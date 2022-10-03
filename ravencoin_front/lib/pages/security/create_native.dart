@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -13,14 +18,11 @@ import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/login.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/utils/device.dart' show getId;
 import 'package:ravencoin_front/utils/extensions.dart';
-import 'package:ravencoin_front/services/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CreateNative extends StatefulWidget {
   @override
@@ -36,22 +38,7 @@ class _CreateNativeState extends State<CreateNative> {
   bool isConsented = false;
   bool consented = false;
   late bool needsConsent;
-
-  Future<void> finishLoadingDatabase() async {
-    //if (!await finishedLoading) {
-    if (await HIVE_INIT.isPartiallyLoaded()) {
-      await HIVE_INIT.setupDatabase2();
-    }
-    //}
-  }
-
-  Future<void> finishLoadingWaiters() async {
-    if (await HIVE_INIT.isPartiallyLoaded()) {
-      await HIVE_INIT.setupWaiters2();
-    }
-  }
-
-  Future<bool> get finishedLoading async => await HIVE_INIT.isLoaded();
+  final LocalAuthApi localAuthApi = LocalAuthApi();
 
   @override
   void initState() {
@@ -61,9 +48,6 @@ class _CreateNativeState extends State<CreateNative> {
         setState(() {});
       }
     }));
-    () async {
-      await finishLoadingDatabase();
-    }();
   }
 
   @override
@@ -101,6 +85,12 @@ class _CreateNativeState extends State<CreateNative> {
                   height: (16 + 24).figmaH,
                   child: welcomeMessage),
             ),
+            SliverToBoxAdapter(
+              child: Container(
+                  alignment: Alignment.bottomCenter,
+                  height: (16 + 24).figmaH,
+                  child: labelMessage),
+            ),
             SliverFillRemaining(
                 hasScrollBody: false,
                 child: KeyboardHidesWidgetWithDelay(
@@ -111,7 +101,22 @@ class _CreateNativeState extends State<CreateNative> {
                         children: [
                           (needsConsent ? ulaMessage : SizedBox(height: 100)),
                           SizedBox(height: 40),
-                          Row(children: [bioButton]),
+                          Row(children: [
+                            FutureBuilder<bool>(
+                                future:
+                                    localAuthApi.entirelyReadyToAuthenticate,
+                                builder:
+                                    (context, AsyncSnapshot<bool> snapshot) {
+                                  if (snapshot.hasData) {
+                                    if (snapshot.data!) {
+                                      return nativeButton;
+                                    }
+                                    return setupButton;
+                                  } else {
+                                    return CircularProgressIndicator();
+                                  }
+                                })
+                          ]),
                           SizedBox(height: 40),
                         ]))),
           ])));
@@ -127,6 +132,14 @@ class _CreateNativeState extends State<CreateNative> {
             .textTheme
             .headline1
             ?.copyWith(color: AppColors.black60),
+      );
+
+  Widget get labelMessage => Text(
+        "${Platform.isIOS ? 'iOS' : 'Android'} Phone Security",
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.black),
       );
 
   Widget get ulaMessage => Row(
@@ -196,7 +209,17 @@ class _CreateNativeState extends State<CreateNative> {
         },
       );
 
-  Widget get bioButton => components.buttons.actionButton(
+  Widget get setupButton => components.buttons.actionButton(
+        context,
+        focusNode: unlockFocus,
+        enabled: readyToUnlock(),
+        label: 'Setup',
+        onPressed: () async {
+          await submitSetup();
+        },
+      );
+
+  Widget get nativeButton => components.buttons.actionButton(
         context,
         focusNode: unlockFocus,
         enabled: readyToUnlock(),
@@ -206,20 +229,20 @@ class _CreateNativeState extends State<CreateNative> {
         },
       );
 
+  Future submitSetup() async {
+    if (Platform.isIOS) {
+      await AppSettings.openSecuritySettings();
+    } else {
+      await AppSettings.openSecuritySettings();
+      // android only alternative
+      //import 'package:open_settings/open_settings.dart';
+      //await OpenSettings.openSecuritySetting();
+    }
+  }
+
   Future submit() async {
     setState(() => enabled = false);
 
-    /// just in case
-    if (await HIVE_INIT.isPartiallyLoaded()) {
-      await finishLoadingWaiters();
-
-      /// doesn't await work?
-      //while (!(await HIVE_INIT.isLoaded())) {
-      //  await Future.delayed(Duration(milliseconds: 50));
-      //}
-    }
-
-    final localAuthApi = LocalAuthApi();
     final validate = await localAuthApi.authenticate();
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       final key = await SecureStorage.authenticationKey;

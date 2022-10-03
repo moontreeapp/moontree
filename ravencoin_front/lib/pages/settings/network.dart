@@ -74,6 +74,13 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   }
 
   Widget body() => CustomScrollView(slivers: <Widget>[
+        //SliverToBoxAdapter(
+        //    child: Padding(
+        //        padding:
+        //            EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 16),
+        //        child: Container(
+        //            alignment: Alignment.topLeft, child: NetworkChoice()))),
+
         //SliverToBoxAdapter(child: SizedBox(height: 6)),
         //SliverToBoxAdapter(
         //    child: Padding(

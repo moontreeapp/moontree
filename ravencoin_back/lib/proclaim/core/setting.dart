@@ -125,8 +125,8 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
     ]);
   }
 
-  AuthMethod get authMethod =>
-      primaryIndex.getOne(SettingName.Auth_Method)!.value;
+  AuthMethod? get authMethod =>
+      primaryIndex.getOne(SettingName.Auth_Method)?.value;
 
   bool get authMethodIsNativeSecurity =>
       primaryIndex.getOne(SettingName.Auth_Method)!.value ==

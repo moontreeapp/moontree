@@ -41,7 +41,7 @@ class _ChosenBlockchainState extends State<ChosenBlockchain> {
         ? Container()
         : GestureDetector(
             onTap: () => Navigator.of(components.navigator.routeContext!)
-                .pushNamed('/settings/network/options'),
+                .pushNamed('/settings/network/blockchain'),
             child: Container(
                 width: 36,
                 alignment: Alignment.center,

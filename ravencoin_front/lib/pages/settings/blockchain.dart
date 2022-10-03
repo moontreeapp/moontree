@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-class NetworkOptionsPage extends StatelessWidget {
-  const NetworkOptionsPage() : super();
+class BlockchainChoice extends StatelessWidget {
+  const BlockchainChoice() : super();
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +22,5 @@ class NetworkOptionsPage extends StatelessWidget {
                     EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft, child: NetworkChoice()))),
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-                child: Container(
-                    alignment: Alignment.topLeft, child: MinerModeChoice()))),
       ]);
 }

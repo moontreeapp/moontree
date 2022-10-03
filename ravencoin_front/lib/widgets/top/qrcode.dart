@@ -21,6 +21,7 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
     'Login',
     'Splash',
     'Createlogin',
+    'Setup',
   ];
   late bool loading = true;
 

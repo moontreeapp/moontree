@@ -103,7 +103,7 @@ class _TransactionListState extends State<TransactionList> {
             components.buttons.actionButtonSoft(
               context,
               label: 'Go to Settings',
-              link: '/settings/network/options',
+              link: '/settings/network/mining',
             ),
             SizedBox(height: 80),
           ])

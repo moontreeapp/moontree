@@ -376,13 +376,13 @@ class _HoldingList extends State<HoldingList> {
             onEditingComplete: () => setState(() => showSearchBar = false)));
     for (AssetHolding holding in holdings ?? []) {
       var thisHolding = ListTile(
-          //dense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () => onTap(wallet, holding),
-          onLongPress: _togglePath,
-          leading: leadingIcon(holding),
-          title: title(holding),
-          /*trailing: Icon(Icons.chevron_right_rounded)*/
+        //dense: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+        onTap: () => onTap(wallet, holding),
+        onLongPress: _togglePath,
+        leading: leadingIcon(holding),
+        title: title(holding),
+        /* HIDING SEARCH FOR NOW
           trailing: holding.symbol == rvn && !isEmpty
               ? GestureDetector(
                   onTap: () => setState(() => showSearchBar = !showSearchBar),
@@ -401,7 +401,9 @@ class _HoldingList extends State<HoldingList> {
                                 blurRadius: 2)
                           ],
                         ))
-              : null);
+              : null
+          */
+      );
       if (holding.symbol == rvn) {
         rvnHolding.add(Container(
             //duration: Duration(milliseconds: 500),

@@ -87,7 +87,7 @@ class _PageLead extends State<PageLead> {
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));
     }
     if (pageTitle == '') {
-      return Container();
+      //return Container();
     }
     if (pageTitle == 'Splash') {
       return Container();
@@ -132,6 +132,18 @@ class _PageLead extends State<PageLead> {
             streams.app.fling.add(false);
             if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.pop(components.navigator.routeContext ?? context);
+          });
+    }
+    if (['Createlogin'].contains(pageTitle)) {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacementNamed(
+              components.navigator.routeContext ?? context,
+              '/security/create/setup',
+            );
+            streams.app.splash.add(false);
           });
     }
     if (pageTitle == 'BackupConfirm') {

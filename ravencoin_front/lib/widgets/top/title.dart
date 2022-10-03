@@ -38,7 +38,7 @@ class PageTitle extends StatefulWidget {
     'Qualifiersub': 'Create',
     'Sub': 'Create',
     'Restricted': 'Create',
-    'Createlogin': 'Sign Up',
+    'Createlogin': 'Setup',
     'Login': 'Locked',
   };
   static Map<String, String> pageMapReissue = const {
@@ -270,9 +270,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     title: Text('New Wallet',
                         style: Theme.of(context).textTheme.bodyText1),
                   ),
-
                   /** for testing - create a SingleWallet
-                  */
                   ListTile(
                     visualDensity: VisualDensity.compact,
                     onTap: () async {
@@ -285,6 +283,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     title: Text('New Single Wallet',
                         style: Theme.of(context).textTheme.bodyText1),
                   )
+                  */
                 ] +
                 [
                   for (Wallet wallet in pros.wallets.ordered)

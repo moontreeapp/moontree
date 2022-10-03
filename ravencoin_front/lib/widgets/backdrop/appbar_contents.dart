@@ -91,7 +91,7 @@ class BackdropAppBarContents extends StatelessWidget
                 print(y.key);
               }
             }
-            print(pros.wallets.singles.first.addresses.first);
+            //print(pros.wallets.singles.first.addresses.first);
 
             //print(pros.passwords.records);
             //print(await SecureStorage
@@ -130,10 +130,10 @@ class BackdropAppBarContents extends StatelessWidget
         shape: shape,
         automaticallyImplyLeading: false,
         elevation: 0,
-        leading: ['ChooseMethod', 'Createlogin', 'Login']
-                .contains(streams.app.page.value)
-            ? null
-            : PageLead(mainContext: context),
+        leading:
+            ['ChooseMethod', 'Login', 'Setup'].contains(streams.app.page.value)
+                ? null
+                : PageLead(mainContext: context),
         centerTitle: spoof,
         title: PageTitle(animate: animate),
         actions: <Widget>[

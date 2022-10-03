@@ -47,6 +47,23 @@ class LocalAuthApi {
     return true;
   }
 
+  Future<bool> get entirelyReadyToAuthenticate async {
+    if (!await canCheckBiometrics) {
+      reason = AuthenticationResult.noSupport;
+      return false;
+    }
+    if (!await isSetup) {
+      reason = AuthenticationResult.notSetup;
+      return false;
+    }
+    //List<BiometricType> nativeSecuritys = await availableBiometrics;
+    //if (nativeSecuritys.isEmpty) {
+    //  reason = AuthenticationResult.noBiometrics;
+    //  return false;
+    //}
+    return true;
+  }
+
   Future<bool> authenticate({bool stickyAuth = false}) async {
     if (!(await readyToAuthenticate)) {
       reason = AuthenticationResult.error;

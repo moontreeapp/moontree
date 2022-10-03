@@ -4,10 +4,10 @@ import 'package:ravencoin_back/streams/app.dart';
 class AuthenticationService {
   bool get methodIsNative => pros.settings.authMethodIsNativeSecurity;
   bool get methodIsPassword => !pros.settings.authMethodIsNativeSecurity;
-  AuthMethod get method => pros.settings.authMethod;
+  AuthMethod? get method => pros.settings.authMethod;
 
   Future<void> setMethod({
-    required AuthMethod method,
+    required AuthMethod? method,
   }) async =>
       await pros.settings
           .save(Setting(name: SettingName.Auth_Method, value: method));

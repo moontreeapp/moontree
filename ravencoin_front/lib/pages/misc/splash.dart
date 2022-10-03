@@ -155,18 +155,23 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
     // this is false on 1st startup -> create
     if (!services.password.required) {
-      if (pros.settings.authMethodIsNativeSecurity) {
-        final localAuthApi = LocalAuthApi();
-        if (await localAuthApi.readyToAuthenticate) {
-          Future.microtask(() => Navigator.pushReplacementNamed(
-              context, getMethodPathCreate(),
-              arguments: {'needsConsent': true}));
-        } else {
-          passwordFallback();
-        }
-      } else {
-        passwordFallback();
-      }
+      //streams.app.page.add('Setup');
+      Future.microtask(() => Navigator.pushReplacementNamed(
+            context,
+            '/security/create/setup',
+          ));
+      //if (pros.settings.authMethodIsNativeSecurity) {
+      //  final localAuthApi = LocalAuthApi();
+      //  if (await localAuthApi.readyToAuthenticate) {
+      //    Future.microtask(() => Navigator.pushReplacementNamed(
+      //        context, getMethodPathCreate(),
+      //        arguments: {'needsConsent': true}));
+      //  } else {
+      //    passwordFallback();
+      //  }
+      //} else {
+      //  passwordFallback();
+      //}
     } else {
       await maybeSwitchToPassword();
       if (services.password.interruptedPasswordChange()) {

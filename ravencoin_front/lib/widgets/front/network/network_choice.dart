@@ -32,10 +32,10 @@ class _NetworkChoice extends State<NetworkChoice> {
       children: <Widget>[
         Text('Blockchain Network',
             style: Theme.of(context).textTheme.bodyText1),
-        Text(
-          'Wallets can hold value on multiple blockchains. Which blockchain would you like to connect to?',
-          style: Theme.of(context).textTheme.bodyText2,
-        ),
+        //Text(
+        //  'Wallets can hold value on multiple blockchains. Which blockchain would you like to connect to?',
+        //  style: Theme.of(context).textTheme.bodyText2,
+        //),
         SizedBox(height: 16),
         RadioListTile<Chain>(
             title: const Text('Ravencoin (mainnet)'),

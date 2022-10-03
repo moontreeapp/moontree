@@ -125,7 +125,7 @@ class _NavMenuState extends State<NavMenu> {
         padding: EdgeInsets.all(0),
         children: [
           destination(
-            icon: Icons.security,
+            icon: Icons.lock_rounded,
             name: 'Security',
             link: '/security/method/change',
           ),
@@ -150,9 +150,10 @@ class _NavMenuState extends State<NavMenu> {
           ),
           /* hiding for now
           destination(
-            icon: MdiIcons.accountCog,
-            name: 'Options',
-            link: '/settings/network/options',
+            //icon: MdiIcons.accountCog,
+            icon: MdiIcons.pickaxe,
+            name: 'Mining',
+            link: '/settings/network/mining',
           ),
           */
         ],
@@ -161,6 +162,13 @@ class _NavMenuState extends State<NavMenu> {
         shrinkWrap: true,
         padding: EdgeInsets.all(0),
         children: [
+          /* hiding for now
+          destination(
+            icon: MdiIcons.linkVariant, //MdiIcons.linkBoxVariant,
+            name: 'Blockchain',
+            link: '/settings/network/blockchain',
+          ),
+          */
           destination(
               icon: MdiIcons.shieldKey,
               name: 'Import',

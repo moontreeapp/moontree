@@ -17,6 +17,7 @@ import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/pages/security/backup/keypair.dart';
 import 'package:ravencoin_front/pages/security/backup/show.dart';
 import 'package:ravencoin_front/pages/security/backup/verify.dart';
+import 'package:ravencoin_front/pages/security/create_choice.dart';
 import 'package:ravencoin_front/pages/security/create_native.dart';
 import 'package:ravencoin_front/pages/security/create_password.dart';
 import 'package:ravencoin_front/pages/security/login_password.dart';
@@ -29,8 +30,9 @@ import 'package:ravencoin_front/pages/settings/export.dart';
 import 'package:ravencoin_front/pages/settings/feedback.dart';
 import 'package:ravencoin_front/pages/settings/import.dart';
 import 'package:ravencoin_front/pages/settings/language.dart';
+import 'package:ravencoin_front/pages/settings/blockchain.dart';
 import 'package:ravencoin_front/pages/settings/network.dart';
-import 'package:ravencoin_front/pages/settings/network_options.dart';
+import 'package:ravencoin_front/pages/settings/mining.dart';
 import 'package:ravencoin_front/pages/settings/advanced.dart';
 import 'package:ravencoin_front/pages/settings/preferences.dart';
 import 'package:ravencoin_front/pages/settings/support.dart';
@@ -120,6 +122,7 @@ class pages {
         '/security/resume': (context) => ChangeResume(),
         '/security/password/login': (context) => LoginPassword(),
         '/security/native/login': (context) => LoginNative(),
+        '/security/create/setup': (context) => CreateChoice(),
         '/security/password/createlogin': (context) => CreatePassword(),
         '/security/native/createlogin': (context) => CreateNative(),
         '/security/security': (context) => VerifyAuthentication(),
@@ -138,7 +141,8 @@ class pages {
         '/settings/feedback': (context) => Feedback(),
         '/settings/import': (context) => Import(),
         '/settings/network': (context) => ElectrumNetwork(),
-        '/settings/network/options': (context) => NetworkOptionsPage(),
+        '/settings/network/mining': (context) => MiningChoice(),
+        '/settings/network/blockchain': (context) => BlockchainChoice(),
         '/settings/preferences': (context) => Preferences(),
         '/settings/support': (context) => Support(),
         '/settings/technical': (context) => TechnicalView(),
