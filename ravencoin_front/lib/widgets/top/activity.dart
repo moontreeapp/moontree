@@ -5,7 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/widgets/front/network/download_queue_count.dart';
+import 'package:ravencoin_front/widgets/front/choices/download_queue_count.dart';
 
 class ActivityLight extends StatefulWidget {
   ActivityLight({Key? key}) : super(key: key);
