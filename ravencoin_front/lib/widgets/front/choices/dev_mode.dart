@@ -21,7 +21,7 @@ class _DeveloperModeChoice extends State<DeveloperModeChoice> {
   @override
   void initState() {
     super.initState();
-    devChoice = services.wallet.currentWallet.minerMode == true
+    devChoice = pros.settings.developerMode == true
         ? DeveloperModeChoices.on
         : DeveloperModeChoices.off;
   }

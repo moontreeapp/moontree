@@ -227,15 +227,16 @@ class SecureStorage {
     await storage.deleteAll();
   }
 
+  static const authkey = 'authenticationKey';
+
   static Future<String> get authenticationKey async {
-    const key = 'authenticationKey';
     final storage = FlutterSecureStorage();
-    String? value = await storage.read(key: key);
+    String? value = await storage.read(key: authkey);
     if (value != null) {
       return value;
     }
     final bioKey = randomString();
-    await storage.write(key: key, value: bioKey);
+    await storage.write(key: authkey, value: bioKey);
     return bioKey;
   }
 
@@ -269,7 +270,7 @@ class SecureStorage {
     return await storage.read(key: key);
   }
 
-  static Future<void> write(String key, String value) async {
+  static Future<void> write(String key, String? value) async {
     final storage = FlutterSecureStorage();
     await storage.write(
       key: key,
@@ -279,5 +280,10 @@ class SecureStorage {
           : null,
       aOptions: !Platform.isIOS ? AndroidOptions() : null,
     );
+  }
+
+  static Future<void> deleteAll() async {
+    final storage = FlutterSecureStorage();
+    storage.deleteAll();
   }
 }
