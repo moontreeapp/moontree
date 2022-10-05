@@ -7,20 +7,20 @@ environment:
 
 dependencies:
   bs58check: ^1.0.2
-  collection: ^1.15.0
-  crypto: ^3.0.0
-  encrypt: ^5.0.0
-  equatable: ^2.0.3
-  hive: ^2.0.4
-  ordered_set: ^3.1.0
-  pointycastle: ^3.3.4
-  quiver: ^3.0.1
+  collection: ^1.16.0
+  crypto: ^3.0.2
+  encrypt: ^5.0.1
+  equatable: ^2.0.5
+  hive: ^2.2.3
+  ordered_set: ^5.0.0
+  pointycastle: ^3.6.2
+  quiver: ^3.1.0
   ravencoin_wallet: ^3.0.0
   ravencoin_electrum: ^2.0.0
   proclaim: ^4.0.1
-  rxdart: ^0.27.3
+  rxdart: ^0.27.5
   sorted_list: ^1.0.0
-  http: ^0.13.3
+  http: ^0.13.5
   ulid: ^2.0.0
   tuple: ^2.0.0
   intl: ^0.17.0
