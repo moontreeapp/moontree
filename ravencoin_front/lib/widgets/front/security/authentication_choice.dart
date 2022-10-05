@@ -5,6 +5,7 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:ravencoin_front/services/wallet.dart' show saveSecret;
 
 class AuthenticationMethodChoice extends StatefulWidget {
   final dynamic data;
@@ -92,7 +93,6 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
 
                   print((pros.wallets.records.first as LeaderWallet).cipher);
 
-                  /*
                   await services.authentication.setPassword(
                     password: key,
                     salt: key,
@@ -101,7 +101,6 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                   );
                   print('setMethod');
                   await services.authentication.setMethod(method: value!);
-                  */
                 } else {
                   if (localAuthApi.reason == AuthenticationResult.error) {
                     setState(() {
