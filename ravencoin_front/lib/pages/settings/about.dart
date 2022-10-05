@@ -24,12 +24,12 @@ class About extends StatelessWidget {
                 children: <Widget>[
                   GestureDetector(
                       onDoubleTap: () async {
-                        Navigator.of(context)
-                            .pushReplacementNamed('/settings/developer');
-                        //await pros.settings.toggleDevMode();
-                        //streams.app.snack.add(Snack(
-                        //    message:
-                        //        'developer mode: ${pros.settings.developerMode}'));
+                        //Navigator.of(context)
+                        //    .pushReplacementNamed('/settings/developer');
+                        ////await pros.settings.toggleDevMode();
+                        ////streams.app.snack.add(Snack(
+                        ////    message:
+                        ////        'developer mode: ${pros.settings.developerMode}'));
                       },
                       child: Image.asset(
                         'assets/logo/moontree_logo.png',
