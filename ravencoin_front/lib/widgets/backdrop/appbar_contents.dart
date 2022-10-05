@@ -84,31 +84,9 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            print(services.download.queue.transactions);
-            print(services.download.queue.addresses);
-            //print(pros.wallets.records) as LeaderWallet;
-            //print(pros.wallets.singles.first.addresses.first);
-
-            //print(pros.passwords.records);
-            //print(await SecureStorage
-            //    .authenticationKey); //-jDnNMt8bAEMapFVDOimimMlf89cd1hNW37C
-            //await pros.wallets.save(LeaderWallet.from(
-            //    pros.wallets.records.first as LeaderWallet,
-            //    cipherUpdate: CipherUpdate(CipherType.AES, passwordId: 5)));
-            //print(await ((pros.wallets.records.first as LeaderWallet)
-            //    .cipherUpdate));
-            //await populateWalletsWithSensitives();
-            //print(await ((pros.wallets.records.first as LeaderWallet)
-            //    .getEntropy)!(pros.wallets.records.first.id));
-            //print(pros.passwords.length);
-            //print(await (pros.wallets.records.first as LeaderWallet).entropy);
-
-            //a0c2b104e973f1a553b901b5ace818ab
-            //I/flutter (10771): patch better donkey spray disease sport exclude cage remember guard alert final
-            //services.balance.recalculateAllBalances();
-            //print(Current.balanceRVN);
-            //print(pros.unspents.byWalletSymbolConfirmation());
-            //printFullState();
+            print(pros.ciphers.records);
+            print(await ((pros.wallets.records.first as LeaderWallet)
+                .getEntropy)!(pros.wallets.records.first.id));
           },
           child: appBar,
         )

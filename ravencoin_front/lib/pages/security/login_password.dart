@@ -387,8 +387,12 @@ class _LoginPasswordState extends State<LoginPassword> {
       altPassword: providedPassword,
       altSalt: await SecureStorage.authenticationKey,
     );
+    print('------');
+    print(pros.ciphers.records);
     await services.cipher.updateWallets();
+    print(pros.ciphers.records);
     services.cipher.cleanupCiphers();
+    print(pros.ciphers.records);
     services.cipher.loginTime();
     streams.app.context.add(AppContext.wallet);
     streams.app.splash.add(false); // trigger to refresh app bar again

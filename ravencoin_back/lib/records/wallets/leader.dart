@@ -79,6 +79,10 @@ class LeaderWallet extends Wallet {
   @override
   String get encrypted => encryptedEntropy;
 
+  Future<String> get encryptedSecret async => encryptedEntropy == ''
+      ? await (_getEntropy ?? (id) async => id)(id)
+      : encryptedEntropy;
+
   @override
   Future<String> secret([CipherBase? cipher]) async => await mnemonic;
 
@@ -116,9 +120,6 @@ class LeaderWallet extends Wallet {
 
   Future<String> get mnemonic async => bip39.entropyToMnemonic(await entropy);
 
-  Future<String> get entropy async => hex.decrypt(
-      encryptedEntropy == ''
-          ? await (_getEntropy ?? (id) async => id)(id)
-          : encryptedEntropy,
-      cipher!);
+  Future<String> get entropy async =>
+      hex.decrypt(await encryptedSecret, cipher!);
 }
