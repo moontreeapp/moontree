@@ -38,7 +38,7 @@ class _DownloadQueueCount extends State<DownloadQueueCount> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'download queue count: '
+          'download queue: '
           '${addresses + transactions}',
           style: Theme.of(context).textTheme.subtitle1,
         ),

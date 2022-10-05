@@ -41,6 +41,8 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         return SettingName.Version_Previous;
       case 13:
         return SettingName.Version_Current;
+      case 14:
+        return SettingName.Mode_Dev;
       default:
         return SettingName.Version_Database;
     }
@@ -90,6 +92,9 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         break;
       case SettingName.Version_Current:
         writer.writeByte(13);
+        break;
+      case SettingName.Mode_Dev:
+        writer.writeByte(14);
         break;
     }
   }

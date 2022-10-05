@@ -38,11 +38,16 @@ extension WalletHasManyVins on Wallet {
 }
 
 extension WalletHasManyTransactions on Wallet {
-  Set<Transaction> get transactions =>
-      (vouts.map((vout) => vout.transaction!).toList() +
+  Set<Transaction> get transactions {
+    try {
+      return (vouts.map((vout) => vout.transaction!).toList() +
               vins.map((vin) => vin.transaction!).toList())
           .toSet()
         ..remove(null);
+    } catch (e) {
+      return <Transaction>{};
+    }
+  }
 }
 
 // would prefer .assets

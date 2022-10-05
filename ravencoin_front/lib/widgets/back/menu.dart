@@ -148,27 +148,39 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Network',
             link: '/settings/network',
           ),
-          /* hiding for now
-          destination(
-            //icon: MdiIcons.accountCog,
-            icon: MdiIcons.pickaxe,
-            name: 'Mining',
-            link: '/settings/network/mining',
-          ),
-          */
+          if (pros.settings.developerMode == true)
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.pickaxe,
+              name: 'Mining',
+              link: '/settings/network/mining',
+            ),
+          if (pros.settings.developerMode == true)
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.database,
+              name: 'Database',
+              link: '/settings/database',
+            ),
+          if (pros.settings.developerMode == true)
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.rocketLaunchOutline,
+              name: 'Advanced',
+              link: '/settings/developer',
+            ),
         ],
       ),
       '/settings': ListView(
         shrinkWrap: true,
         padding: EdgeInsets.all(0),
         children: [
-          /* hiding for now
-          destination(
-            icon: MdiIcons.linkVariant, //MdiIcons.linkBoxVariant,
-            name: 'Blockchain',
-            link: '/settings/network/blockchain',
-          ),
-          */
+          if (pros.settings.developerMode == true)
+            destination(
+              icon: MdiIcons.linkVariant, //MdiIcons.linkBoxVariant,
+              name: 'Blockchain',
+              link: '/settings/network/blockchain',
+            ),
           destination(
               icon: MdiIcons.shieldKey,
               name: 'Import',

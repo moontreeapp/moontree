@@ -33,10 +33,10 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
         SettingName.Electrum_Port:
             Setting(name: SettingName.Electrum_Port, value: defaultPort),
-        SettingName.Blockchain:
-            Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
         SettingName.Auth_Method: Setting(
             name: SettingName.Auth_Method, value: AuthMethod.nativeSecurity),
+        SettingName.Blockchain:
+            Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
         SettingName.Wallet_Current:
             Setting(name: SettingName.Wallet_Current, value: '0'),
         SettingName.Wallet_Preferred:
@@ -49,6 +49,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.Send_Immediate, value: null),
         SettingName.Version_Previous:
             Setting(name: SettingName.Send_Immediate, value: null),
+        SettingName.Mode_Dev: Setting(name: SettingName.Mode_Dev, value: false),
       }.map((settingName, setting) => MapEntry(settingName.name, setting));
 
   /// should this be in the database or should it be a constant somewhere?
@@ -131,4 +132,10 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   bool get authMethodIsNativeSecurity =>
       primaryIndex.getOne(SettingName.Auth_Method)!.value ==
       AuthMethod.nativeSecurity;
+
+  bool get developerMode => primaryIndex.getOne(SettingName.Mode_Dev)!.value;
+
+  Future toggleDevMode([bool? turnOn]) async => await save(
+        Setting(name: SettingName.Mode_Dev, value: turnOn ?? !developerMode),
+      );
 }

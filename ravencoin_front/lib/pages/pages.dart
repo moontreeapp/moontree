@@ -33,6 +33,8 @@ import 'package:ravencoin_front/pages/settings/language.dart';
 import 'package:ravencoin_front/pages/settings/blockchain.dart';
 import 'package:ravencoin_front/pages/settings/network.dart';
 import 'package:ravencoin_front/pages/settings/mining.dart';
+import 'package:ravencoin_front/pages/settings/database.dart';
+import 'package:ravencoin_front/pages/settings/developer.dart';
 import 'package:ravencoin_front/pages/settings/advanced.dart';
 import 'package:ravencoin_front/pages/settings/preferences.dart';
 import 'package:ravencoin_front/pages/settings/support.dart';
@@ -146,5 +148,7 @@ class pages {
         '/settings/preferences': (context) => Preferences(),
         '/settings/support': (context) => Support(),
         '/settings/technical': (context) => TechnicalView(),
+        '/settings/database': (context) => DatabaseOptions(),
+        '/settings/developer': (context) => DeveloperOptions(),
       };
 }

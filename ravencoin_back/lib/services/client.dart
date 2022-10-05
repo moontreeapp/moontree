@@ -40,11 +40,15 @@ class ClientService {
     var x;
     try {
       x = await callback();
-    } catch (e) {
-      // reconnect on any error, not just server disconnected } on StateError {
-      await createClient();
-      // if we error this time, fail
-      x = await callback();
+      //} catch (e) {
+    } on StateError {
+      //print('creatingClient because of StateError');
+      ////print(e);
+      //// reconnect on any error, not just server disconnected } on StateError {
+      //await createClient();
+      //// if we error this time, fail
+      //x = await callback();
+      x = null;
     }
     return x;
   }
@@ -251,12 +255,16 @@ class SubscribeService {
         if (!streams.client.busy.value) {
           streams.client.busy.add(true);
         }
-        print('UNSPENTS-${address.address}');
         final addressStatus = address.status;
         await saveStatusUpdate(address, status);
-        if (addressStatus == null) {
-          print('NEW ADDRESS');
-          // new address
+        if (addressStatus?.status == null && status == null) {
+          print('NEW ADDRESS-${address.address}');
+          await maybeDerive(address);
+          await pullUnspents(address);
+          queueHistoryDownload(address);
+        } else if (addressStatus?.status == null && status != null) {
+          print('NEW ADDRESS w/ Hist-${address.address}');
+          // first transaction on address discovered
           //var s = Stopwatch()..start();
           await maybeDerive(address);
           //print('maybeDerive: ${s.elapsed}');
@@ -264,16 +272,12 @@ class SubscribeService {
           //print('pullUnspents: ${s.elapsed}');
           queueHistoryDownload(address);
           //print('queueHistoryDownload: ${s.elapsed}');
-        } else if (addressStatus.status == null && status != null) {
-          // first transaction on address discovered
-          await maybeDerive(address);
-          await pullUnspents(address);
-          queueHistoryDownload(address);
-        } else if (addressStatus.status != status) {
+        } else if (addressStatus?.status != status) {
+          print('NEW TRANSACTIONS-${address.address}');
           // new transaction on address discovered
           await pullUnspents(address);
           queueHistoryDownload(address);
-        } else if (addressStatus.status == status) {
+        } else if (addressStatus?.status == status) {
           // do nothing
         }
         final wallet = address.wallet!;

@@ -258,54 +258,50 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
           await SimpleSelectionItems(
             components.navigator.routeContext!,
             then: () => dropDownActive = false,
-            items:
-                /**
-            [
-                   hide for now
-                  ListTile(
-                    visualDensity: VisualDensity.compact,
-                    onTap: () async {
-                      Navigator.pop(components.navigator.routeContext!);
-                      final walletId = await generateWallet();
-                      await switchWallet(walletId);
-                    },
-                    leading: Icon(Icons.add, color: AppColors.primary),
-                    title: Text('New Wallet',
-                        style: Theme.of(context).textTheme.bodyText1),
-                  ),
-                  */
-                /** for testing - create a SingleWallet
-                  ListTile(
-                    visualDensity: VisualDensity.compact,
-                    onTap: () async {
-                      Navigator.pop(components.navigator.routeContext!);
-                      final walletId =
-                          await generateWallet(walletType: WalletType.single);
-                      await switchWallet(walletId);
-                    },
-                    leading: Icon(Icons.add, color: AppColors.primary),
-                    title: Text('New Single Wallet',
-                        style: Theme.of(context).textTheme.bodyText1),
-                  )
+            items: [
+                  if (pros.settings.developerMode == true)
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      onTap: () async {
+                        Navigator.pop(components.navigator.routeContext!);
+                        final walletId = await generateWallet();
+                        await switchWallet(walletId);
+                      },
+                      leading: Icon(Icons.add, color: AppColors.primary),
+                      title: Text('New Wallet',
+                          style: Theme.of(context).textTheme.bodyText1),
+                    ),
+                  if (pros.settings.developerMode == true)
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      onTap: () async {
+                        Navigator.pop(components.navigator.routeContext!);
+                        final walletId =
+                            await generateWallet(walletType: WalletType.single);
+                        await switchWallet(walletId);
+                      },
+                      leading: Icon(Icons.add, color: AppColors.primary),
+                      title: Text('New Single Wallet',
+                          style: Theme.of(context).textTheme.bodyText1),
+                    )
                 ] +
-                  */
                 [
-              for (Wallet wallet in pros.wallets.ordered)
-                ListTile(
-                  visualDensity: VisualDensity.compact,
-                  onTap: () async {
-                    Navigator.pop(components.navigator.routeContext!);
-                    if (wallet.id != Current.walletId) {
-                      await switchWallet(wallet.id);
-                    }
-                  },
-                  leading: Icon(
-                    Icons.account_balance_wallet_rounded,
-                    color: AppColors.primary,
-                  ),
-                  title: Text(wallet.name,
-                      style: Theme.of(context).textTheme.bodyText1),
-                  /* awaiting design..........
+                  for (Wallet wallet in pros.wallets.ordered)
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      onTap: () async {
+                        Navigator.pop(components.navigator.routeContext!);
+                        if (wallet.id != Current.walletId) {
+                          await switchWallet(wallet.id);
+                        }
+                      },
+                      leading: Icon(
+                        Icons.account_balance_wallet_rounded,
+                        color: AppColors.primary,
+                      ),
+                      title: Text(wallet.name,
+                          style: Theme.of(context).textTheme.bodyText1),
+                      /* awaiting design..........
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -435,8 +431,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                           ],
                         )
                         */
-                )
-            ],
+                    )
+                ],
           ).build();
         }
       },

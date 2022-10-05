@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
@@ -67,10 +68,6 @@ class _HoldingList extends State<HoldingList> {
         //print('triggered by holdingCount');
         //setState(() {});
       }
-    }));
-    listeners.add(streams.app.wallet.refresh.listen((bool value) {
-      print('told to Refresh');
-      setState(() {});
     }));
     //listeners.add(pros.balances.batchedChanges
     //    .listen((List<Change<Balance>> changes) async {
@@ -346,8 +343,11 @@ class _HoldingList extends State<HoldingList> {
     );
   }
 
-  Widget _holdingsView(BuildContext context,
-      {Wallet? wallet, bool isEmpty = false}) {
+  Widget _holdingsView(
+    BuildContext context, {
+    Wallet? wallet,
+    bool isEmpty = false,
+  }) {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
     final searchBar = Padding(
@@ -376,34 +376,34 @@ class _HoldingList extends State<HoldingList> {
             onEditingComplete: () => setState(() => showSearchBar = false)));
     for (AssetHolding holding in holdings ?? []) {
       var thisHolding = ListTile(
-        //dense: true,
-        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        onTap: () => onTap(wallet, holding),
-        onLongPress: _togglePath,
-        leading: leadingIcon(holding),
-        title: title(holding),
-        /* HIDING SEARCH FOR NOW
-          trailing: holding.symbol == rvn && !isEmpty
-              ? GestureDetector(
-                  onTap: () => setState(() => showSearchBar = !showSearchBar),
-                  child: searchController.text == ''
-                      ? Icon(Icons.search)
-                      : Icon(
-                          Icons.search,
-                          shadows: [
-                            Shadow(
-                                color: AppColors.black12,
-                                offset: Offset(1, 1),
-                                blurRadius: 1),
-                            Shadow(
-                                color: AppColors.black12,
-                                offset: Offset(1, 2),
-                                blurRadius: 2)
-                          ],
-                        ))
-              : null
-          */
-      );
+          //dense: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          onTap: () => onTap(wallet, holding),
+          onLongPress: _togglePath,
+          leading: leadingIcon(holding),
+          title: title(holding),
+          trailing: pros.settings.developerMode == true
+              ? (holding.symbol == rvn && !isEmpty
+                  ? GestureDetector(
+                      onTap: () =>
+                          setState(() => showSearchBar = !showSearchBar),
+                      child: searchController.text == ''
+                          ? Icon(Icons.search)
+                          : Icon(
+                              Icons.search,
+                              shadows: [
+                                Shadow(
+                                    color: AppColors.black12,
+                                    offset: Offset(1, 1),
+                                    blurRadius: 1),
+                                Shadow(
+                                    color: AppColors.black12,
+                                    offset: Offset(1, 2),
+                                    blurRadius: 2)
+                              ],
+                            ))
+                  : null)
+              : null);
       if (holding.symbol == rvn) {
         rvnHolding.add(Container(
             //duration: Duration(milliseconds: 500),
@@ -468,18 +468,29 @@ class _HoldingList extends State<HoldingList> {
       //    title: Text('+ Create Asset (not enough RVN)',
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
-
+    final listView = ListView(
+        controller: widget.scrollController,
+        dragStartBehavior: DragStartBehavior.start,
+        physics: ClampingScrollPhysics(),
+        children: <Widget>[
+          ...rvnHolding,
+          ...assetHoldings,
+          ...[components.empty.blankNavArea(context)]
+        ]);
+    if (pros.settings.developerMode == true) {
+      return GestureDetector(
+          onTap: FocusScope.of(context).unfocus,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              streams.app.snack.add(Snack(message: 'Resyncing...'));
+              await services.client.resetMemoryAndConnection();
+            },
+            child: listView,
+          ));
+    }
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
-      child: ListView(
-          controller: widget.scrollController,
-          dragStartBehavior: DragStartBehavior.start,
-          physics: ClampingScrollPhysics(),
-          children: <Widget>[
-            ...rvnHolding,
-            ...assetHoldings,
-            ...[components.empty.blankNavArea(context)]
-          ]),
+      child: listView,
     );
   }
 

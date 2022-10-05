@@ -49,4 +49,7 @@ enum SettingName {
 
   @HiveField(13)
   Version_Current,
+
+  @HiveField(14)
+  Mode_Dev,
 }

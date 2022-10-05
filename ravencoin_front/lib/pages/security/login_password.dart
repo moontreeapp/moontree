@@ -348,17 +348,14 @@ class _LoginPasswordState extends State<LoginPassword> {
 
       /// lets not login this way again:
       await updatePasswordsToSecureStorage();
-      streams.app.snack
-          .add(Snack(message: 'Almost done migrating...', showOnLogin: true));
-
-      /// erase all history stuff
-      await services.client.resetMemoryAndConnection();
-      services.download.overrideGettingStarted = true;
 
       /// bridge
-      await updateWalletsToSecureStorage();
       await updateWalletNames();
-      await login(password.text);
+      await updateWalletsToSecureStorage();
+      streams.app.snack
+          .add(Snack(message: 'Migration complete...', showOnLogin: true));
+
+      await login(password.text, refresh: true);
     } else if (await services.password.lockout
             .handleVerificationAttempt(await validate()) &&
         passwordText == null) {
@@ -375,29 +372,54 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
   }
 
-  Future<void> login(String providedPassword) async {
+  Future<void> login(String providedPassword, {bool refresh = false}) async {
     /// there are existing wallets, we should populate them with sensitives now.
     await populateWalletsWithSensitives();
     if (!consented) {
       consented = await consentToAgreements(await getId());
     }
+    if (refresh) {
+      services.download.overrideGettingStarted = true;
+    }
+    print('going to homescreen');
     try {
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
+      print('went to homescreen');
     } catch (e) {
       print(e);
     }
+    print('init ciphers ');
     // create ciphers for wallets we have
     services.cipher.initCiphers(
       altPassword: providedPassword,
       altSalt: await SecureStorage.authenticationKey,
     );
+    print('init ciphers done');
     await services.cipher.updateWallets();
+    print('updatewallets done');
     services.cipher.cleanupCiphers();
+    print('cleanupCiphers done');
     services.cipher.loginTime();
+    print('loginTime done');
     streams.app.context.add(AppContext.wallet);
+    print('app.context done');
     streams.app.splash.add(false); // trigger to refresh app bar again
+    print('app.splash done');
     streams.app.logout.add(false);
+    print('app.logout done');
     streams.app.verify.add(true);
+    print('app.verify done');
+    if (refresh) {
+      print('refresh');
+      streams.app.snack
+          .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));
+
+      /// erase all history stuff
+      await services.client.resetMemoryAndConnection();
+      services.download.overrideGettingStarted = true;
+      streams.app.wallet.refresh.add(true);
+      print('app.wallet');
+    }
   }
 }
 

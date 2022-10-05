@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -21,10 +22,19 @@ class About extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(
-                    'assets/logo/moontree_logo.png',
-                    height: 128.figma(context),
-                  ),
+                  GestureDetector(
+                      onDoubleTap: () async {
+                        Navigator.of(context)
+                            .pushReplacementNamed('/settings/developer');
+                        //await pros.settings.toggleDevMode();
+                        //streams.app.snack.add(Snack(
+                        //    message:
+                        //        'developer mode: ${pros.settings.developerMode}'));
+                      },
+                      child: Image.asset(
+                        'assets/logo/moontree_logo.png',
+                        height: 128.figma(context),
+                      )),
                   GestureDetector(
                     onTap: () {
                       launchUrl(
