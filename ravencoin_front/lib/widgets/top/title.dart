@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_front/components/text.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/wallet.dart'
     show generateWallet, switchWallet;
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/widgets/bottom/selection_items.dart';
-import 'package:ravencoin_front/widgets/front/verify.dart';
-import 'package:ravencoin_front/widgets/other/textfield.dart';
 
 class PageTitle extends StatefulWidget {
   final bool animate;

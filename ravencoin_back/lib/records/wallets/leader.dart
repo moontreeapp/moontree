@@ -87,8 +87,10 @@ class LeaderWallet extends Wallet {
   Future<String> secret([CipherBase? cipher]) async => await mnemonic;
 
   @override
-  Future<ravenwallet.HDWallet> seedWallet(CipherBase cipher,
-          {Net net = Net.Main}) async =>
+  Future<ravenwallet.HDWallet> seedWallet(
+    CipherBase cipher, {
+    Net net = Net.Main,
+  }) async =>
       SeedWallet(await seed, net).wallet;
 
   @override

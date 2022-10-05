@@ -5,7 +5,6 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
-import 'package:ravencoin_front/services/wallet.dart';
 
 class AuthenticationMethodChoice extends StatefulWidget {
   final dynamic data;
