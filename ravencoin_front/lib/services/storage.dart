@@ -248,10 +248,10 @@ class SecureStorage {
           secret.scripthash ??
           passwordIdKey(secret.passwordId!),
       value: secret.secret,
-      iOptions: Platform.isIOS
-          ? IOSOptions(accessibility: KeychainAccessibility.first_unlock)
-          : null,
-      aOptions: !Platform.isIOS ? AndroidOptions() : null,
+      //iOptions: Platform.isIOS
+      //    ? IOSOptions(accessibility: KeychainAccessibility.first_unlock)
+      //    : null,
+      //aOptions: !Platform.isIOS ? AndroidOptions() : null,
     );
   }
 
@@ -270,15 +270,20 @@ class SecureStorage {
     return await storage.read(key: key);
   }
 
+  static Future<Map<String, String>> readAll() async {
+    final storage = FlutterSecureStorage();
+    return await storage.readAll();
+  }
+
   static Future<void> write(String key, String? value) async {
     final storage = FlutterSecureStorage();
     await storage.write(
       key: key,
       value: value,
-      iOptions: Platform.isIOS
-          ? IOSOptions(accessibility: KeychainAccessibility.first_unlock)
-          : null,
-      aOptions: !Platform.isIOS ? AndroidOptions() : null,
+      //iOptions: Platform.isIOS
+      //    ? IOSOptions(accessibility: KeychainAccessibility.first_unlock)
+      //    : null,
+      //aOptions: !Platform.isIOS ? AndroidOptions() : null,
     );
   }
 
