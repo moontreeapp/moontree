@@ -1,26 +1,13 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_back/services/consent.dart'
-    show ConsentDocument, documentEndpoint, consentToAgreements;
-import 'package:ravencoin_front/services/auth.dart';
-import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
-import 'package:ravencoin_front/services/wallet.dart'
-    show saveSecret, setupWallets;
-import 'package:ravencoin_front/theme/extensions.dart';
-import 'package:ravencoin_front/utils/auth.dart';
-import 'package:ravencoin_front/utils/login.dart';
-import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_front/theme/colors.dart';
-import 'package:ravencoin_front/utils/data.dart';
-import 'package:ravencoin_front/utils/device.dart' show getId;
-import 'package:ravencoin_front/utils/extensions.dart';
+import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/services.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:ravencoin_front/theme/colors.dart';
+import 'package:ravencoin_front/utils/auth.dart';
+import 'package:ravencoin_front/utils/data.dart';
+import 'package:ravencoin_front/utils/extensions.dart';
+import 'package:ravencoin_front/widgets/widgets.dart';
 
 class CreateChoice extends StatefulWidget {
   @override
