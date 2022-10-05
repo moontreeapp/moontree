@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -7,7 +6,6 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart';
-import 'package:ravencoin_front/widgets/front/security/password.dart';
 
 class AuthenticationMethodChoice extends StatefulWidget {
   final dynamic data;
@@ -54,26 +52,35 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               Future<void> onSuccess() async {
+                print('to native');
                 final localAuthApi = LocalAuthApi();
+                print('localAuthApi');
                 final validate = await localAuthApi.authenticate();
+                print('validate');
                 if (validate) {
+                  print('if validate');
                   if (mounted) {
+                    print('if mounted');
                     setState(() {
                       authenticationMethodChoice = AuthMethod.nativeSecurity;
                     });
                   }
+                  print('loading...');
                   components.loading.screen(
                       message: 'Setting Security',
                       staticImage: true,
                       returnHome: true,
                       playCount: 1);
-                  await services.authentication.setMethod(method: value!);
+                  final key = await SecureStorage.authenticationKey;
+                  print('setPassword $key');
                   await services.authentication.setPassword(
-                    password: await SecureStorage.authenticationKey,
-                    salt: await SecureStorage.authenticationKey,
+                    password: key,
+                    salt: key,
                     message: 'Successfully Updated Security',
                     saveSecret: saveSecret,
                   );
+                  print('setMethod');
+                  await services.authentication.setMethod(method: value!);
                 } else {
                   if (localAuthApi.reason == AuthenticationResult.error) {
                     setState(() {

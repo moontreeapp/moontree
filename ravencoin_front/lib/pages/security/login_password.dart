@@ -377,36 +377,24 @@ class _LoginPasswordState extends State<LoginPassword> {
     if (refresh) {
       services.download.overrideGettingStarted = true;
     }
-    print('going to homescreen');
     try {
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
-      print('went to homescreen');
     } catch (e) {
       print(e);
     }
-    print('init ciphers ');
     // create ciphers for wallets we have
     services.cipher.initCiphers(
       altPassword: providedPassword,
       altSalt: await SecureStorage.authenticationKey,
     );
-    print('init ciphers done');
     await services.cipher.updateWallets();
-    print('updatewallets done');
     services.cipher.cleanupCiphers();
-    print('cleanupCiphers done');
     services.cipher.loginTime();
-    print('loginTime done');
     streams.app.context.add(AppContext.wallet);
-    print('app.context done');
     streams.app.splash.add(false); // trigger to refresh app bar again
-    print('app.splash done');
     streams.app.logout.add(false);
-    print('app.logout done');
     streams.app.verify.add(true);
-    print('app.verify done');
     if (refresh) {
-      print('refresh');
       streams.app.snack
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));
 
@@ -414,7 +402,6 @@ class _LoginPasswordState extends State<LoginPassword> {
       await services.client.resetMemoryAndConnection();
       services.download.overrideGettingStarted = true;
       streams.app.wallet.refresh.add(true);
-      print('app.wallet');
     }
   }
 }
