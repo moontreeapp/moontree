@@ -31,7 +31,7 @@ Future<String> generateWallet({
   return wallet!.id;
 }
 
-Future setupRealWallet(String? id) async {
+Future setupRealWallet([String? id]) async {
   final mnemonic;
   if (id != null) {
     await dotenv.load(fileName: '.env');
@@ -44,7 +44,7 @@ Future setupRealWallet(String? id) async {
 
 Future setupWallets() async {
   if (pros.wallets.records.isEmpty) {
-    await setupRealWallet('1');
+    await setupRealWallet();
     await pros.settings.setCurrentWalletId(pros.wallets.first.id);
     await pros.settings.savePreferredWalletId(pros.wallets.first.id);
   }
