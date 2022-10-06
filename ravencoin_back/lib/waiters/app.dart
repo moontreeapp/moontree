@@ -13,7 +13,11 @@ class AppWaiter extends Waiter {
       'streams.app.active',
       streams.app.active,
       (bool active) async {
-        if (!active && services.password.required) {
+        if (!active &&
+            services.password.required &&
+            streams.app.verify.value == false) {
+          print(
+              'minimized--- if we are minimized because of local auth do not logout!');
           streams.app.logout.add(true);
         }
       },
