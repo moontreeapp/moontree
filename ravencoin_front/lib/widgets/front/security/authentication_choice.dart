@@ -125,29 +125,8 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
 
               setState(() => authenticationMethodChoice = value);
 
-              streams.app.verify.add(false); // always require auth
+              streams.app.verify.add(false); // require auth
               if (services.password.askCondition) {
-                /// you might think we'd ask for their password here, then ask for
-                /// native authentication, decrypting the wallets with their
-                /// password the only reason we don't need to us that we save the
-                /// cipher so we can just use that. however, we need to verify
-                /// they really can access it so, we must ask for existing login
-                //await components.message.giveChoices(
-                //  components.navigator.routeContext!,
-                //  title: 'Authenticate to Change Setting',
-                //  content:
-                //      'To complete the change you must first authenticate with your current authentication method.',
-                //  behaviors: {
-                //    'CANCEL': () {
-                //      Navigator.pop(components.navigator.routeContext!);
-                //      setState(() {
-                //        authenticationMethodChoice =
-                //            AuthMethod.moontreePassword;
-                //        canceled = true;
-                //      });
-                //    },
-                //    'OK': () async {
-                //Navigator.pop(components.navigator.routeContext!);
                 await Navigator.pushNamed(
                   components.navigator.routeContext!,
                   '/security/security',
@@ -166,9 +145,6 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                     }
                   });
                 }
-                //    }
-                //  },
-                //);
               } else {
                 await onSuccess();
               }

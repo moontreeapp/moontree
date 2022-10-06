@@ -24,6 +24,7 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
     }));
     listeners.add(streams.app.logout.listen((bool value) {
       if (value && streams.app.page.value != 'Login') {
+        print('logging out');
         logout();
       }
     }));

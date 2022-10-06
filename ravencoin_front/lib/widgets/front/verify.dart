@@ -188,7 +188,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
 
   Widget get bioButton => components.buttons.actionButton(
         context,
-        enabled: enabled,
+        enabled: enabled && services.password.lockout.timePast(),
         label: widget.buttonLabel == 'Submit'
             ? 'Unlock'
             : (data['buttonLable'] ?? widget.buttonLabel),
