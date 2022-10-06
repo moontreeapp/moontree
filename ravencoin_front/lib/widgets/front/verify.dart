@@ -200,7 +200,9 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
   Future submit() async {
     setState(() => enabled = false);
     final localAuthApi = LocalAuthApi();
+    streams.app.authenticating.add(true);
     final validate = await localAuthApi.authenticate();
+    streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       streams.app.verify.add(true);
       widget.parentState?.setState(() {});

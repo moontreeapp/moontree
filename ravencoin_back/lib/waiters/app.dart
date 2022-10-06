@@ -15,7 +15,7 @@ class AppWaiter extends Waiter {
       (bool active) async {
         if (!active &&
             services.password.required &&
-            streams.app.verify.value == false) {
+            streams.app.authenticating.value == false) {
           print(
               'minimized--- if we are minimized because of local auth do not logout!');
           streams.app.logout.add(true);

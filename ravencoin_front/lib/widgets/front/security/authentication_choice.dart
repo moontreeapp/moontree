@@ -57,7 +57,9 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                 final localAuthApi = LocalAuthApi();
                 print('localAuthApi');
                 print(pros.ciphers.records);
+                streams.app.authenticating.add(true);
                 final validate = await localAuthApi.authenticate();
+                streams.app.authenticating.add(false);
                 print('validate');
                 print(pros.ciphers.records);
                 if (validate) {

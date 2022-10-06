@@ -22,6 +22,7 @@ class AppStreams {
   //final locked = BehaviorSubject<bool>.seeded(false);
   final logout = BehaviorSubject<bool>.seeded(false);
   final scrim = BehaviorSubject<bool>.seeded(false);
+  final authenticating = BehaviorSubject<bool>.seeded(false);
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();

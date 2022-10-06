@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
 
 enum AuthenticationResult {
   success,
@@ -70,7 +69,6 @@ class LocalAuthApi {
       reason = AuthenticationResult.error;
       return false;
     }
-    print(pros.ciphers.records);
     // Some nativeSecuritys are enrolled.
     //if (nativeSecuritys.contains(BiometricType.strong) ||
     //    nativeSecuritys.contains(BiometricType.face)) {
@@ -97,7 +95,6 @@ class LocalAuthApi {
           sensitiveTransaction: false,
         ),
       )) {
-        print(pros.ciphers.records);
         reason = AuthenticationResult.success;
         return true;
       }
