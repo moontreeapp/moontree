@@ -22,7 +22,8 @@ class AppStreams {
   //final locked = BehaviorSubject<bool>.seeded(false);
   final logout = BehaviorSubject<bool>.seeded(false);
   final scrim = BehaviorSubject<bool>.seeded(false);
-  final authenticating = BehaviorSubject<bool>.seeded(false);
+  final authenticating = BehaviorSubject<bool>.seeded(
+      false); // if we are minimized because of local auth do not logout
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();

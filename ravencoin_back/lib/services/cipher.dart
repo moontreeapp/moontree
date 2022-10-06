@@ -148,7 +148,6 @@ class CipherService {
   /// after wallets are updated or verified to be up to date
   /// remove all ciphers that no wallet uses and that are not the current one
   Future<void> cleanupCiphers() async {
-    print('removing unused ciphers');
     await pros.ciphers.removeAll(pros.ciphers.records
         .where((cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
 

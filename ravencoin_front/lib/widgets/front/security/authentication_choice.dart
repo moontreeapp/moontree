@@ -52,56 +52,28 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               Future<void> onSuccess() async {
-                print(pros.ciphers.records);
-                print('to native');
                 final localAuthApi = LocalAuthApi();
-                print('localAuthApi');
-                print(pros.ciphers.records);
                 streams.app.authenticating.add(true);
                 final validate = await localAuthApi.authenticate();
                 streams.app.authenticating.add(false);
-                print('validate');
-                print(pros.ciphers.records);
                 if (validate) {
-                  print('if validate');
-                  print(pros.ciphers.records);
                   if (mounted) {
-                    print('if mounted');
-                    print(pros.ciphers.records);
                     setState(() {
                       authenticationMethodChoice = AuthMethod.nativeSecurity;
                     });
                   }
-                  print('loading...');
-                  print(pros.ciphers.records);
                   components.loading.screen(
                       message: 'Setting Security',
                       staticImage: true,
                       returnHome: true,
                       playCount: 1);
                   final key = await SecureStorage.authenticationKey;
-                  print('setPassword $key');
-                  print(pros.ciphers.records);
-                  print(
-                      (pros.wallets.records.first as LeaderWallet).getEntropy);
-                  print(await await (pros.wallets.records.first as LeaderWallet)
-                      .getEntropy);
-                  print(await (pros.wallets.records.first as LeaderWallet)
-                      .encryptedSecret);
-                  print((pros.wallets.records.first as LeaderWallet).encrypted);
-                  print((pros.wallets.records.first as LeaderWallet)
-                      .cipherUpdate);
-                  print(pros.ciphers.records);
-
-                  print((pros.wallets.records.first as LeaderWallet).cipher);
-
                   await services.authentication.setPassword(
                     password: key,
                     salt: key,
                     message: 'Successfully Updated Security',
                     saveSecret: saveSecret,
                   );
-                  print('setMethod');
                   await services.authentication.setMethod(method: value!);
                 } else {
                   if (localAuthApi.reason == AuthenticationResult.error) {
