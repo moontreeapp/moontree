@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/utilities/database.dart'
-    show resetInMemoryState, eraseChainData;
+    show eraseChainData, eraseDerivedData, resetInMemoryState;
 import 'package:ravencoin_back/utilities/lock.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -127,7 +127,7 @@ class ClientService {
     await resetMemoryAndConnection();
   }
 
-  Future<void> resetMemoryAndConnection() async {
+  Future<void> resetMemoryAndConnection({bool keepBalances = false}) async {
     /// notice that we remove all our database here entirely.
     /// this is the simplest way to handle it.
     /// it might be ideal to keep the transactions, vout, unspents, vins, addresses, etc.
@@ -135,6 +135,7 @@ class ClientService {
     /// this is something we could do later if we want.
     resetInMemoryState();
     await eraseChainData();
+    await eraseDerivedData(keepBalances: keepBalances);
 
     /// make a new client to connect to the new network
     await services.client.createClient();

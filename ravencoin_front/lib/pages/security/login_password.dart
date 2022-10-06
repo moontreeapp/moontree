@@ -399,7 +399,7 @@ class _LoginPasswordState extends State<LoginPassword> {
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));
 
       /// erase all history stuff
-      await services.client.resetMemoryAndConnection();
+      await services.client.resetMemoryAndConnection(keepBalances: true);
       services.download.overrideGettingStarted = true;
       streams.app.wallet.refresh.add(true);
     }
