@@ -1,6 +1,7 @@
 // ignore_for_file: omit_local_variable_types
 
 import 'package:equatable/equatable.dart';
+import 'package:quiver/iterables.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
@@ -64,6 +65,14 @@ class LeaderWalletService {
     NodeExposure exposure,
   ) async {
     final hdIndex = wallet.highestIndexOf(exposure) + 1;
+    return await deriveAddressByIndex(wallet, exposure, hdIndex);
+  }
+
+  Future<Address> deriveAddressByIndex(
+    LeaderWallet wallet,
+    NodeExposure exposure,
+    int hdIndex,
+  ) async {
     final subwallet = await getSubWallet(wallet, hdIndex, exposure);
     return Address(
         id: subwallet.scripthash,
@@ -189,6 +198,29 @@ class LeaderWalletService {
       ));
     }
     await pros.addresses.saveAll(newAddresses);
+  }
+
+  Future<void> deriveMoreAddressByIndex(
+    LeaderWallet wallet, {
+    required int highestIndex,
+    List<NodeExposure>? exposures,
+  }) async {
+    if (pros.ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
+      exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
+      var newAddresses = <Address>{};
+      for (var exposure in exposures) {
+        for (var hdIndex in range(highestIndex)) {
+          newAddresses.add(await deriveAddressByIndex(
+            wallet,
+            exposure,
+            hdIndex as int,
+          ));
+        }
+      }
+      await pros.addresses.saveAll(newAddresses);
+    } else {
+      services.wallet.leader.backlog.add(wallet);
+    }
   }
 }
 

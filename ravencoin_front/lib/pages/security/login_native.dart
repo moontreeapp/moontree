@@ -233,7 +233,9 @@ class _LoginNativeState extends State<LoginNative> {
     /// there are existing wallets, we should populate them with sensitives now.
     await populateWalletsWithSensitives();
     final localAuthApi = LocalAuthApi();
+    streams.app.authenticating.add(true);
     final validate = await localAuthApi.authenticate();
+    streams.app.authenticating.add(false);
     setState(() => enabled = false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (!consented) {

@@ -387,12 +387,8 @@ class _LoginPasswordState extends State<LoginPassword> {
       altPassword: providedPassword,
       altSalt: await SecureStorage.authenticationKey,
     );
-    print('------');
-    print(pros.ciphers.records);
     await services.cipher.updateWallets();
-    print(pros.ciphers.records);
     services.cipher.cleanupCiphers();
-    print(pros.ciphers.records);
     services.cipher.loginTime();
     streams.app.context.add(AppContext.wallet);
     streams.app.splash.add(false); // trigger to refresh app bar again
@@ -403,7 +399,7 @@ class _LoginPasswordState extends State<LoginPassword> {
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));
 
       /// erase all history stuff
-      await services.client.resetMemoryAndConnection();
+      await services.client.resetMemoryAndConnection(keepBalances: true);
       services.download.overrideGettingStarted = true;
       streams.app.wallet.refresh.add(true);
     }

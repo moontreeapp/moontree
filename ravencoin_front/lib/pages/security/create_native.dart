@@ -242,8 +242,9 @@ class _CreateNativeState extends State<CreateNative> {
 
   Future submit() async {
     setState(() => enabled = false);
-
+    streams.app.authenticating.add(true);
     final validate = await localAuthApi.authenticate();
+    streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       final key = await SecureStorage.authenticationKey;
 

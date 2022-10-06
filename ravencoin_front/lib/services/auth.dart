@@ -69,7 +69,6 @@ class LocalAuthApi {
       reason = AuthenticationResult.error;
       return false;
     }
-
     // Some nativeSecuritys are enrolled.
     //if (nativeSecuritys.contains(BiometricType.strong) ||
     //    nativeSecuritys.contains(BiometricType.face)) {
