@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:quiver/iterables.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/utilities/database.dart'
@@ -127,25 +128,51 @@ class ClientService {
     await resetMemoryAndConnection();
   }
 
-  Future<void> resetMemoryAndConnection({bool keepBalances = false}) async {
+  Future<void> resetMemoryAndConnection({
+    bool keepBalances = false,
+    bool saveAddressCounts = true,
+  }) async {
     /// notice that we remove all our database here entirely.
-    /// this is the simplest way to handle it.
+    /// this is the simplest way to handle it (changing blockchains, this is also it's own feature).
     /// it might be ideal to keep the transactions, vout, unspents, vins, addresses, etc.
     /// but we're not ging to because we'd have to segment all of them by network.
     /// this is something we could do later if we want.
+    if (saveAddressCounts) {
+      services.client.subscribe.setWalletAddressCounts();
+      streams.client.busy.add(true);
+    }
     resetInMemoryState();
-    await eraseChainData();
-    await eraseDerivedData(keepBalances: keepBalances);
+    await eraseChainData(keepBalances: keepBalances);
+    //await eraseDerivedData(keepBalances: keepBalances);
 
     /// make a new client to connect to the new network
     await services.client.createClient();
 
     /// start derivation process
-    final currentWallet = services.wallet.currentWallet;
-    if (currentWallet is LeaderWallet) {
-      await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+    if (services.client.subscribe.walletAddressCounts.isEmpty) {
+      final currentWallet = services.wallet.currentWallet;
+      if (currentWallet is LeaderWallet) {
+        await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+      }
+      await services.client.subscribe.toAllAddresses();
+    } else {
+      for (var w in pros.wallets.leaders) {
+        if (services.client.subscribe.walletAddressCounts.containsKey(w.id)) {
+          await services.wallet.leader.deriveMoreAddressByIndex(
+            w,
+            exposures: [NodeExposure.External],
+            highestIndex:
+                services.client.subscribe.walletAddressCounts[w.id]!.first,
+          );
+          await services.wallet.leader.deriveMoreAddressByIndex(
+            w,
+            exposures: [NodeExposure.Internal],
+            highestIndex:
+                services.client.subscribe.walletAddressCounts[w.id]!.last,
+          );
+        }
+      }
     }
-    await services.client.subscribe.toAllAddresses();
 
     /// subscribe to blocks on new chain
     await waiters.block.subscribe();
@@ -162,6 +189,22 @@ class SubscribeService {
       subscriptionHandlesAddress = {};
   final Map<String, StreamSubscription> subscriptionHandlesAsset = {};
   bool startupProcessRunning = false;
+
+  // {wallet: [external, internal]}
+  Map<String, List<int>> walletAddressCounts = {};
+
+  void setWalletAddressCounts() {
+    for (var wallet in pros.wallets.records) {
+      walletAddressCounts[wallet.id] = [
+        wallet.externalAddresses.length,
+        wallet.internalAddresses.length
+      ];
+    }
+  }
+
+  void clearWalletAddressCounts() {
+    walletAddressCounts.clear();
+  }
 
   Future<bool> toAllAddresses() async {
     /// this is not a user action - do not show activity
@@ -214,14 +257,16 @@ class SubscribeService {
     return true;
   }
 
-  Future maybeDerive(Address address) async {
-    final wallet = address.wallet;
-    if (wallet is LeaderWallet) {
-      if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
-        await services.wallet.leader.handleDeriveAddress(
-          leader: address.wallet! as LeaderWallet,
-          exposure: address.exposure,
-        );
+  Future maybeDerive(Address address, int maxDeriveNumber) async {
+    if (maxDeriveNumber == 0) {
+      final wallet = address.wallet;
+      if (wallet is LeaderWallet) {
+        if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
+          await services.wallet.leader.handleDeriveAddress(
+            leader: address.wallet! as LeaderWallet,
+            exposure: address.exposure,
+          );
+        }
       }
     }
   }
@@ -253,21 +298,53 @@ class SubscribeService {
       subscriptionHandlesAddress[address.walletId]![address.id] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
+        int getMaxDeriveNumber() {
+          int n = 0;
+          if (walletAddressCounts.isNotEmpty &&
+              walletAddressCounts.containsKey(address.walletId)) {
+            if (address.exposure == NodeExposure.External) {
+              if (walletAddressCounts[address.walletId]!.first <=
+                  address.hdIndex) {
+                walletAddressCounts[address.walletId] = [
+                  0,
+                  walletAddressCounts[address.walletId]!.last
+                ];
+              }
+              n = walletAddressCounts[address.walletId]!.first;
+            } else if (address.exposure == NodeExposure.Internal) {
+              if (walletAddressCounts[address.walletId]!.last <=
+                  address.hdIndex) {
+                walletAddressCounts[address.walletId] = [
+                  walletAddressCounts[address.walletId]!.first,
+                  0
+                ];
+              }
+              n = walletAddressCounts[address.walletId]!.last;
+            }
+          }
+          return n;
+        }
+
         if (!streams.client.busy.value) {
           streams.client.busy.add(true);
         }
         final addressStatus = address.status;
         await saveStatusUpdate(address, status);
+
+        /// manage walletAddressCounts - record if we are using that.
+        final maxDeriveNumber = getMaxDeriveNumber();
+
+        /// process
         if (addressStatus?.status == null && status == null) {
           print('NEW ADDRESS-${address.address}');
-          await maybeDerive(address);
+          await maybeDerive(address, maxDeriveNumber);
           await pullUnspents(address);
           queueHistoryDownload(address);
         } else if (addressStatus?.status == null && status != null) {
           print('NEW ADDRESS w/ Hist-${address.address}');
           // first transaction on address discovered
           //var s = Stopwatch()..start();
-          await maybeDerive(address);
+          await maybeDerive(address, maxDeriveNumber);
           //print('maybeDerive: ${s.elapsed}');
           await pullUnspents(address);
           //print('pullUnspents: ${s.elapsed}');
@@ -282,7 +359,25 @@ class SubscribeService {
           // do nothing
         }
         final wallet = address.wallet!;
-        if (wallet is LeaderWallet &&
+
+        /// manage walletAddressCounts - set back to empty
+        if (walletAddressCounts.isNotEmpty &&
+            walletAddressCounts.containsKey(wallet.id)) {
+          var isEmpty = true;
+          for (var val in walletAddressCounts.values) {
+            if (val.first != 0 || val.last != 0) {
+              isEmpty = false;
+              break;
+            }
+          }
+          if (isEmpty) {
+            walletAddressCounts.clear();
+          }
+        }
+
+        /// end of process
+        if (walletAddressCounts.isEmpty &&
+            wallet is LeaderWallet &&
             services.wallet.leader.gapSatisfied(wallet) &&
             subscriptionHandlesAddress.containsKey(address.walletId) &&
             subscriptionHandlesAddress[address.walletId]!.keys.length ==

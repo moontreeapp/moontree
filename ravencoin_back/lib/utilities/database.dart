@@ -5,22 +5,17 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:proclaim/proclaim.dart';
 
 /// erases data concerning transactions and the like, leaves assets alone.
-Future eraseChainData() async {
+Future eraseChainData({bool keepBalances = false}) async {
   await pros.blocks.removeAll(pros.blocks.records);
   await pros.statuses.removeAll(pros.statuses.records);
-  //await pros.balances.removeAll(pros.balances.records);
-  //await pros.addresses.removeAll(pros.addresses.records);
-  await pros.unspents.removeAll(pros.unspents.records);
-  await pros.vouts.removeAll(pros.vouts.records);
-  await pros.vins.removeAll(pros.vins.records);
-  await pros.transactions.removeAll(pros.transactions.records);
-}
-
-Future eraseDerivedData({bool keepBalances = false}) async {
   if (!keepBalances) {
     await pros.balances.removeAll(pros.balances.records);
   }
   await pros.addresses.removeAll(pros.addresses.records);
+  await pros.unspents.removeAll(pros.unspents.records);
+  await pros.vouts.removeAll(pros.vouts.records);
+  await pros.vins.removeAll(pros.vins.records);
+  await pros.transactions.removeAll(pros.transactions.records);
 }
 
 void resetInMemoryState() {
