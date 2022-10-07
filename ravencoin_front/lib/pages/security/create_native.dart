@@ -65,61 +65,66 @@ class _CreateNativeState extends State<CreateNative> {
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
-  Widget body() => GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Container(
-          padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
-          child: CustomScrollView(slivers: <Widget>[
-            SliverToBoxAdapter(
-              child: SizedBox(height: 76.figmaH),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                height: 128.figmaH,
-                child: moontree,
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                  alignment: Alignment.bottomCenter,
-                  height: (16 + 24).figmaH,
-                  child: welcomeMessage),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                  alignment: Alignment.bottomCenter,
-                  height: (16 + 24).figmaH,
-                  child: labelMessage),
-            ),
-            SliverFillRemaining(
-                hasScrollBody: false,
-                child: KeyboardHidesWidgetWithDelay(
-                    fade: true,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          (needsConsent ? ulaMessage : SizedBox(height: 100)),
-                          SizedBox(height: 40),
-                          Row(children: [
-                            FutureBuilder<bool>(
-                                future:
-                                    localAuthApi.entirelyReadyToAuthenticate,
-                                builder:
-                                    (context, AsyncSnapshot<bool> snapshot) {
-                                  if (snapshot.hasData) {
-                                    if (snapshot.data!) {
-                                      return nativeButton;
-                                    }
-                                    return setupButton;
-                                  } else {
-                                    return CircularProgressIndicator();
-                                  }
-                                })
-                          ]),
-                          SizedBox(height: 40),
-                        ]))),
-          ])));
+  Widget body() => FutureBuilder<bool>(
+      future: localAuthApi.entirelyReadyToAuthenticate,
+      builder: (context, AsyncSnapshot<bool> snapshot) {
+        return GestureDetector(
+            onTap: FocusScope.of(context).unfocus,
+            child: Container(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+                child: CustomScrollView(slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: 76.figmaH),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      height: 128.figmaH,
+                      child: moontree,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                        alignment: Alignment.bottomCenter,
+                        height: (16 + 24).figmaH,
+                        child: welcomeMessage),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                        alignment: Alignment.bottomCenter,
+                        height: (16 + 24).figmaH,
+                        child: labelMessage),
+                  ),
+                  if (snapshot.hasData && !snapshot.data!)
+                    SliverToBoxAdapter(
+                      child: Container(
+                          alignment: Alignment.center,
+                          height: (8 + 16 + 24).figmaH,
+                          child: setupMessage),
+                    ),
+                  SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: KeyboardHidesWidgetWithDelay(
+                          fade: true,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                (needsConsent
+                                    ? ulaMessage
+                                    : SizedBox(height: 100)),
+                                SizedBox(height: 40),
+                                Row(children: [
+                                  snapshot.hasData
+                                      ? snapshot.data!
+                                          ? nativeButton
+                                          : setupButton
+                                      : CircularProgressIndicator()
+                                ]),
+                                SizedBox(height: 40),
+                              ]))),
+                ])));
+      });
 
   Widget get moontree => Container(
         child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
@@ -136,10 +141,20 @@ class _CreateNativeState extends State<CreateNative> {
 
   Widget get labelMessage => Text(
         "${Platform.isIOS ? 'iOS' : 'Android'} Phone Security",
+        textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
             .subtitle1!
             .copyWith(color: AppColors.black),
+      );
+
+  Widget get setupMessage => Text(
+        'Please setup Face, Fingerprints, Pattern, PIN, or Password',
+        textAlign: TextAlign.center,
+        style: Theme.of(context)
+            .textTheme
+            .subtitle2!
+            .copyWith(color: AppColors.black, fontWeight: FontWeight.w600),
       );
 
   Widget get ulaMessage => Row(

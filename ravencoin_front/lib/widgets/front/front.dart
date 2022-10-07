@@ -9,6 +9,7 @@ export 'choices/clear_secure_storage.dart';
 export 'choices/resync.dart';
 export 'choices/dev_mode.dart';
 export 'choices/miner_mode_choice.dart';
+export 'choices/show_authentication_key.dart';
 export 'security/authentication_choice.dart';
 export 'security/password.dart';
 export 'asset_details.dart';
