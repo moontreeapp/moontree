@@ -28,12 +28,6 @@ class DatabaseOptions extends StatelessWidget {
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft, child: ClearSSChoice()))),
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-                child: Container(
-                    alignment: Alignment.topLeft,
-                    child: ShowAuthenticationChoice()))),
+
       ]);
 }

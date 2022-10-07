@@ -46,12 +46,24 @@ class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.only(
-                        left: 0, right: 16, top: 24, bottom: 16),
-                    child: Container(
-                        alignment: Alignment.topLeft,
-                        child: AuthenticationMethodChoice())),
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 0, right: 16, top: 24, bottom: 16),
+                          child: Container(
+                              alignment: Alignment.topLeft,
+                              child: AuthenticationMethodChoice())),
+                      if (pros.settings.developerMode)
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 16, right: 16, top: 16, bottom: 16),
+                            child: Container(
+                                alignment: Alignment.topLeft,
+                                child: ShowAuthenticationChoice())),
+                    ]),
                 if (!pros.settings.authMethodIsNativeSecurity)
                   components.containers
                       .navBar(context, child: Row(children: [changeButton]))
