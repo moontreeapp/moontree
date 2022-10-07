@@ -56,7 +56,8 @@ class _HoldingList extends State<HoldingList> {
     super.initState();
     holdingCount = getCount();
     if (services.download.overrideGettingStarted) {
-      services.download.overrideGettingStarted = false;
+      /// keep it until entire app reload
+      //services.download.overrideGettingStarted = false;
       overrideGettingStarted = true;
     }
     listeners
@@ -217,30 +218,34 @@ class _HoldingList extends State<HoldingList> {
       streams.client.busy.add(false);
     }
 
+    if (overrideGettingStarted && balances.isEmpty) {
+      //components.message.giveChoices(
+      //  context,
+      //  title: 'New Feature!',
+      //  content:
+      //      "You can login with native authentication now!\n\nJust go to Settings -> Security to change the way you login.\n\nIt's best to make a backup first.",
+      //  behaviors: {
+      //    'Cancel': Navigator.of(context).pop,
+      //    'Make a Backup': () {
+      //      Navigator.of(context).pop();
+      //      Navigator.of(context).pushNamed('/security/backup');
+      //    },
+      //    'Change Login': () {
+      //      Navigator.of(context).pop();
+      //      Navigator.of(context).pushNamed('/security/method/change');
+      //    },
+      //  },
+      //);
+      return components.empty.getAssetsPlaceholder(context,
+          scrollController: widget.scrollController,
+          count: max(holdingCount, 1),
+          holding: true);
+    }
+    if (overrideGettingStarted) {
+      return _holdingsView(context);
+    }
+
     if (pros.wallets.length == 1 && balances.isEmpty && transactions.isEmpty) {
-      if (overrideGettingStarted) {
-        //components.message.giveChoices(
-        //  context,
-        //  title: 'New Feature!',
-        //  content:
-        //      "You can login with native authentication now!\n\nJust go to Settings -> Security to change the way you login.\n\nIt's best to make a backup first.",
-        //  behaviors: {
-        //    'Cancel': Navigator.of(context).pop,
-        //    'Make a Backup': () {
-        //      Navigator.of(context).pop();
-        //      Navigator.of(context).pushNamed('/security/backup');
-        //    },
-        //    'Change Login': () {
-        //      Navigator.of(context).pop();
-        //      Navigator.of(context).pushNamed('/security/method/change');
-        //    },
-        //  },
-        //);
-        return components.empty.getAssetsPlaceholder(context,
-            scrollController: widget.scrollController,
-            count: max(holdingCount, 1),
-            holding: true);
-      }
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Get Started',
@@ -495,6 +500,12 @@ class _HoldingList extends State<HoldingList> {
   }
 
   void onTap(Wallet? wallet, AssetHolding holding) {
+    if (overrideGettingStarted) {
+      components.message.giveChoices(context,
+          title: 'Still Syncing',
+          content: 'please try again later.',
+          behaviors: {'ok': () => Navigator.of(context).pop()});
+    }
     if (holding.length == 1) {
       navigate(holding.balance!, wallet: wallet);
     } else {

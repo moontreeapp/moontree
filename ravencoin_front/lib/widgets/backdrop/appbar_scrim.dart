@@ -11,7 +11,7 @@ class AppBarScrim extends StatefulWidget {
 
 class _AppBarScrimState extends State<AppBarScrim> {
   late List listeners = [];
-  final Duration waitForSheetDrop = Duration(milliseconds: 50);
+  final Duration waitForSheetDrop = Duration(milliseconds: 10);
   bool applyScrim = false;
 
   @override
@@ -43,15 +43,20 @@ class _AppBarScrimState extends State<AppBarScrim> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () async {
-          Navigator.of(components.navigator.routeContext!)
-              .popUntil(ModalRoute.withName('/home'));
-          streams.app.scrim.add(false);
-        },
-        child: Container(
-          //  duration: waitForSheetDrop, // to make it look better, causes #604
-          color: applyScrim ? Colors.black38 : Colors.transparent,
-          height: applyScrim ? 56 : 0,
-        ));
+      onTap: () async {
+        Navigator.of(components.navigator.routeContext!)
+            .popUntil(ModalRoute.withName('/home'));
+        streams.app.scrim.add(false);
+      },
+      child: AnimatedContainer(
+        duration: waitForSheetDrop, // to make it look better, causes #604
+        color: applyScrim ? Colors.black38 : Colors.transparent,
+        height: applyScrim ? 56 : 0,
+      ),
+      //child: Container(
+      //  color: applyScrim ?Colors.transparent.,
+      //  height: applyScrim ? 56,
+      //),
+    );
   }
 }

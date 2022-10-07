@@ -76,7 +76,7 @@ class BackdropAppBarContents extends StatelessWidget
           ),
         testAppBar(appBar, test: false),
         // alphaBar,
-        //AppBarScrim(),
+        AppBarScrim(),
       ],
     );
   }

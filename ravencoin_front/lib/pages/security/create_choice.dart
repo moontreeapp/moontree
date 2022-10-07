@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -135,7 +137,7 @@ class _CreateChoiceState extends State<CreateChoice> {
   Widget get nativeButton => components.buttons.actionButton(
         context,
         enabled: true,
-        label: 'ANDROID PHONE SECURITY',
+        label: '${Platform.isIOS ? 'iOS' : 'ANDROID'} PHONE SECURITY',
         onPressed: () async {
           await services.authentication
               .setMethod(method: AuthMethod.nativeSecurity);

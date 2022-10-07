@@ -214,8 +214,15 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     if (pageTitle != 'Home') {
       return null;
     }
-    if (pros.wallets.length > 0) {
-      if (settingTitle != null) {
+    if (pros.wallets.length > 0 //||
+        //(pros.settings.primaryIndex.getOne(SettingName.Mode_Dev)?.value ==
+        //true &&
+        //pros.wallets.length > 0)
+        ) {
+      if (settingTitle != null &&
+          (pros.wallets.length > 1 ||
+              pros.settings.primaryIndex.getOne(SettingName.Mode_Dev)?.value ==
+                  true)) {
         return walletDropDown();
       } else if (appContext == AppContext.wallet) {
         return GestureDetector(
