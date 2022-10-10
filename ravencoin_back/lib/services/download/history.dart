@@ -6,6 +6,13 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 class HistoryService {
   bool busy = false;
   int calledAllDoneProcess = 0; // used to hide transactions while downloading
+  Future aggregatedDownloadProcess(List<Address> addresses) async {
+    busy = true;
+    var txHashes = (await getHistories(addresses)).toSet();
+    var txs = await grabTransactions(txHashes);
+    await saveThese([for (var tx in txs) await parseTx(tx)]);
+    busy = false;
+  }
 
   /// never called
   //Future<List<List<String>>> getHistories(List<Address> addresses) async {
@@ -75,8 +82,10 @@ class HistoryService {
   }
 
   Future getAndSaveMempoolTransactions() async {
-    await getAndSaveTransactions(
-        pros.transactions.mempool.map((t) => t.id).toSet());
+    var x = pros.transactions.mempool.map((t) => t.id).toSet();
+    if (x.isNotEmpty) {
+      await getAndSaveTransactions(x);
+    }
   }
 
   Future getAndSaveTransactions(
@@ -84,22 +93,23 @@ class HistoryService {
     bool saveVin = true,
     bool saveVout = true,
   }) async {
-    busy = true;
-    await saveTransactions(
-      [
-        for (var transactionId in txIds)
-          await services.client.api.getTransaction(transactionId)
-      ],
-      saveVin: saveVin,
-      saveVout: saveVout,
-    );
-    busy = false;
+    await getTransactions(txIds, saveVin: saveVin, saveVout: saveVout);
+    //busy = true;
+    //await saveTransactions(
+    //  [
+    //    for (var transactionId in txIds)
+    //      await services.client.api.getTransaction(transactionId)
+    //  ],
+    //  saveVin: saveVin,
+    //  saveVout: saveVout,
+    //);
+    //busy = false;
   }
 
   Future allDoneProcess() async {
     busy = true;
     calledAllDoneProcess += 1;
-    //await saveDanglingTransactions();
+    await saveDanglingTransactions();
     busy = false;
   }
 
@@ -108,20 +118,22 @@ class HistoryService {
   /// one more step - get all vins that have no corresponding vout (in the db)
   /// and get the vouts for them
   Future saveDanglingTransactions() async {
+    final txs = pros.vins.dangling.map((vin) => vin.voutTransactionId).toSet();
     await getTransactions(
-      filterOutPreviouslyDownloaded(
-          pros.vins.danglingVins.map((vin) => vin.voutTransactionId).toSet()),
-      saveVin: false, //
-      saveVout: true, //
-    );
-    // make sure you have all the vouts that you need for transactions according
-    // to the unspents:
-    await getTransactions(
-      filterOutPreviouslyDownloaded(
-          pros.unspents.records.map((e) => e.transactionId).toSet()),
-      saveVin: false, //
+      filterOutPreviouslyDownloaded(txs),
+      saveVin: false,
       saveVout: true,
     );
+
+    /// this really doesn't seem necessary because we grab it when we pull.
+    // make sure you have all the vouts that you need for transactions according
+    // to the unspents:
+    //await getTransactions(
+    //  filterOutPreviouslyDownloaded(
+    //      pros.unspents.records.map((e) => e.transactionId).toSet()),
+    //  saveVin: false, //
+    //  saveVout: true,
+    //);
   }
 
   Iterable<String> filterOutPreviouslyDownloaded(
@@ -294,7 +306,7 @@ class HistoryService {
           saveVin: saveVin);
 
   /// when an address status change: make our historic tx data match blockchain
-  Future saveTransactions(
+  Future<void> saveTransactions(
     List<Tx> txs, {
     bool saveVin = true,
     bool saveVout = true,
@@ -308,9 +320,14 @@ class HistoryService {
           justReturn: true,
         )
     ];
-    final threes =
-        await Future.wait<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>>(
-            futures);
+    await saveThese(
+      await Future.wait<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>>(futures),
+    );
+  }
+
+  Future<void> saveThese(
+    List<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>> threes,
+  ) async {
     final transactions = <Transaction>{};
     final vins = <Vin>{};
     final vouts = <Vout>{};

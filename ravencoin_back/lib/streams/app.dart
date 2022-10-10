@@ -24,6 +24,8 @@ class AppStreams {
   final scrim = BehaviorSubject<bool>.seeded(false);
   final authenticating = BehaviorSubject<bool>.seeded(
       false); // if we are minimized because of local auth do not logout
+  final browsing = BehaviorSubject<bool>.seeded(
+      false); // if we are minimized because of we are opening browser
 
   WalletSideStreams wallet = WalletSideStreams();
   ManageSideStreams manage = ManageSideStreams();

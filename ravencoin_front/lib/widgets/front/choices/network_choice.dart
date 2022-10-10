@@ -1,3 +1,4 @@
+import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -11,13 +12,16 @@ class NetworkChoice extends StatefulWidget {
 }
 
 class _NetworkChoice extends State<NetworkChoice> {
-  Chain? networkChoice = Chain.ravencoin;
+  Chain chainChoice = Chain.ravencoin;
+  Net netChoice = Net.Main;
+  late Tuple2<Chain, Net> chainNet;
 
   @override
   void initState() {
     super.initState();
-    networkChoice =
-        pros.settings.netName == 'Main' ? Chain.ravencoin : Chain.evrmore;
+    chainChoice = pros.settings.chain;
+    netChoice = pros.settings.net;
+    chainNet = Tuple2(chainChoice, netChoice);
   }
 
   @override
@@ -41,33 +45,45 @@ class _NetworkChoice extends State<NetworkChoice> {
         //    then: () => dropDownActive = false,
         //    items: []),
         SizedBox(height: 16),
-        RadioListTile<Chain>(
-            title: const Text('Ravencoin (mainnet)'),
-            value: Chain.ravencoin,
-            groupValue: networkChoice,
-            onChanged: (Chain? value) async {
-              streams.client.busy.add(true);
-              setState(() => networkChoice = value);
-              services.client.switchNetworks(value, net: Net.Main);
-              components.loading.screen(
-                  message: 'Syncing with Ravencoin',
-                  returnHome: true,
-                  playCount: 5);
-            }),
-        RadioListTile<Chain>(
-            title: const Text('Evrmore (mainnet)'),
-            value: Chain.evrmore,
-            groupValue: networkChoice,
-            onChanged: (Chain? value) async {
-              streams.client.busy.add(true);
-              setState(() => networkChoice = value);
-              services.client.switchNetworks(value, net: Net.Test);
-              components.loading.screen(
-                  message: 'Syncing with Evrmore',
-                  returnHome: true,
-                  playCount: 5);
-            }),
+        RadioListTile<Tuple2<Chain, Net>>(
+            title: const Text('Ravencoin'),
+            value: Tuple2(Chain.ravencoin, Net.Main),
+            groupValue: chainNet,
+            onChanged: changeChainNet),
+        if (pros.settings.developerMode)
+          RadioListTile<Tuple2<Chain, Net>>(
+              title: const Text('Ravencoin (testnet)'),
+              value: Tuple2(Chain.ravencoin, Net.Test),
+              groupValue: chainNet,
+              onChanged: changeChainNet),
+        RadioListTile<Tuple2<Chain, Net>>(
+            title: const Text('Evrmore'),
+            value: Tuple2(Chain.evrmore, Net.Main),
+            groupValue: chainNet,
+            onChanged: changeChainNet),
+        if (pros.settings.developerMode)
+          RadioListTile<Tuple2<Chain, Net>>(
+              title: const Text('Evrmore (testnet)'),
+              value: Tuple2(Chain.evrmore, Net.Test),
+              groupValue: chainNet,
+              onChanged: changeChainNet)
       ],
+    );
+  }
+
+  void changeChainNet(Tuple2<Chain, Net>? value) async {
+    streams.client.busy.add(true);
+    setState(() {
+      chainChoice = value!.item1;
+      netChoice = value.item2;
+      chainNet = value;
+    });
+    services.client.switchNetworks(value!.item1, net: value.item2);
+    components.loading.screen(
+      message:
+          'Syncing with ${value.item1.name.toTitleCase()}${value.item2 == Net.Test ? ' ' + value.item2.name.toTitleCase() : ''}',
+      returnHome: true,
+      playCount: 5,
     );
   }
 }

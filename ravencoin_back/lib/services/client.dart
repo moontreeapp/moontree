@@ -137,16 +137,18 @@ class ClientService {
     /// but we're not ging to because we'd have to segment all of them by network.
     /// this is something we could do later if we want.
     database.resetInMemoryState();
+    printFullState();
     if (!keepTx) {
       await database.eraseTransactionData(quick: true);
     }
     await database.eraseUnspentData(quick: true, keepBalances: keepBalances);
     if (!keepAddresses) {
-      await database.eraseAddressData(quick: true, keepBalances: keepBalances);
+      await database.eraseAddressData(quick: true);
     }
     if (keepBalances) {
       services.download.overrideGettingStarted = true;
     }
+    printFullState();
 
     /// make a new client to connect to the new network
     await services.client.createClient();
@@ -161,7 +163,7 @@ class ClientService {
 
     // subscribe
     await waiters.block.subscribe();
-    await services.client.subscribe.toAllAddresses();
+    //await services.client.subscribe.toAllAddresses();
 
     /// update the UI
     streams.app.wallet.refresh.add(true);
@@ -232,9 +234,11 @@ class SubscribeService {
     if (wallet is LeaderWallet) {
       if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
         await services.wallet.leader.handleDeriveAddress(
-          leader: address.wallet! as LeaderWallet,
+          leader: wallet,
           exposure: address.exposure,
         );
+      } else {
+        // remember that we don't have to check for this wallet.
       }
     }
   }
@@ -246,8 +250,8 @@ class SubscribeService {
         getTransactions: true,
       );
 
-  void queueHistoryDownload(Address address) =>
-      services.download.queue.update(address: address);
+  void queueHistoryDownload(Address address) => null;
+  //services.download.queue.update(address: address);
 
   Future saveStatusUpdate(Address address, String? status) async =>
       await pros.statuses.save(Status(
@@ -276,8 +280,8 @@ class SubscribeService {
         if (addressStatus?.status == null && status == null) {
           print('NEW ADDRESS-${address.address}');
           await maybeDerive(address);
-          //await pullUnspents(address);
-          //queueHistoryDownload(address);
+          //await pullUnspents(address); //  I think I can remove this here
+          //queueHistoryDownload(address); // I think I can remove this here
         } else if (addressStatus?.status == null && status != null) {
           print('NEW ADDRESS w/ Hist-${address.address}');
           // first transaction on address discovered
@@ -307,6 +311,14 @@ class SubscribeService {
           await services.balance
               .recalculateAllBalances(walletIds: {address.walletId});
           startupProcessRunning = false;
+          if (!services.download.history.busy) {
+            await services.download.history
+                .aggregatedDownloadProcess(wallet.addresses);
+            // Ideally we'd call this once rather than per wallet.
+            //if (services.download.history.calledAllDoneProcess == 0) {
+            await services.download.history.allDoneProcess();
+            //}
+          }
           streams.client.busy.add(false);
           streams.client.activity.add(ActivityMessage(active: false));
           if (services.wallet.leader.newLeaderProcessRunning) {

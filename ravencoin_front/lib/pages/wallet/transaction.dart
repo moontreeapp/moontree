@@ -96,9 +96,15 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'Note':
         return transaction!.note ?? '';
       case 'Fee':
-        return transactionRecord!.fee == 0
-            ? 'calculating...'
-            : transactionRecord!.fee.toAmount().toCommaString() + ' RVN';
+        return () {
+          if (transactionRecord!.fee == 0) {
+            transactionRecord!.getVouts();
+            return 'calculating...';
+          } else {
+            return transactionRecord!.fee.toAmount().toCommaString() + ' RVN';
+          }
+        }();
+
       default:
         return 'unknown';
     }
@@ -160,6 +166,7 @@ class _TransactionPageState extends State<TransactionPage> {
             'Browser'.toUpperCase(): () {
               Navigator.of(context).pop();
               //launch(url + elementFull(text));
+              streams.app.browsing.add(true);
               launchUrl(Uri.parse(url + elementFull(text)));
             },
           },

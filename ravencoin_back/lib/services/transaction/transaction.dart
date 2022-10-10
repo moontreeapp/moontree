@@ -119,8 +119,8 @@ class TransactionService {
               var vinVout = vin.vout;
               if (vinVout == null) {
                 /// unable to await so set flag
-                services.download.history
-                    .getAndSaveTransactions({vin.voutTransactionId});
+                //services.download.history
+                //    .getAndSaveTransactions({vin.voutTransactionId});
                 feeFlag = true;
               }
               if ((vinVout?.security ?? rvn) == rvn) {
@@ -265,8 +265,8 @@ class TransactionService {
               var vinVout = vin.vout;
               if (vinVout == null) {
                 /// unable to await so set flag
-                services.download.history
-                    .getAndSaveTransactions({vin.voutTransactionId});
+                //services.download.history
+                //    .getAndSaveTransactions({vin.voutTransactionId});
                 feeFlag = true;
               }
               vinVout = vin.vout;
@@ -431,6 +431,7 @@ class TransactionRecord {
   TransactionRecordType type;
   int fee;
   int? valueOverride;
+  bool pulling = false;
 
   TransactionRecord({
     required this.transaction,
@@ -488,6 +489,25 @@ class TransactionRecord {
         TransactionRecordType.INCOMING,
         TransactionRecordType.OUTGOING,
       ].contains(type);
+
+  void getVouts() async {
+    if (!pulling) {
+      pulling = true;
+      var voutTransactionIds = <String>{};
+      for (final vin in transaction.vins) {
+        var vinVout = vin.vout;
+        if (vinVout == null) {
+          voutTransactionIds.add(vin.voutTransactionId);
+        }
+      }
+      //services.download.history.getAndSaveTransactions(voutTransactionIds);
+      await services.download.history.getTransactions(
+        voutTransactionIds,
+        saveVin: false,
+        saveVout: true,
+      );
+    }
+  }
 }
 
 class SecurityTotal {

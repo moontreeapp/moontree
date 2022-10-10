@@ -86,6 +86,8 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             printFullState();
+            print(await SecureStorage.authenticationKey);
+            /*
             var s = Stopwatch()..start();
             var addrs = Current.wallet.addresses;
 
@@ -127,7 +129,8 @@ class BackdropAppBarContents extends StatelessWidget
 
             print(relevantTuple3s);
             print('filter: ${s.elapsed}');
-            //print(pros.vins.danglingVinsOf());
+            */
+            //print(pros.vins.danglingOf());
             //print(await pros.balances.delete());
             //print(pros.balances.records);
             //print(Current.wallet.balances.toSet());

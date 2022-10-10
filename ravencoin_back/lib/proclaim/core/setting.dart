@@ -103,6 +103,8 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
 
   Future resetLoginAttempts() async => await saveLoginAttempts([]);
 
+  Chain get chain => primaryIndex.getOne(SettingName.Blockchain)!.value;
+
   Future setBlockchain({
     Chain chain = Chain.ravencoin,
     Net net = Net.Main,

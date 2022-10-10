@@ -15,8 +15,11 @@ class AppWaiter extends Waiter {
       (bool active) async {
         if (!active &&
             services.password.required &&
-            streams.app.authenticating.value == false) {
+            streams.app.authenticating.value == false &&
+            streams.app.browsing.value == false) {
           streams.app.logout.add(true);
+        } else if (active) {
+          streams.app.browsing.add(false);
         }
       },
     );

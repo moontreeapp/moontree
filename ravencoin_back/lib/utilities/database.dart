@@ -40,10 +40,7 @@ Future<void> eraseUnspentData({
   }
 }
 
-Future<void> eraseAddressData({
-  bool quick = false,
-  bool keepBalances = false,
-}) async {
+Future<void> eraseAddressData({bool quick = false}) async {
   if (quick) {
     await pros.addresses.delete();
   } else {
