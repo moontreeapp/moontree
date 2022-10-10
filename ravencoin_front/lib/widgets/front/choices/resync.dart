@@ -42,8 +42,8 @@ class _ResyncChoice extends State<ResyncChoice> {
               Navigator.of(context).pushReplacementNamed('/home');
               streams.app.snack
                   .add(Snack(message: 'resyncing, please wait...'));
-              await services.client
-                  .resetMemoryAndConnection(keepTx: true, keepBalances: true);
+              await services.client.resetMemoryAndConnection(
+                  keepTx: false, keepBalances: false, keepAddresses: false);
             },
           )
         ])

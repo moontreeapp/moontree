@@ -3,16 +3,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:quiver/iterables.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_back/utilities/database.dart'
-    show
-        eraseAddressData,
-        eraseChainData,
-        eraseDerivedData,
-        eraseTransactionData,
-        resetInMemoryState;
+import 'package:ravencoin_back/utilities/database.dart' as database;
 import 'package:ravencoin_back/utilities/lock.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -136,17 +129,21 @@ class ClientService {
   Future<void> resetMemoryAndConnection({
     bool keepTx = false,
     bool keepBalances = false,
+    bool keepAddresses = false,
   }) async {
     /// notice that we remove all our database here entirely.
     /// this is the simplest way to handle it (changing blockchains, this is also it's own feature).
     /// it might be ideal to keep the transactions, vout, unspents, vins, addresses, etc.
     /// but we're not ging to because we'd have to segment all of them by network.
     /// this is something we could do later if we want.
-    resetInMemoryState();
+    database.resetInMemoryState();
     if (!keepTx) {
-      await eraseTransactionData();
+      await database.eraseTransactionData(quick: true);
     }
-    await eraseAddressData(keepBalances: keepBalances);
+    await database.eraseUnspentData(quick: true, keepBalances: keepBalances);
+    if (!keepAddresses) {
+      await database.eraseAddressData(quick: true, keepBalances: keepBalances);
+    }
     if (keepBalances) {
       services.download.overrideGettingStarted = true;
     }
@@ -155,14 +152,16 @@ class ClientService {
     await services.client.createClient();
 
     /// start derivation process
-    final currentWallet = services.wallet.currentWallet;
-    if (currentWallet is LeaderWallet) {
-      await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+    if (!keepAddresses) {
+      final currentWallet = services.wallet.currentWallet;
+      if (currentWallet is LeaderWallet) {
+        await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+      }
     }
-    await services.client.subscribe.toAllAddresses();
 
-    /// subscribe to blocks on new chain
+    // subscribe
     await waiters.block.subscribe();
+    await services.client.subscribe.toAllAddresses();
 
     /// update the UI
     streams.app.wallet.refresh.add(true);
@@ -277,8 +276,8 @@ class SubscribeService {
         if (addressStatus?.status == null && status == null) {
           print('NEW ADDRESS-${address.address}');
           await maybeDerive(address);
-          await pullUnspents(address);
-          queueHistoryDownload(address);
+          //await pullUnspents(address);
+          //queueHistoryDownload(address);
         } else if (addressStatus?.status == null && status != null) {
           print('NEW ADDRESS w/ Hist-${address.address}');
           // first transaction on address discovered

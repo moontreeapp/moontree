@@ -35,6 +35,33 @@ class HistoryService {
   //  }
   //}
 
+  Future<List<String>> getHistories(List<Address> addresses) async {
+    try {
+      var listOfLists = await services.client.api.getHistories(addresses);
+      return [
+        for (var x in listOfLists) x.map((history) => history.txHash).toList()
+      ].expand((e) => e).toList();
+    } catch (e) {
+      try {
+        var txIds = <List<String>>[];
+        for (var address in addresses) {
+          var historiesItem;
+          try {
+            historiesItem = (await services.client.api.getHistory(address))
+                .map((history) => history.txHash)
+                .toList();
+          } catch (e) {
+            historiesItem = [];
+          }
+          txIds.add(historiesItem);
+        }
+        return txIds.expand((e) => e).toList();
+      } catch (e) {
+        return [];
+      }
+    }
+  }
+
   /// called during address subscription
   Future<List<String>> getHistory(Address address) async {
     try {
@@ -72,7 +99,7 @@ class HistoryService {
   Future allDoneProcess() async {
     busy = true;
     calledAllDoneProcess += 1;
-    await saveDanglingTransactions();
+    //await saveDanglingTransactions();
     busy = false;
   }
 
@@ -154,6 +181,73 @@ class HistoryService {
       }
     }
     return Tuple3(value, security ?? pros.securities.RVN, asset);
+  }
+
+  Future<List<Tx>> grabTransactions(Iterable<String> transactionIds) async {
+    busy = true;
+    var txs = <Tx>[];
+    try {
+      txs = await services.client.api.getTransactions(transactionIds);
+    } catch (e) {
+      var futures = <Future<Tx>>[];
+      for (var transactionId in transactionIds) {
+        futures.add(services.client.api.getTransaction(transactionId));
+      }
+      txs = await Future.wait<Tx>(futures);
+    }
+    return txs;
+  }
+
+  Future<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>> parseTx(Tx tx) async {
+    var newVins = <Vin>{};
+    var newVouts = <Vout>{};
+    var newTxs = <Transaction>{};
+    for (var vin in tx.vin) {
+      if (vin.txid != null && vin.vout != null) {
+        newVins.add(Vin(
+          transactionId: tx.txid,
+          voutTransactionId: vin.txid!,
+          voutPosition: vin.vout!,
+        ));
+      } else if (vin.coinbase != null && vin.sequence != null) {
+        newVins.add(Vin(
+          transactionId: tx.txid,
+          voutTransactionId: vin.coinbase!,
+          voutPosition: vin.sequence!,
+          isCoinbase: true,
+        ));
+      }
+    }
+    for (var vout in tx.vout) {
+      if (vout.scriptPubKey.type == 'nullassetdata') continue;
+      var vs = await handleAssetData(tx, vout);
+      newVouts.add(Vout(
+        transactionId: tx.txid,
+        position: vout.n,
+        type: vout.scriptPubKey.type,
+        lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
+        rvnValue: vs.item3 != null ? 0 : vs.item1,
+        assetValue: vs.item3 == null
+            ? null
+            : utils.amountToSat(vout.scriptPubKey.amount),
+        assetSecurityId: vs.item2.id,
+        memo: vout.memo,
+        assetMemo: vout.assetMemo,
+        toAddress: vout.scriptPubKey.addresses?[0],
+        // multisig - must detect if multisig...
+        additionalAddresses: (vout.scriptPubKey.addresses?.length ?? 0) > 1
+            ? vout.scriptPubKey.addresses!
+                .sublist(1, vout.scriptPubKey.addresses!.length)
+            : null,
+      ));
+      newTxs.add(Transaction(
+        id: tx.txid,
+        height: tx.height,
+        confirmed: (tx.confirmations ?? 0) > 0,
+        time: tx.time,
+      ));
+    }
+    return Tuple3(newTxs, newVins, newVouts);
   }
 
   Future<void>? getTransactions(

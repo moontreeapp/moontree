@@ -19,4 +19,6 @@ class VinProclaim extends Proclaim<_VinIdKey, Vin> {
   }
 
   Iterable<Vin> get danglingVins => records.where((vin) => vin.vout == null);
+  Iterable<Vin> danglingVinsOf(List<Vin> vins) =>
+      vins.where((vin) => vin.vout == null);
 }

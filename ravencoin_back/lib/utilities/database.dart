@@ -5,19 +5,49 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:proclaim/proclaim.dart';
 
 /// erases data concerning transactions and the like, leaves assets alone.
-Future<void> eraseTransactionData({bool keepBalances = false}) async {
+Future<void> eraseTransactionData({
+  bool quick = false,
+  bool keepBalances = false,
+}) async {
   //await pros.blocks.removeAll(pros.blocks.records);
-  await pros.vouts.clear();
-  await pros.vins.clear();
-  await pros.transactions.clear();
+  if (quick) {
+    await pros.vouts.delete();
+    await pros.vins.delete();
+    await pros.transactions.delete();
+  } else {
+    await pros.vouts.clear();
+    await pros.vins.clear();
+    await pros.transactions.clear();
+  }
 }
 
-Future<void> eraseAddressData({bool keepBalances = false}) async {
-  await pros.statuses.clear();
-  await pros.addresses.clear();
-  await pros.unspents.clear();
-  if (!keepBalances) {
-    await pros.balances.clear();
+Future<void> eraseUnspentData({
+  bool quick = false,
+  bool keepBalances = false,
+}) async {
+  if (quick) {
+    await pros.statuses.delete();
+    await pros.unspents.delete();
+    if (!keepBalances) {
+      await pros.balances.delete();
+    }
+  } else {
+    await pros.statuses.clear();
+    await pros.unspents.clear();
+    if (!keepBalances) {
+      await pros.balances.clear();
+    }
+  }
+}
+
+Future<void> eraseAddressData({
+  bool quick = false,
+  bool keepBalances = false,
+}) async {
+  if (quick) {
+    await pros.addresses.delete();
+  } else {
+    await pros.addresses.clear();
   }
 }
 
