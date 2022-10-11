@@ -26,7 +26,8 @@ class _ConnectionLightState extends State<ConnectionLight>
   };
   /* alternative */
   bool connectionBusy = false;
-  bool busy = false;
+  /* blinking animations */
+  //bool busy = false;
 
   /* fancy movement animations
   bool connectionBusy = false;
@@ -85,16 +86,20 @@ class _ConnectionLightState extends State<ConnectionLight>
         });
       }
     }));
-    /* blinking animations */
-    //listeners.add(streams.client.busy.listen((bool value) async {
-    //  if (value && !connectionBusy) {
-    //    setState(() => connectionBusy = value);
-    //    rebuildMe();
-    //  }
-    //  if (!value && connectionBusy) {
-    //    setState(() => connectionBusy = value);
-    //  }
-    //}));
+    listeners.add(streams.client.busy.listen((bool value) async {
+      if (value != connectionBusy) {
+        setState(() => connectionBusy = value);
+      }
+
+      /* blinking animations */
+      //if (value && !connectionBusy) {
+      //  setState(() => connectionBusy = value);
+      //  //rebuildMe();
+      //}
+      //if (!value && connectionBusy) {
+      //  setState(() => connectionBusy = value);
+      //}
+    }));
   }
 
   @override
@@ -105,21 +110,22 @@ class _ConnectionLightState extends State<ConnectionLight>
     super.dispose();
   }
 
-  Future<void> rebuildMe() async {
-    await Future.delayed(Duration(milliseconds: 600));
-    if (connectionBusy) {
-      // don't blink when spinner runs... separate into different streams?
-      if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
-          !services.wallet.leader.newLeaderProcessRunning) {
-        setState(() => busy = !busy);
-      }
-      rebuildMe();
-    } else {
-      if (busy) {
-        setState(() => busy = !busy);
-      }
-    }
-  }
+  /* blinking animations */
+  //Future<void> rebuildMe() async {
+  //  await Future.delayed(Duration(milliseconds: 600));
+  //  if (connectionBusy) {
+  //    // don't blink when spinner runs... separate into different streams?
+  //    if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
+  //        !services.wallet.leader.newLeaderProcessRunning) {
+  //      setState(() => busy = !busy);
+  //    }
+  //    rebuildMe();
+  //  } else {
+  //    if (busy) {
+  //      setState(() => busy = !busy);
+  //    }
+  //  }
+  //}
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +134,8 @@ class _ConnectionLightState extends State<ConnectionLight>
       height: 8,
       width: 8,
       decoration: BoxDecoration(
-        color: connectionStatus == ConnectionStatus.connected && busy
+        color: connectionStatus == ConnectionStatus.connected &&
+                connectionBusy // && busy
             ? AppColors.logoGreen
             : connectionStatusColor,
         borderRadius: BorderRadius.circular(20),

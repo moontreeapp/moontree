@@ -220,7 +220,7 @@ class TransactionService {
                 ioType = TransactionRecordType.SELF;
               }
             } else {
-              ioType = TransactionRecordType.FEE;
+              ioType ??= TransactionRecordType.FEE;
             }
             if (selfIn > 0 &&
                 outgoingAddrs.containsKey(net.burnAddresses.burn)) {

@@ -171,7 +171,9 @@ class BackdropAppBarContents extends StatelessWidget
           /// an overlay color of the status. then if the option was on the
           /// network page that would make sense.
           //if (!spoof) ChosenBlockchain(),
-          if (!spoof) ActivityLight(),
+          /// this is not needed since we have a shimmer and we'll subtle color
+          /// the connection light in the event that we have network activity.
+          //if (!spoof) ActivityLight(),
           if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),
           if (!spoof) QRCodeContainer(),
           if (!spoof) SnackBarViewer(),
