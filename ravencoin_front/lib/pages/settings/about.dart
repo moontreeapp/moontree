@@ -23,13 +23,15 @@ class About extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   GestureDetector(
-                      onDoubleTap: () async {
-                        Navigator.of(context)
-                            .pushReplacementNamed('/settings/developer');
-                        ////await pros.settings.toggleDevMode();
-                        ////streams.app.snack.add(Snack(
-                        ////    message:
-                        ////        'developer mode: ${pros.settings.developerMode}'));
+                      onVerticalDragEnd: (DragEndDetails x) async {
+                        if (x.velocity.pixelsPerSecond.dy < -3000) {
+                          Navigator.of(context)
+                              .pushReplacementNamed('/settings/developer');
+                          ////await pros.settings.toggleDevMode();
+                          ////streams.app.snack.add(Snack(
+                          ////    message:
+                          ////        'developer mode: ${pros.settings.developerMode}'));
+                        }
                       },
                       child: Image.asset(
                         'assets/logo/moontree_logo.png',
