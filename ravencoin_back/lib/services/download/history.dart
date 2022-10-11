@@ -94,6 +94,7 @@ class HistoryService {
     bool saveVout = true,
   }) async {
     await getTransactions(txIds, saveVin: saveVin, saveVout: saveVout);
+    print('DONE!');
     //busy = true;
     //await saveTransactions(
     //  [

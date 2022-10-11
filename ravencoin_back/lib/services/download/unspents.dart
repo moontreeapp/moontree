@@ -89,13 +89,26 @@ class UnspentService {
       ///       'message': 'No such mempool or blockchain transaction. Use gettransaction for wallet transactions.'}))
       //await services.download.history
       //  .getAndSaveTransactions(utxos.map((e) => e.transactionId).toSet());
-      for (var unspentRecord in utxos) {
+      /// so try it all first, because that's much more efficient, if you fail,
+      /// try one at a time:
+      final txids = services.download.history
+          .filterOutPreviouslyDownloaded(utxos.map((e) => e.transactionId))
+          .toSet();
+      if (txids.isNotEmpty) {
         try {
-          await services.download.history
-              .getAndSaveTransactions({unspentRecord.transactionId});
+          await services.download.history.getAndSaveTransactions(txids);
         } catch (e) {
-          /// so if this transaction is not found, we should remove the unspent
-          await pros.unspents.remove(unspentRecord);
+          for (var unspentRecord in utxos) {
+            final txid = unspentRecord.transactionId;
+            if (txids.contains(txid)) {
+              try {
+                await services.download.history.getAndSaveTransactions({txid});
+              } catch (e) {
+                /// so if this transaction is not found, we should remove the unspent
+                await pros.unspents.remove(unspentRecord);
+              }
+            }
+          }
         }
       }
     }

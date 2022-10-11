@@ -21,7 +21,7 @@ class SendWaiter extends Waiter {
           SendEstimate estimate = tuple.item2;
 
           /// extra safety - fee guard clause
-          if (estimate.fees > 2 * 100000000) {
+          if (estimate.fees > 20 * 100000000) {
             throw Exception(
                 'FEE IS TOO LARGE! NO FEE SHOULD EVER BE THIS BIG!');
           }

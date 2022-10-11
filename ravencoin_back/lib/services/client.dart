@@ -296,6 +296,7 @@ class SubscribeService {
               address: address.address, status: 'new transaction for');
           await pullUnspents(address);
         } else if (addressStatus?.status == status) {
+          await pullUnspents(address); // just incase we don't have them...
           // do nothing
         }
         final wallet = address.wallet!;

@@ -58,6 +58,7 @@ class _SendState extends State<Send> {
   bool showPaste = false;
   String clipboard = '';
   final ScrollController scrollController = ScrollController();
+  bool clicked = false;
 
   bool rvnValidation() =>
       pros.balances.primaryIndex
@@ -684,7 +685,13 @@ class _SendState extends State<Send> {
         context,
         focusNode: previewFocusNode,
         enabled: !disabled,
-        onPressed: () => startSend(),
+        label: !clicked ? 'Preview' : 'Generating Transaction...',
+        onPressed: () {
+          setState(() {
+            clicked = true;
+          });
+          startSend();
+        },
         disabledOnPressed: () {
           if (!rvnValidation()) {
             tellUserNoRVN();
