@@ -146,7 +146,7 @@ class _PageLead extends State<PageLead> {
             streams.app.splash.add(false);
           });
     }
-    if (pageTitle == 'BackupConfirm') {
+    if (['BackupConfirm', 'Mining'].contains(pageTitle)) {
       /// the reason for this is after we took out encryptedEntropy from
       /// LeaderWallets we needed to make all the functions dealing with getting
       /// sensitive information futures, and since they're futures, we had to

@@ -240,6 +240,7 @@ class ImportWalletService {
       if (existingWalletId == null) {
         // since we're importing we assume the user has it backed up already
         wallet.backedUp = true;
+        wallet.skipHistory = services.wallet.currentWallet.minerMode;
         var importedChange = await pros.wallets.save(wallet);
         // set it as current before returning
         await pros.settings.setCurrentWalletId(importedChange!.record.id);

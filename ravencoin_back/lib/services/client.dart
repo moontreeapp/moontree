@@ -323,8 +323,9 @@ class SubscribeService {
                 .aggregatedDownloadProcess(wallet.addresses);
             // Ideally we'd call this once rather than per wallet.
             //if (services.download.history.calledAllDoneProcess == 0) {
-            await services.download.history.allDoneProcess();
-            //}
+            if (!services.wallet.currentWallet.minerMode) {
+              await services.download.history.allDoneProcess();
+            }
           }
           streams.client.busy.add(false);
           streams.client.activity.add(ActivityMessage(active: false));
