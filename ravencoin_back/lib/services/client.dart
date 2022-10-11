@@ -285,20 +285,15 @@ class SubscribeService {
 
         /// process
         if (addressStatus?.status == null && status == null) {
-          print('NEW ADDRESS-${address.address}');
+          broadcastActivity(address: address.address, status: 'empty');
           await maybeDerive(address);
-          //await pullUnspents(address); //  I think I can remove this here
         } else if (addressStatus?.status == null && status != null) {
-          print('NEW ADDRESS w/ Hist-${address.address}');
-          // first transaction on address discovered
-          //var s = Stopwatch()..start();
+          broadcastActivity(address: address.address, status: 'used');
           await maybeDerive(address);
-          //print('maybeDerive: ${s.elapsed}');
           await pullUnspents(address);
-          //print('pullUnspents: ${s.elapsed}');
         } else if (addressStatus?.status != status) {
-          print('NEW TRANSACTIONS-${address.address}');
-          // new transaction on address discovered
+          broadcastActivity(
+              address: address.address, status: 'new transaction for');
           await pullUnspents(address);
         } else if (addressStatus?.status == status) {
           // do nothing
@@ -313,6 +308,9 @@ class SubscribeService {
                 wallet.addresses.length) {
           await services.balance
               .recalculateAllBalances(walletIds: {address.walletId});
+          if (wallet.id == pros.settings.currentWalletId) {
+            streams.app.wallet.refresh.add(true);
+          }
           startupProcessRunning = false;
           if (!services.download.history.busy) {
             await services.download.history
@@ -345,6 +343,16 @@ class SubscribeService {
         }
       });
     }
+  }
+
+  void broadcastActivity({String? address, String? status}) {
+    streams.client.download.add(ActivityMessage(
+        active: true,
+        title: 'Syncing with the network',
+        message: address == null
+            ? status ?? 'Downloading your transactions...'
+            : 'Discovered ${status == null ? '' : '$status '}address: $address'));
+    print('$status $address');
   }
 
   Future subscribeAsset(Asset asset) async {

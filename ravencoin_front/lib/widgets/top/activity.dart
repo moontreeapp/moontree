@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
 import 'package:ravencoin_front/widgets/front/choices/download_queue_count.dart';
 
 class ActivityLight extends StatefulWidget {
@@ -66,7 +67,8 @@ class _ActivityLightState extends State<ActivityLight>
                   child: activityMessage.message == '' ||
                           activityMessage.message == null
                       ? (pros.settings.developerMode == true
-                          ? DownloadQueueCount()
+                          //? DownloadQueueCount()
+                          ? DownloadActivity()
                           : null)
                       : null,
                   behaviors: {
