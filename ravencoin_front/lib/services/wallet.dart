@@ -54,6 +54,10 @@ Future<void> switchWallet(String walletId) async {
   await pros.settings.setCurrentWalletId(walletId);
   streams.app.fling.add(false);
   streams.app.setting.add(null);
+  final currentWallet = pros.wallets.primaryIndex.getOne(walletId);
+  if (currentWallet is LeaderWallet && currentWallet.addresses.isEmpty) {
+    await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+  }
 }
 
 Future<void> populateWalletsWithSensitives() async {

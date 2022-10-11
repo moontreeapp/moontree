@@ -137,7 +137,6 @@ class ClientService {
     /// but we're not ging to because we'd have to segment all of them by network.
     /// this is something we could do later if we want.
     database.resetInMemoryState();
-    printFullState();
     if (!keepTx) {
       await database.eraseTransactionData(quick: true);
     }
@@ -148,7 +147,6 @@ class ClientService {
     if (keepBalances) {
       services.download.overrideGettingStarted = true;
     }
-    printFullState();
 
     /// make a new client to connect to the new network
     await services.client.createClient();
@@ -158,7 +156,16 @@ class ClientService {
       final currentWallet = services.wallet.currentWallet;
       if (currentWallet is LeaderWallet) {
         await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+      } else {
+        // trigger single derive?
       }
+
+      /// we could do this when we nav to it. (front services switchWallet)
+      //for (var wallet in pros.wallets.records) {
+      //  if (wallet != currentWallet) {
+      //    await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+      //  }
+      //}
     }
 
     // subscribe
