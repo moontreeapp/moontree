@@ -288,7 +288,6 @@ class SubscribeService {
           print('NEW ADDRESS-${address.address}');
           await maybeDerive(address);
           //await pullUnspents(address); //  I think I can remove this here
-          //queueHistoryDownload(address); // I think I can remove this here
         } else if (addressStatus?.status == null && status != null) {
           print('NEW ADDRESS w/ Hist-${address.address}');
           // first transaction on address discovered
@@ -297,13 +296,10 @@ class SubscribeService {
           //print('maybeDerive: ${s.elapsed}');
           await pullUnspents(address);
           //print('pullUnspents: ${s.elapsed}');
-          queueHistoryDownload(address);
-          //print('queueHistoryDownload: ${s.elapsed}');
         } else if (addressStatus?.status != status) {
           print('NEW TRANSACTIONS-${address.address}');
           // new transaction on address discovered
           await pullUnspents(address);
-          queueHistoryDownload(address);
         } else if (addressStatus?.status == status) {
           // do nothing
         }

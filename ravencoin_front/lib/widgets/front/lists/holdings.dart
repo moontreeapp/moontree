@@ -213,7 +213,7 @@ class _HoldingList extends State<HoldingList> {
     final busy = currentIsLeader
         ? streams.client.busy.value || addresses.length < 40
         : false;
-    if (!currentIsLeader && services.download.queue.transactions.length == 0) {
+    if (!currentIsLeader) {
       // single wallets sometimes never stop spinning
       streams.client.busy.add(false);
     }

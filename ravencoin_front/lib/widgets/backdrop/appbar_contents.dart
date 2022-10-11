@@ -75,7 +75,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -86,8 +86,8 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             printFullState();
-            print(await SecureStorage.authenticationKey);
             /*
+            print(await SecureStorage.authenticationKey);
             var s = Stopwatch()..start();
             var addrs = Current.wallet.addresses;
 

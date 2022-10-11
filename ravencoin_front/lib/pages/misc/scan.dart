@@ -25,6 +25,12 @@ class _ScanQRState extends State<ScanQR> {
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
   @override
+  void initState() {
+    super.initState();
+    streams.app.browsing.add(true);
+  }
+
+  @override
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
