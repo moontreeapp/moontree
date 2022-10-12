@@ -684,7 +684,7 @@ class _SendState extends State<Send> {
       components.buttons.actionButton(
         context,
         focusNode: previewFocusNode,
-        enabled: !disabled,
+        enabled: !disabled && !clicked,
         label: !clicked ? 'Preview' : 'Generating Transaction...',
         onPressed: () {
           setState(() {
@@ -735,6 +735,9 @@ class _SendState extends State<Send> {
         )
       },
     );
+    setState(() {
+      clicked = false;
+    });
   }
 
   void _produceAssetModal() {
