@@ -80,6 +80,19 @@ extension BySymbolMethodsForUnspent on Index<_SymbolKey, Unspent> {
   List<Unspent> getAll(String symbol) => getByKeyStr(symbol);
 }
 
+// bySymbolChain
+
+class _SymbolChainKey extends Key<Unspent> {
+  @override
+  String getKey(Unspent unspent) =>
+      Unspent.getChainSymbolId(unspent.chain, unspent.symbol);
+}
+
+extension BySymbolChainMethodsForUnspent on Index<_SymbolChainKey, Unspent> {
+  List<Unspent> getAll(String symbol, Chain chain) =>
+      getByKeyStr(Unspent.getChainSymbolId(chain, symbol));
+}
+
 // byWallet
 
 class _WalletKey extends Key<Unspent> {
@@ -101,6 +114,34 @@ class _WalletSymbolKey extends Key<Unspent> {
 extension ByWalletSymbolMethodsForUnspent on Index<_WalletSymbolKey, Unspent> {
   List<Unspent> getAll(String walletId, String? symbol) =>
       getByKeyStr(Unspent.getWalletSymbolId(walletId, symbol ?? 'RVN'));
+}
+
+// byWalletChain
+
+class _WalletChainKey extends Key<Unspent> {
+  @override
+  String getKey(Unspent unspent) =>
+      Unspent.getWalletChainId(unspent.walletId, unspent.chain);
+}
+
+extension ByWalletChainMethodsForUnspent on Index<_WalletChainKey, Unspent> {
+  List<Unspent> getAll(String walletId, Chain chain) =>
+      getByKeyStr(Unspent.getWalletChainId(walletId, chain));
+}
+
+// byWalletChainSymbol
+
+class _WalletChainSymbolKey extends Key<Unspent> {
+  @override
+  String getKey(Unspent unspent) => Unspent.getWalletChainSymbolId(
+      unspent.walletId, unspent.chain, unspent.symbol);
+}
+
+extension ByWalletChainSymbolMethodsForUnspent
+    on Index<_WalletChainSymbolKey, Unspent> {
+  List<Unspent> getAll(String walletId, Chain chain, String? symbol) =>
+      getByKeyStr(
+          Unspent.getWalletChainSymbolId(walletId, chain, symbol ?? 'RVN'));
 }
 
 // byWalletConfirmation
@@ -128,4 +169,35 @@ extension ByWalletSymbolConfirmationMethodsForUnspent
   List<Unspent> getAll(String walletId, String? symbol, bool confirmed) =>
       getByKeyStr(Unspent.getWalletSymbolConfirmationId(
           walletId, symbol ?? 'RVN', confirmed));
+}
+
+// byWalletConfirmation
+
+class _WalletChainConfirmationKey extends Key<Unspent> {
+  @override
+  String getKey(Unspent unspent) => Unspent.getWalletChainConfirmationId(
+      unspent.walletId, unspent.chain, unspent.isConfirmed);
+}
+
+extension ByWalletChainConfirmationMethodsForUnspent
+    on Index<_WalletChainConfirmationKey, Unspent> {
+  List<Unspent> getAll(String walletId, Chain chain, bool confirmed) =>
+      getByKeyStr(
+          Unspent.getWalletChainConfirmationId(walletId, chain, confirmed));
+}
+
+// byWalletChainSymbolConfirmation
+
+class _WalletChainSymbolConfirmationKey extends Key<Unspent> {
+  @override
+  String getKey(Unspent unspent) => Unspent.getWalletChainSymbolConfirmationId(
+      unspent.walletId, unspent.chain, unspent.symbol, unspent.isConfirmed);
+}
+
+extension ByWalletChainSymbolConfirmationMethodsForUnspent
+    on Index<_WalletChainSymbolConfirmationKey, Unspent> {
+  List<Unspent> getAll(
+          String walletId, Chain chain, String? symbol, bool confirmed) =>
+      getByKeyStr(Unspent.getWalletChainSymbolConfirmationId(
+          walletId, chain, symbol ?? 'RVN', confirmed));
 }

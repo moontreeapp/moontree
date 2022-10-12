@@ -11,11 +11,18 @@ class UnspentProclaim extends Proclaim<_UnspentKey, Unspent> {
   late IndexMultiple<_SecurityTypeKey, Unspent> bySecurityType;
   late IndexMultiple<_AddressKey, Unspent> byAddress;
   late IndexMultiple<_SymbolKey, Unspent> bySymbol;
+  late IndexMultiple<_SymbolChainKey, Unspent> bySymbolChain;
   late IndexMultiple<_WalletKey, Unspent> byWallet;
   late IndexMultiple<_WalletSymbolKey, Unspent> byWalletSymbol;
+  late IndexMultiple<_WalletChainKey, Unspent> byWalletChain;
+  late IndexMultiple<_WalletChainSymbolKey, Unspent> byWalletChainSymbol;
   late IndexMultiple<_WalletConfirmationKey, Unspent> byWalletConfirmation;
   late IndexMultiple<_WalletSymbolConfirmationKey, Unspent>
       byWalletSymbolConfirmation;
+  late IndexMultiple<_WalletChainConfirmationKey, Unspent>
+      byWalletChainConfirmation;
+  late IndexMultiple<_WalletChainSymbolConfirmationKey, Unspent>
+      byWalletChainSymbolConfirmation;
 
   UnspentProclaim() : super(_UnspentKey()) {
     byTransaction = addIndexMultiple('transaction', _TransactionKey());
@@ -27,10 +34,18 @@ class UnspentProclaim extends Proclaim<_UnspentKey, Unspent> {
     bySymbol = addIndexMultiple('symbol', _SymbolKey());
     byWallet = addIndexMultiple('wallet', _WalletKey());
     byWalletSymbol = addIndexMultiple('walletSymbol', _WalletSymbolKey());
+    bySymbolChain = addIndexMultiple('symbolChain', _SymbolChainKey());
+    byWalletChain = addIndexMultiple('walletChain', _WalletChainKey());
+    byWalletChainSymbol =
+        addIndexMultiple('walletChainSymbol', _WalletChainSymbolKey());
     byWalletConfirmation =
         addIndexMultiple('walletConfirmation', _WalletConfirmationKey());
     byWalletSymbolConfirmation = addIndexMultiple(
         'walletSymbolConfirmation', _WalletSymbolConfirmationKey());
+    byWalletChainConfirmation = addIndexMultiple(
+        'walletChainConfirmation', _WalletChainConfirmationKey());
+    byWalletChainSymbolConfirmation = addIndexMultiple(
+        'walletChainSymbolConfirmation', _WalletChainSymbolConfirmationKey());
   }
 
   // on startup it's blank

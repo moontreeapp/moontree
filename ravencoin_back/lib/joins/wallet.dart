@@ -8,11 +8,22 @@ extension WalletBelongsToCipher on Wallet {
 }
 
 extension WalletHasManyAddresses on Wallet {
-  List<Address> get addresses => pros.addresses.byWallet.getAll(id);
+  List<Address> get addresses =>
+      pros.addresses.byWalletChain.getAll(id, pros.settings.chain);
+}
+
+extension WalletHasManyAddressesOnAllChains on Wallet {
+  List<Address> get allAddresses => pros.addresses.byWallet.getAll(id);
 }
 
 extension WalletHasManyAddressesByExposure on Wallet {
   List<Address> addressesBy(NodeExposure exposure) =>
+      pros.addresses.byWalletChainExposure
+          .getAll(id, pros.settings.chain, pros.settings.net, exposure);
+}
+
+extension WalletHasManyAddressesByExposureOnAllChains on Wallet {
+  List<Address> allAddressesBy(NodeExposure exposure) =>
       pros.addresses.byWalletExposure.getAll(id, exposure);
 }
 
@@ -24,7 +35,12 @@ extension WalletHasOneHighestIndexByExposure on Wallet {
 }
 
 extension WalletHasManyBalances on Wallet {
-  List<Balance> get balances => pros.balances.byWallet.getAll(id);
+  List<Balance> get balances => pros.balances.byWalletChain
+      .getAll(id, pros.settings.chain, pros.settings.net);
+}
+
+extension WalletHasManyBalancesOnAllChains on Wallet {
+  List<Balance> get allbalances => pros.balances.byWallet.getAll(id);
 }
 
 extension WalletHasManyVouts on Wallet {

@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:ravencoin_back/records/security.dart';
+import 'package:ravencoin_back/records/types/chain.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_back/utilities/exceptions.dart';
 import 'package:ravencoin_back/utilities/transform.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
@@ -25,30 +27,50 @@ class Balance with EquatableMixin {
   @HiveField(3)
   int unconfirmed;
 
+  @HiveField(4, defaultValue: Chain.ravencoin)
+  Chain chain;
+
+  @HiveField(5, defaultValue: Net.Main)
+  Net net;
+
   Balance({
     required this.walletId,
     required this.security,
     required this.confirmed,
     required this.unconfirmed,
+    required this.chain,
+    required this.net,
   });
 
   @override
-  List<Object> get props => [walletId, security, confirmed, unconfirmed];
+  List<Object> get props => [
+        walletId,
+        security,
+        confirmed,
+        unconfirmed,
+        chain,
+        net,
+      ];
 
   @override
   String toString() =>
-      'Balance($walletId, $security, $confirmed, $unconfirmed)';
+      'Balance($walletId, $security, $confirmed, $unconfirmed, $chain, $net)';
 
   factory Balance.fromScripthashBalance({
     required String walletId,
     required Security security,
     required ScripthashBalance balance,
+    required Chain chain,
+    required Net net,
   }) =>
       Balance(
-          walletId: walletId,
-          security: security,
-          confirmed: balance.confirmed,
-          unconfirmed: balance.unconfirmed);
+        walletId: walletId,
+        security: security,
+        confirmed: balance.confirmed,
+        unconfirmed: balance.unconfirmed,
+        chain: chain,
+        net: net,
+      );
 
   factory Balance.fromBalance(
     Balance balance, {
@@ -56,26 +78,54 @@ class Balance with EquatableMixin {
     Security? security,
     int? confirmed,
     int? unconfirmed,
+    Chain? chain,
+    Net? net,
   }) =>
       Balance(
           walletId: walletId ?? balance.walletId,
           security: security ?? balance.security,
           confirmed: confirmed ?? balance.confirmed,
-          unconfirmed: unconfirmed ?? balance.unconfirmed);
+          unconfirmed: unconfirmed ?? balance.unconfirmed,
+          chain: chain ?? balance.chain,
+          net: net ?? balance.net);
 
   String get id => Balance.balanceKey(walletId, security);
 
+  String get idChain => Balance.balanceChainKey(walletId, security, chain, net);
+
   static String balanceKey(String walletId, Security security) =>
       '$walletId:${security.id}';
+
+  static String balanceChainKey(
+          String walletId, Security security, Chain chain, Net net) =>
+      '$walletId:${security.id}:${chain.name}:${net.name}';
+
+  static String walletChainKey(String walletId, Chain chain, Net net) =>
+      '$walletId:${chain.name}:${net.name}';
+
+  static String securityChainKey(Security security, Chain chain, Net net) =>
+      '${security.id}:${chain.name}:${net.name}';
+
+  static String chainSymbol(Chain chain) {
+    switch (chain) {
+      case Chain.ravencoin:
+        return 'RVN';
+      case Chain.evrmore:
+        return 'EVR';
+      default:
+        return 'RVN';
+    }
+  }
 
   int get value => confirmed + unconfirmed;
 
   double get amount => satToAmount(confirmed + unconfirmed);
 
-  double get rvn => (confirmed / 100000000); //+ (unconfirmed / 100000000);
+  double get currency => (confirmed / 100000000); //+ (unconfirmed / 100000000);
 
   String get valueRVN =>
-      NumberFormat('RVN #,##0.00000000', 'en_US').format(rvn);
+      NumberFormat('${chainSymbol(chain)} #,##0.00000000', 'en_US')
+          .format(currency);
 
   Balance operator +(Balance balance) {
     // its ok if they don't match.
@@ -85,11 +135,17 @@ class Balance with EquatableMixin {
     if (security != balance.security) {
       throw BalanceMismatch("Balance securities don't match - can't combine");
     }
+    if (chain != balance.chain || net != balance.net) {
+      throw BalanceMismatch("Balance blockchains don't match - can't combine");
+    }
     return Balance(
-        walletId: walletId,
-        security: security,
-        confirmed: confirmed + balance.confirmed,
-        unconfirmed: unconfirmed + balance.unconfirmed);
+      walletId: walletId,
+      security: security,
+      confirmed: confirmed + balance.confirmed,
+      unconfirmed: unconfirmed + balance.unconfirmed,
+      chain: chain,
+      net: net,
+    );
   }
 }
 

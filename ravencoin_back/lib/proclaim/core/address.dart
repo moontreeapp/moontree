@@ -15,19 +15,28 @@ class AddressLocation {
 
 class AddressProclaim extends Proclaim<_ScripthashKey, Address> {
   late IndexMultiple<_AddressKey, Address> byAddress;
+  late IndexMultiple<_ScripthashKey, Address> byScripthash;
   late IndexMultiple<_WalletKey, Address> byWallet;
   late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
   late IndexMultiple<_WalletExposureHDKey, Address> byWalletExposureIndex;
-  late IndexMultiple<_ScripthashKey, Address> byScripthash;
+  late IndexMultiple<_WalletChainKey, Address> byWalletChain;
+  late IndexMultiple<_WalletChainExposureKey, Address> byWalletChainExposure;
+  late IndexMultiple<_WalletChainExposureHDKey, Address>
+      byWalletChainExposureIndex;
 
   AddressProclaim() : super(_ScripthashKey()) {
     byAddress = addIndexMultiple('address', _AddressKey());
+    byScripthash = addIndexMultiple('scripthash', _ScripthashKey());
     byWallet = addIndexMultiple('wallet', _WalletKey());
     byWalletExposure =
         addIndexMultiple('wallet-exposure', _WalletExposureKey());
     byWalletExposureIndex =
         addIndexMultiple('wallet-exposure-hdindex', _WalletExposureHDKey());
-    byScripthash = addIndexMultiple('scripthash', _ScripthashKey());
+    byWalletChain = addIndexMultiple('walletChain', _WalletChainKey());
+    byWalletChainExposure =
+        addIndexMultiple('walletChain-exposure', _WalletChainExposureKey());
+    byWalletChainExposureIndex = addIndexMultiple(
+        'walletChain-exposure-hdindex', _WalletChainExposureHDKey());
   }
 
   /// returns addresses in order

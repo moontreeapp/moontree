@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/extensions/object.dart';
 import 'package:ravencoin_back/extensions/validation.dart';
+import 'package:ravencoin_back/records/types/chain.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_back/utilities/utilities.dart';
 
 import '_type_id.dart';
@@ -31,6 +32,12 @@ class Asset with EquatableMixin {
   @HiveField(6)
   final int position;
 
+  @HiveField(7, defaultValue: Chain.ravencoin)
+  final Chain chain;
+
+  @HiveField(8, defaultValue: Net.Main)
+  final Net net;
+
   //late final TxSource source;
   ////late final String txHash; // where it originated?
   ////late final int txPos; // the vout it originated?
@@ -44,6 +51,8 @@ class Asset with EquatableMixin {
     required this.metadata,
     required this.transactionId,
     required this.position,
+    this.chain = Chain.ravencoin,
+    this.net = Net.Main,
   });
 
   @override
@@ -55,16 +64,19 @@ class Asset with EquatableMixin {
         metadata,
         transactionId,
         position,
+        chain,
+        net,
       ];
 
   @override
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position)';
+      'position: $position, chain: $chain, net: $net)';
 
-  static String assetKey(String symbol) => symbol;
-  String get id => symbol;
+  static String assetKey(String symbol, Chain chain, Net net) =>
+      '$symbol:${chain.name}:${net.name}';
+  String get id => assetKey(symbol, chain, net);
   String? get parentId {
     if (assetType == AssetType.Sub) {
       var splits = symbol.split('/');

@@ -30,6 +30,9 @@ class Unspent with EquatableMixin, ToStringMixin {
   @HiveField(6)
   String symbol;
 
+  @HiveField(7, defaultValue: Chain.ravencoin)
+  Chain chain;
+
   Unspent({
     required this.walletId,
     required this.addressId,
@@ -38,11 +41,13 @@ class Unspent with EquatableMixin, ToStringMixin {
     required this.height,
     required this.value,
     this.symbol = 'RVN',
+    this.chain = Chain.ravencoin,
   });
 
   factory Unspent.fromScripthashUnspent(
     String walletId,
     ScripthashUnspent scripthashUnspent,
+    Chain chain,
   ) {
     return Unspent(
       walletId: walletId,
@@ -52,6 +57,7 @@ class Unspent with EquatableMixin, ToStringMixin {
       height: scripthashUnspent.height,
       value: scripthashUnspent.value,
       symbol: scripthashUnspent.symbol ?? 'RVN',
+      chain: chain,
     );
   }
 
@@ -63,6 +69,7 @@ class Unspent with EquatableMixin, ToStringMixin {
         height,
         value,
         symbol,
+        chain,
       ];
 
   @override
@@ -76,6 +83,7 @@ class Unspent with EquatableMixin, ToStringMixin {
         'height',
         'value',
         'symbol',
+        'chain',
       ];
 
   String get scripthash => addressId;
@@ -94,12 +102,25 @@ class Unspent with EquatableMixin, ToStringMixin {
       getWalletSymbolConfirmationId(walletId, symbol, isConfirmed);
 
   static String getWalletSymbolId(String walletId, String symbol) =>
-      walletId + ':' + symbol;
+      '$walletId:$symbol';
+  static String getWalletChainId(String walletId, Chain chain) =>
+      '$walletId:${chain.name}';
+  static String getWalletChainSymbolId(
+          String walletId, Chain chain, String symbol) =>
+      '$walletId:${chain.name}:$symbol';
+  static String getChainSymbolId(Chain chain, String symbol) =>
+      '${chain.name}:$symbol';
   static String getWalletConfirmationId(String walletId, bool isConfirmed) =>
-      walletId + ':' + isConfirmed.toString();
+      '$walletId:${isConfirmed.toString()}';
   static String getWalletSymbolConfirmationId(
           String walletId, String symbol, bool isConfirmed) =>
-      walletId + ':' + symbol + ':' + isConfirmed.toString();
+      '$walletId:$symbol:${isConfirmed.toString()}';
+  static String getWalletChainConfirmationId(
+          String walletId, Chain chain, bool isConfirmed) =>
+      '$walletId:${chain.name}:${isConfirmed.toString()}';
+  static String getWalletChainSymbolConfirmationId(
+          String walletId, Chain chain, String symbol, bool isConfirmed) =>
+      '$walletId:${chain.name}:$symbol:${isConfirmed.toString()}';
 
   static String getUnspentId(String transactionId, int position) =>
       '$transactionId:$position';

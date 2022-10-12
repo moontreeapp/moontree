@@ -68,3 +68,62 @@ extension ByWalletExposureHDMethodsForAddress
       getByKeyStr(_walletExposureHDToKey(walletId, exposure, hdIndex))
           .firstOrNull;
 }
+
+// byWallet
+
+String _walletChainToKey(String walletId, Chain chain) => '$walletId:$chain';
+
+class _WalletChainKey extends Key<Address> {
+  @override
+  String getKey(Address address) =>
+      _walletChainToKey(address.walletId, address.chain);
+}
+
+extension ByWalletChainMethodsForAddress on Index<_WalletChainKey, Address> {
+  List<Address> getAll(String walletId, Chain chain) =>
+      getByKeyStr(_walletChainToKey(walletId, chain));
+}
+
+// byWalletExposure
+
+String _walletChainExposureToKey(
+        String walletId, Chain chain, Net net, NodeExposure exposure) =>
+    '$walletId:${chain.name}:${net.name}:$exposure';
+
+class _WalletChainExposureKey extends Key<Address> {
+  @override
+  String getKey(Address address) => _walletChainExposureToKey(
+      address.walletId, address.chain, address.net, address.exposure);
+}
+
+extension ByWalletChainExposureMethodsForAddress
+    on Index<_WalletChainExposureKey, Address> {
+  List<Address> getAll(
+          String walletId, Chain chain, Net net, NodeExposure exposure) =>
+      getByKeyStr(_walletChainExposureToKey(walletId, chain, net, exposure));
+}
+
+// byWalletExposureIndex
+
+String _walletChainExposureHDToKey(String walletId, Chain chain, Net net,
+        NodeExposure exposure, int hdIndex) =>
+    '$walletId:${chain.name}:${net.name}:$exposure:$hdIndex';
+
+class _WalletChainExposureHDKey extends Key<Address> {
+  @override
+  String getKey(Address address) => _walletChainExposureHDToKey(
+      address.walletId,
+      address.chain,
+      address.net,
+      address.exposure,
+      address.hdIndex);
+}
+
+extension ByWalletChainExposureHDMethodsForAddress
+    on Index<_WalletChainExposureHDKey, Address> {
+  Address? getOne(String walletId, Chain chain, Net net, NodeExposure exposure,
+          int hdIndex) =>
+      getByKeyStr(_walletChainExposureHDToKey(
+              walletId, chain, net, exposure, hdIndex))
+          .firstOrNull;
+}
