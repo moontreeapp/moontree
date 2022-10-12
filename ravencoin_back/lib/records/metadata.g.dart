@@ -23,13 +23,15 @@ class MetadataAdapter extends TypeAdapter<Metadata> {
       kind: fields[3] as MetadataType,
       parent: fields[4] as String?,
       logo: fields[5] as bool,
+      chain: fields[7] == null ? Chain.ravencoin : fields[7] as Chain,
+      net: fields[8] == null ? Net.Main : fields[8] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Metadata obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.symbol)
       ..writeByte(1)
@@ -41,7 +43,11 @@ class MetadataAdapter extends TypeAdapter<Metadata> {
       ..writeByte(4)
       ..write(obj.parent)
       ..writeByte(5)
-      ..write(obj.logo);
+      ..write(obj.logo)
+      ..writeByte(7)
+      ..write(obj.chain)
+      ..writeByte(8)
+      ..write(obj.net);
   }
 
   @override

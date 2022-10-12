@@ -19,17 +19,23 @@ class SecurityAdapter extends TypeAdapter<Security> {
     return Security(
       symbol: fields[0] as String,
       securityType: fields[1] as SecurityType,
+      chain: fields[2] == null ? Chain.ravencoin : fields[2] as Chain,
+      net: fields[3] == null ? Net.Main : fields[3] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Security obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.symbol)
       ..writeByte(1)
-      ..write(obj.securityType);
+      ..write(obj.securityType)
+      ..writeByte(2)
+      ..write(obj.chain)
+      ..writeByte(3)
+      ..write(obj.net);
   }
 
   @override

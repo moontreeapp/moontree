@@ -10,12 +10,12 @@ extension AssetCanHaveOneParent on Asset {
 
 extension AssetHasOneSecurity on Asset {
   Security? get security => pros.securities.bySymbolSecurityType
-      .getOne(symbol, SecurityType.RavenAsset);
+      .getOne(symbol, SecurityType.RavenAsset, chain, net);
 }
 
 extension AssetHasOneMetadata on Asset {
   Metadata? get primaryMetadata => [
-        pros.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata)
+        pros.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata, chain, net)
       ].where((md) => md?.parent == null).firstOrNull;
 }
 
@@ -32,7 +32,7 @@ extension AssetHasOneLogoMetadata on Asset {
       }
     }
     var primaryMetadata = [
-      pros.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata)
+      pros.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata, chain, net)
     ].where((md) => md?.parent == null).firstOrNull;
     if (primaryMetadata?.kind == MetadataType.ImagePath) {
       return primaryMetadata;

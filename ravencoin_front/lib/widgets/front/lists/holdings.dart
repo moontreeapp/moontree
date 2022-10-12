@@ -189,9 +189,16 @@ class _HoldingList extends State<HoldingList> {
           .map((v) => v.assetSecurityId?.split(':').first ?? 'RVN')
           .toSet()) {
         balances.add(Balance(
+            chain: Current.chain,
+            net: Current.net,
             walletId: walletId,
             security: pros.securities.bySymbol.getAll(symbol).firstOrNull ??
-                Security(symbol: symbol, securityType: SecurityType.RavenAsset),
+                Security(
+                  symbol: symbol,
+                  securityType: SecurityType.RavenAsset,
+                  chain: Current.chain,
+                  net: Current.net,
+                ),
             confirmed: 0,
             unconfirmed: 0));
       }
@@ -673,7 +680,11 @@ class _HoldingList extends State<HoldingList> {
               : components.text.securityAsReadable(holding.balance?.value ?? 0,
                   security: holding.balance?.security ??
                       Security(
-                          symbol: 'unknown', securityType: SecurityType.Fiat),
+                        symbol: 'unknown',
+                        securityType: SecurityType.Fiat,
+                        chain: Current.chain,
+                        net: Current.net,
+                      ),
                   asUSD: showUSD),
           style: Theme.of(context)
               .textTheme

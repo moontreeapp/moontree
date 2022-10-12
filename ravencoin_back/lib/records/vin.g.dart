@@ -21,13 +21,15 @@ class VinAdapter extends TypeAdapter<Vin> {
       voutTransactionId: fields[1] as String,
       voutPosition: fields[2] as int,
       isCoinbase: fields[3] as bool,
+      chain: fields[4] == null ? Chain.ravencoin : fields[4] as Chain,
+      net: fields[5] == null ? Net.Main : fields[5] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Vin obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.transactionId)
       ..writeByte(1)
@@ -35,7 +37,11 @@ class VinAdapter extends TypeAdapter<Vin> {
       ..writeByte(2)
       ..write(obj.voutPosition)
       ..writeByte(3)
-      ..write(obj.isCoinbase);
+      ..write(obj.isCoinbase)
+      ..writeByte(4)
+      ..write(obj.chain)
+      ..writeByte(5)
+      ..write(obj.net);
   }
 
   @override

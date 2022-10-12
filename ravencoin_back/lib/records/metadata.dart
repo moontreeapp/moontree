@@ -6,8 +6,10 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:ravencoin_back/records/types/metadata_type.dart';
 import 'package:ravencoin_back/extensions/object.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 
 import '_type_id.dart';
 
@@ -33,6 +35,12 @@ class Metadata with EquatableMixin {
   @HiveField(5)
   final bool logo; // helper flag for logos (most chilren will be logos)
 
+  @HiveField(7, defaultValue: Chain.ravencoin)
+  final Chain chain;
+
+  @HiveField(8, defaultValue: Net.Main)
+  final Net net;
+
   /// metadata is often an ipfsHash of json which often includes an ipfsHash
   /// for the logo. Instead of looking it up everytime, since there is no hard
   /// format, we save the ipfsLogo hash on the object when we figure it out.
@@ -49,24 +57,30 @@ class Metadata with EquatableMixin {
     required this.kind,
     this.parent,
     this.logo = false,
+    required this.chain,
+    required this.net,
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         symbol,
         metadata,
-        data ?? '',
+        data,
         kind,
-        parent ?? '',
+        parent,
         logo,
+        chain,
+        net,
       ];
 
   @override
   String toString() => 'Metadata(symbol: $symbol, metadata: $metadata, '
-      'data: $data, kind: $kind, parent: $parent, logo: $logo)';
+      'data: $data, kind: $kind, parent: $parent, logo: $logo, '
+      '${chainNetReadable(chain, net)}';
 
-  static String metadataKey(String symbol, String metadata) =>
-      '$symbol:$metadata';
-  String get id => '$symbol:$metadata';
+  static String key(String symbol, String metadata, Chain chain, Net net) =>
+      '$symbol:$metadata:${chainNetKey(chain, net)}';
+
+  String get id => key(symbol, metadata, chain, net);
   String get metadataTypeName => kind.name;
 }

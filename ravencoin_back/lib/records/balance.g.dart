@@ -21,13 +21,15 @@ class BalanceAdapter extends TypeAdapter<Balance> {
       security: fields[1] as Security,
       confirmed: fields[2] as int,
       unconfirmed: fields[3] as int,
+      chain: fields[4] == null ? Chain.ravencoin : fields[4] as Chain,
+      net: fields[5] == null ? Net.Main : fields[5] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Balance obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.walletId)
       ..writeByte(1)
@@ -35,7 +37,11 @@ class BalanceAdapter extends TypeAdapter<Balance> {
       ..writeByte(2)
       ..write(obj.confirmed)
       ..writeByte(3)
-      ..write(obj.unconfirmed);
+      ..write(obj.unconfirmed)
+      ..writeByte(4)
+      ..write(obj.chain)
+      ..writeByte(5)
+      ..write(obj.net);
   }
 
   @override

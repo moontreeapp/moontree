@@ -18,15 +18,21 @@ class BlockAdapter extends TypeAdapter<Block> {
     };
     return Block(
       height: fields[0] as int,
+      chain: fields[1] == null ? Chain.ravencoin : fields[1] as Chain,
+      net: fields[2] == null ? Net.Main : fields[2] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Block obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.height);
+      ..write(obj.height)
+      ..writeByte(1)
+      ..write(obj.chain)
+      ..writeByte(2)
+      ..write(obj.net);
   }
 
   @override

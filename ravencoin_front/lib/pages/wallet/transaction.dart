@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -209,7 +210,7 @@ class _TransactionPageState extends State<TransactionPage> {
 
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
     tx = tx ?? transaction!;
-    current = current ?? pros.blocks.latest;
+    current = current ?? pros.blocks.latest(Current.chain, Current.net);
     return (current != null && tx.height != null)
         ? current.height - tx.height!
         : null;

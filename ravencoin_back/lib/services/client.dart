@@ -254,6 +254,8 @@ class SubscribeService {
       await services.download.unspents.pull(
         scripthashes: {address.scripthash},
         wallet: address.wallet!,
+        chain: address.chain,
+        net: address.net,
         getTransactions: true,
       );
 

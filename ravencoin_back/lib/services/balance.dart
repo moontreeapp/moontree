@@ -36,15 +36,23 @@ class BalanceService {
     for (var walletId in walletIds) {
       for (var symbol in pros.unspents.getSymbolsByWallet(walletId)) {
         var security = pros.securities.bySymbol.getAll(symbol).firstOrNull ??
-            Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+            Security(
+              symbol: symbol,
+              securityType: SecurityType.RavenAsset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            );
         var confirmed = pros.unspents.totalConfirmed(walletId, symbol);
         var unconfirmed = pros.unspents.totalUnconfirmed(walletId, symbol);
         if (confirmed + unconfirmed > 0) {
           balances.add(Balance(
-              walletId: walletId,
-              security: security,
-              confirmed: confirmed,
-              unconfirmed: unconfirmed));
+            walletId: walletId,
+            security: security,
+            confirmed: confirmed,
+            unconfirmed: unconfirmed,
+            chain: pros.settings.chain,
+            net: pros.settings.net,
+          ));
         }
       }
     }
@@ -103,8 +111,14 @@ class BalanceService {
   }
 
   Balance walletBalance(Wallet wallet, Security security) {
-    var retBalance =
-        Balance(walletId: '', confirmed: 0, unconfirmed: 0, security: security);
+    var retBalance = Balance(
+      walletId: '',
+      confirmed: 0,
+      unconfirmed: 0,
+      security: security,
+      chain: pros.settings.chain,
+      net: pros.settings.net,
+    );
     for (var balance in wallet.balances) {
       if (balance.security == security) {
         retBalance = retBalance + balance;

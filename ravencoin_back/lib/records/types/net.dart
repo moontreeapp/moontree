@@ -18,3 +18,20 @@ enum Net {
   @HiveField(1)
   Test
 }
+
+String netSymbolModifier(Net net) {
+  switch (net) {
+    case Net.Main:
+      return '';
+    case Net.Test:
+      return 't';
+    default:
+      return '';
+  }
+}
+
+String netKey(Net net) => net.name;
+
+String netReadable(Net net) => 'net: ${net.name}';
+
+String netName(Net net) => net.name;

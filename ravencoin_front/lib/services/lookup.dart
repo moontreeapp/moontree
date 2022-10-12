@@ -26,4 +26,7 @@ class Current {
 
   static List<TransactionRecord> walletCompiledTransactions() =>
       services.transaction.getTransactionRecords(wallet: wallet);
+
+  static get chain => pros.settings.chain;
+  static get net => pros.settings.net;
 }

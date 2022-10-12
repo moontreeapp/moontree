@@ -5,5 +5,5 @@ part of 'block.dart';
 // only latest block saved in proclaim at this time
 class _HeaderKey extends Key<Block> {
   @override
-  String getKey(Block header) => Block.blockKey();
+  String getKey(Block header) => Block.key(header.chain, header.net);
 }

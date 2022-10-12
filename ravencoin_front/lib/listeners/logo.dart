@@ -48,6 +48,8 @@ class AssetListener {
         var ipfs = IpfsMiniExplorer(asset.metadata);
         var resp = await ipfs.get();
         await pros.metadatas.save(Metadata(
+            chain: pros.settings.chain,
+            net: pros.settings.net,
             symbol: asset.symbol,
             metadata: asset.metadata,
             data: resp,
@@ -75,6 +77,8 @@ class LogoListener {
       var ipfs = IpfsMiniExplorer(hash);
       var resp = await ipfs.get();
       pros.metadatas.save(Metadata(
+        chain: pros.settings.chain,
+        net: pros.settings.net,
         symbol: metadata.symbol,
         metadata: hash,
         data: resp,

@@ -31,40 +31,47 @@ class FixtureSet1 extends FixtureSet {
             walletId: '0',
             hdIndex: 0,
             exposure: NodeExposure.Internal,
-            net: Net.Test),
+            net: Net.Test,
+            chain: Chain.ravencoin),
         '1': Address(
             id: '1',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 1,
             exposure: NodeExposure.External,
-            net: Net.Test),
+            net: Net.Test,
+            chain: Chain.ravencoin),
         '2': Address(
             id: '2',
             address: 'address 2 address',
             walletId: '0',
             hdIndex: 2,
             exposure: NodeExposure.External,
-            net: Net.Test),
+            net: Net.Test,
+            chain: Chain.ravencoin),
         '3': Address(
             id: '3',
             address: 'address 3 address',
             walletId: '0',
             hdIndex: 3,
             exposure: NodeExposure.External,
-            net: Net.Test),
+            net: Net.Test,
+            chain: Chain.ravencoin),
         '100': Address(
             id: '100',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 3,
             exposure: NodeExposure.External,
-            net: Net.Test),
+            net: Net.Test,
+            chain: Chain.ravencoin),
       };
 
   @override
   Map<String, Asset> get assets => {
         '0': Asset(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             symbol: 'MOONTREE',
             satsInCirculation: 1000,
             divisibility: 0,
@@ -73,6 +80,8 @@ class FixtureSet1 extends FixtureSet {
             transactionId: '10',
             position: 2),
         '1': Asset(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             symbol: 'MOONTREE1',
             satsInCirculation: 1000,
             divisibility: 2,
@@ -85,22 +94,43 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Balance> get balances => {
         '0': Balance(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             walletId: '0',
             confirmed: 15000000,
             unconfirmed: 10000000,
-            security:
-                Security(symbol: 'RVN', securityType: SecurityType.Crypto)),
+            security: Security(
+              symbol: 'RVN',
+              securityType: SecurityType.Crypto,
+              chain: Chain.ravencoin,
+              net: Net.Main,
+            )),
         '1': Balance(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             walletId: '0',
             confirmed: 100,
             unconfirmed: 0,
-            security: Security(symbol: 'USD', securityType: SecurityType.Fiat)),
+            security: Security(
+              symbol: 'USD',
+              securityType: SecurityType.Fiat,
+              chain: Chain.ravencoin,
+              net: Net.Main,
+            )),
       };
 
   @override
   Map<String, Block> get blocks => {
-        '0': Block(height: 0),
-        '1': Block(height: 1),
+        '0': Block(
+          height: 0,
+          chain: Chain.ravencoin,
+          net: Net.Main,
+        ),
+        '1': Block(
+          height: 1,
+          chain: Chain.ravencoin,
+          net: Net.Main,
+        ),
       };
 
   @override
@@ -111,13 +141,17 @@ class FixtureSet1 extends FixtureSet {
 
   @override
   Map<String, Metadata> get metadatas => {
-        Metadata.metadataKey('MOONTREE', 'metadata'): Metadata(
-            symbol: 'MOONTREE',
-            metadata: 'metadata',
-            data: null,
-            kind: MetadataType.Unknown,
-            parent: null,
-            logo: false)
+        Metadata.key('MOONTREE', 'metadata', Chain.ravencoin, Net.Main):
+            Metadata(
+          symbol: 'MOONTREE',
+          metadata: 'metadata',
+          data: null,
+          kind: MetadataType.Unknown,
+          parent: null,
+          logo: false,
+          chain: Chain.ravencoin,
+          net: Net.Main,
+        )
       };
 
   @override
@@ -126,23 +160,55 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Rate> get rates => {
         'RVN:Crypto:USD:Fiat': Rate(
-            base: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
-            quote: Security(symbol: 'USD', securityType: SecurityType.Fiat),
+            base: Security(
+              symbol: 'RVN',
+              securityType: SecurityType.Crypto,
+              chain: Chain.ravencoin,
+              net: Net.Main,
+            ),
+            quote: Security(
+              symbol: 'USD',
+              securityType: SecurityType.Fiat,
+              chain: Chain.ravencoin,
+              net: Net.Main,
+            ),
             rate: .1),
         'MOONTREE:RavenAsset:RVN:Crypto': Rate(
             base: Security(
-                symbol: 'MOONTREE', securityType: SecurityType.RavenAsset),
-            quote: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
+              symbol: 'MOONTREE',
+              securityType: SecurityType.RavenAsset,
+              chain: Chain.ravencoin,
+              net: Net.Main,
+            ),
+            quote: Security(
+              symbol: 'RVN',
+              securityType: SecurityType.Crypto,
+              chain: Chain.ravencoin,
+              net: Net.Main,
+            ),
             rate: 100),
       };
 
   @override
   Map<String, Security> get securities => {
-        'RVN:Crypto':
-            Security(symbol: 'RVN', securityType: SecurityType.Crypto),
-        'USD:Fiat': Security(symbol: 'USD', securityType: SecurityType.Fiat),
-        'MOONTREE:RavenAsset':
-            Security(symbol: 'MOONTREE', securityType: SecurityType.RavenAsset),
+        'RVN:Crypto': Security(
+          symbol: 'RVN',
+          securityType: SecurityType.Crypto,
+          chain: Chain.ravencoin,
+          net: Net.Main,
+        ),
+        'USD:Fiat': Security(
+          symbol: 'USD',
+          securityType: SecurityType.Fiat,
+          chain: Chain.ravencoin,
+          net: Net.Main,
+        ),
+        'MOONTREE:RavenAsset': Security(
+          symbol: 'MOONTREE',
+          securityType: SecurityType.RavenAsset,
+          chain: Chain.ravencoin,
+          net: Net.Main,
+        ),
       };
 
   @override
@@ -156,12 +222,26 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Transaction> get transactions => {
         '0': Transaction(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             id: 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             confirmed: true,
             height: 0),
-        '1': Transaction(id: '1', confirmed: true, height: 1),
-        '2': Transaction(id: '2', confirmed: true, height: 2),
+        '1': Transaction(
+            chain: Chain.ravencoin,
+            net: Net.Main,
+            id: '1',
+            confirmed: true,
+            height: 1),
+        '2': Transaction(
+            chain: Chain.ravencoin,
+            net: Net.Main,
+            id: '2',
+            confirmed: true,
+            height: 2),
         '3': Transaction(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             id: 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             confirmed: true,
             height: 2),
@@ -170,13 +250,27 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Vin> get vins => {
         '0': Vin(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '0',
             voutTransactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             voutPosition: 0),
-        '1': Vin(transactionId: '1', voutTransactionId: '1', voutPosition: 0),
-        '2': Vin(transactionId: '2', voutTransactionId: '2', voutPosition: -1),
+        '1': Vin(
+            chain: Chain.ravencoin,
+            net: Net.Main,
+            transactionId: '1',
+            voutTransactionId: '1',
+            voutPosition: 0),
+        '2': Vin(
+            chain: Chain.ravencoin,
+            net: Net.Main,
+            transactionId: '2',
+            voutTransactionId: '2',
+            voutPosition: -1),
         '3': Vin(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '3',
             voutTransactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
@@ -186,6 +280,8 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Vout> get vouts => {
         '0': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             rvnValue: 5000000,
@@ -197,6 +293,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: null,
             additionalAddresses: null), // spent
         '1': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '1',
             rvnValue: 0,
             position: 0,
@@ -207,6 +305,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: 100,
             additionalAddresses: null), // claimed by a Vin
         '2': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '1',
             rvnValue: 0,
             position: 99,
@@ -217,6 +317,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: 100,
             additionalAddresses: null), // not consumed
         '3': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '2',
             rvnValue: 10000000,
             position: -1,
@@ -227,6 +329,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: null,
             additionalAddresses: null), // spent
         '4': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             rvnValue: 10000000,
@@ -238,6 +342,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: null,
             additionalAddresses: null), // spent
         '5': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '10',
             rvnValue: 0,
             position: 0,
@@ -248,6 +354,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: 100,
             additionalAddresses: null), // consumed?
         '6': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '1',
             rvnValue: 0,
             position: 100,
@@ -258,6 +366,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: 1000,
             additionalAddresses: null), // not consumed
         '7': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '1',
             rvnValue: 0,
             position: 101,
@@ -268,6 +378,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: 500,
             additionalAddresses: null), // not consumed
         '8': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             rvnValue: 5000000,
@@ -279,6 +391,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: null,
             additionalAddresses: null), // unspent
         '9': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId: '2',
             rvnValue: 10000000,
             position: -10,
@@ -289,6 +403,8 @@ class FixtureSet1 extends FixtureSet {
             assetValue: null,
             additionalAddresses: null), // unspent
         '10': Vout(
+            chain: Chain.ravencoin,
+            net: Net.Main,
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
             rvnValue: 10000000,

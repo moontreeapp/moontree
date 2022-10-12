@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:ravencoin_back/utilities/hex.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart'
     show KPWallet, NetworkType, ECPair;
@@ -9,11 +11,14 @@ class SingleWalletService {
     var net = pros.settings.net;
     var kpWallet = await wallet.kpWallet; //getKPWallet(wallet);
     return Address(
-        id: kpWallet.scripthash,
-        address: kpWallet.address!,
-        walletId: wallet.id,
-        hdIndex: 0,
-        net: net);
+      id: kpWallet.scripthash,
+      address: kpWallet.address!,
+      walletId: wallet.id,
+      exposure: NodeExposure.External, // ignored on singles.
+      hdIndex: 0,
+      chain: pros.settings.chain,
+      net: net,
+    );
   }
 
   KPWallet getKPWallet(SingleWallet wallet) => KPWallet.fromWIF(

@@ -51,6 +51,12 @@ class Vout with EquatableMixin, ToStringMixin {
   @HiveField(10)
   List<String>? additionalAddresses;
 
+  @HiveField(11, defaultValue: Chain.ravencoin)
+  final Chain chain;
+
+  @HiveField(12, defaultValue: Net.Main)
+  final Net net;
+
   Vout({
     required this.transactionId,
     required this.position,
@@ -63,6 +69,8 @@ class Vout with EquatableMixin, ToStringMixin {
     this.assetSecurityId,
     this.toAddress,
     this.additionalAddresses,
+    required this.chain,
+    required this.net,
   });
 
   // this is wrong. confirmed may have had something to do with position back
@@ -83,6 +91,8 @@ class Vout with EquatableMixin, ToStringMixin {
         assetSecurityId,
         toAddress,
         additionalAddresses,
+        chain,
+        net,
       ];
 
   @override
@@ -101,12 +111,14 @@ class Vout with EquatableMixin, ToStringMixin {
         'assetSecurityId',
         'toAddress',
         'additionalAddresses',
+        'chain',
+        'net',
       ];
 
-  String get id => getVoutId(transactionId, position);
+  String get id => key(transactionId, position, chain, net);
 
-  static String getVoutId(String transactionId, int position) =>
-      '$transactionId:$position';
+  static String key(String transactionId, int position, Chain chain, Net net) =>
+      '$transactionId:$position:${chainNetKey(chain, net)}';
 
   List<String> get toAddresses =>
       [if (toAddress != null) toAddress!, ...additionalAddresses ?? []];

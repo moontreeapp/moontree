@@ -157,8 +157,12 @@ class GenericCreateRequest with ToStringMixin {
         'parent',
       ];
 
-  Security get security =>
-      Security(symbol: fullName, securityType: SecurityType.RavenAsset);
+  Security get security => Security(
+        symbol: fullName,
+        securityType: SecurityType.RavenAsset,
+        chain: pros.settings.chain,
+        net: pros.settings.net,
+      );
 }
 
 class GenericReissueRequest with ToStringMixin {
@@ -234,8 +238,12 @@ class GenericReissueRequest with ToStringMixin {
         'parent',
       ];
 
-  Security get security =>
-      Security(symbol: fullName, securityType: SecurityType.RavenAsset);
+  Security get security => Security(
+        symbol: fullName,
+        securityType: SecurityType.RavenAsset,
+        chain: pros.settings.chain,
+        net: pros.settings.net,
+      );
 }
 
 class SendRequest with ToStringMixin {
@@ -564,7 +572,10 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: parentAsset, securityType: SecurityType.RavenAsset))
+                chain: pros.settings.chain,
+                net: pros.settings.net,
+                symbol: parentAsset,
+                securityType: SecurityType.RavenAsset))
         : <Vout>[];
     var securityIn = 0;
     for (var utxo in utxosSecurity) {
@@ -645,6 +656,8 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
+                chain: pros.settings.chain,
+                net: pros.settings.net,
                 symbol: estimate.security!.symbol.substring(1) + '!',
                 securityType: SecurityType.RavenAsset))
         : <Vout>[];
@@ -721,6 +734,8 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
+            chain: pros.settings.chain,
+            net: pros.settings.net,
             symbol: estimate.security!.symbol.substring(1) + '!',
             securityType: SecurityType.RavenAsset));
     var returnAddress =
@@ -796,6 +811,8 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 sat for ownership asset
         security: Security(
+            chain: pros.settings.chain,
+            net: pros.settings.net,
             symbol: estimate.security!.symbol[0] == '\$'
                 ? estimate.security!.symbol.substring(1) + '!'
                 : estimate.security!.symbol,
@@ -876,6 +893,8 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
+            chain: pros.settings.chain,
+            net: pros.settings.net,
             symbol: estimate.security!.symbol + '!',
             securityType: SecurityType.RavenAsset));
     var returnAddress =
@@ -1010,6 +1029,8 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
+                chain: pros.settings.chain,
+                net: pros.settings.net,
                 symbol: parentAsset + '!',
                 securityType: SecurityType.RavenAsset))
         : <Vout>[];
@@ -1079,6 +1100,8 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
+                chain: pros.settings.chain,
+                net: pros.settings.net,
                 symbol: parentAsset + '!',
                 securityType: SecurityType.RavenAsset))
         : <Vout>[];

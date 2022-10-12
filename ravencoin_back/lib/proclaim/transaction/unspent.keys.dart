@@ -31,8 +31,8 @@ class _TransactionPositionKey extends Key<Unspent> {
 
 extension ByTransactionPositionMethodsForUnspent
     on Index<_TransactionPositionKey, Unspent> {
-  Unspent? getOne(String transactionId, int position) =>
-      getByKeyStr(Unspent.getUnspentId(transactionId, position)).firstOrNull;
+  Unspent? getOne(String transactionId, int position, Chain chain, Net net) =>
+      getByKeyStr(Unspent.key(transactionId, position, chain, net)).firstOrNull;
 }
 
 // bySecurity
@@ -85,12 +85,12 @@ extension BySymbolMethodsForUnspent on Index<_SymbolKey, Unspent> {
 class _SymbolChainKey extends Key<Unspent> {
   @override
   String getKey(Unspent unspent) =>
-      Unspent.getChainSymbolId(unspent.chain, unspent.symbol);
+      Unspent.getSymbolChainId(unspent.symbol, unspent.chain, unspent.net);
 }
 
 extension BySymbolChainMethodsForUnspent on Index<_SymbolChainKey, Unspent> {
-  List<Unspent> getAll(String symbol, Chain chain) =>
-      getByKeyStr(Unspent.getChainSymbolId(chain, symbol));
+  List<Unspent> getAll(String symbol, Chain chain, Net net) =>
+      getByKeyStr(Unspent.getSymbolChainId(symbol, chain, net));
 }
 
 // byWallet
@@ -121,12 +121,12 @@ extension ByWalletSymbolMethodsForUnspent on Index<_WalletSymbolKey, Unspent> {
 class _WalletChainKey extends Key<Unspent> {
   @override
   String getKey(Unspent unspent) =>
-      Unspent.getWalletChainId(unspent.walletId, unspent.chain);
+      Unspent.getWalletChainId(unspent.walletId, unspent.chain, unspent.net);
 }
 
 extension ByWalletChainMethodsForUnspent on Index<_WalletChainKey, Unspent> {
-  List<Unspent> getAll(String walletId, Chain chain) =>
-      getByKeyStr(Unspent.getWalletChainId(walletId, chain));
+  List<Unspent> getAll(String walletId, Chain chain, Net net) =>
+      getByKeyStr(Unspent.getWalletChainId(walletId, chain, net));
 }
 
 // byWalletChainSymbol
@@ -134,14 +134,14 @@ extension ByWalletChainMethodsForUnspent on Index<_WalletChainKey, Unspent> {
 class _WalletChainSymbolKey extends Key<Unspent> {
   @override
   String getKey(Unspent unspent) => Unspent.getWalletChainSymbolId(
-      unspent.walletId, unspent.chain, unspent.symbol);
+      unspent.walletId, unspent.chain, unspent.net, unspent.symbol);
 }
 
 extension ByWalletChainSymbolMethodsForUnspent
     on Index<_WalletChainSymbolKey, Unspent> {
-  List<Unspent> getAll(String walletId, Chain chain, String? symbol) =>
-      getByKeyStr(
-          Unspent.getWalletChainSymbolId(walletId, chain, symbol ?? 'RVN'));
+  List<Unspent> getAll(String walletId, Chain chain, Net net, String? symbol) =>
+      getByKeyStr(Unspent.getWalletChainSymbolId(
+          walletId, chain, net, symbol ?? 'RVN'));
 }
 
 // byWalletConfirmation
@@ -176,14 +176,14 @@ extension ByWalletSymbolConfirmationMethodsForUnspent
 class _WalletChainConfirmationKey extends Key<Unspent> {
   @override
   String getKey(Unspent unspent) => Unspent.getWalletChainConfirmationId(
-      unspent.walletId, unspent.chain, unspent.isConfirmed);
+      unspent.walletId, unspent.chain, unspent.net, unspent.isConfirmed);
 }
 
 extension ByWalletChainConfirmationMethodsForUnspent
     on Index<_WalletChainConfirmationKey, Unspent> {
-  List<Unspent> getAll(String walletId, Chain chain, bool confirmed) =>
-      getByKeyStr(
-          Unspent.getWalletChainConfirmationId(walletId, chain, confirmed));
+  List<Unspent> getAll(String walletId, Chain chain, Net net, bool confirmed) =>
+      getByKeyStr(Unspent.getWalletChainConfirmationId(
+          walletId, chain, net, confirmed));
 }
 
 // byWalletChainSymbolConfirmation
@@ -191,13 +191,18 @@ extension ByWalletChainConfirmationMethodsForUnspent
 class _WalletChainSymbolConfirmationKey extends Key<Unspent> {
   @override
   String getKey(Unspent unspent) => Unspent.getWalletChainSymbolConfirmationId(
-      unspent.walletId, unspent.chain, unspent.symbol, unspent.isConfirmed);
+        unspent.walletId,
+        unspent.chain,
+        unspent.net,
+        unspent.symbol,
+        unspent.isConfirmed,
+      );
 }
 
 extension ByWalletChainSymbolConfirmationMethodsForUnspent
     on Index<_WalletChainSymbolConfirmationKey, Unspent> {
-  List<Unspent> getAll(
-          String walletId, Chain chain, String? symbol, bool confirmed) =>
+  List<Unspent> getAll(String walletId, Chain chain, Net net, String? symbol,
+          bool confirmed) =>
       getByKeyStr(Unspent.getWalletChainSymbolConfirmationId(
-          walletId, chain, symbol ?? 'RVN', confirmed));
+          walletId, chain, net, symbol ?? 'RVN', confirmed));
 }

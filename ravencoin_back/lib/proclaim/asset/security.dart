@@ -17,8 +17,36 @@ class SecurityProclaim extends Proclaim<_SecurityIdKey, Security> {
   }
 
   static Map<String, Security> get defaults => {
-        'USD:Fiat': Security(symbol: 'USD', securityType: SecurityType.Fiat),
-        'RVN:Crypto': Security(symbol: 'RVN', securityType: SecurityType.Crypto)
+        'USD:Fiat': Security(
+          symbol: 'USD',
+          securityType: SecurityType.Fiat,
+          chain: Chain.none,
+          net: Net.Main,
+        ),
+        'RVN:Crypto': Security(
+          symbol: 'RVN',
+          securityType: SecurityType.Crypto,
+          chain: Chain.ravencoin,
+          net: Net.Main,
+        ),
+        'EVR:Crypto': Security(
+          symbol: 'EVR',
+          securityType: SecurityType.Crypto,
+          chain: Chain.evrmore,
+          net: Net.Main,
+        ),
+        'RVNt:Crypto': Security(
+          symbol: 'RVNt',
+          securityType: SecurityType.Crypto,
+          chain: Chain.ravencoin,
+          net: Net.Test,
+        ),
+        'EVRt:Crypto': Security(
+          symbol: 'EVRt',
+          securityType: SecurityType.Crypto,
+          chain: Chain.evrmore,
+          net: Net.Test,
+        )
       };
 
   Security get RVN =>

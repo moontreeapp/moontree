@@ -15,6 +15,7 @@ enum SecurityType {
   @HiveField(2)
   RavenAsset,
 
+  /// never used
   @HiveField(3)
   RavenMaster,
 }

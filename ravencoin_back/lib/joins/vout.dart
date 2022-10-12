@@ -9,7 +9,7 @@ extension VoutBelongsToTransaction on Vout {
 
 extension VoutBelongsToVin on Vout {
   Vin? get vin =>
-      pros.vins.byVoutId.getOne(Vout.getVoutId(transactionId, position));
+      pros.vins.byVoutId.getOne(Vout.key(transactionId, position, chain, net));
   // no vin - this is a unspent output
 }
 

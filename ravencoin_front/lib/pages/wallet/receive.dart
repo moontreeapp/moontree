@@ -89,8 +89,12 @@ class _ReceiveState extends State<Receive> {
     fetchedNames = requestMessage.text.length <= 32
         ? (await services.client.api.getAssetNames(requestMessage.text))
             .toList()
-            .map((e) =>
-                Security(symbol: e, securityType: SecurityType.RavenAsset))
+            .map((e) => Security(
+                  symbol: e,
+                  securityType: SecurityType.RavenAsset,
+                  chain: Current.chain,
+                  net: Current.net,
+                ))
             .toList()
         : [];
   }

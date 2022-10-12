@@ -91,8 +91,15 @@ Balance blank(Asset asset) => Balance(
     walletId: '',
     confirmed: 0,
     unconfirmed: 0,
+    chain: pros.settings.chain,
+    net: pros.settings.net,
     security: asset.security ??
-        Security(securityType: SecurityType.RavenAsset, symbol: asset.symbol));
+        Security(
+          securityType: SecurityType.RavenAsset,
+          symbol: asset.symbol,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ));
 
 Map<String, AssetHolding> assetHoldingsFromAssets(String parent) {
   Map<String, AssetHolding> assets = {};

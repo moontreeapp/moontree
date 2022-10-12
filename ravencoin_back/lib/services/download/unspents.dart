@@ -15,14 +15,20 @@ class UnspentService {
 
   void _maybeSubscribeToAsset({
     required String symbol,
+    required Chain chain,
+    required Net net,
     bool subscribe = false,
   }) {
     if (pros.unspents.bySymbol.getAll(symbol).isEmpty) {
-      if (subscribe && symbol != 'RVN') {
+      if (subscribe &&
+          !(symbol == 'RVN' && chain == Chain.ravencoin) &&
+          !(symbol == 'EVR' && chain == Chain.evrmore)) {
         // Subscribe to a dummy asset of this type
         // This method checks if we're already subscribed and
         // handles downloads if we are not
         services.client.subscribe.toAsset(Asset(
+            chain: chain,
+            net: net,
             symbol: symbol,
             satsInCirculation: 0,
             divisibility: 0,
@@ -38,6 +44,8 @@ class UnspentService {
   Future<void> pull({
     required Wallet wallet,
     required Set<String> scripthashes,
+    required Chain chain,
+    required Net net,
     bool getTransactions = true,
   }) async {
     var utxos = <Unspent>{};
@@ -47,7 +55,7 @@ class UnspentService {
         .expand((i) => i)
         .toList();
     for (var utxo in rvnUtxos) {
-      utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo));
+      utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo, chain, net));
     }
 
     /// update assets call
@@ -59,8 +67,9 @@ class UnspentService {
       // that are for assets, but have a null symbol which we would interpret as
       // rvn... but we already know none of these are rvn, so don't save it.
       if (utxo.symbol != null) {
-        utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo));
-        _maybeSubscribeToAsset(symbol: utxo.symbol!, subscribe: true);
+        utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo, chain, net));
+        _maybeSubscribeToAsset(
+            symbol: utxo.symbol!, subscribe: true, chain: chain, net: net);
       } else {
         // raise to notify in here?
       }

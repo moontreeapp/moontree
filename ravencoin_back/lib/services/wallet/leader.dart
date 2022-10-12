@@ -80,7 +80,9 @@ class LeaderWalletService {
         walletId: wallet.id,
         hdIndex: hdIndex,
         exposure: exposure,
-        net: pros.settings.net);
+        // TODO: if we don't pass these in here, then while deriving we could change it and screw thigns up...
+        net: pros.settings.net,
+        chain: pros.settings.chain);
   }
 
   Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async {

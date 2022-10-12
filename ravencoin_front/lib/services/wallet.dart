@@ -129,3 +129,13 @@ Future<void> updateWalletNames() async {
   }
   await pros.wallets.saveAll(records);
 }
+
+/// migrating address id to address scripthash
+/// decided not necessary
+//Future<void> migrateAddressIdsToScripthash() async {
+//  var records = <Address>[];
+//  for (var address in pros.addresses.records) {
+//    records.add(Address.from(address, scripthash: address.id));
+//  }
+//  await pros.addresses.saveAll(records);
+//}

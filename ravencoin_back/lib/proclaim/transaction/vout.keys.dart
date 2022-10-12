@@ -31,8 +31,8 @@ class _TransactionPositionKey extends Key<Vout> {
 
 extension ByTransactionPositionMethodsForVout
     on Index<_TransactionPositionKey, Vout> {
-  Vout? getOne(String transactionId, int position) =>
-      getByKeyStr(Vout.getVoutId(transactionId, position)).firstOrNull;
+  Vout? getOne(String transactionId, int position, Chain chain, Net net) =>
+      getByKeyStr(Vout.key(transactionId, position, chain, net)).firstOrNull;
 }
 // bySecurity
 

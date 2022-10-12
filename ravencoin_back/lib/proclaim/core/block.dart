@@ -9,5 +9,6 @@ class BlockProclaim extends Proclaim<_HeaderKey, Block> {
   BlockProclaim() : super(_HeaderKey());
 
   // should be a list of one item since the key is hard coded, should replace it
-  Block? get latest => primaryIndex.getByKeyStr(Block.blockKey()).firstOrNull;
+  Block? latest(Chain chain, Net net) =>
+      primaryIndex.getByKeyStr(Block.key(chain, net)).firstOrNull;
 }

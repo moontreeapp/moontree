@@ -46,6 +46,7 @@ class _SymbolSecurityTypeKey extends Key<Security> {
 
 extension BySymbolSecurityTypeMethodsForSecurity
     on Index<_SymbolSecurityTypeKey, Security> {
-  Security? getOne(String symbol, SecurityType securityType) =>
-      getByKeyStr(Security.securityKey(symbol, securityType)).firstOrNull;
+  Security? getOne(
+          String symbol, SecurityType securityType, Chain chain, Net net) =>
+      getByKeyStr(Security.key(symbol, securityType, chain, net)).firstOrNull;
 }

@@ -8,8 +8,8 @@ extension UnspentBelongsToTransaction on Unspent {
 }
 
 extension UnspentIsAVout on Unspent {
-  Vout? get vout =>
-      pros.vouts.byTransactionPosition.getOne(transactionId, position);
+  Vout? get vout => pros.vouts.byTransactionPosition
+      .getOne(transactionId, position, chain, net);
 }
 
 extension UnspentHasOneSecurity on Unspent {

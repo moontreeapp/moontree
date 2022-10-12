@@ -24,13 +24,15 @@ class AssetAdapter extends TypeAdapter<Asset> {
       metadata: fields[4] as String,
       transactionId: fields[5] as String,
       position: fields[6] as int,
+      chain: fields[7] == null ? Chain.ravencoin : fields[7] as Chain,
+      net: fields[8] == null ? Net.Main : fields[8] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Asset obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.symbol)
       ..writeByte(1)
@@ -44,7 +46,11 @@ class AssetAdapter extends TypeAdapter<Asset> {
       ..writeByte(5)
       ..write(obj.transactionId)
       ..writeByte(6)
-      ..write(obj.position);
+      ..write(obj.position)
+      ..writeByte(7)
+      ..write(obj.chain)
+      ..writeByte(8)
+      ..write(obj.net);
   }
 
   @override

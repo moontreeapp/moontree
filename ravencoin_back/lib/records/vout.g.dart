@@ -28,13 +28,15 @@ class VoutAdapter extends TypeAdapter<Vout> {
       assetSecurityId: fields[8] as String?,
       toAddress: fields[9] as String?,
       additionalAddresses: (fields[10] as List?)?.cast<String>(),
+      chain: fields[11] == null ? Chain.ravencoin : fields[11] as Chain,
+      net: fields[12] == null ? Net.Main : fields[12] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Vout obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.transactionId)
       ..writeByte(1)
@@ -56,7 +58,11 @@ class VoutAdapter extends TypeAdapter<Vout> {
       ..writeByte(9)
       ..write(obj.toAddress)
       ..writeByte(10)
-      ..write(obj.additionalAddresses);
+      ..write(obj.additionalAddresses)
+      ..writeByte(11)
+      ..write(obj.chain)
+      ..writeByte(12)
+      ..write(obj.net);
   }
 
   @override

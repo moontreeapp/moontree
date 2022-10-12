@@ -10,7 +10,7 @@ class _WalletSecurityKey extends Key<Balance> {
 extension ByWalletSecurityMethodsForBalance
     on Index<_WalletSecurityKey, Balance> {
   Balance? getOne(String walletId, Security security) =>
-      getByKeyStr(Balance.balanceKey(walletId, security)).firstOrNull;
+      getByKeyStr(Balance.key(walletId, security)).firstOrNull;
 }
 
 // byWallet

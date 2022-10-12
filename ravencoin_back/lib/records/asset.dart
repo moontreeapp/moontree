@@ -51,8 +51,8 @@ class Asset with EquatableMixin {
     required this.metadata,
     required this.transactionId,
     required this.position,
-    this.chain = Chain.ravencoin,
-    this.net = Net.Main,
+    required this.chain,
+    required this.net,
   });
 
   @override
@@ -71,12 +71,14 @@ class Asset with EquatableMixin {
   @override
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
-      'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position, chain: $chain, net: $net)';
+      'reissuable: $reissuable, metadata: $metadata, '
+      'transactionId: $transactionId, position: $position, '
+      '${chainNetReadable(chain, net)})';
 
-  static String assetKey(String symbol, Chain chain, Net net) =>
-      '$symbol:${chain.name}:${net.name}';
-  String get id => assetKey(symbol, chain, net);
+  String get id => key(symbol, chain, net);
+  static String key(String symbol, Chain chain, Net net) =>
+      '$symbol:${chainNetKey(chain, net)}';
+
   String? get parentId {
     if (assetType == AssetType.Sub) {
       var splits = symbol.split('/');

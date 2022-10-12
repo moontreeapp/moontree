@@ -6,7 +6,7 @@ extension MetadataBelongsToAsset on Metadata {
 
 extension MetadataHasOneParent on Metadata {
   Metadata? get parentMetadata => parent != null
-      ? pros.metadatas.bySymbolMetadata.getOne(symbol, parent!)
+      ? pros.metadatas.bySymbolMetadata.getOne(symbol, parent!, chain, net)
       : null;
 }
 

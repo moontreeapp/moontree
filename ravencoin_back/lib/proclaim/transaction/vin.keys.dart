@@ -31,8 +31,10 @@ class _VoutIdKey extends Key<Vin> {
 
 extension ByVoutIdMethodsForVin on Index<_VoutIdKey, Vin> {
   Vin? getOne(String voutId) => getByKeyStr(voutId).firstOrNull;
-  Vin? getOneDetails(String voutTransactionId, int position) =>
-      getByKeyStr(Vout.getVoutId(voutTransactionId, position)).firstOrNull;
+  Vin? getOneDetails(
+          String voutTransactionId, int position, Chain chain, Net net) =>
+      getByKeyStr(Vout.key(voutTransactionId, position, chain, net))
+          .firstOrNull;
 }
 
 // byIsCoinbase

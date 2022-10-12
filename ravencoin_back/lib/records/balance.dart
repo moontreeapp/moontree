@@ -53,8 +53,9 @@ class Balance with EquatableMixin {
       ];
 
   @override
-  String toString() =>
-      'Balance($walletId, $security, $confirmed, $unconfirmed, $chain, $net)';
+  String toString() => 'Balance(walletId: $walletId, security: $security, '
+      ' confirmed: $confirmed, unconfirmed: $unconfirmed, '
+      '${chainNetReadable(chain, net)})';
 
   factory Balance.fromScripthashBalance({
     required String walletId,
@@ -89,33 +90,22 @@ class Balance with EquatableMixin {
           chain: chain ?? balance.chain,
           net: net ?? balance.net);
 
-  String get id => Balance.balanceKey(walletId, security);
+  String get id => Balance.key(walletId, security);
 
   String get idChain => Balance.balanceChainKey(walletId, security, chain, net);
 
-  static String balanceKey(String walletId, Security security) =>
+  static String key(String walletId, Security security) =>
       '$walletId:${security.id}';
 
   static String balanceChainKey(
           String walletId, Security security, Chain chain, Net net) =>
-      '$walletId:${security.id}:${chain.name}:${net.name}';
+      '$walletId:${security.id}:${chainNetKey(chain, net)}';
 
   static String walletChainKey(String walletId, Chain chain, Net net) =>
-      '$walletId:${chain.name}:${net.name}';
+      '$walletId:${chainNetKey(chain, net)}';
 
   static String securityChainKey(Security security, Chain chain, Net net) =>
-      '${security.id}:${chain.name}:${net.name}';
-
-  static String chainSymbol(Chain chain) {
-    switch (chain) {
-      case Chain.ravencoin:
-        return 'RVN';
-      case Chain.evrmore:
-        return 'EVR';
-      default:
-        return 'RVN';
-    }
-  }
+      '${security.id}:${chainNetKey(chain, net)}';
 
   int get value => confirmed + unconfirmed;
 

@@ -16,6 +16,8 @@ void main() async {
 
     test('saveChangedBalances', () async {
       var updatedBalance = Balance(
+          chain: Chain.ravencoin,
+          net: Net.Main,
           walletId: '0',
           security: pros.securities.RVN,
           confirmed: 15000000,

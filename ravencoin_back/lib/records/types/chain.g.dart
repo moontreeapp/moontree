@@ -14,22 +14,27 @@ class ChainAdapter extends TypeAdapter<Chain> {
   Chain read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return Chain.ravencoin;
+        return Chain.none;
       case 1:
+        return Chain.ravencoin;
+      case 2:
         return Chain.evrmore;
       default:
-        return Chain.ravencoin;
+        return Chain.none;
     }
   }
 
   @override
   void write(BinaryWriter writer, Chain obj) {
     switch (obj) {
-      case Chain.ravencoin:
+      case Chain.none:
         writer.writeByte(0);
         break;
-      case Chain.evrmore:
+      case Chain.ravencoin:
         writer.writeByte(1);
+        break;
+      case Chain.evrmore:
+        writer.writeByte(2);
         break;
     }
   }
