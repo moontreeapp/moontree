@@ -33,8 +33,8 @@ void main() async {
     test('asset wallet unspents', () {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: pros.securities.bySymbolSecurityType
-                  .getOne('MOONTREE', SecurityType.RavenAsset))
+              security: pros.securities.bySymbolSecurityType.getOne('MOONTREE',
+                  SecurityType.RavenAsset, Chain.ravencoin, Net.Main))
           .toList();
       //expect(?, ?);
     });
@@ -42,8 +42,8 @@ void main() async {
     test('asset wallet unspents', () {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: pros.securities.bySymbolSecurityType
-                  .getOne('MOONTREE', SecurityType.RavenAsset))
+              security: pros.securities.bySymbolSecurityType.getOne('MOONTREE',
+                  SecurityType.RavenAsset, Chain.ravencoin, Net.Main))
           .toList();
       //expect(?, ?);
     });
@@ -51,8 +51,8 @@ void main() async {
     test('missing asset wallet unspents', () {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: pros.securities.bySymbolSecurityType
-                  .getOne('lalala', SecurityType.RavenAsset))
+              security: pros.securities.bySymbolSecurityType.getOne(
+                  'lalala', SecurityType.RavenAsset, Chain.ravencoin, Net.Main))
           .toList();
       //expect(0);
     });
@@ -76,16 +76,16 @@ void main() async {
       var utxos = await services.balance.collectUTXOs(
           walletId: wallet.id,
           amount: 5,
-          security: pros.securities.bySymbolSecurityType
-              .getOne('MOONTREE', SecurityType.RavenAsset));
+          security: pros.securities.bySymbolSecurityType.getOne(
+              'MOONTREE', SecurityType.RavenAsset, Chain.ravencoin, Net.Main));
       expect(utxos.map((utxo) => utxo.assetValue).toList(), [100]);
     });
     test('take multiple from the top', () async {
       var utxos = await services.balance.collectUTXOs(
           walletId: wallet.id,
           amount: 1200,
-          security: pros.securities.bySymbolSecurityType
-              .getOne('MOONTREE', SecurityType.RavenAsset));
+          security: pros.securities.bySymbolSecurityType.getOne(
+              'MOONTREE', SecurityType.RavenAsset, Chain.ravencoin, Net.Main));
       expect(utxos.map((utxo) => utxo.assetValue).toList(), [1000, 500]);
     });
   });

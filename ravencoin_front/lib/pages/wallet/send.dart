@@ -655,8 +655,11 @@ class _SendState extends State<Send> {
           feeGoal: feeGoal,
           security: sendAsset.text == 'Ravencoin'
               ? null
-              : pros.securities.bySymbolSecurityType
-                  .getOne(sendAsset.text, SecurityType.RavenAsset),
+              : pros.securities.bySymbolSecurityType.getOne(
+                  sendAsset.text,
+                  SecurityType.RavenAsset,
+                  pros.settings.chain,
+                  pros.settings.net),
           assetMemo: sendAsset.text != 'Ravencoin' &&
                   sendMemo.text != '' &&
                   sendMemo.text.isIpfs

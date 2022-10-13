@@ -40,9 +40,13 @@ class AssetService {
   }) async {
     var meta = await services.client.api.getMeta(symbol);
     if (meta != null) {
+      var address =
+          pros.addresses.byAddress.getOne(vout?.scriptPubKey.addresses?[0]);
       var value =
           vout == null ? 0 : utils.amountToSat(vout.scriptPubKey.amount);
       var asset = Asset(
+        chain: address?.chain ?? Chain.none,
+        net: address?.net ?? Net.Main,
         symbol: meta.symbol,
         metadata: (await services.client.api.getTransaction(meta.source.txHash))
                 .vout[meta.source.txPos]
@@ -57,6 +61,8 @@ class AssetService {
       );
       streams.asset.added.add(asset);
       var security = Security(
+        chain: address?.chain ?? Chain.none,
+        net: address?.net ?? Net.Main,
         symbol: meta.symbol,
         securityType: SecurityType.RavenAsset,
       );

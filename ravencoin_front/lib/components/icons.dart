@@ -97,8 +97,8 @@ class IconComponents {
 
   /// return custom logo (presumably previously downloaded from ipfs) or null
   Widget? _assetAvatarSecurity(String symbol, {double? height, double? width}) {
-    var security = pros.securities.bySymbolSecurityType
-        .getOne(symbol, SecurityType.RavenAsset);
+    var security = pros.securities.bySymbolSecurityType.getOne(symbol,
+        SecurityType.RavenAsset, pros.settings.chain, pros.settings.net);
     if (security != null &&
         !([null, '']).contains(security.asset?.logo?.data)) {
       try {

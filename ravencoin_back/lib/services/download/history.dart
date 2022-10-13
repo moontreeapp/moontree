@@ -152,11 +152,13 @@ class HistoryService {
   Future<Tuple3<int, Security, Asset?>> handleAssetData(
     Tx tx,
     TxVout vout,
+    Chain chain,
+    Net net,
   ) async {
     var symbol = vout.scriptPubKey.asset ?? 'RVN';
     var value = vout.valueSat;
     var security = pros.securities.bySymbolSecurityType
-        .getOne(symbol, SecurityType.RavenAsset);
+        .getOne(symbol, SecurityType.RavenAsset, chain, net);
     var asset = pros.assets.bySymbol.getOne(symbol);
     if (security == null ||
         asset == null ||
@@ -183,10 +185,14 @@ class HistoryService {
           reissuable: vout.scriptPubKey.reissuable == 1,
           transactionId: tx.txid,
           position: vout.n,
+          chain: chain,
+          net: net,
         );
         security = Security(
           symbol: symbol,
           securityType: SecurityType.RavenAsset,
+          chain: chain,
+          net: net,
         );
         await pros.assets.save(asset);
         await pros.securities.save(security);
@@ -215,26 +221,23 @@ class HistoryService {
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
-    for (var vin in tx.vin) {
-      if (vin.txid != null && vin.vout != null) {
-        newVins.add(Vin(
-          transactionId: tx.txid,
-          voutTransactionId: vin.txid!,
-          voutPosition: vin.vout!,
-        ));
-      } else if (vin.coinbase != null && vin.sequence != null) {
-        newVins.add(Vin(
-          transactionId: tx.txid,
-          voutTransactionId: vin.coinbase!,
-          voutPosition: vin.sequence!,
-          isCoinbase: true,
-        ));
-      }
-    }
+    Chain? chain;
+    Net? net;
+    var safeChain = Chain.none;
+    var safeNet = Net.Main;
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
-      var vs = await handleAssetData(tx, vout);
+      chain ??= pros.addresses.byAddress
+          .getOne(vout.scriptPubKey.addresses?[0])
+          ?.chain;
+      net ??=
+          pros.addresses.byAddress.getOne(vout.scriptPubKey.addresses?[0])?.net;
+      safeChain = chain ?? pros.settings.chain;
+      safeNet = net ?? pros.settings.net;
+      var vs = await handleAssetData(tx, vout, safeChain, safeNet);
       newVouts.add(Vout(
+        chain: safeChain,
+        net: safeNet,
         transactionId: tx.txid,
         position: vout.n,
         type: vout.scriptPubKey.type,
@@ -254,11 +257,33 @@ class HistoryService {
             : null,
       ));
       newTxs.add(Transaction(
+        chain: safeChain,
+        net: safeNet,
         id: tx.txid,
         height: tx.height,
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
       ));
+    }
+    for (var vin in tx.vin) {
+      if (vin.txid != null && vin.vout != null) {
+        newVins.add(Vin(
+          chain: safeChain,
+          net: safeNet,
+          transactionId: tx.txid,
+          voutTransactionId: vin.txid!,
+          voutPosition: vin.vout!,
+        ));
+      } else if (vin.coinbase != null && vin.sequence != null) {
+        newVins.add(Vin(
+          chain: safeChain,
+          net: safeNet,
+          transactionId: tx.txid,
+          voutTransactionId: vin.coinbase!,
+          voutPosition: vin.sequence!,
+          isCoinbase: true,
+        ));
+      }
     }
     return Tuple3(newTxs, newVins, newVouts);
   }
@@ -351,30 +376,24 @@ class HistoryService {
     var newVins = <Vin>{};
     var newVouts = <Vout>{};
     var newTxs = <Transaction>{};
-
-    if (saveVin) {
-      for (var vin in tx.vin) {
-        if (vin.txid != null && vin.vout != null) {
-          newVins.add(Vin(
-            transactionId: tx.txid,
-            voutTransactionId: vin.txid!,
-            voutPosition: vin.vout!,
-          ));
-        } else if (vin.coinbase != null && vin.sequence != null) {
-          newVins.add(Vin(
-            transactionId: tx.txid,
-            voutTransactionId: vin.coinbase!,
-            voutPosition: vin.sequence!,
-            isCoinbase: true,
-          ));
-        }
-      }
-    }
+    Chain? chain;
+    Net? net;
+    var safeChain = Chain.none;
+    var safeNet = Net.Main;
     for (var vout in tx.vout) {
       if (vout.scriptPubKey.type == 'nullassetdata') continue;
-      var vs = await handleAssetData(tx, vout);
+      chain ??= pros.addresses.byAddress
+          .getOne(vout.scriptPubKey.addresses?[0])
+          ?.chain;
+      net ??=
+          pros.addresses.byAddress.getOne(vout.scriptPubKey.addresses?[0])?.net;
+      safeChain = chain ?? pros.settings.chain;
+      safeNet = net ?? pros.settings.net;
+      var vs = await handleAssetData(tx, vout, safeChain, safeNet);
       if (saveVout) {
         newVouts.add(Vout(
+          chain: safeChain,
+          net: safeNet,
           transactionId: tx.txid,
           position: vout.n,
           type: vout.scriptPubKey.type,
@@ -395,11 +414,35 @@ class HistoryService {
         ));
       }
       newTxs.add(Transaction(
+        chain: safeChain,
+        net: safeNet,
         id: tx.txid,
         height: tx.height,
         confirmed: (tx.confirmations ?? 0) > 0,
         time: tx.time,
       ));
+    }
+    if (saveVin) {
+      for (var vin in tx.vin) {
+        if (vin.txid != null && vin.vout != null) {
+          newVins.add(Vin(
+            chain: safeChain,
+            net: safeNet,
+            transactionId: tx.txid,
+            voutTransactionId: vin.txid!,
+            voutPosition: vin.vout!,
+          ));
+        } else if (vin.coinbase != null && vin.sequence != null) {
+          newVins.add(Vin(
+            chain: safeChain,
+            net: safeNet,
+            transactionId: tx.txid,
+            voutTransactionId: vin.coinbase!,
+            voutPosition: vin.sequence!,
+            isCoinbase: true,
+          ));
+        }
+      }
     }
     if (justReturn) {
       return Tuple3(newTxs, newVins, newVouts);

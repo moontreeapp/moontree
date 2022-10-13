@@ -19,7 +19,8 @@ class _AddressKey extends Key<Address> {
 }
 
 extension ByAddressMethodsForAddress on Index<_AddressKey, Address> {
-  Address? getOne(String address) => getByKeyStr(address).firstOrNull;
+  Address? getOne(String? address) =>
+      address == null ? null : getByKeyStr(address).firstOrNull;
 }
 
 // byWallet

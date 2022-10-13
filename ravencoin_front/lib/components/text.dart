@@ -55,8 +55,8 @@ class TextComponents {
       return pros.securities.USD;
     }
     return security ??
-        pros.securities.bySymbolSecurityType
-            .getOne(symbol, SecurityType.RavenAsset) ??
+        pros.securities.bySymbolSecurityType.getOne(symbol,
+            SecurityType.RavenAsset, pros.settings.chain, pros.settings.net) ??
         Security(
           symbol: symbol,
           securityType: SecurityType.RavenAsset,
@@ -74,8 +74,8 @@ class TextComponents {
       return null;
     }
     security = security ??
-        pros.securities.bySymbolSecurityType
-            .getOne(symbol, SecurityType.RavenAsset) ??
+        pros.securities.bySymbolSecurityType.getOne(symbol,
+            SecurityType.RavenAsset, pros.settings.chain, pros.settings.net) ??
         Security(
           symbol: symbol,
           securityType: SecurityType.RavenAsset,

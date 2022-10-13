@@ -23,8 +23,11 @@ class _AssetState extends State<Asset> {
     return BackdropLayers(
       back: CoinSpec(
           pageTitle: 'Asset',
-          security: pros.securities.bySymbolSecurityType
-              .getOne(symbol, SecurityType.RavenAsset)!),
+          security: pros.securities.bySymbolSecurityType.getOne(
+              symbol,
+              SecurityType.RavenAsset,
+              pros.settings.chain,
+              pros.settings.net)!),
       front: FrontCurve(
           height: MediaQuery.of(context).size.height - (201 + 56),
           child: Column(children: [
