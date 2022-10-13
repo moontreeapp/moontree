@@ -80,7 +80,7 @@ class Address with EquatableMixin {
     //String? scripthash,
   }) =>
       Address(
-        id: id ?? address.id,
+        id: id ?? address.idKey,
         address: addressAddress ?? address.address,
         walletId: walletId ?? address.walletId,
         hdIndex: hdIndex ?? address.hdIndex,

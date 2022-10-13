@@ -135,7 +135,7 @@ Future<void> updateWalletNames() async {
 //Future<void> migrateAddressIdsToScripthash() async {
 //  var records = <Address>[];
 //  for (var address in pros.addresses.records) {
-//    records.add(Address.from(address, scripthash: address.id));
+//    records.add(Address.from(address, scripthash: address.idKey));
 //  }
 //  await pros.addresses.saveAll(records);
 //}

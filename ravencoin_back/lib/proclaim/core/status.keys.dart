@@ -31,7 +31,8 @@ class _AddressKey extends Key<Status> {
 
 extension ByAddressMethodsForStatus on Index<_AddressKey, Status> {
   Status? getOne(Address address) =>
-      getByKeyStr(Status.statusId(address.id, StatusType.address)).firstOrNull;
+      getByKeyStr(Status.statusId(address.idKey, StatusType.address))
+          .firstOrNull;
 }
 
 // byAsset

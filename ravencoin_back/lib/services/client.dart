@@ -264,7 +264,7 @@ class SubscribeService {
 
   Future saveStatusUpdate(Address address, String? status) async =>
       await pros.statuses.save(Status(
-        linkId: address.id,
+        linkId: address.idKey,
         statusType: StatusType.address,
         status: status,
       ));
@@ -275,8 +275,8 @@ class SubscribeService {
     }
     if (!subscriptionHandlesAddress[address.walletId]!
         .keys
-        .contains(address.id)) {
-      subscriptionHandlesAddress[address.walletId]![address.id] =
+        .contains(address.idKey)) {
+      subscriptionHandlesAddress[address.walletId]![address.idKey] =
           (await services.client.api.subscribeAddress(address))
               .listen((String? status) async {
         if (!streams.client.busy.value) {
@@ -376,7 +376,7 @@ class SubscribeService {
   }
 
   void unsubscribeAddress(Address address) =>
-      unsubscribeAddressByIds(address.walletId, address.id);
+      unsubscribeAddressByIds(address.walletId, address.idKey);
 
   void unsubscribeAddressByIds(String wallet, String address) =>
       (subscriptionHandlesAddress[wallet] ?? {}).remove(address)?.cancel();

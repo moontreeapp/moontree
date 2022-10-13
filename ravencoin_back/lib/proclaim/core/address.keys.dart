@@ -2,12 +2,12 @@ part of 'address.dart';
 
 // primary key
 
-class _ScripthashKey extends Key<Address> {
+class _IdKey extends Key<Address> {
   @override
-  String getKey(Address address) => address.id;
+  String getKey(Address address) => address.idKey;
 }
 
-extension ByRawScripthashMethodsForAddress on Index<_ScripthashKey, Address> {
+extension ByIdMethodsForAddress on Index<_IdKey, Address> {
   Address? getOne(String addressId) => getByKeyStr(addressId).firstOrNull;
 }
 

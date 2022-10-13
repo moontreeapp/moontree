@@ -13,9 +13,9 @@ class AddressLocation {
         exposure = locationExposure;
 }
 
-class AddressProclaim extends Proclaim<_ScripthashKey, Address> {
+class AddressProclaim extends Proclaim<_IdKey, Address> {
   late IndexMultiple<_AddressKey, Address> byAddress;
-  late IndexMultiple<_ScripthashKey, Address> byScripthash;
+  late IndexMultiple<_IdKey, Address> byScripthash;
   late IndexMultiple<_WalletKey, Address> byWallet;
   late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
   late IndexMultiple<_WalletExposureHDKey, Address> byWalletExposureIndex;
@@ -24,9 +24,9 @@ class AddressProclaim extends Proclaim<_ScripthashKey, Address> {
   late IndexMultiple<_WalletChainExposureHDKey, Address>
       byWalletChainExposureIndex;
 
-  AddressProclaim() : super(_ScripthashKey()) {
+  AddressProclaim() : super(_IdKey()) {
     byAddress = addIndexMultiple('address', _AddressKey());
-    byScripthash = addIndexMultiple('scripthash', _ScripthashKey());
+    byScripthash = addIndexMultiple('scripthash', _IdKey());
     byWallet = addIndexMultiple('wallet', _WalletKey());
     byWalletExposure =
         addIndexMultiple('wallet-exposure', _WalletExposureKey());
@@ -44,7 +44,7 @@ class AddressProclaim extends Proclaim<_ScripthashKey, Address> {
     var i = 0;
     for (var address
         in byWalletExposure.getAll(walletId, NodeExposure.Internal)) {
-      if (address.id == addressId) {
+      if (address.idKey == addressId) {
         return AddressLocation(i, NodeExposure.Internal);
       }
       i = i + 1;
@@ -52,7 +52,7 @@ class AddressProclaim extends Proclaim<_ScripthashKey, Address> {
     i = 0;
     for (var address
         in byWalletExposure.getAll(walletId, NodeExposure.External)) {
-      if (address.id == addressId) {
+      if (address.idKey == addressId) {
         return AddressLocation(i, NodeExposure.External);
       }
       i = i + 1;
