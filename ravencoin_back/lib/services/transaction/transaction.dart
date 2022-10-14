@@ -1,6 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' as networks;
+import 'package:ravencoin_back/streams/spend.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
+import 'package:tuple/tuple.dart';
 
 import 'maker.dart';
 
@@ -40,7 +42,7 @@ class TransactionService {
     var transactionRecords = <TransactionRecord>[];
     final rvn = pros.securities.RVN;
 
-    final net = pros.settings.mainnet ? networks.mainnet : networks.testnet;
+    final net = pros.settings.mainnet ? ravencoin.mainnet : ravencoin.testnet;
     final specialTag = {net.burnAddresses.addTag: net.burnAmounts.addTag};
     final specialReissue = {net.burnAddresses.reissue: net.burnAmounts.reissue};
     final specialCreate = {
@@ -407,6 +409,180 @@ class TransactionService {
     }
     ret.addAll(actual);
     return ret;
+  }
+
+  /// incomplete: uses as few transactions as possible. Only works if they have
+  /// less than 1000 UTXOs
+  Future<bool> sweep({
+    required Wallet from,
+    required String toWalletId,
+    required bool currency,
+    required bool assets,
+  }) async {
+    final destinationAddress = services.wallet.getEmptyAddress(
+      pros.wallets.primaryIndex.getOne(toWalletId)!,
+      NodeExposure.External,
+    );
+    final assetBalances =
+        from.balances.where((b) => b.security.symbol != 'RVN').toList();
+
+    if (from.unspents.isEmpty || from.RVNValue == 0) {
+      // unable to perform any transactions
+      return false;
+    }
+
+    if (assets &&
+        assetBalances.isNotEmpty &&
+        assetBalances.fold(0, (int agg, e) => e.value + agg) > 0) {
+      if (currency) {
+        // ASSETS && RVN
+        if (from.unspents.length < 1000) {
+          // we should be able to do it all in one transaction
+          //Tuple2<ravencoin.Transaction, SendEstimate>
+          var txEstimate = await services.transaction.make.transactionSweepAll(
+            destinationAddress,
+            SendEstimate(from.RVNValue),
+            wallet: from,
+            securities: assetBalances.map((e) => e.security).toSet(),
+            goal: ravencoin.TxGoals.standard,
+          );
+          streams.spend.send.add(TransactionNote(
+            txHex: txEstimate.item1.toHex(),
+          ));
+          return true;
+        } else {
+          // we'll need to make multiple transacitons
+          // do the assets in a loop until they're all spent
+          // then do the RVN in a loop until they're all spent
+          return false;
+        }
+      } else {
+        // JUST ASSETS
+        if (from.unspents.map((e) => e.security.symbol != 'RVN').length <
+            1000) {
+          // we should be able to do it all in one transaction
+          for (var balance in assetBalances) {
+            var txEstimate = await services.transaction.make.transaction(
+              destinationAddress,
+              SendEstimate(balance.value, security: balance.security),
+              wallet: from,
+              goal: ravencoin.TxGoals.standard,
+            );
+            streams.spend.send.add(TransactionNote(
+              txHex: txEstimate.item1.toHex(),
+            ));
+          }
+          return true;
+        } else {
+          // we'll need to make multiple transacitons
+          // do the assets in a loop until they're all spent
+          return false;
+        }
+      }
+    } else {
+      // JUST RVN
+      if (from.unspents.map((e) => e.security.symbol == 'RVN').length < 1000) {
+        // we should be able to do it all in one transaction
+        var txEstimate = await services.transaction.make.transactionSendAllRVN(
+          destinationAddress,
+          SendEstimate(from.RVNValue),
+          wallet: from,
+          goal: ravencoin.TxGoals.standard,
+        );
+        streams.spend.send.add(TransactionNote(
+          txHex: txEstimate.item1.toHex(),
+        ));
+        return true;
+      } else {
+        // we'll need to make multiple transacitons
+        // then do the RVN in a loop until they're all spent
+        return false;
+      }
+    }
+  }
+
+  /// make and execute one or more transactions using all UTXOs
+  /// for now sweeping is not done in one transaction, its as many transactions
+  /// as needed, segmented by assets and maximum number of utxos. in other words
+  /// there will be at least one transaction per security. why? because that's
+  /// how we wrote the transaction maker - one asset at a time. making sweep
+  /// more correct means redoing that entire thing.
+  ///
+  /// this one doesn't really work because it sends the assets, then sends
+  /// change back to self, but it tries to send the rvn right away before it
+  /// gets the unspents of the change.
+  Future<bool> sweepEZ({
+    required Wallet from,
+    required String toWalletId,
+    required bool currency,
+    required bool assets,
+  }) async {
+    final destinationAddress = services.wallet.getEmptyAddress(
+      pros.wallets.primaryIndex.getOne(toWalletId)!,
+      NodeExposure.External,
+    );
+    final assetBalances =
+        from.balances.where((b) => b.security.symbol != 'RVN').toList();
+
+    // if we have assets, send them, and send all the rvn
+    // if we don't have assets or don't want to send them, just sendallRVN
+
+    if (from.unspents.isEmpty || from.RVNValue == 0) {
+      // unable to perform any transactions
+      return false;
+    }
+
+    var fees = 0;
+    if (assets &&
+        assetBalances.isNotEmpty &&
+        assetBalances.fold(0, (int agg, e) => e.value + agg) > 0) {
+      for (var balance in assetBalances) {
+        var txEstimate = await services.transaction.make.transaction(
+          destinationAddress,
+          SendEstimate(balance.value, security: balance.security),
+          wallet: from,
+          goal: ravencoin.TxGoals.standard,
+        );
+        streams.spend.send.add(TransactionNote(
+          txHex: txEstimate.item1.toHex(),
+        ));
+        fees += txEstimate.item2.fees;
+      }
+    }
+    if (currency) {
+      final balance =
+          from.balances.where((e) => e.security.symbol == 'RVN').first;
+      var txEstimate = await services.transaction.make.transactionSendAllRVN(
+        destinationAddress,
+        SendEstimate(balance.value - fees, security: null),
+        wallet: from,
+        goal: ravencoin.TxGoals.standard,
+      );
+      streams.spend.send.add(TransactionNote(
+        txHex: txEstimate.item1.toHex(),
+      ));
+    }
+    return true;
+    //if (sendRequest != null) {
+    //  print('SEND REQUEST $sendRequest');
+    //  Tuple2<ravencoin.Transaction, SendEstimate> tuple;
+    //  try {
+    //    tuple = await services.transaction.make.transactionBy(sendRequest);
+    //    ravencoin.Transaction tx = tuple.item1;
+    //    SendEstimate estimate = tuple.item2;
+    //
+    //    /// extra safety - fee guard clause
+    //    if (estimate.fees > 2 * 100000000) {
+    //      throw Exception(
+    //          'FEE IS TOO LARGE! NO FEE SHOULD EVER BE THIS BIG!');
+    //    }
+    //
+    //    streams.spend.made.add(TransactionNote(
+    //      txHex: tx.toHex(),
+    //      note: sendRequest.note,
+    //    ));
+    //    streams.spend.estimate.add(estimate);
+    //    streams.spend.make.add(null);
   }
 }
 

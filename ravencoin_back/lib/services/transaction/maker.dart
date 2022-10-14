@@ -1311,4 +1311,70 @@ class TransactionMaker {
     tx = txb.build();
     return Tuple2(tx, estimate);
   }
+
+  /// we can skip the while loop because we know we want to include all unspents
+  /// asside from taking a shortcut, this function is actually necessary because
+  /// the other transaction function assume the amount is constant and adds fees
+  /// onto it but when sending all you want the fee taken out of the send amount
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSweepAll(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    required Set<Security> securities,
+    TxGoal? goal,
+    Set<int>? previousFees,
+    int? assetMemoExpiry,
+  }) async {
+    ravencoin.TransactionBuilder makeTxBuilder(
+      List<Vout> utxosCurrency,
+      Map<Security, List<Vout>> utxosBySecurity,
+      SendEstimate estimate,
+    ) {
+      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      for (var utxo in utxosCurrency) {
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      txb.addOutput(toAddress, estimate.amount,
+          asset: null, memo: null, expiry: null);
+      for (var utxo in utxosBySecurity.values.expand((e) => e)) {
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      for (var entry in utxosBySecurity.entries) {
+        txb.addOutput(
+            toAddress,
+            entry.value
+                .fold(0, (int? agg, Vout v) => v.assetValue! + (agg ?? 0)),
+            asset: entry.key.symbol,
+            memo: null,
+            expiry: null);
+      }
+      return txb;
+    }
+
+    print('in sendall');
+    var utxosCurrency = await services.balance.collectUTXOs(
+      walletId: wallet.id,
+      amount: estimate.amount,
+      security: null,
+    );
+    var utxosBySecurity = <Security, List<Vout>>{};
+    for (var security in securities) {
+      utxosBySecurity[security] = await services.balance.collectUTXOs(
+        walletId: wallet.id,
+        amount:
+            pros.balances.byWalletSecurity.getOne(wallet.id, security)!.value,
+        security: security,
+      );
+    }
+    var txb = makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
+    var tx = txb.buildSpoofedSigs();
+    estimate.setFees(tx.fee(goal: goal));
+    estimate.setAmount(estimate.amount - estimate.fees);
+    txb = makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
+    await txb.signEachInput(
+        utxosCurrency + utxosBySecurity.values.expand((e) => e).toList());
+    // gives error: incomplete transaction even though inputs and outputs are there and signed, I think.
+    tx = txb.build();
+    return Tuple2(tx, estimate);
+  }
 }

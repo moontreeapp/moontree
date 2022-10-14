@@ -148,6 +148,14 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Network',
             link: '/settings/network',
           ),
+          if (pros.settings.developerMode == true &&
+              Current.balanceRVN.value > 0)
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.broom,
+              name: 'Sweep',
+              link: '/settings/sweep',
+            ),
           if (pros.settings.developerMode == true)
             destination(
               //icon: MdiIcons.accountCog,

@@ -38,6 +38,7 @@ import 'package:ravencoin_front/pages/settings/developer.dart';
 import 'package:ravencoin_front/pages/settings/advanced.dart';
 import 'package:ravencoin_front/pages/settings/preferences.dart';
 import 'package:ravencoin_front/pages/settings/support.dart';
+import 'package:ravencoin_front/pages/settings/sweep.dart';
 import 'package:ravencoin_front/pages/settings/technical.dart';
 //import 'package:ravencoin_front/pages/settings/currency.dart';
 //import 'package:ravencoin_front/pages/settings/wallet.dart';
@@ -150,5 +151,6 @@ class pages {
         '/settings/technical': (context) => TechnicalView(),
         '/settings/database': (context) => DatabaseOptions(),
         '/settings/developer': (context) => DeveloperOptions(),
+        '/settings/sweep': (context) => SweepPage(),
       };
 }

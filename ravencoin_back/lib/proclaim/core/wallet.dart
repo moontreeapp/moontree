@@ -57,4 +57,9 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
       pros.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!;
 
   String get currentWalletName => currentWallet.name;
+
+  //List<AssetHolding>? get holdings => utils.assetHoldings(balances);
+  ////services.download.unspents
+  //          //    .unspentBalancesByWalletId[Current.walletId] ??
+  //          //[]
 }
