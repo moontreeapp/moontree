@@ -40,6 +40,7 @@ import 'package:ravencoin_front/pages/settings/preferences.dart';
 import 'package:ravencoin_front/pages/settings/support.dart';
 import 'package:ravencoin_front/pages/settings/sweep.dart';
 import 'package:ravencoin_front/pages/settings/technical.dart';
+import 'package:ravencoin_front/pages/settings/wallet.dart';
 //import 'package:ravencoin_front/pages/settings/currency.dart';
 //import 'package:ravencoin_front/pages/settings/wallet.dart';
 import 'package:ravencoin_front/pages/wallet/receive.dart';
@@ -96,7 +97,7 @@ class pages {
         '/home': (context) => Home(),
         '/manage/asset': (context) => Asset(),
         '/transactions': (context) => Transactions(),
-        //'/wallet': (context) => WalletView(), // technical view
+        '/addresses': (context) => WalletView(), // technical view
         '/scan': (context) => ScanQR(),
         // create and reissue would make better sense if it referenced assets,
         // but actually these should all be improved to match

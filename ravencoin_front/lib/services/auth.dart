@@ -65,10 +65,10 @@ class LocalAuthApi {
   }
 
   Future<bool> authenticate({bool stickyAuth = false}) async {
-    if (!(await isSetup)) {
-      reason = AuthenticationResult.notSetup;
-      return false;
-    }
+    //if (!(await isSetup)) {
+    //  reason = AuthenticationResult.notSetup;
+    //  return false;
+    //}
     // Some nativeSecuritys are enrolled.
     //if (nativeSecuritys.contains(BiometricType.strong) ||
     //    nativeSecuritys.contains(BiometricType.face)) {

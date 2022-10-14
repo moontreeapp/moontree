@@ -135,6 +135,7 @@ class _WalletViewState extends State<WalletView> {
           controller: _scrollController,
           padding: EdgeInsets.all(20.0),
           children: <Widget>[
+            /*
             Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
                 style: TextStyle(color: Theme.of(context).bad)),
             SizedBox(height: 15.0),
@@ -156,6 +157,7 @@ class _WalletViewState extends State<WalletView> {
                     ? 'Hide ' + secretName + ' Secret'
                     : 'Show ' + secretName + ' Secret')),
             SizedBox(height: 30.0),
+            */
             Text('Wallet Addresses'),
             SizedBox(height: 10.0),
             Center(
@@ -194,7 +196,7 @@ class _WalletViewState extends State<WalletView> {
           for (var walletAddress
               in wallet.addresses..sort((a, b) => a.compareTo(b)))
             ListTile(
-              onTap: () => setState(() async {
+              onTap: () => setState(() {
                 // Delay to make sure the frames are rendered properly
                 //await Future.delayed(const Duration(milliseconds: 300));
 
@@ -211,9 +213,9 @@ class _WalletViewState extends State<WalletView> {
                     //        walletAddress.address)
                     .toList();
                 address = walletAddress.address;
-                privateKey = (await services.wallet.leader
-                        .getSubWalletFromAddress(walletAddress))
-                    .wif; // .wif is the format that raven-Qt-testnet expects
+                //privateKey = (await services.wallet.leader
+                //        .getSubWalletFromAddress(walletAddress))
+                //    .wif; // .wif is the format that raven-Qt-testnet expects
                 //.base58Priv;
                 //.privKey;
                 exposureAndIndex = Column(children: [
@@ -243,10 +245,12 @@ class _WalletViewState extends State<WalletView> {
                           style: Theme.of(context).textTheme.caption),
                     ],
                   ),
+                  /*
                   SizedBox(height: 10),
                   SelectableText(
                     'private key: ' + (privateKey ?? 'unknown'),
                   ),
+                  */
                 ]);
               }),
               title: Wrap(

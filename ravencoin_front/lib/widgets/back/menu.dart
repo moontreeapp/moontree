@@ -161,6 +161,12 @@ class _NavMenuState extends State<NavMenu> {
             ),
           if (pros.settings.developerMode == true)
             destination(
+              icon: Icons.format_list_bulleted_rounded,
+              name: 'Addresses',
+              link: '/addresses',
+            ),
+          if (pros.settings.developerMode == true)
+            destination(
               //icon: MdiIcons.accountCog,
               icon: MdiIcons.pickaxe,
               name: 'Mining',
@@ -233,11 +239,6 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/about',
           ),
           /*
-          destination(
-            icon: Icons.info_rounded,
-            name: 'Wallet',
-            link: '/wallet',
-          ),
           destination(
               icon: Icons.info_outline_rounded,
               name: 'Clear Database',
