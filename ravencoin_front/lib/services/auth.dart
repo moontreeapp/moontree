@@ -65,8 +65,8 @@ class LocalAuthApi {
   }
 
   Future<bool> authenticate({bool stickyAuth = false}) async {
-    if (!(await readyToAuthenticate)) {
-      reason = AuthenticationResult.error;
+    if (!(await isSetup)) {
+      reason = AuthenticationResult.notSetup;
       return false;
     }
     // Some nativeSecuritys are enrolled.
