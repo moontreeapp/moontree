@@ -149,7 +149,10 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/network',
           ),
           if (pros.settings.developerMode == true &&
-              Current.balanceRVN.value > 0)
+              Current.balanceRVN.value > 0 &&
+              Current.wallet.unspents.length <
+                  1000 // unable to handle this edgecase yet.
+          )
             destination(
               //icon: MdiIcons.accountCog,
               icon: MdiIcons.broom,
