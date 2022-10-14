@@ -35,7 +35,7 @@ class _ClearSSChoice extends State<ClearSSChoice> {
         ),
         SizedBox(height: 16),
         Row(children: [
-          components.buttons.actionButton(
+          components.buttons.actionButtonSoft(
             context,
             enabled: true,
             label: 'Clear Secure Storage',

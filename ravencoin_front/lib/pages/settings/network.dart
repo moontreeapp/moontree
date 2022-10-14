@@ -7,6 +7,7 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
+import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class ElectrumNetwork extends StatefulWidget {
@@ -92,6 +93,22 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                 padding:
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: serverTextField)),
+        SliverToBoxAdapter(
+            child: Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text('Most Recent Network Activity',
+                          style: Theme.of(context).textTheme.bodyText1),
+                    ]))),
+        SliverToBoxAdapter(
+            child: Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
+                child: Container(
+                    alignment: Alignment.topLeft, child: DownloadActivity()))),
 
         //SliverToBoxAdapter(
         //    child: Container(height: MediaQuery.of(context).size.height / 2)),

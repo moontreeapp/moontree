@@ -29,7 +29,7 @@ class _ShowAuthenticationChoice extends State<ShowAuthenticationChoice> {
         SizedBox(height: 16),
         Row(
           children: [
-            components.buttons.actionButton(
+            components.buttons.actionButtonSoft(
               context,
               enabled: true,
               label: '$msg Key',

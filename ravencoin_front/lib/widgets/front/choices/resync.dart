@@ -34,7 +34,7 @@ class _ResyncChoice extends State<ResyncChoice> {
         ),
         SizedBox(height: 16),
         Row(children: [
-          components.buttons.actionButton(
+          components.buttons.actionButtonSoft(
             context,
             enabled: true,
             label: 'Resync Now',

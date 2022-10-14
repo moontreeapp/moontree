@@ -19,7 +19,7 @@ class BlockchainChoice extends StatelessWidget {
         SliverToBoxAdapter(
             child: Padding(
                 padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 16),
+                    EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft, child: NetworkChoice()))),
       ]);
