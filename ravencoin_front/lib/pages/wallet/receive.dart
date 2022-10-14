@@ -98,7 +98,7 @@ class _ReceiveState extends State<Receive> {
   Widget build(BuildContext context) {
     streams.app.navHeight.add(NavHeight.short);
     username =
-        pros.settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
+        pros.settings.primaryIndex.getOne(SettingName.user_name)?.value ?? '';
     data = populateData(context, data);
     requestMessage.text = requestMessage.text == ''
         ? data['symbol'] != null && data['symbol'] != ''
