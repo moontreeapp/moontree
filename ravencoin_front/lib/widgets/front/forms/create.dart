@@ -13,12 +13,14 @@ import 'package:ravencoin_front/utils/transformers.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 enum FormPresets {
+  // admin?
+  // subAdmin?
   main,
   sub,
   restricted,
   qualifier,
   qualifierSub,
-  NFT,
+  unique,
   channel,
 }
 
@@ -67,7 +69,7 @@ class _CreateAssetState extends State<CreateAsset> {
     FormPresets.main: 'Asset Name',
     FormPresets.restricted: 'Restricted Asset Name',
     FormPresets.qualifier: 'Qualifier Name',
-    FormPresets.NFT: 'NFT Name',
+    FormPresets.unique: 'NFT Name',
     FormPresets.channel: 'Message Channel Name',
   };
 
@@ -148,7 +150,7 @@ class _CreateAssetState extends State<CreateAsset> {
   //        (isQualifier && widget.parent != null));
 
   bool get isMain => widget.preset == FormPresets.main;
-  bool get isNFT => widget.preset == FormPresets.NFT;
+  bool get isNFT => widget.preset == FormPresets.unique;
   bool get isChannel => widget.preset == FormPresets.channel;
   bool get isQualifier => widget.preset == FormPresets.qualifier;
   bool get isRestricted => widget.preset == FormPresets.restricted;

@@ -41,5 +41,5 @@ class Security with EquatableMixin {
 
   /// todo identify a ipfs hash correctly...
   // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
-  bool get isAsset => securityType == SecurityType.RavenAsset;
+  bool get isAsset => securityType == SecurityType.asset;
 }

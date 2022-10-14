@@ -37,7 +37,7 @@ class WalletService {
           : pros.wallets.records
               .map((wallet) => wallet.cipherUpdate)
               .where((cipherUpdate) =>
-                  cipherUpdate.cipherType != CipherType.None &&
+                  cipherUpdate.cipherType != CipherType.none &&
                   cipherUpdate.passwordId! < pros.passwords.maxPasswordId!)
               .toSet();
 

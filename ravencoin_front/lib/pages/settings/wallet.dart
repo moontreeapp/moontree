@@ -74,7 +74,7 @@ class _WalletViewState extends State<WalletView> {
       address = address ??
           (wallet is LeaderWallet
               ? services.wallet.getEmptyAddress(
-                  wallet as LeaderWallet, NodeExposure.External)
+                  wallet as LeaderWallet, NodeExposure.external)
               : services.wallet.single
                   .getKPWallet(wallet as SingleWallet)
                   .address);
@@ -226,7 +226,7 @@ class _WalletViewState extends State<WalletView> {
                         'Index: ' + walletAddress.hdIndex.toString(),
                       ),
                       Text(
-                        (walletAddress.exposure == NodeExposure.Internal
+                        (walletAddress.exposure == NodeExposure.internal
                             ? 'Internal (change)'
                             : 'External (receive)'),
                       ),
@@ -256,7 +256,7 @@ class _WalletViewState extends State<WalletView> {
               title: Wrap(
                 alignment: WrapAlignment.spaceBetween,
                 children: [
-                  (walletAddress.exposure == NodeExposure.Internal
+                  (walletAddress.exposure == NodeExposure.internal
                       ? components.icons.out(context)
                       : components.icons.income(context)),
                   Text(walletAddress.address,

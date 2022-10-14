@@ -158,7 +158,7 @@ class GenericCreateRequest with ToStringMixin {
       ];
 
   Security get security =>
-      Security(symbol: fullName, securityType: SecurityType.RavenAsset);
+      Security(symbol: fullName, securityType: SecurityType.asset);
 }
 
 class GenericReissueRequest with ToStringMixin {
@@ -235,7 +235,7 @@ class GenericReissueRequest with ToStringMixin {
       ];
 
   Security get security =>
-      Security(symbol: fullName, securityType: SecurityType.RavenAsset);
+      Security(symbol: fullName, securityType: SecurityType.asset);
 }
 
 class SendRequest with ToStringMixin {
@@ -500,7 +500,7 @@ class TransactionMaker {
     var feeSats = 0;
     var utxosRaven = <Vout>[];
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -563,8 +563,8 @@ class TransactionMaker {
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
             amount: 100000000,
-            security: Security(
-                symbol: parentAsset, securityType: SecurityType.RavenAsset))
+            security:
+                Security(symbol: parentAsset, securityType: SecurityType.asset))
         : <Vout>[];
     var securityIn = 0;
     for (var utxo in utxosSecurity) {
@@ -573,7 +573,7 @@ class TransactionMaker {
     var securityChange = securityIn - 100000000;
 
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -646,10 +646,10 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
                 symbol: estimate.security!.symbol.substring(1) + '!',
-                securityType: SecurityType.RavenAsset))
+                securityType: SecurityType.asset))
         : <Vout>[];
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -722,9 +722,9 @@ class TransactionMaker {
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
             symbol: estimate.security!.symbol.substring(1) + '!',
-            securityType: SecurityType.RavenAsset));
+            securityType: SecurityType.asset));
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -799,7 +799,7 @@ class TransactionMaker {
             symbol: estimate.security!.symbol[0] == '\$'
                 ? estimate.security!.symbol.substring(1) + '!'
                 : estimate.security!.symbol,
-            securityType: SecurityType.RavenAsset));
+            securityType: SecurityType.asset));
     var securityIn = 0; // May be qualifier
     for (var utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
@@ -807,7 +807,7 @@ class TransactionMaker {
     var securityChange = securityIn - 100000000;
 
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -877,9 +877,9 @@ class TransactionMaker {
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
             symbol: estimate.security!.symbol + '!',
-            securityType: SecurityType.RavenAsset));
+            securityType: SecurityType.asset));
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -945,7 +945,7 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -1010,11 +1010,10 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: parentAsset + '!',
-                securityType: SecurityType.RavenAsset))
+                symbol: parentAsset + '!', securityType: SecurityType.asset))
         : <Vout>[];
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -1079,11 +1078,10 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: parentAsset + '!',
-                securityType: SecurityType.RavenAsset))
+                symbol: parentAsset + '!', securityType: SecurityType.asset))
         : <Vout>[];
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     var extraFee = (estimate.security!.symbol.contains('~')
         ? pros.settings.network.burnAmounts.issueMessage
@@ -1143,7 +1141,7 @@ class TransactionMaker {
     var utxosSecurity = await services.balance.collectUTXOs(
         walletId: wallet.id, amount: 100000000, security: estimate.security!);
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -1210,7 +1208,7 @@ class TransactionMaker {
         estimate.security == null ? 0 : securityIn - estimate.amount;
     // must wait for addesses ...?
     var returnAddress =
-        services.wallet.getEmptyAddress(wallet, NodeExposure.Internal);
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;

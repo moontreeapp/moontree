@@ -35,10 +35,10 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
   /// returns preferred or first or null wallet
   Wallet? getBestWallet() =>
       primaryIndex.getOne(pros.settings.primaryIndex
-          .getOne(SettingName.Wallet_Preferred)
+          .getOne(SettingName.wallet_preferred)
           ?.value) ??
       primaryIndex.getOne(pros.settings.primaryIndex
-          .getOne(SettingName.Wallet_Current)
+          .getOne(SettingName.wallet_current)
           ?.value) ??
       records.firstOrNull;
 
@@ -54,7 +54,7 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
   }
 
   Wallet get currentWallet => primaryIndex.getOne(
-      pros.settings.primaryIndex.getOne(SettingName.Wallet_Current)?.value)!;
+      pros.settings.primaryIndex.getOne(SettingName.wallet_current)?.value)!;
 
   String get currentWalletName => currentWallet.name;
 

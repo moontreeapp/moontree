@@ -20,16 +20,16 @@ class VersionService {
   /// preivous becomes current if diff, writes current, returns both in map
   Future<VersionDescription> rotate(String newVersion) async {
     final previous =
-        pros.settings.primaryIndex.getOne(SettingName.Version_Previous)?.value;
+        pros.settings.primaryIndex.getOne(SettingName.version_previous)?.value;
     final current =
-        pros.settings.primaryIndex.getOne(SettingName.Version_Current)?.value;
+        pros.settings.primaryIndex.getOne(SettingName.version_current)?.value;
     if (newVersion != current) {
       await pros.settings.save(Setting(
-        name: SettingName.Version_Previous,
+        name: SettingName.version_previous,
         value: current,
       ));
       await pros.settings.save(Setting(
-        name: SettingName.Version_Current,
+        name: SettingName.version_current,
         value: newVersion,
       ));
     }
@@ -49,21 +49,21 @@ class VersionService {
       VersionDescription(
         previous: previous ??
             (pros.settings.primaryIndex
-                .getOne(SettingName.Version_Previous)
+                .getOne(SettingName.version_previous)
                 ?.value),
         current: current ??
             (pros.settings.primaryIndex
-                .getOne(SettingName.Version_Current)
+                .getOne(SettingName.version_current)
                 ?.value),
         database: database ??
             (pros.settings.primaryIndex
-                .getOne(SettingName.Version_Database)
+                .getOne(SettingName.version_database)
                 ?.value),
         newVersion: newVersion,
       );
 
   String? get current =>
-      pros.settings.primaryIndex.getOne(SettingName.Version_Current)?.value;
+      pros.settings.primaryIndex.getOne(SettingName.version_current)?.value;
 }
 
 class VersionDescription with ToStringMixin {

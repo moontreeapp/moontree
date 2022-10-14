@@ -110,13 +110,13 @@ class pages {
         '/create/channel': (context) => CreateChannelAsset(),
         '/create/restricted': (context) => CreateRestrictedAsset(),
         '/create/checkout': (context) => Checkout(
-              transactionType: TransactionType.Create,
+              transactionType: TransactionType.create,
             ),
         '/reissue/main': (context) => ReissueMainAsset(),
         '/reissue/sub': (context) => ReissueMainSubAsset(),
         '/reissue/restricted': (context) => ReissueRestrictedAsset(),
         '/reissue/checkout': (context) => Checkout(
-              transactionType: TransactionType.Reissue,
+              transactionType: TransactionType.reissue,
             ),
         '/security/backup': (context) => BackupSeed(),
         '/security/backupKeypair': (context) => ShowKeypair(),
@@ -134,10 +134,10 @@ class pages {
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),
         '/transaction/checkout': (context) => Checkout(
-              transactionType: TransactionType.Spend,
+              transactionType: TransactionType.spend,
             ),
         '/settings/export/export': (context) =>
-            Checkout(transactionType: TransactionType.Export),
+            Checkout(transactionType: TransactionType.export),
         '/settings/about': (context) => About(),
         '/settings/level': (context) => Advanced(),
         '/settings/currency': (context) => Language(),

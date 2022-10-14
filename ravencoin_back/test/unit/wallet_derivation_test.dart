@@ -31,21 +31,21 @@ KPWallet newKPWallet({
   return KPWallet(
       ECPair.fromPrivateKey(
         privateKey,
-        network: raven_net.networks[raven_net.Net.Test]!,
+        network: raven_net.networks[raven_net.Net.test]!,
         compressed: compressed,
       ),
       P2PKH(
           data: PaymentData(),
-          network: raven_net.networks[raven_net.Net.Test]!),
-      raven_net.networks[raven_net.Net.Test]!);
+          network: raven_net.networks[raven_net.Net.test]!),
+      raven_net.networks[raven_net.Net.test]!);
 }
 
 void main() {
   //test('derive mainnet address', () {
   //  var wallet = LeaderWallet(
   //      walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
-  //  var derived = wallet.deriveWallet(Net.Main, 0, NodeExposure.Internal);
-  //  var address = wallet.deriveAddress(Net.Main, 0, NodeExposure.Internal);
+  //  var derived = wallet.deriveWallet(Net.main, 0, NodeExposure.internal);
+  //  var address = wallet.deriveAddress(Net.main, 0, NodeExposure.internal);
   //  expect(derived.pubKey,
   //      '03cd88842308a57abb3a3b6dce56e7e33a9ceefdb92d1a23d1c102f4af7a1ca617');
   //  expect(derived.address, 'RBT3LwNAZN1fq5C3WQUkDX5wiE8qWgn7FR');
@@ -56,8 +56,8 @@ void main() {
   //test('derive testnet address', () {
   //  var wallet = LeaderWallet(
   //      walletId: '0', accountId: 'a1', encryptedSeed: encryptedSeed);
-  //  var derived = wallet.deriveWallet(Net.Test, 0, NodeExposure.Internal);
-  //  var address = wallet.deriveAddress(Net.Test, 0, NodeExposure.Internal);
+  //  var derived = wallet.deriveWallet(Net.test, 0, NodeExposure.internal);
+  //  var address = wallet.deriveAddress(Net.test, 0, NodeExposure.internal);
   //  expect(derived.pubKey,
   //      '03cd88842308a57abb3a3b6dce56e7e33a9ceefdb92d1a23d1c102f4af7a1ca617');
   //  expect(derived.address, 'mhgoZUZrmZeMYBJTkoTzwuy4oxGwn96wVp');
@@ -80,9 +80,9 @@ void main() {
 
   test('hdwallet public key', () {
     var testnet = HDWallet.fromSeed(seed,
-        network: raven_net.networks[raven_net.Net.Test]!);
+        network: raven_net.networks[raven_net.Net.test]!);
     var mainnet = HDWallet.fromSeed(seed,
-        network: raven_net.networks[raven_net.Net.Main]!);
+        network: raven_net.networks[raven_net.Net.main]!);
     expect(testnet.pubKey, mainnet.pubKey);
     expect(testnet.address == mainnet.address, false);
   });
@@ -105,7 +105,7 @@ void main() {
     var ewif = EncryptedWIF.fromWIF(wif, CipherNone());
     var wallet = SingleWallet(
         id: ewif.walletId,
-        cipherUpdate: CipherUpdate(CipherType.None),
+        cipherUpdate: CipherUpdate(CipherType.none),
         encryptedWIF: ewif.encryptedSecret);
     expect(wallet.encryptedWIF,
         '803095cb26affefcaaa835ff968d60437c7c764da40cdd1a1b497406c7902a8ac901');

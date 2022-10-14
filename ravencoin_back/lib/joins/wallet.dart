@@ -2,7 +2,7 @@ part of 'joins.dart';
 
 extension WalletBelongsToCipher on Wallet {
   //CipherBase? get cipher => pros.cipherRegistry.ciphers[cipherUpdate];
-  CipherBase? get cipher => cipherUpdate.cipherType == CipherType.None
+  CipherBase? get cipher => cipherUpdate.cipherType == CipherType.none
       ? pros.ciphers.records.firstOrNull?.cipher
       : pros.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
 }
@@ -74,13 +74,13 @@ extension WalletHasRVNValue on Wallet {
 // change addresses
 extension WalletHasManyInternalAddresses on Wallet {
   Iterable<Address> get internalAddresses =>
-      addresses.where((address) => address.exposure == NodeExposure.Internal);
+      addresses.where((address) => address.exposure == NodeExposure.internal);
 }
 
 // receive addresses
 extension WalletHasManyExternalAddresses on Wallet {
   Iterable<Address> get externalAddresses =>
-      addresses.where((address) => address.exposure == NodeExposure.External);
+      addresses.where((address) => address.exposure == NodeExposure.external);
 }
 
 extension WalletHasManyGapAddresses on Wallet {
@@ -137,28 +137,28 @@ extension WalletHasManyGapAddresses on Wallet {
 
 extension WalletHasManyEmptyInternalAddresses on Wallet {
   Iterable<Address> get emptyInternalAddresses => addresses.where((address) =>
-      address.exposure == NodeExposure.Internal &&
+      address.exposure == NodeExposure.internal &&
       address.status?.status == null);
   //internalAddresses.where((address) => address.vouts.isEmpty);
 }
 
 extension WalletHasManyEmptyExternalAddresses on Wallet {
   Iterable<Address> get emptyExternalAddresses => addresses.where((address) =>
-      address.exposure == NodeExposure.External &&
+      address.exposure == NodeExposure.external &&
       address.status?.status == null);
   //externalAddresses.where((address) => address.vouts.isEmpty);
 }
 
 extension WalletHasManyUsedInternalAddresses on Wallet {
   Iterable<Address> get usedInternalAddresses => addresses.where((address) =>
-      address.exposure == NodeExposure.Internal &&
+      address.exposure == NodeExposure.internal &&
       address.status?.status != null);
   //internalAddresses.where((address) => address.vouts.isNotEmpty);
 }
 
 extension WalletHasManyUsedExternalAddresses on Wallet {
   Iterable<Address> get usedExternalAddresses => addresses.where((address) =>
-      address.exposure == NodeExposure.External &&
+      address.exposure == NodeExposure.external &&
       address.status?.status != null);
   //externalAddresses.where((address) => address.vouts.isNotEmpty);
 }

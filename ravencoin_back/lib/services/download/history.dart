@@ -155,8 +155,8 @@ class HistoryService {
   ) async {
     var symbol = vout.scriptPubKey.asset ?? 'RVN';
     var value = vout.valueSat;
-    var security = pros.securities.bySymbolSecurityType
-        .getOne(symbol, SecurityType.RavenAsset);
+    var security =
+        pros.securities.bySymbolSecurityType.getOne(symbol, SecurityType.asset);
     var asset = pros.assets.bySymbol.getOne(symbol);
     if (security == null ||
         asset == null ||
@@ -186,7 +186,7 @@ class HistoryService {
         );
         security = Security(
           symbol: symbol,
-          securityType: SecurityType.RavenAsset,
+          securityType: SecurityType.asset,
         );
         await pros.assets.save(asset);
         await pros.securities.save(security);

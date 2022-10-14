@@ -10,4 +10,4 @@ final BehaviorSubject<Metadata?> addedJson$ = BehaviorSubject.seeded(null)
   ..addStream(pros.metadatas.changes
       .where((change) => change is Added)
       .map((change) => change.record)
-      .where((data) => data.kind == MetadataType.JsonString));
+      .where((data) => data.kind == MetadataType.jsonString));

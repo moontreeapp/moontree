@@ -14,21 +14,21 @@ class CipherTypeAdapter extends TypeAdapter<CipherType> {
   CipherType read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return CipherType.None;
+        return CipherType.none;
       case 1:
-        return CipherType.AES;
+        return CipherType.aes;
       default:
-        return CipherType.None;
+        return CipherType.none;
     }
   }
 
   @override
   void write(BinaryWriter writer, CipherType obj) {
     switch (obj) {
-      case CipherType.None:
+      case CipherType.none:
         writer.writeByte(0);
         break;
-      case CipherType.AES:
+      case CipherType.aes:
         writer.writeByte(1);
         break;
     }

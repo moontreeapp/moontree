@@ -20,7 +20,7 @@ void main() {
       var hiveInit = HiveInitializer(destroyOnTeardown: true);
       var dir = Directory(hiveInit.dbDir);
 
-      await hiveInit.setUp(HiveLoadingStep.All);
+      await hiveInit.setUp(HiveLoadingStep.all);
       expect(await dir.exists(), true);
 
       await hiveInit.tearDown();

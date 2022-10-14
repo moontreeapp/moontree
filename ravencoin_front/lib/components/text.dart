@@ -56,8 +56,8 @@ class TextComponents {
     }
     return security ??
         pros.securities.bySymbolSecurityType
-            .getOne(symbol, SecurityType.RavenAsset) ??
-        Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+            .getOne(symbol, SecurityType.asset) ??
+        Security(symbol: symbol, securityType: SecurityType.asset);
   }
 
   Asset? getAssetOf({
@@ -70,8 +70,8 @@ class TextComponents {
     }
     security = security ??
         pros.securities.bySymbolSecurityType
-            .getOne(symbol, SecurityType.RavenAsset) ??
-        Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+            .getOne(symbol, SecurityType.asset) ??
+        Security(symbol: symbol, securityType: SecurityType.asset);
     return pros.assets.bySymbol.getOne(symbol);
   }
 

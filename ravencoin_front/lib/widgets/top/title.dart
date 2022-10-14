@@ -218,7 +218,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     if (pros.wallets.length > 0) {
       if (settingTitle != null &&
           (pros.wallets.length > 1 ||
-              pros.settings.primaryIndex.getOne(SettingName.Mode_Dev)?.value ==
+              pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value ==
                   true)) {
         return walletDropDown();
       } else if (appContext == AppContext.wallet) {

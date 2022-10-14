@@ -178,31 +178,31 @@ class SelectionItems {
             height: 24,
             width: 24,
             assetType: {
-                  SelectionOption.Restricted_Symbol: AssetType.Restricted,
-                  SelectionOption.Main_Asset: AssetType.Main,
-                  SelectionOption.Restricted_Asset: AssetType.Restricted,
-                  SelectionOption.Qualifier_Asset: AssetType.Qualifier,
-                  SelectionOption.Admin_Asset: AssetType.Admin,
-                  SelectionOption.Main: AssetType.Main,
-                  SelectionOption.Restricted: AssetType.Restricted,
-                  SelectionOption.NFT_Asset: AssetType.NFT,
-                  SelectionOption.Qualifier: AssetType.Qualifier,
-                  SelectionOption.Sub_Qualifier: AssetType.QualifierSub,
-                  SelectionOption.QualifierSub: AssetType.QualifierSub,
-                  SelectionOption.Admin: AssetType.Admin,
-                  SelectionOption.Sub_Asset: AssetType.Sub,
-                  SelectionOption.Sub: AssetType.Sub,
-                  SelectionOption.NFT: AssetType.NFT,
-                  SelectionOption.Messaging_Channel_Asset: AssetType.Channel,
-                  SelectionOption.Channel: AssetType.Channel,
+                  SelectionOption.Restricted_Symbol: AssetType.restricted,
+                  SelectionOption.Main_Asset: AssetType.main,
+                  SelectionOption.Restricted_Asset: AssetType.restricted,
+                  SelectionOption.Qualifier_Asset: AssetType.qualifier,
+                  SelectionOption.Admin_Asset: AssetType.admin,
+                  SelectionOption.Main: AssetType.main,
+                  SelectionOption.Restricted: AssetType.restricted,
+                  SelectionOption.NFT_Asset: AssetType.unique,
+                  SelectionOption.Qualifier: AssetType.qualifier,
+                  SelectionOption.Sub_Qualifier: AssetType.qualifierSub,
+                  SelectionOption.QualifierSub: AssetType.qualifierSub,
+                  SelectionOption.Admin: AssetType.admin,
+                  SelectionOption.Sub_Asset: AssetType.sub,
+                  SelectionOption.Sub: AssetType.sub,
+                  SelectionOption.NFT: AssetType.unique,
+                  SelectionOption.Messaging_Channel_Asset: AssetType.channel,
+                  SelectionOption.Channel: AssetType.channel,
                 }[name] ??
-                AssetType.Main) ??
+                AssetType.main) ??
         components.icons.assetFromCacheOrGenerate(
             asset: symbolColors,
             height: 24,
             width: 24,
             imageDetails: imageDetails,
-            assetType: AssetType.Main);
+            assetType: AssetType.main);
   }
 
   Widget leads(SelectionOption name, {String? holding}) => Icon(
@@ -210,21 +210,21 @@ class SelectionItems {
               ? components.icons.assetTypeIcon(name: holding)
               : components.icons.assetTypeIcon(
                   assetType: {
-                        SelectionOption.Restricted_Symbol: AssetType.Restricted,
-                        SelectionOption.Main_Asset: AssetType.Main,
-                        SelectionOption.Restricted_Asset: AssetType.Restricted,
-                        SelectionOption.Qualifier_Asset: AssetType.Qualifier,
-                        SelectionOption.Admin_Asset: AssetType.Admin,
-                        SelectionOption.Main: AssetType.Main,
-                        SelectionOption.Restricted: AssetType.Restricted,
-                        SelectionOption.NFT_Asset: AssetType.NFT,
-                        SelectionOption.Qualifier: AssetType.Qualifier,
-                        SelectionOption.Admin: AssetType.Admin,
-                        SelectionOption.Sub_Asset: AssetType.Sub,
-                        SelectionOption.NFT: AssetType.NFT,
+                        SelectionOption.Restricted_Symbol: AssetType.restricted,
+                        SelectionOption.Main_Asset: AssetType.main,
+                        SelectionOption.Restricted_Asset: AssetType.restricted,
+                        SelectionOption.Qualifier_Asset: AssetType.qualifier,
+                        SelectionOption.Admin_Asset: AssetType.admin,
+                        SelectionOption.Main: AssetType.main,
+                        SelectionOption.Restricted: AssetType.restricted,
+                        SelectionOption.NFT_Asset: AssetType.unique,
+                        SelectionOption.Qualifier: AssetType.qualifier,
+                        SelectionOption.Admin: AssetType.admin,
+                        SelectionOption.Sub_Asset: AssetType.sub,
+                        SelectionOption.NFT: AssetType.unique,
                         SelectionOption.Messaging_Channel_Asset:
-                            AssetType.Channel,
-                        SelectionOption.Channel: AssetType.Channel,
+                            AssetType.channel,
+                        SelectionOption.Channel: AssetType.channel,
                       }[name] ??
                       null)) ??
           {

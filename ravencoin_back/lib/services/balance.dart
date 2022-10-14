@@ -36,7 +36,7 @@ class BalanceService {
     for (var walletId in walletIds) {
       for (var symbol in pros.unspents.getSymbolsByWallet(walletId)) {
         var security = pros.securities.bySymbol.getAll(symbol).firstOrNull ??
-            Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+            Security(symbol: symbol, securityType: SecurityType.asset);
         var confirmed = pros.unspents.totalConfirmed(walletId, symbol);
         var unconfirmed = pros.unspents.totalUnconfirmed(walletId, symbol);
         if (confirmed + unconfirmed > 0) {

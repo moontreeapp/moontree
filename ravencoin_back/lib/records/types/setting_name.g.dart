@@ -14,86 +14,86 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
   SettingName read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return SettingName.Version_Database;
+        return SettingName.version_database;
       case 1:
-        return SettingName.Login_Attempts;
+        return SettingName.login_attempts;
       case 2:
-        return SettingName.Electrum_Net;
+        return SettingName.electrum_net;
       case 3:
-        return SettingName.Electrum_Domain;
+        return SettingName.electrum_domain;
       case 4:
-        return SettingName.Electrum_Port;
+        return SettingName.electrum_port;
       case 5:
-        return SettingName.Auth_Method;
+        return SettingName.auth_method;
       case 6:
-        return SettingName.Blockchain;
+        return SettingName.blockchain;
       case 7:
-        return SettingName.Wallet_Current;
+        return SettingName.wallet_current;
       case 8:
-        return SettingName.Wallet_Preferred;
+        return SettingName.wallet_preferred;
       case 9:
-        return SettingName.Local_Path;
+        return SettingName.local_path;
       case 10:
-        return SettingName.User_Name;
+        return SettingName.user_name;
       case 11:
-        return SettingName.Send_Immediate;
+        return SettingName.send_immediate;
       case 12:
-        return SettingName.Version_Previous;
+        return SettingName.version_previous;
       case 13:
-        return SettingName.Version_Current;
+        return SettingName.version_current;
       case 14:
-        return SettingName.Mode_Dev;
+        return SettingName.mode_dev;
       default:
-        return SettingName.Version_Database;
+        return SettingName.version_database;
     }
   }
 
   @override
   void write(BinaryWriter writer, SettingName obj) {
     switch (obj) {
-      case SettingName.Version_Database:
+      case SettingName.version_database:
         writer.writeByte(0);
         break;
-      case SettingName.Login_Attempts:
+      case SettingName.login_attempts:
         writer.writeByte(1);
         break;
-      case SettingName.Electrum_Net:
+      case SettingName.electrum_net:
         writer.writeByte(2);
         break;
-      case SettingName.Electrum_Domain:
+      case SettingName.electrum_domain:
         writer.writeByte(3);
         break;
-      case SettingName.Electrum_Port:
+      case SettingName.electrum_port:
         writer.writeByte(4);
         break;
-      case SettingName.Auth_Method:
+      case SettingName.auth_method:
         writer.writeByte(5);
         break;
-      case SettingName.Blockchain:
+      case SettingName.blockchain:
         writer.writeByte(6);
         break;
-      case SettingName.Wallet_Current:
+      case SettingName.wallet_current:
         writer.writeByte(7);
         break;
-      case SettingName.Wallet_Preferred:
+      case SettingName.wallet_preferred:
         writer.writeByte(8);
         break;
-      case SettingName.Local_Path:
+      case SettingName.local_path:
         writer.writeByte(9);
         break;
-      case SettingName.User_Name:
+      case SettingName.user_name:
         writer.writeByte(10);
         break;
-      case SettingName.Send_Immediate:
+      case SettingName.send_immediate:
         writer.writeByte(11);
         break;
-      case SettingName.Version_Previous:
+      case SettingName.version_previous:
         writer.writeByte(12);
         break;
-      case SettingName.Version_Current:
+      case SettingName.version_current:
         writer.writeByte(13);
         break;
-      case SettingName.Mode_Dev:
+      case SettingName.mode_dev:
         writer.writeByte(14);
         break;
     }

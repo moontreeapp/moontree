@@ -20,8 +20,8 @@ class LeaderWalletService {
   bool gapSatisfied(LeaderWallet leader, [NodeExposure? exposure]) =>
       exposure != null
           ? leader.gapAddresses(exposure).length >= requiredGap
-          : gapSatisfied(leader, NodeExposure.External) &&
-              gapSatisfied(leader, NodeExposure.Internal);
+          : gapSatisfied(leader, NodeExposure.external) &&
+              gapSatisfied(leader, NodeExposure.internal);
 
   Future<void> handleDeriveAddress({
     required LeaderWallet leader,
@@ -189,7 +189,7 @@ class LeaderWalletService {
     LeaderWallet wallet, [
     List<NodeExposure>? exposures,
   ]) async {
-    exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
+    exposures = exposures ?? [NodeExposure.external, NodeExposure.internal];
     var newAddresses = <Address>{};
     for (var exposure in exposures) {
       newAddresses.add(await deriveNextAddress(
@@ -206,7 +206,7 @@ class LeaderWalletService {
     List<NodeExposure>? exposures,
   }) async {
     if (pros.ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
-      exposures = exposures ?? [NodeExposure.External, NodeExposure.Internal];
+      exposures = exposures ?? [NodeExposure.external, NodeExposure.internal];
       var newAddresses = <Address>{};
       for (var exposure in exposures) {
         for (var hdIndex in range(highestIndex)) {

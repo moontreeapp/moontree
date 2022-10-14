@@ -14,21 +14,21 @@ class NetAdapter extends TypeAdapter<Net> {
   Net read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return Net.Main;
+        return Net.main;
       case 1:
-        return Net.Test;
+        return Net.test;
       default:
-        return Net.Main;
+        return Net.main;
     }
   }
 
   @override
   void write(BinaryWriter writer, Net obj) {
     switch (obj) {
-      case Net.Main:
+      case Net.main:
         writer.writeByte(0);
         break;
-      case Net.Test:
+      case Net.test:
         writer.writeByte(1);
         break;
     }

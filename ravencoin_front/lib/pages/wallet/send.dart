@@ -585,7 +585,7 @@ class _SendState extends State<Send> {
 
   bool _validateAddress([String? address]) =>
       sendAddress.text == '' ||
-      (pros.settings.net == Net.Main
+      (pros.settings.net == Net.main
           ? sendAddress.text.isAddressRVN
           : sendAddress.text.isAddressRVNt);
 
@@ -656,7 +656,7 @@ class _SendState extends State<Send> {
           security: sendAsset.text == 'Ravencoin'
               ? null
               : pros.securities.bySymbolSecurityType
-                  .getOne(sendAsset.text, SecurityType.RavenAsset),
+                  .getOne(sendAsset.text, SecurityType.asset),
           assetMemo: sendAsset.text != 'Ravencoin' &&
                   sendMemo.text != '' &&
                   sendMemo.text.isIpfs

@@ -30,20 +30,20 @@ class Setting with EquatableMixin {
   static String settingKey(SettingName name) => name.name;
 
   Type? get type => {
-        SettingName.Version_Database: int,
-        SettingName.Login_Attempts: List, //<DateTime>
-        SettingName.Electrum_Net: Net,
-        SettingName.Electrum_Domain: String,
-        SettingName.Electrum_Port: int,
-        SettingName.Auth_Method: AuthMethod,
-        SettingName.Blockchain: Chain,
-        SettingName.Wallet_Current: String,
-        SettingName.Wallet_Preferred: String,
-        SettingName.Local_Path: String,
-        SettingName.User_Name: String, //?
-        SettingName.Send_Immediate: bool,
-        SettingName.Version_Previous: String, //?
-        SettingName.Version_Current: String, //?
-        SettingName.Mode_Dev: bool,
+        SettingName.version_database: int,
+        SettingName.login_attempts: List, //<DateTime>
+        SettingName.electrum_net: Net,
+        SettingName.electrum_domain: String,
+        SettingName.electrum_port: int,
+        SettingName.auth_method: AuthMethod,
+        SettingName.blockchain: Chain,
+        SettingName.wallet_current: String,
+        SettingName.wallet_preferred: String,
+        SettingName.local_path: String,
+        SettingName.user_name: String, //?
+        SettingName.send_immediate: bool,
+        SettingName.version_previous: String, //?
+        SettingName.version_current: String, //?
+        SettingName.mode_dev: bool,
       }[name];
 }

@@ -53,16 +53,16 @@ class ClientService {
   }
 
   String get electrumDomain =>
-      pros.settings.primaryIndex.getOne(SettingName.Electrum_Domain)!.value;
+      pros.settings.primaryIndex.getOne(SettingName.electrum_domain)!.value;
 
   int get electrumPort =>
-      pros.settings.primaryIndex.getOne(SettingName.Electrum_Port)!.value;
+      pros.settings.primaryIndex.getOne(SettingName.electrum_port)!.value;
 
   String get currentDomain =>
-      pros.settings.primaryIndex.getOne(SettingName.Electrum_Domain)!.value;
+      pros.settings.primaryIndex.getOne(SettingName.electrum_domain)!.value;
 
   int get currentPort =>
-      pros.settings.primaryIndex.getOne(SettingName.Electrum_Port)!.value;
+      pros.settings.primaryIndex.getOne(SettingName.electrum_port)!.value;
 
   bool get connectionStatus => ravenElectrumClient != null ? true : false;
 
@@ -114,8 +114,8 @@ class ClientService {
     required int port,
   }) async =>
       await pros.settings.saveAll([
-        Setting(name: SettingName.Electrum_Domain, value: domain),
-        Setting(name: SettingName.Electrum_Port, value: port),
+        Setting(name: SettingName.electrum_domain, value: domain),
+        Setting(name: SettingName.electrum_port, value: port),
       ]);
 
   Future switchNetworks(Chain? chain, {required Net net}) async {

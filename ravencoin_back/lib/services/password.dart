@@ -14,7 +14,7 @@ class PasswordService {
   /// are any wallets encrypted with something other than no cipher
   bool get required {
     for (var cipherUpdate in services.wallet.getAllCipherUpdates) {
-      if (cipherUpdate.cipherType != CipherType.None) return true;
+      if (cipherUpdate.cipherType != CipherType.none) return true;
     }
     return false;
   }

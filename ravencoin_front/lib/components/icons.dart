@@ -97,8 +97,8 @@ class IconComponents {
 
   /// return custom logo (presumably previously downloaded from ipfs) or null
   Widget? _assetAvatarSecurity(String symbol, {double? height, double? width}) {
-    var security = pros.securities.bySymbolSecurityType
-        .getOne(symbol, SecurityType.RavenAsset);
+    var security =
+        pros.securities.bySymbolSecurityType.getOne(symbol, SecurityType.asset);
     if (security != null &&
         !([null, '']).contains(security.asset?.logo?.data)) {
       try {
@@ -295,8 +295,8 @@ class IconComponents {
     height ??= 18;
     width ??= 18;
     assetType =
-        assetType ?? (name != null ? Asset.assetTypeOf(name) : AssetType.Main);
-    if (assetType != AssetType.Main) {
+        assetType ?? (name != null ? Asset.assetTypeOf(name) : AssetType.main);
+    if (assetType != AssetType.main) {
       return Container(
           height: height,
           width: width,
@@ -338,23 +338,23 @@ class IconComponents {
       return null;
     }
     switch (assetType ?? Asset.assetTypeOf(name!)) {
-      case AssetType.Admin:
+      case AssetType.admin:
         return MdiIcons.crown;
-      case AssetType.Channel:
+      case AssetType.channel:
         return MdiIcons.message;
-      case AssetType.NFT:
+      case AssetType.unique:
         return MdiIcons.diamond;
-      case AssetType.Main:
+      case AssetType.main:
         return Icons.circle_outlined;
-      case AssetType.Qualifier:
+      case AssetType.qualifier:
         return MdiIcons.pound;
-      case AssetType.QualifierSub:
+      case AssetType.qualifierSub:
         return MdiIcons.pound;
-      case AssetType.Restricted:
+      case AssetType.restricted:
         return MdiIcons.lock;
-      case AssetType.Sub:
+      case AssetType.sub:
         return MdiIcons.slashForward;
-      case AssetType.SubAdmin:
+      case AssetType.subAdmin:
         return MdiIcons.crown;
       default:
         return Icons.circle_outlined;

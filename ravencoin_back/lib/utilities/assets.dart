@@ -28,56 +28,56 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
         balance.security.asset?.baseSymbol ?? balance.security.symbol;
     var assetType =
         balance.security.asset?.assetType ?? balance.security.securityType;
-    if ([AssetType.Main, AssetType.Admin].contains(assetType)) {
+    if ([AssetType.main, AssetType.admin].contains(assetType)) {
       if (!balancesMain.containsKey(baseSymbol)) {
         balancesMain[baseSymbol] = AssetHolding(
           symbol: baseSymbol,
-          main: assetType == AssetType.Main ? balance : null,
-          admin: assetType == AssetType.Admin ? balance : null,
+          main: assetType == AssetType.main ? balance : null,
+          admin: assetType == AssetType.admin ? balance : null,
         );
       } else {
         balancesMain[baseSymbol] = AssetHolding.fromAssetHolding(
           balancesMain[baseSymbol]!,
-          main: assetType == AssetType.Main ? balance : null,
-          admin: assetType == AssetType.Admin ? balance : null,
+          main: assetType == AssetType.main ? balance : null,
+          admin: assetType == AssetType.admin ? balance : null,
         );
       }
-    } else if ([AssetType.Sub, AssetType.SubAdmin].contains(assetType)) {
+    } else if ([AssetType.sub, AssetType.subAdmin].contains(assetType)) {
       if (!balancesSub.containsKey(baseSymbol)) {
         balancesSub[baseSymbol] = AssetHolding(
           symbol: baseSymbol,
-          sub: assetType == AssetType.Sub ? balance : null,
-          subAdmin: assetType == AssetType.SubAdmin ? balance : null,
+          sub: assetType == AssetType.sub ? balance : null,
+          subAdmin: assetType == AssetType.subAdmin ? balance : null,
         );
       } else {
         balancesSub[baseSymbol] = AssetHolding.fromAssetHolding(
           balancesSub[baseSymbol]!,
-          sub: assetType == AssetType.Sub ? balance : null,
-          subAdmin: assetType == AssetType.SubAdmin ? balance : null,
+          sub: assetType == AssetType.sub ? balance : null,
+          subAdmin: assetType == AssetType.subAdmin ? balance : null,
         );
       }
     } else {
       if (!balancesOther.containsKey(baseSymbol)) {
         balancesOther[baseSymbol] = AssetHolding(
           symbol: baseSymbol,
-          nft: assetType == AssetType.NFT ? balance : null,
-          channel: assetType == AssetType.Channel ? balance : null,
-          restricted: assetType == AssetType.Restricted ? balance : null,
-          qualifier: assetType == AssetType.Qualifier ? balance : null,
-          qualifierSub: assetType == AssetType.QualifierSub ? balance : null,
-          crypto: assetType == SecurityType.Crypto ? balance : null,
-          fiat: assetType == SecurityType.Fiat ? balance : null,
+          nft: assetType == AssetType.unique ? balance : null,
+          channel: assetType == AssetType.channel ? balance : null,
+          restricted: assetType == AssetType.restricted ? balance : null,
+          qualifier: assetType == AssetType.qualifier ? balance : null,
+          qualifierSub: assetType == AssetType.qualifierSub ? balance : null,
+          crypto: assetType == SecurityType.crypto ? balance : null,
+          fiat: assetType == SecurityType.fiat ? balance : null,
         );
       } else {
         balancesOther[baseSymbol] = AssetHolding.fromAssetHolding(
           balancesOther[baseSymbol]!,
-          nft: assetType == AssetType.NFT ? balance : null,
-          channel: assetType == AssetType.Channel ? balance : null,
-          restricted: assetType == AssetType.Restricted ? balance : null,
-          qualifier: assetType == AssetType.Qualifier ? balance : null,
-          qualifierSub: assetType == AssetType.QualifierSub ? balance : null,
-          crypto: assetType == SecurityType.Crypto ? balance : null,
-          fiat: assetType == SecurityType.Fiat ? balance : null,
+          nft: assetType == AssetType.unique ? balance : null,
+          channel: assetType == AssetType.channel ? balance : null,
+          restricted: assetType == AssetType.restricted ? balance : null,
+          qualifier: assetType == AssetType.qualifier ? balance : null,
+          qualifierSub: assetType == AssetType.qualifierSub ? balance : null,
+          crypto: assetType == SecurityType.crypto ? balance : null,
+          fiat: assetType == SecurityType.fiat ? balance : null,
         );
       }
     }
@@ -92,7 +92,7 @@ Balance blank(Asset asset) => Balance(
     confirmed: 0,
     unconfirmed: 0,
     security: asset.security ??
-        Security(securityType: SecurityType.RavenAsset, symbol: asset.symbol));
+        Security(securityType: SecurityType.asset, symbol: asset.symbol));
 
 Map<String, AssetHolding> assetHoldingsFromAssets(String parent) {
   Map<String, AssetHolding> assets = {};
@@ -101,26 +101,26 @@ Map<String, AssetHolding> assetHoldingsFromAssets(String parent) {
     if (!assets.containsKey(asset.baseSubSymbol)) {
       assets[asset.baseSubSymbol] = AssetHolding(
         symbol: asset.baseSubSymbol,
-        main: assetType == AssetType.Main ? blank(asset) : null,
-        admin: assetType == AssetType.Admin ? blank(asset) : null,
-        restricted: assetType == AssetType.Restricted ? blank(asset) : null,
-        qualifier: assetType == AssetType.Qualifier ? blank(asset) : null,
-        nft: assetType == AssetType.NFT ? blank(asset) : null,
-        channel: assetType == AssetType.Channel ? blank(asset) : null,
-        //crypto: assetType == SecurityType.Crypto ? blank(asset) : null,
-        //fiat: assetType == SecurityType.Fiat ? blank(asset) : null,
+        main: assetType == AssetType.main ? blank(asset) : null,
+        admin: assetType == AssetType.admin ? blank(asset) : null,
+        restricted: assetType == AssetType.restricted ? blank(asset) : null,
+        qualifier: assetType == AssetType.qualifier ? blank(asset) : null,
+        nft: assetType == AssetType.unique ? blank(asset) : null,
+        channel: assetType == AssetType.channel ? blank(asset) : null,
+        //crypto: assetType == SecurityType.crypto ? blank(asset) : null,
+        //fiat: assetType == SecurityType.fiat ? blank(asset) : null,
       );
     } else {
       assets[asset.baseSubSymbol] = AssetHolding.fromAssetHolding(
         assets[asset.baseSubSymbol]!,
-        main: assetType == AssetType.Main ? blank(asset) : null,
-        admin: assetType == AssetType.Admin ? blank(asset) : null,
-        restricted: assetType == AssetType.Restricted ? blank(asset) : null,
-        qualifier: assetType == AssetType.Qualifier ? blank(asset) : null,
-        nft: assetType == AssetType.NFT ? blank(asset) : null,
-        channel: assetType == AssetType.Channel ? blank(asset) : null,
-        //crypto: assetType == SecurityType.Crypto ? blank(asset) : null,
-        //fiat: assetType == SecurityType.Fiat ? blank(asset) : null,
+        main: assetType == AssetType.main ? blank(asset) : null,
+        admin: assetType == AssetType.admin ? blank(asset) : null,
+        restricted: assetType == AssetType.restricted ? blank(asset) : null,
+        qualifier: assetType == AssetType.qualifier ? blank(asset) : null,
+        nft: assetType == AssetType.unique ? blank(asset) : null,
+        channel: assetType == AssetType.channel ? blank(asset) : null,
+        //crypto: assetType == SecurityType.crypto ? blank(asset) : null,
+        //fiat: assetType == SecurityType.fiat ? blank(asset) : null,
       );
     }
   }

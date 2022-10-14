@@ -32,8 +32,8 @@ class CipherProclaim extends Proclaim<_CipherUpdateKey, Cipher> {
       };
 
   static Map<CipherType, Function> cipherInitializers = {
-    CipherType.None: ([Uint8List? password, Uint8List? salt]) => CipherNone(),
-    CipherType.AES: (Uint8List password, [Uint8List? salt]) =>
+    CipherType.none: ([Uint8List? password, Uint8List? salt]) => CipherNone(),
+    CipherType.aes: (Uint8List password, [Uint8List? salt]) =>
         CipherAES(password, salt: salt),
   };
 

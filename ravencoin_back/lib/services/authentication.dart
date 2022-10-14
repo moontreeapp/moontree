@@ -10,7 +10,7 @@ class AuthenticationService {
     required AuthMethod? method,
   }) async =>
       await pros.settings
-          .save(Setting(name: SettingName.Auth_Method, value: method));
+          .save(Setting(name: SettingName.auth_method, value: method));
 
   Future<void> setPassword({
     required String password,

@@ -7,13 +7,13 @@ part 'metadata_type.g.dart';
 @HiveType(typeId: TypeId.MetadataType)
 enum MetadataType {
   @HiveField(0)
-  Unknown,
+  unknown,
 
   @HiveField(1)
-  JsonString,
+  jsonString,
 
   @HiveField(2)
-  ImagePath,
+  imagePath,
 
   // potentially we could have video types, html types, js types, whatever...
 }

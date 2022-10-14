@@ -6,15 +6,32 @@ import '../_type_id.dart';
 part 'net.g.dart';
 
 var networks = {
-  Net.Main: mainnet,
-  Net.Test: testnet,
+  Net.main: mainnet,
+  Net.test: testnet,
 };
 
 @HiveType(typeId: TypeId.Net)
 enum Net {
   @HiveField(0)
-  Main,
+  main,
 
   @HiveField(1)
-  Test
+  test
 }
+
+String netSymbolModifier(Net net) {
+  switch (net) {
+    case Net.main:
+      return '';
+    case Net.test:
+      return 't';
+    default:
+      return '';
+  }
+}
+
+String netKey(Net net) => net.name;
+
+String netReadable(Net net) => 'net: ${net.name}';
+
+String netName(Net net) => net.name;

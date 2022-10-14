@@ -37,7 +37,7 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   Future<String> secret(CipherBase cipher);
 
-  Future<WalletBase> seedWallet(CipherBase cipher, {Net net = Net.Main});
+  Future<WalletBase> seedWallet(CipherBase cipher, {Net net = Net.main});
 
   SecretType get secretType => SecretType.none;
   WalletType get walletType => WalletType.none;

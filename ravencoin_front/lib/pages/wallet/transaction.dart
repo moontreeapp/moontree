@@ -62,21 +62,21 @@ class _TransactionPageState extends State<TransactionPage> {
         return getConfirmationsBetweenHelper();
       case 'Type':
         switch (transactionRecord!.type) {
-          case TransactionRecordType.SELF:
+          case TransactionRecordType.self:
             return 'to Self';
-          case TransactionRecordType.FEE:
+          case TransactionRecordType.fee:
             return 'Asset Transfer Fee';
-          case TransactionRecordType.ASSETCREATION:
+          case TransactionRecordType.create:
             return 'Asset Creation';
-          case TransactionRecordType.BURN:
+          case TransactionRecordType.burn:
             return 'Burned';
-          case TransactionRecordType.REISSUE:
+          case TransactionRecordType.reissue:
             return 'Reissue';
-          case TransactionRecordType.TAG:
+          case TransactionRecordType.tag:
             return 'Tag';
-          case TransactionRecordType.INCOMING:
+          case TransactionRecordType.incoming:
             return 'In';
-          case TransactionRecordType.OUTGOING:
+          case TransactionRecordType.outgoing:
             //default:
             return 'Out';
         }

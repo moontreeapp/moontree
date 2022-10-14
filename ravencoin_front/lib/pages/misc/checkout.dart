@@ -12,7 +12,7 @@ import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-enum TransactionType { Spend, Create, Reissue, Export }
+enum TransactionType { spend, create, reissue, export }
 
 class CheckoutStruct {
   final Widget? icon;
@@ -94,7 +94,7 @@ class _CheckoutState extends State<Checkout> {
       streams.app.snack
           .add(Snack(message: 'Still syncing with network, please wait'));
     }
-    if (widget.transactionType == TransactionType.Spend) {
+    if (widget.transactionType == TransactionType.spend) {
       listeners.add(streams.spend.estimate.listen((SendEstimate? value) {
         if (value != estimate) {
           setState(() {
@@ -102,7 +102,7 @@ class _CheckoutState extends State<Checkout> {
           });
         }
       }));
-    } else if (widget.transactionType == TransactionType.Create) {
+    } else if (widget.transactionType == TransactionType.create) {
       listeners.add(streams.create.estimate.listen((SendEstimate? value) {
         if (value != estimate) {
           setState(() {
@@ -110,7 +110,7 @@ class _CheckoutState extends State<Checkout> {
           });
         }
       }));
-    } else if (widget.transactionType == TransactionType.Reissue) {
+    } else if (widget.transactionType == TransactionType.reissue) {
       listeners.add(streams.reissue.estimate.listen((SendEstimate? value) {
         if (value != estimate) {
           setState(() {

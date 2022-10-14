@@ -46,7 +46,7 @@ class LeaderWaiter extends Waiter {
       (Tuple2<ConnectionStatus, Change<Cipher>> tuple) async {
         //print('connected/CIPHER ${tuple.item1} ${tuple.item2}');
         //await services.client.api.ping();
-        if (tuple.item2.record.cipherType != CipherType.None) {
+        if (tuple.item2.record.cipherType != CipherType.none) {
           pros.wallets.leaders.forEach((wallet) =>
               !services.wallet.leader.gapSatisfied(wallet)
                   ? services.wallet.leader.handleDeriveAddress(leader: wallet)

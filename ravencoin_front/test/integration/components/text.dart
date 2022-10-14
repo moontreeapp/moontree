@@ -5,7 +5,7 @@ import '../../fixtures/fixtures.dart' as fixtures;
 
 void main() {
   final Security security =
-      Security(symbol: 'MOONTREE', securityType: SecurityType.RavenAsset);
+      Security(symbol: 'MOONTREE', securityType: SecurityType.asset);
   final textC = TextComponents();
 
   group('securityAsReadable', () {
@@ -53,13 +53,13 @@ void main() {
           position: 0));
       await pros.rates.saveAll([
         Rate(
-            base: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
-            quote: Security(symbol: 'USD', securityType: SecurityType.Fiat),
+            base: Security(symbol: 'RVN', securityType: SecurityType.crypto),
+            quote: Security(symbol: 'USD', securityType: SecurityType.fiat),
             rate: 3.0),
         Rate(
-            base: Security(
-                symbol: 'MOONTREE', securityType: SecurityType.RavenAsset),
-            quote: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
+            base:
+                Security(symbol: 'MOONTREE', securityType: SecurityType.asset),
+            quote: Security(symbol: 'RVN', securityType: SecurityType.crypto),
             rate: 2.0),
       ]);
       // 123 -> divisibility 2 -> 1.23 moontrees -> 2.46 ravens -> 7.38 dollars
@@ -79,8 +79,8 @@ void main() {
 
     test('RVN to USD with rate', () async {
       await pros.rates.save(Rate(
-          base: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
-          quote: Security(symbol: 'USD', securityType: SecurityType.Fiat),
+          base: Security(symbol: 'RVN', securityType: SecurityType.crypto),
+          quote: Security(symbol: 'USD', securityType: SecurityType.fiat),
           rate: 3.0));
       // 123 ravens -> 3.69 dollars
       expect(textC.rvnUSD(0), r'$ 0.00');

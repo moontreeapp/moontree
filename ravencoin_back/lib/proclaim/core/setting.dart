@@ -12,9 +12,9 @@ part 'setting.keys.dart';
 class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   SettingProclaim() : super(_SettingNameKey());
 
-  static final Net defaultNet = Net.Main;
+  static final Net defaultNet = Net.main;
   static final String defaultUrl = 'moontree.com';
-  static final int defaultPort = defaultNet == Net.Test ? 50012 : 50002;
+  static final int defaultPort = defaultNet == Net.test ? 50012 : 50002;
 
   /// port map
   //50001 - mainnet tcp
@@ -23,105 +23,105 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   //50012 - testnet ssl
 
   static Map<String, Setting> get defaults => {
-        SettingName.Version_Database:
-            Setting(name: SettingName.Version_Database, value: 1),
-        SettingName.Login_Attempts:
-            Setting(name: SettingName.Login_Attempts, value: <DateTime>[]),
-        SettingName.Electrum_Net:
-            Setting(name: SettingName.Electrum_Net, value: defaultNet),
-        SettingName.Electrum_Domain:
-            Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
-        SettingName.Electrum_Port:
-            Setting(name: SettingName.Electrum_Port, value: defaultPort),
-        SettingName.Auth_Method: Setting(
-            name: SettingName.Auth_Method, value: AuthMethod.nativeSecurity),
-        SettingName.Blockchain:
-            Setting(name: SettingName.Blockchain, value: Chain.ravencoin),
-        SettingName.Wallet_Current:
-            Setting(name: SettingName.Wallet_Current, value: '0'),
-        SettingName.Wallet_Preferred:
-            Setting(name: SettingName.Wallet_Preferred, value: '0'),
-        SettingName.User_Name:
-            Setting(name: SettingName.User_Name, value: null),
-        SettingName.Send_Immediate:
-            Setting(name: SettingName.Send_Immediate, value: false),
-        SettingName.Version_Current:
-            Setting(name: SettingName.Send_Immediate, value: null),
-        SettingName.Version_Previous:
-            Setting(name: SettingName.Send_Immediate, value: null),
-        SettingName.Mode_Dev: Setting(name: SettingName.Mode_Dev, value: false),
+        SettingName.version_database:
+            Setting(name: SettingName.version_database, value: 1),
+        SettingName.login_attempts:
+            Setting(name: SettingName.login_attempts, value: <DateTime>[]),
+        SettingName.electrum_net:
+            Setting(name: SettingName.electrum_net, value: defaultNet),
+        SettingName.electrum_domain:
+            Setting(name: SettingName.electrum_domain, value: defaultUrl),
+        SettingName.electrum_port:
+            Setting(name: SettingName.electrum_port, value: defaultPort),
+        SettingName.auth_method: Setting(
+            name: SettingName.auth_method, value: AuthMethod.nativeSecurity),
+        SettingName.blockchain:
+            Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+        SettingName.wallet_current:
+            Setting(name: SettingName.wallet_current, value: '0'),
+        SettingName.wallet_preferred:
+            Setting(name: SettingName.wallet_preferred, value: '0'),
+        SettingName.user_name:
+            Setting(name: SettingName.user_name, value: null),
+        SettingName.send_immediate:
+            Setting(name: SettingName.send_immediate, value: false),
+        SettingName.version_current:
+            Setting(name: SettingName.send_immediate, value: null),
+        SettingName.version_previous:
+            Setting(name: SettingName.send_immediate, value: null),
+        SettingName.mode_dev: Setting(name: SettingName.mode_dev, value: false),
       }.map((settingName, setting) => MapEntry(settingName.name, setting));
 
   /// should this be in the database or should it be a constant somewhere?
   //int get appVersion =>
-  //    primaryIndex.getOne(SettingName.App_Version)!.value;
+  //    primaryIndex.getOne(SettingName.app_version)!.value;
 
   int get databaseVersion =>
-      primaryIndex.getOne(SettingName.Version_Database)!.value;
+      primaryIndex.getOne(SettingName.version_database)!.value;
 
   String get preferredWalletId =>
-      primaryIndex.getOne(SettingName.Wallet_Preferred)!.value;
+      primaryIndex.getOne(SettingName.wallet_preferred)!.value;
 
   String get currentWalletId =>
-      primaryIndex.getOne(SettingName.Wallet_Current)!.value;
+      primaryIndex.getOne(SettingName.wallet_current)!.value;
 
-  String? get localPath => primaryIndex.getOne(SettingName.Local_Path)?.value;
+  String? get localPath => primaryIndex.getOne(SettingName.local_path)?.value;
 
   String get domainPort =>
-      '${primaryIndex.getOne(SettingName.Electrum_Domain)?.value}:${primaryIndex.getOne(SettingName.Electrum_Port)?.value}';
+      '${primaryIndex.getOne(SettingName.electrum_domain)?.value}:${primaryIndex.getOne(SettingName.electrum_port)?.value}';
 
   String get defaultDomainPort => '$defaultUrl:$defaultPort';
 
   Future restoreDomainPort() async => await saveAll([
-        Setting(name: SettingName.Electrum_Domain, value: defaultUrl),
-        Setting(name: SettingName.Electrum_Port, value: defaultPort),
+        Setting(name: SettingName.electrum_domain, value: defaultUrl),
+        Setting(name: SettingName.electrum_port, value: defaultPort),
       ]);
 
   Future savePreferredWalletId(String walletId) async =>
-      await save(Setting(name: SettingName.Wallet_Preferred, value: walletId));
+      await save(Setting(name: SettingName.wallet_preferred, value: walletId));
 
   Future setCurrentWalletId([String? walletId]) async => await save(Setting(
-      name: SettingName.Wallet_Current, value: walletId ?? preferredWalletId));
+      name: SettingName.wallet_current, value: walletId ?? preferredWalletId));
 
-  Net get net => primaryIndex.getOne(SettingName.Electrum_Net)!.value;
+  Net get net => primaryIndex.getOne(SettingName.electrum_net)!.value;
 
   bool get mainnet =>
-      primaryIndex.getOne(SettingName.Electrum_Net)!.value == Net.Main;
+      primaryIndex.getOne(SettingName.electrum_net)!.value == Net.main;
 
   NetworkType get network => networks[net]!;
 
   String get netName => net.name;
 
   List get loginAttempts =>
-      primaryIndex.getOne(SettingName.Login_Attempts)!.value;
+      primaryIndex.getOne(SettingName.login_attempts)!.value;
 
   Future saveLoginAttempts(List attempts) async =>
-      await save(Setting(name: SettingName.Login_Attempts, value: attempts));
+      await save(Setting(name: SettingName.login_attempts, value: attempts));
 
   Future incrementLoginAttempts() async =>
       await saveLoginAttempts(loginAttempts + <DateTime>[DateTime.now()]);
 
   Future resetLoginAttempts() async => await saveLoginAttempts([]);
 
-  Chain get chain => primaryIndex.getOne(SettingName.Blockchain)!.value;
+  Chain get chain => primaryIndex.getOne(SettingName.blockchain)!.value;
 
   Future setBlockchain({
     Chain chain = Chain.ravencoin,
-    Net net = Net.Main,
+    Net net = Net.main,
   }) async {
     await saveAll([
-      Setting(name: SettingName.Electrum_Net, value: net),
-      Setting(name: SettingName.Blockchain, value: chain),
+      Setting(name: SettingName.electrum_net, value: net),
+      Setting(name: SettingName.blockchain, value: chain),
     ]);
 
     /// triggers should be set to change the domain:port by chain:net
     /// for now we'll put it here:
     await saveAll([
       Setting(
-          name: SettingName.Electrum_Port,
-          value: net == Net.Test ? 50012 : 50002),
+          name: SettingName.electrum_port,
+          value: net == Net.test ? 50012 : 50002),
       Setting(
-          name: SettingName.Electrum_Domain,
+          name: SettingName.electrum_domain,
           value: chain == Chain.ravencoin
               ? defaultUrl
               : defaultUrl /*electrum for evrmore???*/),
@@ -129,15 +129,15 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   }
 
   AuthMethod? get authMethod =>
-      primaryIndex.getOne(SettingName.Auth_Method)?.value;
+      primaryIndex.getOne(SettingName.auth_method)?.value;
 
   bool get authMethodIsNativeSecurity =>
-      primaryIndex.getOne(SettingName.Auth_Method)!.value ==
+      primaryIndex.getOne(SettingName.auth_method)!.value ==
       AuthMethod.nativeSecurity;
 
-  bool get developerMode => primaryIndex.getOne(SettingName.Mode_Dev)!.value;
+  bool get developerMode => primaryIndex.getOne(SettingName.mode_dev)!.value;
 
   Future toggleDevMode([bool? turnOn]) async => await save(
-        Setting(name: SettingName.Mode_Dev, value: turnOn ?? !developerMode),
+        Setting(name: SettingName.mode_dev, value: turnOn ?? !developerMode),
       );
 }

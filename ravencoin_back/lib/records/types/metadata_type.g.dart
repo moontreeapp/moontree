@@ -14,26 +14,26 @@ class MetadataTypeAdapter extends TypeAdapter<MetadataType> {
   MetadataType read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return MetadataType.Unknown;
+        return MetadataType.unknown;
       case 1:
-        return MetadataType.JsonString;
+        return MetadataType.jsonString;
       case 2:
-        return MetadataType.ImagePath;
+        return MetadataType.imagePath;
       default:
-        return MetadataType.Unknown;
+        return MetadataType.unknown;
     }
   }
 
   @override
   void write(BinaryWriter writer, MetadataType obj) {
     switch (obj) {
-      case MetadataType.Unknown:
+      case MetadataType.unknown:
         writer.writeByte(0);
         break;
-      case MetadataType.JsonString:
+      case MetadataType.jsonString:
         writer.writeByte(1);
         break;
-      case MetadataType.ImagePath:
+      case MetadataType.imagePath:
         writer.writeByte(2);
         break;
     }

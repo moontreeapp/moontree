@@ -8,7 +8,7 @@ import 'package:ulid/ulid.dart';
 /// All: loads all the tables
 /// Lock: loads all the tables necessary to display login screen (step 1)
 /// Login: loads all the tables necessary to display home screen (the rest) (2)
-enum HiveLoadingStep { All, Lock, Login }
+enum HiveLoadingStep { all, lock, login }
 
 class HiveInitializer {
   late final String id;
@@ -37,7 +37,7 @@ class HiveInitializer {
     var s = Stopwatch()..start();
     await openBoxes(step);
     print('openAllBoxes: ${s.elapsed}');
-    if ([HiveLoadingStep.All, HiveLoadingStep.Lock].contains(step)) {
+    if ([HiveLoadingStep.all, HiveLoadingStep.lock].contains(step)) {
       beforeLoad();
     }
     print('beforeLoad: ${s.elapsed}');
@@ -86,13 +86,13 @@ class HiveInitializer {
   /// address must open before wallets because added in wallets waiter
   /// we look up addresses to get highest hdindex
   Future openBoxes(HiveLoadingStep step) async {
-    if ([HiveLoadingStep.All, HiveLoadingStep.Lock].contains(step)) {
+    if ([HiveLoadingStep.all, HiveLoadingStep.lock].contains(step)) {
       await Hive.openBox<Rate>('rates');
       await Hive.openBox<Password>('passwords');
       await Hive.openBox<Setting>('settings');
       await Hive.openBox<Wallet>('wallets');
     }
-    if ([HiveLoadingStep.All, HiveLoadingStep.Login].contains(step)) {
+    if ([HiveLoadingStep.all, HiveLoadingStep.login].contains(step)) {
       await Hive.openBox<Address>('addresses');
       await Hive.openBox<Asset>('assets');
       await Hive.openBox<Balance>('balances');
@@ -109,7 +109,7 @@ class HiveInitializer {
   }
 
   void load(HiveLoadingStep step) {
-    if ([HiveLoadingStep.All, HiveLoadingStep.Lock].contains(step)) {
+    if ([HiveLoadingStep.all, HiveLoadingStep.lock].contains(step)) {
       //pros.secrets.setSource(MapSource(SecretProclaim.defaults));
       /// this needs to be inmemory:
       pros.ciphers.setSource(MapSource(CipherProclaim.defaults));
@@ -121,7 +121,7 @@ class HiveInitializer {
       ));
       pros.wallets.setSource(HiveSource('wallets'));
     }
-    if ([HiveLoadingStep.All, HiveLoadingStep.Login].contains(step)) {
+    if ([HiveLoadingStep.all, HiveLoadingStep.login].contains(step)) {
       pros.unspents.setSource(HiveSource('unspents'));
       pros.addresses.setSource(HiveSource('addresses'));
       pros.balances.setSource(HiveSource('balances'));

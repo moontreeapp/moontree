@@ -89,7 +89,7 @@ class LeaderWallet extends Wallet {
   @override
   Future<ravenwallet.HDWallet> seedWallet(
     CipherBase cipher, {
-    Net net = Net.Main,
+    Net net = Net.main,
   }) async =>
       SeedWallet(await seed, net).wallet;
 

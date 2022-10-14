@@ -7,7 +7,7 @@ import 'package:ravencoin_back/extensions/object.dart';
 void main() {
   group('Object Extensions', () {
     test('enumString', () {
-      expect(Net.Main.name, 'Main');
+      expect(Net.main.name, 'Main');
     });
   });
 }

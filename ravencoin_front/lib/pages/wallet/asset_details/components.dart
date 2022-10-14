@@ -206,14 +206,14 @@ class MetadataView extends StatelessWidget {
       );
     } else if (securityAsset.primaryMetadata == null) {
       chilren = [SelectableText(securityAsset.metadata)];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.imagePath) {
       chilren = [
         Image.file(AssetLogos()
             .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
       ];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.jsonString) {
       chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.unknown) {
       chilren = [
         SelectableText(securityAsset.primaryMetadata!.metadata),
         SelectableText(securityAsset.primaryMetadata!.data ?? '')

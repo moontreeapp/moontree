@@ -17,7 +17,7 @@ void main() {
     final mnemonic =
         'smile build brain topple moon scrap area aim budget enjoy polar erosion';
     final seed = bip39.mnemonicToSeed(mnemonic);
-    var seedWallet = SeedWallet(seed, Net.Test);
+    var seedWallet = SeedWallet(seed, Net.test);
     var privateKey =
         'b3c6d3e13b383424704b0a3419815f49b31dc9e049c7020f2eeb36e5a36d1a6e';
     expect(seedWallet.wallet.privKey, privateKey);

@@ -14,32 +14,27 @@ class SecurityTypeAdapter extends TypeAdapter<SecurityType> {
   SecurityType read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return SecurityType.Fiat;
+        return SecurityType.fiat;
       case 1:
-        return SecurityType.Crypto;
+        return SecurityType.crypto;
       case 2:
-        return SecurityType.RavenAsset;
-      case 3:
-        return SecurityType.RavenMaster;
+        return SecurityType.asset;
       default:
-        return SecurityType.Fiat;
+        return SecurityType.fiat;
     }
   }
 
   @override
   void write(BinaryWriter writer, SecurityType obj) {
     switch (obj) {
-      case SecurityType.Fiat:
+      case SecurityType.fiat:
         writer.writeByte(0);
         break;
-      case SecurityType.Crypto:
+      case SecurityType.crypto:
         writer.writeByte(1);
         break;
-      case SecurityType.RavenAsset:
+      case SecurityType.asset:
         writer.writeByte(2);
-        break;
-      case SecurityType.RavenMaster:
-        writer.writeByte(3);
         break;
     }
   }

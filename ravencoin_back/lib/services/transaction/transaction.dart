@@ -177,11 +177,11 @@ class TransactionService {
             if (tagIntersection.isNotEmpty) {
               for (final address in tagIntersection) {
                 if (outgoingAddrs[address] == specialTag[address]) {
-                  ioType = TransactionRecordType.TAG;
+                  ioType = TransactionRecordType.tag;
                 }
               }
               // If not a tag, effectively a burn
-              ioType ??= TransactionRecordType.BURN;
+              ioType ??= TransactionRecordType.burn;
             }
 
             final reissueIntersection = outgoingAddrs.keys
@@ -190,11 +190,11 @@ class TransactionService {
             if (reissueIntersection.isNotEmpty) {
               for (final address in reissueIntersection) {
                 if (outgoingAddrs[address] == specialReissue[address]) {
-                  ioType = TransactionRecordType.REISSUE;
+                  ioType = TransactionRecordType.reissue;
                 }
               }
               // If not a tag, effectively a burn
-              ioType ??= TransactionRecordType.BURN;
+              ioType ??= TransactionRecordType.burn;
             }
 
             final createIntersection = outgoingAddrs.keys
@@ -204,11 +204,11 @@ class TransactionService {
             if (createIntersection.isNotEmpty) {
               for (final address in createIntersection) {
                 if (outgoingAddrs[address] == specialCreate[address]) {
-                  ioType = TransactionRecordType.ASSETCREATION;
+                  ioType = TransactionRecordType.create;
                 }
               }
               // If not a tag, effectively a burns
-              ioType ??= TransactionRecordType.BURN;
+              ioType ??= TransactionRecordType.burn;
             }
 
             // Only call it "sent to self" if no RVN is coming from anywhere else
@@ -219,19 +219,19 @@ class TransactionService {
             // regular out transaction...
             if ((transaction.vouts.map((e) => !e.isAsset).every((e) => e))) {
               if (othersIn == 0 && othersOut == 0 && selfIn == selfOut + fee) {
-                ioType = TransactionRecordType.SELF;
+                ioType = TransactionRecordType.self;
               }
             } else {
-              ioType ??= TransactionRecordType.FEE;
+              ioType ??= TransactionRecordType.fee;
             }
             if (selfIn > 0 &&
                 outgoingAddrs.containsKey(net.burnAddresses.burn)) {
-              ioType = TransactionRecordType.BURN;
+              ioType = TransactionRecordType.burn;
             }
             // Defaults
             ioType ??= selfIn > selfOut
-                ? TransactionRecordType.OUTGOING
-                : TransactionRecordType.INCOMING;
+                ? TransactionRecordType.outgoing
+                : TransactionRecordType.incoming;
 
             //print('s $selfIn $selfOut o $othersIn $othersOut');
             transactionRecords.add(TransactionRecord(
@@ -240,7 +240,7 @@ class TransactionService {
               totalIn: selfIn,
               totalOut: selfOut,
               valueOverride:
-                  ioType == TransactionRecordType.SELF ? outIntentional : null,
+                  ioType == TransactionRecordType.self ? outIntentional : null,
               height: transaction.height,
               type: ioType,
               fee: feeFlag ? 0 : fee,
@@ -330,11 +330,11 @@ class TransactionService {
             if (tagIntersection.isNotEmpty) {
               for (final address in tagIntersection) {
                 if (outgoingAddrs[address] == specialTag[address]) {
-                  ioType = TransactionRecordType.TAG;
+                  ioType = TransactionRecordType.tag;
                 }
               }
               // If not a tag, effectively a burn
-              ioType ??= TransactionRecordType.BURN;
+              ioType ??= TransactionRecordType.burn;
             }
 
             final reissueIntersection = outgoingAddrs.keys
@@ -343,11 +343,11 @@ class TransactionService {
             if (reissueIntersection.isNotEmpty) {
               for (final address in reissueIntersection) {
                 if (outgoingAddrs[address] == specialReissue[address]) {
-                  ioType = TransactionRecordType.REISSUE;
+                  ioType = TransactionRecordType.reissue;
                 }
               }
               // If not a tag, effectively a burn
-              ioType ??= TransactionRecordType.BURN;
+              ioType ??= TransactionRecordType.burn;
             }
 
             final createIntersection = outgoingAddrs.keys
@@ -357,25 +357,25 @@ class TransactionService {
             if (createIntersection.isNotEmpty) {
               for (final address in createIntersection) {
                 if (outgoingAddrs[address] == specialCreate[address]) {
-                  ioType = TransactionRecordType.ASSETCREATION;
+                  ioType = TransactionRecordType.create;
                 }
               }
               // If not a tag, effectively a burns
-              ioType ??= TransactionRecordType.BURN;
+              ioType ??= TransactionRecordType.burn;
             }
 
             // Only call it "sent to self" if no RVN is coming from anywhere else
             if (othersIn == 0 && othersOut == 0 && selfIn == selfOut) {
-              ioType = TransactionRecordType.SELF;
+              ioType = TransactionRecordType.self;
             }
             if (selfIn > 0 &&
                 outgoingAddrs.containsKey(net.burnAddresses.burn)) {
-              ioType = TransactionRecordType.BURN;
+              ioType = TransactionRecordType.burn;
             }
             // Defaults
             ioType ??= selfIn > selfOut
-                ? TransactionRecordType.OUTGOING
-                : TransactionRecordType.INCOMING;
+                ? TransactionRecordType.outgoing
+                : TransactionRecordType.incoming;
 
             transactionRecords.add(TransactionRecord(
               transaction: transaction,
@@ -383,7 +383,7 @@ class TransactionService {
               totalIn: selfIn,
               totalOut: selfOut,
               valueOverride: [
-                TransactionRecordType.SELF,
+                TransactionRecordType.self,
               ].contains(ioType)
                   ? outIntentional
                   : null,
@@ -421,7 +421,7 @@ class TransactionService {
   }) async {
     final destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
-      NodeExposure.External,
+      NodeExposure.external,
     );
     final assetBalances =
         from.balances.where((b) => b.security.symbol != 'RVN').toList();
@@ -519,7 +519,7 @@ class TransactionService {
   }) async {
     final destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
-      NodeExposure.External,
+      NodeExposure.external,
     );
     final assetBalances =
         from.balances.where((b) => b.security.symbol != 'RVN').toList();
@@ -587,14 +587,14 @@ class TransactionService {
 }
 
 enum TransactionRecordType {
-  INCOMING,
-  OUTGOING,
-  FEE,
-  SELF,
-  ASSETCREATION,
-  TAG,
-  BURN,
-  REISSUE,
+  incoming,
+  outgoing,
+  fee,
+  self,
+  create,
+  tag,
+  burn,
+  reissue,
 }
 
 class TransactionRecord {
@@ -641,29 +641,29 @@ class TransactionRecord {
 
   String get typeToString {
     switch (type) {
-      case TransactionRecordType.FEE:
+      case TransactionRecordType.fee:
         return 'Transaction Fee';
-      case TransactionRecordType.ASSETCREATION:
+      case TransactionRecordType.create:
         return 'Asset Creation';
-      case TransactionRecordType.BURN:
+      case TransactionRecordType.burn:
         return 'Burn';
-      case TransactionRecordType.REISSUE:
+      case TransactionRecordType.reissue:
         return 'Reissue';
-      case TransactionRecordType.TAG:
+      case TransactionRecordType.tag:
         return 'Tag';
-      case TransactionRecordType.SELF:
+      case TransactionRecordType.self:
         return 'Sent to Self';
-      case TransactionRecordType.INCOMING:
+      case TransactionRecordType.incoming:
         return 'Received';
-      case TransactionRecordType.OUTGOING:
+      case TransactionRecordType.outgoing:
         return 'Sent';
     }
   }
 
-  bool get toSelf => type == TransactionRecordType.SELF;
+  bool get toSelf => type == TransactionRecordType.self;
   bool get isNormal => [
-        TransactionRecordType.INCOMING,
-        TransactionRecordType.OUTGOING,
+        TransactionRecordType.incoming,
+        TransactionRecordType.outgoing,
       ].contains(type);
 
   void getVouts() async {

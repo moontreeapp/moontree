@@ -34,17 +34,17 @@ class AddressProclaim extends Proclaim<_ScripthashKey, Address> {
   AddressLocation? getAddressLocationOf(String addressId, String walletId) {
     var i = 0;
     for (var address
-        in byWalletExposure.getAll(walletId, NodeExposure.Internal)) {
+        in byWalletExposure.getAll(walletId, NodeExposure.internal)) {
       if (address.id == addressId) {
-        return AddressLocation(i, NodeExposure.Internal);
+        return AddressLocation(i, NodeExposure.internal);
       }
       i = i + 1;
     }
     i = 0;
     for (var address
-        in byWalletExposure.getAll(walletId, NodeExposure.External)) {
+        in byWalletExposure.getAll(walletId, NodeExposure.external)) {
       if (address.id == addressId) {
-        return AddressLocation(i, NodeExposure.External);
+        return AddressLocation(i, NodeExposure.external);
       }
       i = i + 1;
     }

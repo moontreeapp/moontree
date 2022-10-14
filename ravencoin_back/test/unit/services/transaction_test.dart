@@ -34,7 +34,7 @@ void main() async {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
               security: pros.securities.bySymbolSecurityType
-                  .getOne('MOONTREE', SecurityType.RavenAsset))
+                  .getOne('MOONTREE', SecurityType.asset))
           .toList();
       //expect(?, ?);
     });
@@ -43,7 +43,7 @@ void main() async {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
               security: pros.securities.bySymbolSecurityType
-                  .getOne('MOONTREE', SecurityType.RavenAsset))
+                  .getOne('MOONTREE', SecurityType.asset))
           .toList();
       //expect(?, ?);
     });
@@ -52,7 +52,7 @@ void main() async {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
               security: pros.securities.bySymbolSecurityType
-                  .getOne('lalala', SecurityType.RavenAsset))
+                  .getOne('lalala', SecurityType.asset))
           .toList();
       //expect(0);
     });
@@ -77,7 +77,7 @@ void main() async {
           walletId: wallet.id,
           amount: 5,
           security: pros.securities.bySymbolSecurityType
-              .getOne('MOONTREE', SecurityType.RavenAsset));
+              .getOne('MOONTREE', SecurityType.asset));
       expect(utxos.map((utxo) => utxo.assetValue).toList(), [100]);
     });
     test('take multiple from the top', () async {
@@ -85,7 +85,7 @@ void main() async {
           walletId: wallet.id,
           amount: 1200,
           security: pros.securities.bySymbolSecurityType
-              .getOne('MOONTREE', SecurityType.RavenAsset));
+              .getOne('MOONTREE', SecurityType.asset));
       expect(utxos.map((utxo) => utxo.assetValue).toList(), [1000, 500]);
     });
   });

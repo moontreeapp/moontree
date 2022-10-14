@@ -24,7 +24,7 @@ class _AssetState extends State<Asset> {
       back: CoinSpec(
           pageTitle: 'Asset',
           security: pros.securities.bySymbolSecurityType
-              .getOne(symbol, SecurityType.RavenAsset)!),
+              .getOne(symbol, SecurityType.asset)!),
       front: FrontCurve(
           height: MediaQuery.of(context).size.height - (201 + 56),
           child: Column(children: [
@@ -32,14 +32,14 @@ class _AssetState extends State<Asset> {
             NavBar(
               includeSectors: false,
               actionButtons: <Widget>[
-                if ([AssetType.Main, AssetType.Sub]
+                if ([AssetType.main, AssetType.sub]
                     .contains(chosenAsset.assetType)) ...[
                   components.buttons.actionButton(context,
                       label: 'create', onPressed: _produceSubCreateModal),
                 ],
                 if ([
-                  AssetType.Qualifier,
-                  AssetType.QualifierSub,
+                  AssetType.qualifier,
+                  AssetType.qualifierSub,
                 ].contains(chosenAsset.assetType)) ...[
                   components.buttons.actionButton(context,
                       label: 'create',
@@ -70,7 +70,7 @@ class _AssetState extends State<Asset> {
 
   void _produceMainManageModal(assetRecord.Asset asset) async {
     if (asset.reissuable &&
-        [AssetType.Main, AssetType.Sub, AssetType.Restricted]
+        [AssetType.main, AssetType.sub, AssetType.restricted]
             .contains(asset.assetType)) {
       await SelectionItems(
         context,

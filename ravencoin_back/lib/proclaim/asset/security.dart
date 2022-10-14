@@ -17,8 +17,8 @@ class SecurityProclaim extends Proclaim<_SecurityIdKey, Security> {
   }
 
   static Map<String, Security> get defaults => {
-        'USD:Fiat': Security(symbol: 'USD', securityType: SecurityType.Fiat),
-        'RVN:Crypto': Security(symbol: 'RVN', securityType: SecurityType.Crypto)
+        'USD:Fiat': Security(symbol: 'USD', securityType: SecurityType.fiat),
+        'RVN:Crypto': Security(symbol: 'RVN', securityType: SecurityType.crypto)
       };
 
   Security get RVN =>

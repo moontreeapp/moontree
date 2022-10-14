@@ -7,14 +7,11 @@ part 'security_type.g.dart';
 @HiveType(typeId: TypeId.SecurityType)
 enum SecurityType {
   @HiveField(0)
-  Fiat,
+  fiat,
 
   @HiveField(1)
-  Crypto,
+  crypto,
 
   @HiveField(2)
-  RavenAsset,
-
-  @HiveField(3)
-  RavenMaster,
+  asset,
 }

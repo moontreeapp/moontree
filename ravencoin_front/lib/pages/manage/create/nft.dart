@@ -34,5 +34,5 @@ class _CreateNFTAssetState extends State<CreateNFTAsset> {
         )));
   }
 
-  Widget body() => CreateAsset(preset: FormPresets.NFT, isSub: true);
+  Widget body() => CreateAsset(preset: FormPresets.unique, isSub: true);
 }

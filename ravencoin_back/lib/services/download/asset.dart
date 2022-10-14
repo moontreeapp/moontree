@@ -10,7 +10,7 @@ class AssetService {
           : '$symbol/'.replaceAll('\$', '');
 
   void allAdminsSubs() => pros.assets.byAssetType
-      .getAll(AssetType.Admin)
+      .getAll(AssetType.admin)
       .where((asset) => !asset.symbol.contains('/'))
       .map((asset) => asset.symbol)
       .forEach(downloadMain);
@@ -58,7 +58,7 @@ class AssetService {
       streams.asset.added.add(asset);
       var security = Security(
         symbol: meta.symbol,
-        securityType: SecurityType.RavenAsset,
+        securityType: SecurityType.asset,
       );
       await pros.assets.save(asset);
       await pros.securities.save(security);

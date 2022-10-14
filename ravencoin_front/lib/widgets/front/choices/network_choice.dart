@@ -13,7 +13,7 @@ class NetworkChoice extends StatefulWidget {
 
 class _NetworkChoice extends State<NetworkChoice> {
   Chain chainChoice = Chain.ravencoin;
-  Net netChoice = Net.Main;
+  Net netChoice = Net.main;
   late Tuple2<Chain, Net> chainNet;
 
   @override
@@ -47,24 +47,24 @@ class _NetworkChoice extends State<NetworkChoice> {
         SizedBox(height: 16),
         RadioListTile<Tuple2<Chain, Net>>(
             title: const Text('Ravencoin'),
-            value: Tuple2(Chain.ravencoin, Net.Main),
+            value: Tuple2(Chain.ravencoin, Net.main),
             groupValue: chainNet,
             onChanged: changeChainNet),
         if (pros.settings.developerMode)
           RadioListTile<Tuple2<Chain, Net>>(
               title: const Text('Ravencoin (testnet)'),
-              value: Tuple2(Chain.ravencoin, Net.Test),
+              value: Tuple2(Chain.ravencoin, Net.test),
               groupValue: chainNet,
               onChanged: changeChainNet),
         RadioListTile<Tuple2<Chain, Net>>(
             title: const Text('Evrmore'),
-            value: Tuple2(Chain.evrmore, Net.Main),
+            value: Tuple2(Chain.evrmore, Net.main),
             groupValue: chainNet,
             onChanged: changeChainNet),
         if (pros.settings.developerMode)
           RadioListTile<Tuple2<Chain, Net>>(
               title: const Text('Evrmore (testnet)'),
-              value: Tuple2(Chain.evrmore, Net.Test),
+              value: Tuple2(Chain.evrmore, Net.test),
               groupValue: chainNet,
               onChanged: changeChainNet)
       ],
@@ -81,7 +81,7 @@ class _NetworkChoice extends State<NetworkChoice> {
     services.client.switchNetworks(value!.item1, net: value.item2);
     components.loading.screen(
       message:
-          'Syncing with ${value.item1.name.toTitleCase()}${value.item2 == Net.Test ? ' ' + value.item2.name.toTitleCase() : ''}',
+          'Syncing with ${value.item1.name.toTitleCase()}${value.item2 == Net.test ? ' ' + value.item2.name.toTitleCase() : ''}',
       returnHome: true,
       playCount: 5,
     );

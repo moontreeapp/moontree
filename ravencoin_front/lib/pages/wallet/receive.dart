@@ -89,8 +89,7 @@ class _ReceiveState extends State<Receive> {
     fetchedNames = requestMessage.text.length <= 32
         ? (await services.client.api.getAssetNames(requestMessage.text))
             .toList()
-            .map((e) =>
-                Security(symbol: e, securityType: SecurityType.RavenAsset))
+            .map((e) => Security(symbol: e, securityType: SecurityType.asset))
             .toList()
         : [];
   }
@@ -108,7 +107,7 @@ class _ReceiveState extends State<Receive> {
         : requestMessage.text;
     address = services.wallet.getEmptyAddress(
       Current.wallet,
-      NodeExposure.External,
+      NodeExposure.external,
       address: address,
     );
     uri = uri == '' ? address! : uri;
@@ -293,7 +292,7 @@ class _ReceiveState extends State<Receive> {
                               //            return [
                               //              Security(
                               //                  symbol: 'testing',
-                              //                  securityType: SecurityType.Fiat)
+                              //                  securityType: SecurityType.fiat)
                               //            ];
                               //          }
                               //          if (requestMessage.text.length >= 3) {
@@ -301,7 +300,7 @@ class _ReceiveState extends State<Receive> {
                               //          }
                               //          //(await services.client.api.getAllAssetNames(textEditingValue.text)).map((String s) => Security(
                               //          //        symbol: s,
-                              //          //        securityType: SecurityType.RavenAsset));
+                              //          //        securityType: SecurityType.asset));
                               //          return securities.data
                               //              .where((Security option) => option.symbol
                               //                  .contains(requestMessage.text.toUpperCase()))

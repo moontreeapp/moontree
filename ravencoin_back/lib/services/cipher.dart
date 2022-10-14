@@ -7,7 +7,7 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart';
 
 class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
-  List<CipherType> get allCipherTypes => [CipherType.AES, CipherType.None];
+  List<CipherType> get allCipherTypes => [CipherType.aes, CipherType.none];
 
   int gracePeriod = 60 * 1;
   DateTime? lastLoginTime;
@@ -19,9 +19,9 @@ class CipherService {
 
   CipherType get latestCipherType => services.password.exist
       ? pros.passwords.current!.saltedHash == ''
-          ? CipherType.None
-          : CipherType.AES
-      : CipherType.None;
+          ? CipherType.none
+          : CipherType.aes
+      : CipherType.none;
 
   @override
   String toString() => 'latestCipherType: ${latestCipherType.name}';
@@ -30,7 +30,7 @@ class CipherService {
       CipherUpdate(latestCipherType, passwordId: pros.passwords.maxPasswordId);
 
   CipherUpdate get noneCipherUpdate =>
-      CipherUpdate(CipherType.None, passwordId: pros.passwords.maxPasswordId);
+      CipherUpdate(CipherType.none, passwordId: pros.passwords.maxPasswordId);
 
   Cipher? get currentCipherBase =>
       pros.ciphers.primaryIndex.getOne(currentCipherUpdate);
@@ -137,7 +137,7 @@ class CipherService {
     salt = getSalt(salt: salt, altSalt: altSalt);
     return pros.ciphers.registerCipher(
       password == []
-          ? CipherUpdate(CipherType.None,
+          ? CipherUpdate(CipherType.none,
               passwordId: pros.passwords.maxPasswordId)
           : currentCipherUpdate,
       password,

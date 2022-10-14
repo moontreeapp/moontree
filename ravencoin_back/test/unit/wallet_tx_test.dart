@@ -10,7 +10,7 @@ import 'package:ravencoin_back/records/wallets/extended_wallet_base.dart';
 void main() {
   group('Wallet Transaction', () {
     test('create & sign a 1-to-1 transaction', () async {
-      var network = networks[Net.Test]!;
+      var network = networks[Net.test]!;
 
       var wallet = HDWallet.fromBase58(
           'tprv8jsr128yT1XaEVNpw7t4v5ijZBURTzvqFzy71Favkx7VnMYsmcAf'

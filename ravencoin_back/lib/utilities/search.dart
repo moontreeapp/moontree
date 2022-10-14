@@ -1,9 +1,9 @@
-enum Nearest { FLOOR, CEIL, CLOSEST }
+enum Nearest { floor, ceil, closest }
 
 int binaryClosest({
   required List list,
   required dynamic value,
-  Nearest type = Nearest.CLOSEST,
+  Nearest type = Nearest.closest,
   Comparator? comp,
 }) {
   comp = comp ?? (a, b) => a - b;
@@ -14,14 +14,14 @@ int binaryClosest({
   }
   // Our nearest value is less than the lowest value in the list
   if (comp(value, list[0]) <= 0) {
-    if (type == Nearest.FLOOR) {
+    if (type == Nearest.floor) {
       return -1;
     }
     return 0;
   }
   // Our nearest value is greater than the highest value in the list
   if (comp(value, list[list.length - 1]) >= 0) {
-    if (type == Nearest.CEIL) {
+    if (type == Nearest.ceil) {
       return -1;
     }
     return list.length - 1;
@@ -40,11 +40,11 @@ int binaryClosest({
       } else if (comp(value, list[mid]) < 0) {
         if (mid > 0 && comp(value, list[mid - 1]) > 0) {
           switch (type) {
-            case Nearest.FLOOR:
+            case Nearest.floor:
               return mid - 1;
-            case Nearest.CEIL:
+            case Nearest.ceil:
               return mid;
-            case Nearest.CLOSEST:
+            case Nearest.closest:
             default:
               return comp(value, list[mid - 1]).abs() <
                       comp(value, list[mid]).abs()
@@ -56,11 +56,11 @@ int binaryClosest({
       } else {
         if (mid < list.length - 1 && comp(value, list[mid + 1]) < 0) {
           switch (type) {
-            case Nearest.FLOOR:
+            case Nearest.floor:
               return mid;
-            case Nearest.CEIL:
+            case Nearest.ceil:
               return mid + 1;
-            case Nearest.CLOSEST:
+            case Nearest.closest:
             default:
               return comp(value, list[mid + 1]).abs() <
                       comp(value, list[mid]).abs()
@@ -76,11 +76,11 @@ int binaryClosest({
     if (mid_comp < 0) {
       if (mid > 0) {
         switch (type) {
-          case Nearest.FLOOR:
+          case Nearest.floor:
             return mid - 1;
-          case Nearest.CEIL:
+          case Nearest.ceil:
             return mid;
-          case Nearest.CLOSEST:
+          case Nearest.closest:
           default:
             return comp(value, list[mid - 1]).abs() <
                     comp(value, list[mid]).abs()
@@ -88,7 +88,7 @@ int binaryClosest({
                 : mid;
         }
       } else {
-        if (type == Nearest.FLOOR) {
+        if (type == Nearest.floor) {
           return -1;
         }
         return mid;
@@ -97,11 +97,11 @@ int binaryClosest({
     if (mid_comp > 0) {
       if (mid < list.length - 1) {
         switch (type) {
-          case Nearest.FLOOR:
+          case Nearest.floor:
             return mid;
-          case Nearest.CEIL:
+          case Nearest.ceil:
             return mid + 1;
-          case Nearest.CLOSEST:
+          case Nearest.closest:
           default:
             return comp(value, list[mid + 1]).abs() <
                     comp(value, list[mid]).abs()
@@ -109,7 +109,7 @@ int binaryClosest({
                 : mid;
         }
       } else {
-        if (type == Nearest.CEIL) {
+        if (type == Nearest.ceil) {
           return -1;
         }
         return mid;
@@ -182,7 +182,7 @@ bool binaryInsert({
 }) {
   comp = comp ?? (a, b) => a - b;
   var index =
-      binaryClosest(list: list, value: value, type: Nearest.CEIL, comp: comp);
+      binaryClosest(list: list, value: value, type: Nearest.ceil, comp: comp);
   if (index >= 0) {
     if (!double_add && comp(value, list[index]) == 0) {
       return false;

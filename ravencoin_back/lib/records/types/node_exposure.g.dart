@@ -14,21 +14,21 @@ class NodeExposureAdapter extends TypeAdapter<NodeExposure> {
   NodeExposure read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return NodeExposure.Internal;
+        return NodeExposure.internal;
       case 1:
-        return NodeExposure.External;
+        return NodeExposure.external;
       default:
-        return NodeExposure.Internal;
+        return NodeExposure.internal;
     }
   }
 
   @override
   void write(BinaryWriter writer, NodeExposure obj) {
     switch (obj) {
-      case NodeExposure.Internal:
+      case NodeExposure.internal:
         writer.writeByte(0);
         break;
-      case NodeExposure.External:
+      case NodeExposure.external:
         writer.writeByte(1);
         break;
     }

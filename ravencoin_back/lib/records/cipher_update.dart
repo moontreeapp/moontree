@@ -39,4 +39,4 @@ class CipherUpdate with EquatableMixin {
       {for (var value in CipherType.values) value.name: value};
 }
 
-const CipherUpdate defaultCipherUpdate = CipherUpdate(CipherType.None);
+const CipherUpdate defaultCipherUpdate = CipherUpdate(CipherType.none);

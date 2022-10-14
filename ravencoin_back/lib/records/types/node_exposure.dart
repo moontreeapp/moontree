@@ -7,8 +7,8 @@ part 'node_exposure.g.dart';
 @HiveType(typeId: TypeId.NodeExposure)
 enum NodeExposure {
   @HiveField(0)
-  Internal,
+  internal,
 
   @HiveField(1)
-  External
+  external
 }
