@@ -184,7 +184,7 @@ class _NavMenuState extends State<NavMenu> {
               //icon: MdiIcons.accountCog,
               icon: MdiIcons.rocketLaunchOutline,
               name: 'Advanced',
-              link: '/settings/developer',
+              link: '/settings/advanced',
             ),
           //destination(
           //  //icon: MdiIcons.accountCog,
