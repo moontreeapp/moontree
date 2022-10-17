@@ -9,5 +9,7 @@ class _SettingNameKey extends Key<Setting> {
 
 extension BySettingNameMethodsForSetting on Index<_SettingNameKey, Setting> {
   Setting? getOne(SettingName name) =>
-      getByKeyStr(Setting.settingKey(name)).firstOrNull;
+      getByKeyStr(Setting.key(name)).firstOrNull;
+
+  List<Setting> getAll(SettingName name) => getByKeyStr(Setting.key(name));
 }

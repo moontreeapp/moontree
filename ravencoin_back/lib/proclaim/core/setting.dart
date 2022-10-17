@@ -36,7 +36,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
         SettingName.auth_method: Setting(
             name: SettingName.auth_method, value: AuthMethod.nativeSecurity),
         SettingName.blockchain:
-            Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+            Setting(name: SettingName.blockchain, value: Chain.none),
         SettingName.wallet_current:
             Setting(name: SettingName.wallet_current, value: '0'),
         SettingName.wallet_preferred:
@@ -112,7 +112,7 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
   }) async {
     await saveAll([
       Setting(name: SettingName.electrum_net, value: net),
-      Setting(name: SettingName.blockchain, value: chain),
+      Setting(name: SettingName.blockchain, value: chain)
     ]);
 
     /// triggers should be set to change the domain:port by chain:net

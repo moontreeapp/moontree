@@ -25,9 +25,9 @@ class Setting with EquatableMixin {
   @override
   String toString() => 'Setting($name, $value)';
 
-  String get id => Setting.settingKey(name);
+  String get id => Setting.key(name);
 
-  static String settingKey(SettingName name) => name.name;
+  static String key(SettingName name) => name.name;
 
   Type? get type => {
         SettingName.version_database: int,

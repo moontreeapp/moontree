@@ -1,7 +1,10 @@
-import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_back/streams/client.dart';
+import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/bottom/selection_items.dart';
 import 'package:ravencoin_front/widgets/other/textfield.dart';
 import 'package:ravencoin_front/widgets/assets/icons.dart';
+import 'package:ravencoin_front/widgets/assets/filters.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -21,6 +24,7 @@ class _NetworkChoice extends State<NetworkChoice> {
   Chain chainChoice = Chain.ravencoin;
   Net netChoice = Net.main;
   late Tuple2<Chain, Net> chainNet;
+  bool showHelper = true;
 
   @override
   void initState() {
@@ -37,109 +41,124 @@ class _NetworkChoice extends State<NetworkChoice> {
 
   @override
   Widget build(BuildContext context) {
+    choiceController.text =
+        '${chainChoice.name.toTitleCase()}${netChoice == Net.test ? ' (testnet)' : ''}';
+    //FocusScope.of(context).requestFocus(choiceFocus);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        TextFieldFormatted(
-          focusNode: choiceFocus,
-          controller: choiceController,
-          readOnly: true,
-          textInputAction: TextInputAction.next,
-          decoration: components.styles.decorations.textField(context,
+        Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: TextFieldFormatted(
               focusNode: choiceFocus,
+              controller: choiceController,
+              readOnly: true,
               labelText: 'Blockchain',
-              hintText: 'Ravencoin',
+              //hintText: 'Ravencoin',
+              helperText: services.client.connectionStatus &&
+                      streams.client.connected.value ==
+                          ConnectionStatus.connected
+                  ? 'Connected'
+                  : null,
+              helperStyle: Theme.of(context)
+                  .textTheme
+                  .caption!
+                  .copyWith(height: .8, color: AppColors.primary),
+              alwaysShowHelper: showHelper,
+              textInputAction: TextInputAction.next,
               suffixIcon: IconButton(
                 icon: Padding(
                     padding: EdgeInsets.only(right: 14),
                     child: Icon(Icons.expand_more_rounded,
                         color: Color(0xDE000000))),
                 onPressed: () => _produceAssetModal(),
-              )),
-          onTap: () {
-            _produceAssetModal();
-            setState(() {});
-          },
-          onEditingComplete: () async {
-            FocusScope.of(context).requestFocus(choiceFocus);
-          },
-        ),
-
-        //Text('Blockchain Network',
-        //    style: Theme.of(context).textTheme.bodyText1),
-        //Text(
-        //  'Wallets can hold value on multiple blockchains. Which blockchain would you like to connect to?',
-        //  style: Theme.of(context).textTheme.bodyText2,
-        //),
-        //await SimpleSelectionItems(
-        //    components.navigator.routeContext!,
-        //    then: () => dropDownActive = false,
-        //    items: []),
-        SizedBox(height: 16),
-        RadioListTile<Tuple2<Chain, Net>>(
-            title: const Text('Ravencoin'),
-            value: Tuple2(Chain.ravencoin, Net.main),
-            groupValue: chainNet,
-            onChanged: changeChainNet),
-        if (pros.settings.advancedDeveloperMode)
-          RadioListTile<Tuple2<Chain, Net>>(
-              title: const Text('Ravencoin (testnet)'),
-              value: Tuple2(Chain.ravencoin, Net.test),
-              groupValue: chainNet,
-              onChanged: changeChainNet),
-        RadioListTile<Tuple2<Chain, Net>>(
-            title: const Text('Evrmore'),
-            value: Tuple2(Chain.evrmore, Net.main),
-            groupValue: chainNet,
-            onChanged: changeChainNet),
-        if (pros.settings.advancedDeveloperMode)
-          RadioListTile<Tuple2<Chain, Net>>(
-              title: const Text('Evrmore (testnet)'),
-              value: Tuple2(Chain.evrmore, Net.test),
-              groupValue: chainNet,
-              onChanged: changeChainNet)
+              ),
+              onTap: () {
+                _produceAssetModal();
+                setState(() {});
+              },
+              onEditingComplete: () async {
+                FocusScope.of(context).requestFocus(choiceFocus);
+              },
+            )),
       ],
-    );
-  }
-
-  void changeChainNet(Tuple2<Chain, Net>? value) async {
-    streams.client.busy.add(true);
-    setState(() {
-      chainChoice = value!.item1;
-      netChoice = value.item2;
-      chainNet = value;
-    });
-    services.client.switchNetworks(value!.item1, net: value.item2);
-    components.loading.screen(
-      message:
-          'Syncing with ${value.item1.name.toTitleCase()}${value.item2 == Net.test ? ' ' + value.item2.name.toTitleCase() : ''}',
-      returnHome: true,
-      playCount: 5,
     );
   }
 
   void _produceAssetModal() => SimpleSelectionItems(context, items: [
         ListTile(
-          leading: icons.evrmore(height: 24, width: 24, circled: true),
-          title: Text('Evrmore'),
-          trailing: null,
-        ),
-        //if (pros.settings.advancedDeveloperMode)
-        //  ListTile(
-        //    leading: svgIcons.evrmoreTest,
-        //    title: Text('Evrmore (testnet)'),
-        //    trailing: null,
-        //  ),
+            dense: true,
+            leading: icons.evrmore(height: 24, width: 24, circled: true),
+            title: Text('Evrmore',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: AppColors.black87)),
+            trailing: chainChoice == Chain.evrmore && netChoice == Net.main
+                ? Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+            onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.main))),
+        if (pros.settings.developerMode)
+          ListTile(
+              leading: ColorFiltered(
+                  colorFilter: filters.greyscale,
+                  child: icons.evrmore(height: 24, width: 24, circled: true)),
+              title: Text('Evrmore (testnet)',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: AppColors.black87)),
+              trailing: chainChoice == Chain.evrmore && netChoice == Net.test
+                  ? Icon(Icons.check_rounded, color: AppColors.primary)
+                  : null,
+              onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.test))),
         ListTile(
-          leading: icons.ravencoin(height: 24, width: 24, circled: true),
-          title: Text('Ravencoin'),
-          trailing: null,
-        ),
-        //if (pros.settings.advancedDeveloperMode)
-        //  ListTile(
-        //    leading: svgIcons.ravencoinTest,
-        //    title: Text('Ravencoin (testnet)'),
-        //    trailing: null,
-        //  ),
+            dense: true,
+            leading: icons.ravencoin(height: 24, width: 24, circled: true),
+            title: Text('Ravencoin',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: AppColors.black87)),
+            trailing: chainChoice == Chain.ravencoin && netChoice == Net.main
+                ? Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+            onTap: () => changeChainNet(Tuple2(Chain.ravencoin, Net.main))),
+        if (pros.settings.developerMode)
+          ListTile(
+              leading: ColorFiltered(
+                  colorFilter: filters.greyscale,
+                  child: icons.ravencoin(height: 24, width: 24, circled: true)),
+              title: Text('Ravencoin (testnet)',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: AppColors.black87)),
+              trailing: chainChoice == Chain.ravencoin && netChoice == Net.test
+                  ? Icon(Icons.check_rounded, color: AppColors.primary)
+                  : null,
+              onTap: () => changeChainNet(Tuple2(Chain.ravencoin, Net.test))),
       ]).build();
+
+  void changeChainNet(Tuple2<Chain, Net> value) async {
+    Navigator.of(context).pop();
+    streams.client.busy.add(true);
+    setState(() {
+      chainChoice = value.item1;
+      netChoice = value.item2;
+      chainNet = value;
+      showHelper = false;
+    });
+    await services.client.switchNetworks(value.item1, net: value.item2);
+    await components.loading.screen(
+      message:
+          'Connecting to ${value.item1.name.toTitleCase()}${value.item2 == Net.test ? ' ' + value.item2.name.toTitleCase() : ''}',
+      returnHome: false,
+      playCount: 5,
+    );
+    streams.app.snack.add(Snack(message: 'Successfully connected'));
+    setState(() {
+      showHelper = true;
+    });
+  }
 }
