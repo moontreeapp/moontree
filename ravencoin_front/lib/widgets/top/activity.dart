@@ -66,7 +66,7 @@ class _ActivityLightState extends State<ActivityLight>
                   content: activityMessage.message,
                   child: activityMessage.message == '' ||
                           activityMessage.message == null
-                      ? (pros.settings.developerMode == true
+                      ? (pros.settings.advancedDeveloperMode == true
                           //? DownloadQueueCount()
                           ? DownloadActivity()
                           : null)

@@ -49,7 +49,8 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
             Setting(name: SettingName.send_immediate, value: null),
         SettingName.version_previous:
             Setting(name: SettingName.send_immediate, value: null),
-        SettingName.mode_dev: Setting(name: SettingName.mode_dev, value: false),
+        SettingName.mode_dev:
+            Setting(name: SettingName.mode_dev, value: FeatureLevel.easy),
       }.map((settingName, setting) => MapEntry(settingName.name, setting));
 
   /// should this be in the database or should it be a constant somewhere?
@@ -135,9 +136,31 @@ class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
       primaryIndex.getOne(SettingName.auth_method)!.value ==
       AuthMethod.nativeSecurity;
 
-  bool get developerMode => primaryIndex.getOne(SettingName.mode_dev)!.value;
+  bool get developerMode => [FeatureLevel.normal, FeatureLevel.expert]
+      .contains(primaryIndex.getOne(SettingName.mode_dev)?.value);
+
+  bool get advancedDeveloperMode =>
+      primaryIndex.getOne(SettingName.mode_dev)?.value == FeatureLevel.expert;
 
   Future toggleDevMode([bool? turnOn]) async => await save(
-        Setting(name: SettingName.mode_dev, value: turnOn ?? !developerMode),
+        Setting(
+            name: SettingName.mode_dev,
+            value: turnOn == true
+                ? FeatureLevel.normal
+                : turnOn == null
+                    ? (developerMode ? FeatureLevel.easy : FeatureLevel.normal)
+                    : FeatureLevel.easy),
+      );
+
+  Future toggleAdvDevMode([bool? turnOn]) async => await save(
+        Setting(
+            name: SettingName.mode_dev,
+            value: turnOn == true
+                ? FeatureLevel.expert
+                : turnOn == null
+                    ? (advancedDeveloperMode
+                        ? FeatureLevel.easy
+                        : FeatureLevel.expert)
+                    : FeatureLevel.easy),
       );
 }

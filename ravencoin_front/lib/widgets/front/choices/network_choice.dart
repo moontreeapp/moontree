@@ -50,7 +50,7 @@ class _NetworkChoice extends State<NetworkChoice> {
             value: Tuple2(Chain.ravencoin, Net.main),
             groupValue: chainNet,
             onChanged: changeChainNet),
-        if (pros.settings.developerMode)
+        if (pros.settings.advancedDeveloperMode)
           RadioListTile<Tuple2<Chain, Net>>(
               title: const Text('Ravencoin (testnet)'),
               value: Tuple2(Chain.ravencoin, Net.test),
@@ -61,7 +61,7 @@ class _NetworkChoice extends State<NetworkChoice> {
             value: Tuple2(Chain.evrmore, Net.main),
             groupValue: chainNet,
             onChanged: changeChainNet),
-        if (pros.settings.developerMode)
+        if (pros.settings.advancedDeveloperMode)
           RadioListTile<Tuple2<Chain, Net>>(
               title: const Text('Evrmore (testnet)'),
               value: Tuple2(Chain.evrmore, Net.test),

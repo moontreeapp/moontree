@@ -26,11 +26,7 @@ class About extends StatelessWidget {
                       onVerticalDragEnd: (DragEndDetails x) async {
                         if (x.velocity.pixelsPerSecond.dy < -3000) {
                           Navigator.of(context)
-                              .pushReplacementNamed('/settings/developer');
-                          ////await pros.settings.toggleDevMode();
-                          ////streams.app.snack.add(Snack(
-                          ////    message:
-                          ////        'developer mode: ${pros.settings.developerMode}'));
+                              .pushReplacementNamed('/settings/advanced');
                         }
                       },
                       child: Image.asset(

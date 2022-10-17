@@ -93,22 +93,25 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                 padding:
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: serverTextField)),
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text('Most Recent Network Activity',
-                          style: Theme.of(context).textTheme.bodyText1),
-                    ]))),
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
-                child: Container(
-                    alignment: Alignment.topLeft, child: DownloadActivity()))),
+        if (pros.settings.advancedDeveloperMode)
+          SliverToBoxAdapter(
+              child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('Most Recent Network Activity',
+                            style: Theme.of(context).textTheme.bodyText1),
+                      ]))),
+        if (pros.settings.advancedDeveloperMode)
+          SliverToBoxAdapter(
+              child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
+                  child: Container(
+                      alignment: Alignment.topLeft,
+                      child: DownloadActivity()))),
 
         //SliverToBoxAdapter(
         //    child: Container(height: MediaQuery.of(context).size.height / 2)),

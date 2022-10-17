@@ -56,7 +56,7 @@ class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
                           child: Container(
                               alignment: Alignment.topLeft,
                               child: AuthenticationMethodChoice())),
-                      if (pros.settings.developerMode)
+                      if (pros.settings.advancedDeveloperMode)
                         Padding(
                             padding: EdgeInsets.only(
                                 left: 16, right: 16, top: 16, bottom: 16),

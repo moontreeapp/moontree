@@ -482,7 +482,7 @@ class _HoldingList extends State<HoldingList> {
           ...assetHoldings,
           ...[components.empty.blankNavArea(context)]
         ]);
-    if (pros.settings.developerMode == true) {
+    if (pros.settings.advancedDeveloperMode == true) {
       return GestureDetector(
           onTap: FocusScope.of(context).unfocus,
           child: RefreshIndicator(

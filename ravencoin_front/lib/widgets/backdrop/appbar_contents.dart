@@ -86,6 +86,8 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             printFullState();
+            print(pros.settings.advancedDeveloperMode);
+            print(pros.settings.primaryIndex.getOne(SettingName.mode_dev));
             /*
             print(await SecureStorage.authenticationKey);
             var s = Stopwatch()..start();

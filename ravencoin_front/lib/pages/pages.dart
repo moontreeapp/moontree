@@ -26,6 +26,7 @@ import 'package:ravencoin_front/pages/security/resume.dart';
 import 'package:ravencoin_front/pages/security/change_password.dart';
 import 'package:ravencoin_front/pages/security/change_method.dart';
 import 'package:ravencoin_front/pages/settings/about.dart';
+import 'package:ravencoin_front/pages/settings/advanced.dart';
 import 'package:ravencoin_front/pages/settings/export.dart';
 import 'package:ravencoin_front/pages/settings/feedback.dart';
 import 'package:ravencoin_front/pages/settings/import.dart';
@@ -35,7 +36,7 @@ import 'package:ravencoin_front/pages/settings/network.dart';
 import 'package:ravencoin_front/pages/settings/mining.dart';
 import 'package:ravencoin_front/pages/settings/database.dart';
 import 'package:ravencoin_front/pages/settings/developer.dart';
-import 'package:ravencoin_front/pages/settings/advanced.dart';
+import 'package:ravencoin_front/pages/settings/userlevel.dart';
 import 'package:ravencoin_front/pages/settings/preferences.dart';
 import 'package:ravencoin_front/pages/settings/support.dart';
 import 'package:ravencoin_front/pages/settings/sweep.dart';
@@ -152,6 +153,7 @@ class pages {
         '/settings/technical': (context) => TechnicalView(),
         '/settings/database': (context) => DatabaseOptions(),
         '/settings/developer': (context) => DeveloperOptions(),
+        '/settings/advanced': (context) => AdvancedDeveloperOptions(),
         '/settings/sweep': (context) => SweepPage(),
       };
 }

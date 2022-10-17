@@ -38,7 +38,7 @@ class _DeveloperModeChoice extends State<DeveloperModeChoice> {
       children: <Widget>[
         Text('Developer Mode', style: Theme.of(context).textTheme.bodyText1),
         Text(
-          'In Developer Mode, you can do anything... make a paper backup first.',
+          'Developer Mode has some experimental functionality, use at your own risk. It is always best to make a paper backup first.',
           style: Theme.of(context).textTheme.bodyText2,
         ),
         SizedBox(height: 16),
@@ -49,7 +49,7 @@ class _DeveloperModeChoice extends State<DeveloperModeChoice> {
           onChanged: (DeveloperModeChoices? value) => setState(() {
             if (value != null) {
               devChoice = value;
-              pros.settings.toggleDevMode(!pros.settings.developerMode);
+              pros.settings.toggleDevMode(true);
             }
           }),
         ),
@@ -60,7 +60,7 @@ class _DeveloperModeChoice extends State<DeveloperModeChoice> {
           onChanged: (DeveloperModeChoices? value) => setState(() {
             if (value != null) {
               devChoice = value;
-              pros.settings.toggleDevMode(!pros.settings.developerMode);
+              pros.settings.toggleDevMode(false);
             }
           }),
         ),

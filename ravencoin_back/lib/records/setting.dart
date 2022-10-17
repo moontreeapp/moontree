@@ -44,6 +44,6 @@ class Setting with EquatableMixin {
         SettingName.send_immediate: bool,
         SettingName.version_previous: String, //?
         SettingName.version_current: String, //?
-        SettingName.mode_dev: bool,
+        SettingName.mode_dev: FeatureLevel,
       }[name];
 }

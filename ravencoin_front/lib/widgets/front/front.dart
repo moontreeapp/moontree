@@ -7,6 +7,7 @@ export 'choices/download_queue_count.dart';
 export 'choices/network_choice.dart';
 export 'choices/clear_secure_storage.dart';
 export 'choices/resync.dart';
+export 'choices/adv_dev_mode.dart';
 export 'choices/dev_mode.dart';
 export 'choices/miner_mode_choice.dart';
 export 'choices/show_authentication_key.dart';

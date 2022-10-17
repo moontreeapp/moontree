@@ -218,8 +218,10 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     if (pros.wallets.length > 0) {
       if (settingTitle != null &&
           (pros.wallets.length > 1 ||
-              pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value ==
-                  true)) {
+              [FeatureLevel.normal, FeatureLevel.expert].contains(pros
+                  .settings.primaryIndex
+                  .getOne(SettingName.mode_dev)
+                  ?.value))) {
         return walletDropDown();
       } else if (appContext == AppContext.wallet) {
         return GestureDetector(
@@ -272,7 +274,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                       title: Text('New Wallet',
                           style: Theme.of(context).textTheme.bodyText1),
                     ),
-                  if (pros.settings.developerMode == true)
+                  if (pros.settings.advancedDeveloperMode == true)
                     ListTile(
                       visualDensity: VisualDensity.compact,
                       onTap: () async {
@@ -303,7 +305,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                         title: Text(wallet.name,
                             style: Theme.of(context).textTheme.bodyText1),
                         // awaiting design..........
-                        trailing: !pros.settings.developerMode
+                        trailing: !pros.settings.advancedDeveloperMode
                             ? null
                             : Row(
                                 mainAxisSize: MainAxisSize.min,

@@ -148,7 +148,7 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Network',
             link: '/settings/network',
           ),
-          if (pros.settings.developerMode == true &&
+          if (pros.settings.developerMode &&
               Current.balanceRVN.value > 0 &&
               Current.wallet.unspents.length <
                   1000 // unable to handle this edgecase yet.
@@ -159,40 +159,46 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Sweep',
               link: '/settings/sweep',
             ),
-          if (pros.settings.developerMode == true)
+          if (pros.settings.advancedDeveloperMode)
             destination(
               icon: Icons.format_list_bulleted_rounded,
               name: 'Addresses',
               link: '/addresses',
             ),
-          if (pros.settings.developerMode == true)
+          if (pros.settings.developerMode)
             destination(
               //icon: MdiIcons.accountCog,
               icon: MdiIcons.pickaxe,
               name: 'Mining',
               link: '/settings/network/mining',
             ),
-          if (pros.settings.developerMode == true)
+          if (pros.settings.advancedDeveloperMode)
             destination(
               //icon: MdiIcons.accountCog,
               icon: MdiIcons.database,
               name: 'Database',
               link: '/settings/database',
             ),
-          if (pros.settings.developerMode == true)
-            destination(
-              //icon: MdiIcons.accountCog,
-              icon: MdiIcons.rocketLaunchOutline,
-              name: 'Advanced',
-              link: '/settings/developer',
-            ),
+          //if (pros.settings.advancedDeveloperMode == true)
+          //  destination(
+          //    //icon: MdiIcons.accountCog,
+          //    icon: MdiIcons.rocketLaunchOutline,
+          //    name: 'Advanced',
+          //    link: '/settings/developer',
+          //  ),
+          destination(
+            //icon: MdiIcons.accountCog,
+            icon: MdiIcons.developerBoard,
+            name: 'Developer',
+            link: '/settings/developer',
+          ),
         ],
       ),
       '/settings': ListView(
         shrinkWrap: true,
         padding: EdgeInsets.all(0),
         children: [
-          if (pros.settings.developerMode == true)
+          if (pros.settings.advancedDeveloperMode)
             destination(
               icon: MdiIcons.linkVariant, //MdiIcons.linkBoxVariant,
               name: 'Blockchain',
