@@ -188,7 +188,7 @@ class _NavMenuState extends State<NavMenu> {
             ),
           destination(
             //icon: MdiIcons.accountCog,
-            icon: MdiIcons.developerBoard,
+            icon: MdiIcons.devTo,
             name: 'Developer',
             link: '/settings/developer',
           ),
@@ -200,7 +200,7 @@ class _NavMenuState extends State<NavMenu> {
         children: [
           if (pros.settings.advancedDeveloperMode)
             destination(
-              icon: MdiIcons.linkVariant, //MdiIcons.linkBoxVariant,
+              icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant, //
               name: 'Blockchain',
               link: '/settings/network/blockchain',
             ),
