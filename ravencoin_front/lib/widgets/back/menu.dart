@@ -179,19 +179,19 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Database',
               link: '/settings/database',
             ),
-          //if (pros.settings.advancedDeveloperMode == true)
-          //  destination(
-          //    //icon: MdiIcons.accountCog,
-          //    icon: MdiIcons.rocketLaunchOutline,
-          //    name: 'Advanced',
-          //    link: '/settings/developer',
-          //  ),
-          destination(
-            //icon: MdiIcons.accountCog,
-            icon: MdiIcons.developerBoard,
-            name: 'Developer',
-            link: '/settings/developer',
-          ),
+          if (pros.settings.advancedDeveloperMode == true)
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.rocketLaunchOutline,
+              name: 'Advanced',
+              link: '/settings/developer',
+            ),
+          //destination(
+          //  //icon: MdiIcons.accountCog,
+          //  icon: MdiIcons.developerBoard,
+          //  name: 'Developer',
+          //  link: '/settings/developer',
+          //),
         ],
       ),
       '/settings': ListView(
