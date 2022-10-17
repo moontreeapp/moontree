@@ -113,7 +113,7 @@ class Vout with EquatableMixin, ToStringMixin {
 
   int securityValue({Security? security}) => security == null ||
           (security.symbol == pros.securities.RVN.symbol &&
-              security.securityType == SecurityType.Crypto)
+              security.securityType == SecurityType.crypto)
       ? rvnValue
       : (security.id == assetSecurityId)
           ? assetValue ?? 0

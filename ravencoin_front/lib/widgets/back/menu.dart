@@ -126,9 +126,17 @@ class _NavMenuState extends State<NavMenu> {
         children: [
           destination(
             icon: Icons.lock_rounded,
-            name: 'Password',
-            link: '/security/change',
+            name: 'Security',
+            link: '/security/method/change',
           ),
+          /*
+          if (!pros.settings.authMethodIsNativeSecurity)
+            destination(
+              icon: Icons.lock_rounded,
+              name: 'Password',
+              link: '/security/password/change',
+            ),
+            */
           /*
           destination(
               icon: MdiIcons.accountCog,
@@ -140,24 +148,79 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Network',
             link: '/settings/network',
           ),
+          if (pros.settings.developerMode &&
+              Current.balanceRVN.value > 0 &&
+              Current.wallet.unspents.length <
+                  1000 // unable to handle this edgecase yet.
+          )
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.broom,
+              name: 'Sweep',
+              link: '/settings/sweep',
+            ),
+          if (pros.settings.advancedDeveloperMode)
+            destination(
+              icon: Icons.format_list_bulleted_rounded,
+              name: 'Addresses',
+              link: '/addresses',
+            ),
+          if (pros.settings.developerMode)
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.pickaxe,
+              name: 'Mining',
+              link: '/settings/network/mining',
+            ),
+          if (pros.settings.advancedDeveloperMode)
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.database,
+              name: 'Database',
+              link: '/settings/database',
+            ),
+          if (pros.settings.advancedDeveloperMode == true)
+            destination(
+              //icon: MdiIcons.accountCog,
+              icon: MdiIcons.rocketLaunchOutline,
+              name: 'Advanced',
+              link: '/settings/advanced',
+            ),
+          //destination(
+          //  //icon: MdiIcons.accountCog,
+          //  icon: MdiIcons.developerBoard,
+          //  name: 'Developer',
+          //  link: '/settings/developer',
+          //),
         ],
       ),
       '/settings': ListView(
         shrinkWrap: true,
         padding: EdgeInsets.all(0),
         children: [
-          destination(
-            icon: MdiIcons.shieldKey,
-            name: 'Import / Export',
-            link: '/settings/import_export',
-            arrow: true,
-          ),
-          if (Current.wallet is LeaderWallet)
+          if (pros.settings.advancedDeveloperMode)
             destination(
-              icon: MdiIcons.drawPen,
-              name: 'Backup',
-              link: '/security/backup',
+              icon: MdiIcons.linkVariant, //MdiIcons.linkBoxVariant,
+              name: 'Blockchain',
+              link: '/settings/network/blockchain',
             ),
+          destination(
+              icon: MdiIcons.shieldKey,
+              name: 'Import',
+              link: '/settings/import'),
+          //destination(
+          //  icon: MdiIcons.shieldKey,
+          //  name: 'Import / Export',
+          //  link: '/settings/import_export',
+          //  arrow: true,
+          //),
+          destination(
+            icon: MdiIcons.drawPen,
+            name: 'Backup',
+            link: Current.wallet is LeaderWallet
+                ? '/security/backup'
+                : '/security/backupKeypair',
+          ),
           destination(
             icon: Icons.settings,
             name: 'Settings',
@@ -183,11 +246,6 @@ class _NavMenuState extends State<NavMenu> {
           ),
           /*
           destination(
-            icon: Icons.info_rounded,
-            name: 'Wallet',
-            link: '/wallet',
-          ),
-          destination(
               icon: Icons.info_outline_rounded,
               name: 'Clear Database',
               link: '/home',
@@ -199,6 +257,7 @@ class _NavMenuState extends State<NavMenu> {
                 
               }),
           */
+          SizedBox(height: 16),
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(

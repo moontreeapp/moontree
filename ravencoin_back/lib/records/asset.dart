@@ -66,23 +66,23 @@ class Asset with EquatableMixin {
   static String assetKey(String symbol) => symbol;
   String get id => symbol;
   String? get parentId {
-    if (assetType == AssetType.Sub) {
+    if (assetType == AssetType.sub) {
       var splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
     }
-    if (assetType == AssetType.SubAdmin) {
+    if (assetType == AssetType.subAdmin) {
       var splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
     }
-    if (assetType == AssetType.QualifierSub) {
+    if (assetType == AssetType.qualifierSub) {
       var splits = symbol.split('/#');
       return splits.sublist(0, splits.length - 1).join('/#');
     }
-    if (assetType == AssetType.NFT) {
+    if (assetType == AssetType.unique) {
       var splits = symbol.split('#');
       return splits.sublist(0, splits.length - 1).join('#');
     }
-    if (assetType == AssetType.Channel) {
+    if (assetType == AssetType.channel) {
       var splits = symbol.split('~');
       return splits.sublist(0, splits.length - 1).join('~');
     }
@@ -90,23 +90,23 @@ class Asset with EquatableMixin {
   }
 
   String? get shortName {
-    if (assetType == AssetType.Sub) {
+    if (assetType == AssetType.sub) {
       var splits = symbol.split('/');
       return splits[splits.length - 1];
     }
-    if (assetType == AssetType.SubAdmin) {
+    if (assetType == AssetType.subAdmin) {
       var splits = symbol.split('/');
       return splits[splits.length - 1];
     }
-    if (assetType == AssetType.QualifierSub) {
+    if (assetType == AssetType.qualifierSub) {
       var splits = symbol.split('/#');
       return splits[splits.length - 1];
     }
-    if (assetType == AssetType.NFT) {
+    if (assetType == AssetType.unique) {
       var splits = symbol.split('#');
       return splits[splits.length - 1];
     }
-    if (assetType == AssetType.Channel) {
+    if (assetType == AssetType.channel) {
       var splits = symbol.split('~');
       return splits[splits.length - 1];
     }
@@ -120,24 +120,24 @@ class Asset with EquatableMixin {
   bool get hasMetadata => metadata != '';
 
   bool get isAdmin =>
-      assetType == AssetType.Admin || assetType == AssetType.SubAdmin;
+      assetType == AssetType.admin || assetType == AssetType.subAdmin;
 
-  bool get isSubAdmin => assetType == AssetType.SubAdmin;
+  bool get isSubAdmin => assetType == AssetType.subAdmin;
 
   bool get isQualifier =>
-      assetType == AssetType.Qualifier || assetType == AssetType.QualifierSub;
+      assetType == AssetType.qualifier || assetType == AssetType.qualifierSub;
 
   bool get isAnySub =>
-      assetType == AssetType.QualifierSub ||
-      assetType == AssetType.SubAdmin ||
-      assetType == AssetType.Sub ||
-      assetType == AssetType.NFT ||
-      assetType == AssetType.Channel;
+      assetType == AssetType.qualifierSub ||
+      assetType == AssetType.subAdmin ||
+      assetType == AssetType.sub ||
+      assetType == AssetType.unique ||
+      assetType == AssetType.channel;
 
-  bool get isRestricted => assetType == AssetType.Restricted;
-  bool get isMain => assetType == AssetType.Main;
-  bool get isNFT => assetType == AssetType.NFT;
-  bool get isChannel => assetType == AssetType.NFT;
+  bool get isRestricted => assetType == AssetType.restricted;
+  bool get isMain => assetType == AssetType.main;
+  bool get isNFT => assetType == AssetType.unique;
+  bool get isChannel => assetType == AssetType.unique;
 
   String get baseSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
       ? symbol.substring(1, symbol.length)
@@ -157,45 +157,45 @@ class Asset with EquatableMixin {
 
   static AssetType assetTypeOf(String symbol) {
     if (symbol.startsWith('#') && symbol.contains('/')) {
-      return AssetType.QualifierSub;
+      return AssetType.qualifierSub;
     }
     if (symbol.startsWith('#')) {
-      return AssetType.Qualifier;
+      return AssetType.qualifier;
     }
     if (symbol.startsWith('\$')) {
-      return AssetType.Restricted;
+      return AssetType.restricted;
     }
     if (symbol.contains('#')) {
-      return AssetType.NFT;
+      return AssetType.unique;
     }
     if (symbol.contains('~')) {
-      return AssetType.Channel;
+      return AssetType.channel;
     }
     if (symbol.contains('/') && symbol.endsWith('!')) {
-      return AssetType.SubAdmin;
+      return AssetType.subAdmin;
     }
     if (symbol.contains('/')) {
-      return AssetType.Sub;
+      return AssetType.sub;
     }
     if (symbol.endsWith('!')) {
-      return AssetType.Admin;
+      return AssetType.admin;
     }
-    return AssetType.Main;
+    return AssetType.main;
   }
 
-  String get assetTypeName => assetType.enumString;
+  String get assetTypeName => assetType.name;
 
   double get amount => utils.satToAmount(satsInCirculation);
 }
 
 enum AssetType {
-  Main,
-  Admin,
-  Restricted,
-  NFT,
-  Channel,
-  Sub,
-  SubAdmin,
-  Qualifier,
-  QualifierSub,
+  main,
+  admin,
+  restricted,
+  unique,
+  channel,
+  sub,
+  subAdmin,
+  qualifier,
+  qualifierSub,
 }

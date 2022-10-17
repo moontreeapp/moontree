@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_back/utilities/lock.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
@@ -8,9 +7,6 @@ enum ValueType { confirmed, unconfirmed }
 
 /// we use the electrum server directly for determining our UTXO set
 class UnspentService {
-  final Set<String> _scripthashesChecked = {};
-  final _scripthashesLock = ReaderWriterLock();
-
   void _maybeTriggerBackup(Iterable<ScripthashUnspent> unspents) {
     if (unspents.isNotEmpty && pros.unspents.isEmpty) {
       streams.app.triggers.add(ThresholdTrigger.backup);
@@ -42,23 +38,22 @@ class UnspentService {
   Future<void> pull({
     required Wallet wallet,
     required Set<String> scripthashes,
-    bool getTransactions = false,
+    bool getTransactions = true,
   }) async {
     var utxos = <Unspent>{};
 
-    await _scripthashesLock
-        .write(() => _scripthashesChecked.addAll(scripthashes.toSet()));
-
     /// update RVN call
-    var rvnUtxos =
-        (await services.client.api.getUnspents(scripthashes)).expand((i) => i);
+    var rvnUtxos = (await services.client.api.getUnspents(scripthashes))
+        .expand((i) => i)
+        .toList();
     for (var utxo in rvnUtxos) {
       utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo));
     }
 
     /// update assets call
     var assetUtxos = (await services.client.api.getAssetUnspents(scripthashes))
-        .expand((i) => i);
+        .expand((i) => i)
+        .toList();
     for (final utxo in assetUtxos) {
       // should never be null but can't hurt to be safe. this filters out utxos
       // that are for assets, but have a null symbol which we would interpret as
@@ -76,21 +71,46 @@ class UnspentService {
 
     // only save if there's something new, in that case erase all, save all.
     var existing = pros.unspents.byScripthashes(scripthashes).toSet();
-    if (existing.length != utxos.length ||
-        existing.intersection(utxos).length != existing.length) {
-      await pros.unspents.clearByScripthashes(scripthashes);
-      await pros.unspents.saveAll(utxos);
-      if (getTransactions) {
-        await services.download.history.getAndSaveTransactions(
-          utxos.map((e) => e.transactionId).toSet(),
-        );
+    await pros.unspents.removeAll(existing.difference(utxos));
+    await pros.unspents.saveAll(utxos.difference(existing));
+    if (getTransactions && utxos.isNotEmpty) {
+      /// we don't want to queue these because that makes it hard to know when
+      /// vouts are downloaded for these unspents. If we await the download
+      /// here, instead, we can easily make the send button available when vouts
+      /// for all unspents are downloaded
+      //await services.download.queue.update(
+      //  txids: utxos.map((e) => e.transactionId).toSet(),
+      //);
+
+      /// noticed that during a reorg we can get error about tx not found
+      ///   Exception has occurred.
+      ///     RpcException (JSON-RPC error 2: daemon error: DaemonError({
+      ///       'code': -5,
+      ///       'message': 'No such mempool or blockchain transaction. Use gettransaction for wallet transactions.'}))
+      //await services.download.history
+      //  .getAndSaveTransactions(utxos.map((e) => e.transactionId).toSet());
+      /// so try it all first, because that's much more efficient, if you fail,
+      /// try one at a time:
+      final txids = services.download.history
+          .filterOutPreviouslyDownloaded(utxos.map((e) => e.transactionId))
+          .toSet();
+      if (txids.isNotEmpty) {
+        try {
+          await services.download.history.getAndSaveTransactions(txids);
+        } catch (e) {
+          for (var unspentRecord in utxos) {
+            final txid = unspentRecord.transactionId;
+            if (txids.contains(txid)) {
+              try {
+                await services.download.history.getAndSaveTransactions({txid});
+              } catch (e) {
+                /// so if this transaction is not found, we should remove the unspent
+                await pros.unspents.remove(unspentRecord);
+              }
+            }
+          }
+        }
       }
     }
   }
-
-  /// during the initial start of the app a process is run to check every
-  /// address for updates, once we have checked them all, are done and can
-  /// recalculate balances.
-  Future<bool> get isDone => _scripthashesLock
-      .read(() => _scripthashesChecked.length >= pros.addresses.length);
 }

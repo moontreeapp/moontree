@@ -31,12 +31,12 @@ class SingleWaiter extends Waiter {
       (Change<Wallet> change) {
         change.when(
             loaded: (loaded) {},
-            added: (added) {
+            added: (added) async {
               var wallet = added.record;
               if (wallet.cipher != null) {
                 print('SAVING ADDRESS FOR SINGLE WALLET IMMEDIATELY');
-                pros.addresses.save(
-                    services.wallet.single.toAddress(wallet as SingleWallet));
+                await pros.addresses.save(await services.wallet.single
+                    .toAddress(wallet as SingleWallet));
               } else {
                 backlog.add(wallet as SingleWallet);
               }
@@ -51,12 +51,13 @@ class SingleWaiter extends Waiter {
     );
   }
 
-  void attemptSingleWalletAddressDerive(CipherUpdate cipherUpdate) {
+  void attemptSingleWalletAddressDerive(CipherUpdate cipherUpdate) async {
     var remove = <SingleWallet>{};
     for (var wallet in backlog) {
       if (wallet.cipherUpdate == cipherUpdate) {
         print('SAVING ADDRESS FOR SINGLE WALLET IN BACKLOG');
-        pros.addresses.save(services.wallet.single.toAddress(wallet));
+        await pros.addresses
+            .save(await services.wallet.single.toAddress(wallet));
         remove.add(wallet);
       }
     }

@@ -10,7 +10,7 @@ class AssetService {
           : '$symbol/'.replaceAll('\$', '');
 
   void allAdminsSubs() => pros.assets.byAssetType
-      .getAll(AssetType.Admin)
+      .getAll(AssetType.admin)
       .where((asset) => !asset.symbol.contains('/'))
       .map((asset) => asset.symbol)
       .forEach(downloadMain);
@@ -51,14 +51,14 @@ class AssetService {
             '',
         satsInCirculation: meta.satsInCirculation,
         divisibility: meta.divisions,
-        reissuable: meta.reissuable == 1,
+        reissuable: meta.reissuable,
         transactionId: meta.source.txHash,
         position: meta.source.txPos,
       );
       streams.asset.added.add(asset);
       var security = Security(
         symbol: meta.symbol,
-        securityType: SecurityType.RavenAsset,
+        securityType: SecurityType.asset,
       );
       await pros.assets.save(asset);
       await pros.securities.save(security);

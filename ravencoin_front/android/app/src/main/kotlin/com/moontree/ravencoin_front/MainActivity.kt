@@ -1,6 +1,12 @@
 package com.moontree.ravencoin_front
 
-import io.flutter.embedding.android.FlutterActivity
+/// original, prior to using local_auth package:
+//import io.flutter.embedding.android.FlutterActivity
+//
+//class MainActivity: FlutterActivity() {
+//}
 
-class MainActivity: FlutterActivity() {
+import io.flutter.embedding.android.FlutterFragmentActivity
+
+class MainActivity: FlutterFragmentActivity() {
 }

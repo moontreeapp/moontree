@@ -83,7 +83,7 @@ class RVNtoFiat implements RVNRateInterface {
   /// also, tries to get recent, if unable to get recent data, accepts whatever
   /// is available, otherwise, fails.
   Tuple2<double, double> _interpretMoontreeStructure(
-    Map<String, Map<String, dynamic>> jsonBody, {
+    Map<String, dynamic> jsonBody, {
     int recentHours = 12,
     bool anytime = false,
   }) {
@@ -133,7 +133,8 @@ class RVNtoFiat implements RVNRateInterface {
 
   double _interpret(http.Response response) {
     if (serviceName == 'Moontree') {
-      Map<String, Map<String, dynamic>> jsonBody;
+      //Map<String, Map<String, dynamic>> jsonBody;
+      Map<String, dynamic> jsonBody;
       try {
         jsonBody = jsonDecode(response.body);
       } catch (e) {

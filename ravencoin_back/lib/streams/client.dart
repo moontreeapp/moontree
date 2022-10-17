@@ -6,6 +6,8 @@ class ClientStreams {
       BehaviorSubject<ConnectionStatus>.seeded(ConnectionStatus.disconnected);
   final busy = BehaviorSubject<bool>.seeded(false);
   final activity = BehaviorSubject<ActivityMessage>.seeded(ActivityMessage());
+  final download = BehaviorSubject<ActivityMessage>.seeded(ActivityMessage());
+  final queue = PublishSubject<bool>();
 }
 
 enum ConnectionStatus { connected, connecting, disconnected }

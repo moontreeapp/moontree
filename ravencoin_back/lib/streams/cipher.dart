@@ -12,7 +12,7 @@ class CipherStreams {
 
 /// returns ciphertype depending on if a password exists
 final Stream<CipherType> latestCipherType$ = streams.password.exists
-    .map((bool exists) => exists ? CipherType.AES : CipherType.None);
+    .map((bool exists) => exists ? CipherType.aes : CipherType.none);
 
 /// returns lastest cipherUpdate (latest cipherType, highest passwordId)
 final latestCipherUpdate$ = CombineLatestStream.combine2(

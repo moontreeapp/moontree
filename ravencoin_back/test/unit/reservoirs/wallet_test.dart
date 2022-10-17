@@ -3,7 +3,7 @@ import 'package:proclaim/proclaim.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:ravencoin_back/records/records.dart';
-import 'package:ravencoin_back/proclaim/wallet.dart';
+import 'package:ravencoin_back/proclaim/core/wallet.dart';
 import '../../fixtures/mnemonic.dart';
 
 void main() {

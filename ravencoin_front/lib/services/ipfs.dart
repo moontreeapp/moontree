@@ -107,7 +107,7 @@ class LogoGetter extends IpfsCall {
 }
 
 class IpfsMiniExplorer extends IpfsCall {
-  MetadataType kind = MetadataType.Unknown;
+  MetadataType kind = MetadataType.unknown;
 
   IpfsMiniExplorer([ipfsHash]) : super(ipfsHash);
 
@@ -128,10 +128,10 @@ class IpfsMiniExplorer extends IpfsCall {
     if (_verify(response)) {
       jsonBody = _detectJson(response);
       if (jsonBody is Map<dynamic, dynamic>) {
-        kind = MetadataType.JsonString;
+        kind = MetadataType.jsonString;
         return response.body; //jsonBody.toString();
       } else {
-        kind = MetadataType.ImagePath;
+        kind = MetadataType.imagePath;
         return await _saveImage(response.bodyBytes);
       }
     }
@@ -158,7 +158,7 @@ class IpfsMiniExplorer extends IpfsCall {
           .absolute
           .path;
     } catch (e) {
-      kind = MetadataType.Unknown;
+      kind = MetadataType.unknown;
       print(e);
       // unable to save (perhaps bytes wasn't an image)
     }

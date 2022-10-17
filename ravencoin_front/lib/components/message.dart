@@ -9,6 +9,7 @@ class MessageComponents {
     required Map<String, VoidCallback> behaviors,
     String? title = 'Open in External App',
     String? content = 'Open discord app or browser?',
+    Widget? child,
   }) async {
     // add scrim to appbar with stream here?
     await showDialog(
@@ -23,17 +24,39 @@ class MessageComponents {
               title: title == null
                   ? null
                   : Text(title, style: Theme.of(context).textTheme.headline2),
-              content: content == null
-                  ? null
-                  : Container(
-                      height: 24,
-                      width: MediaQuery.of(context).size.width -
-                          (24 - 24 - 40 - 40),
-                      child: Text(content,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(color: AppColors.black38))),
+              content: child != null && content != null
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                            width: MediaQuery.of(context).size.width -
+                                (24 - 24 - 40 - 40),
+                            child: Text(content,
+                                overflow: TextOverflow.fade,
+                                softWrap: true,
+                                maxLines: 10,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(color: AppColors.black38))),
+                        child,
+                      ],
+                    )
+                  : child != null
+                      ? child
+                      : content != null
+                          ? Container(
+                              width: MediaQuery.of(context).size.width -
+                                  (24 - 24 - 40 - 40),
+                              child: Text(content,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: true,
+                                  maxLines: 10,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(color: AppColors.black38)))
+                          : null,
               actions: [
                 for (var key in behaviors.keys)
                   TextButton(

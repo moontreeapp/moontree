@@ -13,12 +13,14 @@ import 'package:ravencoin_front/utils/transformers.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 enum FormPresets {
+  // admin?
+  // subAdmin?
   main,
   sub,
   restricted,
   qualifier,
   qualifierSub,
-  NFT,
+  unique,
   channel,
 }
 
@@ -67,7 +69,7 @@ class _CreateAssetState extends State<CreateAsset> {
     FormPresets.main: 'Asset Name',
     FormPresets.restricted: 'Restricted Asset Name',
     FormPresets.qualifier: 'Qualifier Name',
-    FormPresets.NFT: 'NFT Name',
+    FormPresets.unique: 'NFT Name',
     FormPresets.channel: 'Message Channel Name',
   };
 
@@ -148,7 +150,7 @@ class _CreateAssetState extends State<CreateAsset> {
   //        (isQualifier && widget.parent != null));
 
   bool get isMain => widget.preset == FormPresets.main;
-  bool get isNFT => widget.preset == FormPresets.NFT;
+  bool get isNFT => widget.preset == FormPresets.unique;
   bool get isChannel => widget.preset == FormPresets.channel;
   bool get isQualifier => widget.preset == FormPresets.qualifier;
   bool get isRestricted => widget.preset == FormPresets.restricted;
@@ -290,7 +292,7 @@ class _CreateAssetState extends State<CreateAsset> {
         hintText: '21,000,000',
         errorText: quantityController.text != '' &&
                 !quantityValidation(quantityController.text.toDouble())
-            ? 'must ${quantityController.text.toInt().toCommaString()} be between 1 and 21,000,000,000'
+            ? 'must ${quantityController.text.asSatsInt().toCommaString()} be between 1 and 21,000,000,000'
             : null,
         onChanged: (String value) =>
             validateQuantity(quantity: value == '' ? 0.0 : value.toDouble()),
@@ -523,7 +525,7 @@ class _CreateAssetState extends State<CreateAsset> {
       decimalController.text != '' && decimal >= 0 && decimal <= 8;
 
   void validateDecimal({int? decimal}) {
-    decimal = decimal ?? decimalController.text.toInt();
+    decimal = decimal ?? decimalController.text.asSatsInt();
     var oldValidation = decimalValidated;
     decimalValidated = decimalValidation(decimal);
     if (oldValidation != decimalValidated || !decimalValidated) {
@@ -540,7 +542,7 @@ class _CreateAssetState extends State<CreateAsset> {
           : true) &&
       (needsDecimal
           ? decimalController.text != '' &&
-              decimalValidation(decimalController.text.toInt())
+              decimalValidation(decimalController.text.asSatsInt())
           : true) &&
       (ipfsController.text == '' || assetDataValidation(ipfsController.text));
 
@@ -553,7 +555,7 @@ class _CreateAssetState extends State<CreateAsset> {
               : true) &&
           (needsDecimal
               ? decimalController.text != '' &&
-                  decimalValidation(decimalController.text.toInt())
+                  decimalValidation(decimalController.text.asSatsInt())
               : true) &&
           isNFT
       ? assetDataValidation(ipfsController.text)
@@ -580,7 +582,7 @@ class _CreateAssetState extends State<CreateAsset> {
             : (ipfsController.text.isIpfs
                 ? ipfsController.text.base58Decode
                 : ipfsController.text.hexBytesForScript),
-        decimals: needsDecimal ? decimalController.text.toInt() : null,
+        decimals: needsDecimal ? decimalController.text.asSatsInt() : null,
         reissuable: needsReissue ? reissueValue : null,
         verifier: needsVerifier ? verifierController.text : null,
         parent: isSub ? parentController.text : null,
@@ -656,7 +658,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
   void formatQuantity() =>
       quantityController.text = quantityController.text.isInt
-          ? quantityController.text.toInt().toCommaString()
+          ? quantityController.text.asSatsInt().toCommaString()
           : quantityController.text.toDouble().toCommaString();
 
   void _produceParentModal() {

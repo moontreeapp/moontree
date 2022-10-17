@@ -44,6 +44,7 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
+    streams.app.navHeight.add(NavHeight.none);
     transactionRecord = data['transactionRecord'];
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
@@ -61,21 +62,21 @@ class _TransactionPageState extends State<TransactionPage> {
         return getConfirmationsBetweenHelper();
       case 'Type':
         switch (transactionRecord!.type) {
-          case TransactionRecordType.SELF:
+          case TransactionRecordType.self:
             return 'to Self';
-          case TransactionRecordType.FEE:
+          case TransactionRecordType.fee:
             return 'Asset Transfer Fee';
-          case TransactionRecordType.ASSETCREATION:
+          case TransactionRecordType.create:
             return 'Asset Creation';
-          case TransactionRecordType.BURN:
+          case TransactionRecordType.burn:
             return 'Burned';
-          case TransactionRecordType.REISSUE:
+          case TransactionRecordType.reissue:
             return 'Reissue';
-          case TransactionRecordType.TAG:
+          case TransactionRecordType.tag:
             return 'Tag';
-          case TransactionRecordType.INCOMING:
+          case TransactionRecordType.incoming:
             return 'In';
-          case TransactionRecordType.OUTGOING:
+          case TransactionRecordType.outgoing:
             //default:
             return 'Out';
         }
@@ -95,9 +96,15 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'Note':
         return transaction!.note ?? '';
       case 'Fee':
-        return transactionRecord!.fee == 0
-            ? 'calculating...'
-            : transactionRecord!.fee.toAmount().toCommaString() + ' RVN';
+        return () {
+          if (transactionRecord!.fee == 0) {
+            transactionRecord!.getVouts();
+            return 'calculating...';
+          } else {
+            return transactionRecord!.fee.toAmount().toCommaString() + ' RVN';
+          }
+        }();
+
       default:
         return 'unknown';
     }
@@ -131,8 +138,7 @@ class _TransactionPageState extends State<TransactionPage> {
         trailing: GestureDetector(
           onLongPress: () {
             Clipboard.setData(ClipboardData(text: value));
-            streams.app.snack
-                .add(Snack(message: 'Copied to Clipboard', atBottom: true));
+            streams.app.snack.add(Snack(message: 'copied to clipboard'));
           },
           child: Text(
             value,
@@ -160,14 +166,14 @@ class _TransactionPageState extends State<TransactionPage> {
             'Browser'.toUpperCase(): () {
               Navigator.of(context).pop();
               //launch(url + elementFull(text));
+              streams.app.browsing.add(true);
               launchUrl(Uri.parse(url + elementFull(text)));
             },
           },
         ),
         onLongPress: () {
           Clipboard.setData(ClipboardData(text: elementFull(text)));
-          streams.app.snack
-              .add(Snack(message: 'Copied to Clipboard', atBottom: true));
+          streams.app.snack.add(Snack(message: 'copied to clipboard'));
         },
         trailing: Text(element(text), style: Theme.of(context).textTheme.link),
       );

@@ -12,7 +12,7 @@ import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-enum TransactionType { Spend, Create, Reissue, Export }
+enum TransactionType { spend, create, reissue, export }
 
 class CheckoutStruct {
   final Widget? icon;
@@ -91,10 +91,10 @@ class _CheckoutState extends State<Checkout> {
     /// if still in download process of any kind, tell user they must wait till
     /// sync is finished, disable button until done.
     if (streams.client.busy.value) {
-      streams.app.snack.add(Snack(
-          message: 'Still syncing with network, please wait', atBottom: true));
+      streams.app.snack
+          .add(Snack(message: 'Still syncing with network, please wait'));
     }
-    if (widget.transactionType == TransactionType.Spend) {
+    if (widget.transactionType == TransactionType.spend) {
       listeners.add(streams.spend.estimate.listen((SendEstimate? value) {
         if (value != estimate) {
           setState(() {
@@ -102,7 +102,7 @@ class _CheckoutState extends State<Checkout> {
           });
         }
       }));
-    } else if (widget.transactionType == TransactionType.Create) {
+    } else if (widget.transactionType == TransactionType.create) {
       listeners.add(streams.create.estimate.listen((SendEstimate? value) {
         if (value != estimate) {
           setState(() {
@@ -110,7 +110,7 @@ class _CheckoutState extends State<Checkout> {
           });
         }
       }));
-    } else if (widget.transactionType == TransactionType.Reissue) {
+    } else if (widget.transactionType == TransactionType.reissue) {
       listeners.add(streams.reissue.estimate.listen((SendEstimate? value) {
         if (value != estimate) {
           setState(() {
@@ -198,7 +198,9 @@ class _CheckoutState extends State<Checkout> {
   }) {
     var rows = <Widget>[];
     for (var pair in pairs) {
-      var rightSide = fee ? getRightFee(pair.toList()[1]) : pair.toList()[1];
+      var rightSide = fee
+          ? getRightFee(pair.toList()[1])
+          : getRightAmount(pair.toList()[1]);
       if (rightSide.length > 20) {
         rightSide =
             ['To', 'IPFS', 'IPFS/TxId', 'ID', 'TxId'].contains(pair.toList()[0])
@@ -236,6 +238,19 @@ class _CheckoutState extends State<Checkout> {
           ]));
     }
     return rows.intersperse(SizedBox(height: 21));
+  }
+
+  String getRightAmount(String x) {
+    if (x == 'calculating amount...') {
+      disabled = true;
+      if (estimate != null) {
+        disabled = false;
+        return satToAmount(estimate!.amount).toString();
+        //return satToAmount(estimate!.total - estimate!.fees).toString();
+      }
+      return x;
+    }
+    return x;
   }
 
   String getRightFee(String x) {

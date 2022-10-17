@@ -29,14 +29,14 @@ class ExportWalletService {
   /// simply a json map with wallets as keys.
   /// values in our system is another map with id as key,
   /// other systems could use list or whatever.
-  Map<String, Map<String, dynamic>> structureForExport(
+  Future<Map<String, Map<String, dynamic>>> structureForExport(
     Iterable<Wallet> wallets,
-  ) =>
-      {'wallets': walletsToExportFormat(wallets)};
+  ) async =>
+      {'wallets': await walletsToExportFormat(wallets)};
 
-  Map<String, Map<String, dynamic>> walletsToExportFormat(
+  Future<Map<String, Map<String, dynamic>>> walletsToExportFormat(
     Iterable<Wallet> wallets,
-  ) =>
+  ) async =>
       {
         for (final wallet in wallets) ...{
           wallet.id: {
@@ -45,7 +45,8 @@ class ExportWalletService {
             'backed up': wallet.backedUp,
             'secret': services.password.required
                 ? hex.encrypt(
-                    convert.hex.encode(wallet.secret(wallet.cipher!).codeUnits),
+                    convert.hex.encode(
+                        (await wallet.secret(wallet.cipher!)).codeUnits),
                     services.cipher.currentCipher!)
                 : wallet.secret(wallet.cipher!), //encrypted,
             // For now:

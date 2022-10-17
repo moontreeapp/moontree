@@ -58,3 +58,18 @@ Future<void> uploadNewDocument() async {
       ConsentDocument.risk_disclosures.name,
       null);
 }
+
+Future<bool> consentToAgreements(String deviceId) async {
+  //uploadNewDocument();
+  // consent just once
+  try {
+    final consent = Consent();
+    await consent.given(deviceId, ConsentDocument.user_agreement);
+    await consent.given(deviceId, ConsentDocument.privacy_policy);
+    await consent.given(deviceId, ConsentDocument.risk_disclosures);
+    return true;
+  } catch (e) {
+    print('unable $e');
+  }
+  return false;
+}

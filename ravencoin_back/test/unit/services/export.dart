@@ -11,7 +11,7 @@ void main() {
     final wallet = SingleWallet(
         id: encryptedWIF.walletId,
         encryptedWIF: encryptedWIF.encryptedSecret,
-        cipherUpdate: CipherUpdate(CipherType.None),
+        cipherUpdate: CipherUpdate(CipherType.none),
         name: 'name');
 
     print('${service.walletsToExportFormat({wallet})}');

@@ -8,7 +8,6 @@ import 'package:ravencoin_back/extensions/stream/maximum.dart';
 class PasswordStreams {
   final latest = latestPassword$;
   final exists = passwordExists$;
-  final update = BehaviorSubject<String?>.seeded(null);
 }
 
 final BehaviorSubject<Password?> latestPassword$ = BehaviorSubject.seeded(null)

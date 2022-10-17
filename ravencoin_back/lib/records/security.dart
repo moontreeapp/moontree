@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/records/security_type.dart';
+import 'package:ravencoin_back/records/types/security_type.dart';
 import 'package:ravencoin_back/extensions/object.dart';
 
 import '_type_id.dart';
@@ -35,11 +35,11 @@ class Security with EquatableMixin {
   String get id => securityKey(symbol, securityType);
 
   static String securityKey(String symbol, SecurityType securityType) =>
-      '$symbol:${securityType.enumString}';
+      '$symbol:${securityType.name}';
 
-  String get securityTypeName => securityType.enumString;
+  String get securityTypeName => securityType.name;
 
   /// todo identify a ipfs hash correctly...
   // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
-  bool get isAsset => securityType == SecurityType.RavenAsset;
+  bool get isAsset => securityType == SecurityType.asset;
 }

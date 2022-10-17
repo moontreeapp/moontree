@@ -47,8 +47,8 @@ class AssetNavbar extends StatelessWidget {
               !walletIsEmpty && connectionStatus == ConnectionStatus.connected,
           disabledOnPressed: () {
             streams.app.snack.add(Snack(
-                message: 'Unable to send, please try again later.',
-                atMiddle: true));
+              message: 'Unable to send, please try again later',
+            ));
           },
         ),
         components.buttons.actionButton(
@@ -221,14 +221,14 @@ class MetadataView extends StatelessWidget {
       );
     } else if (securityAsset.primaryMetadata == null) {
       chilren = [SelectableText(securityAsset.metadata)];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.ImagePath) {
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.imagePath) {
       chilren = [
         Image.file(AssetLogos()
             .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
       ];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.JsonString) {
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.jsonString) {
       chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.Unknown) {
+    } else if (securityAsset.primaryMetadata!.kind == MetadataType.unknown) {
       chilren = [
         SelectableText(securityAsset.primaryMetadata!.metadata),
         SelectableText(securityAsset.primaryMetadata!.data ?? '')

@@ -58,6 +58,7 @@ class _SendState extends State<Send> {
   bool showPaste = false;
   String clipboard = '';
   final ScrollController scrollController = ScrollController();
+  bool clicked = false;
 
   bool rvnValidation() =>
       pros.balances.primaryIndex
@@ -67,7 +68,6 @@ class _SendState extends State<Send> {
   void tellUserNoRVN() => streams.app.snack.add(Snack(
         message: 'No Ravencoin in wallet - fees are paid in Ravencoin',
         positive: false,
-        atMiddle: true,
       ));
 
   @override
@@ -585,7 +585,7 @@ class _SendState extends State<Send> {
 
   bool _validateAddress([String? address]) =>
       sendAddress.text == '' ||
-      (pros.settings.net == Net.Main
+      (pros.settings.net == Net.main
           ? sendAddress.text.isAddressRVN
           : sendAddress.text.isAddressRVNt);
 
@@ -643,7 +643,7 @@ class _SendState extends State<Send> {
     visibleAmount = verifyVisibleAmount(sendAmount.text);
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
-      var sendAmountAsSats = utils.amountToSat(double.parse(sendAmount.text));
+      var sendAmountAsSats = utils.textAmountToSat(sendAmount.text);
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
           sendAll: holding == visibleAmount.toDouble(),
@@ -656,7 +656,7 @@ class _SendState extends State<Send> {
           security: sendAsset.text == 'Ravencoin'
               ? null
               : pros.securities.bySymbolSecurityType
-                  .getOne(sendAsset.text, SecurityType.RavenAsset),
+                  .getOne(sendAsset.text, SecurityType.asset),
           assetMemo: sendAsset.text != 'Ravencoin' &&
                   sendMemo.text != '' &&
                   sendMemo.text.isIpfs
@@ -684,8 +684,14 @@ class _SendState extends State<Send> {
       components.buttons.actionButton(
         context,
         focusNode: previewFocusNode,
-        enabled: !disabled,
-        onPressed: () => startSend(),
+        enabled: !disabled && !clicked,
+        label: !clicked ? 'Preview' : 'Generating Transaction...',
+        onPressed: () {
+          setState(() {
+            clicked = true;
+          });
+          startSend();
+        },
         disabledOnPressed: () {
           if (!rvnValidation()) {
             tellUserNoRVN();
@@ -712,7 +718,10 @@ class _SendState extends State<Send> {
           items: [
             ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],
-            ['Amount', visibleAmount],
+            [
+              'Amount',
+              sendRequest.sendAll ? 'calculating amount...' : visibleAmount
+            ],
             if (sendMemo.text != '') ['Memo', sendMemo.text],
             if (sendNote.text != '') ['Note', sendNote.text],
           ],
@@ -726,6 +735,9 @@ class _SendState extends State<Send> {
         )
       },
     );
+    setState(() {
+      clicked = false;
+    });
   }
 
   void _produceAssetModal() {

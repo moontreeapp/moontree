@@ -18,9 +18,11 @@ class SubscriptionWaiter extends Waiter {
   }
 
   void deinitAllSubscriptions() {
-    for (var listener
+    for (var addressMap
         in services.client.subscribe.subscriptionHandlesAddress.values) {
-      listener.cancel();
+      for (var listener in addressMap.values) {
+        listener.cancel();
+      }
     }
     for (var listener
         in services.client.subscribe.subscriptionHandlesAsset.values) {

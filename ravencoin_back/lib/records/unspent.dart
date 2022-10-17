@@ -106,5 +106,5 @@ class Unspent with EquatableMixin, ToStringMixin {
 
   Security get security => symbol == 'RVN'
       ? pros.securities.RVN
-      : Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+      : Security(symbol: symbol, securityType: SecurityType.asset);
 }

@@ -18,74 +18,80 @@ part 'leader.g.dart';
 @HiveType(typeId: TypeId.LeaderWallet)
 class LeaderWallet extends Wallet {
   @HiveField(7)
-  final String encryptedEntropy;
+  final String encryptedEntropy; // deprecated
 
   LeaderWallet({
     required String id,
     required this.encryptedEntropy,
     bool backedUp = false,
+    bool skipHistory = false,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
-    Set<int>? unusedInternalIndices,
-    Set<int>? unusedExternalIndices,
     Uint8List? seed,
+    Future<String> Function(String id)? getEntropy,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
           name: name,
           backedUp: backedUp,
+          skipHistory: skipHistory,
         ) {
-    this.unusedInternalIndices = unusedInternalIndices ?? {};
-    this.unusedExternalIndices = unusedExternalIndices ?? {};
     _seed = seed;
+    _getEntropy = getEntropy;
   }
 
   Uint8List? _seed;
-
-  /// caching optimization
-  late Set<int> unusedInternalIndices;
-  late Set<int> unusedExternalIndices;
+  Future<String> Function(String id)? _getEntropy;
 
   factory LeaderWallet.from(
     LeaderWallet existing, {
     String? id,
     String? encryptedEntropy,
     bool? backedUp,
+    bool? skipHistory,
     CipherUpdate? cipherUpdate,
     String? name,
-    Set<int>? unusedInternalIndices,
-    Set<int>? unusedExternalIndices,
-    Uint8List? seed,
+    Uint8List? seed, // must pass in if you want to save it.
+    Future<String> Function(String id)? getEntropy,
   }) =>
       LeaderWallet(
         id: id ?? existing.id,
         encryptedEntropy: encryptedEntropy ?? existing.encryptedEntropy,
         backedUp: backedUp ?? existing.backedUp,
+        skipHistory: skipHistory ?? existing.skipHistory,
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
         name: name ?? existing.name,
-        unusedInternalIndices:
-            unusedInternalIndices ?? existing.unusedInternalIndices,
-        unusedExternalIndices:
-            unusedExternalIndices ?? existing.unusedExternalIndices,
-        seed: seed ?? existing.seed,
+        seed: seed, // can't autopopulate seed because it's async, must pass in.
+        getEntropy: getEntropy ?? existing.getEntropy,
       );
 
+  void setSecret(Future<String> Function(String id) getEntropy) =>
+      _getEntropy = getEntropy;
+
   @override
-  List<Object?> get props => [id, cipherUpdate, encryptedEntropy, backedUp];
+  List<Object?> get props =>
+      [id, cipherUpdate, encryptedEntropy, backedUp, skipHistory, name];
 
   @override
   String toString() =>
-      'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, $backedUp)';
+      'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, $backedUp, $skipHistory, $name)';
 
   @override
   String get encrypted => encryptedEntropy;
 
-  @override
-  String secret(CipherBase cipher) => mnemonic;
+  Future<String> get encryptedSecret async => encryptedEntropy == ''
+      ? await (_getEntropy ?? (id) async => id)(id)
+      : encryptedEntropy;
 
   @override
-  ravenwallet.HDWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) =>
-      SeedWallet(seed, net).wallet;
+  Future<String> secret([CipherBase? cipher]) async => await mnemonic;
+
+  @override
+  Future<ravenwallet.HDWallet> seedWallet(
+    CipherBase cipher, {
+    Net net = Net.main,
+  }) async =>
+      SeedWallet(await seed, net).wallet;
 
   @override
   SecretType get secretType => SecretType.mnemonic;
@@ -94,60 +100,28 @@ class LeaderWallet extends Wallet {
   WalletType get walletType => WalletType.leader;
 
   @override
-  String get secretTypeToString => secretType.enumString;
+  String get secretTypeToString => secretType.name;
 
   @override
-  String get walletTypeToString => walletType.enumString;
+  String get walletTypeToString => walletType.name;
 
-  Uint8List? get publicKey =>
-      services.wallet.leader.getSeedWallet(this).wallet.keyPair.publicKey;
+  String get pubkey => id;
 
-  Uint8List get seed {
-    _seed ??= bip39.mnemonicToSeed(mnemonic);
+  Future<Uint8List?> get publicKey async =>
+      (await services.wallet.leader.getSeedWallet(this))
+          .wallet
+          .keyPair
+          .publicKey;
+
+  Future<String> Function(String id)? get getEntropy => _getEntropy;
+
+  Future<Uint8List> get seed async {
+    _seed ??= bip39.mnemonicToSeed(await mnemonic);
     return _seed!;
   }
 
-  String get mnemonic => bip39.entropyToMnemonic(entropy);
+  Future<String> get mnemonic async => bip39.entropyToMnemonic(await entropy);
 
-  String get entropy => hex.decrypt(encryptedEntropy, cipher!);
-
-  /// caching optimization ///
-  void addUnused(int hdIndex, NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? addUnusedInternal(hdIndex)
-          : addUnusedExternal(hdIndex);
-  void removeUnused(int hdIndex, NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? removeUnusedInternal(hdIndex)
-          : removeUnusedExternal(hdIndex);
-
-  void addUnusedInternal(int hdIndex) => unusedInternalIndices.add(hdIndex);
-  void addUnusedExternal(int hdIndex) => unusedExternalIndices.add(hdIndex);
-  void removeUnusedInternal(int hdIndex) =>
-      unusedInternalIndices.remove(hdIndex);
-  void removeUnusedExternal(int hdIndex) =>
-      unusedExternalIndices.remove(hdIndex);
-  Address? getUnusedAddress(NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? unusedInternalAddress
-          : unusedExternalAddress;
-  Address? getRandomUnusedAddress(NodeExposure exposure) =>
-      exposure == NodeExposure.Internal
-          ? randomUnusedInternalAddress
-          : randomUnusedExternalAddress;
-
-  Address? get unusedInternalAddress {
-    return pros.addresses.byWalletExposureIndex
-        .getOne(id, NodeExposure.Internal, unusedInternalIndices.min);
-  }
-
-  Address? get unusedExternalAddress => pros.addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.External, unusedExternalIndices.min);
-
-  Address? get randomUnusedInternalAddress => pros
-      .addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.Internal, unusedInternalIndices.randomChoice);
-  Address? get randomUnusedExternalAddress => pros
-      .addresses.byWalletExposureIndex
-      .getOne(id, NodeExposure.External, unusedExternalIndices.randomChoice);
+  Future<String> get entropy async =>
+      hex.decrypt(await encryptedSecret, cipher!);
 }

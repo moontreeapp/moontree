@@ -31,15 +31,10 @@ class _TransactionsState extends State<Transactions> {
 
     /// need these until we make it fully reactive so we can reset the page if underlying data changes
     listeners.add(pros.vouts.batchedChanges.listen((batchedChanges) {
-      if (services.wallet.leader.newLeaderProcessRunning) {
-        print('newLeader process running, not refreshing');
+      if (services.wallet.leader.newLeaderProcessRunning ||
+          services.client.subscribe.startupProcessRunning) {
         return;
       }
-      if (services.client.subscribe.startupProcessRunning) {
-        print('startup process running, not refreshing');
-        return;
-      }
-
       if (batchedChanges.isNotEmpty) {
         print('Refresh - vouts');
         transactionsBloc.clearCache();
@@ -86,7 +81,12 @@ class _TransactionsState extends State<Transactions> {
               maxChildSize: min(1.0, max(minHeight, getMaxExtent(context))),
               controller: dController,
               builder: (context, scrollController) {
-                bloc.scrollObserver.add(dController.size);
+                //bloc.scrollObserver.add(dController.size);
+                _scrollListener() {
+                  bloc.scrollObserver.add(dController.size);
+                }
+
+                dController.addListener(_scrollListener);
                 return CoinDetailsGlidingSheet(
                   bloc.nullCacheView ? null : MetadataView(),
                   dController,
@@ -100,10 +100,6 @@ class _TransactionsState extends State<Transactions> {
   }
 
   double getMaxExtent(BuildContext context) {
-    return (bloc.currentTxs.length * 80 +
-            80 +
-            40 +
-            (!services.download.history.isComplete ? 80 : 0))
-        .ofMediaHeight(context);
+    return (bloc.currentTxs.length * 80 + 80 + 40 + 80).ofMediaHeight(context);
   }
 }

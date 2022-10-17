@@ -168,41 +168,41 @@ class SelectionItems {
   }
 
   String asString(SelectionOption name) =>
-      name.enumString.toTitleCase(underscoresAsSpace: true);
+      name.name.toTitleCase(underscoresAsSpace: true);
 
   Widget createLeads(SelectionOption name) {
-    var imageDetails = components.icons.getImageDetails(symbolColors);
+    var imageDetails = components.icons.getImageDetailsAlphacon(symbolColors);
     return components.icons.generateIndicator(
             name: symbolColors,
             imageDetails: imageDetails,
             height: 24,
             width: 24,
             assetType: {
-                  SelectionOption.Restricted_Symbol: AssetType.Restricted,
-                  SelectionOption.Main_Asset: AssetType.Main,
-                  SelectionOption.Restricted_Asset: AssetType.Restricted,
-                  SelectionOption.Qualifier_Asset: AssetType.Qualifier,
-                  SelectionOption.Admin_Asset: AssetType.Admin,
-                  SelectionOption.Main: AssetType.Main,
-                  SelectionOption.Restricted: AssetType.Restricted,
-                  SelectionOption.NFT_Asset: AssetType.NFT,
-                  SelectionOption.Qualifier: AssetType.Qualifier,
-                  SelectionOption.Sub_Qualifier: AssetType.QualifierSub,
-                  SelectionOption.QualifierSub: AssetType.QualifierSub,
-                  SelectionOption.Admin: AssetType.Admin,
-                  SelectionOption.Sub_Asset: AssetType.Sub,
-                  SelectionOption.Sub: AssetType.Sub,
-                  SelectionOption.NFT: AssetType.NFT,
-                  SelectionOption.Messaging_Channel_Asset: AssetType.Channel,
-                  SelectionOption.Channel: AssetType.Channel,
+                  SelectionOption.Restricted_Symbol: AssetType.restricted,
+                  SelectionOption.Main_Asset: AssetType.main,
+                  SelectionOption.Restricted_Asset: AssetType.restricted,
+                  SelectionOption.Qualifier_Asset: AssetType.qualifier,
+                  SelectionOption.Admin_Asset: AssetType.admin,
+                  SelectionOption.Main: AssetType.main,
+                  SelectionOption.Restricted: AssetType.restricted,
+                  SelectionOption.NFT_Asset: AssetType.unique,
+                  SelectionOption.Qualifier: AssetType.qualifier,
+                  SelectionOption.Sub_Qualifier: AssetType.qualifierSub,
+                  SelectionOption.QualifierSub: AssetType.qualifierSub,
+                  SelectionOption.Admin: AssetType.admin,
+                  SelectionOption.Sub_Asset: AssetType.sub,
+                  SelectionOption.Sub: AssetType.sub,
+                  SelectionOption.NFT: AssetType.unique,
+                  SelectionOption.Messaging_Channel_Asset: AssetType.channel,
+                  SelectionOption.Channel: AssetType.channel,
                 }[name] ??
-                AssetType.Main) ??
+                AssetType.main) ??
         components.icons.assetFromCacheOrGenerate(
             asset: symbolColors,
             height: 24,
             width: 24,
             imageDetails: imageDetails,
-            assetType: AssetType.Main);
+            assetType: AssetType.main);
   }
 
   Widget leads(SelectionOption name, {String? holding}) => Icon(
@@ -210,21 +210,21 @@ class SelectionItems {
               ? components.icons.assetTypeIcon(name: holding)
               : components.icons.assetTypeIcon(
                   assetType: {
-                        SelectionOption.Restricted_Symbol: AssetType.Restricted,
-                        SelectionOption.Main_Asset: AssetType.Main,
-                        SelectionOption.Restricted_Asset: AssetType.Restricted,
-                        SelectionOption.Qualifier_Asset: AssetType.Qualifier,
-                        SelectionOption.Admin_Asset: AssetType.Admin,
-                        SelectionOption.Main: AssetType.Main,
-                        SelectionOption.Restricted: AssetType.Restricted,
-                        SelectionOption.NFT_Asset: AssetType.NFT,
-                        SelectionOption.Qualifier: AssetType.Qualifier,
-                        SelectionOption.Admin: AssetType.Admin,
-                        SelectionOption.Sub_Asset: AssetType.Sub,
-                        SelectionOption.NFT: AssetType.NFT,
+                        SelectionOption.Restricted_Symbol: AssetType.restricted,
+                        SelectionOption.Main_Asset: AssetType.main,
+                        SelectionOption.Restricted_Asset: AssetType.restricted,
+                        SelectionOption.Qualifier_Asset: AssetType.qualifier,
+                        SelectionOption.Admin_Asset: AssetType.admin,
+                        SelectionOption.Main: AssetType.main,
+                        SelectionOption.Restricted: AssetType.restricted,
+                        SelectionOption.NFT_Asset: AssetType.unique,
+                        SelectionOption.Qualifier: AssetType.qualifier,
+                        SelectionOption.Admin: AssetType.admin,
+                        SelectionOption.Sub_Asset: AssetType.sub,
+                        SelectionOption.NFT: AssetType.unique,
                         SelectionOption.Messaging_Channel_Asset:
-                            AssetType.Channel,
-                        SelectionOption.Channel: AssetType.Channel,
+                            AssetType.channel,
+                        SelectionOption.Channel: AssetType.channel,
                       }[name] ??
                       null)) ??
           {
@@ -312,15 +312,15 @@ class SelectionItems {
           visualDensity: VisualDensity.compact,
           onTap: () {
             Navigator.pop(context);
-            controller.text = 'Wallet ' + wallet.name;
+            controller.text = wallet.name;
           },
           leading: Icon(
             Icons.account_balance_wallet_rounded,
             color: AppColors.primary,
             size: 20,
           ),
-          title: Text('Wallet ' + wallet.name,
-              style: Theme.of(context).textTheme.bodyText1));
+          title:
+              Text(wallet.name, style: Theme.of(context).textTheme.bodyText1));
 
   Widget walletItemAll(TextEditingController controller) => ListTile(
       visualDensity: VisualDensity.compact,
@@ -630,12 +630,13 @@ class SelectionItems {
 class SimpleSelectionItems {
   final BuildContext context;
   late List<Widget> items;
+  late void Function()? then;
 
-  SimpleSelectionItems(this.context, {required this.items});
+  SimpleSelectionItems(this.context, {required this.items, this.then});
 
   Future<void> produceModal(List items) async {
     await showModalBottomSheet<void>(
-        context: context,
+        context: context, //components.navigator.mainContext!,
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
@@ -670,7 +671,12 @@ class SimpleSelectionItems {
                   ));
             }),
           );
-        }).then((value) => streams.app.scrim.add(false));
+        }).then((value) {
+      streams.app.scrim.add(false);
+      if (then != null) {
+        then!();
+      }
+    });
   }
 
   Future<void> build() async {

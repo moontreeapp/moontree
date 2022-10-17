@@ -2,6 +2,7 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' show ECPair, WalletBase;
 import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:tuple/tuple.dart';
 
 import 'wallet/leader.dart';
 import 'wallet/single.dart';
@@ -14,6 +15,9 @@ class WalletService {
   final SingleWalletService single = SingleWalletService();
   final ExportWalletService export = ExportWalletService();
   final ImportWalletService import = ImportWalletService();
+
+  Wallet get currentWallet =>
+      pros.wallets.primaryIndex.getOne(pros.settings.currentWalletId)!;
 
   // should return all cipherUpdates
   Set<CipherUpdate> get getAllCipherUpdates =>
@@ -33,59 +37,94 @@ class WalletService {
           : pros.wallets.records
               .map((wallet) => wallet.cipherUpdate)
               .where((cipherUpdate) =>
-                  cipherUpdate.cipherType != CipherType.None &&
+                  cipherUpdate.cipherType != CipherType.none &&
                   cipherUpdate.passwordId! < pros.passwords.maxPasswordId!)
               .toSet();
 
-  Future createSave({
-    required WalletType walletType,
-    required CipherUpdate cipherUpdate,
-    String? secret,
+  /// returns a pubkey, secret
+  Future<Wallet?> createSave({
+    WalletType? walletType,
+    CipherUpdate? cipherUpdate,
+    String? mnemonic,
     String? name,
+    Future<String> Function(String id)? getSecret,
+    Future<void> Function(Secret secret)? saveSecret,
   }) async {
+    cipherUpdate ??= services.cipher.currentCipherUpdate;
+    walletType ??= WalletType.leader;
     if (walletType == WalletType.leader) {
-      await leader.makeSaveLeaderWallet(
+      return await leader.makeSaveLeaderWallet(
         pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
-        mnemonic: secret,
+        mnemonic: mnemonic,
         name: name,
+        getEntropy: getSecret,
+        saveSecret: saveSecret,
       );
     } else {
       //WalletType.single
-      await single.makeSaveSingleWallet(
+      return await single.makeSaveSingleWallet(
         pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
-        wif: secret,
+        wif: mnemonic,
         name: name,
+        getWif: getSecret,
+        saveSecret: saveSecret,
       );
     }
   }
 
-  Wallet? create({
+  Future generate() async => await services.wallet.createSave(
+      walletType: WalletType.leader,
+      cipherUpdate: services.cipher.currentCipherUpdate,
+      mnemonic: null);
+
+  Future<Wallet?> create({
     required WalletType walletType,
     required CipherUpdate cipherUpdate,
     required String? secret,
     bool alwaysReturn = false,
-  }) =>
-      {
-        WalletType.leader: () => leader.makeLeaderWallet(
-              pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherUpdate: cipherUpdate,
-              entropy: secret != null ? bip39.mnemonicToEntropy(secret) : null,
-              alwaysReturn: alwaysReturn,
-            ),
-        WalletType.single: () => single.makeSingleWallet(
-              pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
-              cipherUpdate: cipherUpdate,
-              wif: secret,
-              alwaysReturn: alwaysReturn,
-            )
-      }[walletType]!();
+    Future<String> Function(String id)? getSecret,
+    Future<void> Function(Secret secret)? saveSecret,
+  }) async {
+    switch (walletType) {
+      case WalletType.leader:
+        final entropy =
+            bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic());
+        final wallet = await leader.makeLeaderWallet(
+          pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+          cipherUpdate: cipherUpdate,
+          entropy: entropy,
+          alwaysReturn: alwaysReturn,
+          getEntropy: getSecret,
+          saveSecret: saveSecret,
+        );
+        return wallet;
+      case WalletType.single:
+        final wallet = await single.makeSingleWallet(
+          pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+          cipherUpdate: cipherUpdate,
+          wif: secret!,
+          alwaysReturn: alwaysReturn,
+          getWif: getSecret,
+          saveSecret: saveSecret,
+        );
+        return wallet!;
+      default:
+        return create(
+          walletType: WalletType.leader,
+          cipherUpdate: cipherUpdate,
+          secret: secret,
+          alwaysReturn: alwaysReturn,
+          getSecret: getSecret,
+        );
+    }
+  }
 
-  ECPair getAddressKeypair(Address address) {
+  Future<ECPair> getAddressKeypair(Address address) async {
     var wallet = address.wallet;
     if (wallet is LeaderWallet) {
-      var seedWallet = services.wallet.leader.getSeedWallet(wallet);
+      var seedWallet = await services.wallet.leader.getSeedWallet(wallet);
       var hdWallet =
           seedWallet.subwallet(address.hdIndex, exposure: address.exposure);
       return hdWallet.keyPair;
@@ -97,78 +136,13 @@ class WalletService {
     }
   }
 
-  WalletBase getChangeWallet(Wallet wallet) {
-    if (wallet is LeaderWallet) {
-      return leader.getNextEmptyWallet(wallet);
-    }
-    if (wallet is SingleWallet) {
-      return single.getKPWallet(wallet);
-    }
-    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
-  String getChangeAddress(Wallet wallet) {
-    if (wallet is LeaderWallet) {
-      return leader.getNextChangeAddress(wallet);
-    }
-    if (wallet is SingleWallet) {
-      return wallet.addresses.first.address;
-    }
-    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
-  // new, fast cached way (cache generated and saved during download)
-  String getEmptyAddressFromCache(Wallet wallet, {bool random = false}) {
-    if (wallet is LeaderWallet) {
-      return leader.getNextEmptyAddress(wallet,
-          exposure: NodeExposure.External, random: random);
-    }
-    if (wallet is SingleWallet) {
-      return wallet.addresses.first.address;
-    }
-    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
-  // old, slow reliable way to get an empty wallet
-  WalletBase getEmptyWalletFromDatabase(Wallet wallet,
-      {exposure = NodeExposure.External}) {
-    if (wallet is LeaderWallet) {
-      return leader.getNextEmptyWallet(wallet, exposure: NodeExposure.External);
-    }
-    if (wallet is SingleWallet) {
-      return single.getKPWallet(wallet);
-    }
-    throw WalletMissing("Wallet '${wallet.id}' has no change wallets");
-  }
-
+  /// gets the first empty address
   String getEmptyAddress(
-    Wallet wallet, {
-    bool random = false,
-    bool internal = false,
+    Wallet wallet,
+    NodeExposure exposure, {
     String? address,
-  }) {
-    if (internal) {
-      try {
-        return address ?? services.wallet.getChangeAddress(wallet);
-      } catch (e) {
-        return address ??
-            services.wallet
-                .getEmptyWalletFromDatabase(
-                  wallet,
-                  exposure: NodeExposure.Internal,
-                )
-                .address!;
-      }
-    }
-    try {
-      return address ??
-          services.wallet.getEmptyAddressFromCache(
-            wallet,
-            random: random,
-          );
-    } catch (e) {
-      return address ??
-          services.wallet.getEmptyWalletFromDatabase(wallet).address!;
-    }
-  }
+  }) =>
+      address ?? wallet.minimumEmptyAddress(exposure).address; // all
+  //address ?? wallet.firstEmptyInGap(exposure).address; // gap only
+  /// actaully we should fill all the gaps first according to bip44 spec
 }

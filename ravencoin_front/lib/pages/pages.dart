@@ -14,22 +14,34 @@ import 'package:ravencoin_front/pages/manage/reissue/sub.dart';
 import 'package:ravencoin_front/pages/misc/splash.dart';
 import 'package:ravencoin_front/pages/misc/scan.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
+import 'package:ravencoin_front/pages/security/backup/keypair.dart';
 import 'package:ravencoin_front/pages/security/backup/show.dart';
 import 'package:ravencoin_front/pages/security/backup/verify.dart';
-import 'package:ravencoin_front/pages/security/create.dart';
-import 'package:ravencoin_front/pages/security/login.dart';
+import 'package:ravencoin_front/pages/security/create_choice.dart';
+import 'package:ravencoin_front/pages/security/create_native.dart';
+import 'package:ravencoin_front/pages/security/create_password.dart';
+import 'package:ravencoin_front/pages/security/login_password.dart';
+import 'package:ravencoin_front/pages/security/login_native.dart';
 import 'package:ravencoin_front/pages/security/resume.dart';
-import 'package:ravencoin_front/pages/security/change.dart';
+import 'package:ravencoin_front/pages/security/change_password.dart';
+import 'package:ravencoin_front/pages/security/change_method.dart';
 import 'package:ravencoin_front/pages/settings/about.dart';
+import 'package:ravencoin_front/pages/settings/advanced.dart';
 import 'package:ravencoin_front/pages/settings/export.dart';
 import 'package:ravencoin_front/pages/settings/feedback.dart';
 import 'package:ravencoin_front/pages/settings/import.dart';
 import 'package:ravencoin_front/pages/settings/language.dart';
+import 'package:ravencoin_front/pages/settings/blockchain.dart';
 import 'package:ravencoin_front/pages/settings/network.dart';
-import 'package:ravencoin_front/pages/settings/advanced.dart';
+import 'package:ravencoin_front/pages/settings/mining.dart';
+import 'package:ravencoin_front/pages/settings/database.dart';
+import 'package:ravencoin_front/pages/settings/developer.dart';
+import 'package:ravencoin_front/pages/settings/userlevel.dart';
 import 'package:ravencoin_front/pages/settings/preferences.dart';
 import 'package:ravencoin_front/pages/settings/support.dart';
+import 'package:ravencoin_front/pages/settings/sweep.dart';
 import 'package:ravencoin_front/pages/settings/technical.dart';
+import 'package:ravencoin_front/pages/settings/wallet.dart';
 //import 'package:ravencoin_front/pages/settings/currency.dart';
 //import 'package:ravencoin_front/pages/settings/wallet.dart';
 import 'package:ravencoin_front/pages/wallet/receive.dart';
@@ -37,6 +49,7 @@ import 'package:ravencoin_front/pages/wallet/send.dart';
 import 'package:ravencoin_front/pages/wallet/transaction.dart';
 //import 'package:ravencoin_front/pages/wallet/transactions.dart';
 import 'package:ravencoin_front/pages/wallet/transactions/widget.dart';
+import 'package:ravencoin_front/widgets/front/verify.dart';
 
 class pages {
   // static Splash splash = Splash();
@@ -85,7 +98,7 @@ class pages {
         '/home': (context) => Home(),
         '/manage/asset': (context) => Asset(),
         '/transactions': (context) => Transactions(),
-        //'/wallet': (context) => WalletView(), // technical view
+        '/addresses': (context) => WalletView(), // technical view
         '/scan': (context) => ScanQR(),
         // create and reissue would make better sense if it referenced assets,
         // but actually these should all be improved to match
@@ -98,28 +111,34 @@ class pages {
         '/create/channel': (context) => CreateChannelAsset(),
         '/create/restricted': (context) => CreateRestrictedAsset(),
         '/create/checkout': (context) => Checkout(
-              transactionType: TransactionType.Create,
+              transactionType: TransactionType.create,
             ),
         '/reissue/main': (context) => ReissueMainAsset(),
         '/reissue/sub': (context) => ReissueMainSubAsset(),
         '/reissue/restricted': (context) => ReissueRestrictedAsset(),
         '/reissue/checkout': (context) => Checkout(
-              transactionType: TransactionType.Reissue,
+              transactionType: TransactionType.reissue,
             ),
         '/security/backup': (context) => BackupSeed(),
+        '/security/backupKeypair': (context) => ShowKeypair(),
         '/security/backupConfirm': (context) => VerifySeed(),
-        '/security/change': (context) => ChangePassword(),
+        '/security/password/change': (context) => ChangeLoginPassword(),
+        '/security/method/change': (context) => ChangeLoginMethod(),
         '/security/resume': (context) => ChangeResume(),
-        '/security/login': (context) => Login(),
-        '/security/createlogin': (context) => CreateLogin(),
+        '/security/password/login': (context) => LoginPassword(),
+        '/security/native/login': (context) => LoginNative(),
+        '/security/create/setup': (context) => CreateChoice(),
+        '/security/password/createlogin': (context) => CreatePassword(),
+        '/security/native/createlogin': (context) => CreateNative(),
+        '/security/security': (context) => VerifyAuthentication(),
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),
         '/transaction/checkout': (context) => Checkout(
-              transactionType: TransactionType.Spend,
+              transactionType: TransactionType.spend,
             ),
         '/settings/export/export': (context) =>
-            Checkout(transactionType: TransactionType.Export),
+            Checkout(transactionType: TransactionType.export),
         '/settings/about': (context) => About(),
         '/settings/level': (context) => Advanced(),
         '/settings/currency': (context) => Language(),
@@ -127,8 +146,14 @@ class pages {
         '/settings/feedback': (context) => Feedback(),
         '/settings/import': (context) => Import(),
         '/settings/network': (context) => ElectrumNetwork(),
+        '/settings/network/mining': (context) => MiningChoice(),
+        '/settings/network/blockchain': (context) => BlockchainChoice(),
         '/settings/preferences': (context) => Preferences(),
         '/settings/support': (context) => Support(),
         '/settings/technical': (context) => TechnicalView(),
+        '/settings/database': (context) => DatabaseOptions(),
+        '/settings/developer': (context) => DeveloperOptions(),
+        '/settings/advanced': (context) => AdvancedDeveloperOptions(),
+        '/settings/sweep': (context) => SweepPage(),
       };
 }

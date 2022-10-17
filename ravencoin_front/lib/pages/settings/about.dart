@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -21,10 +22,17 @@ class About extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(
-                    'assets/logo/moontree_logo.png',
-                    height: 128.figma(context),
-                  ),
+                  GestureDetector(
+                      onVerticalDragEnd: (DragEndDetails x) async {
+                        if (x.velocity.pixelsPerSecond.dy < -3000) {
+                          Navigator.of(context)
+                              .pushReplacementNamed('/settings/advanced');
+                        }
+                      },
+                      child: Image.asset(
+                        'assets/logo/moontree_logo.png',
+                        height: 128.figma(context),
+                      )),
                   GestureDetector(
                     onTap: () {
                       launchUrl(
@@ -44,8 +52,9 @@ class About extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'beta: ' +
-                        VERSIONS[Platform.isIOS ? 'ios' : 'android']!['beta']!,
+                    '$VERSION_TRACK: ' +
+                        services.version
+                            .byPlatform(Platform.isIOS ? 'ios' : 'android'),
                     style: Theme.of(context).textTheme.subtitle2!.copyWith(
                         color: AppColors.black60,
                         fontWeight: FontWeights.semiBold),

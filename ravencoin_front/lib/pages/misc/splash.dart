@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_front/services/auth.dart' show LocalAuthApi;
+import 'package:ravencoin_front/services/password.dart';
+import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
+import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/device.dart';
 import 'package:ravencoin_front/widgets/backdrop/backdrop.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -49,6 +54,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await Future.delayed(Duration(milliseconds: 3500));
     await HIVE_INIT.setupDatabaseStart();
     await HIVE_INIT.setupDatabase1();
+
+    /// update version right after we open settings box, capture a snapshot of
+    /// the movement if we need to use it for migration logic: final versions =
+    services.version.rotate(
+      services.version.byPlatform(Platform.isIOS ? 'ios' : 'android'),
+    );
 
     /// must use a heavier isolate implementation
     //compute((_) async {
@@ -132,11 +143,37 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Future redirectToCreateOrLogin() async {
+    Future passwordFallback() async {
+      services.authentication.setMethod(method: AuthMethod.moontreePassword);
+      Future.microtask(() => Navigator.pushReplacementNamed(
+            context,
+            getMethodPathCreate(),
+          ));
+    }
+
+    // make a password out of biokey
+
     // this is false on 1st startup -> create
     if (!services.password.required) {
-      Future.microtask(() =>
-          Navigator.pushReplacementNamed(context, '/security/createlogin'));
+      //streams.app.page.add('Setup');
+      Future.microtask(() => Navigator.pushReplacementNamed(
+            context,
+            '/security/create/setup',
+          ));
+      //if (pros.settings.authMethodIsNativeSecurity) {
+      //  final localAuthApi = LocalAuthApi();
+      //  if (await localAuthApi.readyToAuthenticate) {
+      //    Future.microtask(() => Navigator.pushReplacementNamed(
+      //        context, getMethodPathCreate(),
+      //        arguments: {'needsConsent': true}));
+      //  } else {
+      //    passwordFallback();
+      //  }
+      //} else {
+      //  passwordFallback();
+      //}
     } else {
+      await maybeSwitchToPassword();
       if (services.password.interruptedPasswordChange()) {
         showDialog(
             context: context,
@@ -152,17 +189,16 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                               arguments: {}))
                     ]));
       } else {
-        final id = await getId();
         bool hasConsented = false;
         try {
-          hasConsented = await discoverConsent(id);
+          hasConsented = await discoverConsent(await getId());
         } catch (e) {
           streams.app.snack.add(Snack(
-              message: 'Unable to connect! Please check connectivity.',
-              atBottom: true));
+            message: 'Unable to connect! Please check connectivity.',
+          ));
         }
         Future.microtask(() => Navigator.pushReplacementNamed(
-            context, '/security/login',
+            context, getMethodPathLogin(),
             arguments: {'needsConsent': !hasConsented}));
 
         /// testing out instant/custom page transitions

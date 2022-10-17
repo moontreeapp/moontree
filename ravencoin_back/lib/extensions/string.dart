@@ -60,7 +60,33 @@ extension StringCharactersExtension on String {
 }
 
 extension StringNumericExtension on String {
-  int toInt() {
+  /// assumes the string is an amount
+  int toSats([divisibility = 8]) {
+    var x = trim();
+    if (x == '' || x == '.') {
+      return 0;
+    }
+    if (!x.contains('.')) {
+      x = '$x.';
+    }
+    var s = x.split('.');
+    if (s.length > 2) {
+      return 0;
+    }
+    if (s.last.length > divisibility) {
+      s[1] = s[1].substring(0, divisibility);
+    } else if (s.last.length < divisibility) {
+      s[1] = s[1] + '0' * (divisibility - s.last.length);
+    }
+    var textSats = '${s.first}${s.last}';
+    if (textSats.length > 15) {
+      return int.parse(textSats.substring(0, 15));
+    }
+    return int.parse(textSats);
+  }
+
+  /// assumes the string is already in sats.
+  int asSatsInt() {
     var text = utils.removeChars(
       split('.').first,
       chars: utils.strings.punctuation + utils.strings.whiteSapce,
@@ -113,7 +139,7 @@ extension IntReadableNumericExtension on int {
 
 extension DoubleReadableNumericExtension on double {
   String toCommaString() =>
-      toString().split('.').first.toInt().toCommaString() +
+      toString().split('.').first.asSatsInt().toCommaString() +
       (toString().split('.').last == '0'
           ? ''
           : '.' + toString().split('.').last);

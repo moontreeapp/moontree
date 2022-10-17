@@ -5,6 +5,7 @@ class RouteStack extends NavigatorObserver {
   List<Route<dynamic>> routeStack = [];
   BuildContext? routeContext;
   BuildContext? scaffoldContext;
+  BuildContext? mainContext;
   TabController? tabController;
 
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {

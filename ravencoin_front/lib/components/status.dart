@@ -31,7 +31,7 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    streams.app.status.add(state.enumString);
+    streams.app.status.add(state.name);
     setState(() {
       _notification = state;
     });
@@ -39,6 +39,6 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: false, child: Text(_notification.enumString));
+    return Visibility(visible: false, child: Text(_notification.name));
   }
 }

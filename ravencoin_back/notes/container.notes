@@ -11,7 +11,7 @@ container.node(0)
 
 account.wallet?
 
-container.eachWallet(WalletExposure.Internal) |wallet| {
+container.eachWallet(WalletExposure.internal) |wallet| {
   wallet.doSomething()
 }
 

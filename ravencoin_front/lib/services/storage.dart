@@ -7,7 +7,10 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:ravencoin_back/records/raw/secret.dart';
+import 'package:ravencoin_back/utilities/random.dart';
 import 'package:share/share.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Storage {
   Future<Directory> get _localDir async =>
@@ -205,4 +208,87 @@ class FileDetails {
       required this.size,
       this.content,
       this.contentBytes});
+}
+
+class SecureStorage {
+  Future example() async {
+    final key = 'key';
+    // Create storage
+    final storage = new FlutterSecureStorage();
+    // Read value
+    String? value = await storage.read(key: key);
+    // Read all values
+    Map<String, String> allValues = await storage.readAll();
+    // Write value
+    await storage.write(key: key, value: value);
+    // Delete value
+    await storage.delete(key: key);
+    // Delete all
+    await storage.deleteAll();
+  }
+
+  static const authkey = 'authenticationKey';
+
+  static Future<String> get authenticationKey async {
+    final storage = FlutterSecureStorage();
+    String? value = await storage.read(key: authkey);
+    if (value != null) {
+      return value;
+    }
+    final bioKey = randomString();
+    await storage.write(key: authkey, value: bioKey);
+    return bioKey;
+  }
+
+  static Future<void> writeSecret(Secret? secret) async {
+    if (secret == null) return;
+    final storage = FlutterSecureStorage();
+    await storage.write(
+      key: secret.pubkey ??
+          secret.scripthash ??
+          passwordIdKey(secret.passwordId!),
+      value: secret.secret,
+      //iOptions: Platform.isIOS
+      //    ? IOSOptions(accessibility: KeychainAccessibility.first_unlock)
+      //    : null,
+      //aOptions: !Platform.isIOS ? AndroidOptions() : null,
+    );
+  }
+
+  static Future<String?> readSecret(Secret secret) async {
+    final storage = FlutterSecureStorage();
+    return await storage.read(
+        key: secret.pubkey ??
+            secret.scripthash ??
+            passwordIdKey(secret.passwordId!));
+  }
+
+  static String passwordIdKey(int passwordId) => 'passwordId${passwordId}';
+
+  static Future<String?> read(String key) async {
+    final storage = FlutterSecureStorage();
+    return await storage.read(key: key);
+  }
+
+  static Future<Map<String, String>> readAll() async {
+    final storage = FlutterSecureStorage();
+    return await storage.readAll();
+  }
+
+  static Future<void> write(String key, String? value) async {
+    final storage = FlutterSecureStorage();
+    await storage.write(
+      key: key,
+      value: value,
+      //iOptions: Platform.isIOS
+      //    ? IOSOptions(accessibility: KeychainAccessibility.first_unlock)
+      //    : null,
+      //aOptions: !Platform.isIOS ? AndroidOptions() : null,
+    );
+  }
+
+  static Future<void> deleteAll() async {
+    final storage = FlutterSecureStorage();
+    storage.deleteAll();
+  }
 }

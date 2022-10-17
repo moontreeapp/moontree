@@ -9,8 +9,8 @@ extension AssetCanHaveOneParent on Asset {
 }
 
 extension AssetHasOneSecurity on Asset {
-  Security? get security => pros.securities.bySymbolSecurityType
-      .getOne(symbol, SecurityType.RavenAsset);
+  Security? get security =>
+      pros.securities.bySymbolSecurityType.getOne(symbol, SecurityType.asset);
 }
 
 extension AssetHasOneMetadata on Asset {
@@ -34,14 +34,14 @@ extension AssetHasOneLogoMetadata on Asset {
     var primaryMetadata = [
       pros.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata)
     ].where((md) => md?.parent == null).firstOrNull;
-    if (primaryMetadata?.kind == MetadataType.ImagePath) {
+    if (primaryMetadata?.kind == MetadataType.imagePath) {
       return primaryMetadata;
     }
     var nonMasterPrimaryMetadata = pros.metadatas.bySymbol
         .getAll(baseSymbol)
         .where((md) => md.parent == null)
         .firstOrNull;
-    if (nonMasterPrimaryMetadata?.kind == MetadataType.ImagePath) {
+    if (nonMasterPrimaryMetadata?.kind == MetadataType.imagePath) {
       return nonMasterPrimaryMetadata; // assume parent is logo, could check dims ratio...
     }
     return null;
