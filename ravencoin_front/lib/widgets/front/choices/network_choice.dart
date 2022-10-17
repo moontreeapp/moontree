@@ -1,3 +1,7 @@
+import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/widgets/bottom/selection_items.dart';
+import 'package:ravencoin_front/widgets/other/textfield.dart';
+import 'package:ravencoin_front/widgets/assets/icons.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -12,6 +16,8 @@ class NetworkChoice extends StatefulWidget {
 }
 
 class _NetworkChoice extends State<NetworkChoice> {
+  final choiceFocus = FocusNode();
+  final choiceController = TextEditingController();
   Chain chainChoice = Chain.ravencoin;
   Net netChoice = Net.main;
   late Tuple2<Chain, Net> chainNet;
@@ -34,6 +40,31 @@ class _NetworkChoice extends State<NetworkChoice> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        TextFieldFormatted(
+          focusNode: choiceFocus,
+          controller: choiceController,
+          readOnly: true,
+          textInputAction: TextInputAction.next,
+          decoration: components.styles.decorations.textField(context,
+              focusNode: choiceFocus,
+              labelText: 'Blockchain',
+              hintText: 'Ravencoin',
+              suffixIcon: IconButton(
+                icon: Padding(
+                    padding: EdgeInsets.only(right: 14),
+                    child: Icon(Icons.expand_more_rounded,
+                        color: Color(0xDE000000))),
+                onPressed: () => _produceAssetModal(),
+              )),
+          onTap: () {
+            _produceAssetModal();
+            setState(() {});
+          },
+          onEditingComplete: () async {
+            FocusScope.of(context).requestFocus(choiceFocus);
+          },
+        ),
+
         //Text('Blockchain Network',
         //    style: Theme.of(context).textTheme.bodyText1),
         //Text(
@@ -86,4 +117,29 @@ class _NetworkChoice extends State<NetworkChoice> {
       playCount: 5,
     );
   }
+
+  void _produceAssetModal() => SimpleSelectionItems(context, items: [
+        ListTile(
+          leading: icons.evrmore(height: 24, width: 24, circled: true),
+          title: Text('Evrmore'),
+          trailing: null,
+        ),
+        //if (pros.settings.advancedDeveloperMode)
+        //  ListTile(
+        //    leading: svgIcons.evrmoreTest,
+        //    title: Text('Evrmore (testnet)'),
+        //    trailing: null,
+        //  ),
+        ListTile(
+          leading: icons.ravencoin(height: 24, width: 24, circled: true),
+          title: Text('Ravencoin'),
+          trailing: null,
+        ),
+        //if (pros.settings.advancedDeveloperMode)
+        //  ListTile(
+        //    leading: svgIcons.ravencoinTest,
+        //    title: Text('Ravencoin (testnet)'),
+        //    trailing: null,
+        //  ),
+      ]).build();
 }

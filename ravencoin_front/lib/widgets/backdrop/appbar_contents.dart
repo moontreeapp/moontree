@@ -85,9 +85,14 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            printFullState();
-            print(pros.settings.advancedDeveloperMode);
-            print(pros.settings.primaryIndex.getOne(SettingName.mode_dev));
+            //printFullState();
+            //print(pros.settings.advancedDeveloperMode);
+            print(pros.settings.primaryIndex
+                    .getOne(SettingName.mode_dev)
+                    ?.value ==
+                FeatureLevel.expert);
+            print(
+                pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value);
             /*
             print(await SecureStorage.authenticationKey);
             var s = Stopwatch()..start();

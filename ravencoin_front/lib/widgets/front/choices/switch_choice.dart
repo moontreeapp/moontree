@@ -4,7 +4,7 @@ class SwtichChoice extends StatefulWidget {
   final String label;
   final String? description;
   final bool initial;
-  final void Function(bool)? onChanged;
+  final Future<void> Function(bool)? onChanged;
   const SwtichChoice({
     this.label = 'Choice',
     this.initial = false,
@@ -39,9 +39,9 @@ class _SwtichChoice extends State<SwtichChoice> {
             Text(widget.label, style: Theme.of(context).textTheme.bodyText1),
             Switch(
                 value: choice,
-                onChanged: (value) {
+                onChanged: (value) async {
                   if (widget.onChanged != null) {
-                    widget.onChanged!(value);
+                    await widget.onChanged!(value);
                   }
                   setState(() => choice = value);
                 }),

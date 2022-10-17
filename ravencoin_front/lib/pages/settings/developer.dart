@@ -26,7 +26,8 @@ class DeveloperOptions extends StatelessWidget {
                     child: SwtichChoice(
                       label: 'Developer Mode',
                       initial: pros.settings.developerMode,
-                      onChanged: (value) => pros.settings.toggleDevMode(value),
+                      onChanged: (value) async =>
+                          await pros.settings.toggleDevMode(value),
                     )))),
       ]);
 }
