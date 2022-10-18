@@ -10,15 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 
-class NetworkChoice extends StatefulWidget {
+class BlockchainChoice extends StatefulWidget {
   final dynamic data;
-  const NetworkChoice({this.data}) : super();
+  const BlockchainChoice({this.data}) : super();
 
   @override
-  _NetworkChoice createState() => _NetworkChoice();
+  _BlockchainChoice createState() => _BlockchainChoice();
 }
 
-class _NetworkChoice extends State<NetworkChoice> {
+class _BlockchainChoice extends State<BlockchainChoice> {
   final choiceFocus = FocusNode();
   final choiceController = TextEditingController();
   Chain chainChoice = Chain.ravencoin;
