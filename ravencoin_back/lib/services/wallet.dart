@@ -54,7 +54,7 @@ class WalletService {
     walletType ??= WalletType.leader;
     if (walletType == WalletType.leader) {
       return await leader.makeSaveLeaderWallet(
-        pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+        pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
         mnemonic: mnemonic,
         name: name,
@@ -64,7 +64,7 @@ class WalletService {
     } else {
       //WalletType.single
       return await single.makeSaveSingleWallet(
-        pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+        pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
         wif: mnemonic,
         name: name,
@@ -92,7 +92,7 @@ class WalletService {
         final entropy =
             bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic());
         final wallet = await leader.makeLeaderWallet(
-          pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+          pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,
           entropy: entropy,
           alwaysReturn: alwaysReturn,
@@ -102,7 +102,7 @@ class WalletService {
         return wallet;
       case WalletType.single:
         final wallet = await single.makeSingleWallet(
-          pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+          pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,
           wif: secret!,
           alwaysReturn: alwaysReturn,

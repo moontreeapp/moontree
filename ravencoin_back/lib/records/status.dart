@@ -37,7 +37,7 @@ class Status with EquatableMixin {
         'linkId: $linkId, statusType: $statusType, status: $status)';
   }
 
-  String get id => statusId(linkId, statusType);
-  static String statusId(String linkId, StatusType statusType) =>
+  String get id => key(linkId, statusType);
+  static String key(String linkId, StatusType statusType) =>
       linkId + statusType.name;
 }

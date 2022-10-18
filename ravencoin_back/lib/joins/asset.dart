@@ -1,21 +1,21 @@
 part of 'joins.dart';
 
 extension AssetHasOneStatus on Asset {
-  Status? get status => pros.statuses.byAsset.getOne(this);
+  Status? get status => pros.statuses.primaryIndex.getOneByAsset(this);
 }
 
 extension AssetCanHaveOneParent on Asset {
-  Asset? get parent => pros.assets.bySymbol.getOne(parentId ?? '');
+  Asset? get parent => pros.assets.primaryIndex.getOneById(parentId ?? '');
 }
 
 extension AssetHasOneSecurity on Asset {
-  Security? get security =>
-      pros.securities.bySymbolSecurityType.getOne(symbol, SecurityType.asset);
+  Security? get security => pros.securities.primaryIndex
+      .getOne(symbol, SecurityType.asset, chain, net);
 }
 
 extension AssetHasOneMetadata on Asset {
   Metadata? get primaryMetadata => [
-        pros.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata)
+        pros.metadatas.primaryIndex.getOne(baseSymbol, metadata, chain, net)
       ].where((md) => md?.parent == null).firstOrNull;
 }
 
@@ -32,7 +32,7 @@ extension AssetHasOneLogoMetadata on Asset {
       }
     }
     var primaryMetadata = [
-      pros.metadatas.bySymbolMetadata.getOne(baseSymbol, metadata)
+      pros.metadatas.primaryIndex.getOne(baseSymbol, metadata, chain, net)
     ].where((md) => md?.parent == null).firstOrNull;
     if (primaryMetadata?.kind == MetadataType.imagePath) {
       return primaryMetadata;

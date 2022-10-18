@@ -2,25 +2,15 @@ part of 'asset.dart';
 
 // primary key
 
-class _AssetIdKey extends Key<Asset> {
+class _IdKey extends Key<Asset> {
   @override
   String getKey(Asset asset) => asset.id;
 }
 
-extension ByIdMethodsForAsset on Index<_AssetIdKey, Asset> {
-  Asset? getOne(String assetId) => getByKeyStr(assetId).firstOrNull;
-}
-
-// bySymbol
-// same as primary
-
-class _SymbolKey extends Key<Asset> {
-  @override
-  String getKey(Asset asset) => asset.symbol;
-}
-
-extension BySymbolMethodsForAsset on Index<_SymbolKey, Asset> {
-  Asset? getOne(String symbol) => getByKeyStr(symbol).firstOrNull;
+extension ByIdMethodsForAsset on Index<_IdKey, Asset> {
+  Asset? getOneById(String id) => getByKeyStr(id).firstOrNull;
+  Asset? getOne(String symbol, Chain chain, Net net) =>
+      getByKeyStr(Asset.key(symbol, chain, net)).firstOrNull;
 }
 
 // byAssetType

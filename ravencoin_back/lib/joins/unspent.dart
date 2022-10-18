@@ -8,12 +8,19 @@ extension UnspentBelongsToTransaction on Unspent {
 }
 
 extension UnspentIsAVout on Unspent {
-  Vout? get vout =>
-      pros.vouts.byTransactionPosition.getOne(transactionId, position);
+  Vout? get vout => pros.vouts.primaryIndex
+      .getOneByTransactionPosition(transactionId, position);
 }
 
 extension UnspentHasOneSecurity on Unspent {
-  Security? get security => pros.securities.primaryIndex.getOne(symbol);
+  Security? get security => pros.securities.primaryIndex.getOne(
+      symbol,
+      (symbol == 'RVN' && pros.settings.chain == Chain.ravencoin) ||
+              (symbol == 'EVR' && pros.settings.chain == Chain.evrmore)
+          ? SecurityType.crypto
+          : SecurityType.asset,
+      chain,
+      net);
 }
 
 extension UnspentBelongsToAddress on Unspent {

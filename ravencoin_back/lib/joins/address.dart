@@ -1,7 +1,7 @@
 part of 'joins.dart';
 
 extension AddressHasOneStatus on Address {
-  Status? get status => pros.statuses.byAddress.getOne(this);
+  Status? get status => pros.statuses.primaryIndex.getOneByAddress(this);
 }
 
 extension AddressBelongsToWallet on Address {

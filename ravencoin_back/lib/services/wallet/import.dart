@@ -97,7 +97,7 @@ class ImportWalletService {
         }
         final secret = wallet_obj['secret'] as String;
         final cipherUpdate = CipherUpdate.fromMap(wallet_obj['cipherUpdate']);
-        final cipher = pros.ciphers.byCipherTypePasswordId
+        final cipher = pros.ciphers.primaryIndex
             .getOne(cipherUpdate.cipherType, cipherUpdate.passwordId)!;
 
         // Ensure we can actually decrypt

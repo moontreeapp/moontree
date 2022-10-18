@@ -2,14 +2,20 @@ part of 'security.dart';
 
 // primary key
 
-class _SecurityIdKey extends Key<Security> {
+class _IdKey extends Key<Security> {
   @override
   String getKey(Security security) => security.id;
 }
 
-extension ByIdMethodsForSecurity on Index<_SecurityIdKey, Security> {
-  Security? getOne(String? securityId) =>
+extension ByIdMethodsForSecurity on Index<_IdKey, Security> {
+  Security? getOneRaw(String? securityId) =>
       securityId == null ? null : getByKeyStr(securityId).firstOrNull;
+  Security? getOne(
+          String? symbol, SecurityType? securityType, Chain? chain, Net? net) =>
+      [symbol, securityType, chain, net].contains(null)
+          ? null
+          : getByKeyStr(Security.key(symbol!, securityType!, chain!, net!))
+              .firstOrNull;
 }
 
 // bySymbol
@@ -34,18 +40,4 @@ extension BySecurityTypeMethodsForSecurity
     on Index<_SecurityTypeKey, Security> {
   List<Security> getAll(SecurityType securityType) =>
       getByKeyStr(securityType.toString());
-}
-
-// bySymbolSecurityType
-// same as primary key but with two inputs
-
-class _SymbolSecurityTypeKey extends Key<Security> {
-  @override
-  String getKey(Security security) => security.id;
-}
-
-extension BySymbolSecurityTypeMethodsForSecurity
-    on Index<_SymbolSecurityTypeKey, Security> {
-  Security? getOne(String symbol, SecurityType securityType) =>
-      getByKeyStr(Security.securityKey(symbol, securityType)).firstOrNull;
 }

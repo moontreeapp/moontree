@@ -4,12 +4,12 @@ import 'package:proclaim/proclaim.dart';
 
 part 'transaction.keys.dart';
 
-class TransactionProclaim extends Proclaim<_TxHashKey, Transaction> {
+class TransactionProclaim extends Proclaim<_IdKey, Transaction> {
   late IndexMultiple<_HeightKey, Transaction> byHeight;
   late IndexMultiple<_ConfirmedKey, Transaction> byConfirmed;
   static const maxInt = 1 << 63;
 
-  TransactionProclaim() : super(_TxHashKey()) {
+  TransactionProclaim() : super(_IdKey()) {
     byHeight = addIndexMultiple('height', _HeightKey());
     byConfirmed = addIndexMultiple('confirmed', _ConfirmedKey());
   }

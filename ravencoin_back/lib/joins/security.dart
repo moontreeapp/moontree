@@ -1,7 +1,7 @@
 part of 'joins.dart';
 
 extension SecurityHasOneAsset on Security {
-  Asset? get asset => pros.assets.bySymbol.getOne(symbol);
+  Asset? get asset => pros.assets.primaryIndex.getOne(symbol, chain, net);
 }
 
 extension SecurityHasOneRVNRate on Security {

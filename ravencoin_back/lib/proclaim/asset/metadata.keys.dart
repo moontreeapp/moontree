@@ -2,27 +2,14 @@ part of 'metadata.dart';
 
 // primary key
 
-class _MetadataIdKey extends Key<Metadata> {
+class _IdKey extends Key<Metadata> {
   @override
   String getKey(Metadata metadata) => metadata.id;
 }
 
-extension ByIdMethodsForMetadata on Index<_MetadataIdKey, Metadata> {
-  Metadata? getOne(String metadataId) => getByKeyStr(metadataId).firstOrNull;
-}
-
-// bySymbolSecurityType
-// same as primary key but with two inputs
-
-class _SymbolMetadataKey extends Key<Metadata> {
-  @override
-  String getKey(Metadata metadata) => metadata.id;
-}
-
-extension BySymbolMetadataMethodsForMetadata
-    on Index<_SymbolMetadataKey, Metadata> {
-  Metadata? getOne(String symbol, String metadata) =>
-      getByKeyStr(Metadata.metadataKey(symbol, metadata)).firstOrNull;
+extension ByIdMethodsForMetadata on Index<_IdKey, Metadata> {
+  Metadata? getOne(String symbol, String metadata, Chain chain, Net net) =>
+      getByKeyStr(Metadata.key(symbol, metadata, chain, net)).firstOrNull;
 }
 
 // metadata key

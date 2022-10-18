@@ -4,13 +4,13 @@ import 'package:proclaim/proclaim.dart';
 
 part 'vin.keys.dart';
 
-class VinProclaim extends Proclaim<_VinIdKey, Vin> {
+class VinProclaim extends Proclaim<_IdKey, Vin> {
   late IndexMultiple<_TransactionKey, Vin> byTransaction;
   late IndexMultiple<_IsCoinbaseKey, Vin> byIsCoinbase;
   late IndexMultiple<_VoutIdKey, Vin> byVoutId;
   late IndexMultiple<_VoutTransactionIdKey, Vin> byVoutTransactionId;
 
-  VinProclaim() : super(_VinIdKey()) {
+  VinProclaim() : super(_IdKey()) {
     byTransaction = addIndexMultiple('transaction', _TransactionKey());
     byIsCoinbase = addIndexMultiple('isCoinbase', _IsCoinbaseKey());
     byVoutId = addIndexMultiple('vout', _VoutIdKey());

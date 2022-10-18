@@ -13,6 +13,6 @@ part 'rate.keys.dart';
 /// asset -> RVN
 /// RVN -> USD (or major fiats)
 /// USD -> other fiat (for obscure fiats)
-class ExchangeRateProclaim extends Proclaim<_RateKey, Rate> {
-  ExchangeRateProclaim() : super(_RateKey());
+class ExchangeRateProclaim extends Proclaim<_IdKey, Rate> {
+  ExchangeRateProclaim() : super(_IdKey());
 }

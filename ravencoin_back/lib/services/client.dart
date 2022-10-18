@@ -255,6 +255,8 @@ class SubscribeService {
         scripthashes: {address.scripthash},
         wallet: address.wallet!,
         getTransactions: true,
+        chain: pros.settings.chain,
+        net: pros.settings.net,
       );
 
   void queueHistoryDownload(Address address) => null;

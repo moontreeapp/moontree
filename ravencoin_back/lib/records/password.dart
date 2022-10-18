@@ -33,5 +33,5 @@ class Password with EquatableMixin {
 
   static String getSalt(int id) => 'moontree$id';
 
-  static String passwordKey(int id) => id.toString();
+  static String key(int id) => id.toString();
 }

@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:ravencoin_back/records/security.dart';
+import 'package:ravencoin_back/records/types/chain.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_back/utilities/exceptions.dart';
 import 'package:ravencoin_back/utilities/transform.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
@@ -63,9 +65,9 @@ class Balance with EquatableMixin {
           confirmed: confirmed ?? balance.confirmed,
           unconfirmed: unconfirmed ?? balance.unconfirmed);
 
-  String get id => Balance.balanceKey(walletId, security);
+  String get id => Balance.key(walletId, security);
 
-  static String balanceKey(String walletId, Security security) =>
+  static String key(String walletId, Security security) =>
       '$walletId:${security.id}';
 
   int get value => confirmed + unconfirmed;

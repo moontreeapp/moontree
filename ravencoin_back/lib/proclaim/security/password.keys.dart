@@ -5,12 +5,12 @@ int maxPasswordId(Iterable<Password> passwords) =>
 
 class _IdKey extends Key<Password> {
   @override
-  String getKey(Password password) => Password.passwordKey(password.id);
+  String getKey(Password password) => Password.key(password.id);
 }
 
 extension ByIdMethodsForPassword on Index<_IdKey, Password> {
   Password? getOne(int passwordId) =>
-      getByKeyStr(Password.passwordKey(passwordId)).firstOrNull;
+      getByKeyStr(Password.key(passwordId)).firstOrNull;
 
   Password? getMostRecent() => values
       .where((password) => password.id == maxPasswordId(values))

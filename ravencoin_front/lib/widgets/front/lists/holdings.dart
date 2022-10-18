@@ -191,7 +191,12 @@ class _HoldingList extends State<HoldingList> {
         balances.add(Balance(
             walletId: walletId,
             security: pros.securities.bySymbol.getAll(symbol).firstOrNull ??
-                Security(symbol: symbol, securityType: SecurityType.asset),
+                Security(
+                  symbol: symbol,
+                  securityType: SecurityType.asset,
+                  chain: pros.settings.chain,
+                  net: pros.settings.net,
+                ),
             confirmed: 0,
             unconfirmed: 0));
       }
@@ -673,7 +678,11 @@ class _HoldingList extends State<HoldingList> {
               : components.text.securityAsReadable(holding.balance?.value ?? 0,
                   security: holding.balance?.security ??
                       Security(
-                          symbol: 'unknown', securityType: SecurityType.fiat),
+                        symbol: 'unknown',
+                        securityType: SecurityType.fiat,
+                        chain: Chain.none,
+                        net: Net.test,
+                      ),
                   asUSD: showUSD),
           style: Theme.of(context)
               .textTheme

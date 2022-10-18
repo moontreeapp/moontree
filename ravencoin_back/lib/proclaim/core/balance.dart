@@ -4,15 +4,13 @@ import 'package:proclaim/proclaim.dart';
 
 part 'balance.keys.dart';
 
-class BalanceProclaim extends Proclaim<_WalletSecurityKey, Balance> {
+class BalanceProclaim extends Proclaim<_IdKey, Balance> {
   late IndexMultiple<_WalletKey, Balance> byWallet;
   late IndexMultiple<_SecurityKey, Balance> bySecurity;
-  late IndexMultiple<_WalletSecurityKey, Balance> byWalletSecurity;
 
-  BalanceProclaim() : super(_WalletSecurityKey()) {
+  BalanceProclaim() : super(_IdKey()) {
     byWallet = addIndexMultiple('wallet', _WalletKey());
     bySecurity = addIndexMultiple('security', _SecurityKey());
-    byWalletSecurity = addIndexMultiple('walletSecurity', _WalletSecurityKey());
   }
 
   Balance getOrZero(String walletId, {required Security security}) =>

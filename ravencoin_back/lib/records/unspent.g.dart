@@ -24,13 +24,15 @@ class UnspentAdapter extends TypeAdapter<Unspent> {
       height: fields[4] as int,
       value: fields[5] as int,
       symbol: fields[6] as String,
+      chain: fields[7] == null ? Chain.ravencoin : fields[7] as Chain,
+      net: fields[8] == null ? Net.main : fields[8] as Net,
     );
   }
 
   @override
   void write(BinaryWriter writer, Unspent obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.walletId)
       ..writeByte(1)
@@ -44,7 +46,11 @@ class UnspentAdapter extends TypeAdapter<Unspent> {
       ..writeByte(5)
       ..write(obj.value)
       ..writeByte(6)
-      ..write(obj.symbol);
+      ..write(obj.symbol)
+      ..writeByte(7)
+      ..write(obj.chain)
+      ..writeByte(8)
+      ..write(obj.net);
   }
 
   @override

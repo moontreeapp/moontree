@@ -27,7 +27,7 @@ class LeaderWalletService {
     required LeaderWallet leader,
     NodeExposure? exposure,
   }) async {
-    if (pros.ciphers.primaryIndex.getOne(leader.cipherUpdate) != null) {
+    if (pros.ciphers.primaryIndex.getOneByCipherUpdate(leader.cipherUpdate) != null) {
       await services.wallet.leader.deriveMoreAddresses(
         leader,
         exposure == null ? null : [exposure],
@@ -101,7 +101,7 @@ class LeaderWalletService {
   Future<LeaderWallet> generate() async {
     final cipherUpdate = services.cipher.currentCipherUpdate;
     final leaderWallet = await makeLeaderWallet(
-        pros.ciphers.primaryIndex.getOne(cipherUpdate)!.cipher,
+        pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
         entropy: null,
         name: null,
@@ -205,7 +205,7 @@ class LeaderWalletService {
     required int highestIndex,
     List<NodeExposure>? exposures,
   }) async {
-    if (pros.ciphers.primaryIndex.getOne(wallet.cipherUpdate) != null) {
+    if (pros.ciphers.primaryIndex.getOneByCipherUpdate(wallet.cipherUpdate) != null) {
       exposures = exposures ?? [NodeExposure.external, NodeExposure.internal];
       var newAddresses = <Address>{};
       for (var exposure in exposures) {

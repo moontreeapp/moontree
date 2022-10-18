@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/extensions/object.dart';
 import 'package:ravencoin_back/extensions/validation.dart';
+import 'package:ravencoin_back/records/types/chain.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_back/utilities/utilities.dart';
 
 import '_type_id.dart';
@@ -31,6 +32,12 @@ class Asset with EquatableMixin {
   @HiveField(6)
   final int position;
 
+  @HiveField(7, defaultValue: Chain.ravencoin)
+  final Chain chain;
+
+  @HiveField(8, defaultValue: Net.main)
+  final Net net;
+
   //late final TxSource source;
   ////late final String txHash; // where it originated?
   ////late final int txPos; // the vout it originated?
@@ -44,6 +51,8 @@ class Asset with EquatableMixin {
     required this.metadata,
     required this.transactionId,
     required this.position,
+    required this.chain,
+    required this.net,
   });
 
   @override
@@ -55,17 +64,21 @@ class Asset with EquatableMixin {
         metadata,
         transactionId,
         position,
+        chain,
+        net,
       ];
 
   @override
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position)';
+      'position: $position, ${chainNetReadable(chain, net)})';
 
-  static String assetKey(String symbol) => symbol;
-  String get id => symbol;
-  String? get parentId {
+  static String key(String symbol, Chain chain, Net net) =>
+      '$symbol:${chainNetKey(chain, net)}';
+
+  String get id => key(symbol, chain, net);
+  String? get parentSymbol {
     if (assetType == AssetType.sub) {
       var splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
@@ -88,6 +101,9 @@ class Asset with EquatableMixin {
     }
     return null;
   }
+
+  String? get parentId =>
+      parentSymbol == null ? null : key(parentSymbol!, chain, net);
 
   String? get shortName {
     if (assetType == AssetType.sub) {

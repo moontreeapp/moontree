@@ -9,8 +9,8 @@ import 'package:ravencoin_wallet/ravencoin_wallet.dart' show NetworkType;
 
 part 'setting.keys.dart';
 
-class SettingProclaim extends Proclaim<_SettingNameKey, Setting> {
-  SettingProclaim() : super(_SettingNameKey());
+class SettingProclaim extends Proclaim<_IdKey, Setting> {
+  SettingProclaim() : super(_IdKey());
 
   static final Net defaultNet = Net.main;
   static final String defaultUrl = 'moontree.com';

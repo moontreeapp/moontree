@@ -16,7 +16,7 @@ extension VoutBelongsToVin on Vout {
 extension VoutHasOneSecurity on Vout {
   Security? get security => assetSecurityId == null
       ? pros.securities.RVN
-      : pros.securities.primaryIndex.getOne(assetSecurityId!);
+      : pros.securities.primaryIndex.getOneRaw(assetSecurityId!);
   // if this is not found we should go get it,
   // because this should never not be found.
 }

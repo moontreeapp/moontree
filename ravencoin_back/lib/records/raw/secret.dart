@@ -49,9 +49,9 @@ class Secret with EquatableMixin {
         'secretType': secretType.name,
       };
 
-  String get id => Secret.primaryId(pubkey, scripthash, passwordId, secretType);
+  String get id => Secret.key(pubkey, scripthash, passwordId, secretType);
 
-  static String primaryId(
+  static String key(
     String? pubkey,
     String? scripthash,
     int? passwordId,

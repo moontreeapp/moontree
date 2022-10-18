@@ -4,7 +4,7 @@ extension WalletBelongsToCipher on Wallet {
   //CipherBase? get cipher => pros.cipherRegistry.ciphers[cipherUpdate];
   CipherBase? get cipher => cipherUpdate.cipherType == CipherType.none
       ? pros.ciphers.records.firstOrNull?.cipher
-      : pros.ciphers.primaryIndex.getOne(cipherUpdate)?.cipher;
+      : pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)?.cipher;
 }
 
 extension WalletHasManyAddresses on Wallet {

@@ -4,23 +4,19 @@ import 'package:collection/collection.dart';
 import 'package:ravencoin_back/security/cipher_aes.dart';
 import 'package:ravencoin_back/security/cipher_base.dart';
 import 'package:ravencoin_back/security/cipher_none.dart';
-import 'package:ravencoin_back/extensions/object.dart';
 import 'package:proclaim/proclaim.dart';
 
 import 'package:ravencoin_back/records/records.dart';
 
 part 'cipher.keys.dart';
 
-class CipherProclaim extends Proclaim<_CipherUpdateKey, Cipher> {
+class CipherProclaim extends Proclaim<_IdKey, Cipher> {
   late IndexMultiple<_PasswordKey, Cipher> byPassword;
   late IndexMultiple<_CipherTypeKey, Cipher> byCipherType;
-  late IndexMultiple<_CipherTypePasswordIdKey, Cipher> byCipherTypePasswordId;
 
-  CipherProclaim() : super(_CipherUpdateKey()) {
+  CipherProclaim() : super(_IdKey()) {
     byPassword = addIndexMultiple('password', _PasswordKey());
     byCipherType = addIndexMultiple('cipherType', _CipherTypeKey());
-    byCipherTypePasswordId =
-        addIndexMultiple('cipherTypePasswordId', _CipherTypePasswordIdKey());
   }
 
   // populate with a nocipher cipher for creation of wallets without password
