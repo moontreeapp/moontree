@@ -198,7 +198,7 @@ class _NavMenuState extends State<NavMenu> {
         shrinkWrap: true,
         padding: EdgeInsets.all(0),
         children: [
-          if (pros.settings.advancedDeveloperMode)
+          if (pros.settings.developerMode)
             destination(
               icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant, //
               name: 'Blockchain',
