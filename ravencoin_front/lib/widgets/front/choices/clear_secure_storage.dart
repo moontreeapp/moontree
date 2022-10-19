@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -57,6 +56,11 @@ class _ClearSSChoice extends State<ClearSSChoice> {
                               },
                               'ACTUALLY DO IT': () async {
                                 await SecureStorage.deleteAll();
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                streams.app.snack.add(
+                                    Snack(message: 'Secure Storage Cleared'));
                               }
                             })
                   });
