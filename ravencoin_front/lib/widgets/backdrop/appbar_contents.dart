@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:hive/hive.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -89,6 +90,15 @@ class BackdropAppBarContents extends StatelessWidget
             print(pros.balances.byWallet.getAll(Current.walletId).where(
                   (e) => e.security == pros.securities.RVN,
                 ));
+            print('---');
+            for (var x in pros.unspents.records) {
+              print(x);
+            }
+            print('---');
+            var box = Hive.box<Unspent>('unspents');
+            for (var x in box.keys) {
+              print(x);
+            }
             //await pros.settings.save(
             //    Setting(name: SettingName.blockchain, value: Chain.evrmore));
 

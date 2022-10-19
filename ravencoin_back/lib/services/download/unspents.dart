@@ -15,7 +15,7 @@ class UnspentService {
 
   void _maybeSubscribeToAsset({
     required String symbol,
-        required Chain chain,
+    required Chain chain,
     required Net net,
     bool subscribe = false,
   }) {
@@ -27,7 +27,7 @@ class UnspentService {
         // This method checks if we're already subscribed and
         // handles downloads if we are not
         services.client.subscribe.toAsset(Asset(
-          chain: chain,
+            chain: chain,
             net: net,
             symbol: symbol,
             satsInCirculation: 0,
@@ -44,7 +44,7 @@ class UnspentService {
   Future<void> pull({
     required Wallet wallet,
     required Set<String> scripthashes,
-        required Chain chain,
+    required Chain chain,
     required Net net,
     bool getTransactions = true,
   }) async {
@@ -67,7 +67,7 @@ class UnspentService {
       // that are for assets, but have a null symbol which we would interpret as
       // rvn... but we already know none of these are rvn, so don't save it.
       if (utxo.symbol != null) {
-       utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo, chain, net));
+        utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo, chain, net));
         _maybeSubscribeToAsset(
             symbol: utxo.symbol!, subscribe: true, chain: chain, net: net);
       } else {
@@ -78,6 +78,10 @@ class UnspentService {
     _maybeTriggerBackup(rvnUtxos);
     _maybeTriggerBackup(assetUtxos);
 
+    if (scripthashes.contains(
+        'f4a46b0a38e65b1f7633c31e347135a9362de4ce749a2e1d436b0b50b1d816af')) {
+      print('f4a46b0a38e65b1f7633c31e347135a9362de4ce749a2e1d436b0b50b1d816af');
+    }
     // only save if there's something new, in that case erase all, save all.
     var existing = pros.unspents.byScripthashes(scripthashes).toSet();
     await pros.unspents.removeAll(existing.difference(utxos));
