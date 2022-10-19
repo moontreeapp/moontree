@@ -87,9 +87,7 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             //print(pros.settings.primaryIndex.getAll(SettingName.auth_method));
-            print(pros.balances.byWallet.getAll(Current.walletId).where(
-                  (e) => e.security == pros.securities.RVN,
-                ));
+            print(pros.balances.byWallet.getAll(Current.walletId));
             print('---');
             for (var x in pros.unspents.records) {
               print(x);

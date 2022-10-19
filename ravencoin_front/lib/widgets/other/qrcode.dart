@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 
 class QRCodeButton extends StatefulWidget {
@@ -29,6 +30,7 @@ class _QRCodeButtonState extends State<QRCodeButton> {
                 color: widget.light ? Colors.white : Colors.black,
               ),
               onPressed: () async {
+                if (streams.app.scrim.value == true) return;
                 ScaffoldMessenger.of(context).clearSnackBars();
                 //Backdrop.of(components.navigator.routeContext!).concealBackLayer();
                 //ScanResult result = await BarcodeScanner.scan();

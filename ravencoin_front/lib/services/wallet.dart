@@ -129,3 +129,17 @@ Future<void> updateWalletNames() async {
   }
   await pros.wallets.saveAll(records);
 }
+
+/// resaving securities, assets, metadata, and unspents
+/// because we want them to be reindexed so their look up keys in proclaim
+/// reflect their new id which includes chain and net. (untested)
+Future<void> updateChain() async {
+  var securities = pros.securities.records;
+  var assets = pros.assets.records;
+  var metadatas = pros.metadatas.records;
+  var unspents = pros.unspents.records;
+  await pros.securities.saveAll(securities);
+  await pros.assets.saveAll(assets);
+  await pros.metadatas.saveAll(metadatas);
+  await pros.unspents.saveAll(unspents);
+}
