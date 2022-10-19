@@ -350,7 +350,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       await updateWalletsToSecureStorage();
       streams.app.snack
           .add(Snack(message: 'Migration complete...', showOnLogin: true));
-
+      streams.app.scrim.add(false);
       await login(password.text, refresh: true);
     } else if (await services.password.lockout
             .handleVerificationAttempt(await validate()) &&
