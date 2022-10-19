@@ -8,7 +8,7 @@
 PRODUCT_NAME = ravencoin_front
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.moontree.ravencoinFront
+PRODUCT_BUNDLE_IDENTIFIER = com.moontree.ios
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2022 com.moontree. All rights reserved.
