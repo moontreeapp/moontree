@@ -448,6 +448,7 @@ class TransactionService {
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
+            successMsg: 'Successfully Swept',
           ));
           return true;
         } else {
@@ -470,6 +471,7 @@ class TransactionService {
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
+              successMsg: 'Successfully Swept',
             ));
           }
           return true;
@@ -491,6 +493,7 @@ class TransactionService {
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
+          successMsg: 'Successfully Swept',
         ));
         return true;
       } else {
@@ -545,6 +548,7 @@ class TransactionService {
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
+          successMsg: 'Successfully Swept',
         ));
         fees += txEstimate.item2.fees;
       }
@@ -560,6 +564,7 @@ class TransactionService {
       );
       streams.spend.send.add(TransactionNote(
         txHex: txEstimate.item1.toHex(),
+        successMsg: 'Successfully Swept',
       ));
     }
     return true;

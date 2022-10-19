@@ -23,14 +23,15 @@ class Spend {
 class TransactionNote with ToStringMixin {
   String txHex;
   String? note;
+  String? successMsg;
 
-  TransactionNote({required this.txHex, this.note});
-
-  @override
-  List<Object> get props => [txHex, note ?? 'null'];
+  TransactionNote({required this.txHex, this.note, this.successMsg});
 
   @override
-  List<String> get propNames => ['txHex', 'note?'];
+  List<Object> get props => [txHex, note ?? 'null', successMsg ?? 'null'];
+
+  @override
+  List<String> get propNames => ['txHex', 'note?', 'successMsg?'];
 }
 
 class SpendForm with EquatableMixin {
