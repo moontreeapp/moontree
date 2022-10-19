@@ -78,10 +78,6 @@ class UnspentService {
     _maybeTriggerBackup(rvnUtxos);
     _maybeTriggerBackup(assetUtxos);
 
-    if (scripthashes.contains(
-        'f4a46b0a38e65b1f7633c31e347135a9362de4ce749a2e1d436b0b50b1d816af')) {
-      print('f4a46b0a38e65b1f7633c31e347135a9362de4ce749a2e1d436b0b50b1d816af');
-    }
     // only save if there's something new, in that case erase all, save all.
     var existing = pros.unspents.byScripthashes(scripthashes).toSet();
     await pros.unspents.removeAll(existing.difference(utxos));
