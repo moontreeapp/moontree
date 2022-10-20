@@ -12,7 +12,7 @@ extension ByIdMethodsForSecret on Index<_IdKey, Secret> {
     int? passwordId,
     SecretType secretType,
   ) =>
-      getByKeyStr(Secret.primaryId(pubkey, scripthash, passwordId, secretType))
+      getByKeyStr(Secret.key(pubkey, scripthash, passwordId, secretType))
           .firstOrNull;
 }
 
@@ -26,25 +26,10 @@ class _LinkKey extends Key<Secret> {
 extension ByPasswordMethodsForSecret on Index<_LinkKey, Secret> {
   List<Secret> getOne(String? pubkey, String? scripthash, int? passwordId) =>
       getByKeyStr(Secret.LinkId(pubkey, scripthash, passwordId));
-}
-
-/// byPubkey
-
-extension ByPubkeyMethodsForSecret on Index<_LinkKey, Secret> {
-  Secret? getOne(String pubkey) =>
+  Secret? getOneByPubkey(String pubkey) =>
       getByKeyStr(Secret.LinkId(pubkey, null, null)).firstOrNull;
-}
-
-/// byScripthash
-
-extension ByScripthashMethodsForSecret on Index<_LinkKey, Secret> {
-  Secret? getOne(String scripthash) =>
+  Secret? getOneByScripthash(String scripthash) =>
       getByKeyStr(Secret.LinkId(null, scripthash, null)).firstOrNull;
-}
-
-/// byPasswordId
-
-extension ByPasswordIdMethodsForSecret on Index<_LinkKey, Secret> {
-  Secret? getOne(int passwordId) =>
+  Secret? getOneByPasswordId(int passwordId) =>
       getByKeyStr(Secret.LinkId(null, null, passwordId)).firstOrNull;
 }

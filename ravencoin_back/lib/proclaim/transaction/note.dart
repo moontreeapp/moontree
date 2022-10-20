@@ -4,6 +4,6 @@ import 'package:proclaim/proclaim.dart';
 
 part 'note.keys.dart';
 
-class NoteProclaim extends Proclaim<_NoteIdKey, Note> {
-  NoteProclaim() : super(_NoteIdKey());
+class NoteProclaim extends Proclaim<_IdKey, Note> {
+  NoteProclaim() : super(_IdKey());
 }

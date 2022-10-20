@@ -23,8 +23,10 @@ class _ReissueRestrictedAssetState extends State<ReissueRestrictedAsset> {
 
   @override
   Widget build(BuildContext context) {
-    var asset =
-        pros.assets.bySymbol.getOne(streams.app.manage.asset.value ?? '');
+    var asset = pros.assets.primaryIndex.getOne(
+        streams.app.manage.asset.value ?? '',
+        pros.settings.chain,
+        pros.settings.net);
     if (asset != null && asset.reissuable) {
       streams.reissue.form.add(GenericReissueForm(
         parent: asset.parent?.symbol,

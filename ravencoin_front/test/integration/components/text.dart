@@ -4,8 +4,11 @@ import 'package:ravencoin_front/components/text.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
 void main() {
-  final Security security =
-      Security(symbol: 'MOONTREE', securityType: SecurityType.asset);
+  final Security security = Security(
+      symbol: 'MOONTREE',
+      securityType: SecurityType.asset,
+      chain: Chain.ravencoin,
+      net: Net.test);
   final textC = TextComponents();
 
   group('securityAsReadable', () {
@@ -20,6 +23,8 @@ void main() {
 
     test('asset amount with divisibilty', () async {
       await pros.assets.save(Asset(
+          chain: Chain.ravencoin,
+          net: Net.test,
           symbol: 'MOONTREE',
           satsInCirculation: 1000,
           divisibility: 2,
@@ -44,6 +49,8 @@ void main() {
 
     test('asset to RVN then to USD with rate (and divisibility)', () async {
       await pros.assets.save(Asset(
+          chain: Chain.ravencoin,
+          net: Net.test,
           symbol: 'MOONTREE',
           satsInCirculation: 1000,
           divisibility: 2,
@@ -53,13 +60,28 @@ void main() {
           position: 0));
       await pros.rates.saveAll([
         Rate(
-            base: Security(symbol: 'RVN', securityType: SecurityType.crypto),
-            quote: Security(symbol: 'USD', securityType: SecurityType.fiat),
+            base: Security(
+                symbol: 'RVN',
+                securityType: SecurityType.crypto,
+                chain: Chain.ravencoin,
+                net: Net.test),
+            quote: Security(
+                symbol: 'USD',
+                securityType: SecurityType.fiat,
+                chain: Chain.none,
+                net: Net.test),
             rate: 3.0),
         Rate(
-            base:
-                Security(symbol: 'MOONTREE', securityType: SecurityType.asset),
-            quote: Security(symbol: 'RVN', securityType: SecurityType.crypto),
+            base: Security(
+                symbol: 'MOONTREE',
+                securityType: SecurityType.asset,
+                chain: Chain.ravencoin,
+                net: Net.test),
+            quote: Security(
+                symbol: 'RVN',
+                securityType: SecurityType.crypto,
+                chain: Chain.ravencoin,
+                net: Net.test),
             rate: 2.0),
       ]);
       // 123 -> divisibility 2 -> 1.23 moontrees -> 2.46 ravens -> 7.38 dollars
@@ -79,8 +101,16 @@ void main() {
 
     test('RVN to USD with rate', () async {
       await pros.rates.save(Rate(
-          base: Security(symbol: 'RVN', securityType: SecurityType.crypto),
-          quote: Security(symbol: 'USD', securityType: SecurityType.fiat),
+          base: Security(
+              symbol: 'RVN',
+              securityType: SecurityType.crypto,
+              chain: Chain.ravencoin,
+              net: Net.test),
+          quote: Security(
+              symbol: 'USD',
+              securityType: SecurityType.fiat,
+              chain: Chain.none,
+              net: Net.test),
           rate: 3.0));
       // 123 ravens -> 3.69 dollars
       expect(textC.rvnUSD(0), r'$ 0.00');

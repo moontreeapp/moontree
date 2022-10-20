@@ -157,8 +157,12 @@ class GenericCreateRequest with ToStringMixin {
         'parent',
       ];
 
-  Security get security =>
-      Security(symbol: fullName, securityType: SecurityType.asset);
+  Security get security => Security(
+        symbol: fullName,
+        securityType: SecurityType.asset,
+        chain: pros.settings.chain,
+        net: pros.settings.net,
+      );
 }
 
 class GenericReissueRequest with ToStringMixin {
@@ -234,8 +238,12 @@ class GenericReissueRequest with ToStringMixin {
         'parent',
       ];
 
-  Security get security =>
-      Security(symbol: fullName, securityType: SecurityType.asset);
+  Security get security => Security(
+        symbol: fullName,
+        securityType: SecurityType.asset,
+        chain: pros.settings.chain,
+        net: pros.settings.net,
+      );
 }
 
 class SendRequest with ToStringMixin {
@@ -563,8 +571,12 @@ class TransactionMaker {
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
             amount: 100000000,
-            security:
-                Security(symbol: parentAsset, securityType: SecurityType.asset))
+            security: Security(
+              symbol: parentAsset,
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            ))
         : <Vout>[];
     var securityIn = 0;
     for (var utxo in utxosSecurity) {
@@ -645,8 +657,11 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: estimate.security!.symbol.substring(1) + '!',
-                securityType: SecurityType.asset))
+              symbol: estimate.security!.symbol.substring(1) + '!',
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            ))
         : <Vout>[];
     var returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
@@ -721,8 +736,11 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
-            symbol: estimate.security!.symbol.substring(1) + '!',
-            securityType: SecurityType.asset));
+          symbol: estimate.security!.symbol.substring(1) + '!',
+          securityType: SecurityType.asset,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ));
     var returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
@@ -796,10 +814,13 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 sat for ownership asset
         security: Security(
-            symbol: estimate.security!.symbol[0] == '\$'
-                ? estimate.security!.symbol.substring(1) + '!'
-                : estimate.security!.symbol,
-            securityType: SecurityType.asset));
+          symbol: estimate.security!.symbol[0] == '\$'
+              ? estimate.security!.symbol.substring(1) + '!'
+              : estimate.security!.symbol,
+          securityType: SecurityType.asset,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ));
     var securityIn = 0; // May be qualifier
     for (var utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
@@ -876,8 +897,11 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
-            symbol: estimate.security!.symbol + '!',
-            securityType: SecurityType.asset));
+          symbol: estimate.security!.symbol + '!',
+          securityType: SecurityType.asset,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ));
     var returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
@@ -1010,7 +1034,11 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: parentAsset + '!', securityType: SecurityType.asset))
+              symbol: parentAsset + '!',
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            ))
         : <Vout>[];
     var returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
@@ -1078,7 +1106,11 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: parentAsset + '!', securityType: SecurityType.asset))
+              symbol: parentAsset + '!',
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            ))
         : <Vout>[];
     var returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
@@ -1359,8 +1391,7 @@ class TransactionMaker {
     for (var security in securities) {
       utxosBySecurity[security] = await services.balance.collectUTXOs(
         walletId: wallet.id,
-        amount:
-            pros.balances.byWalletSecurity.getOne(wallet.id, security)!.value,
+        amount: pros.balances.primaryIndex.getOne(wallet.id, security)!.value,
         security: security,
       );
     }

@@ -33,7 +33,7 @@ class CipherService {
       CipherUpdate(CipherType.none, passwordId: pros.passwords.maxPasswordId);
 
   Cipher? get currentCipherBase =>
-      pros.ciphers.primaryIndex.getOne(currentCipherUpdate);
+      pros.ciphers.primaryIndex.getOneByCipherUpdate(currentCipherUpdate);
 
   CipherBase? get currentCipher => currentCipherBase?.cipher;
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -49,7 +48,7 @@ class _ClearSSChoice extends State<ClearSSChoice> {
                             context,
                             title: 'Are you really sure?',
                             content:
-                                "Look, buddy, you do this and you can't login anymore. I mean at least go back and make a paper backup first if you're gonna do this. The only real reason to do this is if you want to erase the app from your device entirely.",
+                                "Look, don't want to do this. You wont be able to login anymore. I mean at least go back and make a paper backup first. The only real reason to do this is for testing purposes or in preparation of erasing the app from your device entirely.",
                             behaviors: {
                               'CANCEL': () {
                                 Navigator.of(context).pop();
@@ -57,6 +56,11 @@ class _ClearSSChoice extends State<ClearSSChoice> {
                               },
                               'ACTUALLY DO IT': () async {
                                 await SecureStorage.deleteAll();
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                streams.app.snack.add(
+                                    Snack(message: 'Secure Storage Cleared'));
                               }
                             })
                   });

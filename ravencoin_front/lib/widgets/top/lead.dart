@@ -70,16 +70,39 @@ class _PageLead extends State<PageLead> {
     if (loading && pageTitle != 'Network') {
       return Container();
     }
-    if (settingTitle?.startsWith('/settings/') ?? false) {
+    if (pageTitle == 'Home' &&
+        (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-          onPressed: () => streams.app.setting.add('/settings'));
+          onPressed: () {
+            if (streams.app.scrim.value == true) return;
+            streams.app.setting.add('/settings');
+            //Navigator.pop(components.navigator.routeContext ?? context);
+            //Navigator.pop(components.navigator.routeContext ?? context);
+            //Navigator.pushReplacementNamed(
+            //    components.navigator.routeContext ?? context, '/home',
+            //    arguments: {});
+            //streams.app.setting.add(settingTitle);
+          });
     }
+    if (pageTitle != 'Home' &&
+        (settingTitle?.startsWith('/settings/') ?? false)) {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            if (streams.app.scrim.value == true) return;
+            Navigator.pop(components.navigator.routeContext ?? context);
+            streams.app.setting.add(settingTitle);
+          });
+    }
+
     if (pageTitle == 'Home') {
       return IconButton(
           splashRadius: 24,
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             ScaffoldMessenger.of(context).clearSnackBars();
             streams.app.fling.add(true);
           },
@@ -108,6 +131,7 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           icon: Icon(Icons.close_rounded, color: Colors.white),
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             streams.app.fling.add(false);
             if (pageTitle == 'Send') streams.spend.form.add(null);
             if (xlead) streams.app.xlead.add(false);
@@ -129,6 +153,7 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             streams.app.fling.add(false);
             if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.pop(components.navigator.routeContext ?? context);
@@ -139,6 +164,7 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             Navigator.pushReplacementNamed(
               components.navigator.routeContext ?? context,
               '/security/create/setup',
@@ -162,6 +188,7 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.popUntil(components.navigator.routeContext ?? context,
                 ModalRoute.withName('/home'));
@@ -171,6 +198,7 @@ class _PageLead extends State<PageLead> {
         splashRadius: 24,
         icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
         onPressed: () {
+          if (streams.app.scrim.value == true) return;
           if (pageTitle == 'Transaction') streams.spend.form.add(null);
           Navigator.pop(components.navigator.routeContext ?? context);
         });

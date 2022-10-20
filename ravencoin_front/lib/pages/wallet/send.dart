@@ -234,13 +234,23 @@ class _SendState extends State<Send> {
     data = populateData(context, data);
     var symbol = streams.spend.form.value?.symbol ?? pros.securities.RVN.symbol;
     symbol = symbol == 'Ravencoin' ? pros.securities.RVN.symbol : symbol;
-    security = pros.securities.bySymbol.getAll(symbol).first;
+    security = pros.securities.primaryIndex.getOne(
+        symbol,
+        symbol == 'RVN' && pros.settings.chain == Chain.ravencoin ||
+                symbol == 'EVR' && pros.settings.chain == Chain.evrmore
+            ? SecurityType.crypto
+            : SecurityType.asset,
+        pros.settings.chain,
+        pros.settings.net)!;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
       handlePopulateFromQR(data['qrCode']);
       data.remove('qrCode');
     }
-    divisibility = pros.assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
+    divisibility = pros.assets.primaryIndex
+            .getOne(symbol, security.chain, security.net)
+            ?.divisibility ??
+        8;
     var possibleHoldings = [
       for (var balance in Current.holdings)
         if (balance.security.symbol == symbol) utils.satToAmount(balance.value)
@@ -655,8 +665,12 @@ class _SendState extends State<Send> {
           feeGoal: feeGoal,
           security: sendAsset.text == 'Ravencoin'
               ? null
-              : pros.securities.bySymbolSecurityType
-                  .getOne(sendAsset.text, SecurityType.asset),
+              : pros.securities.primaryIndex.getOne(
+                  sendAsset.text,
+                  SecurityType.asset,
+                  pros.settings.chain,
+                  pros.settings.net,
+                ),
           assetMemo: sendAsset.text != 'Ravencoin' &&
                   sendMemo.text != '' &&
                   sendMemo.text.isIpfs

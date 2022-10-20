@@ -4,26 +4,54 @@ import 'package:proclaim/proclaim.dart';
 
 part 'security.keys.dart';
 
-class SecurityProclaim extends Proclaim<_SecurityIdKey, Security> {
+class SecurityProclaim extends Proclaim<_IdKey, Security> {
   late IndexMultiple<_SymbolKey, Security> bySymbol;
   late IndexMultiple<_SecurityTypeKey, Security> bySecurityType;
-  late IndexMultiple<_SymbolSecurityTypeKey, Security> bySymbolSecurityType;
+  static final staticUSD = Security(
+      symbol: 'USD',
+      securityType: SecurityType.fiat,
+      chain: Chain.none,
+      net: Net.main);
+  static final staticRVN = Security(
+      symbol: 'RVN',
+      securityType: SecurityType.crypto,
+      chain: Chain.ravencoin,
+      net: Net.main);
+  static final staticEVR = Security(
+      symbol: 'EVR',
+      securityType: SecurityType.crypto,
+      chain: Chain.evrmore,
+      net: Net.main);
+  static final staticRVNt = Security(
+      symbol: 'RVN',
+      securityType: SecurityType.crypto,
+      chain: Chain.ravencoin,
+      net: Net.test);
+  static final staticEVRt = Security(
+      symbol: 'EVR',
+      securityType: SecurityType.crypto,
+      chain: Chain.evrmore,
+      net: Net.test);
 
-  SecurityProclaim() : super(_SecurityIdKey()) {
+  SecurityProclaim() : super(_IdKey()) {
     bySymbol = addIndexMultiple('symbol', _SymbolKey());
     bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
-    bySymbolSecurityType =
-        addIndexMultiple('symbolSecurityType', _SymbolSecurityTypeKey());
   }
 
+  IndexUnique<_IdKey, Security> get byKey =>
+      indices[constPrimaryIndex]! as IndexUnique<_IdKey, Security>;
+
   static Map<String, Security> get defaults => {
-        'USD:Fiat': Security(symbol: 'USD', securityType: SecurityType.fiat),
-        'RVN:Crypto': Security(symbol: 'RVN', securityType: SecurityType.crypto)
+        SecurityProclaim.staticUSD.id: SecurityProclaim.staticUSD,
+        SecurityProclaim.staticRVN.id: SecurityProclaim.staticRVN,
+        SecurityProclaim.staticEVR.id: SecurityProclaim.staticEVR,
+        SecurityProclaim.staticRVNt.id: SecurityProclaim.staticRVNt,
+        SecurityProclaim.staticEVRt.id: SecurityProclaim.staticEVRt,
       };
 
-  Security get RVN =>
-      primaryIndex.getOne('RVN:Crypto') ??
-      SecurityProclaim.defaults['RVN:Crypto']!;
-  Security get USD =>
-      primaryIndex.getOne('USD:Fiat') ?? SecurityProclaim.defaults['USD:Fiat']!;
+  final Security USD = SecurityProclaim.staticUSD;
+  final Security RVN = SecurityProclaim.staticRVN;
+  final Security EVR = SecurityProclaim.staticEVR;
+  final Security RVNt = SecurityProclaim.staticRVNt;
+  final Security EVRt = SecurityProclaim.staticEVRt;
 }

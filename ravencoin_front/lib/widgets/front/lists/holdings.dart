@@ -191,7 +191,12 @@ class _HoldingList extends State<HoldingList> {
         balances.add(Balance(
             walletId: walletId,
             security: pros.securities.bySymbol.getAll(symbol).firstOrNull ??
-                Security(symbol: symbol, securityType: SecurityType.asset),
+                Security(
+                  symbol: symbol,
+                  securityType: SecurityType.asset,
+                  chain: pros.settings.chain,
+                  net: pros.settings.net,
+                ),
             confirmed: 0,
             unconfirmed: 0));
       }
@@ -482,19 +487,21 @@ class _HoldingList extends State<HoldingList> {
           ...assetHoldings,
           ...[components.empty.blankNavArea(context)]
         ]);
-    if (pros.settings.advancedDeveloperMode == true) {
-      return GestureDetector(
-          onTap: FocusScope.of(context).unfocus,
-          child: RefreshIndicator(
-            onRefresh: () async {
-              streams.app.snack.add(Snack(message: 'Resyncing...'));
-              await services.client.resetMemoryAndConnection();
-            },
-            child: listView,
-          ));
-    }
+    //if (pros.settings.advancedDeveloperMode == true) {
+    //  return RefreshIndicator(
+    //    onRefresh: () async {
+    //      streams.app.snack.add(Snack(message: 'Resyncing...'));
+    //      await services.client.resetMemoryAndConnection();
+    //      setState(() {});
+    //    },
+    //    child: listView,
+    //  );
+    //}
     return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
+      onTap: () async => setState(() {
+        print('refresh1');
+        FocusScope.of(context).unfocus;
+      }),
       child: listView,
     );
   }
@@ -673,7 +680,11 @@ class _HoldingList extends State<HoldingList> {
               : components.text.securityAsReadable(holding.balance?.value ?? 0,
                   security: holding.balance?.security ??
                       Security(
-                          symbol: 'unknown', securityType: SecurityType.fiat),
+                        symbol: 'unknown',
+                        securityType: SecurityType.fiat,
+                        chain: Chain.none,
+                        net: Net.test,
+                      ),
                   asUSD: showUSD),
           style: Theme.of(context)
               .textTheme

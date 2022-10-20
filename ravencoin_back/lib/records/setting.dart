@@ -19,15 +19,27 @@ class Setting with EquatableMixin {
     required this.value,
   });
 
+  factory Setting.from(
+    Setting setting, {
+    SettingName? name,
+    dynamic value,
+    bool valueIsNull = false,
+  }) {
+    return Setting(
+      name: name ?? setting.name,
+      value: valueIsNull ? null : value ?? setting.value,
+    );
+  }
+
   @override
   List<Object> get props => [name, value ?? ''];
 
   @override
   String toString() => 'Setting($name, $value)';
 
-  String get id => Setting.settingKey(name);
+  String get id => Setting.key(name);
 
-  static String settingKey(SettingName name) => name.name;
+  static String key(SettingName name) => name.name;
 
   Type? get type => {
         SettingName.version_database: int,

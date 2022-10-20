@@ -2,12 +2,12 @@ part of 'transaction.dart';
 
 // primary key
 
-class _TxHashKey extends Key<Transaction> {
+class _IdKey extends Key<Transaction> {
   @override
   String getKey(Transaction transaction) => transaction.id;
 }
 
-extension ByIdMethodsForTransaction on Index<_TxHashKey, Transaction> {
+extension ByIdMethodsForTransaction on Index<_IdKey, Transaction> {
   Transaction? getOne(String hash) => getByKeyStr(hash).firstOrNull;
 }
 

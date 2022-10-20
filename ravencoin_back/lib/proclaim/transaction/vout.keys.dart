@@ -2,13 +2,15 @@ part of 'vout.dart';
 
 // primary key
 
-class _VoutKey extends Key<Vout> {
+class _IdKey extends Key<Vout> {
   @override
   String getKey(Vout vout) => vout.id;
 }
 
-extension ByIdMethodsForVout on Index<_VoutKey, Vout> {
+extension ByIdMethodsForVout on Index<_IdKey, Vout> {
   Vout? getOne(String hash) => getByKeyStr(hash).firstOrNull;
+  Vout? getOneByTransactionPosition(String transactionId, int position) =>
+      getByKeyStr(Vout.getVoutId(transactionId, position)).firstOrNull;
 }
 
 // byTransaction
@@ -22,18 +24,6 @@ extension ByTransactionMethodsForVout on Index<_TransactionKey, Vout> {
   List<Vout> getAll(String transactionId) => getByKeyStr(transactionId);
 }
 
-// byTransactionPosition same as primary
-
-class _TransactionPositionKey extends Key<Vout> {
-  @override
-  String getKey(Vout vout) => vout.id;
-}
-
-extension ByTransactionPositionMethodsForVout
-    on Index<_TransactionPositionKey, Vout> {
-  Vout? getOne(String transactionId, int position) =>
-      getByKeyStr(Vout.getVoutId(transactionId, position)).firstOrNull;
-}
 // bySecurity
 
 class _SecurityKey extends Key<Vout> {

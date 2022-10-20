@@ -57,7 +57,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final holdingBalance = pros.balances.byWalletSecurity.getOne(
+    final holdingBalance = pros.balances.primaryIndex.getOne(
         Current.walletId, pros.securities.bySymbol.getAll(symbol).first);
     //Current.holdings.where((balance) => balance.security.symbol == symbol);
     var holdingSat = 0;
@@ -95,7 +95,10 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
               symbol: symbol,
               holdingSat: holdingSat,
               totalSupply: widget.pageTitle == 'Asset'
-                  ? pros.assets.bySymbol.getOne(symbol)?.amount.toCommaString()
+                  ? pros.assets.primaryIndex
+                      .getOne(symbol, pros.settings.chain, pros.settings.net)
+                      ?.amount
+                      .toCommaString()
                   : null),
           widget.bottom ?? specBottom(holdingSat, amountSat),
         ],

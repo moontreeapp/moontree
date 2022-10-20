@@ -4,17 +4,14 @@ import 'package:proclaim/proclaim.dart';
 
 part 'metadata.keys.dart';
 
-class MetadataProclaim extends Proclaim<_MetadataIdKey, Metadata> {
+class MetadataProclaim extends Proclaim<_IdKey, Metadata> {
   late IndexMultiple<_SymbolKey, Metadata> bySymbol;
   late IndexMultiple<_MetadataKey, Metadata> byMetadata;
   late IndexMultiple<_ParentKey, Metadata> byParent;
-  late IndexMultiple<_SymbolMetadataKey, Metadata> bySymbolMetadata;
 
-  MetadataProclaim() : super(_MetadataIdKey()) {
+  MetadataProclaim() : super(_IdKey()) {
     bySymbol = addIndexMultiple('symbol', _SymbolKey());
     byMetadata = addIndexMultiple('metadata', _MetadataKey());
     byParent = addIndexMultiple('parent', _ParentKey());
-    bySymbolMetadata =
-        addIndexMultiple('metadataSymbolSecurityType', _SymbolMetadataKey());
   }
 }

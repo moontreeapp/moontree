@@ -30,6 +30,12 @@ class Unspent with EquatableMixin, ToStringMixin {
   @HiveField(6)
   String symbol;
 
+  @HiveField(7, defaultValue: Chain.ravencoin)
+  final Chain chain;
+
+  @HiveField(8, defaultValue: Net.main)
+  final Net net;
+
   Unspent({
     required this.walletId,
     required this.addressId,
@@ -37,12 +43,16 @@ class Unspent with EquatableMixin, ToStringMixin {
     required this.position,
     required this.height,
     required this.value,
-    this.symbol = 'RVN',
+    required this.symbol,
+    required this.chain,
+    required this.net,
   });
 
   factory Unspent.fromScripthashUnspent(
     String walletId,
     ScripthashUnspent scripthashUnspent,
+    Chain chain,
+    Net net,
   ) {
     return Unspent(
       walletId: walletId,
@@ -51,7 +61,35 @@ class Unspent with EquatableMixin, ToStringMixin {
       position: scripthashUnspent.txPos,
       height: scripthashUnspent.height,
       value: scripthashUnspent.value,
-      symbol: scripthashUnspent.symbol ?? 'RVN',
+      symbol: scripthashUnspent.symbol ??
+          (chain == Chain.ravencoin ? 'RVN' : 'EVR'),
+      chain: chain,
+      net: net,
+    );
+  }
+
+  factory Unspent.from(
+    Unspent unspent, {
+    String? walletId,
+    String? transactionId,
+    String? addressId,
+    int? position,
+    int? height,
+    int? value,
+    String? symbol,
+    Chain? chain,
+    Net? net,
+  }) {
+    return Unspent(
+      walletId: walletId ?? unspent.walletId,
+      addressId: addressId ?? unspent.addressId,
+      transactionId: transactionId ?? unspent.transactionId,
+      position: position ?? unspent.position,
+      height: height ?? unspent.height,
+      value: value ?? unspent.value,
+      symbol: symbol ?? (chain != null ? chainSymbol(chain) : unspent.symbol),
+      chain: chain ?? unspent.chain,
+      net: net ?? unspent.net,
     );
   }
 
@@ -63,6 +101,8 @@ class Unspent with EquatableMixin, ToStringMixin {
         height,
         value,
         symbol,
+        chain,
+        net,
       ];
 
   @override
@@ -76,11 +116,13 @@ class Unspent with EquatableMixin, ToStringMixin {
         'height',
         'value',
         'symbol',
+        'chain',
+        'net',
       ];
 
   String get scripthash => addressId;
   String get txHash => transactionId;
-  String get id => getUnspentId(transactionId, position);
+  String get id => key(transactionId, position, chain, net);
   int get confirmed => isConfirmed ? value : 0;
   int get unconfirmed => isUnconfirmed ? value : 0;
 
@@ -94,17 +136,34 @@ class Unspent with EquatableMixin, ToStringMixin {
       getWalletSymbolConfirmationId(walletId, symbol, isConfirmed);
 
   static String getWalletSymbolId(String walletId, String symbol) =>
-      walletId + ':' + symbol;
+      '$walletId:$symbol';
+  static String getWalletChainId(String walletId, Chain chain, Net net) =>
+      '$walletId:${chainNetKey(chain, net)}';
+  static String getWalletChainSymbolId(
+          String walletId, Chain chain, Net net, String symbol) =>
+      '$walletId:${chainNetKey(chain, net)}:$symbol';
+  static String getSymbolChainId(String symbol, Chain chain, Net net) =>
+      '${chainNetKey(chain, net)}:$symbol';
   static String getWalletConfirmationId(String walletId, bool isConfirmed) =>
-      walletId + ':' + isConfirmed.toString();
+      '$walletId:${isConfirmed.toString()}';
   static String getWalletSymbolConfirmationId(
           String walletId, String symbol, bool isConfirmed) =>
-      walletId + ':' + symbol + ':' + isConfirmed.toString();
+      '$walletId:$symbol:${isConfirmed.toString()}';
+  static String getWalletChainConfirmationId(
+          String walletId, Chain chain, Net net, bool isConfirmed) =>
+      '$walletId:${chainNetKey(chain, net)}:${isConfirmed.toString()}';
+  static String getWalletChainSymbolConfirmationId(String walletId, Chain chain,
+          Net net, String symbol, bool isConfirmed) =>
+      '$walletId:${chainNetKey(chain, net)}:$symbol:${isConfirmed.toString()}';
 
-  static String getUnspentId(String transactionId, int position) =>
-      '$transactionId:$position';
+  static String key(String transactionId, int position, Chain chain, Net net) =>
+      '$transactionId:$position:${chainNetKey(chain, net)}';
 
   Security get security => symbol == 'RVN'
       ? pros.securities.RVN
-      : Security(symbol: symbol, securityType: SecurityType.asset);
+      : Security(
+          symbol: symbol,
+          securityType: SecurityType.asset,
+          chain: chain,
+          net: net);
 }

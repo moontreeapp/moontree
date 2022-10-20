@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:hive/hive.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,7 +76,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -85,9 +86,44 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            printFullState();
-            print(pros.settings.advancedDeveloperMode);
-            print(pros.settings.primaryIndex.getOne(SettingName.mode_dev));
+            //print(pros.settings.primaryIndex.getAll(SettingName.auth_method));
+            //await pros.settings
+            //    .setBlockchain(chain: Chain.ravencoin, net: Net.main);
+            //await pros.settings.save(
+            //    Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+            //    force: true);
+            //await updateEnumLowerCase();
+            //print('rates');
+            //var rates = Hive.box<Rate>('rates');
+            //for (var x in rates.keys) {
+            //  print(x);
+            //  print(rates.get(x));
+            //}
+            //print(pros.securities.USD);
+            //updateChain();
+
+            //var box = Hive.box<Setting>('settings');
+            //for (var x in box.keys) {
+            //  print(x);
+            //}
+
+            //print(pros.balances.byWallet.getAll(Current.walletId));
+            //for (var x in pros.unspents.records) {
+            //  print(x);
+            //}
+            //print('---');
+
+            //await pros.settings.save(
+            //    Setting(name: SettingName.blockchain, value: Chain.evrmore));
+
+            //printFullState();
+            //print(pros.settings.advancedDeveloperMode);
+            //print(pros.settings.primaryIndex
+            //        .getOne(SettingName.mode_dev)
+            //        ?.value ==
+            //    FeatureLevel.expert);
+            //print(
+            //    pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value);
             /*
             print(await SecureStorage.authenticationKey);
             var s = Stopwatch()..start();

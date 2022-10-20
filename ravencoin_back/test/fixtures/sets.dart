@@ -65,6 +65,8 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Asset> get assets => {
         '0': Asset(
+          chain: Chain.ravencoin,
+            net: Net.test, 
             symbol: 'MOONTREE',
             satsInCirculation: 1000,
             divisibility: 0,
@@ -73,6 +75,8 @@ class FixtureSet1 extends FixtureSet {
             transactionId: '10',
             position: 2),
         '1': Asset(
+          chain: Chain.ravencoin,
+            net: Net.test,
             symbol: 'MOONTREE1',
             satsInCirculation: 1000,
             divisibility: 2,
@@ -88,13 +92,20 @@ class FixtureSet1 extends FixtureSet {
             walletId: '0',
             confirmed: 15000000,
             unconfirmed: 10000000,
-            security:
-                Security(symbol: 'RVN', securityType: SecurityType.crypto)),
+            security: Security(
+                symbol: 'RVN',
+                securityType: SecurityType.crypto,
+                chain: Chain.ravencoin,
+                net: Net.test)),
         '1': Balance(
             walletId: '0',
             confirmed: 100,
             unconfirmed: 0,
-            security: Security(symbol: 'USD', securityType: SecurityType.fiat)),
+            security: Security(
+                symbol: 'USD',
+                securityType: SecurityType.fiat,
+                chain: Chain.none,
+                net: Net.test)),
       };
 
   @override
@@ -111,7 +122,9 @@ class FixtureSet1 extends FixtureSet {
 
   @override
   Map<String, Metadata> get metadatas => {
-        Metadata.metadataKey('MOONTREE', 'metadata'): Metadata(
+        Metadata.key('MOONTREE', 'metadata', Chain.ravencoin, Net.test): Metadata(
+            chain: Chain.ravencoin,
+            net: Net.test,
             symbol: 'MOONTREE',
             metadata: 'metadata',
             data: null,
@@ -126,23 +139,48 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Rate> get rates => {
         'RVN:Crypto:USD:Fiat': Rate(
-            base: Security(symbol: 'RVN', securityType: SecurityType.crypto),
-            quote: Security(symbol: 'USD', securityType: SecurityType.fiat),
+            base: Security(
+                symbol: 'RVN',
+                securityType: SecurityType.crypto,
+                chain: Chain.ravencoin,
+                net: Net.test),
+            quote: Security(
+                symbol: 'USD',
+                securityType: SecurityType.fiat,
+                chain: Chain.none,
+                net: Net.test),
             rate: .1),
         'MOONTREE:RavenAsset:RVN:Crypto': Rate(
-            base:
-                Security(symbol: 'MOONTREE', securityType: SecurityType.asset),
-            quote: Security(symbol: 'RVN', securityType: SecurityType.crypto),
+            base: Security(
+                symbol: 'MOONTREE',
+                securityType: SecurityType.asset,
+                chain: Chain.ravencoin,
+                net: Net.test),
+            quote: Security(
+                symbol: 'RVN',
+                securityType: SecurityType.crypto,
+                chain: Chain.ravencoin,
+                net: Net.test),
             rate: 100),
       };
 
   @override
   Map<String, Security> get securities => {
-        'RVN:Crypto':
-            Security(symbol: 'RVN', securityType: SecurityType.crypto),
-        'USD:Fiat': Security(symbol: 'USD', securityType: SecurityType.fiat),
-        'MOONTREE:RavenAsset':
-            Security(symbol: 'MOONTREE', securityType: SecurityType.asset),
+        'RVN:Crypto': Security(
+            symbol: 'RVN',
+            securityType: SecurityType.crypto,
+            chain: Chain.ravencoin,
+            net: Net.test),
+        'USD:Fiat': Security(
+            symbol: 'USD',
+            securityType: SecurityType.fiat,
+            chain: Chain.none,
+            net: Net.test),
+        'MOONTREE:RavenAsset': Security(
+            symbol: 'MOONTREE',
+            securityType: SecurityType.asset,
+            chain: Chain.ravencoin,
+            net: Net.test),
       };
 
   @override

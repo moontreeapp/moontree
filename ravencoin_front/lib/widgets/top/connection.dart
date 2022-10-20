@@ -148,6 +148,7 @@ class _ConnectionLightState extends State<ConnectionLight>
           padding: EdgeInsets.zero,
           icon: circleIcon,
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             if (![
               'Login',
               'Createlogin',

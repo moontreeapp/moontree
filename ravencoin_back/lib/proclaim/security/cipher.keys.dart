@@ -2,27 +2,16 @@ part of 'cipher.dart';
 
 /// primary key - CipherUpdate
 
-class _CipherUpdateKey extends Key<Cipher> {
+class _IdKey extends Key<Cipher> {
   @override
   String getKey(Cipher cipher) => cipher.id;
 }
 
-extension ByCipherUpdateMethodsForCipher on Index<_CipherUpdateKey, Cipher> {
-  Cipher? getOne(CipherUpdate cipherUpdate) =>
-      getByKeyStr(cipherUpdate.cipherUpdateId).firstOrNull;
-}
-
-/// byCipherTypePasswordId
-
-class _CipherTypePasswordIdKey extends Key<Cipher> {
-  @override
-  String getKey(Cipher cipher) => cipher.id;
-}
-
-extension ByCipherTypePasswordIdMethodsForCipher
-    on Index<_CipherTypePasswordIdKey, Cipher> {
+extension ByCipherUpdateMethodsForCipher on Index<_IdKey, Cipher> {
   Cipher? getOne(CipherType cipherType, int? passwordId) =>
       getByKeyStr(Cipher.cipherKey(cipherType, passwordId)).firstOrNull;
+  Cipher? getOneByCipherUpdate(CipherUpdate cipherUpdate) =>
+      getByKeyStr(cipherUpdate.cipherUpdateId).firstOrNull;
 }
 
 /// byPassword

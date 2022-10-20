@@ -18,7 +18,8 @@ class _AssetDetails extends State<AssetDetails> {
 
   @override
   Widget build(BuildContext context) {
-    assetDetails = pros.assets.primaryIndex.getOne(widget.symbol);
+    assetDetails = pros.assets.primaryIndex
+        .getOne(widget.symbol, pros.settings.chain, pros.settings.net);
     return body();
   }
 

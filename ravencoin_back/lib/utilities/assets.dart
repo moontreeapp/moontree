@@ -92,7 +92,11 @@ Balance blank(Asset asset) => Balance(
     confirmed: 0,
     unconfirmed: 0,
     security: asset.security ??
-        Security(securityType: SecurityType.asset, symbol: asset.symbol));
+        Security(
+            securityType: SecurityType.asset,
+            symbol: asset.symbol,
+            chain: Chain.none,
+            net: Net.test));
 
 Map<String, AssetHolding> assetHoldingsFromAssets(String parent) {
   Map<String, AssetHolding> assets = {};

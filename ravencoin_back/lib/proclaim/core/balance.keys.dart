@@ -2,15 +2,14 @@ part of 'balance.dart';
 
 // primary key
 
-class _WalletSecurityKey extends Key<Balance> {
+class _IdKey extends Key<Balance> {
   @override
   String getKey(Balance balance) => balance.id;
 }
 
-extension ByWalletSecurityMethodsForBalance
-    on Index<_WalletSecurityKey, Balance> {
+extension ByWalletSecurityMethodsForBalance on Index<_IdKey, Balance> {
   Balance? getOne(String walletId, Security security) =>
-      getByKeyStr(Balance.balanceKey(walletId, security)).firstOrNull;
+      getByKeyStr(Balance.key(walletId, security)).firstOrNull;
 }
 
 // byWallet

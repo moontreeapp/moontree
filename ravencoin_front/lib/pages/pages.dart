@@ -147,7 +147,7 @@ class pages {
         '/settings/import': (context) => Import(),
         '/settings/network': (context) => ElectrumNetwork(),
         '/settings/network/mining': (context) => MiningChoice(),
-        '/settings/network/blockchain': (context) => BlockchainChoice(),
+        '/settings/network/blockchain': (context) => BlockchainChoices(),
         '/settings/preferences': (context) => Preferences(),
         '/settings/support': (context) => Support(),
         '/settings/technical': (context) => TechnicalView(),

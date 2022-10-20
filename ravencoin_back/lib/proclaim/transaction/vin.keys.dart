@@ -2,12 +2,12 @@ part of 'vin.dart';
 
 // primary key
 
-class _VinIdKey extends Key<Vin> {
+class _IdKey extends Key<Vin> {
   @override
   String getKey(Vin vin) => vin.id;
 }
 
-extension ByIdMethodsForVin on Index<_VinIdKey, Vin> {
+extension ByIdMethodsForVin on Index<_IdKey, Vin> {
   Vin? getOne(String hash) => getByKeyStr(hash).firstOrNull;
 }
 

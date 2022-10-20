@@ -19,12 +19,17 @@ class _AssetState extends State<Asset> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     var symbol = data['symbol'] as String;
-    var chosenAsset = pros.assets.bySymbol.getOne(symbol)!;
+    var chosenAsset = pros.assets.primaryIndex
+        .getOne(symbol, pros.settings.chain, pros.settings.net)!;
     return BackdropLayers(
       back: CoinSpec(
           pageTitle: 'Asset',
-          security: pros.securities.bySymbolSecurityType
-              .getOne(symbol, SecurityType.asset)!),
+          security: pros.securities.primaryIndex.getOne(
+            symbol,
+            SecurityType.asset,
+            pros.settings.chain,
+            pros.settings.net,
+          )!),
       front: FrontCurve(
           height: MediaQuery.of(context).size.height - (201 + 56),
           child: Column(children: [

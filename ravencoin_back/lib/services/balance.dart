@@ -36,9 +36,24 @@ class BalanceService {
     for (var walletId in walletIds) {
       for (var symbol in pros.unspents.getSymbolsByWallet(walletId)) {
         var security = pros.securities.bySymbol.getAll(symbol).firstOrNull ??
-            Security(symbol: symbol, securityType: SecurityType.asset);
-        var confirmed = pros.unspents.totalConfirmed(walletId, symbol);
-        var unconfirmed = pros.unspents.totalUnconfirmed(walletId, symbol);
+            Security(
+              symbol: symbol,
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            );
+        var confirmed = pros.unspents.totalConfirmed(
+          walletId,
+          symbol: symbol,
+          chain: security.chain,
+          net: security.net,
+        );
+        var unconfirmed = pros.unspents.totalUnconfirmed(
+          walletId,
+          symbol: symbol,
+          chain: security.chain,
+          net: security.net,
+        );
         if (confirmed + unconfirmed > 0) {
           balances.add(Balance(
               walletId: walletId,
@@ -58,8 +73,13 @@ class BalanceService {
     required int amount,
     Security? security,
   }) async {
-    pros.unspents.assertSufficientFunds(pros.wallets.currentWallet.id, amount,
-        symbol: security?.symbol);
+    pros.unspents.assertSufficientFunds(
+      pros.wallets.currentWallet.id,
+      amount,
+      symbol: security?.symbol,
+      chain: security?.chain ?? pros.settings.chain,
+      net: security?.net ?? pros.settings.net,
+    );
     var gathered = 0;
     var unspents =
         (pros.unspents.byWalletSymbol.getAll(walletId, security?.symbol))

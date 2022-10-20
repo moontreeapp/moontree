@@ -4,17 +4,14 @@ import 'package:proclaim/proclaim.dart';
 
 part 'vout.keys.dart';
 
-class VoutProclaim extends Proclaim<_VoutKey, Vout> {
+class VoutProclaim extends Proclaim<_IdKey, Vout> {
   late IndexMultiple<_TransactionKey, Vout> byTransaction;
-  late IndexMultiple<_TransactionPositionKey, Vout> byTransactionPosition;
   late IndexMultiple<_SecurityKey, Vout> bySecurity;
   late IndexMultiple<_SecurityTypeKey, Vout> bySecurityType;
   late IndexMultiple<_AddressKey, Vout> byAddress;
 
-  VoutProclaim() : super(_VoutKey()) {
+  VoutProclaim() : super(_IdKey()) {
     byTransaction = addIndexMultiple('transaction', _TransactionKey());
-    byTransactionPosition =
-        addIndexMultiple('transaction-position', _TransactionPositionKey());
     bySecurity = addIndexMultiple('security', _SecurityKey());
     bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
     byAddress = addIndexMultiple('address', _AddressKey());

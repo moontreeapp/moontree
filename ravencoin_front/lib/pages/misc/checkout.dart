@@ -331,10 +331,18 @@ class _CheckoutState extends State<Checkout> {
             style: Theme.of(context).textTheme.bodyText1),
       ]);
 
-  Widget get confirm =>
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(struct.confirm!, style: Theme.of(context).textTheme.bodyText1),
-      ]);
+  Widget get confirm => Container(
+        height: 60,
+        alignment: Alignment.center,
+        child: Text(
+          struct.confirm!,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyText1,
+          softWrap: true,
+          overflow: TextOverflow.fade,
+          maxLines: 3,
+        ),
+      );
 
   String getRightTotal(String x) {
     if (x == 'calculating total...') {

@@ -146,18 +146,20 @@ class _AssetList extends State<AssetList> {
     } else {
       var assetDetails = <String, Asset?>{};
       if (asset.admin != null) {
-        assetDetails['main'] = pros.assets.primaryIndex.getOne(asset.symbol);
+        assetDetails['main'] = pros.assets.primaryIndex
+            .getOne(asset.symbol, pros.settings.chain, pros.settings.net);
       }
       if (asset.subAdmin != null) {
-        assetDetails['main'] = pros.assets.primaryIndex.getOne(asset.symbol);
+        assetDetails['main'] = pros.assets.primaryIndex
+            .getOne(asset.symbol, pros.settings.chain, pros.settings.net);
       }
       if (asset.restricted != null) {
-        assetDetails['restricted'] =
-            pros.assets.primaryIndex.getOne(asset.restrictedSymbol!);
+        assetDetails['restricted'] = pros.assets.primaryIndex.getOne(
+            asset.restrictedSymbol!, pros.settings.chain, pros.settings.net);
       }
       if (asset.qualifier != null) {
-        assetDetails['qualifier'] =
-            pros.assets.primaryIndex.getOne(asset.qualifierSymbol!);
+        assetDetails['qualifier'] = pros.assets.primaryIndex.getOne(
+            asset.qualifierSymbol!, pros.settings.chain, pros.settings.net);
       }
       SelectionItems(
         context,

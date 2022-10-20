@@ -26,6 +26,6 @@ final Stream<Cipher> latestCipher$ = CombineLatestStream.combine2(
         pros.ciphers.changes,
         latestCipherUpdate$,
         (Change<Cipher> change, CipherUpdate cipherUpdate) =>
-            pros.ciphers.primaryIndex.getOne(cipherUpdate))
+            pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate))
     .whereType<Cipher>()
     .distinctUnique();

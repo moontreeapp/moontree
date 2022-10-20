@@ -9,15 +9,9 @@ part 'secret.keys.dart';
 
 class SecretProclaim extends Proclaim<_IdKey, Secret> {
   late IndexMultiple<_LinkKey, Secret> byLink;
-  late IndexMultiple<_LinkKey, Secret> byPubkey;
-  late IndexMultiple<_LinkKey, Secret> byScripthash;
-  late IndexMultiple<_LinkKey, Secret> byPasswordId;
 
   SecretProclaim() : super(_IdKey()) {
     byLink = addIndexMultiple('byLink', _LinkKey());
-    byPubkey = addIndexMultiple('byPubkey', _LinkKey());
-    byScripthash = addIndexMultiple('byScripthash', _LinkKey());
-    byPasswordId = addIndexMultiple('byPasswordId', _LinkKey());
   }
   static Map<String, Secret> get defaults => {};
 

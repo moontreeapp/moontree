@@ -250,12 +250,15 @@ class SubscribeService {
     }
   }
 
-  Future pullUnspents(Address address) async =>
-      await services.download.unspents.pull(
-        scripthashes: {address.scripthash},
-        wallet: address.wallet!,
-        getTransactions: true,
-      );
+  Future pullUnspents(Address address) async {
+    await services.download.unspents.pull(
+      scripthashes: {address.scripthash},
+      wallet: address.wallet!,
+      getTransactions: true,
+      chain: pros.settings.chain,
+      net: pros.settings.net,
+    );
+  }
 
   void queueHistoryDownload(Address address) => null;
   //services.download.queue.update(address: address);
