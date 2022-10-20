@@ -71,6 +71,10 @@ class _NavMenuState extends State<NavMenu> {
                     link,
                     arguments: arguments,
                   );
+
+                  /// moved to loader in case we come back to holdings list
+                  /// but generally we want to come back to the settings if
+                  /// we came from it:
                   //streams.app.setting.add(null);
                   //streams.app.fling.add(false);
                 } else {
