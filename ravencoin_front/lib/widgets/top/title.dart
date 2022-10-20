@@ -17,13 +17,9 @@ class PageTitle extends StatefulWidget {
   @override
   PageTitleState createState() => PageTitleState();
 
-  static Map<String, String> settingsMap = const {
-    '/settings/import_export': 'Import / Export',
-    '/settings/settings': 'Settings',
-  };
   static Map<String, String> pageMap = const {
     'Level': 'User Level',
-    'Import_export': 'Import / Export',
+    'Import_export': 'Import & Export',
     'Change': 'Security',
     'Remove': 'Security',
     'Verify': 'Security',
@@ -180,8 +176,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     }
     fullname = false;
     return walletNumber() ??
-        wrap(PageTitle.settingsMap[settingTitle] ??
-            (streams.reissue.form.value != null
+        wrap((streams.reissue.form.value != null
                 ? PageTitle.pageMapReissue[pageTitle]
                 : null) ??
             PageTitle.pageMap[pageTitle] ??
@@ -216,7 +211,11 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       return null;
     }
     if (pros.wallets.length > 0) {
-      if (settingTitle != null &&
+      if (settingTitle != null && settingTitle == '/settings/import_export') {
+        return Text('Import & Export');
+      } else if (settingTitle != null && settingTitle == '/settings/settings') {
+        return Text('Settings');
+      } else if (settingTitle != null &&
           (pros.wallets.length > 1 ||
               [FeatureLevel.normal, FeatureLevel.expert].contains(pros
                   .settings.primaryIndex

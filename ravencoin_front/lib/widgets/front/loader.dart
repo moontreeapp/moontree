@@ -40,6 +40,9 @@ class _LoaderState extends State<Loader> {
 
   void _goSomewhere() {
     if (widget.returnHome) {
+      streams.app.setting.add(null);
+      streams.app.fling.add(false);
+      //await Future.delayed(Duration(milliseconds: 100)); // doesn't help
       Navigator.popUntil(
         components.navigator.routeContext!,
         ModalRoute.withName('/home'),

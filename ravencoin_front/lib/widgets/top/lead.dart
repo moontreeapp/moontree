@@ -70,15 +70,34 @@ class _PageLead extends State<PageLead> {
     if (loading && pageTitle != 'Network') {
       return Container();
     }
-    if (settingTitle?.startsWith('/settings/') ?? false) {
+    if (pageTitle == 'Home' &&
+        (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
             if (streams.app.scrim.value == true) return;
             streams.app.setting.add('/settings');
+            //Navigator.pop(components.navigator.routeContext ?? context);
+            //Navigator.pop(components.navigator.routeContext ?? context);
+            //Navigator.pushReplacementNamed(
+            //    components.navigator.routeContext ?? context, '/home',
+            //    arguments: {});
+            //streams.app.setting.add(settingTitle);
           });
     }
+    if (pageTitle != 'Home' &&
+        (settingTitle?.startsWith('/settings/') ?? false)) {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            if (streams.app.scrim.value == true) return;
+            Navigator.pop(components.navigator.routeContext ?? context);
+            streams.app.setting.add(settingTitle);
+          });
+    }
+
     if (pageTitle == 'Home') {
       return IconButton(
           splashRadius: 24,

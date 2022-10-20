@@ -139,6 +139,8 @@ class _VerifySeedState extends State<VerifySeed> {
                 .backedUp(Current.wallet as LeaderWallet);
             await populateWalletsWithSensitives();
           }
+          streams.app.setting.add(null);
+          streams.app.fling.add(false);
           Navigator.popUntil(context, ModalRoute.withName('/home'));
           streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
         },

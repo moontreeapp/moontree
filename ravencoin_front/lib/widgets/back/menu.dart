@@ -71,8 +71,8 @@ class _NavMenuState extends State<NavMenu> {
                     link,
                     arguments: arguments,
                   );
-                  streams.app.setting.add(null);
-                  streams.app.fling.add(false);
+                  //streams.app.setting.add(null);
+                  //streams.app.fling.add(false);
                 } else {
                   streams.app.setting.add(link);
                 }
@@ -118,6 +118,16 @@ class _NavMenuState extends State<NavMenu> {
                   );
                 }
               }),
+          if (pros.settings.developerMode &&
+              Current.balanceRVN.value > 0 &&
+              Current.wallet.unspents.length <
+                  1000 // unable to handle this edgecase yet.
+          )
+            destination(
+              icon: MdiIcons.broom,
+              name: 'Sweep',
+              link: '/settings/sweep',
+            ),
         ],
       ),
       '/settings/settings': ListView(
@@ -148,17 +158,6 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Network',
             link: '/settings/network',
           ),
-          if (pros.settings.developerMode &&
-              Current.balanceRVN.value > 0 &&
-              Current.wallet.unspents.length <
-                  1000 // unable to handle this edgecase yet.
-          )
-            destination(
-              //icon: MdiIcons.accountCog,
-              icon: MdiIcons.broom,
-              name: 'Sweep',
-              link: '/settings/sweep',
-            ),
           if (pros.settings.advancedDeveloperMode)
             destination(
               icon: Icons.format_list_bulleted_rounded,
@@ -204,16 +203,18 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Blockchain',
               link: '/settings/network/blockchain',
             ),
-          destination(
+          if (!pros.settings.developerMode)
+            destination(
+                icon: MdiIcons.shieldKey,
+                name: 'Import',
+                link: '/settings/import'),
+          if (pros.settings.developerMode)
+            destination(
               icon: MdiIcons.shieldKey,
-              name: 'Import',
-              link: '/settings/import'),
-          //destination(
-          //  icon: MdiIcons.shieldKey,
-          //  name: 'Import / Export',
-          //  link: '/settings/import_export',
-          //  arrow: true,
-          //),
+              name: 'Import & Export',
+              link: '/settings/import_export',
+              arrow: true,
+            ),
           destination(
             icon: MdiIcons.drawPen,
             name: 'Backup',
