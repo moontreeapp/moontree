@@ -130,16 +130,90 @@ Future<void> updateWalletNames() async {
   await pros.wallets.saveAll(records);
 }
 
-/// resaving securities, assets, metadata, and unspents
-/// because we want them to be reindexed so their look up keys in proclaim
-/// reflect their new id which includes chain and net. (untested)
+/// we brought our enums into conformity by making the values lowercase, so we
+/// should update the indexes of the boxes to reflect that.
+Future<void> updateEnumLowerCase() async {
+  var settings = pros.settings.records.toList();
+  await pros.settings.delete();
+  for (var setting in settings) {
+    await pros.settings.save(Setting.from(setting), force: true);
+  }
+  if (pros.settings.chain == Chain.none) {
+    await pros.settings.save(
+        Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+        force: true);
+    await pros.settings.save(
+        Setting(name: SettingName.electrum_net, value: Net.main),
+        force: true);
+  }
+  var rates = pros.rates.records.toList();
+  var balances = pros.balances.records.toList();
+  await pros.rates.delete();
+  await pros.balances.delete();
+  for (var rate in rates) {
+    await pros.rates.save(Rate.from(rate), force: true);
+  }
+  for (var balance in balances) {
+    await pros.balances.save(Balance.from(balance), force: true);
+  }
+}
+
 Future<void> updateChain() async {
-  var securities = pros.securities.records;
-  var assets = pros.assets.records;
-  var metadatas = pros.metadatas.records;
-  var unspents = pros.unspents.records;
-  await pros.securities.saveAll(securities);
-  await pros.assets.saveAll(assets);
-  await pros.metadatas.saveAll(metadatas);
-  await pros.unspents.saveAll(unspents);
+  var settings = pros.settings.records.toList();
+  await pros.settings.delete();
+  for (var setting in settings) {
+    await pros.settings.save(Setting.from(setting), force: true);
+  }
+  if (pros.settings.chain == Chain.none) {
+    await pros.settings.save(
+        Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+        force: true);
+    await pros.settings.save(
+        Setting(name: SettingName.electrum_net, value: Net.main),
+        force: true);
+  }
+  var assets = pros.assets.records.toList();
+  var securities = pros.securities.records.toList();
+  var metadatas = pros.metadatas.records.toList();
+  var unspents = pros.unspents.records.toList();
+  await pros.assets.delete();
+  await pros.securities.delete();
+  await pros.metadatas.delete();
+  await pros.unspents.delete();
+  for (var asset in assets) {
+    await pros.assets.save(
+        Asset.from(
+          asset,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ),
+        force: true);
+  }
+  for (var security in securities) {
+    await pros.securities.save(
+        Security.from(
+          security,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ),
+        force: true);
+  }
+  for (var metadata in metadatas) {
+    await pros.metadatas.save(
+        Metadata.from(
+          metadata,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ),
+        force: true);
+  }
+  for (var unspent in unspents) {
+    await pros.unspents.save(
+        Unspent.from(
+          unspent,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ),
+        force: true);
+  }
 }

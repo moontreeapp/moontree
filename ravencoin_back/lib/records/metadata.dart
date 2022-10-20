@@ -78,6 +78,29 @@ class Metadata with EquatableMixin {
       'data: $data, kind: $kind, parent: $parent, logo: $logo, '
       '${chainNetReadable(chain, net)}';
 
+  factory Metadata.from(
+    Metadata metadata, {
+    String? symbol,
+    String? metadataValue,
+    String? data,
+    MetadataType? kind,
+    String? parent,
+    bool? logo,
+    Chain? chain,
+    Net? net,
+  }) {
+    return Metadata(
+      logo: logo ?? metadata.logo,
+      parent: parent ?? metadata.parent,
+      kind: kind ?? metadata.kind,
+      data: data ?? metadata.data,
+      metadata: metadataValue ?? metadata.metadata,
+      symbol: symbol ?? (chain != null ? chainSymbol(chain) : metadata.symbol),
+      chain: chain ?? metadata.chain,
+      net: net ?? metadata.net,
+    );
+  }
+
   static String key(String symbol, String metadata, Chain chain, Net net) =>
       '$symbol:$metadata:${chainNetKey(chain, net)}';
 

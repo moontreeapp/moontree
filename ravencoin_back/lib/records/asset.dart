@@ -74,6 +74,31 @@ class Asset with EquatableMixin {
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
       'position: $position, ${chainNetReadable(chain, net)})';
 
+  factory Asset.from(
+    Asset asset, {
+    int? satsInCirculation,
+    int? divisibility,
+    bool? reissuable,
+    String? metadata,
+    String? transactionId,
+    int? position,
+    String? symbol,
+    Chain? chain,
+    Net? net,
+  }) {
+    return Asset(
+      satsInCirculation: satsInCirculation ?? asset.satsInCirculation,
+      divisibility: divisibility ?? asset.divisibility,
+      reissuable: reissuable ?? asset.reissuable,
+      metadata: metadata ?? asset.metadata,
+      transactionId: transactionId ?? asset.transactionId,
+      position: position ?? asset.position,
+      symbol: symbol ?? (chain != null ? chainSymbol(chain) : asset.symbol),
+      chain: chain ?? asset.chain,
+      net: net ?? asset.net,
+    );
+  }
+
   static String key(String symbol, Chain chain, Net net) =>
       '$symbol:${chainNetKey(chain, net)}';
 

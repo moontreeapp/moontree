@@ -34,6 +34,21 @@ class Balance with EquatableMixin {
     required this.unconfirmed,
   });
 
+  factory Balance.from(
+    Balance balance, {
+    String? walletId,
+    Security? security,
+    int? confirmed,
+    int? unconfirmed,
+  }) {
+    return Balance(
+      walletId: walletId ?? balance.walletId,
+      security: security ?? balance.security,
+      confirmed: confirmed ?? balance.confirmed,
+      unconfirmed: unconfirmed ?? balance.unconfirmed,
+    );
+  }
+
   @override
   List<Object> get props => [walletId, security, confirmed, unconfirmed];
 

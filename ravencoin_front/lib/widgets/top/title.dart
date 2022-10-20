@@ -244,6 +244,18 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     .textTheme
                     .headline2!
                     .copyWith(color: AppColors.white)));
+      } else if (appContext == AppContext.manage) {
+        return Text(pros.wallets.currentWalletName,
+            style: Theme.of(context)
+                .textTheme
+                .headline2!
+                .copyWith(color: AppColors.white));
+      } else if (appContext == AppContext.swap) {
+        return Text(pros.wallets.currentWalletName,
+            style: Theme.of(context)
+                .textTheme
+                .headline2!
+                .copyWith(color: AppColors.white));
       }
     }
 

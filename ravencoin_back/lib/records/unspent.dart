@@ -68,6 +68,31 @@ class Unspent with EquatableMixin, ToStringMixin {
     );
   }
 
+  factory Unspent.from(
+    Unspent unspent, {
+    String? walletId,
+    String? transactionId,
+    String? addressId,
+    int? position,
+    int? height,
+    int? value,
+    String? symbol,
+    Chain? chain,
+    Net? net,
+  }) {
+    return Unspent(
+      walletId: walletId ?? unspent.walletId,
+      addressId: addressId ?? unspent.addressId,
+      transactionId: transactionId ?? unspent.transactionId,
+      position: position ?? unspent.position,
+      height: height ?? unspent.height,
+      value: value ?? unspent.value,
+      symbol: symbol ?? (chain != null ? chainSymbol(chain) : unspent.symbol),
+      chain: chain ?? unspent.chain,
+      net: net ?? unspent.net,
+    );
+  }
+
   @override
   List<Object?> get props => [
         addressId,

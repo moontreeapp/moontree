@@ -189,12 +189,12 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Advanced',
               link: '/settings/advanced',
             ),
-          destination(
-            //icon: MdiIcons.accountCog,
-            icon: MdiIcons.devTo,
-            name: 'Developer',
-            link: '/settings/developer',
-          ),
+          //destination(
+          //  //icon: MdiIcons.accountCog,
+          //  icon: MdiIcons.devTo,
+          //  name: 'Developer',
+          //  link: '/settings/developer',
+          //),
         ],
       ),
       '/settings': ListView(

@@ -487,19 +487,21 @@ class _HoldingList extends State<HoldingList> {
           ...assetHoldings,
           ...[components.empty.blankNavArea(context)]
         ]);
-    if (pros.settings.advancedDeveloperMode == true) {
-      return GestureDetector(
-          onTap: FocusScope.of(context).unfocus,
-          child: RefreshIndicator(
-            onRefresh: () async {
-              streams.app.snack.add(Snack(message: 'Resyncing...'));
-              await services.client.resetMemoryAndConnection();
-            },
-            child: listView,
-          ));
-    }
+    //if (pros.settings.advancedDeveloperMode == true) {
+    //  return RefreshIndicator(
+    //    onRefresh: () async {
+    //      streams.app.snack.add(Snack(message: 'Resyncing...'));
+    //      await services.client.resetMemoryAndConnection();
+    //      setState(() {});
+    //    },
+    //    child: listView,
+    //  );
+    //}
     return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
+      onTap: () async => setState(() {
+        print('refresh1');
+        FocusScope.of(context).unfocus;
+      }),
       child: listView,
     );
   }

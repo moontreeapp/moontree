@@ -23,6 +23,19 @@ class Rate with EquatableMixin {
     required this.rate,
   });
 
+  factory Rate.from(
+    Rate given, {
+    Security? base,
+    Security? quote,
+    double? rate,
+  }) {
+    return Rate(
+      base: base ?? given.base,
+      quote: quote ?? given.quote,
+      rate: rate ?? given.rate,
+    );
+  }
+
   @override
   List<Object?> get props => [base, quote, rate];
 

@@ -43,6 +43,21 @@ class Security with EquatableMixin {
         net: net ?? other.net,
       );
 
+  factory Security.from(
+    Security security, {
+    SecurityType? securityType,
+    String? symbol,
+    Chain? chain,
+    Net? net,
+  }) {
+    return Security(
+      securityType: securityType ?? security.securityType,
+      symbol: symbol ?? (chain != null ? chainSymbol(chain) : security.symbol),
+      chain: chain ?? security.chain,
+      net: net ?? security.net,
+    );
+  }
+
   @override
   List<Object> get props => [symbol, securityType, chain, net];
 

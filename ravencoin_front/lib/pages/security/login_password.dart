@@ -23,6 +23,7 @@ import 'package:ravencoin_front/services/wallet.dart'
     show
         populateWalletsWithSensitives,
         updateChain,
+        updateEnumLowerCase,
         updateWalletNames,
         updateWalletsToSecureStorage;
 
@@ -334,10 +335,12 @@ class _LoginPasswordState extends State<LoginPassword> {
       /// bridge
       await updateWalletNames();
       await updateWalletsToSecureStorage();
+      await updateEnumLowerCase();
       await updateChain();
+      streams.app.scrim.add(null);
       streams.app.snack
           .add(Snack(message: 'Migration complete...', showOnLogin: true));
-      streams.app.scrim.add(null);
+
       await login(password.text, refresh: true);
     } else if (await services.password.lockout
             .handleVerificationAttempt(await validate()) &&

@@ -76,7 +76,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -87,16 +87,32 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             //print(pros.settings.primaryIndex.getAll(SettingName.auth_method));
-            print(pros.balances.byWallet.getAll(Current.walletId));
-            print('---');
-            for (var x in pros.unspents.records) {
-              print(x);
-            }
-            print('---');
-            var box = Hive.box<Unspent>('unspents');
-            for (var x in box.keys) {
-              print(x);
-            }
+            //await pros.settings
+            //    .setBlockchain(chain: Chain.ravencoin, net: Net.main);
+            //await pros.settings.save(
+            //    Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+            //    force: true);
+            //await updateEnumLowerCase();
+            //print('rates');
+            //var rates = Hive.box<Rate>('rates');
+            //for (var x in rates.keys) {
+            //  print(x);
+            //  print(rates.get(x));
+            //}
+            //print(pros.securities.USD);
+            //updateChain();
+
+            //var box = Hive.box<Setting>('settings');
+            //for (var x in box.keys) {
+            //  print(x);
+            //}
+
+            //print(pros.balances.byWallet.getAll(Current.walletId));
+            //for (var x in pros.unspents.records) {
+            //  print(x);
+            //}
+            //print('---');
+
             //await pros.settings.save(
             //    Setting(name: SettingName.blockchain, value: Chain.evrmore));
 

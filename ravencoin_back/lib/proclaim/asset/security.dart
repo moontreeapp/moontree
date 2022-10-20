@@ -26,12 +26,12 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
       symbol: 'RVN',
       securityType: SecurityType.crypto,
       chain: Chain.ravencoin,
-      net: Net.main);
+      net: Net.test);
   static final staticEVRt = Security(
       symbol: 'EVR',
       securityType: SecurityType.crypto,
       chain: Chain.evrmore,
-      net: Net.main);
+      net: Net.test);
 
   SecurityProclaim() : super(_IdKey()) {
     bySymbol = addIndexMultiple('symbol', _SymbolKey());
