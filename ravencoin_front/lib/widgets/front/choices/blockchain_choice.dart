@@ -98,6 +98,18 @@ class _BlockchainChoice extends State<BlockchainChoice> {
                 ? Icon(Icons.check_rounded, color: AppColors.primary)
                 : null,
             onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.main))),
+        ListTile(
+            dense: true,
+            leading: icons.ravencoin(height: 24, width: 24, circled: true),
+            title: Text('Ravencoin',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: AppColors.black87)),
+            trailing: chainChoice == Chain.ravencoin && netChoice == Net.main
+                ? Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+            onTap: () => changeChainNet(Tuple2(Chain.ravencoin, Net.main))),
         if (pros.settings.developerMode)
           ListTile(
               leading: ColorFiltered(
@@ -112,18 +124,6 @@ class _BlockchainChoice extends State<BlockchainChoice> {
                   ? Icon(Icons.check_rounded, color: AppColors.primary)
                   : null,
               onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.test))),
-        ListTile(
-            dense: true,
-            leading: icons.ravencoin(height: 24, width: 24, circled: true),
-            title: Text('Ravencoin',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: AppColors.black87)),
-            trailing: chainChoice == Chain.ravencoin && netChoice == Net.main
-                ? Icon(Icons.check_rounded, color: AppColors.primary)
-                : null,
-            onTap: () => changeChainNet(Tuple2(Chain.ravencoin, Net.main))),
         if (pros.settings.developerMode)
           ListTile(
               leading: ColorFiltered(
