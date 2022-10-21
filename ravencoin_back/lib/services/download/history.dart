@@ -157,8 +157,13 @@ class HistoryService {
   ) async {
     var symbol = vout.scriptPubKey.asset ?? 'RVN';
     var value = vout.valueSat;
-    var security = pros.securities.primaryIndex
-        .getOne(symbol, SecurityType.asset, chain, net);
+    var security = pros.securities.primaryIndex.getOne(
+        symbol,
+        ['RVN', 'EVR'].contains(symbol)
+            ? SecurityType.crypto
+            : SecurityType.asset,
+        chain,
+        net);
     var asset = pros.assets.primaryIndex.getOne(symbol, chain, net);
     if (security == null ||
         asset == null ||
@@ -244,7 +249,7 @@ class HistoryService {
         position: vout.n,
         type: vout.scriptPubKey.type,
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-        rvnValue: vs.item3 != null ? 0 : vs.item1,
+        rvnValue: vs.item2.symbol == 'RVN' ? vs.item1 : 0,
         assetValue: vs.item3 == null
             ? null
             : utils.amountToSat(vout.scriptPubKey.amount),
@@ -402,7 +407,7 @@ class HistoryService {
           position: vout.n,
           type: vout.scriptPubKey.type,
           lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-          rvnValue: vs.item3 != null ? 0 : vs.item1,
+          rvnValue: vs.item2.symbol == 'RVN' ? vs.item1 : 0,
           assetValue: vs.item3 == null
               ? null
               : utils.amountToSat(vout.scriptPubKey.amount),
