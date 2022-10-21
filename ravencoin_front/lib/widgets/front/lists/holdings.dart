@@ -508,10 +508,10 @@ class _HoldingList extends State<HoldingList> {
 
   void onTap(Wallet? wallet, AssetHolding holding) {
     if (overrideGettingStarted) {
-      components.message.giveChoices(context,
-          title: 'Still Syncing',
-          content: 'please try again later.',
-          behaviors: {'ok': () => Navigator.of(context).pop()});
+      //components.message.giveChoices(context,
+      //    title: 'Still Syncing',
+      //    content: 'please try again later.',
+      //    behaviors: {'ok': () => Navigator.of(context).pop()});
     }
     if (holding.length == 1) {
       navigate(holding.balance!, wallet: wallet);

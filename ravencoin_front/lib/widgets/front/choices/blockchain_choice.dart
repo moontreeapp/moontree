@@ -98,20 +98,6 @@ class _BlockchainChoice extends State<BlockchainChoice> {
                 ? Icon(Icons.check_rounded, color: AppColors.primary)
                 : null,
             onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.main))),
-        if (pros.settings.developerMode)
-          ListTile(
-              leading: ColorFiltered(
-                  colorFilter: filters.greyscale,
-                  child: icons.evrmore(height: 24, width: 24, circled: true)),
-              title: Text('Evrmore (testnet)',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(color: AppColors.black87)),
-              trailing: chainChoice == Chain.evrmore && netChoice == Net.test
-                  ? Icon(Icons.check_rounded, color: AppColors.primary)
-                  : null,
-              onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.test))),
         ListTile(
             dense: true,
             leading: icons.ravencoin(height: 24, width: 24, circled: true),
@@ -128,8 +114,22 @@ class _BlockchainChoice extends State<BlockchainChoice> {
           ListTile(
               leading: ColorFiltered(
                   colorFilter: filters.greyscale,
+                  child: icons.evrmore(height: 24, width: 24, circled: true)),
+              title: Text('Evrmore testnet',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: AppColors.black87)),
+              trailing: chainChoice == Chain.evrmore && netChoice == Net.test
+                  ? Icon(Icons.check_rounded, color: AppColors.primary)
+                  : null,
+              onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.test))),
+        if (pros.settings.developerMode)
+          ListTile(
+              leading: ColorFiltered(
+                  colorFilter: filters.greyscale,
                   child: icons.ravencoin(height: 24, width: 24, circled: true)),
-              title: Text('Ravencoin (testnet)',
+              title: Text('Ravencoin testnet',
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!

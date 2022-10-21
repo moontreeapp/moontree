@@ -52,7 +52,7 @@ class Security with EquatableMixin {
   }) {
     return Security(
       securityType: securityType ?? security.securityType,
-      symbol: symbol ?? (chain != null ? chainSymbol(chain) : security.symbol),
+      symbol: symbol ?? security.symbol,
       chain: chain ?? security.chain,
       net: net ?? security.net,
     );
