@@ -115,7 +115,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               leading: ColorFiltered(
                   colorFilter: filters.greyscale,
                   child: icons.evrmore(height: 24, width: 24, circled: true)),
-              title: Text('Evrmore (testnet)',
+              title: Text('Evrmore testnet',
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!
@@ -129,7 +129,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               leading: ColorFiltered(
                   colorFilter: filters.greyscale,
                   child: icons.ravencoin(height: 24, width: 24, circled: true)),
-              title: Text('Ravencoin (testnet)',
+              title: Text('Ravencoin testnet',
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!
