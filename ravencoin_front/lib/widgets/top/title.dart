@@ -273,7 +273,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             components.navigator.routeContext!,
             then: () => dropDownActive = false,
             items: [
-                  if (pros.settings.developerMode == true)
+                  if (pros.settings.advancedDeveloperMode == true)
                     ListTile(
                       visualDensity: VisualDensity.compact,
                       onTap: () async {
