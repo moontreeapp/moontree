@@ -392,7 +392,7 @@ class _HoldingList extends State<HoldingList> {
           onLongPress: _togglePath,
           leading: leadingIcon(holding),
           title: title(holding),
-          trailing: pros.settings.developerMode == true
+          trailing: pros.settings.advancedDeveloperMode == true
               ? (holding.symbol == rvn && !isEmpty
                   ? GestureDetector(
                       onTap: () =>
