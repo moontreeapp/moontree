@@ -36,7 +36,7 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
         SettingName.auth_method: Setting(
             name: SettingName.auth_method, value: AuthMethod.nativeSecurity),
         SettingName.blockchain:
-            Setting(name: SettingName.blockchain, value: Chain.none),
+            Setting(name: SettingName.blockchain, value: Chain.ravencoin),
         SettingName.wallet_current:
             Setting(name: SettingName.wallet_current, value: '0'),
         SettingName.wallet_preferred:

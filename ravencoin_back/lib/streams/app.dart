@@ -21,7 +21,7 @@ class AppStreams {
   final keyboard = BehaviorSubject<KeyboardStatus?>.seeded(null);
   //final locked = BehaviorSubject<bool>.seeded(false);
   final logout = BehaviorSubject<bool>.seeded(false);
-  final scrim = BehaviorSubject<bool>.seeded(false);
+  final scrim = BehaviorSubject<bool?>.seeded(false); // null = disable
   final authenticating = BehaviorSubject<bool>.seeded(
       false); // if we are minimized because of local auth do not logout
   final browsing = BehaviorSubject<bool>.seeded(

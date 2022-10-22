@@ -22,6 +22,8 @@ import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart'
     show
         populateWalletsWithSensitives,
+        updateChain,
+        updateEnumLowerCase,
         updateWalletNames,
         updateWalletsToSecureStorage;
 
@@ -309,7 +311,6 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
 
     /// bridge
-    ///
     if (ancientValidate()) {
       streams.app.snack.add(Snack(
           message: 'Migrating to latest version. Just a sec...',
@@ -327,20 +328,6 @@ class _LoginPasswordState extends State<LoginPassword> {
         salt: await SecureStorage.authenticationKey,
         saveSecret: SecureStorage.writeSecret,
       );
-      ///// salt and has this password correctly
-      ///final saltedHashedPassword = services.password.validate
-      ///    .getHash(password.text, await SecureStorage.authenticationKey);
-      ///// put this password hashed with the right salt in the secure storage
-      ///await SecureStorage.writeSecret(Secret(
-      ///  secret: saltedHashedPassword,
-      ///  secretType: SecretType.saltedHashedPassword,
-      ///  passwordId: pros.passwords.primaryIndex.getMostRecent()!.id,
-      ///));
-      ///// make a cipher with the right salt
-
-      /// password change process? updatewallets?
-      // decrypt the wallets with the old cipher
-      // reencrypt the wallets with this new cipher
 
       /// lets not login this way again:
       await updatePasswordsToSecureStorage();
@@ -348,9 +335,12 @@ class _LoginPasswordState extends State<LoginPassword> {
       /// bridge
       await updateWalletNames();
       await updateWalletsToSecureStorage();
+      await updateEnumLowerCase();
+      await updateChain();
+      streams.app.scrim.add(null);
       streams.app.snack
           .add(Snack(message: 'Migration complete...', showOnLogin: true));
-      streams.app.scrim.add(false);
+
       await login(password.text, refresh: true);
     } else if (await services.password.lockout
             .handleVerificationAttempt(await validate()) &&

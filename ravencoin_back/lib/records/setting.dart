@@ -19,6 +19,18 @@ class Setting with EquatableMixin {
     required this.value,
   });
 
+  factory Setting.from(
+    Setting setting, {
+    SettingName? name,
+    dynamic value,
+    bool valueIsNull = false,
+  }) {
+    return Setting(
+      name: name ?? setting.name,
+      value: valueIsNull ? null : value ?? setting.value,
+    );
+  }
+
   @override
   List<Object> get props => [name, value ?? ''];
 
