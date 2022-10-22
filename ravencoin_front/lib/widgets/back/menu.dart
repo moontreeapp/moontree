@@ -175,13 +175,13 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Mining',
               link: '/settings/network/mining',
             ),
-          if (pros.settings.developerMode)
-            destination(
-              //icon: MdiIcons.accountCog,
-              icon: MdiIcons.database,
-              name: 'Database',
-              link: '/settings/database',
-            ),
+          //if (pros.settings.developerMode)
+          destination(
+            //icon: MdiIcons.accountCog,
+            icon: MdiIcons.database,
+            name: 'Database',
+            link: '/settings/database',
+          ),
           if (pros.settings.advancedDeveloperMode == true)
             destination(
               //icon: MdiIcons.accountCog,
