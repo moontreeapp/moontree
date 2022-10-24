@@ -122,10 +122,10 @@ class _NavMenuState extends State<NavMenu> {
                   );
                 }
               }),
-          if (pros.settings.developerMode &&
-              Current.balanceRVN.value > 0 &&
-              Current.wallet.unspents.length <
-                  1000 // unable to handle this edgecase yet.
+          if (pros.settings.developerMode && Current.balanceRVN.value > 0
+
+          //// should be able to handle this edgecase now, untested
+          //&& Current.wallet.unspents.length < 1000
           )
             destination(
               icon: MdiIcons.broom,

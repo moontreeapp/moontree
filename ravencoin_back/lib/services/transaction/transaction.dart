@@ -412,8 +412,7 @@ class TransactionService {
     return ret;
   }
 
-  /// incomplete: uses as few transactions as possible. Only works if they have
-  /// less than 1000 UTXOs
+  /// sweep all assets and crypto from one wallet to another
   Future<bool> sweep({
     required Wallet from,
     required String toWalletId,
@@ -441,7 +440,6 @@ class TransactionService {
         // ASSETS && RVN
         if (from.unspents.length < 1000) {
           // we should be able to do it all in one transaction
-          //Tuple2<ravencoin.Transaction, SendEstimate>
           var txEstimate = await services.transaction.make.transactionSweepAll(
             destinationAddress,
             SendEstimate(from.RVNValue),
@@ -456,28 +454,6 @@ class TransactionService {
           ));
           return true;
         } else {
-          // we'll need to make multiple transacitons
-          // do the assets in a loop until they're all spent
-          // then do the RVN in a loop until they're all spent
-          /// this means call this function until we loop out of all assets
-          /// then call this function until we loop out of all rvn
-          /// if we run out of rvn but still have asset unspents tell user.
-          /// this probably means we need to keep track of which unspents have
-          /// been spent. and we may need to wait til we get the change back
-          /// to complete the next loop. So it's a little complex.
-          /// so we'll call this function for asset only, and make the
-          /// transactionSweepAll function only take the first 1000 utxos.
-          /// then we'll wait a few seconds between each subsequent call to give
-          /// the listener on spend.send enough time to remove the utxos on
-          /// success, then we'll call this function again, until we notice that
-          /// there are no assets left. then we'll do the same for rvn.
-          ///
-          /// that was design #1 and I hate it. Here's what we'll do instead.
-          /// we'll make a list of utxo sets here then feed them one at a time
-          /// in a loop to a sweep function that will only use the utxos we
-          /// provide, on the last one we wont override the snack so it'll
-          /// send the message out.
-          ///
           await sweep(
             from: from,
             toWalletId: toWalletId,
@@ -502,7 +478,6 @@ class TransactionService {
                 .where((e) => !pros.securities.contains(e.security))
                 .length <
             1000) {
-          // we should be able to do it all in one transaction
           for (var balance in assetBalances) {
             var txEstimate = await services.transaction.make.transaction(
               destinationAddress,
@@ -582,7 +557,6 @@ class TransactionService {
               .where((e) => !pros.securities.contains(e.security))
               .length <
           1000) {
-        // we should be able to do it all in one transaction
         var txEstimate = await services.transaction.make.transactionSendAllRVN(
           destinationAddress,
           SendEstimate(from.RVNValue),

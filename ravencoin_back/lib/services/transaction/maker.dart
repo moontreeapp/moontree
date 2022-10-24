@@ -1468,23 +1468,22 @@ class TransactionMaker {
     return Tuple2(tx, estimate);
   }
 
-  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSendAllRVNIncrementally(
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>>
+      transactionSendAllRVNIncrementally(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
+    required List<Vout> utxosCurrency,
     TxGoal? goal,
-    Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder makeTxBuilder(
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
-      var total = 0;
       var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
-        total = total + utxo.rvnValue;
       }
       print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
@@ -1501,17 +1500,12 @@ class TransactionMaker {
     }
 
     print('in sendall');
-    var utxos = await services.balance.collectUTXOs(
-      walletId: wallet.id,
-      amount: estimate.amount,
-      security: null,
-    );
-    var txb = makeTxBuilder(utxos, estimate);
+    var txb = makeTxBuilder(utxosCurrency, estimate);
     var tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: goal));
     estimate.setAmount(estimate.amount - estimate.fees);
-    txb = makeTxBuilder(utxos, estimate);
-    await txb.signEachInput(utxos);
+    txb = makeTxBuilder(utxosCurrency, estimate);
+    await txb.signEachInput(utxosCurrency);
     tx = txb.build();
     return Tuple2(tx, estimate);
   }
