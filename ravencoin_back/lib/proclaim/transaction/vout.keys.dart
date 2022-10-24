@@ -10,7 +10,7 @@ class _IdKey extends Key<Vout> {
 extension ByIdMethodsForVout on Index<_IdKey, Vout> {
   Vout? getOne(String hash) => getByKeyStr(hash).firstOrNull;
   Vout? getOneByTransactionPosition(String transactionId, int position) =>
-      getByKeyStr(Vout.getVoutId(transactionId, position)).firstOrNull;
+      getByKeyStr(Vout.key(transactionId, position)).firstOrNull;
 }
 
 // byTransaction

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
@@ -418,13 +419,15 @@ class TransactionService {
     required String toWalletId,
     required bool currency,
     required bool assets,
+    String? note,
+    String? msg,
   }) async {
     final destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
       NodeExposure.external,
     );
     final assetBalances =
-        from.balances.where((b) => b.security.symbol != 'RVN').toList();
+        from.balances.where((b) => !pros.securities.contains(b)).toList();
 
     if (from.unspents.isEmpty || from.RVNValue == 0) {
       // unable to perform any transactions
@@ -449,17 +452,55 @@ class TransactionService {
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
             successMsg: 'Successfully Swept',
+            note: note,
           ));
           return true;
         } else {
           // we'll need to make multiple transacitons
           // do the assets in a loop until they're all spent
           // then do the RVN in a loop until they're all spent
-          return false;
+          /// this means call this function until we loop out of all assets
+          /// then call this function until we loop out of all rvn
+          /// if we run out of rvn but still have asset unspents tell user.
+          /// this probably means we need to keep track of which unspents have
+          /// been spent. and we may need to wait til we get the change back
+          /// to complete the next loop. So it's a little complex.
+          /// so we'll call this function for asset only, and make the
+          /// transactionSweepAll function only take the first 1000 utxos.
+          /// then we'll wait a few seconds between each subsequent call to give
+          /// the listener on spend.send enough time to remove the utxos on
+          /// success, then we'll call this function again, until we notice that
+          /// there are no assets left. then we'll do the same for rvn.
+          ///
+          /// that was design #1 and I hate it. Here's what we'll do instead.
+          /// we'll make a list of utxo sets here then feed them one at a time
+          /// in a loop to a sweep function that will only use the utxos we
+          /// provide, on the last one we wont override the snack so it'll
+          /// send the message out.
+          ///
+          await sweep(
+            from: from,
+            toWalletId: toWalletId,
+            currency: false,
+            assets: true,
+            note: note,
+            msg: '',
+          );
+          await sweep(
+            from: from,
+            toWalletId: toWalletId,
+            currency: true,
+            assets: false,
+            note: note,
+            msg: 'Successfully Swept',
+          );
+          return true;
         }
       } else {
         // JUST ASSETS
-        if (from.unspents.map((e) => e.security.symbol != 'RVN').length <
+        if (from.unspents
+                .where((e) => !pros.securities.contains(e.security))
+                .length <
             1000) {
           // we should be able to do it all in one transaction
           for (var balance in assetBalances) {
@@ -472,18 +513,75 @@ class TransactionService {
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
               successMsg: 'Successfully Swept',
+              note: note,
             ));
           }
           return true;
         } else {
-          // we'll need to make multiple transacitons
-          // do the assets in a loop until they're all spent
-          return false;
+          // get all utxos
+          var assetUtxosBySecurity = <Security, List<Vout>>{};
+          final securities = assetBalances.map((e) => e.security).toSet();
+          for (var security in securities) {
+            assetUtxosBySecurity[security] =
+                await services.balance.collectUTXOs(
+              walletId: from.id,
+              amount:
+                  pros.balances.primaryIndex.getOne(from.id, security)!.value,
+              security: security,
+            );
+          }
+          // batch by 1000 and make transaction
+          var utxosBySecurity = <Security, List<Vout>>{};
+          for (var key in assetUtxosBySecurity.keys) {
+            utxosBySecurity[key] = [];
+            var i = 0;
+            for (var value in assetUtxosBySecurity[key]!) {
+              utxosBySecurity[key]!.add(value);
+              i++;
+              if (i == 1000) {
+                var txEstimate = await services.transaction.make
+                    .transactionSweepAssetIncrementally(
+                  destinationAddress,
+                  SendEstimate(0, security: null), // essentially ignored
+                  utxosBySecurity: utxosBySecurity,
+                  wallet: from,
+                  goal: ravencoin.TxGoals.standard,
+                );
+                streams.spend.send.add(TransactionNote(
+                  txHex: txEstimate.item1.toHex(),
+                  successMsg: '',
+                  note: note,
+                ));
+                utxosBySecurity = <Security, List<Vout>>{};
+                utxosBySecurity[key] = [];
+                i = 0;
+              }
+            }
+          }
+          if (utxosBySecurity.isNotEmpty) {
+            var txEstimate = await services.transaction.make
+                .transactionSweepAssetIncrementally(
+              destinationAddress,
+              SendEstimate(0, security: null), // essentially ignored
+              utxosBySecurity: utxosBySecurity,
+              wallet: from,
+              goal: ravencoin.TxGoals.standard,
+            );
+            streams.spend.send.add(TransactionNote(
+              txHex: txEstimate.item1.toHex(),
+              successMsg: msg,
+              note: note,
+            ));
+          }
+          return true;
         }
       }
     } else {
       // JUST RVN
-      if (from.unspents.map((e) => e.security.symbol == 'RVN').length < 1000) {
+      if (from.unspents
+              .where((e) => !pros.securities.contains(e.security))
+              .length <
+          1000) {
         // we should be able to do it all in one transaction
         var txEstimate = await services.transaction.make.transactionSendAllRVN(
           destinationAddress,
@@ -494,12 +592,56 @@ class TransactionService {
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
           successMsg: 'Successfully Swept',
+          note: note,
         ));
         return true;
       } else {
-        // we'll need to make multiple transacitons
-        // then do the RVN in a loop until they're all spent
-        return false;
+        // get all utxos
+        var cryptoUtxos = await services.balance.collectUTXOs(
+            walletId: from.id, amount: from.RVNValue, security: null);
+        // batch by 1000 and make transaction
+        var utxos = <Vout>[];
+        var i = 0;
+        var total = 0;
+        for (var utxo in cryptoUtxos) {
+          total = total + utxo.rvnValue;
+          utxos.add(utxo);
+          i++;
+          if (i == 1000) {
+            var txEstimate = await services.transaction.make
+                .transactionSendAllRVNIncrementally(
+              destinationAddress,
+              SendEstimate(total, security: null),
+              utxosCurrency: utxos,
+              wallet: from,
+              goal: ravencoin.TxGoals.standard,
+            );
+            streams.spend.send.add(TransactionNote(
+              txHex: txEstimate.item1.toHex(),
+              successMsg: '',
+              note: note,
+            ));
+            utxos = <Vout>[];
+            i = 0;
+            total = 0;
+          }
+        }
+        if (utxos.isNotEmpty) {
+          var txEstimate = await services.transaction.make
+              .transactionSendAllRVNIncrementally(
+            destinationAddress,
+            SendEstimate(total, security: null), // essentially ignored
+            utxosCurrency: utxos,
+            wallet: from,
+            goal: ravencoin.TxGoals.standard,
+          );
+          streams.spend.send.add(TransactionNote(
+            txHex: txEstimate.item1.toHex(),
+            successMsg: msg,
+            note: note,
+          ));
+        }
+        return true;
       }
     }
   }

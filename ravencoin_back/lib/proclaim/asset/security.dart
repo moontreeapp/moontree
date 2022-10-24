@@ -54,4 +54,12 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
   final Security EVR = SecurityProclaim.staticEVR;
   final Security RVNt = SecurityProclaim.staticRVNt;
   final Security EVRt = SecurityProclaim.staticEVRt;
+
+  final List<Security> cryptos = [
+    SecurityProclaim.staticUSD,
+    SecurityProclaim.staticRVN,
+    SecurityProclaim.staticEVR,
+    SecurityProclaim.staticRVNt,
+    SecurityProclaim.staticEVRt,
+  ];
 }

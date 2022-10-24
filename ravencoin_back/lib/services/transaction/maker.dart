@@ -1406,4 +1406,113 @@ class TransactionMaker {
     tx = txb.build();
     return Tuple2(tx, estimate);
   }
+
+  /// transactionSweepAll above is only called when it is known there are no
+  /// more than 1000 inputs. This function is called when there are more than
+  /// 1000 asset inputs.
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>>
+      transactionSweepAssetIncrementally(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    required Map<Security, List<Vout>> utxosBySecurity,
+    TxGoal? goal,
+    int? assetMemoExpiry,
+  }) async {
+    ravencoin.TransactionBuilder? txb;
+    ravencoin.Transaction tx;
+    var feeSats = 0;
+    // Grab required assets for transfer amount
+    var utxosRaven = <Vout>[];
+    var utxosSecurity = utxosBySecurity.values.expand((e) => e).toList();
+    // must wait for addesses ...?
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
+    var returnRaven = -1; // Init to bad val
+    while (returnRaven < 0 || feeSats != estimate.fees) {
+      feeSats = estimate.fees;
+      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      // Grab required RVN for fee (plus amount, maybe)
+      utxosRaven = await services.balance
+          .collectUTXOs(walletId: wallet.id, amount: feeSats, security: null);
+      var satsIn = 0;
+      // We also add inputs in this loop
+      for (var utxo in utxosRaven) {
+        txb.addInput(utxo.transactionId, utxo.position);
+        satsIn += utxo.rvnValue;
+      }
+      for (var utxo in utxosSecurity) {
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      returnRaven = satsIn - feeSats;
+      if (returnRaven > 0) {
+        txb.addOutput(returnAddress, returnRaven);
+      }
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
+      for (var entry in utxosBySecurity.entries) {
+        txb.addOutput(
+            toAddress,
+            entry.value
+                .fold(0, (int? agg, Vout v) => v.assetValue! + (agg ?? 0)),
+            asset: entry.key.symbol,
+            memo: estimate.assetMemo,
+            expiry: assetMemoExpiry);
+      }
+      tx = txb.buildSpoofedSigs();
+      estimate.setFees(tx.fee(goal: goal));
+    }
+    await txb!.signEachInput(utxosRaven + utxosSecurity);
+    tx = txb.build();
+    return Tuple2(tx, estimate);
+  }
+
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSendAllRVNIncrementally(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    TxGoal? goal,
+    Set<int>? previousFees,
+    int? assetMemoExpiry,
+  }) async {
+    ravencoin.TransactionBuilder makeTxBuilder(
+      List<Vout> utxos,
+      SendEstimate estimate,
+    ) {
+      var total = 0;
+      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      for (var utxo in utxos) {
+        txb.addInput(utxo.transactionId, utxo.position);
+        total = total + utxo.rvnValue;
+      }
+      print('extimate.assetMemo: ${estimate.assetMemo}');
+      txb.addOutput(
+        toAddress,
+        estimate.amount,
+        asset: estimate.security?.symbol,
+        memo: estimate.assetMemo,
+        expiry: assetMemoExpiry,
+      );
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
+      return txb;
+    }
+
+    print('in sendall');
+    var utxos = await services.balance.collectUTXOs(
+      walletId: wallet.id,
+      amount: estimate.amount,
+      security: null,
+    );
+    var txb = makeTxBuilder(utxos, estimate);
+    var tx = txb.buildSpoofedSigs();
+    estimate.setFees(tx.fee(goal: goal));
+    estimate.setAmount(estimate.amount - estimate.fees);
+    txb = makeTxBuilder(utxos, estimate);
+    await txb.signEachInput(utxos);
+    tx = txb.build();
+    return Tuple2(tx, estimate);
+  }
 }

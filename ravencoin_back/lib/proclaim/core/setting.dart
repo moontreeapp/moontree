@@ -13,14 +13,9 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   SettingProclaim() : super(_IdKey());
 
   static final Net defaultNet = Net.main;
+  static final Chain defaultChain = Chain.ravencoin;
   static final String defaultUrl = 'moontree.com';
-  static final int defaultPort = defaultNet == Net.test ? 50012 : 50002;
-
-  /// port map
-  //50001 - mainnet tcp
-  //50002 - mainnet ssl
-  //50011 - testnet tcp
-  //50012 - testnet ssl
+  static final int defaultPort = portOf(defaultChain, defaultNet);
 
   static Map<String, Setting> get defaults => {
         SettingName.version_database:
@@ -89,7 +84,7 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   bool get mainnet =>
       primaryIndex.getOne(SettingName.electrum_net)!.value == Net.main;
 
-  NetworkType get network => networks[net]!;
+  NetworkType get network => networkOf(chain, net);
 
   String get netName => net.name;
 
@@ -118,14 +113,12 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
     /// triggers should be set to change the domain:port by chain:net
     /// for now we'll put it here:
     await saveAll([
-      Setting(
-          name: SettingName.electrum_port,
-          value: net == Net.test ? 50012 : 50002),
+      Setting(name: SettingName.electrum_port, value: portOf(chain, net)),
       Setting(
           name: SettingName.electrum_domain,
           value: chain == Chain.ravencoin
               ? defaultUrl
-              : defaultUrl /*electrum for evrmore???*/),
+              : defaultUrl /* electrum for evrmore? */),
     ]);
   }
 
