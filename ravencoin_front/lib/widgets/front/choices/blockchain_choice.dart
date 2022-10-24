@@ -86,18 +86,19 @@ class _BlockchainChoice extends State<BlockchainChoice> {
   }
 
   void _produceAssetModal() => SimpleSelectionItems(context, items: [
-        ListTile(
-            dense: true,
-            leading: icons.evrmore(height: 24, width: 24, circled: true),
-            title: Text('Evrmore',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: AppColors.black87)),
-            trailing: chainChoice == Chain.evrmore && netChoice == Net.main
-                ? Icon(Icons.check_rounded, color: AppColors.primary)
-                : null,
-            onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.main))),
+        if (pros.settings.advancedDeveloperMode)
+          ListTile(
+              dense: true,
+              leading: icons.evrmore(height: 24, width: 24, circled: true),
+              title: Text('Evrmore',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: AppColors.black87)),
+              trailing: chainChoice == Chain.evrmore && netChoice == Net.main
+                  ? Icon(Icons.check_rounded, color: AppColors.primary)
+                  : null,
+              onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.main))),
         ListTile(
             dense: true,
             leading: icons.ravencoin(height: 24, width: 24, circled: true),
@@ -110,7 +111,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
                 ? Icon(Icons.check_rounded, color: AppColors.primary)
                 : null,
             onTap: () => changeChainNet(Tuple2(Chain.ravencoin, Net.main))),
-        if (pros.settings.developerMode)
+        if (pros.settings.advancedDeveloperMode)
           ListTile(
               leading: ColorFiltered(
                   colorFilter: filters.greyscale,
@@ -149,13 +150,13 @@ class _BlockchainChoice extends State<BlockchainChoice> {
       chainNet = value;
       showHelper = false;
     });
-    await services.client.switchNetworks(value.item1, net: value.item2);
-    await components.loading.screen(
+    components.loading.screen(
       message:
           'Connecting to ${value.item1.name.toTitleCase()}${value.item2 == Net.test ? ' ' + value.item2.name.toTitleCase() : ''}',
       returnHome: false,
       playCount: 5,
     );
+    await services.client.switchNetworks(value.item1, net: value.item2);
     streams.app.snack.add(Snack(message: 'Successfully connected'));
     setState(() {
       showHelper = true;

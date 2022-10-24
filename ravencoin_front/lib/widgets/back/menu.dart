@@ -122,7 +122,7 @@ class _NavMenuState extends State<NavMenu> {
                   );
                 }
               }),
-          if (pros.settings.advancedDeveloperMode &&
+          if (pros.settings.developerMode &&
               Current.balanceRVN.value > 0 &&
               Current.wallet.unspents.length <
                   1000 // unable to handle this edgecase yet.
@@ -168,13 +168,13 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Addresses',
               link: '/addresses',
             ),
-          if (pros.settings.advancedDeveloperMode)
+          if (pros.settings.developerMode)
             destination(
               icon: MdiIcons.pickaxe,
               name: 'Mining',
               link: '/settings/network/mining',
             ),
-          if (pros.settings.developerMode)
+          if (pros.settings.advancedDeveloperMode)
             destination(
               icon: MdiIcons.database,
               name: 'Database',
@@ -198,18 +198,18 @@ class _NavMenuState extends State<NavMenu> {
         shrinkWrap: true,
         padding: EdgeInsets.all(0),
         children: [
-          if (pros.settings.advancedDeveloperMode)
+          if (pros.settings.developerMode)
             destination(
               icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant, //
               name: 'Blockchain',
               link: '/settings/network/blockchain',
             ),
-          if (!pros.settings.advancedDeveloperMode)
+          if (!pros.settings.developerMode)
             destination(
                 icon: MdiIcons.shieldKey,
                 name: 'Import',
                 link: '/settings/import'),
-          if (pros.settings.advancedDeveloperMode)
+          if (pros.settings.developerMode)
             destination(
               icon: MdiIcons.shieldKey,
               name: 'Import & Export',

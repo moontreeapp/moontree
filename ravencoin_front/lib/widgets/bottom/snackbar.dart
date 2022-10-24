@@ -61,7 +61,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     //final tall = streams.app.navHeight.value == NavHeight.tall; // default
     final short = streams.app.navHeight.value == NavHeight.short;
     final none = streams.app.navHeight.value == NavHeight.none ||
-        !short && streams.app.page.value != 'Home';
+        (!short && streams.app.page.value != 'Home') ||
+        (streams.app.page.value == 'Home' && streams.app.setting.value != null);
     var msg = GestureDetector(
         onTap: () {
           print('clearing snackbar?');

@@ -149,6 +149,7 @@ class _ConnectionLightState extends State<ConnectionLight>
           icon: circleIcon,
           onPressed: () {
             if (streams.app.scrim.value == true) return;
+            if (streams.app.loading.value == true) return;
             if (![
               'Login',
               'Createlogin',
