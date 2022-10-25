@@ -396,7 +396,6 @@ class _LoginPasswordState extends State<LoginPassword> {
 
       /// erase all history stuff
       await services.client.resetMemoryAndConnection(keepBalances: false);
-      services.download.overrideGettingStarted = true;
       streams.app.wallet.refresh.add(true);
     }
   }
