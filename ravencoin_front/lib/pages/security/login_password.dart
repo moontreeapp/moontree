@@ -349,13 +349,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       if (passwordText != password.text) {
         setState(() => passwordText = password.text);
       }
-      print('----BUILDS');
-      print(services.version.snapshot?.currentBuild);
-      print(services.version.snapshot?.latestBuild);
-      login(password.text,
-          refresh:
-              int.parse(services.version.snapshot?.currentBuild ?? '0') <= 18 &&
-                  (services.version.snapshot?.buildUpdated ?? false));
+      login(password.text);
     } else {
       setState(() {
         failedAttempt = true;
@@ -371,7 +365,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       consented = await consentToAgreements(await getId());
     }
     if (refresh) {
-      services.download.overrideGettingStarted = true;
+      //services.download.overrideGettingStarted = true;
     }
     try {
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
@@ -396,6 +390,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
       /// erase all history stuff
       await services.client.resetMemoryAndConnection(keepBalances: false);
+      services.download.overrideGettingStarted = true;
       streams.app.wallet.refresh.add(true);
     }
   }
