@@ -186,7 +186,7 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Advanced',
               link: '/settings/advanced',
             ),
-          //if (pros.settings.developerMode == true)
+          if (pros.settings.developerMode == true)
           destination(
             icon: MdiIcons.devTo,
             name: 'Developer',
