@@ -349,7 +349,12 @@ class _LoginPasswordState extends State<LoginPassword> {
       if (passwordText != password.text) {
         setState(() => passwordText = password.text);
       }
-      login(password.text);
+      print('----BUILDS');
+      print(services.version.snapshot?.currentBuild);
+      print(services.version.snapshot?.latestBuild);
+      login(password.text,
+          refresh: services.version.snapshot?.currentBuild == '18' &&
+              (services.version.snapshot?.buildUpdated ?? false));
     } else {
       setState(() {
         failedAttempt = true;

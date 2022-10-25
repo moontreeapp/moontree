@@ -56,7 +56,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await HIVE_INIT.setupDatabase1();
 
     /// update version right after we open settings box, capture a snapshot of
-    /// the movement if we need to use it for migration logic: final versions =
+    /// the movement if we need to use it for migration logic:
     services.version.rotate(
       services.version.byPlatform(Platform.isIOS ? 'ios' : 'android'),
     );

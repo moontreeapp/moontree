@@ -2,8 +2,8 @@
 /// version.py script looks at this map.
 /// so set the versions but don't alter the code structure.
 const VERSIONS = {
-  'ios': {'alpha': '1.3.10+11~1', 'beta': '1.5+19~1'},
-  'android': {'alpha': '1.0.1+2~1', 'beta': '1.5+4~1'}
+  'ios': {'alpha': '1.3.10+11~1', 'beta': '1.5.0+19~1'},
+  'android': {'alpha': '1.0.1+2~1', 'beta': '1.5.0+4~1'}
 };
 
 const VERSION_TRACK = 'beta';

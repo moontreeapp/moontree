@@ -1,8 +1,8 @@
 /// having current and perivous versions lets us do logic on state changes:
-/// 1. previous != current != newVersion (first time run after update)
-/// 2. previous != current == newVersion (has updated, but not recently)
-/// 3. previous == current != newVersion (odd case)
-/// 4. previous == current == newVersion (first version?)
+/// 1. previous != current != latest (first time run after update)
+/// 2. previous != current == latest (has updated, but not recently)
+/// 3. previous == current != latest (odd case)
+/// 4. previous == current == latest (first version?)
 ///
 /// we can use the first case to run migration code on their first run.
 /// we can use the 2nd case in case of strange issues, maybe migration code
@@ -16,34 +16,35 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 
 class VersionService {
   String byPlatform(String platform) => VERSIONS[platform]![VERSION_TRACK]!;
+  VersionDescription? snapshot;
 
   /// preivous becomes current if diff, writes current, returns both in map
-  Future<VersionDescription> rotate(String newVersion) async {
+  Future<void> rotate(String latest) async {
     final previous =
         pros.settings.primaryIndex.getOne(SettingName.version_previous)?.value;
     final current =
         pros.settings.primaryIndex.getOne(SettingName.version_current)?.value;
-    if (newVersion != current) {
+    if (latest != current) {
       await pros.settings.save(Setting(
         name: SettingName.version_previous,
         value: current,
       ));
       await pros.settings.save(Setting(
         name: SettingName.version_current,
-        value: newVersion,
+        value: latest,
       ));
     }
-    return all(
+    snapshot = all(
       previous: previous,
       current: current,
-      newVersion: newVersion,
+      latest: latest,
     );
   }
 
   VersionDescription all({
     String? previous,
     String? current,
-    String? newVersion,
+    String? latest,
     int? database,
   }) =>
       VersionDescription(
@@ -59,7 +60,7 @@ class VersionService {
             (pros.settings.primaryIndex
                 .getOne(SettingName.version_database)
                 ?.value),
-        newVersion: newVersion,
+        latest: latest,
       );
 
   String? get current =>
@@ -69,13 +70,13 @@ class VersionService {
 class VersionDescription with ToStringMixin {
   final String? previous;
   final String? current;
-  final String? newVersion;
+  final String? latest;
   final int? database;
 
   VersionDescription({
     this.previous,
     this.current,
-    this.newVersion,
+    this.latest,
     this.database,
   });
 
@@ -83,7 +84,7 @@ class VersionDescription with ToStringMixin {
   List<Object?> get props => [
         previous,
         current,
-        newVersion,
+        latest,
         database,
       ];
 
@@ -91,7 +92,35 @@ class VersionDescription with ToStringMixin {
   List<String> get propNames => [
         'previous',
         'current',
-        'newVersion',
+        'latest',
         'database',
       ];
+
+  String get currentMajor => current!.split('.').first;
+  String get currentMinor => current!.split('.')[1];
+  String get currentPatch => current!.split('.').last.split('+').first;
+  String get currentBuild => current!.split('+').last.split('~').first;
+  String get currentDatabase => current!.split('+').last.split('~').last;
+
+  String get previousMajor => previous!.split('.').first;
+  String get previousMinor => previous!.split('.')[1];
+  String get previousPatch => previous!.split('.').last.split('+').first;
+  String get previousBuild => previous!.split('+').last.split('~').first;
+  String get previousDatabase => previous!.split('+').last.split('~').last;
+
+  String get latestMajor => latest!.split('.').first;
+  String get latestMinor => latest!.split('.')[1];
+  String get latestPatch => latest!.split('.').last.split('+').first;
+  String get latestBuild => latest!.split('+').last.split('~').first;
+  String get latestDatabase => latest!.split('+').last.split('~').last;
+
+  bool get updated => current != latest;
+  bool get majorUpdated => currentMajor != latestMajor;
+  bool get minorUpdated => currentMinor != latestMinor;
+  bool get patchUpdated => currentPatch != latestPatch;
+  bool get versionUpdated => majorUpdated || minorUpdated || patchUpdated;
+  bool get buildUpdated => currentBuild != latestBuild;
+  bool get databaseUpdated => currentDatabase != latestDatabase;
+
+  bool get onlyBuildUpdated => !versionUpdated && buildUpdated;
 }
