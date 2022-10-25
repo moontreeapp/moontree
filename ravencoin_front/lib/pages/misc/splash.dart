@@ -66,6 +66,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
     // put here or on login screen. here seems better for now.
     await HIVE_INIT.setupWaiters1();
+    await services.client.createClient();
     await HIVE_INIT.setupDatabase2();
     await HIVE_INIT.setupWaiters2();
 

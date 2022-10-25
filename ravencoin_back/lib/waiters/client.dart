@@ -116,6 +116,7 @@ class RavenClientWaiter extends Waiter {
             //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
           } catch (e) {
             print(e);
+            await services.client.createClient();
           }
         }
       },
@@ -143,6 +144,7 @@ class RavenClientWaiter extends Waiter {
           //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
         } catch (e) {
           print('unable to ping...');
+          await services.client.createClient();
         }
         //try {
         //  client!.ping();

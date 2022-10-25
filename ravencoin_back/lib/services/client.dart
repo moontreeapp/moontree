@@ -7,6 +7,7 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/utilities/database.dart' as database;
 import 'package:ravencoin_back/utilities/lock.dart';
+import 'package:ravencoin_back/waiters/client.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
@@ -20,7 +21,8 @@ class ClientService {
   Future<RavenElectrumClient> get client async {
     var x = ravenElectrumClient;
     if (x == null) {
-      await createClient();
+      throw Exception('client not initialized');
+      //await createClient();
     }
     return ravenElectrumClient!;
   }
@@ -65,6 +67,11 @@ class ClientService {
       pros.settings.primaryIndex.getOne(SettingName.electrum_port)!.value;
 
   bool get connectionStatus => ravenElectrumClient != null ? true : false;
+
+  Future<void> disconnect() async {
+    streams.client.connected.add(ConnectionStatus.disconnected);
+    ravenElectrumClient = null;
+  }
 
   /// we want exclusive access to the creation of the client so that we
   /// don't create many connections to the electrum server all at once.
@@ -136,6 +143,8 @@ class ClientService {
     /// it might be ideal to keep the transactions, vout, unspents, vins, addresses, etc.
     /// but we're not ging to because we'd have to segment all of them by network.
     /// this is something we could do later if we want.
+    await services.client.disconnect();
+
     database.resetInMemoryState();
     if (!keepTx) {
       await database.eraseTransactionData(quick: true);

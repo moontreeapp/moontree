@@ -211,7 +211,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           domain: domain,
           port: int.parse(port),
         );
-        // flush out current connection and allow waiter to reestablish one
         await services.client.createClient();
       },
       returnHome: true,
