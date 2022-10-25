@@ -39,7 +39,7 @@ class _ResyncChoice extends State<ResyncChoice> {
             enabled: true,
             label: 'Resync Now',
             onPressed: () async {
-              Navigator.of(context).pushReplacementNamed('/home');
+              Navigator.of(context).popUntil(ModalRoute.withName('/home'));
               streams.app.snack
                   .add(Snack(message: 'resyncing, please wait...'));
               await services.client.resetMemoryAndConnection(
