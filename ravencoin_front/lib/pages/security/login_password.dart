@@ -353,8 +353,9 @@ class _LoginPasswordState extends State<LoginPassword> {
       print(services.version.snapshot?.currentBuild);
       print(services.version.snapshot?.latestBuild);
       login(password.text,
-          refresh: services.version.snapshot?.currentBuild == '18' &&
-              (services.version.snapshot?.buildUpdated ?? false));
+          refresh:
+              int.parse(services.version.snapshot?.currentBuild ?? '0') <= 18 &&
+                  (services.version.snapshot?.buildUpdated ?? false));
     } else {
       setState(() {
         failedAttempt = true;
@@ -395,7 +396,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
       /// erase all history stuff
       await services.client.resetMemoryAndConnection(keepBalances: false);
-      services.download.overrideGettingStarted = false;
+      services.download.overrideGettingStarted = true;
       streams.app.wallet.refresh.add(true);
     }
   }

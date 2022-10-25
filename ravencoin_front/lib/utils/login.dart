@@ -14,4 +14,8 @@ Future<void> login(BuildContext context) async {
   streams.app.splash.add(false); // trigger to refresh app bar again
   streams.app.logout.add(false);
   streams.app.verify.add(true);
+
+  /// here we can put logic to migrate database on new version or something:
+  //services.version.snapshot?.currentBuild == '17' &&
+  //(services.version.snapshot?.buildUpdated ?? false);
 }
