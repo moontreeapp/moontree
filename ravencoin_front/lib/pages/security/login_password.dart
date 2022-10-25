@@ -370,7 +370,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       consented = await consentToAgreements(await getId());
     }
     if (refresh) {
-      //services.download.overrideGettingStarted = true;
+      services.download.overrideGettingStarted = true;
     }
     try {
       Navigator.pushReplacementNamed(context, '/home', arguments: {});
