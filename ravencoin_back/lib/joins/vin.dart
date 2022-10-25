@@ -8,8 +8,8 @@ extension VinBelongsToTransaction on Vin {
 }
 
 extension VinHasOneVout on Vin {
-  Vout? get vout => pros.vouts.primaryIndex
-      .getOne(Vout.getVoutId(voutTransactionId, voutPosition));
+  Vout? get vout =>
+      pros.vouts.primaryIndex.getOne(Vout.key(voutTransactionId, voutPosition));
 }
 
 extension VinHasOneSecurity on Vin {

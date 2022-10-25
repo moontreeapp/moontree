@@ -159,6 +159,8 @@ class Unspent with EquatableMixin, ToStringMixin {
   static String key(String transactionId, int position, Chain chain, Net net) =>
       '$transactionId:$position:${chainNetKey(chain, net)}';
 
+  String get voutId => Vout.key(transactionId, position);
+
   Security get security => symbol == 'RVN'
       ? pros.securities.RVN
       : Security(

@@ -5,11 +5,6 @@ import '../_type_id.dart';
 
 part 'net.g.dart';
 
-var networks = {
-  Net.main: mainnet,
-  Net.test: testnet,
-};
-
 @HiveType(typeId: TypeId.Net)
 enum Net {
   @HiveField(0)

@@ -8,8 +8,7 @@ extension VoutBelongsToTransaction on Vout {
 }
 
 extension VoutBelongsToVin on Vout {
-  Vin? get vin =>
-      pros.vins.byVoutId.getOne(Vout.getVoutId(transactionId, position));
+  Vin? get vin => pros.vins.byVoutId.getOne(Vout.key(transactionId, position));
   // no vin - this is a unspent output
 }
 
@@ -29,5 +28,11 @@ extension VoutBelongsToAddress on Vout {
 
 extension VoutBelongsToWallet on Vout {
   Wallet? get wallet => address?.wallet;
+  // no wallet - we don't own this vout
+}
+
+extension VoutMightBelongToAnUnspent on Vout {
+  Unspent? get unspent =>
+      pros.unspents.byVoutId.getOne(transactionId, position);
   // no wallet - we don't own this vout
 }

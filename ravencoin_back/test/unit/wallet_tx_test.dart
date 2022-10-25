@@ -1,5 +1,6 @@
 // dart test test/unit/raven_tx_test.dart
 
+import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:test/test.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart'
     show HDWallet, TransactionBuilder;
@@ -10,7 +11,7 @@ import 'package:ravencoin_back/records/wallets/extended_wallet_base.dart';
 void main() {
   group('Wallet Transaction', () {
     test('create & sign a 1-to-1 transaction', () async {
-      var network = networks[Net.test]!;
+      var network = networkOf(Chain.ravencoin, Net.test);
 
       var wallet = HDWallet.fromBase58(
           'tprv8jsr128yT1XaEVNpw7t4v5ijZBURTzvqFzy71Favkx7VnMYsmcAf'

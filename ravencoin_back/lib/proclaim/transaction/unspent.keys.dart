@@ -25,6 +25,18 @@ extension ByTransactionMethodsForUnspent on Index<_TransactionKey, Unspent> {
   List<Unspent> getAll(String transactionId) => getByKeyStr(transactionId);
 }
 
+// byTransactionPosition
+
+class _VoutIdKey extends Key<Unspent> {
+  @override
+  String getKey(Unspent unspent) => unspent.voutId;
+}
+
+extension ByVoutIdMethodsForUnspent on Index<_VoutIdKey, Unspent> {
+  Unspent? getOne(String transactionId, int position) =>
+      getByKeyStr(Vout.key(transactionId, position)).firstOrNull;
+}
+
 // bySecurity
 
 class _SecurityKey extends Key<Unspent> {

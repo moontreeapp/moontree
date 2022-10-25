@@ -92,7 +92,6 @@ class BalanceService {
       var randomIndex = _random.nextInt(unspents.length);
       var unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
-      gathered += unspent.value;
       var vout = unspent.vout;
       if (vout == null) {
         await services.download.history.getAndSaveTransactions(
@@ -100,7 +99,10 @@ class BalanceService {
         );
         vout = unspent.vout!;
       }
+      //if (usedUtxos == null || !usedUtxos.contains(vout)) {
+      gathered += unspent.value;
       collection.add(vout);
+      //}
     }
     return collection;
   }

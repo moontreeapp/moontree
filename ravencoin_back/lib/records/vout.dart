@@ -103,9 +103,9 @@ class Vout with EquatableMixin, ToStringMixin {
         'additionalAddresses',
       ];
 
-  String get id => getVoutId(transactionId, position);
+  String get id => key(transactionId, position);
 
-  static String getVoutId(String transactionId, int position) =>
+  static String key(String transactionId, int position) =>
       '$transactionId:$position';
 
   List<String> get toAddresses =>

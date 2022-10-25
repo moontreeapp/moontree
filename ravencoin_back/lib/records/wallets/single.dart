@@ -67,7 +67,11 @@ class SingleWallet extends Wallet {
       EncryptedWIF(encrypted, cipher).secret;
 
   @override
-  Future<KPWallet> seedWallet(CipherBase cipher, {Net net = Net.main}) async =>
+  Future<KPWallet> seedWallet(
+    CipherBase cipher, {
+    Chain chain = Chain.ravencoin,
+    Net net = Net.main,
+  }) async =>
       SingleSelfWallet(await secret(cipher)).wallet;
 
   @override

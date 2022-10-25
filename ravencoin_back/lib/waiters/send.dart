@@ -64,12 +64,25 @@ class SendWaiter extends Waiter {
         print('txid');
         print(txid);
         if (txid != '') {
-          streams.app.snack.add(Snack(
-            message: transactionNote.successMsg ??
-                'Successfully Sent', //: ${txid.cutOutMiddle(length: 3)}
-            //label: 'Transaction ID',
-            //link: 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
-          ));
+          // delete utxos if they're specified
+          if (transactionNote.usedUtxos != null) {
+            for (var vout in transactionNote.usedUtxos!) {
+              final unspent = vout.unspent;
+              if (unspent != null) {
+                await pros.unspents.remove(unspent);
+              }
+            }
+            await pros.vouts.removeAll(transactionNote.usedUtxos!);
+          }
+          // able to disable snack
+          if (transactionNote.successMsg != '') {
+            streams.app.snack.add(Snack(
+              message: transactionNote.successMsg ??
+                  'Successfully Sent', //: ${txid.cutOutMiddle(length: 3)}
+              //label: 'Transaction ID',
+              //link: 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
+            ));
+          }
           streams.spend.success.add(true);
         } else {
           streams.app.snack.add(Snack(

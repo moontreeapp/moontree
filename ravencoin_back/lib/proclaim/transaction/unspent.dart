@@ -5,7 +5,7 @@ import 'package:proclaim/proclaim.dart';
 part 'unspent.keys.dart';
 
 class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
-  //late IndexMultiple<_TransactionKey, Unspent> byTransaction;
+  late IndexMultiple<_VoutIdKey, Unspent> byVoutId;
   //late IndexMultiple<_SecurityKey, Unspent> bySecurity;
   //late IndexMultiple<_SecurityTypeKey, Unspent> bySecurityType;
   late IndexMultiple<_AddressKey, Unspent> byAddress;
@@ -24,7 +24,7 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
       byWalletChainSymbolConfirmation;
 
   UnspentProclaim() : super(_IdKey()) {
-    //byTransaction = addIndexMultiple('transaction', _TransactionKey());
+    byVoutId = addIndexMultiple('transaction', _VoutIdKey());
     //bySecurity = addIndexMultiple('security', _SecurityKey());
     //bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
     byAddress = addIndexMultiple('address', _AddressKey());
