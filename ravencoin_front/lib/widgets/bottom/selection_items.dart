@@ -8,6 +8,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_back/streams/create.dart';
@@ -540,6 +541,12 @@ class SelectionItems {
     TextEditingController? controller,
     int? minDecimal,
   }) async {
+    // wait for keyboard to drop (if you don't it has issues on ios)
+    while (streams.app.keyboard.value != KeyboardStatus.down) {
+      // drop keyboard incase it's up
+      FocusScope.of(context).unfocus();
+      await Future.delayed(Duration(milliseconds: 600));
+    }
     if (modalSet == SelectionSet.Wallets) {
       await produceModal([
             if (pros.wallets.length > 1) walletItemAll(controller!)

@@ -355,7 +355,7 @@ class _SendState extends State<Send> {
                   padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.expand_more_rounded,
                       color: Color(0xDE000000))),
-              onPressed: () => _produceAssetModal(),
+              onPressed: _produceAssetModal,
             )),
         onTap: () {
           _produceAssetModal();
@@ -497,11 +497,7 @@ class _SendState extends State<Send> {
       ['', '.'].contains(visibleAmount) ? 0 : double.parse(visibleAmount);
 
   Widget get sendFeeField => TextFieldFormatted(
-        onTap: () async {
-          FocusScope.of(context).unfocus();
-          while (streams.app.keyboard.value != KeyboardStatus.down) {
-            await Future.delayed(Duration(milliseconds: 251));
-          }
+        onTap: () {
           _produceFeeModal();
           setState(() {});
         },
@@ -516,11 +512,7 @@ class _SendState extends State<Send> {
                 padding: EdgeInsets.only(right: 14),
                 child:
                     Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
-            onPressed: () async {
-              FocusScope.of(context).unfocus();
-              while (streams.app.keyboard.value != KeyboardStatus.down) {
-                await Future.delayed(Duration(milliseconds: 251));
-              }
+            onPressed: () {
               _produceFeeModal();
               setState(() {});
             }),
