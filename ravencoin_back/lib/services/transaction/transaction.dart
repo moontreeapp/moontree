@@ -425,8 +425,9 @@ class TransactionService {
       pros.wallets.primaryIndex.getOne(toWalletId)!,
       NodeExposure.external,
     );
-    final assetBalances =
-        from.balances.where((b) => !pros.securities.contains(b)).toList();
+    final assetBalances = from.balances
+        .where((b) => !pros.securities.cryptos.contains(b.security))
+        .toList();
 
     if (from.unspents.isEmpty || from.RVNValue == 0) {
       // unable to perform any transactions
@@ -440,6 +441,7 @@ class TransactionService {
         // ASSETS && RVN
         if (from.unspents.length < 1000) {
           // we should be able to do it all in one transaction
+          print(assetBalances);
           var txEstimate = await services.transaction.make.transactionSweepAll(
             destinationAddress,
             SendEstimate(from.RVNValue),
