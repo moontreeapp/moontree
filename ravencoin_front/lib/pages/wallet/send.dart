@@ -418,7 +418,6 @@ class _SendState extends State<Send> {
           //DecimalTextInputFormatter(decimalRange: divisibility)
           FilteringTextInputFormatter(RegExp(r'[.0-9]'), allow: true)
         ],
-
         labelText: 'Amount',
         hintText: 'Quantity',
         errorText: sendAmount.text == ''
@@ -487,7 +486,9 @@ class _SendState extends State<Send> {
             fee: sendFee.text,
             amount: asDouble(visibleAmount),
           ));
-          FocusScope.of(context).requestFocus(sendFeeFocusNode);
+          //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
+          //FocusScope.of(context).requestFocus(sendFeeFocusNode);
+          FocusScope.of(context).unfocus();
           setState(() {});
         },
       );
@@ -496,6 +497,12 @@ class _SendState extends State<Send> {
       ['', '.'].contains(visibleAmount) ? 0 : double.parse(visibleAmount);
 
   Widget get sendFeeField => TextFieldFormatted(
+        onTap: () async {
+          FocusScope.of(context).unfocus();
+          await Future.delayed(Duration(milliseconds: 100));
+          _produceFeeModal();
+          setState(() {});
+        },
         focusNode: sendFeeFocusNode,
         controller: sendFee,
         readOnly: true,
@@ -503,15 +510,16 @@ class _SendState extends State<Send> {
         labelText: 'Transaction Speed',
         hintText: 'Standard',
         suffixIcon: IconButton(
-          icon: Padding(
-              padding: EdgeInsets.only(right: 14),
-              child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
-          onPressed: () => _produceFeeModal(),
-        ),
-        onTap: () {
-          _produceFeeModal();
-          setState(() {});
-        },
+            icon: Padding(
+                padding: EdgeInsets.only(right: 14),
+                child:
+                    Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+            onPressed: () async {
+              FocusScope.of(context).unfocus();
+              await Future.delayed(Duration(milliseconds: 100));
+              _produceFeeModal();
+              setState(() {});
+            }),
         onChanged: (String? newValue) {
           feeGoal = {
                 'Cheap': ravencoin.TxGoals.cheap,
