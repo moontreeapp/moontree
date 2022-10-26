@@ -77,8 +77,9 @@ class SendWaiter extends Waiter {
           // able to disable snack
           if (transactionNote.successMsg != '') {
             streams.app.snack.add(Snack(
-              message: transactionNote.successMsg ??
-                  'Successfully Sent', //: ${txid.cutOutMiddle(length: 3)}
+              message: transactionNote.successMsg ?? 'Successfully Sent',
+              label: txid.cutOutMiddle(length: 3),
+              copy: txid,
               //label: 'Transaction ID',
               //link: 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
             ));

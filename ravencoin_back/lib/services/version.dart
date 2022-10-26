@@ -96,23 +96,27 @@ class VersionDescription with ToStringMixin {
         'database',
       ];
 
-  String get currentMajor => current!.split('.').first;
-  String get currentMinor => current!.split('.')[1];
-  String get currentPatch => current!.split('.').last.split('+').first;
-  String get currentBuild => current!.split('+').last.split('~').first;
-  String get currentDatabase => current!.split('+').last.split('~').last;
+  int get currentMajor => int.parse(current!.split('.').first);
+  int get currentMinor => int.parse(current!.split('.')[1]);
+  int get currentPatch => int.parse(current!.split('.').last.split('+').first);
+  int get currentBuild => int.parse(current!.split('+').last.split('~').first);
+  int get currentDatabase =>
+      int.parse(current!.split('+').last.split('~').last);
 
-  String get previousMajor => previous!.split('.').first;
-  String get previousMinor => previous!.split('.')[1];
-  String get previousPatch => previous!.split('.').last.split('+').first;
-  String get previousBuild => previous!.split('+').last.split('~').first;
-  String get previousDatabase => previous!.split('+').last.split('~').last;
+  int get previousMajor => int.parse(previous!.split('.').first);
+  int get previousMinor => int.parse(previous!.split('.')[1]);
+  int get previousPatch =>
+      int.parse(previous!.split('.').last.split('+').first);
+  int get previousBuild =>
+      int.parse(previous!.split('+').last.split('~').first);
+  int get previousDatabase =>
+      int.parse(previous!.split('+').last.split('~').last);
 
-  String get latestMajor => latest!.split('.').first;
-  String get latestMinor => latest!.split('.')[1];
-  String get latestPatch => latest!.split('.').last.split('+').first;
-  String get latestBuild => latest!.split('+').last.split('~').first;
-  String get latestDatabase => latest!.split('+').last.split('~').last;
+  int get latestMajor => int.parse(latest!.split('.').first);
+  int get latestMinor => int.parse(latest!.split('.')[1]);
+  int get latestPatch => int.parse(latest!.split('.').last.split('+').first);
+  int get latestBuild => int.parse(latest!.split('+').last.split('~').first);
+  int get latestDatabase => int.parse(latest!.split('+').last.split('~').last);
 
   bool get updated => current != latest;
   bool get majorUpdated => currentMajor != latestMajor;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -349,7 +350,10 @@ class _LoginPasswordState extends State<LoginPassword> {
       if (passwordText != password.text) {
         setState(() => passwordText = password.text);
       }
-      login(password.text);
+      login(password.text,
+          refresh: (services.version.snapshot?.currentBuild ?? 0) <=
+                  (Platform.isIOS ? 18 : 4) &&
+              (services.version.snapshot?.buildUpdated ?? false));
     } else {
       setState(() {
         failedAttempt = true;

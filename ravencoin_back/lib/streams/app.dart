@@ -61,6 +61,7 @@ class Snack {
   final String? details; // if they click on the message, popup details
   final String? label; // link label
   final String? link;
+  final String? copy;
   final Map<String, dynamic>? arguments;
   final bool showOnLogin;
 
@@ -68,16 +69,17 @@ class Snack {
     required this.message,
     this.positive = true,
     this.details,
-    this.link,
-    this.arguments,
     this.label,
+    this.link,
+    this.copy,
+    this.arguments,
     this.showOnLogin = false,
   });
 
   @override
   String toString() {
     return 'Snack(message: $message, positive: $positive, details: $details, '
-        'label: $label, link: $link, arguments: $arguments, '
+        'label: $label, link: $link, copy: $copy, arguments: $arguments, '
         'showOnLogin: $showOnLogin)';
   }
 }

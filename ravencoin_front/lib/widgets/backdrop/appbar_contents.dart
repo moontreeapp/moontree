@@ -86,6 +86,14 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
+            final txid = 'rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1';
+            streams.app.snack.add(Snack(
+              showOnLogin: true,
+              message: 'Locked', //: ${txid.cutOutMiddle(length: 3)}
+              label: txid.cutOutMiddle(length: 3),
+              copy: txid, //: ${txid.cutOutMiddle(length: 3)}
+              //link: 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
+            ));
             //print(pros.settings.primaryIndex.getAll(SettingName.auth_method));
             //await pros.settings
             //    .setBlockchain(chain: Chain.ravencoin, net: Net.main);
