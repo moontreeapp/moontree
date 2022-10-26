@@ -499,7 +499,9 @@ class _SendState extends State<Send> {
   Widget get sendFeeField => TextFieldFormatted(
         onTap: () async {
           FocusScope.of(context).unfocus();
-          await Future.delayed(Duration(milliseconds: 100));
+          while (streams.app.keyboard.value != KeyboardStatus.down) {
+            await Future.delayed(Duration(milliseconds: 251));
+          }
           _produceFeeModal();
           setState(() {});
         },
@@ -516,7 +518,9 @@ class _SendState extends State<Send> {
                     Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
             onPressed: () async {
               FocusScope.of(context).unfocus();
-              await Future.delayed(Duration(milliseconds: 100));
+              while (streams.app.keyboard.value != KeyboardStatus.down) {
+                await Future.delayed(Duration(milliseconds: 251));
+              }
               _produceFeeModal();
               setState(() {});
             }),
