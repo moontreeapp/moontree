@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_front/theme/colors.dart';
+import 'package:ravencoin_front/widgets/assets/filters.dart';
 //import 'package:ravencoin_front/utils/extensions.dart';
 
 class icons {
@@ -21,11 +22,14 @@ class icons {
         width: width,
       );
 
-  static Widget evrmoreTest({double? height, double? width}) => Image.asset(
-        'assets/evr.png',
-        height: height,
-        width: width,
-      );
+  static Widget evrmoreTest({
+    double? height,
+    double? width,
+    bool circled = false,
+  }) =>
+      ColorFiltered(
+          colorFilter: filters.greyscale,
+          child: evrmore(height: 24, width: 24, circled: true));
 
   static Widget ravencoin({
     double? height,
@@ -38,11 +42,14 @@ class icons {
         width: width,
       );
 
-  static Widget ravencoinTest({double? height, double? width}) => Image.asset(
-        'assets/rvn.png',
-        height: height,
-        width: width,
-      );
+  static Widget ravencoinTest({
+    double? height,
+    double? width,
+    bool circled = false,
+  }) =>
+      ColorFiltered(
+          colorFilter: filters.greyscale,
+          child: ravencoin(height: height, width: width, circled: circled));
 }
 
 class svgIcons {

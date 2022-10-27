@@ -113,9 +113,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
             onTap: () => changeChainNet(Tuple2(Chain.ravencoin, Net.main))),
         if (pros.settings.advancedDeveloperMode)
           ListTile(
-              leading: ColorFiltered(
-                  colorFilter: filters.greyscale,
-                  child: icons.evrmore(height: 24, width: 24, circled: true)),
+              leading: icons.evrmoreTest(height: 24, width: 24, circled: true),
               title: Text('Evrmore testnet',
                   style: Theme.of(context)
                       .textTheme
@@ -127,9 +125,8 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               onTap: () => changeChainNet(Tuple2(Chain.evrmore, Net.test))),
         if (pros.settings.developerMode)
           ListTile(
-              leading: ColorFiltered(
-                  colorFilter: filters.greyscale,
-                  child: icons.ravencoin(height: 24, width: 24, circled: true)),
+              leading:
+                  icons.ravencoinTest(height: 24, width: 24, circled: true),
               title: Text('Ravencoin testnet',
                   style: Theme.of(context)
                       .textTheme

@@ -478,11 +478,74 @@ class _HoldingList extends State<HoldingList> {
       //    title: Text('+ Create Asset (not enough RVN)',
       //        style: TextStyle(color: Theme.of(context).disabledColor))));
     }
+
+    /// in this case we're looking at an wallet in the EVR blockchain
+    final claimInvite = [];
+    if (pros.settings.advancedDeveloperMode == true
+
+        /// within the 60 days
+        /// pros.settings.chain == Chain.evrmore
+        /// we have evr in this wallet
+        /// the ever we have is in the same address as the snapshot
+        ) {
+      claimInvite.add(Stack(alignment: Alignment.topCenter, children: [
+        IgnorePointer(
+            child: Container(
+                height: 72,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      AppColors.error.withAlpha(86),
+                      Colors.white.withOpacity(0.0),
+                    ],
+                  ),
+                ))),
+        Container(
+            //color: AppColors.primaries[0],
+            //color: AppColors.error.withAlpha(87),
+            foregroundDecoration: BoxDecoration(
+                border: Border(
+                    //top: BorderSide(color: AppColors.error, width: 1),
+                    bottom: BorderSide(color: AppColors.error, width: 1))),
+            child: ListTile(
+                //dense: true,
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+                onTap: () async => await components.message.giveChoices(
+                      context,
+                      title: 'Claim Your EVR',
+                      content: ('All EVR in the Evrmore fairdrop must be claimed within 60 '
+                          'days of the snapshot (which occured on october 25th 2022).'
+                          ' The claim process consists of merely sending your EVR to '
+                          'a new address. ${pros.settings.developerMode ? 'This can even be done manually with a normal send transaction. ' : ''}'
+                          'Claim your EVR now!'),
+                      behaviors: {
+                        'OK': () => Navigator.of(context).pop(),
+                      },
+                    ),
+                //leading: Container(
+                //    height: 40,
+                //    width: 40,
+                //    child: components.icons.assetAvatar('EVR')),
+                title: Text('Unclaimed EVR',
+                    style: Theme.of(context).textTheme.bodyText1),
+                trailing: ClaimEvr())),
+      ]));
+      //claimInvite.add(Divider(height: 1));
+    }
+
     final listView = ListView(
         controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
         physics: ClampingScrollPhysics(),
         children: <Widget>[
+          ...claimInvite,
           ...rvnHolding,
           ...assetHoldings,
           ...[components.empty.blankNavArea(context)]

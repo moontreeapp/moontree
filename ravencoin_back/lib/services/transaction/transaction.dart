@@ -451,7 +451,7 @@ class TransactionService {
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
-            successMsg: 'Successfully Swept',
+            successMsg: msg ?? 'Successfully Swept',
             note: note,
           ));
           return true;
@@ -470,7 +470,7 @@ class TransactionService {
             currency: true,
             assets: false,
             note: note,
-            msg: 'Successfully Swept',
+            msg: msg ?? 'Successfully Swept',
           );
           return true;
         }
@@ -489,7 +489,7 @@ class TransactionService {
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
-              successMsg: 'Successfully Swept',
+              successMsg: msg ?? 'Successfully Swept',
               note: note,
             ));
           }
@@ -546,7 +546,7 @@ class TransactionService {
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
-              successMsg: msg,
+              successMsg: msg ?? 'Successfully Swept',
               note: note,
             ));
           }
@@ -567,7 +567,7 @@ class TransactionService {
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
-          successMsg: 'Successfully Swept',
+          successMsg: msg ?? 'Successfully Swept',
           note: note,
         ));
         return true;
@@ -613,7 +613,7 @@ class TransactionService {
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
-            successMsg: msg,
+            successMsg: msg ?? 'Successfully Swept',
             note: note,
           ));
         }

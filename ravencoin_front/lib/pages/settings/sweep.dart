@@ -238,7 +238,6 @@ class _SweepPageState extends State<SweepPage> {
         components.navigator.routeContext!,
         then: () => dropDownActive = false,
         items: [
-              //if (pros.settings.developerMode == true)
               ListTile(
                 visualDensity: VisualDensity.compact,
                 onTap: () async {

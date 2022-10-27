@@ -5,6 +5,7 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/alphacon.dart';
+import 'package:ravencoin_front/widgets/assets/assets.dart' as assets;
 //import 'package:ravencoin_front/utils/identicon.dart';
 import 'package:equatable/equatable.dart';
 
@@ -56,6 +57,16 @@ class IconComponents {
     if (asset.toUpperCase() == pros.securities.RVN.symbol) {
       return _assetAvatarRVN(height: height, width: width);
     }
+    if (asset.toUpperCase() == pros.securities.RVNt.symbol) {
+      return assets.icons
+          .ravencoinTest(height: height, width: width, circled: true);
+    }
+    if (asset.toUpperCase() == pros.securities.EVR.symbol) {
+      return assets.icons.evrmore(height: 24, width: 24, circled: true);
+    }
+    if (asset.toUpperCase() == pros.securities.EVRt.symbol) {
+      return assets.icons.evrmoreTest(height: 24, width: 24, circled: true);
+    }
 
     /// example of custom image:
     //if (asset.toUpperCase().startsWith('MOONTREE')) {
@@ -88,6 +99,9 @@ class IconComponents {
         height: height,
         width: width,
       );
+
+  Widget _assetAvatarEVR({double? height, double? width}) =>
+      assets.icons.evrmore(height: 24, width: 24, circled: true);
 
   Widget _assetAvatarMoontree({double? height, double? width}) => Image.asset(
         'assets/logo/moontree.png',
