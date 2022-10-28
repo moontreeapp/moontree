@@ -5,7 +5,9 @@ import 'waiter.dart';
 
 class AppWaiter extends Waiter {
   DateTime lastActiveTime = DateTime.now();
-  int gracePeriod = 60 * 5;
+  int inactiveGracePeriod = 30;
+  int idleGracePeriod = 60 * 5;
+  Timer? _inactiveTimer;
 
   void init({Object? reconnect}) {
     /// logout on minimize
@@ -17,9 +19,22 @@ class AppWaiter extends Waiter {
             services.password.required &&
             streams.app.authenticating.value == false &&
             streams.app.browsing.value == false) {
-          streams.app.logout.add(true);
+          /// you can remove the timer stuff for immediate logout
+          //streams.app.logout.add(true);
+          _inactiveTimer = Timer(
+            Duration(seconds: inactiveGracePeriod),
+            () {
+              if (!streams.app.active.value) {
+                streams.app.logout.add(true);
+                _inactiveTimer?.cancel();
+                _inactiveTimer = null;
+              }
+            },
+          );
         } else if (active) {
           streams.app.browsing.add(false);
+          _inactiveTimer?.cancel();
+          _inactiveTimer = null;
         }
       },
     );
@@ -39,7 +54,7 @@ class AppWaiter extends Waiter {
     while (true) {
       var x = DateTime.now().difference(lastActiveTime).inSeconds;
       await Future.delayed(
-          Duration(seconds: gracePeriod - (gracePeriod > x ? x : 0)));
+          Duration(seconds: idleGracePeriod - (idleGracePeriod > x ? x : 0)));
       if (
           // we have a password
           services.password.required &&
@@ -47,7 +62,7 @@ class AppWaiter extends Waiter {
               !streams.app.logout.value &&
               // have we had no activity while we've been waiting?
               DateTime.now().difference(lastActiveTime).inSeconds >=
-                  gracePeriod) {
+                  idleGracePeriod) {
         streams.app.logout.add(true);
       }
     }
