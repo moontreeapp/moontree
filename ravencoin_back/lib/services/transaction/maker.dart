@@ -1285,6 +1285,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: goal));
     }
+    estimate.setUTXOs(utxosRaven + utxosSecurity);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
@@ -1337,6 +1338,7 @@ class TransactionMaker {
     estimate.setFees(tx.fee(goal: goal));
     estimate.setAmount(estimate.amount - estimate.fees);
     txb = makeTxBuilder(utxos, estimate);
+    estimate.setUTXOs(utxos);
     await txb.signEachInput(utxos);
     tx = txb.build();
     return Tuple2(tx, estimate);
@@ -1412,8 +1414,10 @@ class TransactionMaker {
     estimate.setFees(tx.fee(goal: goal));
     estimate.setAmount(estimate.amount - estimate.fees);
     txb = makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
-    await txb.signEachInput(
-        utxosCurrency + utxosBySecurity.values.expand((e) => e).toList());
+    final spentUtxos =
+        utxosCurrency + utxosBySecurity.values.expand((e) => e).toList();
+    estimate.setUTXOs(spentUtxos);
+    await txb.signEachInput(spentUtxos);
     // gives error: incomplete transaction even though inputs and outputs are there and signed, I think.
     tx = txb.build();
     return Tuple2(tx, estimate);
@@ -1477,6 +1481,7 @@ class TransactionMaker {
     }
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
+    estimate.setUTXOs(utxosRaven + utxosSecurity);
     return Tuple2(tx, estimate);
   }
 
@@ -1516,6 +1521,7 @@ class TransactionMaker {
     var tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: goal));
     estimate.setAmount(estimate.amount - estimate.fees);
+    estimate.setUTXOs(utxosCurrency);
     txb = makeTxBuilder(utxosCurrency, estimate);
     await txb.signEachInput(utxosCurrency);
     tx = txb.build();

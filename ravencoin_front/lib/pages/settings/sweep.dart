@@ -348,6 +348,7 @@ class _SweepPageState extends State<SweepPage> {
           total: null,
           confirm:
               "Are you sure you want to sweep all of this wallet's coins and assets?",
+          playcount: 10,
           buttonAction: () async {
             services.transaction.sweep(
                 from: Current.wallet,

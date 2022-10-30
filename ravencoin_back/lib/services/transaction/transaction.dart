@@ -413,14 +413,17 @@ class TransactionService {
   }
 
   /// sweep all assets and crypto from one wallet to another
-  Future<bool> sweep({
-    required Wallet from,
-    required String toWalletId,
-    required bool currency,
-    required bool assets,
-    String? note,
-    String? msg,
-  }) async {
+  Future<Set<Vout>> sweep(
+      {required Wallet from,
+      required String toWalletId,
+      required bool currency,
+      required bool assets,
+      String? note,
+      String? msg,
+      int limit = 1000,
+      Set<Vout>? usedUTXOs,
+      bool incremental = false}) async {
+    usedUTXOs = usedUTXOs ?? {};
     final destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
       NodeExposure.external,
@@ -431,7 +434,7 @@ class TransactionService {
 
     if (from.unspents.isEmpty || from.RVNValue == 0) {
       // unable to perform any transactions
-      return false;
+      return usedUTXOs;
     }
 
     if (assets &&
@@ -439,9 +442,8 @@ class TransactionService {
         assetBalances.fold(0, (int agg, e) => e.value + agg) > 0) {
       if (currency) {
         // ASSETS && RVN
-        if (from.unspents.length < 1000) {
+        if (from.unspents.length < limit) {
           // we should be able to do it all in one transaction
-          print(assetBalances);
           var txEstimate = await services.transaction.make.transactionSweepAll(
             destinationAddress,
             SendEstimate(from.RVNValue),
@@ -454,32 +456,39 @@ class TransactionService {
             successMsg: msg ?? 'Successfully Swept',
             note: note,
           ));
-          return true;
+          usedUTXOs.addAll(txEstimate.item2.utxos);
+          return usedUTXOs;
         } else {
-          await sweep(
+          usedUTXOs.addAll(await sweep(
             from: from,
             toWalletId: toWalletId,
             currency: false,
             assets: true,
             note: note,
             msg: '',
-          );
-          await sweep(
+            usedUTXOs: usedUTXOs,
+            incremental: true,
+          ));
+          usedUTXOs.addAll(await sweep(
             from: from,
             toWalletId: toWalletId,
             currency: true,
             assets: false,
             note: note,
             msg: msg ?? 'Successfully Swept',
-          );
-          return true;
+            usedUTXOs: usedUTXOs,
+            incremental: true,
+          ));
+          return usedUTXOs;
         }
       } else {
         // JUST ASSETS
         if (from.unspents
-                .where((e) => !pros.securities.contains(e.security))
-                .length <
-            1000) {
+                    .where((e) => !pros.securities.contains(e.security))
+                    .length <
+                limit &&
+            usedUTXOs.isEmpty &&
+            !incremental) {
           for (var balance in assetBalances) {
             var txEstimate = await services.transaction.make.transaction(
               destinationAddress,
@@ -492,22 +501,25 @@ class TransactionService {
               successMsg: msg ?? 'Successfully Swept',
               note: note,
             ));
+            usedUTXOs.addAll(txEstimate.item2.utxos);
           }
-          return true;
+          return usedUTXOs;
         } else {
           // get all utxos
           var assetUtxosBySecurity = <Security, List<Vout>>{};
           final securities = assetBalances.map((e) => e.security).toSet();
           for (var security in securities) {
             assetUtxosBySecurity[security] =
-                await services.balance.collectUTXOs(
+                (await services.balance.collectUTXOs(
               walletId: from.id,
               amount:
                   pros.balances.primaryIndex.getOne(from.id, security)!.value,
               security: security,
-            );
+            ))
+                    .where((e) => !usedUTXOs!.contains(e))
+                    .toList();
           }
-          // batch by 1000 and make transaction
+          // batch by limit and make transaction
           var utxosBySecurity = <Security, List<Vout>>{};
           for (var key in assetUtxosBySecurity.keys) {
             utxosBySecurity[key] = [];
@@ -515,7 +527,7 @@ class TransactionService {
             for (var value in assetUtxosBySecurity[key]!) {
               utxosBySecurity[key]!.add(value);
               i++;
-              if (i == 1000) {
+              if (i == limit) {
                 var txEstimate = await services.transaction.make
                     .transactionSweepAssetIncrementally(
                   destinationAddress,
@@ -529,6 +541,8 @@ class TransactionService {
                   successMsg: '',
                   note: note,
                 ));
+                usedUTXOs.addAll(txEstimate.item2.utxos);
+                await Future.delayed(Duration(seconds: 10));
                 utxosBySecurity = <Security, List<Vout>>{};
                 utxosBySecurity[key] = [];
                 i = 0;
@@ -549,16 +563,20 @@ class TransactionService {
               successMsg: msg ?? 'Successfully Swept',
               note: note,
             ));
+            usedUTXOs.addAll(txEstimate.item2.utxos);
+            await Future.delayed(Duration(seconds: 10));
           }
-          return true;
+          return usedUTXOs;
         }
       }
     } else {
       // JUST RVN
       if (from.unspents
-              .where((e) => !pros.securities.contains(e.security))
-              .length <
-          1000) {
+                  .where((e) => !pros.securities.contains(e.security))
+                  .length <
+              limit &&
+          usedUTXOs.isEmpty &&
+          !incremental) {
         var txEstimate = await services.transaction.make.transactionSendAllRVN(
           destinationAddress,
           SendEstimate(from.RVNValue),
@@ -570,12 +588,16 @@ class TransactionService {
           successMsg: msg ?? 'Successfully Swept',
           note: note,
         ));
-        return true;
+        await Future.delayed(Duration(seconds: 10));
+        usedUTXOs.addAll(txEstimate.item2.utxos);
+        return usedUTXOs;
       } else {
         // get all utxos
-        var cryptoUtxos = await services.balance.collectUTXOs(
-            walletId: from.id, amount: from.RVNValue, security: null);
-        // batch by 1000 and make transaction
+        var cryptoUtxos = (await services.balance.collectUTXOs(
+                walletId: from.id, amount: from.RVNValue, security: null))
+            .where((e) => !usedUTXOs!.contains(e))
+            .toList();
+        // batch by limit and make transaction
         var utxos = <Vout>[];
         var i = 0;
         var total = 0;
@@ -583,7 +605,7 @@ class TransactionService {
           total = total + utxo.rvnValue;
           utxos.add(utxo);
           i++;
-          if (i == 1000) {
+          if (i == limit) {
             var txEstimate = await services.transaction.make
                 .transactionSendAllRVNIncrementally(
               destinationAddress,
@@ -597,6 +619,8 @@ class TransactionService {
               successMsg: '',
               note: note,
             ));
+            await Future.delayed(Duration(seconds: 10));
+            usedUTXOs.addAll(txEstimate.item2.utxos);
             utxos = <Vout>[];
             i = 0;
             total = 0;
@@ -616,8 +640,9 @@ class TransactionService {
             successMsg: msg ?? 'Successfully Swept',
             note: note,
           ));
+          usedUTXOs.addAll(txEstimate.item2.utxos);
         }
-        return true;
+        return usedUTXOs;
       }
     }
   }

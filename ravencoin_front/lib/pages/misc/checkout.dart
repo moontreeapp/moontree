@@ -29,6 +29,7 @@ class CheckoutStruct {
   final String? buttonWord;
   final Widget? button;
   final String loadingMessage;
+  final int? playcount;
   static const Iterable<Iterable<String>> exampleItems = [
     ['Short Text', 'aligned right'],
     ['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
@@ -64,6 +65,7 @@ class CheckoutStruct {
     this.loadingMessage = 'Sending Transaction',
     this.confirm,
     this.button,
+    this.playcount = 2,
   });
 }
 
@@ -364,7 +366,7 @@ class _CheckoutState extends State<Checkout> {
             if (DateTime.now().difference(startTime).inMilliseconds > 500) {
               components.loading.screen(
                   message: struct.loadingMessage,
-                  playCount: 2,
+                  playCount: struct.playcount ?? 2,
                   then: struct.buttonAction);
               streams.spend.form.add(null);
             }
