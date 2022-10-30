@@ -8,6 +8,7 @@ enum ConsentDocument {
 
 class Consent {
   static const String moontreeUrl = 'https://api.moontree.com';
+  static const String textUrl = 'https://moontree.com';
 
   final Client client;
 
@@ -21,9 +22,8 @@ class Consent {
       await client.hasGiven.consent(deviceId, consentDocument.name);
 }
 
-String documentEndpoint(ConsentDocument consentDocument) {
-  return '${Consent.moontreeUrl}/${consentDocument.name}.html';
-}
+String documentEndpoint(ConsentDocument consentDocument) =>
+    '${Consent.textUrl}/${consentDocument.name}.html';
 
 Future<bool> discoverConsent(String deviceId) async {
   final consent = Consent();

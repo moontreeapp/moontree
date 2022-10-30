@@ -122,11 +122,7 @@ class _NavMenuState extends State<NavMenu> {
                   );
                 }
               }),
-          if (pros.settings.developerMode && Current.balanceRVN.value > 0
-
-          //// should be able to handle this edgecase now, untested
-          //&& Current.wallet.unspents.length < 1000
-          )
+          if (pros.settings.developerMode && Current.balanceRVN.value > 0)
             destination(
               icon: MdiIcons.broom,
               name: 'Sweep',
@@ -187,11 +183,11 @@ class _NavMenuState extends State<NavMenu> {
               link: '/settings/advanced',
             ),
           if (pros.settings.developerMode == true)
-          destination(
-            icon: MdiIcons.devTo,
-            name: 'Developer',
-            link: '/settings/developer',
-          ),
+            destination(
+              icon: MdiIcons.devTo,
+              name: 'Developer',
+              link: '/settings/developer',
+            ),
         ],
       ),
       '/settings': ListView(
