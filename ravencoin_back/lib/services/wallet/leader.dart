@@ -86,7 +86,10 @@ class LeaderWalletService {
 
   Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async {
     return SeedWallet(
-        await wallet.seed, pros.settings.chain, pros.settings.net);
+      await wallet.seed,
+      pros.settings.chain,
+      pros.settings.net,
+    );
   }
 
   Future<HDWallet> getSubWallet(

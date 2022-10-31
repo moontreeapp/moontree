@@ -51,18 +51,19 @@ String chainNetReadable(Chain chain, Net net) =>
     '${chainReadable(chain)}, ${netReadable(net)}';
 
 NetworkType networkOf(Chain chain, Net net) {
-  switch ([chain, net]) {
-    case [Chain.ravencoin, Net.main]:
-      return mainnet;
-    case [Chain.ravencoin, Net.test]:
-      return testnet;
-    case [Chain.evrmore, Net.main]:
-      return evrmoreMainnet;
-    case [Chain.evrmore, Net.test]:
-      return evrmoreTestnet;
-    default:
-      return mainnet;
+  if (chain == Chain.ravencoin && net == Net.main) {
+    return mainnet;
   }
+  if (chain == Chain.ravencoin && net == Net.test) {
+    return testnet;
+  }
+  if (chain == Chain.evrmore && net == Net.main) {
+    return evrmoreMainnet;
+  }
+  if (chain == Chain.evrmore && net == Net.test) {
+    return evrmoreTestnet;
+  }
+  return mainnet;
 }
 
 /// port map
@@ -71,16 +72,17 @@ NetworkType networkOf(Chain chain, Net net) {
 ///50011 - testnet tcp
 ///50012 - testnet ssl
 int portOf(Chain chain, Net net) {
-  switch ([chain, net]) {
-    case [Chain.ravencoin, Net.main]:
-      return 50002;
-    case [Chain.ravencoin, Net.test]:
-      return 50012;
-    case [Chain.evrmore, Net.main]:
-      return 8820;
-    case [Chain.evrmore, Net.test]:
-      return 18820;
-    default:
-      return 50002;
+  if (chain == Chain.ravencoin && net == Net.main) {
+    return 50002;
   }
+  if (chain == Chain.ravencoin && net == Net.test) {
+    return 50012;
+  }
+  if (chain == Chain.evrmore && net == Net.main) {
+    return 8820;
+  }
+  if (chain == Chain.evrmore && net == Net.test) {
+    return 18820;
+  }
+  return 50002;
 }

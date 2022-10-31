@@ -125,11 +125,8 @@ class ClientService {
         Setting(name: SettingName.electrum_port, value: port),
       ]);
 
-  Future switchNetworks(Chain? chain, {required Net net}) async {
-    await pros.settings.setBlockchain(
-      chain: chain ?? Chain.ravencoin,
-      net: net,
-    );
+  Future switchNetworks({required Chain chain, required Net net}) async {
+    await pros.settings.setBlockchain(chain: chain, net: net);
     await resetMemoryAndConnection();
   }
 
@@ -160,6 +157,8 @@ class ClientService {
     /// make a new client to connect to the new network
     await services.client.createClient();
 
+    print(pros.settings.net);
+
     /// start derivation process
     if (!keepAddresses) {
       final currentWallet = services.wallet.currentWallet;
@@ -178,7 +177,7 @@ class ClientService {
     }
 
     // subscribe
-    await waiters.block.subscribe();
+    //await waiters.block.subscribe();
     //await services.client.subscribe.toAllAddresses();
 
     /// update the UI

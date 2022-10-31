@@ -9,15 +9,17 @@ Future<void> eraseTransactionData({
   bool quick = false,
   bool keepBalances = false,
 }) async {
-  //await pros.blocks.removeAll(pros.blocks.records);
+  await pros.blocks.removeAll(pros.blocks.records);
   if (quick) {
     await pros.vouts.delete();
     await pros.vins.delete();
     await pros.transactions.delete();
+    //await pros.blocks.delete();
   } else {
     await pros.vouts.clear();
     await pros.vins.clear();
     await pros.transactions.clear();
+    //await pros.blocks.clear();
   }
 }
 

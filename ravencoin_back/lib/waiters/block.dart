@@ -25,8 +25,10 @@ class BlockWaiter extends Waiter {
     await listen(
       'ravenClient.subscribeHeaders',
       await services.client.api.subscribeHeaders(),
-      (BlockHeader blockHeader) async =>
-          await pros.blocks.save(Block.fromBlockHeader(blockHeader)),
+      (BlockHeader blockHeader) async {
+        print(Block.fromBlockHeader(blockHeader));
+        await pros.blocks.save(Block.fromBlockHeader(blockHeader));
+      },
       autoDeinit: true,
     );
 

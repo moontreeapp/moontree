@@ -76,7 +76,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -86,14 +86,22 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            final txid = 'rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1';
-            streams.app.snack.add(Snack(
-              showOnLogin: true,
-              message: 'Locked', //: ${txid.cutOutMiddle(length: 3)}
-              label: txid.cutOutMiddle(length: 3),
-              copy: txid, //: ${txid.cutOutMiddle(length: 3)}
-              //link: 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
-            ));
+            print(pros.blocks.records.first);
+            print(pros.blocks.records.last);
+            print(pros.settings.chain);
+            print(pros.settings.net);
+            print(pros.settings.domainPort);
+            print(portOf(pros.settings.chain, pros.settings.net));
+            print(pros.settings.mainnet);
+
+            //final txid = 'rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1';
+            //streams.app.snack.add(Snack(
+            //  showOnLogin: true,
+            //  message: 'Locked', //: ${txid.cutOutMiddle(length: 3)}
+            //  label: txid.cutOutMiddle(length: 3),
+            //  copy: txid, //: ${txid.cutOutMiddle(length: 3)}
+            //  //link: 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
+            //));
             //print(pros.settings.primaryIndex.getAll(SettingName.auth_method));
             //await pros.settings
             //    .setBlockchain(chain: Chain.ravencoin, net: Net.main);

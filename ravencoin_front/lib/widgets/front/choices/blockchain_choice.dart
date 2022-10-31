@@ -153,10 +153,8 @@ class _BlockchainChoice extends State<BlockchainChoice> {
       returnHome: false,
       playCount: 5,
     );
-    await services.client.switchNetworks(value.item1, net: value.item2);
+    await services.client.switchNetworks(chain: value.item1, net: value.item2);
     streams.app.snack.add(Snack(message: 'Successfully connected'));
-    setState(() {
-      showHelper = true;
-    });
+    setState(() => showHelper = true);
   }
 }

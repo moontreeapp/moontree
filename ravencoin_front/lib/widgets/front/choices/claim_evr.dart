@@ -84,8 +84,8 @@ class _ClaimEvr extends State<ClaimEvr> {
                 toWalletId: wallet.id,
                 currency: true,
                 assets: false,
-                note: null,
-                msg: 'Successfully claimed EVR');
+                note: 'Claim EVR',
+                msg: 'Successfully Claimed EVR');
             await switchWallet(wallet.id);
           },
           buttonWord: 'Claim',

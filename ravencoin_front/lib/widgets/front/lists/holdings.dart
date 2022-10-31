@@ -481,13 +481,18 @@ class _HoldingList extends State<HoldingList> {
 
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = [];
-    if (pros.settings.advancedDeveloperMode == true
+    if (pros.settings.advancedDeveloperMode == true &&
+        pros.settings.chain == Chain.evrmore &&
 
-        /// within the 60 days
-        /// pros.settings.chain == Chain.evrmore
+        /// within the 60 days (chain.block <= x)
+        pros.blocks.records.first.height <= 60 * 24 * 60 &&
+
         /// we have evr in this wallet
-        /// the ever we have is in the same address as the snapshot
-        ) {
+        /// the evr we have is from the genesis block... not exactly the same as
+        /// checking if the evr is in the same address as the snapshot, but I
+        /// think it's actually just as valid. (moving evr even back to the same
+        /// address is a valid claim?)
+        pros.unspents.records.where((u) => u.height == 0).length > 0) {
       claimInvite.add(Stack(alignment: Alignment.topCenter, children: [
         IgnorePointer(
             child: Container(
