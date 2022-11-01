@@ -66,59 +66,16 @@ class _HoldingList extends State<HoldingList> {
       var count = getCount();
       if (count > holdingCount) {
         holdingCount = count;
-        //print('triggered by holdingCount');
-        //setState(() {});
       }
     }));
-    //listeners.add(pros.balances.batchedChanges
-    //    .listen((List<Change<Balance>> changes) async {
-    //  var interimBalances = Current.wallet.balances.toSet();
-    //  print('triggered by balances');
-    //  if (balances != interimBalances) {
-    //    print('triggered by balances');
-    //    //if (services.wallet.leader.newLeaderProcessRunning ||
-    //    //    await services.download.unspents.isDone) {
-    //    setState(() {
-    //      balances = interimBalances;
-    //    });
-    //    //} else {
-    //    //  balances = interimBalances;
-    //    //}
-    //  }
-    //}));
-    //listeners.add(pros.addresses.batchedChanges
-    //    .listen((List<Change<Address>> changes) async {
-    //  var interimAddresses = Current.wallet.addresses.toSet();
-    //  if (addresses != interimAddresses) {
-    //    print('triggered by addresses');
-    //    setState(() {
-    //      addresses = interimAddresses;
-    //    });
-    //  }
-    //}));
 
     /// when the app becomes active again refresh the front end
     listeners.add(streams.app.active.listen((bool active) async {
       if (active) {
         print('triggered by activity');
-        //if (services.wallet.leader.newLeaderProcessRunning ||
-        //    await services.download.unspents.isDone) {
         setState(() {});
-        //}
       }
     }));
-
-    //listeners.add(streams.client.connected.listen((value) async {
-    //  if (value == ConnectionStatus.connecting) {
-    //    // I do this here because we must ensure that the unspents
-    //    // data is cleared before doing the _waitingForUnspents check
-    //    await services.download.unspents.clearData();
-    //    setState(() {
-    //      _waitingForUnspents = true;
-    //      _freezeHoldings = true;
-    //    });
-    //  }
-    //}));
   }
 
   @override
@@ -222,23 +179,6 @@ class _HoldingList extends State<HoldingList> {
     }
 
     if (overrideGettingStarted && balances.isEmpty) {
-      //components.message.giveChoices(
-      //  context,
-      //  title: 'New Feature!',
-      //  content:
-      //      "You can login with native authentication now!\n\nJust go to Settings -> Security to change the way you login.\n\nIt's best to make a backup first.",
-      //  behaviors: {
-      //    'Cancel': Navigator.of(context).pop,
-      //    'Make a Backup': () {
-      //      Navigator.of(context).pop();
-      //      Navigator.of(context).pushNamed('/security/backup');
-      //    },
-      //    'Change Login': () {
-      //      Navigator.of(context).pop();
-      //      Navigator.of(context).pushNamed('/security/method/change');
-      //    },
-      //  },
-      //);
       return components.empty.getAssetsPlaceholder(context,
           scrollController: widget.scrollController,
           count: max(holdingCount, 1),
@@ -268,8 +208,8 @@ class _HoldingList extends State<HoldingList> {
               'This wallet has never been used before.\nClick "Receive" to get started.',
           placeholderType: PlaceholderType.wallet);
     } else if (balances.isEmpty && transactions.isNotEmpty && !busy) {
-      ///// if they have removed all assets and rvn from wallet, for each asset we've
-      ///// ever held, create empty Balance, and empty AssetHolding.
+      ///// if they have removed all assets and rvn from wallet, for each asset
+      ///// we've ever held, create empty Balance, and empty AssetHolding.
       //if (!services.wallet.leader.newLeaderProcessRunning &&
       //    addresses.isNotEmpty &&
       //    balances.isEmpty &&
@@ -317,28 +257,6 @@ class _HoldingList extends State<HoldingList> {
     } else {
       return _holdingsView(context);
     }
-
-    //balances.isEmpty && streams.import.result.value != null
-    //    ? components.empty.getAssetsPlaceholder(context,
-    //        scrollController: widget.scrollController,
-    //        count: max(holdingCount, 1),
-    //        holding: true)
-    //    : balances.isEmpty && transactions.isEmpty
-    //        ? () {
-    //            return ComingSoonPlaceholder(
-    //                scrollController: widget.scrollController,
-    //                header: 'Get Started',
-    //                message:
-    //                    'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
-    //                placeholderType: PlaceholderType.wallet);
-    //          }()
-    //        : () {
-    //            return _holdingsView(context);
-    //          }();
-
-    //RefreshIndicator( child:...
-    //  onRefresh: () => refresh(),
-    //);
   }
 
   void navigate(Balance balance, {Wallet? wallet}) {
@@ -426,23 +344,6 @@ class _HoldingList extends State<HoldingList> {
           indent: 70,
           endIndent: 0,
         ));
-
-        /// create asset should allow you to create an asset using a speicific address...
-        // hide create asset button - not beta
-        //if (holding.value < 600) {
-        //  rvnHolding.add(ListTile(
-        //      onTap: () {},
-        //      title: Text('+ Create Asset (not enough RVN)',
-        //          style: TextStyle(color: Theme.of(context).disabledColor))));
-        //} else {
-        //  rvnHolding.add(ListTile(
-        //      onTap: () {},
-        //      title: TextButton.icon(
-        //          onPressed: () => Navigator.pushNamed(context, '/transaction/create',
-        //            arguments: {'walletId': wallet?.walletId ?? null}),
-        //          icon: Icon(Icons.add),
-        //          label: Text('Create Asset'))));
-        //}
       } else {
         if (searchController.text == '' ||
             holding.symbol.contains(searchController.text.toUpperCase())) {
@@ -455,26 +356,9 @@ class _HoldingList extends State<HoldingList> {
     /// this case is when we haven't started downloading anything yet.
     if (rvnHolding.isEmpty && assetHoldings.isEmpty) {
       rvnHolding.add(Shimmer.fromColors(
-              baseColor: AppColors.primaries[0],
-              highlightColor: Colors.white,
-              child: components.empty.holdingPlaceholder(context))
-          //    ListTile(
-          //  //dense: true,
-          //  contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          //  onTap: () {},
-          //  leading: Container(
-          //      height: 40,
-          //      width: 40,
-          //      child: components.icons.assetAvatar(pros.securities.RVN.symbol)),
-          //  title: Text(pros.securities.RVN.symbol,
-          //      style: Theme.of(context).textTheme.bodyText1),
-          //)
-          );
-      //rvnHolding.add(Divider(height: 1));
-      //rvnHolding.add(ListTile(
-      //    onTap: () {},
-      //    title: Text('+ Create Asset (not enough RVN)',
-      //        style: TextStyle(color: Theme.of(context).disabledColor))));
+          baseColor: AppColors.primaries[0],
+          highlightColor: Colors.white,
+          child: components.empty.holdingPlaceholder(context)));
     }
 
     /// in this case we're looking at an wallet in the EVR blockchain
@@ -695,14 +579,6 @@ class _HoldingList extends State<HoldingList> {
                             : holding.last,
                     style: Theme.of(context).textTheme.bodyText1),
               )),
-
-          /* //this feature can show the path
-          if (holding.symbol != holding.last && showPath)
-            holding.last.length >= 20
-                ? Text('  (...)', style: Theme.of(context).textTheme.caption)
-                : Text('   (' + holding.notLast + ')',
-                    style: Theme.of(context).textTheme.caption),
-                    */
         ]),
         Text(
           holding.mainLength > 1 && holding.restricted != null
