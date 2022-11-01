@@ -164,12 +164,11 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Addresses',
               link: '/addresses',
             ),
-          if (pros.settings.developerMode)
-            destination(
-              icon: MdiIcons.pickaxe,
-              name: 'Mining',
-              link: '/settings/network/mining',
-            ),
+          destination(
+            icon: MdiIcons.pickaxe,
+            name: 'Mining',
+            link: '/settings/network/mining',
+          ),
           if (pros.settings.advancedDeveloperMode)
             destination(
               icon: MdiIcons.database,
@@ -182,12 +181,11 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Advanced',
               link: '/settings/advanced',
             ),
-          if (pros.settings.developerMode == true)
-            destination(
-              icon: MdiIcons.devTo,
-              name: 'Developer',
-              link: '/settings/developer',
-            ),
+          destination(
+            icon: MdiIcons.devTo,
+            name: 'Developer',
+            link: '/settings/developer',
+          ),
         ],
       ),
       '/settings': ListView(

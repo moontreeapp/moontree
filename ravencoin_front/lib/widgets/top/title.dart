@@ -273,7 +273,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             components.navigator.routeContext!,
             then: () => dropDownActive = false,
             items: [
-                  if (pros.settings.advancedDeveloperMode == true)
+                  if (pros.settings.developerMode == true)
                     ListTile(
                       visualDensity: VisualDensity.compact,
                       onTap: () async {
@@ -316,7 +316,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                         title: Text(wallet.name,
                             style: Theme.of(context).textTheme.bodyText1),
                         // awaiting design..........
-                        trailing: !pros.settings.advancedDeveloperMode
+                        trailing: !pros.settings.developerMode
                             ? null
                             : Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -339,6 +339,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                               padding: EdgeInsets.only(
                                                   top: 16, bottom: 16),
                                               child: TextFieldFormatted(
+                                                maxLengthEnforced: true,
+                                                maxLength: 10,
                                                 controller: changeName,
                                               )),
                                           behaviors: {
@@ -364,7 +366,6 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                   ));
                                                 }
                                               }
-
                                               Navigator.pop(components
                                                   .navigator.routeContext!);
                                               Navigator.pop(components
