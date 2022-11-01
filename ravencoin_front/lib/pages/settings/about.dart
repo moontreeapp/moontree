@@ -7,7 +7,16 @@ import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class About extends StatelessWidget {
+class About extends StatefulWidget {
+  @override
+  _AboutState createState() => _AboutState();
+}
+
+class _AboutState extends State<About> {
+  bool up = false;
+  bool down = false;
+  bool clicked = false;
+
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
@@ -24,11 +33,17 @@ class About extends StatelessWidget {
                 children: <Widget>[
                   GestureDetector(
                       onVerticalDragEnd: (DragEndDetails x) async {
-                        if (x.velocity.pixelsPerSecond.dy < -3000) {
-                          Navigator.of(context)
-                              .pushReplacementNamed('/settings/advanced');
+                        if (x.velocity.pixelsPerSecond.dy < -500) {
+                          up = true;
+                        }
+                        if (x.velocity.pixelsPerSecond.dy > 500) {
+                          down = true;
                         }
                       },
+                      onDoubleTap: () => (up && down) || clicked
+                          ? Navigator.of(context)
+                              .pushReplacementNamed('/settings/advanced')
+                          : clicked = true,
                       child: Image.asset(
                         'assets/logo/moontree_logo.png',
                         height: 128.figma(context),
