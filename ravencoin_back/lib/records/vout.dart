@@ -121,5 +121,6 @@ class Vout with EquatableMixin, ToStringMixin {
 
   String get securityId => assetSecurityId ?? pros.securities.RVN.id;
 
-  bool get isAsset => securityId != pros.securities.RVN.id;
+  bool get isAsset =>
+      !pros.securities.cryptos.map((e) => e.id).contains(securityId);
 }
