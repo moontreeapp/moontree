@@ -86,6 +86,20 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
+            //      height:
+            //      0
+            //      scripthash:
+            //      "e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566"
+            //      symbol:
+            //      null
+            //      txHash:
+            //      "c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262"
+            //      txPos:
+            //      664
+            //      value:
+            //      64678656394845
+            //      hashCode:
+            //      977627678
             print(pros.unspents.records);
             print(pros.addresses.byScripthash.getOne(
                 'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));
