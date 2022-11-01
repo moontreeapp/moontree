@@ -45,20 +45,25 @@ class _ClaimEvr extends State<ClaimEvr> {
       mainAxisSize: MainAxisSize.min,
       children: [submitButton]);
 
-  Widget get submitButton => components.buttons.actionButtonInner(
-        context,
-        focusNode: submitFocus,
-        enabled: !clicked,
-        label: 'Claim Now',
-        onPressed: () async {
-          if (!clicked) {
-            setState(() => clicked = true);
-            final walletId = await generateWallet();
-            wallet = pros.wallets.primaryIndex.getOne(walletId)!;
-            confirmSend();
-          }
-        },
-      );
+  Widget get submitButton => TextButton(
+      onPressed: () async {
+        if (!clicked) {
+          setState(() => clicked = true);
+          await components.loading.screen(
+              context: context,
+              message: 'Generating Transaction...',
+              returnHome: false,
+              playCount: 1);
+          final walletId = await generateWallet();
+          wallet = pros.wallets.primaryIndex.getOne(walletId)!;
+          confirmSend();
+        }
+      },
+      child: Text('Claim',
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1!
+              .copyWith(color: AppColors.primary)));
 
   void confirmSend() {
     Navigator.of(components.navigator.routeContext!).pushNamed(
@@ -73,7 +78,11 @@ class _ClaimEvr extends State<ClaimEvr> {
           paymentSymbol: null,
           items: [
             ['To', wallet.name],
-            ['Amount', 'All EVR'],
+            [
+              'Amount',
+              components.text.securityAsReadable(Current.balanceCurrency.value,
+                  security: Current.balanceCurrency.security, asUSD: false)
+            ],
           ],
           fees: null,
           total: null,
