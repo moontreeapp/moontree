@@ -80,8 +80,8 @@ class _HomePageState extends State<HomePage>
                     child: Container(
                         child: NavBar(
                       appContext: widget.appContext,
-                      placeholderManage: true,
-                      placeholderSwap: true,
+                      placeholderManage: !pros.settings.advancedDeveloperMode,
+                      placeholderSwap: !pros.settings.advancedDeveloperMode,
                     )));
               }),
         ],
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage>
         child: widget.appContext == AppContext.wallet
             ? HoldingList(scrollController: _scrollController)
             : widget.appContext == AppContext.manage
-                ? true
+                ? !pros.settings.advancedDeveloperMode
                     ? ComingSoonPlaceholder(
                         scrollController: _scrollController,
                         message: 'Create & Manage Assets',

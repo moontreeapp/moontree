@@ -281,10 +281,13 @@ class IconComponents {
                     imageDetails.foreground[1],
                     imageDetails.foreground[2],
                   ))),
-          child: Text(
-              (asset?.split(RegExp(r'[/#$~]')).last ?? '☾')
-                  .substring(0, 1)
-                  .toUpperCase(),
+          child: Text(() {
+            final x = (asset?.split(RegExp(r'[/#$~]')).last ?? '☾');
+            if (x == '') {
+              return '☾';
+            }
+            return x.substring(0, 1).toUpperCase();
+          }(),
               style: Theme.of(components.navigator.routeContext!)
                   .textTheme
                   .headline1!

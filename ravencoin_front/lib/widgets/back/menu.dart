@@ -203,6 +203,12 @@ class _NavMenuState extends State<NavMenu> {
                 icon: MdiIcons.shieldKey,
                 name: 'Import',
                 link: '/settings/import'),
+          if (!pros.settings.developerMode && Current.balanceRVN.value > 0)
+            destination(
+              icon: MdiIcons.broom,
+              name: 'Sweep',
+              link: '/settings/sweep',
+            ),
           if (pros.settings.developerMode)
             destination(
               icon: MdiIcons.shieldKey,

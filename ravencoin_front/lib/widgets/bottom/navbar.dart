@@ -184,9 +184,7 @@ class _NavBarState extends State<NavBar> {
                     context,
                     label: 'create',
                     enabled: !widget.placeholderManage,
-                    onPressed: () {
-                      _produceCreateModal(context);
-                    },
+                    onPressed: () => _produceCreateModal(context),
                   )
                 ]
               : <Widget>[
@@ -194,17 +192,13 @@ class _NavBarState extends State<NavBar> {
                     context,
                     label: 'buy',
                     enabled: !widget.placeholderSwap,
-                    onPressed: () {
-                      _produceCreateModal(context);
-                    },
+                    onPressed: () => _produceCreateModal(context),
                   ),
                   components.buttons.actionButton(
                     context,
                     label: 'sell',
                     enabled: !widget.placeholderSwap,
-                    onPressed: () {
-                      _produceCreateModal(context);
-                    },
+                    onPressed: () => _produceCreateModal(context),
                   )
                 ]);
 

@@ -23,6 +23,7 @@ class _AssetList extends State<AssetList> {
   @override
   void initState() {
     super.initState();
+    assetCount = pros.assets.length;
     listeners.add(pros.assets.changes.listen((Change<Asset> change) {
       // if vouts in our account has changed...
       var count = pros.assets.length;
@@ -73,10 +74,17 @@ class _AssetList extends State<AssetList> {
 
   @override
   Widget build(BuildContext context) {
-    assets = filterToAdminAssets(utils.assetHoldings(Current.holdings));
+    assets =
+        filterToAdminAssets(utils.assetHoldings(Current.holdings)).toList();
     return assets.isEmpty && pros.vouts.records.isEmpty // <-- on front tab...
-        ? components.empty.getAssetsPlaceholder(context,
-            scrollController: widget.scrollController, count: assetCount)
+        ? ComingSoonPlaceholder(
+            scrollController: widget.scrollController,
+            header: 'Nothing to Manage',
+            message:
+                'You have no admin assets.\nYou can create one by tapping Create button below.',
+            placeholderType: PlaceholderType.asset)
+        //? components.empty.getAssetsPlaceholder(context,
+        //    scrollController: widget.scrollController, count: assetCount)
         //Container(
         //  alignment: Alignment.center,
         //  child: Scroller(
@@ -85,15 +93,21 @@ class _AssetList extends State<AssetList> {
         //          'This is where assets you can manage will show up...')),
         //) //components.empty.assets(context)
         : assets.isEmpty
-            ? components.empty.getAssetsPlaceholder(context,
-                scrollController: widget.scrollController, count: assetCount)
-            //Container(
+            ? ComingSoonPlaceholder(
+                scrollController: widget.scrollController,
+                header: 'Nothing to Manage',
+                message:
+                    'You have no admin assets.\nYou can create one by tapping Create button below.',
+                placeholderType: PlaceholderType.asset)
+            //? components.empty.getAssetsPlaceholder(context,
+            //    scrollController: widget.scrollController, count: assetCount)
+            //? Container(
             //    alignment: Alignment.center,
             //    child: Scroller(
-            //        controller: widget.scrollController,
+            //        controller: widget.scrollController!,
             //        child:
             //            Text('No Assets to manage. You could create one...')),
-            //  ) //components.empty.assets(context)
+            //  ) components.empty.assets(context)
             : Container(
                 color: Colors.transparent,
                 alignment: Alignment.center,
