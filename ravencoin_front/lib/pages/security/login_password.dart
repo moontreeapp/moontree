@@ -352,7 +352,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       }
       login(password.text,
           refresh: (services.version.snapshot?.currentBuild ?? 0) <=
-                  (Platform.isIOS ? 18 : 4) &&
+                  (Platform.isIOS ? 20 : 4) &&
               (services.version.snapshot?.buildUpdated ?? false));
     } else {
       setState(() {
