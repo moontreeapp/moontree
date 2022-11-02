@@ -418,6 +418,7 @@ class TransactionService {
       required String toWalletId,
       required bool currency,
       required bool assets,
+      String? memo,
       String? note,
       String? msg,
       int limit = 1000,
@@ -446,7 +447,7 @@ class TransactionService {
           // we should be able to do it all in one transaction
           var txEstimate = await services.transaction.make.transactionSweepAll(
             destinationAddress,
-            SendEstimate(from.RVNValue),
+            SendEstimate(from.RVNValue, memo: memo),
             wallet: from,
             securities: assetBalances.map((e) => e.security).toSet(),
             goal: ravencoin.TxGoals.standard,
@@ -464,6 +465,7 @@ class TransactionService {
             toWalletId: toWalletId,
             currency: false,
             assets: true,
+            memo: memo,
             note: note,
             msg: '',
             usedUTXOs: usedUTXOs,
@@ -474,6 +476,7 @@ class TransactionService {
             toWalletId: toWalletId,
             currency: true,
             assets: false,
+            memo: memo,
             note: note,
             msg: msg ?? 'Successfully Swept',
             usedUTXOs: usedUTXOs,
@@ -492,7 +495,8 @@ class TransactionService {
           for (var balance in assetBalances) {
             var txEstimate = await services.transaction.make.transaction(
               destinationAddress,
-              SendEstimate(balance.value, security: balance.security),
+              SendEstimate(balance.value,
+                  security: balance.security, memo: memo),
               wallet: from,
               goal: ravencoin.TxGoals.standard,
             );
@@ -531,7 +535,8 @@ class TransactionService {
                 var txEstimate = await services.transaction.make
                     .transactionSweepAssetIncrementally(
                   destinationAddress,
-                  SendEstimate(0, security: null), // essentially ignored
+                  SendEstimate(0,
+                      security: null, memo: memo), // essentially ignored
                   utxosBySecurity: utxosBySecurity,
                   wallet: from,
                   goal: ravencoin.TxGoals.standard,
@@ -553,7 +558,8 @@ class TransactionService {
             var txEstimate = await services.transaction.make
                 .transactionSweepAssetIncrementally(
               destinationAddress,
-              SendEstimate(0, security: null), // essentially ignored
+              SendEstimate(0,
+                  security: null, memo: memo), // essentially ignored
               utxosBySecurity: utxosBySecurity,
               wallet: from,
               goal: ravencoin.TxGoals.standard,
@@ -579,7 +585,7 @@ class TransactionService {
           !incremental) {
         var txEstimate = await services.transaction.make.transactionSendAllRVN(
           destinationAddress,
-          SendEstimate(from.RVNValue),
+          SendEstimate(from.RVNValue, memo: memo),
           wallet: from,
           goal: ravencoin.TxGoals.standard,
         );
@@ -609,7 +615,7 @@ class TransactionService {
             var txEstimate = await services.transaction.make
                 .transactionSendAllRVNIncrementally(
               destinationAddress,
-              SendEstimate(total, security: null),
+              SendEstimate(total, security: null, memo: memo),
               utxosCurrency: utxos,
               wallet: from,
               goal: ravencoin.TxGoals.standard,
@@ -630,7 +636,8 @@ class TransactionService {
           var txEstimate = await services.transaction.make
               .transactionSendAllRVNIncrementally(
             destinationAddress,
-            SendEstimate(total, security: null), // essentially ignored
+            SendEstimate(total,
+                security: null, memo: memo), // essentially ignored
             utxosCurrency: utxos,
             wallet: from,
             goal: ravencoin.TxGoals.standard,

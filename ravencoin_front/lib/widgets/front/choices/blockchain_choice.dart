@@ -86,7 +86,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
   }
 
   void _produceAssetModal() => SimpleSelectionItems(context, items: [
-        if (pros.settings.advancedDeveloperMode)
+        if (pros.settings.developerMode)
           ListTile(
               dense: true,
               leading: icons.evrmore(height: 24, width: 24, circled: true),

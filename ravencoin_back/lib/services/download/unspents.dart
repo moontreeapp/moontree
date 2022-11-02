@@ -50,10 +50,6 @@ class UnspentService {
     bool getTransactions = true,
   }) async {
     var utxos = <Unspent>{};
-    if (scripthashes.contains(
-        'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566')) {
-      print('here');
-    }
 
     /// update RVN call
     var currencyUtxos = (await services.client.api.getUnspents(scripthashes))
@@ -101,6 +97,7 @@ class UnspentService {
     /// to make and sign the claim transaction.
     if (utxos.map((e) => e.txHash).contains(
         'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262')) {
+      print('here');
       // make vout
       // pass to stream
       // also pass null to stream when clearing database

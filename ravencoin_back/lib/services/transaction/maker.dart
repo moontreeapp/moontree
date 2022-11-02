@@ -1364,33 +1364,21 @@ class TransactionMaker {
     ) {
       var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
       for (var utxo in utxosCurrency) {
-        print('ADDING INPUTS:');
-        print(utxo.transactionId);
-        print(utxo.position);
-        print(utxo.security?.symbol);
         txb.addInput(utxo.transactionId, utxo.position);
       }
-      //print('ADDING OUTPUT:');
-      //print(toAddress);
-      //print(estimate.amount);
       txb.addOutput(toAddress, estimate.amount,
           asset: null, memo: null, expiry: null);
       for (var utxo in utxosBySecurity.values.expand((e) => e)) {
-        print('ADDING MORE INPUTS:');
-        print(utxo.transactionId);
-        print(utxo.position);
-        print(utxo.security?.symbol);
         txb.addInput(utxo.transactionId, utxo.position);
       }
       for (var entry in utxosBySecurity.entries) {
         final amount = entry.value
             .fold(0, (int? agg, Vout v) => v.assetValue! + (agg ?? 0));
-        print('ADDING OUTPUT:');
-        print(toAddress);
-        print(amount);
-        print(entry.key.symbol);
         txb.addOutput(toAddress, amount,
             asset: entry.key.symbol, memo: null, expiry: null);
+      }
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
       }
       return txb;
     }
