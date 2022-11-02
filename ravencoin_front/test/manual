@@ -1,0 +1,35 @@
+void testWalletsDontShareAddresses() {
+  var w1 = res.wallets.data.first as LeaderWallet;
+  var w2 = res.wallets.data.last as LeaderWallet;
+  var a1 = [
+        for (var a in w1.unusedInternalIndices)
+          res.addresses.byWalletExposureIndex
+              .getOne(w1.id, NodeExposure.internal, a)!
+              .address
+      ] +
+      [
+        for (var a in w1.unusedExternalIndices)
+          res.addresses.byWalletExposureIndex
+              .getOne(w1.id, NodeExposure.external, a)!
+              .address
+      ];
+  var a2 = [
+        for (var a in w2.unusedInternalIndices)
+          res.addresses.byWalletExposureIndex
+              .getOne(w2.id, NodeExposure.internal, a)!
+              .address
+      ] +
+      [
+        for (var a in w2.unusedExternalIndices)
+          res.addresses.byWalletExposureIndex
+              .getOne(w2.id, NodeExposure.external, a)!
+              .address
+      ];
+  for (var a in a1) {
+    if (a2.contains(a)) {
+      print('PROBLEM: shared address between wallets $a');
+    }
+  }
+  print('done');
+}
+testWalletsDontShareAddresses();
