@@ -6,6 +6,8 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
+import 'package:ravencoin_front/widgets/front/choices/blockchain_choice.dart'
+    show produceAssetModal;
 
 class ConnectionLight extends StatefulWidget {
   ConnectionLight({Key? key}) : super(key: key);
@@ -134,36 +136,58 @@ class _ConnectionLightState extends State<ConnectionLight>
       height: 8,
       width: 8,
       decoration: BoxDecoration(
-        color: connectionStatus == ConnectionStatus.connected &&
-                connectionBusy // && busy
-            ? AppColors.logoGreen
-            : connectionStatusColor,
+        color: statusColor,
         borderRadius: BorderRadius.circular(20),
       ),
     );
-    return Container(
-        alignment: Alignment.center,
-        child: IconButton(
-          splashRadius: 24,
+    return GestureDetector(
+        onTap: navToBlockchain,
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 400),
+          alignment: Alignment.center,
           padding: EdgeInsets.zero,
-          icon: circleIcon,
-          onPressed: () {
-            if (streams.app.scrim.value == true) return;
-            if (streams.app.loading.value == true) return;
-            if (![
-              'Login',
-              'Createlogin',
-              'Network',
-              'Scan',
-              'Setup',
-            ].contains(streams.app.page.value)) {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              streams.app.xlead.add(true);
-              Navigator.of(components.navigator.routeContext!)
-                  .pushNamed('/settings/network');
-            }
-          },
+          child: pros.settings.chain == Chain.none
+              ? IconButton(
+                  splashRadius: 28,
+                  padding: EdgeInsets.zero,
+                  icon: circleIcon,
+                  onPressed: navToBlockchain,
+                )
+              : Stack(alignment: Alignment.center, children: [
+                  ColorFiltered(
+                      colorFilter:
+                          ColorFilter.mode(statusColor, BlendMode.srcIn),
+                      child: components.icons.assetAvatar(
+                          chainSymbol(pros.settings.chain),
+                          height: 28,
+                          width: 28)),
+                  components.icons.assetAvatar(chainSymbol(pros.settings.chain),
+                      height: 24, width: 24),
+                ]),
         ));
+  }
+
+  Color get statusColor => connectionStatus == ConnectionStatus.connected &&
+          connectionBusy // && busy
+      ? AppColors.logoGreen
+      : connectionStatusColor;
+
+  void navToBlockchain() {
+    if (streams.app.scrim.value == true) return;
+    if (streams.app.loading.value == true) return;
+    if (![
+      'Login',
+      'Createlogin',
+      'Network',
+      'Scan',
+      'Setup',
+    ].contains(streams.app.page.value)) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      streams.app.xlead.add(true);
+      produceAssetModal(components.navigator.routeContext!);
+      //Navigator.of(components.navigator.routeContext!)
+      //    .pushNamed('/settings/network/blockchain');
+    }
   }
 }
 

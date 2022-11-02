@@ -182,7 +182,8 @@ class _TransactionPageState extends State<TransactionPage> {
         padding: EdgeInsets.only(top: 8, bottom: 112),
         children: <Widget>[
               for (var text in ['Date', 'Confirmations', 'Type', 'Fee'])
-                plain(text, element(text))
+                if (element(text) != 'calculating...')
+                  plain(text, element(text))
             ] +
             [
               link(

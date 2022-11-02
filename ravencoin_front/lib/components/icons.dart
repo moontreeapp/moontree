@@ -51,21 +51,26 @@ class IconComponents {
     ImageDetails? imageDetails,
     Color? foreground,
     Color? background,
+    bool circled = true,
   }) {
     height = height ?? size;
     width = width ?? size;
     if (asset.toUpperCase() == pros.securities.RVN.symbol) {
       return _assetAvatarRVN(height: height, width: width);
+      //return assets.icons
+      //    .ravencoin(height: height, width: width, circled: circled);
     }
     if (asset.toUpperCase() == pros.securities.RVNt.symbol) {
       return assets.icons
-          .ravencoinTest(height: height, width: width, circled: true);
+          .ravencoinTest(height: height, width: width, circled: circled);
     }
     if (asset.toUpperCase() == pros.securities.EVR.symbol) {
-      return assets.icons.evrmore(height: 24, width: 24, circled: true);
+      return assets.icons
+          .evrmore(height: height ?? 24, width: width ?? 24, circled: circled);
     }
     if (asset.toUpperCase() == pros.securities.EVRt.symbol) {
-      return assets.icons.evrmoreTest(height: 24, width: 24, circled: true);
+      return assets.icons.evrmoreTest(
+          height: height ?? 24, width: width ?? 24, circled: circled);
     }
 
     /// example of custom image:
