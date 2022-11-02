@@ -37,6 +37,21 @@ String chainSymbol(Chain chain) {
   }
 }
 
+String symbolName(String symbol) {
+  switch (symbol) {
+    case 'RVN':
+      return 'Ravencoin';
+    case 'EVR':
+      return 'Evrmore';
+    case 'RVNt':
+      return 'Ravencoin (testnet)';
+    case 'EVRt':
+      return 'Evrmore (testnet)';
+    default:
+      return symbol;
+  }
+}
+
 String chainName(Chain chain) => chain.name.toTitleCase();
 
 String chainNetSymbol(Chain chain, Net net) =>

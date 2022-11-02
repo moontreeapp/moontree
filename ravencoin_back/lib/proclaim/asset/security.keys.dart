@@ -29,6 +29,19 @@ extension BySymbolMethodsForSecurity on Index<_SymbolKey, Security> {
   List<Security> getAll(String symbol) => getByKeyStr(symbol);
 }
 
+// bySymbolChainNet
+
+class _SymbolChainNetKey extends Key<Security> {
+  @override
+  String getKey(Security security) => security.symbolChainNet;
+}
+
+extension BySymbolChainNetMethodsForSecurity
+    on Index<_SymbolChainNetKey, Security> {
+  List<Security> getAll(String symbol, Chain chain, Net net) =>
+      getByKeyStr(Security.symbolChainNetKey(symbol, chain, net));
+}
+
 // bySecurityType
 
 class _SecurityTypeKey extends Key<Security> {

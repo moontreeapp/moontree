@@ -51,7 +51,8 @@ class TransactionsBloc {
     return securityAsset == null || securityAsset.hasMetadata == false;
   }
 
-  Security get security => data['holding']?.security ?? pros.securities.RVN;
+  Security get security =>
+      data['holding']?.security ?? pros.securities.currentCurrency;
   List<Balance> get currentHolds => Current.holdings;
   List<TransactionRecord> get currentTxs {
     if (Current.wallet.minerMode) return [];

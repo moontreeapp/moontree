@@ -43,34 +43,36 @@ class IconComponents {
   Image get assetMasterImage => Image.asset('assets/masterbag_transparent.png');
   Image get assetRegularImage => Image.asset('assets/assetbag_transparent.png');
 
-  Widget assetAvatar(
-    String asset, {
-    double? size,
-    double? height,
-    double? width,
-    ImageDetails? imageDetails,
-    Color? foreground,
-    Color? background,
-    bool circled = true,
-  }) {
+  Widget assetAvatar(String asset,
+      {double? size,
+      double? height,
+      double? width,
+      ImageDetails? imageDetails,
+      Color? foreground,
+      Color? background,
+      bool circled = true,
+      Net? net}) {
     height = height ?? size;
     width = width ?? size;
     if (asset.toUpperCase() == pros.securities.RVN.symbol) {
+      if (net == Net.test) {
+        return ColorFiltered(
+            colorFilter: assets.filters.greyscale,
+            child: _assetAvatarRVN(height: height, width: width));
+        //return assets.icons
+        //    .ravencoinTest(height: height, width: width, circled: circled);
+      }
       return _assetAvatarRVN(height: height, width: width);
       //return assets.icons
       //    .ravencoin(height: height, width: width, circled: circled);
     }
-    if (asset.toUpperCase() == pros.securities.RVNt.symbol) {
-      return assets.icons
-          .ravencoinTest(height: height, width: width, circled: circled);
-    }
     if (asset.toUpperCase() == pros.securities.EVR.symbol) {
+      if (net == Net.test) {
+        return assets.icons.evrmoreTest(
+            height: height ?? 24, width: width ?? 24, circled: circled);
+      }
       return assets.icons
           .evrmore(height: height ?? 24, width: width ?? 24, circled: circled);
-    }
-    if (asset.toUpperCase() == pros.securities.EVRt.symbol) {
-      return assets.icons.evrmoreTest(
-          height: height ?? 24, width: width ?? 24, circled: circled);
     }
 
     /// example of custom image:

@@ -110,6 +110,14 @@ class BackdropAppBarContents extends StatelessWidget
             //print(pros.vouts.records.first);
 
             print(streams.claim.unclaimed.value);
+            pros.unspents.records.map((e) => e.symbol).forEach((element) {
+              print(element);
+            });
+            pros.balances.records.forEach((element) {
+              print(element);
+            });
+
+            print(pros.unspents.getSymbolsByWallet(Current.walletId));
 
             //print(pros.blocks.records.first);
             //print(pros.blocks.records.last);

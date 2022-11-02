@@ -14,6 +14,7 @@ import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:shimmer/shimmer.dart';
 
 final rvn = pros.securities.RVN.symbol;
+final evr = pros.securities.EVR.symbol;
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
@@ -301,6 +302,9 @@ class _HoldingList extends State<HoldingList> {
             onChanged: (_) => setState(() {}),
             onEditingComplete: () => setState(() => showSearchBar = false)));
     for (AssetHolding holding in holdings ?? []) {
+      if (holding.symbol.startsWith('RVN')) {
+        print(holding);
+      }
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -309,7 +313,7 @@ class _HoldingList extends State<HoldingList> {
           leading: leadingIcon(holding),
           title: title(holding),
           trailing: pros.settings.developerMode == true
-              ? (holding.symbol == rvn && !isEmpty
+              ? ((holding.symbol == rvn || holding.symbol == evr) && !isEmpty
                   ? GestureDetector(
                       onTap: () =>
                           setState(() => showSearchBar = !showSearchBar),
@@ -330,7 +334,7 @@ class _HoldingList extends State<HoldingList> {
                             ))
                   : null)
               : null);
-      if (holding.symbol == rvn) {
+      if (holding.symbol == rvn || holding.symbol == evr) {
         rvnHolding.add(Container(
             //duration: Duration(milliseconds: 500),
             child: Column(
@@ -540,23 +544,25 @@ class _HoldingList extends State<HoldingList> {
           child: //Hero(
               //tag: holding.symbol.toLowerCase(),
               //child:
-              components.icons.assetAvatar(holding.admin != null
-                  ? holding.adminSymbol!
-                  : holding.restricted != null
-                      ? holding.restrictedSymbol!
-                      : holding.qualifier != null
-                          ? holding.qualifierSymbol!
-                          : holding.channel != null
-                              ? holding.channelSymbol!
-                              : holding.nft != null
-                                  ? holding.nftSymbol!
-                                  : holding.subAdmin != null
-                                      ? holding.subAdminSymbol!
-                                      : holding.sub != null
-                                          ? holding.subSymbol!
-                                          : holding.qualifierSub != null
-                                              ? holding.qualifierSubSymbol!
-                                              : holding.symbol))
+              components.icons.assetAvatar(
+                  holding.admin != null
+                      ? holding.adminSymbol!
+                      : holding.restricted != null
+                          ? holding.restrictedSymbol!
+                          : holding.qualifier != null
+                              ? holding.qualifierSymbol!
+                              : holding.channel != null
+                                  ? holding.channelSymbol!
+                                  : holding.nft != null
+                                      ? holding.nftSymbol!
+                                      : holding.subAdmin != null
+                                          ? holding.subAdminSymbol!
+                                          : holding.sub != null
+                                              ? holding.subSymbol!
+                                              : holding.qualifierSub != null
+                                                  ? holding.qualifierSubSymbol!
+                                                  : holding.symbol,
+                  net: pros.settings.net))
       //)
       ;
 
@@ -564,15 +570,15 @@ class _HoldingList extends State<HoldingList> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Container(
-              width: holding.symbol == rvn
+              width: holding.symbol == rvn || holding.symbol == evr
                   ? MediaQuery.of(context).size.width / 2
                   : MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    holding.symbol == rvn
-                        ? 'Ravencoin${pros.settings.mainnet ? '' : ' (testnet)'}'
+                    holding.symbol == rvn || holding.symbol == evr
+                        ? symbolName(holding.symbol)
                         : pros.settings.developerMode && showPath
                             ? holding.symbol
                             : holding.last,

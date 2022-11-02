@@ -35,7 +35,9 @@ class BalanceService {
     await pros.balances.removeAllByIds(walletIds);
     for (var walletId in walletIds) {
       for (var symbol in pros.unspents.getSymbolsByWallet(walletId)) {
-        var security = pros.securities.bySymbol.getAll(symbol).firstOrNull ??
+        var security = pros.securities.bySymbolChainNet
+                .getAll(symbol, pros.settings.chain, pros.settings.net)
+                .firstOrNull ??
             Security(
               symbol: symbol,
               securityType: SecurityType.asset,

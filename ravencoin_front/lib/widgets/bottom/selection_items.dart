@@ -302,11 +302,15 @@ class SelectionItems {
         ));
       },
       leading: components.icons.assetAvatar(
-        name == 'Ravencoin' ? pros.securities.RVN.symbol : name,
-        height: 24,
-        width: 24,
-      ),
-      title: Text(name, style: Theme.of(context).textTheme.bodyText1));
+          name == 'Ravencoin' ? pros.securities.RVN.symbol : name,
+          height: 24,
+          width: 24,
+          net: pros.settings.net),
+      title: Text(
+          name == pros.securities.currentCurrency.symbol
+              ? symbolName(name)
+              : name,
+          style: Theme.of(context).textTheme.bodyText1));
 
   Widget walletItem(Wallet wallet, TextEditingController controller) =>
       ListTile(

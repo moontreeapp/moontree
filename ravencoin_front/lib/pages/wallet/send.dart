@@ -62,7 +62,7 @@ class _SendState extends State<Send> {
 
   bool rvnValidation() =>
       pros.balances.primaryIndex
-          .getOne(Current.walletId, pros.securities.RVN) !=
+          .getOne(Current.walletId, pros.securities.currentCurrency) !=
       null;
 
   void tellUserNoRVN() => streams.app.snack.add(Snack(
@@ -89,7 +89,7 @@ class _SendState extends State<Send> {
     /// #612
     //sendAsset.text = sendAsset.text == ''
     //    ? (pros.balances.primaryIndex
-    //                .getOne(Current.walletId, pros.securities.RVN) !=
+    //                .getOne(Current.walletId, pros.securities.currentCurrency) !=
     //            null
     //        ? 'Ravencoin'
     //        : pros.balances.first.security.symbol)
@@ -106,8 +106,9 @@ class _SendState extends State<Send> {
       if (value != null) {
         if (spendForm != value) {
           spendForm = value;
-          var asset = (value.symbol ?? pros.securities.RVN.symbol);
-          asset = (asset == pros.securities.RVN.symbol || asset == 'Ravencoin')
+          var asset = (value.symbol ?? pros.securities.currentCurrency.symbol);
+          asset = (asset == pros.securities.currentCurrency.symbol ||
+                  asset == 'Ravencoin')
               ? 'Ravencoin'
               : Current.holdingNames.contains(asset)
                   ? asset
@@ -232,8 +233,10 @@ class _SendState extends State<Send> {
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
-    var symbol = streams.spend.form.value?.symbol ?? pros.securities.RVN.symbol;
-    symbol = symbol == 'Ravencoin' ? pros.securities.RVN.symbol : symbol;
+    var symbol = streams.spend.form.value?.symbol ??
+        pros.securities.currentCurrency.symbol;
+    symbol =
+        symbol == 'Ravencoin' ? pros.securities.currentCurrency.symbol : symbol;
     security = pros.securities.primaryIndex.getOne(
         symbol,
         symbol == 'RVN' && pros.settings.chain == Chain.ravencoin ||
@@ -724,15 +727,15 @@ class _SendState extends State<Send> {
       arguments: {
         'struct': CheckoutStruct(
           symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
-                  ? pros.securities.RVN.symbol
+                  ? pros.securities.currentCurrency.symbol
                   : streams.spend.form.value?.symbol) ??
-              pros.securities.RVN.symbol),
+              pros.securities.currentCurrency.symbol),
           displaySymbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
                   ? 'Ravencoin'
                   : streams.spend.form.value?.symbol) ??
               'Ravencoin'),
           subSymbol: '',
-          paymentSymbol: pros.securities.RVN.symbol,
+          paymentSymbol: pros.securities.currentCurrency.symbol,
           items: [
             ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],
@@ -759,9 +762,14 @@ class _SendState extends State<Send> {
   }
 
   void _produceAssetModal() {
-    var options = Current.holdingNames.where((item) => item != 'RVN').toList();
+    final tail = Current.holdingNames
+        .where((item) => item != pros.securities.currentCurrency.symbol)
+        .toList();
+    final head = Current.holdingNames
+        .where((item) => item == pros.securities.currentCurrency.symbol)
+        .toList();
     SelectionItems(context, modalSet: SelectionSet.Holdings)
-        .build(holdingNames: options.isNotEmpty ? options : []);
+        .build(holdingNames: head + tail);
   }
 
   void _produceFeeModal() {

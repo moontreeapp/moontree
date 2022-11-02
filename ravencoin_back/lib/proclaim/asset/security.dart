@@ -6,6 +6,7 @@ part 'security.keys.dart';
 
 class SecurityProclaim extends Proclaim<_IdKey, Security> {
   late IndexMultiple<_SymbolKey, Security> bySymbol;
+  late IndexMultiple<_SymbolChainNetKey, Security> bySymbolChainNet;
   late IndexMultiple<_SecurityTypeKey, Security> bySecurityType;
   static final staticUSD = Security(
       symbol: 'USD',
@@ -35,6 +36,7 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
 
   SecurityProclaim() : super(_IdKey()) {
     bySymbol = addIndexMultiple('symbol', _SymbolKey());
+    bySymbolChainNet = addIndexMultiple('symbolchainnet', _SymbolChainNetKey());
     bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
   }
 
@@ -62,4 +64,22 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
     SecurityProclaim.staticRVNt,
     SecurityProclaim.staticEVRt,
   ];
+
+  Security get currentCurrency {
+    if (pros.settings.chain == Chain.ravencoin &&
+        pros.settings.net == Net.main) {
+      return RVN;
+    } else if (pros.settings.chain == Chain.ravencoin &&
+        pros.settings.net == Net.test) {
+      return RVNt;
+    } else if (pros.settings.chain == Chain.ravencoin &&
+        pros.settings.net == Net.main) {
+      return EVR;
+    } else if (pros.settings.chain == Chain.ravencoin &&
+        pros.settings.net == Net.test) {
+      return EVRt;
+    } else {
+      return USD;
+    }
+  }
 }

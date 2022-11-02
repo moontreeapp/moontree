@@ -159,10 +159,11 @@ class _ConnectionLightState extends State<ConnectionLight>
                           ColorFilter.mode(statusColor, BlendMode.srcIn),
                       child: components.icons.assetAvatar(
                           chainSymbol(pros.settings.chain),
+                          net: pros.settings.net,
                           height: 28,
                           width: 28)),
                   components.icons.assetAvatar(chainSymbol(pros.settings.chain),
-                      height: 24, width: 24),
+                      net: pros.settings.net, height: 24, width: 24),
                 ]),
         ));
   }

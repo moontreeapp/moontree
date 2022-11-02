@@ -13,7 +13,7 @@ class TransactionService {
   List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: security ?? pros.securities.RVN,
+              security: security ?? pros.securities.currentCurrency,
               includeMempool: false)
           .toList();
 
@@ -41,7 +41,7 @@ class TransactionService {
     var givenAddresses =
         wallet.addresses.map((address) => address.address).toSet();
     var transactionRecords = <TransactionRecord>[];
-    final rvn = pros.securities.RVN;
+    final currentCurrency = pros.securities.currentCurrency;
 
     final net = pros.settings.mainnet ? ravencoin.mainnet : ravencoin.testnet;
     final specialTag = {net.burnAddresses.addTag: net.burnAmounts.addTag};
@@ -93,7 +93,7 @@ class TransactionService {
           // This will never contain our own addrs
           final outgoingAddrs = <String, int>{};
 
-          if (security == rvn) {
+          if (security == currentCurrency) {
             var selfIn = 0;
             var othersIn = 0;
             var selfOut = 0;
@@ -126,7 +126,7 @@ class TransactionService {
                 //    .getAndSaveTransactions({vin.voutTransactionId});
                 feeFlag = true;
               }
-              if ((vinVout?.security ?? rvn) == rvn) {
+              if ((vinVout?.security ?? currentCurrency) == currentCurrency) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
                   selfIn += vinVout?.rvnValue ?? 0;
                 } else {
@@ -137,7 +137,7 @@ class TransactionService {
             }
 
             for (final vout in transaction.vouts) {
-              if (vout.security == rvn) {
+              if (vout.security == currentCurrency) {
                 totalOutRVN += vout.rvnValue;
                 if (givenAddresses.contains(vout.toAddress)) {
                   selfOut += vout.rvnValue;
@@ -273,7 +273,7 @@ class TransactionService {
                 feeFlag = true;
               }
               vinVout = vin.vout;
-              if (vinVout?.security == rvn) {
+              if (vinVout?.security == currentCurrency) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
                   selfInRVN += vinVout?.rvnValue ?? 0;
                 } else {
@@ -289,7 +289,7 @@ class TransactionService {
             }
 
             for (final vout in transaction.vouts) {
-              if (vout.security == rvn) {
+              if (vout.security == currentCurrency) {
                 if (givenAddresses.contains(vout.toAddress)) {
                   selfOutRVN += vout.rvnValue;
                 } else {
