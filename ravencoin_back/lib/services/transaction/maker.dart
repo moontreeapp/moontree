@@ -1515,4 +1515,47 @@ class TransactionMaker {
     tx = txb.build();
     return Tuple2(tx, estimate);
   }
+
+  /// CLAIM FEATURE:
+  /// instead of getting the vouts as we normally would, we get them from stream
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> claimAllEVR(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    TxGoal? goal,
+    Set<int>? previousFees,
+    int? assetMemoExpiry,
+  }) async {
+    ravencoin.TransactionBuilder makeTxBuilder(
+      List<Vout> utxos,
+      SendEstimate estimate,
+    ) {
+      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      for (var utxo in utxos) {
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      txb.addOutput(
+        toAddress,
+        estimate.amount,
+        asset: estimate.security?.symbol,
+        memo: estimate.assetMemo,
+        expiry: assetMemoExpiry,
+      );
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
+      return txb;
+    }
+
+    print('in claim all');
+    var utxos = estimate.utxos;
+    var txb = makeTxBuilder(utxos, estimate);
+    var tx = txb.buildSpoofedSigs();
+    estimate.setFees(tx.fee(goal: goal));
+    estimate.setAmount(estimate.amount - estimate.fees);
+    txb = makeTxBuilder(utxos, estimate);
+    await txb.signEachInput(utxos);
+    tx = txb.build();
+    return Tuple2(tx, estimate);
+  }
 }

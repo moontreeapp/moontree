@@ -363,7 +363,7 @@ class _HoldingList extends State<HoldingList> {
 
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = <Widget>[];
-    if (pros.settings.advancedDeveloperMode == true ||
+    if ( //pros.settings.advancedDeveloperMode == true ||
         (pros.settings.chain == Chain.evrmore &&
             pros.blocks.records.first.height <= 60 * 24 * 60 &&
             pros.unspents.records.where((u) => u.height == 0).length > 0)) {
@@ -373,11 +373,10 @@ class _HoldingList extends State<HoldingList> {
           onTap: () async => await components.message.giveChoices(
                 context,
                 title: 'Claim Your EVR',
-                content: ('All EVR in the Evrmore fairdrop must be claimed within 60 '
-                    'days of the snapshot (which occured on october 25th 2022).'
-                    ' Any send transaction is sufficient to claim your EVR. '
-                    '${pros.settings.developerMode ? 'This can even be done manually. ' : ''}'
-                    'Claim your EVR now!'),
+                content: ('All EVR in the Evrmore fairdrop must be claimed '
+                    'within 60 days of the snapshot (which occured on october '
+                    '27th 2022). Any send transaction is sufficient to claim '
+                    'your EVR. Claim your EVR now!'),
                 behaviors: {
                   'OK': () => Navigator.of(context).pop(),
                 },

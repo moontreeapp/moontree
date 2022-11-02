@@ -63,6 +63,9 @@ void resetInMemoryState() {
   services.download.queue.updated = false;
   services.download.queue.address = null;
   services.download.queue.transactionSet = null;
+
+  /// CLAIM FEATURE
+  streams.claim.unclaimed.add(<Vout>{});
 }
 
 Future deleteDatabase() async {

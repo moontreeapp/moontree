@@ -84,6 +84,7 @@ class UnspentService {
     await pros.unspents.removeAll(existing.difference(utxos));
     await pros.unspents.saveAll(utxos.difference(existing));
 
+    /// CLAIM FEATURE
     /// edge case: Evrmore genesis block is too large to download, so if we
     /// detect the utxo with a (height of 0 and on Chain.evrmore) or a txid of
     /// c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262
@@ -98,12 +99,39 @@ class UnspentService {
     if (utxos.map((e) => e.txHash).contains(
         'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262')) {
       print('here');
-      // make vout
-      // pass to stream
-      // also pass null to stream when clearing database
-      // avoid downloading transactions if stream is not null
+      if (pros.settings.currentWalletId == wallet.id) {
+        // make vout
+        for (var utxo in utxos) {
+          if (utxo.txHash ==
+              'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262') {
+            // pass to stream
+            streams.claim.unclaimed.add({
+              ...streams.claim.unclaimed.value,
+              ...{
+                Vout(
+                    transactionId: utxo.txHash,
+                    position: utxo.position,
+                    type: 'pubkeyhash',
+                    rvnValue: utxo.value,
+                    toAddress: utxo.address?.address ??
+                        pros.addresses.byScripthash
+                            .getOne(utxo.scripthash)
+                            ?.address)
+              }
+            });
+          }
+        }
+      }
+      // also pass empty list to stream when clearing memory or change wallet:
+      // utilities.database
+      //
+
+      // avoid downloading transactions if stream is not null:
+      // this if statement and subscribe
+
       // use the contents of the stream to make the sweep transaction in
       //   special claim sweep tx maker function.
+
     } else if (getTransactions && utxos.isNotEmpty) {
       /// we don't want to queue these because that makes it hard to know when
       /// vouts are downloaded for these unspents. If we await the download

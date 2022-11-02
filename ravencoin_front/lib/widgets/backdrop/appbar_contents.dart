@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:hive/hive.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -100,12 +101,16 @@ class BackdropAppBarContents extends StatelessWidget
             //      64678656394845
             //      hashCode:
             //      977627678
-            print(pros.unspents.records);
-            print(pros.addresses.byScripthash.getOne(
-                'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));
-            //EXKwffgqoVuYAq42bGZ5SfMN4KMPmLQhUp
-            print(pros.transactions.primaryIndex.getOne(
-                'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262'));
+            //print(pros.unspents.records);
+            //print(pros.addresses.byScripthash.getOne(
+            //    'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));
+            ////EXKwffgqoVuYAq42bGZ5SfMN4KMPmLQhUp
+            //print(pros.transactions.primaryIndex.getOne(
+            //    'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262'));
+            //print(pros.vouts.records.first);
+
+            print(streams.claim.unclaimed.value);
+
             //print(pros.blocks.records.first);
             //print(pros.blocks.records.last);
             //print(pros.settings.chain);

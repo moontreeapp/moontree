@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 
 class DatabaseOptions extends StatelessWidget {
   const DatabaseOptions() : super();
@@ -22,12 +23,12 @@ class DatabaseOptions extends StatelessWidget {
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft, child: ResyncChoice()))),
-        SliverToBoxAdapter(
-            child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
-                child: Container(
-                    alignment: Alignment.topLeft, child: ClearSSChoice()))),
-
+        if (pros.settings.advancedDeveloperMode)
+          SliverToBoxAdapter(
+              child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                  child: Container(
+                      alignment: Alignment.topLeft, child: ClearSSChoice()))),
       ]);
 }

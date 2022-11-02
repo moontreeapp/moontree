@@ -412,18 +412,49 @@ class TransactionService {
     return ret;
   }
 
+  /// CLAIM FEATURE
+  Future<void> claim({
+    required Wallet from,
+    required String toWalletId,
+    String? note,
+    String? memo,
+    String? msg,
+  }) async {
+    final destinationAddress = services.wallet.getEmptyAddress(
+      pros.wallets.primaryIndex.getOne(toWalletId)!,
+      NodeExposure.external,
+    );
+    final utxos = streams.claim.unclaimed.value;
+    final claimAmount = streams.claim.unclaimed.value
+        .map((e) => e.rvnValue)
+        .reduce((value, element) => value + element);
+
+    var txEstimate = await services.transaction.make.claimAllEVR(
+      destinationAddress,
+      SendEstimate(claimAmount, memo: memo, utxos: utxos.toList()),
+      wallet: from,
+      goal: ravencoin.TxGoals.standard,
+    );
+    //streams.spend.send.add(TransactionNote(
+    //  txHex: txEstimate.item1.toHex(),
+    //  successMsg: msg ?? 'Successfully Claimed',
+    //  note: note,
+    //));
+  }
+
   /// sweep all assets and crypto from one wallet to another
-  Future<Set<Vout>> sweep(
-      {required Wallet from,
-      required String toWalletId,
-      required bool currency,
-      required bool assets,
-      String? memo,
-      String? note,
-      String? msg,
-      int limit = 1000,
-      Set<Vout>? usedUTXOs,
-      bool incremental = false}) async {
+  Future<Set<Vout>> sweep({
+    required Wallet from,
+    required String toWalletId,
+    required bool currency,
+    required bool assets,
+    String? memo,
+    String? note,
+    String? msg,
+    int limit = 1000,
+    Set<Vout>? usedUTXOs,
+    bool incremental = false,
+  }) async {
     usedUTXOs = usedUTXOs ?? {};
     final destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
