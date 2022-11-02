@@ -302,7 +302,11 @@ class SelectionItems {
         ));
       },
       leading: components.icons.assetAvatar(
-          name == 'Ravencoin' ? pros.securities.RVN.symbol : name,
+          name == 'Ravencoin'
+              ? pros.securities.RVN.symbol
+              : name == 'Evrmore'
+                  ? pros.securities.EVR.symbol
+                  : name,
           height: 24,
           width: 24,
           net: pros.settings.net),

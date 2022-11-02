@@ -189,6 +189,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     if (given == pros.securities.RVN.symbol) {
       return 'Ravencoin';
     }
+    if (given == pros.securities.EVR.symbol) {
+      return 'Evrmore';
+    }
     if (given.contains('~')) {
       return given.toLowerCase().split('~').last.toTitleCase();
     }

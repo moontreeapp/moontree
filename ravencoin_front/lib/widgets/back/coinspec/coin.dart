@@ -150,8 +150,8 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   }
 
   Widget get backText => Text(
-        widget.symbol == pros.securities.RVN.symbol
-            ? 'Ravencoin'
+        widget.symbol == pros.securities.currentCurrency.symbol
+            ? symbolName(widget.symbol)
             : widget.symbol,
         style: Theme.of(context)
             .textTheme

@@ -38,6 +38,22 @@ class Support extends StatelessWidget {
                         Padding(
                             padding: EdgeInsets.only(left: 16, right: 16),
                             child: Text(
+                              'Evrmore',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            )),
+                        SizedBox(height: 8),
+                        Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Text(
+                              'Join the Evrmore Discord for general Evrmore discussions.',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            )),
+                        SizedBox(height: 16),
+                        Divider(indent: 0),
+                        SizedBox(height: 16),
+                        Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Text(
                               'Moontree',
                               style: Theme.of(context).textTheme.bodyText1,
                             )),
@@ -50,22 +66,39 @@ class Support extends StatelessWidget {
                             )),
                       ]),
                   components.containers.navBar(context,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            actionButton(
-                              context,
-                              name: 'RAVENCOIN',
-                              link: 's2nc6ecNR3',
-                            ),
-                            SizedBox(width: 16),
-                            actionButton(
-                              context,
-                              name: 'MOONTREE',
-                              link: 'cGDebEXgpW',
-                            ),
-                          ])),
+                      tall: true,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                actionButton(
+                                  context,
+                                  name: 'RAVENCOIN',
+                                  link: 's2nc6ecNR3',
+                                ),
+                                SizedBox(width: 16),
+                                actionButton(
+                                  context,
+                                  name: 'EVRMORE',
+                                  link: 'B87dQ83Swb',
+                                ),
+                              ]),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                actionButton(
+                                  context,
+                                  name: 'MOONTREE',
+                                  link: 'cGDebEXgpW',
+                                ),
+                              ]),
+                          SizedBox(width: 16),
+                        ],
+                      )),
                 ])),
       ),
     );

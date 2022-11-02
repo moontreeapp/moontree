@@ -34,7 +34,7 @@ class VoutProclaim extends Proclaim<_IdKey, Vout> {
       (given ?? pros.vouts.records).where((Vout vout) =>
           ((includeMempool ? true : (vout.transaction?.confirmed ?? false)) &&
               (security != null ? vout.security == security : true) &&
-              (security != null && security != pros.securities.RVN
+              (security != null && security != pros.securities.currentCurrency
                   ? vout.securityValue(security: security) > 0
                   : true) &&
               pros.vins

@@ -25,7 +25,7 @@ class TextComponents {
     bool asUSD = false,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.RVN.symbol) {
+    if (symbol == pros.securities.currentCurrency.symbol) {
       var asAmount = utils.satToAmount(sats);
       return asUSD
           ? rvnUSD(asAmount)
@@ -48,8 +48,8 @@ class TextComponents {
     String? symbol,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.RVN.symbol) {
-      return pros.securities.RVN;
+    if (symbol == pros.securities.currentCurrency.symbol) {
+      return pros.securities.currentCurrency;
     }
     if (symbol == 'USD') {
       return pros.securities.USD;
@@ -69,7 +69,7 @@ class TextComponents {
     String? symbol,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.RVN.symbol) {
+    if (symbol == pros.securities.currentCurrency.symbol) {
       return null;
     }
     security = security ??
@@ -92,7 +92,7 @@ class TextComponents {
         symbol ??
         (() => throw OneOfMultipleMissing(
             'security or symbol required to identify record.'))();
-    return security?.symbol ?? symbol ?? pros.securities.RVN.symbol;
+    return security?.symbol ?? symbol ?? pros.securities.currentCurrency.symbol;
   }
 
   Widget get passwordWarning => Text(
