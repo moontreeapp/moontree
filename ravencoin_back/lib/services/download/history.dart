@@ -141,9 +141,12 @@ class HistoryService {
     Iterable<String> transactionIds,
   ) =>
       transactionIds
-          .where((transactionId) => !pros.vouts.records
-              .map((e) => e.transactionId)
-              .contains(transactionId))
+          .where((transactionId) =>
+              transactionId !=
+                  'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262' && // don't download genesis block of Evrmore, it's too big.
+              !pros.vouts.records
+                  .map((e) => e.transactionId)
+                  .contains(transactionId))
           .toSet();
 
   /// we capture securities here. if it's one we've never seen,

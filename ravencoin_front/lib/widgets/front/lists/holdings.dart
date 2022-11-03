@@ -379,8 +379,7 @@ class _HoldingList extends State<HoldingList> {
                 title: 'Claim Your EVR',
                 content: ('All EVR in the Evrmore fairdrop must be claimed '
                     'within 60 days of the snapshot (which occured on october '
-                    '27th 2022). Any send transaction is sufficient to claim '
-                    'your EVR. Claim your EVR now!'),
+                    '25th 2022). Claim your EVR now!'),
                 behaviors: {
                   'OK': () => Navigator.of(context).pop(),
                 },

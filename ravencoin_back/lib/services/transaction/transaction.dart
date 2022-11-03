@@ -435,11 +435,11 @@ class TransactionService {
       wallet: from,
       goal: ravencoin.TxGoals.standard,
     );
-    //streams.spend.send.add(TransactionNote(
-    //  txHex: txEstimate.item1.toHex(),
-    //  successMsg: msg ?? 'Successfully Claimed',
-    //  note: note,
-    //));
+    streams.spend.send.add(TransactionNote(
+      txHex: txEstimate.item1.toHex(),
+      successMsg: msg ?? 'Successfully Claimed',
+      note: note,
+    ));
   }
 
   /// sweep all assets and crypto from one wallet to another

@@ -72,10 +72,10 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
     } else if (pros.settings.chain == Chain.ravencoin &&
         pros.settings.net == Net.test) {
       return RVNt;
-    } else if (pros.settings.chain == Chain.ravencoin &&
+    } else if (pros.settings.chain == Chain.evrmore &&
         pros.settings.net == Net.main) {
       return EVR;
-    } else if (pros.settings.chain == Chain.ravencoin &&
+    } else if (pros.settings.chain == Chain.evrmore &&
         pros.settings.net == Net.test) {
       return EVRt;
     } else {
