@@ -65,7 +65,7 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
     SecurityProclaim.staticEVRt,
   ];
 
-  Security get currentCurrency {
+  Security get currentCrypto {
     if (pros.settings.chain == Chain.ravencoin &&
         pros.settings.net == Net.main) {
       return RVN;

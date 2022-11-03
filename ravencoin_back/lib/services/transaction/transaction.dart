@@ -13,7 +13,7 @@ class TransactionService {
   List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: security ?? pros.securities.currentCurrency,
+              security: security ?? pros.securities.currentCrypto,
               includeMempool: false)
           .toList();
 
@@ -41,7 +41,7 @@ class TransactionService {
     var givenAddresses =
         wallet.addresses.map((address) => address.address).toSet();
     var transactionRecords = <TransactionRecord>[];
-    final currentCurrency = pros.securities.currentCurrency;
+    final currentCurrency = pros.securities.currentCrypto;
 
     final net = pros.settings.mainnet ? ravencoin.mainnet : ravencoin.testnet;
     final specialTag = {net.burnAddresses.addTag: net.burnAmounts.addTag};

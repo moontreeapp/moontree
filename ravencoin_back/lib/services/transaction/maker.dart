@@ -347,10 +347,9 @@ class SendEstimate with ToStringMixin {
         'creation',
       ];
 
-  int get total =>
-      security == null || security == pros.securities.currentCurrency
-          ? (creation ? 0 : amount) + fees + extraFees
-          : fees + extraFees;
+  int get total => security == null || security == pros.securities.currentCrypto
+      ? (creation ? 0 : amount) + fees + extraFees
+      : fees + extraFees;
   int get utxoTotal => utxos.fold(
       0, (int total, vout) => total + vout.securityValue(security: security));
 
@@ -384,7 +383,7 @@ class TransactionMaker {
                 double.parse(sendRequest.visibleAmount) ==
                     sendRequest.holding) &&
             (sendRequest.security == null ||
-                sendRequest.security == pros.securities.currentCurrency)
+                sendRequest.security == pros.securities.currentCrypto)
         ? await transactionSendAllRVN(
             sendRequest.sendAddress,
             estimate,

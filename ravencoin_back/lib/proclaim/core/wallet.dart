@@ -20,8 +20,10 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
   }
 
   Set<String> get ids => records.map((e) => e.id).toSet();
-  List<Wallet> get ordered =>
-      records.sorted((a, b) => a.name.compareTo(b.name));
+  List<Wallet> get ordered => order(records);
+
+  List<Wallet> order(Iterable<Wallet> wallets) =>
+      wallets.sorted((a, b) => a.name.compareTo(b.name));
 
   List<LeaderWallet> get leaders => byWalletType
       .getAll(WalletType.leader)

@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/assets/filters.dart';
 //import 'package:ravencoin_front/utils/extensions.dart';
 
 class icons {
+  static Widget crypto(
+    Security security, {
+    double? height,
+    double? width,
+    bool circled = false,
+  }) {
+    if (security == pros.securities.EVR) {
+      return evrmore(height: height, width: width, circled: circled);
+    }
+    if (security == pros.securities.EVRt) {
+      return evrmoreTest(height: height, width: width, circled: circled);
+    }
+    if (security == pros.securities.RVN) {
+      return ravencoin(height: height, width: width, circled: circled);
+    }
+    if (security == pros.securities.RVNt) {
+      return ravencoinTest(height: height, width: width, circled: circled);
+    }
+    return ravencoin(height: height, width: width, circled: circled);
+  }
+
   static Widget moontree({double? height, double? width}) => Image.asset(
         'assets/logo/moontree.png',
         height: height,

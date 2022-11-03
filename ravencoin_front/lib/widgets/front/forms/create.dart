@@ -612,7 +612,7 @@ class _CreateAssetState extends State<CreateAsset> {
           symbol: fullName(true),
           displaySymbol: nameController.text,
           subSymbol: '',
-          paymentSymbol: pros.securities.currentCurrency.symbol,
+          paymentSymbol: pros.securities.currentCrypto.symbol,
           items: [
             /// send the correct items
             if (isSub) ['Name', fullName(true), '2'],

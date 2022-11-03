@@ -204,7 +204,7 @@ class HistoryService {
         streams.asset.added.add(asset);
       }
     }
-    return Tuple3(value, security ?? pros.securities.currentCurrency, asset);
+    return Tuple3(value, security ?? pros.securities.currentCrypto, asset);
   }
 
   Future<List<Tx>> grabTransactions(Iterable<String> transactionIds) async {
