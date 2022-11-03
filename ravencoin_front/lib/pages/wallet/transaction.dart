@@ -79,6 +79,9 @@ class _TransactionPageState extends State<TransactionPage> {
           case TransactionRecordType.outgoing:
             //default:
             return 'Out';
+          case TransactionRecordType.claim:
+            //default:
+            return 'Claim';
         }
       case 'ID':
         return transaction!.id.cutOutMiddle();
@@ -101,7 +104,8 @@ class _TransactionPageState extends State<TransactionPage> {
             transactionRecord!.getVouts();
             return 'calculating...';
           } else {
-            return transactionRecord!.fee.toAmount().toCommaString() + ' RVN';
+            return transactionRecord!.fee.toAmount().toCommaString() +
+                ' ${chainSymbol(pros.settings.chain)}';
           }
         }();
 

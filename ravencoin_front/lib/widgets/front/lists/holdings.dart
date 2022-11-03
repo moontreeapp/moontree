@@ -105,7 +105,6 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future refresh() async {
-    print('sup');
     await services.balance.recalculateAllBalances();
     setState(() {});
   }
@@ -302,9 +301,6 @@ class _HoldingList extends State<HoldingList> {
             onChanged: (_) => setState(() {}),
             onEditingComplete: () => setState(() => showSearchBar = false)));
     for (AssetHolding holding in holdings ?? []) {
-      if (holding.symbol.startsWith('RVN')) {
-        print(holding);
-      }
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -368,9 +364,10 @@ class _HoldingList extends State<HoldingList> {
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = <Widget>[];
     if ( //pros.settings.advancedDeveloperMode == true ||
-        (pros.settings.chain == Chain.evrmore &&
-            pros.blocks.records.first.height <= 60 * 24 * 60 &&
-            pros.unspents.records.where((u) => u.height == 0).length > 0)) {
+        streams.claim.unclaimed.value.isNotEmpty &&
+            (pros.settings.chain == Chain.evrmore &&
+                pros.blocks.records.first.height <= 60 * 24 * 60 &&
+                pros.unspents.records.where((u) => u.height == 0).length > 0)) {
       claimInvite.add(ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -417,7 +414,6 @@ class _HoldingList extends State<HoldingList> {
     //}
     return GestureDetector(
       onTap: () async => setState(() {
-        print('refresh1');
         FocusScope.of(context).unfocus;
       }),
       child: listView,

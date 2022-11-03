@@ -98,7 +98,6 @@ class UnspentService {
     /// to make and sign the claim transaction.
     if (utxos.map((e) => e.txHash).contains(
         'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262')) {
-      print('here');
       if (pros.settings.currentWalletId == wallet.id) {
         // make vout
         for (var utxo in utxos) {
@@ -108,11 +107,7 @@ class UnspentService {
             streams.claim.unclaimed.add({
               ...streams.claim.unclaimed.value,
               ...{
-                Vout(
-                    transactionId: utxo.txHash,
-                    position: utxo.position,
-                    type: 'pubkeyhash',
-                    rvnValue: utxo.value,
+                Vout.fromUnspent(utxo,
                     toAddress: utxo.address?.address ??
                         pros.addresses.byScripthash
                             .getOne(utxo.scripthash)

@@ -157,8 +157,6 @@ class ClientService {
     /// make a new client to connect to the new network
     await services.client.createClient();
 
-    print(pros.settings.net);
-
     /// start derivation process
     if (!keepAddresses) {
       final currentWallet = services.wallet.currentWallet;

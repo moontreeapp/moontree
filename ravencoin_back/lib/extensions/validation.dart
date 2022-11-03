@@ -74,6 +74,8 @@ extension StringValidationExtension on String {
   bool get isIpfs => utils.validate.isIpfs(this);
   bool get isAddressRVN => utils.validate.isAddressRVN(this);
   bool get isAddressRVNt => utils.validate.isAddressRVNt(this);
+  bool get isAddressEVR => utils.validate.isAddressEVR(this);
+  bool get isAddressEVRt => utils.validate.isAddressEVRt(this);
   bool get isTxIdRVN => utils.validate.isTxIdRVN(this);
   bool get isAdmin => utils.validate.isAdmin(this);
   bool get isAssetPath => utils.validate.isAssetPath(this);

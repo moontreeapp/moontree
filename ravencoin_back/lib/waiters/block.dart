@@ -26,7 +26,6 @@ class BlockWaiter extends Waiter {
       'ravenClient.subscribeHeaders',
       await services.client.api.subscribeHeaders(),
       (BlockHeader blockHeader) async {
-        print(Block.fromBlockHeader(blockHeader));
         await pros.blocks.save(Block.fromBlockHeader(blockHeader));
       },
       autoDeinit: true,
@@ -36,8 +35,14 @@ class BlockWaiter extends Waiter {
     await listen<Change<Block>>(
       'blocks.changes',
       pros.blocks.changes,
-      (Change<Block> change) =>
-          services.download.history.getAndSaveMempoolTransactions(),
+      (Change<Block> change) => change.when(
+        loaded: (loaded) {},
+        added: (added) async {
+          await services.download.history.getAndSaveMempoolTransactions();
+        },
+        updated: (updated) {},
+        removed: (removed) {},
+      ),
       autoDeinit: true,
     );
   }

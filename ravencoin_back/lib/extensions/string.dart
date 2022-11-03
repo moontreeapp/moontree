@@ -112,7 +112,6 @@ extension StringNumericExtension on String {
   }
 
   double toDouble() {
-    print(this);
     return double.parse(trim().split(',').join(''));
   }
 }

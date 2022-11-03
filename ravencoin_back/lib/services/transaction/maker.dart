@@ -411,11 +411,6 @@ class TransactionMaker {
       //assetMemo: createRequest.assetMemo, // not on front end
       //memo: createRequest.memo, // op return memos allowed, but not on front end
     );
-    print(estimate.total);
-    // MOONTREETESTASSET
-    // QmQsUFxsd4S5FZGxQJjVSBVSPv8Gt1adRE16nACt2zv6KP
-
-    print('createTransactionBy $estimate');
     return createRequest.isNFT || createRequest.isChannel
         ? await transactionCreateChildAsset(
             createRequest.parent!,
@@ -454,7 +449,6 @@ class TransactionMaker {
       security: reissueRequest.security,
       creation: true,
     );
-    print('reissueTransactionBy $estimate');
     return reissueRequest.isRestricted
         ? await transactionReissueRestrictedAsset(
             estimate,
@@ -1267,7 +1261,6 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1313,7 +1306,6 @@ class TransactionMaker {
         txb.addInput(utxo.transactionId, utxo.position);
         total = total + utxo.rvnValue;
       }
-      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1327,7 +1319,6 @@ class TransactionMaker {
       return txb;
     }
 
-    print('in sendall');
     var utxos = await services.balance.collectUTXOs(
       walletId: wallet.id,
       amount: estimate.amount,
@@ -1383,7 +1374,6 @@ class TransactionMaker {
       return txb;
     }
 
-    print('in sendall');
     var utxosCurrency = await services.balance.collectUTXOs(
       walletId: wallet.id,
       amount: estimate.amount,
@@ -1490,7 +1480,6 @@ class TransactionMaker {
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
       }
-      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1504,7 +1493,6 @@ class TransactionMaker {
       return txb;
     }
 
-    print('in sendall');
     var txb = makeTxBuilder(utxosCurrency, estimate);
     var tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: goal));
@@ -1547,7 +1535,6 @@ class TransactionMaker {
       return txb;
     }
 
-    print('in claim all');
     var utxos = estimate.utxos;
     var txb = makeTxBuilder(utxos, estimate);
     var tx = txb.buildSpoofedSigs();

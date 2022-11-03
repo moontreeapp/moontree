@@ -129,15 +129,18 @@ class _NavBarState extends State<NavBar> {
                   : components.buttons.actionButton(
                       context,
                       label: 'send',
-                      enabled: !(pros.settings.chain == Chain.evrmore &&
-                              pros.blocks.records.first.height <=
-                                  60 * 24 * 60 &&
-                              pros.unspents.records
-                                      .where((u) => u.height == 0)
-                                      .length >
-                                  0) ||
-                          (!walletIsEmpty &&
-                              connectionStatus == ConnectionStatus.connected),
+                      enabled:
+                          //!(pros.settings.chain == Chain.evrmore &&
+                          //        pros.blocks.records.first.height <=
+                          //            60 * 24 * 60 &&
+                          //        pros.unspents.records
+                          //                .where((u) => u.height == 0)
+                          //                .length >
+                          //            0)
+                          streams.claim.unclaimed.value.isEmpty &&
+                              (!walletIsEmpty &&
+                                  connectionStatus ==
+                                      ConnectionStatus.connected),
                       disabledOnPressed: () {
                         if (connectionStatus != ConnectionStatus.connected) {
                           streams.app.snack

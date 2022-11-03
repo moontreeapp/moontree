@@ -613,7 +613,6 @@ class _DraggableScrollableSheetState extends State<DraggableScrollableSheet>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('object');
         if (_extent.isAtMin) {
           widget.controller?.animateTo(
             _extent.maxSize,
