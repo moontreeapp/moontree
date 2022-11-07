@@ -18,6 +18,9 @@ class ClientService {
   final _clientLock = ReaderWriterLock();
   RavenElectrumClient? ravenElectrumClient;
 
+  String get serverUrl =>
+      '${services.client.currentDomain}:${services.client.currentPort}';
+
   Future<RavenElectrumClient> get client async {
     var x = ravenElectrumClient;
     if (x == null) {

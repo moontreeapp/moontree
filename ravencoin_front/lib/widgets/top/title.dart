@@ -395,6 +395,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                               wallets = pros.wallets.ordered;
                             });
                             await walletSelection();
+                            await Future.delayed(Duration(milliseconds: 100));
+                            streams.app.scrim.add(true);
                           },
                           child: Text(
                             'Show All',

@@ -148,7 +148,7 @@ class _ConnectionLightState extends State<ConnectionLight>
           padding: EdgeInsets.zero,
           child: pros.settings.chain == Chain.none
               ? IconButton(
-                  splashRadius: 28,
+                  splashRadius: 26,
                   padding: EdgeInsets.zero,
                   icon: circleIcon,
                   onPressed: navToBlockchain,
@@ -160,8 +160,9 @@ class _ConnectionLightState extends State<ConnectionLight>
                       child: components.icons.assetAvatar(
                           chainSymbol(pros.settings.chain),
                           net: pros.settings.net,
-                          height: 28,
-                          width: 28)),
+                          height: 26,
+                          width: 26,
+                          circled: true)),
                   components.icons.assetAvatar(chainSymbol(pros.settings.chain),
                       net: pros.settings.net, height: 24, width: 24),
                 ]),

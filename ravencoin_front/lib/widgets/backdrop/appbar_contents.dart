@@ -103,6 +103,17 @@ class BackdropAppBarContents extends StatelessWidget
             //      977627678
 
             print(pros.transactions.records);
+            await Navigator.pushNamed(
+              components.navigator.routeContext!,
+              '/security/security',
+              arguments: {
+                'buttonLabel': 'Submit',
+                'onSuccess': () async {
+                  Navigator.pop(components.navigator.routeContext!);
+                  print('verified');
+                }
+              },
+            );
             //print(pros.unspents.records);
             //print(pros.addresses.byScripthash.getOne(
             //    'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));

@@ -54,12 +54,11 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               controller: choiceController,
               readOnly: true,
               labelText: 'Blockchain',
-              //hintText: 'Ravencoin',
-              helperText: services.client.connectionStatus &&
-                      streams.client.connected.value ==
-                          ConnectionStatus.connected
-                  ? 'Connected'
-                  : null,
+              //helperText: services.client.connectionStatus &&
+              //        streams.client.connected.value ==
+              //            ConnectionStatus.connected
+              //    ? 'Connected'
+              //    : null,
               helperStyle: Theme.of(context)
                   .textTheme
                   .caption!

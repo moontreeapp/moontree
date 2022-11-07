@@ -657,7 +657,9 @@ class SimpleSelectionItems {
         barrierColor: AppColors.black38,
         shape: components.shape.topRounded8,
         builder: (BuildContext context) {
+          //if (streams.app.scrim.value == false) {
           streams.app.scrim.add(true);
+          //}
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
           var minExtent =
@@ -692,7 +694,9 @@ class SimpleSelectionItems {
           );
           //});
         }).then((value) {
-      streams.app.scrim.add(false);
+      if (streams.app.scrim.value == true) {
+        streams.app.scrim.add(false);
+      }
       if (then != null) {
         then!();
       }

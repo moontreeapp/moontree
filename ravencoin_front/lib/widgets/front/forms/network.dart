@@ -1,8 +1,10 @@
-import 'dart:async';
+/// an attempt to contain all network choice logic in one, but that's impossible
+/// since it puts the button at the bottom of the page. So instead we put the
+/// contained blockchain choice on the network page and changed the links.
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/streams/app.dart';
-
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -10,15 +12,15 @@ import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-class ElectrumNetworkPage extends StatefulWidget {
+class ElectrumNetwork extends StatefulWidget {
   final dynamic data;
-  const ElectrumNetworkPage({this.data}) : super();
+  const ElectrumNetwork({this.data}) : super();
 
   @override
-  _ElectrumNetworkPageState createState() => _ElectrumNetworkPageState();
+  _ElectrumNetworkState createState() => _ElectrumNetworkState();
 }
 
-class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
+class _ElectrumNetworkState extends State<ElectrumNetwork> {
   List<StreamSubscription> listeners = [];
   TextEditingController network = TextEditingController(text: 'Ravencoin');
   TextEditingController serverAddress = TextEditingController(text: '');
@@ -41,6 +43,9 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
           value != connectionStatus &&
           pressed) {
         setState(() {});
+
+        /// why is this happening here?
+        streams.app.snack.add(Snack(message: 'Successfully Connected'));
       }
     }));
   }
@@ -59,73 +64,54 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BackdropLayers(
-        back: BlankBack(),
-        front: FrontCurve(
-            child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: CustomScrollView(slivers: <Widget>[
-            SliverToBoxAdapter(
-                child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 16, right: 16, top: 0, bottom: 16),
-                    child: Container(
-                        alignment: Alignment.topLeft,
-                        child: BlockchainChoice()))),
-            //SliverToBoxAdapter(
-            //    child: Padding(
-            //        padding:
-            //            EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 16),
-            //        child: Container(
-            //            alignment: Alignment.topLeft, child: NetworkChoice()))),
+  Widget build(BuildContext context) => CustomScrollView(slivers: <Widget>[
+        //SliverToBoxAdapter(
+        //    child: Padding(
+        //        padding:
+        //            EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 16),
+        //        child: Container(
+        //            alignment: Alignment.topLeft, child: NetworkChoice()))),
 
-            //SliverToBoxAdapter(child: SizedBox(height: 6)),
-            //SliverToBoxAdapter(
-            //    child: Padding(
-            //        padding:
-            //            EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
-            //        child: networkTextField)),
-            SliverToBoxAdapter(
-                child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 16, right: 16, top: 16, bottom: 16),
-                    child: serverTextField)),
-            if (pros.settings.advancedDeveloperMode)
-              SliverToBoxAdapter(
-                  child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 16, right: 16, top: 36, bottom: 0),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text('Most Recent Network Activity',
-                                style: Theme.of(context).textTheme.bodyText1),
-                          ]))),
-            if (pros.settings.advancedDeveloperMode)
-              SliverToBoxAdapter(
-                  child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 16, right: 16, top: 0, bottom: 16),
-                      child: Container(
-                          alignment: Alignment.topLeft,
-                          child: DownloadActivity()))),
+        //SliverToBoxAdapter(child: SizedBox(height: 6)),
+        //SliverToBoxAdapter(
+        //    child: Padding(
+        //        padding:
+        //            EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+        //        child: networkTextField)),
+        SliverToBoxAdapter(
+            child: Padding(
+                padding: EdgeInsets.only(top: 16), child: serverTextField)),
+        if (pros.settings.advancedDeveloperMode)
+          SliverToBoxAdapter(
+              child: Padding(
+                  padding: EdgeInsets.only(top: 36),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('Most Recent Network Activity',
+                            style: Theme.of(context).textTheme.bodyText1),
+                      ]))),
+        if (pros.settings.advancedDeveloperMode)
+          SliverToBoxAdapter(
+              child: Padding(
+                  padding: EdgeInsets.only(top: 0),
+                  child: Container(
+                      alignment: Alignment.topLeft,
+                      child: DownloadActivity()))),
 
-            //SliverToBoxAdapter(
-            //    child: Container(height: MediaQuery.of(context).size.height / 2)),
-            SliverFillRemaining(
-                hasScrollBody: false,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: 100),
-                      components.containers.navBar(context,
-                          child: Row(children: [submitButton])),
-                    ])),
-          ]),
-        )));
-  }
+        //SliverToBoxAdapter(
+        //    child: Container(height: MediaQuery.of(context).size.height / 2)),
+        SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 100),
+                  components.containers
+                      .navBar(context, child: Row(children: [submitButton])),
+                ])),
+      ]);
 
   Widget get networkTextField => Container(
       height: 81,
@@ -191,32 +177,20 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
   void attemptSave() {
     if (validateDomainPort(serverAddress.text)) {
       FocusScope.of(context).unfocus();
-      validateAndSave();
+      save();
     }
   }
 
   // validate domain:port structure
   bool validateDomainPort(String value) =>
-      value.contains(':') &&
-      value.split(':').last.isInt &&
-      value.split(':').last.asInt() <= 65535;
-
-  void validateAndSave() async {
-    pressed = true;
-    await Navigator.pushNamed(
-      components.navigator.routeContext!,
-      '/security/security',
-      arguments: {
-        'buttonLabel': 'Submit',
-        'onSuccess': () async {
-          Navigator.pop(components.navigator.routeContext!);
-          save();
-        }
-      },
-    );
-  }
+      value.contains(':') && value.split(':').last.isInt;
 
   void save() async {
+    /// todo: verify before saving
+    //streams.app.verify.add(false);
+    //services.password.askCondition
+    //          ? VerifyAuthentication(parentState: this)
+    //          :
     var port = serverAddress.text.split(':').last;
     var domain = serverAddress.text
         .substring(0, serverAddress.text.lastIndexOf(port) - 1);
@@ -224,7 +198,6 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
       message: 'Connecting',
       playCount: 1,
       then: () async {
-        waiters.block.notify = true;
         await services.client.saveElectrumAddress(
           domain: domain,
           port: int.parse(port),
@@ -233,5 +206,6 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
       },
       returnHome: true,
     );
+    pressed = true;
   }
 }

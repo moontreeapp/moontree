@@ -3,6 +3,7 @@
 /// if block headers was not a subscribe, but a function we could call on
 /// demand I believe we could save the electrumx server some bandwidth costs...
 
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 
@@ -10,15 +11,18 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'waiter.dart';
 
 class BlockWaiter extends Waiter {
+  bool notify = true;
   void init() {
-    listen(
-      'streams.client.connected',
-      streams.client.connected,
-      (ConnectionStatus connectionStatus) async =>
-          connectionStatus == ConnectionStatus.connected
-              ? await subscribe()
-              : () {},
-    );
+    listen('streams.client.connected', streams.client.connected,
+        (ConnectionStatus connectionStatus) async {
+      if (connectionStatus == ConnectionStatus.connected) {
+        await subscribe();
+        if (notify) {
+          streams.app.snack.add(Snack(message: 'Successfully Connected'));
+          notify = false;
+        }
+      }
+    });
   }
 
   Future<void> subscribe() async {

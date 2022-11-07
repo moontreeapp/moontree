@@ -43,28 +43,31 @@ class IconComponents {
   Image get assetMasterImage => Image.asset('assets/masterbag_transparent.png');
   Image get assetRegularImage => Image.asset('assets/assetbag_transparent.png');
 
-  Widget assetAvatar(String asset,
-      {double? size,
-      double? height,
-      double? width,
-      ImageDetails? imageDetails,
-      Color? foreground,
-      Color? background,
-      bool circled = true,
-      Net? net}) {
+  Widget assetAvatar(
+    String asset, {
+    double? size,
+    double? height,
+    double? width,
+    ImageDetails? imageDetails,
+    Color? foreground,
+    Color? background,
+    bool circled = true,
+    Net? net,
+  }) {
     height = height ?? size;
     width = width ?? size;
     if (asset.toUpperCase() == pros.securities.RVN.symbol) {
       if (net == Net.test) {
         return ColorFiltered(
             colorFilter: assets.filters.greyscale,
-            child: _assetAvatarRVN(height: height, width: width));
-        //return assets.icons
-        //    .ravencoinTest(height: height, width: width, circled: circled);
+            child: assets.icons
+                .ravencoinTest(height: height, width: width, circled: circled)
+            //_assetAvatarRVN(height: height, width: width)
+            );
       }
-      return _assetAvatarRVN(height: height, width: width);
-      //return assets.icons
-      //    .ravencoin(height: height, width: width, circled: circled);
+      //return _assetAvatarRVN(height: height, width: width);
+      return assets.icons
+          .ravencoin(height: height, width: width, circled: circled);
     }
     if (asset.toUpperCase() == pros.securities.EVR.symbol) {
       if (net == Net.test) {
