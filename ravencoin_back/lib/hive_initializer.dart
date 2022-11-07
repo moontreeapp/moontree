@@ -82,6 +82,7 @@ class HiveInitializer {
     Hive.registerAdapter(SecurityTypeAdapter());
     Hive.registerAdapter(UnspentAdapter());
     Hive.registerAdapter(FeatureLevelAdapter());
+    Hive.registerAdapter(TutorialStatusAdapter());
   }
 
   /// address must open before wallets because added in wallets waiter

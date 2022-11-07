@@ -35,4 +35,5 @@ class TypeId {
   static const Chain = 108;
   static const AuthMethod = 109;
   static const FeatureLevel = 110;
+  static const TutorialStatus = 111;
 }

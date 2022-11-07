@@ -16,6 +16,9 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   static final Chain defaultChain = Chain.ravencoin;
   static final String defaultUrl = 'moontree.com';
   static final int defaultPort = portOf(defaultChain, defaultNet);
+  static final List<TutorialStatus> tutorials = const [
+    TutorialStatus.blockchain
+  ];
 
   static Map<String, Setting> get defaults => {
         SettingName.version_database:
@@ -46,6 +49,8 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
             Setting(name: SettingName.send_immediate, value: null),
         SettingName.mode_dev:
             Setting(name: SettingName.mode_dev, value: FeatureLevel.easy),
+        SettingName.tutorial_status: Setting(
+            name: SettingName.tutorial_status, value: <TutorialStatus>[]),
       }.map((settingName, setting) => MapEntry(settingName.name, setting));
 
   /// should this be in the database or should it be a constant somewhere?

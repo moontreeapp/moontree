@@ -77,7 +77,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -102,18 +102,22 @@ class BackdropAppBarContents extends StatelessWidget
             //      hashCode:
             //      977627678
 
-            print(pros.transactions.records);
-            await Navigator.pushNamed(
-              components.navigator.routeContext!,
-              '/security/security',
-              arguments: {
-                'buttonLabel': 'Submit',
-                'onSuccess': () async {
-                  Navigator.pop(components.navigator.routeContext!);
-                  print('verified');
-                }
-              },
-            );
+            await showModalBottomSheet<void>(
+                context: components.navigator.routeContext!,
+                elevation: 1,
+                isScrollControlled: true,
+                barrierColor: AppColors.black38,
+                shape: components.shape.topRounded8,
+                builder: (BuildContext context) {
+                  if (streams.app.scrim.value == false) {
+                    streams.app.scrim.add(true);
+                  }
+                  return Container(height: 0);
+                }).then((value) {
+              if (streams.app.scrim.value == true) {
+                streams.app.scrim.add(false);
+              }
+            });
             //print(pros.unspents.records);
             //print(pros.addresses.byScripthash.getOne(
             //    'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));

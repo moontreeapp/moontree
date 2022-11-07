@@ -657,9 +657,9 @@ class SimpleSelectionItems {
         barrierColor: AppColors.black38,
         shape: components.shape.topRounded8,
         builder: (BuildContext context) {
-          //if (streams.app.scrim.value == false) {
-          streams.app.scrim.add(true);
-          //}
+          if (streams.app.scrim.value == false) {
+            streams.app.scrim.add(true);
+          }
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
           var minExtent =
@@ -705,5 +705,34 @@ class SimpleSelectionItems {
 
   Future<void> build() async {
     produceModal([for (Widget item in items) item]);
+  }
+}
+
+class SimpleScrim {
+  final BuildContext context;
+  late void Function()? then;
+
+  SimpleScrim(this.context, {this.then});
+
+  Future<void> build() async {
+    await showModalBottomSheet<void>(
+        context: components.navigator.routeContext!,
+        elevation: 1,
+        isScrollControlled: true,
+        barrierColor: AppColors.black38,
+        shape: components.shape.topRounded8,
+        builder: (BuildContext context) {
+          if (streams.app.scrim.value == false) {
+            streams.app.scrim.add(true);
+          }
+          return Container(height: 0);
+        }).then((value) {
+      if (streams.app.scrim.value == true) {
+        streams.app.scrim.add(false);
+      }
+      if (then != null) {
+        then!();
+      }
+    });
   }
 }

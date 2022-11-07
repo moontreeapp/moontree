@@ -30,3 +30,4 @@ export 'types/security_type.dart';
 export 'types/setting_name.dart';
 export 'types/status_type.dart';
 export 'types/feature_level.dart';
+export 'types/tutorial_status.dart';

@@ -52,4 +52,7 @@ enum SettingName {
 
   @HiveField(14)
   mode_dev,
+
+  @HiveField(15)
+  tutorial_status,
 }
