@@ -194,7 +194,7 @@ class _NavMenuState extends State<NavMenu> {
         padding: EdgeInsets.all(0),
         children: [
           destination(
-            icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant, //
+            icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant,
             name: 'Blockchain',
             link: '/settings/network/blockchain',
           ),
