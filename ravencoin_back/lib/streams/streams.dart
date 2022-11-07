@@ -3,6 +3,10 @@ import 'app.dart';
 import 'create.dart';
 import 'reissue.dart';
 import 'cipher.dart';
+
+/// CLAIM FEATURE
+import 'claim.dart';
+
 import 'client.dart';
 import 'import.dart';
 import 'metadata.dart';
@@ -21,5 +25,9 @@ class streams {
   static final password = PasswordStreams();
   static final wallet = WalletStreams();
   static final spend = Spend();
+
+  /// CLAIM FEATURE
+  static final claim = Claim();
+
   static final import = Import();
 }

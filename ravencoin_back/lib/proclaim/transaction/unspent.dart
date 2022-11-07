@@ -83,7 +83,7 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
     String? symbol,
     bool allowUnconfirmed = true,
   }) {
-    symbol = symbol ?? 'RVN';
+    symbol = symbol ?? chainSymbol(chain);
     if (totalConfirmed(walletId, symbol: symbol, chain: chain, net: net) +
             (allowUnconfirmed
                 ? totalUnconfirmed(walletId,

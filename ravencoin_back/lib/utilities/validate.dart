@@ -38,6 +38,10 @@ bool isIpfs(String x) => x.contains(RegExp(
 
 bool isAddressRVN(String x) => Address.validateAddress(x, networks.mainnet);
 bool isAddressRVNt(String x) => Address.validateAddress(x, networks.testnet);
+bool isAddressEVR(String x) =>
+    Address.validateAddress(x, networks.evrmoreMainnet);
+bool isAddressEVRt(String x) =>
+    Address.validateAddress(x, networks.evrmoreTestnet);
 bool isTxIdRVN(String x) => x.contains(RegExp(r'^[0-9a-f]{64}$'));
 // This is the raw hex that will be input into the chain as the associated IPFS
 // Should be check as input as isTxIdRVN

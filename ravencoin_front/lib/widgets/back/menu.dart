@@ -152,12 +152,13 @@ class _NavMenuState extends State<NavMenu> {
               icon: MdiIcons.accountCog,
               name: 'User Level',
               link: '/settings/level'),
-          */
-          destination(
+          
+          destination( // has been combined with blockchain
             icon: MdiIcons.network,
             name: 'Network',
             link: '/settings/network',
           ),
+          */
           if (pros.settings.advancedDeveloperMode)
             destination(
               icon: Icons.format_list_bulleted_rounded,
@@ -192,11 +193,11 @@ class _NavMenuState extends State<NavMenu> {
         shrinkWrap: true,
         padding: EdgeInsets.all(0),
         children: [
-            destination(
-              icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant, //
-              name: 'Blockchain',
-              link: '/settings/network/blockchain',
-            ),
+          destination(
+            icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant,
+            name: 'Blockchain',
+            link: '/settings/network/blockchain',
+          ),
           if (!pros.settings.developerMode)
             destination(
                 icon: MdiIcons.shieldKey,

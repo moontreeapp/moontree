@@ -8,7 +8,8 @@ class HistoryService {
   int calledAllDoneProcess = 0; // used to hide transactions while downloading
   Future aggregatedDownloadProcess(List<Address> addresses) async {
     busy = true;
-    var txHashes = (await getHistories(addresses)).toSet();
+    var txHashes =
+        filterOutPreviouslyDownloaded(await getHistories(addresses)).toSet();
     var txs = await grabTransactions(txHashes);
     await saveThese([for (var tx in txs) await parseTx(tx)]);
     busy = false;
@@ -94,7 +95,6 @@ class HistoryService {
     bool saveVout = true,
   }) async {
     await getTransactions(txIds, saveVin: saveVin, saveVout: saveVout);
-    print('DONE!');
     //busy = true;
     //await saveTransactions(
     //  [
@@ -141,9 +141,12 @@ class HistoryService {
     Iterable<String> transactionIds,
   ) =>
       transactionIds
-          .where((transactionId) => !pros.vouts.records
-              .map((e) => e.transactionId)
-              .contains(transactionId))
+          .where((transactionId) =>
+              transactionId !=
+                  'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262' && // don't download genesis block of Evrmore, it's too big.
+              !pros.vouts.records
+                  .map((e) => e.transactionId)
+                  .contains(transactionId))
           .toSet();
 
   /// we capture securities here. if it's one we've never seen,
@@ -204,7 +207,7 @@ class HistoryService {
         streams.asset.added.add(asset);
       }
     }
-    return Tuple3(value, security ?? pros.securities.RVN, asset);
+    return Tuple3(value, security ?? pros.securities.currentCrypto, asset);
   }
 
   Future<List<Tx>> grabTransactions(Iterable<String> transactionIds) async {
@@ -249,7 +252,7 @@ class HistoryService {
         position: vout.n,
         type: vout.scriptPubKey.type,
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-        rvnValue: vs.item2.symbol == 'RVN' ? vs.item1 : 0,
+        rvnValue: ['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
         assetValue: vs.item3 == null
             ? null
             : utils.amountToSat(vout.scriptPubKey.amount),
@@ -407,7 +410,7 @@ class HistoryService {
           position: vout.n,
           type: vout.scriptPubKey.type,
           lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-          rvnValue: vs.item2.symbol == 'RVN' ? vs.item1 : 0,
+          rvnValue: ['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
           assetValue: vs.item3 == null
               ? null
               : utils.amountToSat(vout.scriptPubKey.amount),

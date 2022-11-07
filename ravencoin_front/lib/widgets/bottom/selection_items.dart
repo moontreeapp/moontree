@@ -302,11 +302,19 @@ class SelectionItems {
         ));
       },
       leading: components.icons.assetAvatar(
-        name == 'Ravencoin' ? pros.securities.RVN.symbol : name,
-        height: 24,
-        width: 24,
-      ),
-      title: Text(name, style: Theme.of(context).textTheme.bodyText1));
+          name == 'Ravencoin'
+              ? pros.securities.RVN.symbol
+              : name == 'Evrmore'
+                  ? pros.securities.EVR.symbol
+                  : name,
+          height: 24,
+          width: 24,
+          net: pros.settings.net),
+      title: Text(
+          name == pros.securities.currentCrypto.symbol
+              ? symbolName(name)
+              : name,
+          style: Theme.of(context).textTheme.bodyText1));
 
   Widget walletItem(Wallet wallet, TextEditingController controller) =>
       ListTile(
@@ -649,7 +657,9 @@ class SimpleSelectionItems {
         barrierColor: AppColors.black38,
         shape: components.shape.topRounded8,
         builder: (BuildContext context) {
+          //if (streams.app.scrim.value == false) {
           streams.app.scrim.add(true);
+          //}
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
           var minExtent =
@@ -657,6 +667,10 @@ class SimpleSelectionItems {
           var initialExtent = minExtent;
           var maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
           maxExtent = min(1.0, max(minExtent, maxExtent));
+
+          /// failed attempt to use set state
+          //return StatefulBuilder(builder: (BuildContext context,
+          //    StateSetter setState /*You can rename this!*/) {
           return DraggableScrollableSheet(
             controller: draggableScrollController,
             snap: false,
@@ -678,8 +692,11 @@ class SimpleSelectionItems {
                   ));
             }),
           );
+          //});
         }).then((value) {
-      streams.app.scrim.add(false);
+      if (streams.app.scrim.value == true) {
+        streams.app.scrim.add(false);
+      }
       if (then != null) {
         then!();
       }

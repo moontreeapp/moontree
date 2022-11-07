@@ -9,14 +9,8 @@ class Current {
   static Balance get balanceRVN =>
       services.balance.walletBalance(wallet, pros.securities.RVN);
 
-  static Balance get balanceCurrency => services.balance.walletBalance(
-      wallet,
-      pros.settings.chain == Chain.ravencoin
-          ? pros.securities.RVN
-          : pros.settings.chain == Chain.evrmore
-              ? pros.securities.EVR
-              : pros.securities.RVN // default usd?
-      );
+  static Balance get balanceCurrency =>
+      services.balance.walletBalance(wallet, pros.securities.currentCrypto);
 
   static Set<Transaction> get transactions => wallet.transactions;
 

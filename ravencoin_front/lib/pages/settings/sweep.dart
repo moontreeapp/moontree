@@ -355,6 +355,7 @@ class _SweepPageState extends State<SweepPage> {
                 toWalletId: walletId,
                 currency: true,
                 assets: true,
+                memo: memoController.text == '' ? null : memoController.text,
                 note: noteController.text == '' ? null : noteController.text);
             //await components.loading.screen(
             //  message: 'Sweeping',

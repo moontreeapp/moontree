@@ -19,7 +19,7 @@ Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
       return set
         ..add(WalletSecurityPair(
             wallet: vout.wallet!,
-            security: vout.security ?? pros.securities.RVN));
+            security: vout.security ?? pros.securities.currentCrypto));
     }
     return set;
   });
@@ -31,6 +31,6 @@ Set<WalletSecurityPair> securityPairsFromVouts(List<Vout> vouts) {
       if (vout.wallet != null)
         WalletSecurityPair(
             wallet: vout.wallet!,
-            security: vout.security ?? pros.securities.RVN)
+            security: vout.security ?? pros.securities.currentCrypto)
   };
 }

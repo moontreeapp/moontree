@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:hive/hive.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -76,7 +77,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -86,13 +87,57 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            print(pros.blocks.records.first);
-            print(pros.blocks.records.last);
-            print(pros.settings.chain);
-            print(pros.settings.net);
-            print(pros.settings.domainPort);
-            print(portOf(pros.settings.chain, pros.settings.net));
-            print(pros.settings.mainnet);
+            //      height:
+            //      0
+            //      scripthash:
+            //      "e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566"
+            //      symbol:
+            //      null
+            //      txHash:
+            //      "c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262"
+            //      txPos:
+            //      664
+            //      value:
+            //      64678656394845
+            //      hashCode:
+            //      977627678
+
+            print(pros.transactions.records);
+            await Navigator.pushNamed(
+              components.navigator.routeContext!,
+              '/security/security',
+              arguments: {
+                'buttonLabel': 'Submit',
+                'onSuccess': () async {
+                  Navigator.pop(components.navigator.routeContext!);
+                  print('verified');
+                }
+              },
+            );
+            //print(pros.unspents.records);
+            //print(pros.addresses.byScripthash.getOne(
+            //    'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));
+            ////EXKwffgqoVuYAq42bGZ5SfMN4KMPmLQhUp
+            //print(pros.transactions.primaryIndex.getOne(
+            //    'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262'));
+            //print(pros.vouts.records.first);
+
+            //print(streams.claim.unclaimed.value);
+            //pros.unspents.records.map((e) => e.symbol).forEach((element) {
+            //  print(element);
+            //});
+            //pros.balances.records.forEach((element) {
+            //  print(element);
+            //});
+            //print(pros.unspents.getSymbolsByWallet(Current.walletId));
+
+            //print(pros.blocks.records.first);
+            //print(pros.blocks.records.last);
+            //print(pros.settings.chain);
+            //print(pros.settings.net);
+            //print(pros.settings.domainPort);
+            //print(portOf(pros.settings.chain, pros.settings.net));
+            //print(pros.settings.mainnet);
 
             //final txid = 'rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1';
             //streams.app.snack.add(Snack(

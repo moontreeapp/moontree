@@ -96,15 +96,16 @@ class _TransactionListState extends State<TransactionList> {
                 padding:
                     EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 0),
                 child: Text(
-                  'Miner Mode is enabled, so transaction history is not available. \n\nTo download your transaction history please disable Miner Mode in Settings.',
+                  '"Mine to Wallet" is enabled, so transaction history is not available. \n\nTo download your transaction history please disable "Mine to Wallet" in Settings.',
                   softWrap: true,
                   maxLines: 10,
                 )),
-            components.buttons.actionButtonSoft(
-              context,
-              label: 'Go to Settings',
-              link: '/settings/network/mining',
-            ),
+            if (pros.settings.developerMode)
+              components.buttons.actionButtonSoft(
+                context,
+                label: 'Go to Settings',
+                link: '/settings/network/mining',
+              ),
             SizedBox(height: 80),
           ])
         : transactions.isEmpty

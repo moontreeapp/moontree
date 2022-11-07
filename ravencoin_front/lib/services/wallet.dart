@@ -51,6 +51,9 @@ Future setupWallets() async {
 }
 
 Future<void> switchWallet(String walletId) async {
+  /// CLAIM FEATURE
+  streams.claim.unclaimed.add(<Vout>{});
+
   await pros.settings.setCurrentWalletId(walletId);
   streams.app.fling.add(false);
   streams.app.setting.add(null);

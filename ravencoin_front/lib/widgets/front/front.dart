@@ -3,6 +3,7 @@ export 'lists/holdings.dart';
 export 'lists/transactions.dart';
 export 'forms/create.dart';
 export 'forms/reissue.dart';
+export 'forms/network.dart';
 export 'choices/download_queue_count.dart';
 export 'choices/blockchain_choice.dart';
 export 'choices/clear_secure_storage.dart';

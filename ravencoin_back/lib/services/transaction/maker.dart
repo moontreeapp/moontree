@@ -347,7 +347,7 @@ class SendEstimate with ToStringMixin {
         'creation',
       ];
 
-  int get total => security == null || security == pros.securities.RVN
+  int get total => security == null || security == pros.securities.currentCrypto
       ? (creation ? 0 : amount) + fees + extraFees
       : fees + extraFees;
   int get utxoTotal => utxos.fold(
@@ -383,7 +383,7 @@ class TransactionMaker {
                 double.parse(sendRequest.visibleAmount) ==
                     sendRequest.holding) &&
             (sendRequest.security == null ||
-                sendRequest.security == pros.securities.RVN)
+                sendRequest.security == pros.securities.currentCrypto)
         ? await transactionSendAllRVN(
             sendRequest.sendAddress,
             estimate,
@@ -411,11 +411,6 @@ class TransactionMaker {
       //assetMemo: createRequest.assetMemo, // not on front end
       //memo: createRequest.memo, // op return memos allowed, but not on front end
     );
-    print(estimate.total);
-    // MOONTREETESTASSET
-    // QmQsUFxsd4S5FZGxQJjVSBVSPv8Gt1adRE16nACt2zv6KP
-
-    print('createTransactionBy $estimate');
     return createRequest.isNFT || createRequest.isChannel
         ? await transactionCreateChildAsset(
             createRequest.parent!,
@@ -454,7 +449,6 @@ class TransactionMaker {
       security: reissueRequest.security,
       creation: true,
     );
-    print('reissueTransactionBy $estimate');
     return reissueRequest.isRestricted
         ? await transactionReissueRestrictedAsset(
             estimate,
@@ -1267,7 +1261,6 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1313,7 +1306,6 @@ class TransactionMaker {
         txb.addInput(utxo.transactionId, utxo.position);
         total = total + utxo.rvnValue;
       }
-      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1327,7 +1319,6 @@ class TransactionMaker {
       return txb;
     }
 
-    print('in sendall');
     var utxos = await services.balance.collectUTXOs(
       walletId: wallet.id,
       amount: estimate.amount,
@@ -1364,38 +1355,25 @@ class TransactionMaker {
     ) {
       var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
       for (var utxo in utxosCurrency) {
-        print('ADDING INPUTS:');
-        print(utxo.transactionId);
-        print(utxo.position);
-        print(utxo.security?.symbol);
         txb.addInput(utxo.transactionId, utxo.position);
       }
-      //print('ADDING OUTPUT:');
-      //print(toAddress);
-      //print(estimate.amount);
       txb.addOutput(toAddress, estimate.amount,
           asset: null, memo: null, expiry: null);
       for (var utxo in utxosBySecurity.values.expand((e) => e)) {
-        print('ADDING MORE INPUTS:');
-        print(utxo.transactionId);
-        print(utxo.position);
-        print(utxo.security?.symbol);
         txb.addInput(utxo.transactionId, utxo.position);
       }
       for (var entry in utxosBySecurity.entries) {
         final amount = entry.value
             .fold(0, (int? agg, Vout v) => v.assetValue! + (agg ?? 0));
-        print('ADDING OUTPUT:');
-        print(toAddress);
-        print(amount);
-        print(entry.key.symbol);
         txb.addOutput(toAddress, amount,
             asset: entry.key.symbol, memo: null, expiry: null);
+      }
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
       }
       return txb;
     }
 
-    print('in sendall');
     var utxosCurrency = await services.balance.collectUTXOs(
       walletId: wallet.id,
       amount: estimate.amount,
@@ -1502,7 +1480,6 @@ class TransactionMaker {
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
       }
-      print('extimate.assetMemo: ${estimate.assetMemo}');
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1516,7 +1493,6 @@ class TransactionMaker {
       return txb;
     }
 
-    print('in sendall');
     var txb = makeTxBuilder(utxosCurrency, estimate);
     var tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: goal));
@@ -1524,6 +1500,48 @@ class TransactionMaker {
     estimate.setUTXOs(utxosCurrency);
     txb = makeTxBuilder(utxosCurrency, estimate);
     await txb.signEachInput(utxosCurrency);
+    tx = txb.build();
+    return Tuple2(tx, estimate);
+  }
+
+  /// CLAIM FEATURE:
+  /// instead of getting the vouts as we normally would, we get them from stream
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> claimAllEVR(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    TxGoal? goal,
+    Set<int>? previousFees,
+    int? assetMemoExpiry,
+  }) async {
+    ravencoin.TransactionBuilder makeTxBuilder(
+      List<Vout> utxos,
+      SendEstimate estimate,
+    ) {
+      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      for (var utxo in utxos) {
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      txb.addOutput(
+        toAddress,
+        estimate.amount,
+        asset: estimate.security?.symbol,
+        memo: estimate.assetMemo,
+        expiry: assetMemoExpiry,
+      );
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
+      return txb;
+    }
+
+    var utxos = estimate.utxos;
+    var txb = makeTxBuilder(utxos, estimate);
+    var tx = txb.buildSpoofedSigs();
+    estimate.setFees(tx.fee(goal: goal));
+    estimate.setAmount(estimate.amount - estimate.fees);
+    txb = makeTxBuilder(utxos, estimate);
+    await txb.signEachInput(utxos);
     tx = txb.build();
     return Tuple2(tx, estimate);
   }

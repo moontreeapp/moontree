@@ -68,8 +68,11 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
             SizedBox(height: .015.ofMediaHeight(context)),
             Hero(
               tag: widget.symbol.toLowerCase(),
-              child: components.icons.assetAvatar(widget.symbol,
-                  size: .0631.ofMediaHeight(context)),
+              child: components.icons.assetAvatar(
+                widget.symbol,
+                size: .0631.ofMediaHeight(context),
+                net: pros.settings.net,
+              ),
             ),
           ],
         ),
@@ -147,8 +150,8 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   }
 
   Widget get backText => Text(
-        widget.symbol == pros.securities.RVN.symbol
-            ? 'Ravencoin'
+        widget.symbol == pros.securities.currentCrypto.symbol
+            ? symbolName(widget.symbol)
             : widget.symbol,
         style: Theme.of(context)
             .textTheme

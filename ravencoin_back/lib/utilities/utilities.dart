@@ -31,6 +31,8 @@ class Validate {
   final isIpfs = validate.isIpfs;
   final isAddressRVN = validate.isAddressRVN;
   final isAddressRVNt = validate.isAddressRVNt;
+  final isAddressEVR = validate.isAddressEVR;
+  final isAddressEVRt = validate.isAddressEVRt;
   final isTxIdRVN = validate.isTxIdRVN;
   final isAdmin = validate.isAdmin;
   final isAssetPath = validate.isAssetPath;

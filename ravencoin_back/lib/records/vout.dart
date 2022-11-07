@@ -65,6 +65,37 @@ class Vout with EquatableMixin, ToStringMixin {
     this.additionalAddresses,
   });
 
+  factory Vout.fromUnspent(
+    Unspent unspent, {
+    String? transactionId,
+    int? position,
+    String? type,
+    int? rvnValue,
+    int? assetValue,
+    String? lockingScript,
+    String? memo,
+    String? assetMemo,
+    String? assetSecurityId,
+    String? toAddress,
+    List<String>? additionalAddresses,
+  }) {
+    return Vout(
+      transactionId: transactionId ?? unspent.txHash,
+      position: position ?? unspent.position,
+      type: type ?? 'pubkeyhash',
+      rvnValue: rvnValue ?? unspent.value,
+      toAddress: toAddress ??
+          unspent.address?.address ??
+          pros.addresses.byScripthash.getOne(unspent.scripthash)?.address,
+      assetValue: assetValue,
+      lockingScript: lockingScript,
+      memo: memo,
+      assetMemo: assetMemo,
+      assetSecurityId: assetSecurityId,
+      additionalAddresses: additionalAddresses,
+    );
+  }
+
   // this is wrong. confirmed may have had something to do with position back
   // when we were dealing with histories but now confirmed is at the
   // transaction level - was the transaction confirmed or not?
@@ -112,14 +143,14 @@ class Vout with EquatableMixin, ToStringMixin {
       [if (toAddress != null) toAddress!, ...additionalAddresses ?? []];
 
   int securityValue({Security? security}) => security == null ||
-          (security.symbol == pros.securities.RVN.symbol &&
+          (security.symbol == pros.securities.currentCrypto.symbol &&
               security.securityType == SecurityType.crypto)
       ? rvnValue
       : (security.id == assetSecurityId)
           ? assetValue ?? 0
           : 0;
 
-  String get securityId => assetSecurityId ?? pros.securities.RVN.id;
+  String get securityId => assetSecurityId ?? pros.securities.currentCrypto.id;
 
   bool get isAsset =>
       !pros.securities.cryptos.map((e) => e.id).contains(securityId);

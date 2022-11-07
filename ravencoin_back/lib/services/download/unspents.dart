@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 
 enum ValueType { confirmed, unconfirmed }
 
@@ -51,10 +52,10 @@ class UnspentService {
     var utxos = <Unspent>{};
 
     /// update RVN call
-    var rvnUtxos = (await services.client.api.getUnspents(scripthashes))
+    var currencyUtxos = (await services.client.api.getUnspents(scripthashes))
         .expand((i) => i)
         .toList();
-    for (var utxo in rvnUtxos) {
+    for (var utxo in currencyUtxos) {
       utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo, chain, net));
     }
 
@@ -75,14 +76,58 @@ class UnspentService {
       }
     }
 
-    _maybeTriggerBackup(rvnUtxos);
+    _maybeTriggerBackup(currencyUtxos);
     _maybeTriggerBackup(assetUtxos);
 
     // only save if there's something new, in that case erase all, save all.
     var existing = pros.unspents.byScripthashes(scripthashes).toSet();
     await pros.unspents.removeAll(existing.difference(utxos));
     await pros.unspents.saveAll(utxos.difference(existing));
-    if (getTransactions && utxos.isNotEmpty) {
+
+    /// CLAIM FEATURE
+    /// edge case: Evrmore genesis block is too large to download, so if we
+    /// detect the utxo with a (height of 0 and on Chain.evrmore) or a txid of
+    /// c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262
+    /// then we have a "claim" situation. We want to halt downloading
+    /// transactions and instead make a Vout from the Unspent. Since it's not an
+    /// asset we don't need the lockingScript so we don't need to get the Vout
+    /// from the transaction, which is lucky for us because it's too big to
+    /// handle in the current implementation. So. I think the best way to do
+    /// this is to make the Vout from the unspent here, pass it to a stream
+    /// then use that stream to avoid downloading any transactions later on, and
+    /// to make and sign the claim transaction.
+    if (utxos.map((e) => e.txHash).contains(
+        'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262')) {
+      if (pros.settings.currentWalletId == wallet.id) {
+        // make vout
+        for (var utxo in utxos) {
+          if (utxo.txHash ==
+              'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262') {
+            // pass to stream
+            streams.claim.unclaimed.add({
+              ...streams.claim.unclaimed.value,
+              ...{
+                Vout.fromUnspent(utxo,
+                    toAddress: utxo.address?.address ??
+                        pros.addresses.byScripthash
+                            .getOne(utxo.scripthash)
+                            ?.address)
+              }
+            });
+          }
+        }
+      }
+      // also pass empty list to stream when clearing memory or change wallet:
+      // utilities.database
+      //
+
+      // avoid downloading transactions if stream is not null:
+      // this if statement and subscribe
+
+      // use the contents of the stream to make the sweep transaction in
+      //   special claim sweep tx maker function.
+
+    } else if (getTransactions && utxos.isNotEmpty) {
       /// we don't want to queue these because that makes it hard to know when
       /// vouts are downloaded for these unspents. If we await the download
       /// here, instead, we can easily make the send button available when vouts
@@ -104,9 +149,12 @@ class UnspentService {
           .filterOutPreviouslyDownloaded(utxos.map((e) => e.transactionId))
           .toSet();
       if (txids.isNotEmpty) {
+        await services.download.history.getAndSaveTransactions(txids);
         try {
           await services.download.history.getAndSaveTransactions(txids);
+          //} catch rpc.RpcException(e) {//(/JSON-RPC error -32600 (invalid request): response too large (over 10,000,000 bytes)) {
         } catch (e) {
+          print(e);
           for (var unspentRecord in utxos) {
             final txid = unspentRecord.transactionId;
             if (txids.contains(txid)) {

@@ -14,6 +14,7 @@ import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:shimmer/shimmer.dart';
 
 final rvn = pros.securities.RVN.symbol;
+final evr = pros.securities.EVR.symbol;
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
@@ -104,7 +105,6 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future refresh() async {
-    print('sup');
     await services.balance.recalculateAllBalances();
     setState(() {});
   }
@@ -309,7 +309,7 @@ class _HoldingList extends State<HoldingList> {
           leading: leadingIcon(holding),
           title: title(holding),
           trailing: pros.settings.developerMode == true
-              ? (holding.symbol == rvn && !isEmpty
+              ? ((holding.symbol == rvn || holding.symbol == evr) && !isEmpty
                   ? GestureDetector(
                       onTap: () =>
                           setState(() => showSearchBar = !showSearchBar),
@@ -330,7 +330,7 @@ class _HoldingList extends State<HoldingList> {
                             ))
                   : null)
               : null);
-      if (holding.symbol == rvn) {
+      if (holding.symbol == rvn || holding.symbol == evr) {
         rvnHolding.add(Container(
             //duration: Duration(milliseconds: 500),
             child: Column(
@@ -363,21 +363,20 @@ class _HoldingList extends State<HoldingList> {
 
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = <Widget>[];
-    if (pros.settings.advancedDeveloperMode == true ||
-        (pros.settings.chain == Chain.evrmore &&
-            pros.blocks.records.first.height <= 60 * 24 * 60 &&
-            pros.unspents.records.where((u) => u.height == 0).length > 0)) {
+    if ( //pros.settings.advancedDeveloperMode == true ||
+        streams.claim.unclaimed.value.isNotEmpty &&
+            (pros.settings.chain == Chain.evrmore &&
+                pros.blocks.records.first.height <= 60 * 24 * 60 &&
+                pros.unspents.records.where((u) => u.height == 0).length > 0)) {
       claimInvite.add(ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
           onTap: () async => await components.message.giveChoices(
                 context,
                 title: 'Claim Your EVR',
-                content: ('All EVR in the Evrmore fairdrop must be claimed within 60 '
-                    'days of the snapshot (which occured on october 25th 2022).'
-                    ' Any send transaction is sufficient to claim your EVR. '
-                    '${pros.settings.developerMode ? 'This can even be done manually. ' : ''}'
-                    'Claim your EVR now!'),
+                content: ('All EVR in the Evrmore fairdrop must be claimed '
+                    'within 60 days of the snapshot (which occured on october '
+                    '25th 2022). Claim your EVR now!'),
                 behaviors: {
                   'OK': () => Navigator.of(context).pop(),
                 },
@@ -415,7 +414,6 @@ class _HoldingList extends State<HoldingList> {
     //}
     return GestureDetector(
       onTap: () async => setState(() {
-        print('refresh1');
         FocusScope.of(context).unfocus;
       }),
       child: listView,
@@ -541,23 +539,25 @@ class _HoldingList extends State<HoldingList> {
           child: //Hero(
               //tag: holding.symbol.toLowerCase(),
               //child:
-              components.icons.assetAvatar(holding.admin != null
-                  ? holding.adminSymbol!
-                  : holding.restricted != null
-                      ? holding.restrictedSymbol!
-                      : holding.qualifier != null
-                          ? holding.qualifierSymbol!
-                          : holding.channel != null
-                              ? holding.channelSymbol!
-                              : holding.nft != null
-                                  ? holding.nftSymbol!
-                                  : holding.subAdmin != null
-                                      ? holding.subAdminSymbol!
-                                      : holding.sub != null
-                                          ? holding.subSymbol!
-                                          : holding.qualifierSub != null
-                                              ? holding.qualifierSubSymbol!
-                                              : holding.symbol))
+              components.icons.assetAvatar(
+                  holding.admin != null
+                      ? holding.adminSymbol!
+                      : holding.restricted != null
+                          ? holding.restrictedSymbol!
+                          : holding.qualifier != null
+                              ? holding.qualifierSymbol!
+                              : holding.channel != null
+                                  ? holding.channelSymbol!
+                                  : holding.nft != null
+                                      ? holding.nftSymbol!
+                                      : holding.subAdmin != null
+                                          ? holding.subAdminSymbol!
+                                          : holding.sub != null
+                                              ? holding.subSymbol!
+                                              : holding.qualifierSub != null
+                                                  ? holding.qualifierSubSymbol!
+                                                  : holding.symbol,
+                  net: pros.settings.net))
       //)
       ;
 
@@ -565,15 +565,15 @@ class _HoldingList extends State<HoldingList> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Container(
-              width: holding.symbol == rvn
+              width: holding.symbol == rvn || holding.symbol == evr
                   ? MediaQuery.of(context).size.width / 2
                   : MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    holding.symbol == rvn
-                        ? 'Ravencoin${pros.settings.mainnet ? '' : ' (testnet)'}'
+                    holding.symbol == rvn || holding.symbol == evr
+                        ? symbolName(holding.symbol)
                         : pros.settings.developerMode && showPath
                             ? holding.symbol
                             : holding.last,

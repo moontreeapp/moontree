@@ -79,7 +79,7 @@ class _ClaimEvr extends State<ClaimEvr> {
           items: [
             ['To', wallet.name],
             [
-              'Amount',
+              'EVR',
               components.text.securityAsReadable(Current.balanceCurrency.value,
                   security: Current.balanceCurrency.security, asUSD: false)
             ],
@@ -88,11 +88,9 @@ class _ClaimEvr extends State<ClaimEvr> {
           total: null,
           confirm: 'Press Claim to complete transaction.',
           buttonAction: () async {
-            await services.transaction.sweep(
+            await services.transaction.claim(
                 from: Current.wallet,
                 toWalletId: wallet.id,
-                currency: true,
-                assets: false,
                 note: 'Claim EVR',
                 msg: 'Successfully Claimed EVR');
             await switchWallet(wallet.id);

@@ -19,7 +19,7 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
   //    Balance(
   //        confirmed: 0,
   //        unconfirmed: 0,
-  //        security: pros.securities.RVN,
+  //        security: pros.securities.currentCrypto,
   //        walletId: pros.settings.currentWalletId)
   //  ];
   //}

@@ -37,6 +37,21 @@ String chainSymbol(Chain chain) {
   }
 }
 
+String symbolName(String symbol) {
+  switch (symbol) {
+    case 'RVN':
+      return 'Ravencoin';
+    case 'EVR':
+      return 'Evrmore';
+    case 'RVNt':
+      return 'Ravencoin (testnet)';
+    case 'EVRt':
+      return 'Evrmore (testnet)';
+    default:
+      return symbol;
+  }
+}
+
 String chainName(Chain chain) => chain.name.toTitleCase();
 
 String chainNetSymbol(Chain chain, Net net) =>
@@ -67,10 +82,12 @@ NetworkType networkOf(Chain chain, Net net) {
 }
 
 /// port map
-///50001 - mainnet tcp
-///50002 - mainnet ssl
-///50011 - testnet tcp
-///50012 - testnet ssl
+///50001 - mainnet tcp rvn
+///50002 - mainnet ssl rvn
+///50011 - testnet tcp rvnt
+///50012 - testnet ssl rvnt
+///50021 - testnet tcp evr
+///50022 - testnet ssl evr
 int portOf(Chain chain, Net net) {
   if (chain == Chain.ravencoin && net == Net.main) {
     return 50002;
@@ -79,10 +96,10 @@ int portOf(Chain chain, Net net) {
     return 50012;
   }
   if (chain == Chain.evrmore && net == Net.main) {
-    return 8820;
+    return 50022; //return 8820;
   }
   if (chain == Chain.evrmore && net == Net.test) {
-    return 18820;
+    return 50032;
   }
   return 50002;
 }

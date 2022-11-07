@@ -166,7 +166,8 @@ class _CheckoutState extends State<Checkout> {
         dense: true,
         visualDensity: VisualDensity.compact,
         leading: struct.icon ??
-            components.icons.assetAvatar(struct.symbol!.toUpperCase()),
+            components.icons.assetAvatar(struct.symbol!.toUpperCase(),
+                net: pros.settings.net),
         title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           SizedBox(width: 5),
           FittedBox(

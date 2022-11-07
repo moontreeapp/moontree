@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show TxGoals;
 import 'package:tuple/tuple.dart';
 
 import 'maker.dart';
@@ -13,7 +13,7 @@ class TransactionService {
   List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: security ?? pros.securities.RVN,
+              security: security ?? pros.securities.currentCrypto,
               includeMempool: false)
           .toList();
 
@@ -41,9 +41,9 @@ class TransactionService {
     var givenAddresses =
         wallet.addresses.map((address) => address.address).toSet();
     var transactionRecords = <TransactionRecord>[];
-    final rvn = pros.securities.RVN;
+    final currentCrypto = pros.securities.currentCrypto;
 
-    final net = pros.settings.mainnet ? ravencoin.mainnet : ravencoin.testnet;
+    final net = networkOf(pros.settings.chain, pros.settings.net);
     final specialTag = {net.burnAddresses.addTag: net.burnAmounts.addTag};
     final specialReissue = {net.burnAddresses.reissue: net.burnAmounts.reissue};
     final specialCreate = {
@@ -93,7 +93,7 @@ class TransactionService {
           // This will never contain our own addrs
           final outgoingAddrs = <String, int>{};
 
-          if (security == rvn) {
+          if (security == currentCrypto) {
             var selfIn = 0;
             var othersIn = 0;
             var selfOut = 0;
@@ -107,6 +107,7 @@ class TransactionService {
 
             var totalInRVN = 0;
             var totalOutRVN = 0;
+            var ioType;
             // Nothing too special about incoming...
             for (final vin in transaction.vins) {
               /// #651 I wonder if at this point there isn't a vout associated
@@ -120,13 +121,45 @@ class TransactionService {
               /// transactions at all until vouts are downloaded... so that's
               /// probably not it... we'll wait till the issue surfaces again.
               var vinVout = vin.vout;
+
+              /// we have another issue when it comes to the claim process:
+              /// we don't download the genesis block of the EVR chain so we do
+              /// not have the vout that those claim transactions point to. so
+              /// we have a special case for that here.
+
+              if (vin.voutTransactionId ==
+                  'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262') {
+                //print(pros.unspents.records);
+                //print(vin.transactionId);
+                //var value = pros.unspents.records
+                //    .where((u) => u.transactionId == vin.transactionId)
+                //    .fold(0,
+                //        (int? running, Unspent u) => u.value + (running ?? 0));
+                //selfIn += value;
+                //totalInRVN += value;
+                //feeFlag = true;
+                var utxos = pros.unspents.records
+                    .where((u) => u.transactionId == vin.transactionId);
+                var utxo;
+                if (utxos.isNotEmpty) {
+                  utxo = utxos.first;
+                  vinVout = Vout.fromUnspent(utxo,
+                      //simulate fee since it's hard to determin for claims
+                      rvnValue: utxo.value - 211200,
+                      toAddress: utxo.address?.address ??
+                          pros.addresses.byScripthash
+                              .getOne(utxo.scripthash)
+                              ?.address);
+                }
+                ioType ??= TransactionRecordType.claim;
+              }
               if (vinVout == null) {
                 /// unable to await so set flag
                 //services.download.history
                 //    .getAndSaveTransactions({vin.voutTransactionId});
                 feeFlag = true;
               }
-              if ((vinVout?.security ?? rvn) == rvn) {
+              if ((vinVout?.security ?? currentCrypto) == currentCrypto) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
                   selfIn += vinVout?.rvnValue ?? 0;
                 } else {
@@ -137,7 +170,7 @@ class TransactionService {
             }
 
             for (final vout in transaction.vouts) {
-              if (vout.security == rvn) {
+              if (vout.security == currentCrypto) {
                 totalOutRVN += vout.rvnValue;
                 if (givenAddresses.contains(vout.toAddress)) {
                   selfOut += vout.rvnValue;
@@ -165,7 +198,6 @@ class TransactionService {
                     (selfIn + othersIn)
                 ? totalInRVN - totalOutRVN
                 : (selfIn + othersIn) - (selfOut + othersOut);
-            var ioType;
 
             // Known burn addr for tagging
             // This goes first as tags can also be in creations
@@ -220,7 +252,9 @@ class TransactionService {
             // regular out transaction...
             if ((transaction.vouts.map((e) => !e.isAsset).every((e) => e))) {
               if (othersIn == 0 && othersOut == 0 && selfIn == selfOut + fee) {
-                ioType = TransactionRecordType.self;
+                if (ioType != TransactionRecordType.claim) {
+                  ioType = TransactionRecordType.self;
+                }
               }
             } else {
               ioType ??= TransactionRecordType.fee;
@@ -240,8 +274,12 @@ class TransactionService {
               security: security!,
               totalIn: selfIn,
               totalOut: selfOut,
-              valueOverride:
-                  ioType == TransactionRecordType.self ? outIntentional : null,
+              valueOverride: [
+                TransactionRecordType.self,
+                TransactionRecordType.claim
+              ].contains(ioType)
+                  ? outIntentional
+                  : null,
               height: transaction.height,
               type: ioType,
               fee: feeFlag ? 0 : fee,
@@ -273,7 +311,7 @@ class TransactionService {
                 feeFlag = true;
               }
               vinVout = vin.vout;
-              if (vinVout?.security == rvn) {
+              if (vinVout?.security == currentCrypto) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
                   selfInRVN += vinVout?.rvnValue ?? 0;
                 } else {
@@ -289,7 +327,7 @@ class TransactionService {
             }
 
             for (final vout in transaction.vouts) {
-              if (vout.security == rvn) {
+              if (vout.security == currentCrypto) {
                 if (givenAddresses.contains(vout.toAddress)) {
                   selfOutRVN += vout.rvnValue;
                 } else {
@@ -412,17 +450,49 @@ class TransactionService {
     return ret;
   }
 
+  /// CLAIM FEATURE
+  Future<void> claim({
+    required Wallet from,
+    required String toWalletId,
+    String? note,
+    String? memo,
+    String? msg,
+  }) async {
+    final destinationAddress = services.wallet.getEmptyAddress(
+      pros.wallets.primaryIndex.getOne(toWalletId)!,
+      NodeExposure.external,
+    );
+    final utxos = streams.claim.unclaimed.value;
+    final claimAmount = streams.claim.unclaimed.value
+        .map((e) => e.rvnValue)
+        .reduce((value, element) => value + element);
+
+    var txEstimate = await services.transaction.make.claimAllEVR(
+      destinationAddress,
+      SendEstimate(claimAmount, memo: memo, utxos: utxos.toList()),
+      wallet: from,
+      goal: TxGoals.standard,
+    );
+    streams.spend.send.add(TransactionNote(
+      txHex: txEstimate.item1.toHex(),
+      successMsg: msg ?? 'Successfully Claimed',
+      note: note,
+    ));
+  }
+
   /// sweep all assets and crypto from one wallet to another
-  Future<Set<Vout>> sweep(
-      {required Wallet from,
-      required String toWalletId,
-      required bool currency,
-      required bool assets,
-      String? note,
-      String? msg,
-      int limit = 1000,
-      Set<Vout>? usedUTXOs,
-      bool incremental = false}) async {
+  Future<Set<Vout>> sweep({
+    required Wallet from,
+    required String toWalletId,
+    required bool currency,
+    required bool assets,
+    String? memo,
+    String? note,
+    String? msg,
+    int limit = 1000,
+    Set<Vout>? usedUTXOs,
+    bool incremental = false,
+  }) async {
     usedUTXOs = usedUTXOs ?? {};
     final destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
@@ -446,10 +516,10 @@ class TransactionService {
           // we should be able to do it all in one transaction
           var txEstimate = await services.transaction.make.transactionSweepAll(
             destinationAddress,
-            SendEstimate(from.RVNValue),
+            SendEstimate(from.RVNValue, memo: memo),
             wallet: from,
             securities: assetBalances.map((e) => e.security).toSet(),
-            goal: ravencoin.TxGoals.standard,
+            goal: TxGoals.standard,
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
@@ -464,6 +534,7 @@ class TransactionService {
             toWalletId: toWalletId,
             currency: false,
             assets: true,
+            memo: memo,
             note: note,
             msg: '',
             usedUTXOs: usedUTXOs,
@@ -474,6 +545,7 @@ class TransactionService {
             toWalletId: toWalletId,
             currency: true,
             assets: false,
+            memo: memo,
             note: note,
             msg: msg ?? 'Successfully Swept',
             usedUTXOs: usedUTXOs,
@@ -492,9 +564,10 @@ class TransactionService {
           for (var balance in assetBalances) {
             var txEstimate = await services.transaction.make.transaction(
               destinationAddress,
-              SendEstimate(balance.value, security: balance.security),
+              SendEstimate(balance.value,
+                  security: balance.security, memo: memo),
               wallet: from,
-              goal: ravencoin.TxGoals.standard,
+              goal: TxGoals.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
@@ -531,10 +604,11 @@ class TransactionService {
                 var txEstimate = await services.transaction.make
                     .transactionSweepAssetIncrementally(
                   destinationAddress,
-                  SendEstimate(0, security: null), // essentially ignored
+                  SendEstimate(0,
+                      security: null, memo: memo), // essentially ignored
                   utxosBySecurity: utxosBySecurity,
                   wallet: from,
-                  goal: ravencoin.TxGoals.standard,
+                  goal: TxGoals.standard,
                 );
                 streams.spend.send.add(TransactionNote(
                   txHex: txEstimate.item1.toHex(),
@@ -553,10 +627,11 @@ class TransactionService {
             var txEstimate = await services.transaction.make
                 .transactionSweepAssetIncrementally(
               destinationAddress,
-              SendEstimate(0, security: null), // essentially ignored
+              SendEstimate(0,
+                  security: null, memo: memo), // essentially ignored
               utxosBySecurity: utxosBySecurity,
               wallet: from,
-              goal: ravencoin.TxGoals.standard,
+              goal: TxGoals.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
@@ -579,9 +654,9 @@ class TransactionService {
           !incremental) {
         var txEstimate = await services.transaction.make.transactionSendAllRVN(
           destinationAddress,
-          SendEstimate(from.RVNValue),
+          SendEstimate(from.RVNValue, memo: memo),
           wallet: from,
-          goal: ravencoin.TxGoals.standard,
+          goal: TxGoals.standard,
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
@@ -609,10 +684,10 @@ class TransactionService {
             var txEstimate = await services.transaction.make
                 .transactionSendAllRVNIncrementally(
               destinationAddress,
-              SendEstimate(total, security: null),
+              SendEstimate(total, security: null, memo: memo),
               utxosCurrency: utxos,
               wallet: from,
-              goal: ravencoin.TxGoals.standard,
+              goal: TxGoals.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
@@ -630,10 +705,11 @@ class TransactionService {
           var txEstimate = await services.transaction.make
               .transactionSendAllRVNIncrementally(
             destinationAddress,
-            SendEstimate(total, security: null), // essentially ignored
+            SendEstimate(total,
+                security: null, memo: memo), // essentially ignored
             utxosCurrency: utxos,
             wallet: from,
-            goal: ravencoin.TxGoals.standard,
+            goal: TxGoals.standard,
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
@@ -687,7 +763,7 @@ class TransactionService {
           destinationAddress,
           SendEstimate(balance.value, security: balance.security),
           wallet: from,
-          goal: ravencoin.TxGoals.standard,
+          goal: TxGoals.standard,
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
@@ -703,7 +779,7 @@ class TransactionService {
         destinationAddress,
         SendEstimate(balance.value - fees, security: null),
         wallet: from,
-        goal: ravencoin.TxGoals.standard,
+        goal: TxGoals.standard,
       );
       streams.spend.send.add(TransactionNote(
         txHex: txEstimate.item1.toHex(),
@@ -743,6 +819,7 @@ enum TransactionRecordType {
   tag,
   burn,
   reissue,
+  claim,
 }
 
 class TransactionRecord {
@@ -805,6 +882,8 @@ class TransactionRecord {
         return 'Received';
       case TransactionRecordType.outgoing:
         return 'Sent';
+      case TransactionRecordType.claim:
+        return 'Claim';
     }
   }
 
@@ -826,7 +905,8 @@ class TransactionRecord {
       }
       //services.download.history.getAndSaveTransactions(voutTransactionIds);
       await services.download.history.getTransactions(
-        voutTransactionIds,
+        services.download.history
+            .filterOutPreviouslyDownloaded(voutTransactionIds),
         saveVin: false,
         saveVout: true,
       );

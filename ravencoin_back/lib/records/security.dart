@@ -71,6 +71,11 @@ class Security with EquatableMixin {
           String symbol, SecurityType securityType, Chain chain, Net net) =>
       '$symbol:${securityType.name}:${chainNetKey(chain, net)}';
 
+  String get symbolChainNet => symbolChainNetKey(symbol, chain, net);
+
+  static String symbolChainNetKey(String symbol, Chain chain, Net net) =>
+      '$symbol:${chainNetKey(chain, net)}';
+
   String get securityTypeName => securityType.name;
 
   /// todo identify a ipfs hash correctly...

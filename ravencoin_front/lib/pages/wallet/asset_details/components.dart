@@ -43,7 +43,7 @@ class AssetNavbar extends StatelessWidget {
           context,
           label: 'receive',
           link: '/transaction/receive',
-          arguments: transactionsBloc.security != pros.securities.RVN
+          arguments: transactionsBloc.security != pros.securities.currentCrypto
               ? {'symbol': transactionsBloc.security.symbol}
               : null,
         )

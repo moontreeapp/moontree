@@ -18,7 +18,7 @@ String requestedAsset(
       }
     }
   }
-  return current ?? pros.securities.RVN.symbol;
+  return current ?? pros.securities.currentCrypto.symbol;
 }
 
 String cleanSatAmount(String amount) {

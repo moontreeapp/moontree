@@ -31,7 +31,7 @@ class _AssetState extends State<Asset> {
             pros.settings.net,
           )!),
       front: FrontCurve(
-          height: MediaQuery.of(context).size.height - (201 + 56),
+          height: MediaQuery.of(context).size.height * .64,
           child: Column(children: [
             Expanded(child: AssetDetails(symbol: symbol)),
             NavBar(

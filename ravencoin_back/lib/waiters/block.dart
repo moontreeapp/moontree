@@ -3,6 +3,7 @@
 /// if block headers was not a subscribe, but a function we could call on
 /// demand I believe we could save the electrumx server some bandwidth costs...
 
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 
@@ -10,15 +11,18 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'waiter.dart';
 
 class BlockWaiter extends Waiter {
+  bool notify = true;
   void init() {
-    listen(
-      'streams.client.connected',
-      streams.client.connected,
-      (ConnectionStatus connectionStatus) async =>
-          connectionStatus == ConnectionStatus.connected
-              ? await subscribe()
-              : () {},
-    );
+    listen('streams.client.connected', streams.client.connected,
+        (ConnectionStatus connectionStatus) async {
+      if (connectionStatus == ConnectionStatus.connected) {
+        await subscribe();
+        if (notify) {
+          streams.app.snack.add(Snack(message: 'Successfully Connected'));
+          notify = false;
+        }
+      }
+    });
   }
 
   Future<void> subscribe() async {
@@ -26,7 +30,6 @@ class BlockWaiter extends Waiter {
       'ravenClient.subscribeHeaders',
       await services.client.api.subscribeHeaders(),
       (BlockHeader blockHeader) async {
-        print(Block.fromBlockHeader(blockHeader));
         await pros.blocks.save(Block.fromBlockHeader(blockHeader));
       },
       autoDeinit: true,
@@ -36,8 +39,14 @@ class BlockWaiter extends Waiter {
     await listen<Change<Block>>(
       'blocks.changes',
       pros.blocks.changes,
-      (Change<Block> change) =>
-          services.download.history.getAndSaveMempoolTransactions(),
+      (Change<Block> change) => change.when(
+        loaded: (loaded) {},
+        added: (added) async {
+          await services.download.history.getAndSaveMempoolTransactions();
+        },
+        updated: (updated) {},
+        removed: (removed) {},
+      ),
       autoDeinit: true,
     );
   }

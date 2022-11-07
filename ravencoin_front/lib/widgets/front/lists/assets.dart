@@ -225,7 +225,9 @@ class _AssetList extends State<AssetList> {
               child: Text(
                   asset.symbol == pros.securities.RVN.symbol
                       ? 'Ravencoin'
-                      : asset.last,
+                      : asset.symbol == pros.securities.EVR.symbol
+                          ? 'Evrmore'
+                          : asset.last,
                   style: Theme.of(context).textTheme.bodyText1),
             ))
         /* //this feature can show the path 

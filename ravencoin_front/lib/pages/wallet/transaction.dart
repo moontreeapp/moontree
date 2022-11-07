@@ -79,6 +79,9 @@ class _TransactionPageState extends State<TransactionPage> {
           case TransactionRecordType.outgoing:
             //default:
             return 'Out';
+          case TransactionRecordType.claim:
+            //default:
+            return 'Claim';
         }
       case 'ID':
         return transaction!.id.cutOutMiddle();
@@ -101,7 +104,8 @@ class _TransactionPageState extends State<TransactionPage> {
             transactionRecord!.getVouts();
             return 'calculating...';
           } else {
-            return transactionRecord!.fee.toAmount().toCommaString() + ' RVN';
+            return transactionRecord!.fee.toAmount().toCommaString() +
+                ' ${chainSymbol(pros.settings.chain)}';
           }
         }();
 
@@ -182,14 +186,16 @@ class _TransactionPageState extends State<TransactionPage> {
         padding: EdgeInsets.only(top: 8, bottom: 112),
         children: <Widget>[
               for (var text in ['Date', 'Confirmations', 'Type', 'Fee'])
-                plain(text, element(text))
+                if (element(text) != 'calculating...')
+                  plain(text, element(text))
             ] +
             [
               link(
                 title: 'Transaction Info',
                 text: 'ID',
-                url:
-                    'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
+                url: pros.settings.chain == Chain.evrmore
+                    ? 'https://evr.explorer.monster/tx/'
+                    : 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
                 description: 'info',
               ),
               if (transactionMemo != null)

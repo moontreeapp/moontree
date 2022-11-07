@@ -62,11 +62,11 @@ class _SendState extends State<Send> {
 
   bool rvnValidation() =>
       pros.balances.primaryIndex
-          .getOne(Current.walletId, pros.securities.RVN) !=
+          .getOne(Current.walletId, pros.securities.currentCrypto) !=
       null;
 
   void tellUserNoRVN() => streams.app.snack.add(Snack(
-        message: 'No Ravencoin in wallet - fees are paid in Ravencoin',
+        message: 'No coin in wallet - unable to pay fees',
         positive: false,
       ));
 
@@ -78,7 +78,8 @@ class _SendState extends State<Send> {
       tellUserNoRVN();
       if (streams.spend.form.value?.symbol == null ||
           streams.spend.form.value?.symbol == 'RVN' ||
-          streams.spend.form.value?.symbol == 'Ravencoin') {
+          streams.spend.form.value?.symbol == 'Ravencoin' ||
+          streams.spend.form.value?.symbol == 'Evrmore') {
         streams.spend.form.add(SpendForm.merge(
           form: streams.spend.form.value,
           symbol: pros.balances.first.security.symbol,
@@ -89,12 +90,13 @@ class _SendState extends State<Send> {
     /// #612
     //sendAsset.text = sendAsset.text == ''
     //    ? (pros.balances.primaryIndex
-    //                .getOne(Current.walletId, pros.securities.RVN) !=
+    //                .getOne(Current.walletId, pros.securities.currentCrypto) !=
     //            null
     //        ? 'Ravencoin'
     //        : pros.balances.first.security.symbol)
     //    : sendAsset.text;
-    sendAsset.text = sendAsset.text == '' ? 'Ravencoin' : sendAsset.text;
+    sendAsset.text =
+        sendAsset.text == '' ? chainName(pros.settings.chain) : sendAsset.text;
     sendFee.text = sendFee.text == '' ? 'Standard' : sendFee.text;
     //sendAssetFocusNode.addListener(refresh);
     //sendAddressFocusNode.addListener(refresh);
@@ -106,13 +108,14 @@ class _SendState extends State<Send> {
       if (value != null) {
         if (spendForm != value) {
           spendForm = value;
-          var asset = (value.symbol ?? pros.securities.RVN.symbol);
-          asset = (asset == pros.securities.RVN.symbol || asset == 'Ravencoin')
-              ? 'Ravencoin'
+          var asset = (value.symbol ?? pros.securities.currentCrypto.symbol);
+          asset = (asset == pros.securities.currentCrypto.symbol ||
+                  asset == chainName(pros.settings.chain))
+              ? chainName(pros.settings.chain)
               : Current.holdingNames.contains(asset)
                   ? asset
                   : asset == ''
-                      ? 'Ravencoin'
+                      ? chainName(pros.settings.chain)
                       : asset;
           var sendFeeText = value.fee ?? 'Standard';
           var sendNoteText = value.note ?? sendNote.text;
@@ -232,8 +235,11 @@ class _SendState extends State<Send> {
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
-    var symbol = streams.spend.form.value?.symbol ?? pros.securities.RVN.symbol;
-    symbol = symbol == 'Ravencoin' ? pros.securities.RVN.symbol : symbol;
+    var symbol = streams.spend.form.value?.symbol ??
+        pros.securities.currentCrypto.symbol;
+    symbol = symbol == chainName(pros.settings.chain)
+        ? pros.securities.currentCrypto.symbol
+        : symbol;
     security = pros.securities.primaryIndex.getOne(
         symbol,
         symbol == 'RVN' && pros.settings.chain == Chain.ravencoin ||
@@ -349,7 +355,7 @@ class _SendState extends State<Send> {
         decoration: components.styles.decorations.textField(context,
             focusNode: sendAssetFocusNode,
             labelText: 'Asset',
-            hintText: 'Ravencoin',
+            hintText: chainName(pros.settings.chain),
             suffixIcon: IconButton(
               icon: Padding(
                   padding: EdgeInsets.only(right: 14),
@@ -599,9 +605,13 @@ class _SendState extends State<Send> {
 
   bool _validateAddress([String? address]) =>
       sendAddress.text == '' ||
-      (pros.settings.net == Net.main
-          ? sendAddress.text.isAddressRVN
-          : sendAddress.text.isAddressRVNt);
+      (pros.settings.chain == Chain.ravencoin
+          ? pros.settings.net == Net.main
+              ? sendAddress.text.isAddressRVN
+              : sendAddress.text.isAddressRVNt
+          : pros.settings.net == Net.main
+              ? sendAddress.text.isAddressEVR
+              : sendAddress.text.isAddressEVRt);
 
   // ignore: unused_element
   bool _validateAddressColor([String? address]) {
@@ -667,7 +677,7 @@ class _SendState extends State<Send> {
           visibleAmount: visibleAmount,
           sendAmountAsSats: sendAmountAsSats,
           feeGoal: feeGoal,
-          security: sendAsset.text == 'Ravencoin'
+          security: sendAsset.text == chainName(pros.settings.chain)
               ? null
               : pros.securities.primaryIndex.getOne(
                   sendAsset.text,
@@ -675,13 +685,13 @@ class _SendState extends State<Send> {
                   pros.settings.chain,
                   pros.settings.net,
                 ),
-          assetMemo: sendAsset.text != 'Ravencoin' &&
+          assetMemo: sendAsset.text != chainName(pros.settings.chain) &&
                   sendMemo.text != '' &&
                   sendMemo.text.isIpfs
               ? sendMemo.text
               : null,
           //TODO: Currently memos are only for non-asset transactions
-          memo: sendAsset.text == 'Ravencoin' &&
+          memo: sendAsset.text == chainName(pros.settings.chain) &&
                   sendMemo.text != '' &&
                   verifyMemo(sendMemo.text)
               ? sendMemo.text
@@ -723,16 +733,18 @@ class _SendState extends State<Send> {
       '/transaction/checkout',
       arguments: {
         'struct': CheckoutStruct(
-          symbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
-                  ? pros.securities.RVN.symbol
+          symbol: ((streams.spend.form.value?.symbol ==
+                      chainName(pros.settings.chain)
+                  ? pros.securities.currentCrypto.symbol
                   : streams.spend.form.value?.symbol) ??
-              pros.securities.RVN.symbol),
-          displaySymbol: ((streams.spend.form.value?.symbol == 'Ravencoin'
-                  ? 'Ravencoin'
+              pros.securities.currentCrypto.symbol),
+          displaySymbol: ((streams.spend.form.value?.symbol ==
+                      chainName(pros.settings.chain)
+                  ? chainName(pros.settings.chain)
                   : streams.spend.form.value?.symbol) ??
-              'Ravencoin'),
+              chainName(pros.settings.chain)),
           subSymbol: '',
-          paymentSymbol: pros.securities.RVN.symbol,
+          paymentSymbol: pros.securities.currentCrypto.symbol,
           items: [
             ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],
@@ -759,9 +771,14 @@ class _SendState extends State<Send> {
   }
 
   void _produceAssetModal() {
-    var options = Current.holdingNames.where((item) => item != 'RVN').toList();
+    final tail = Current.holdingNames
+        .where((item) => item != pros.securities.currentCrypto.symbol)
+        .toList();
+    final head = Current.holdingNames
+        .where((item) => item == pros.securities.currentCrypto.symbol)
+        .toList();
     SelectionItems(context, modalSet: SelectionSet.Holdings)
-        .build(holdingNames: options.isNotEmpty ? options : []);
+        .build(holdingNames: head + tail);
   }
 
   void _produceFeeModal() {
