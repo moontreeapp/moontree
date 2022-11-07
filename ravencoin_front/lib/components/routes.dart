@@ -3,6 +3,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 
 class RouteStack extends NavigatorObserver {
   List<Route<dynamic>> routeStack = [];
+  BuildContext? innerContext;
   BuildContext? routeContext;
   BuildContext? scaffoldContext;
   BuildContext? mainContext;

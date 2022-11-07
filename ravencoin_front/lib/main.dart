@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'package:showcaseview/showcaseview.dart';
 import 'package:ravencoin_front/pages/pages.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
@@ -19,6 +20,7 @@ import 'package:ravencoin_back/streams/streams.dart';
 //   await Firebase.initializeApp();
 //   print('Handling a background message ${message.messageId}');
 // }
+final blockchainTutorialKey = GlobalKey();
 
 Future<void> main() async {
   // Catch errors without crashing the app:
@@ -85,6 +87,7 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
+
         final scaffold = Scaffold(
           backgroundColor:
               Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
@@ -93,9 +96,18 @@ class RavenMobileApp extends StatelessWidget {
           body: child!,
         );
         return GestureDetector(
-            onTap: () => streams.app.tap.add(null),
-            behavior: HitTestBehavior.translucent,
-            child: Platform.isIOS ? scaffold : SafeArea(child: scaffold));
+          onTap: () => streams.app.tap.add(null),
+          behavior: HitTestBehavior.translucent,
+          child: ShowCaseWidget(
+            builder: Builder(builder: (innerContext) {
+              components.navigator.innerContext = innerContext;
+              //WidgetsBinding.instance.addPostFrameCallback((_) =>
+              //    ShowCaseWidget.of(innerContext)
+              //        .startShowCase([blockchainTutorialKey]));
+              return Platform.isIOS ? scaffold : SafeArea(child: scaffold);
+            }),
+          ),
+        );
       },
     );
   }

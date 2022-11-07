@@ -1,15 +1,16 @@
 import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
+import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+//import 'package:showcaseview/showcaseview.dart';
+//import 'package:ravencoin_front/main.dart' show blockchainTutorialKey;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/bottom/selection_items.dart';
-import 'package:ravencoin_back/streams/client.dart';
 
 class NavBar extends StatefulWidget {
   final AppContext? appContext;
@@ -62,6 +63,8 @@ class _NavBarState extends State<NavBar> {
         });
       }
     }));
+    //WidgetsBinding.instance.addPostFrameCallback((_) =>
+    //  ShowCaseWidget.of(context).startShowCase([blockchainTutorialKey]));
   }
 
   @override
@@ -99,7 +102,13 @@ class _NavBarState extends State<NavBar> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        //Showcase(
+                        //  key: blockchainTutorialKey,
+                        //  description:
+                        //      'This is the wallet sector. Here you can view your wallet and send and receive assets.',
+                        //  child:
                         sectorIcon(appContext: AppContext.wallet),
+                        //),
                         sectorIcon(appContext: AppContext.manage),
                         sectorIcon(appContext: AppContext.swap),
                       ],

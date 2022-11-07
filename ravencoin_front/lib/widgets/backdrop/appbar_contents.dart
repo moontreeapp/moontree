@@ -15,15 +15,19 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:showcaseview/showcaseview.dart';
+import 'package:ravencoin_front/main.dart' show blockchainTutorialKey;
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
   final bool spoof;
   final bool animate;
 
-  const BackdropAppBarContents(
-      {Key? key, this.spoof = false, this.animate = true})
-      : super(key: key);
+  const BackdropAppBarContents({
+    Key? key,
+    this.spoof = false,
+    this.animate = true,
+  }) : super(key: key);
 
   @override
   Size get preferredSize => const Size(double.infinity, 56);
@@ -87,37 +91,10 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            //      height:
-            //      0
-            //      scripthash:
-            //      "e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566"
-            //      symbol:
-            //      null
-            //      txHash:
-            //      "c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262"
-            //      txPos:
-            //      664
-            //      value:
-            //      64678656394845
-            //      hashCode:
-            //      977627678
+            ShowCaseWidget.of(
+                    components.navigator.innerContext!) // not main or saffold
+                .startShowCase([blockchainTutorialKey]);
 
-            await showModalBottomSheet<void>(
-                context: components.navigator.routeContext!,
-                elevation: 1,
-                isScrollControlled: true,
-                barrierColor: AppColors.black38,
-                shape: components.shape.topRounded8,
-                builder: (BuildContext context) {
-                  if (streams.app.scrim.value == false) {
-                    streams.app.scrim.add(true);
-                  }
-                  return Container(height: 0);
-                }).then((value) {
-              if (streams.app.scrim.value == true) {
-                streams.app.scrim.add(false);
-              }
-            });
             //print(pros.unspents.records);
             //print(pros.addresses.byScripthash.getOne(
             //    'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));
