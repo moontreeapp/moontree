@@ -8,8 +8,6 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/front/choices/blockchain_choice.dart'
     show produceAssetModal;
-import 'package:showcaseview/showcaseview.dart';
-import 'package:ravencoin_front/main.dart' show blockchainTutorialKey;
 
 class ConnectionLight extends StatefulWidget {
   ConnectionLight({Key? key}) : super(key: key);
@@ -104,11 +102,6 @@ class _ConnectionLightState extends State<ConnectionLight>
       //  setState(() => connectionBusy = value);
       //}
     }));
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.delayed(Duration(seconds: 30));
-      print('showing tutorial');
-      ShowCaseWidget.of(context).startShowCase([blockchainTutorialKey]);
-    });
   }
 
   @override
@@ -147,40 +140,32 @@ class _ConnectionLightState extends State<ConnectionLight>
         borderRadius: BorderRadius.circular(20),
       ),
     );
-    return Showcase(
-      key: blockchainTutorialKey,
-      description:
-          'This is the wallet sector. Here you can view your wallet and send and receive assets.',
-      child: GestureDetector(
-          onTap: navToBlockchain,
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 400),
-            alignment: Alignment.center,
-            padding: EdgeInsets.zero,
-            child: pros.settings.chain == Chain.none
-                ? IconButton(
-                    splashRadius: 26,
-                    padding: EdgeInsets.zero,
-                    icon: circleIcon,
-                    onPressed: navToBlockchain,
-                  )
-                : Stack(alignment: Alignment.center, children: [
-                    ColorFiltered(
-                        colorFilter:
-                            ColorFilter.mode(statusColor, BlendMode.srcIn),
-                        child: components.icons.assetAvatar(
-                            chainSymbol(pros.settings.chain),
-                            net: pros.settings.net,
-                            height: 26,
-                            width: 26,
-                            circled: true)),
-                    components.icons.assetAvatar(
+    return GestureDetector(
+      onTap: navToBlockchain,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 400),
+        alignment: Alignment.center,
+        padding: EdgeInsets.zero,
+        child: pros.settings.chain == Chain.none
+            ? IconButton(
+                splashRadius: 26,
+                padding: EdgeInsets.zero,
+                icon: circleIcon,
+                onPressed: navToBlockchain,
+              )
+            : Stack(alignment: Alignment.center, children: [
+                ColorFiltered(
+                    colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
+                    child: components.icons.assetAvatar(
                         chainSymbol(pros.settings.chain),
                         net: pros.settings.net,
-                        height: 24,
-                        width: 24),
-                  ]),
-          )),
+                        height: 26,
+                        width: 26,
+                        circled: true)),
+                components.icons.assetAvatar(chainSymbol(pros.settings.chain),
+                    net: pros.settings.net, height: 24, width: 24),
+              ]),
+      ),
     );
   }
 

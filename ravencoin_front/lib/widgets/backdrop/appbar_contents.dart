@@ -15,8 +15,6 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
-import 'package:showcaseview/showcaseview.dart';
-import 'package:ravencoin_front/main.dart' show blockchainTutorialKey;
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
@@ -91,10 +89,6 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            ShowCaseWidget.of(
-                    components.navigator.innerContext!) // not main or saffold
-                .startShowCase([blockchainTutorialKey]);
-
             //print(pros.unspents.records);
             //print(pros.addresses.byScripthash.getOne(
             //    'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));
