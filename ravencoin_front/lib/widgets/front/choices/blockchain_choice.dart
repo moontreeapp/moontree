@@ -128,10 +128,12 @@ void produceAssetModal(
                   .textTheme
                   .bodyText1!
                   .copyWith(color: AppColors.black87)),
-          trailing: pros.settings.chain == Chain.ravencoin &&
-                  pros.settings.net == Net.main
-              ? Icon(Icons.check_rounded, color: AppColors.primary)
-              : null,
+          trailing:
+              streams.client.connected.value == ConnectionStatus.connected &&
+                      pros.settings.chain == Chain.ravencoin &&
+                      pros.settings.net == Net.main
+                  ? Icon(Icons.check_rounded, color: AppColors.primary)
+                  : null,
           onTap: () => changeChainNet(
                 context,
                 Tuple2(Chain.ravencoin, Net.main),
@@ -146,10 +148,12 @@ void produceAssetModal(
                     .textTheme
                     .bodyText1!
                     .copyWith(color: AppColors.black87)),
-            trailing: pros.settings.chain == Chain.evrmore &&
-                    pros.settings.net == Net.test
-                ? Icon(Icons.check_rounded, color: AppColors.primary)
-                : null,
+            trailing:
+                streams.client.connected.value == ConnectionStatus.connected &&
+                        pros.settings.chain == Chain.evrmore &&
+                        pros.settings.net == Net.test
+                    ? Icon(Icons.check_rounded, color: AppColors.primary)
+                    : null,
             onTap: () => changeChainNet(
                   context,
                   Tuple2(Chain.evrmore, Net.test),
@@ -164,10 +168,12 @@ void produceAssetModal(
                     .textTheme
                     .bodyText1!
                     .copyWith(color: AppColors.black87)),
-            trailing: pros.settings.chain == Chain.ravencoin &&
-                    pros.settings.net == Net.test
-                ? Icon(Icons.check_rounded, color: AppColors.primary)
-                : null,
+            trailing:
+                streams.client.connected.value == ConnectionStatus.connected &&
+                        pros.settings.chain == Chain.ravencoin &&
+                        pros.settings.net == Net.test
+                    ? Icon(Icons.check_rounded, color: AppColors.primary)
+                    : null,
             onTap: () => changeChainNet(
                   context,
                   Tuple2(Chain.ravencoin, Net.test),
