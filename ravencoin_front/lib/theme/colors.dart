@@ -91,7 +91,7 @@ class AppColors {
   static List<int> get blackNumbers => [12, 38, 60, 87, 100];
 
   static Color get androidSystemBar => primary.withOpacity(1 - .12);
-  static Color get scrim => black.withOpacity(1 - .60);
+  static Color get scrim => black.withOpacity(1 - .38);
 
   List<Color> get backgroundColors => colors
       .where((Color color) => ![lime, yellow, primary].contains(color))

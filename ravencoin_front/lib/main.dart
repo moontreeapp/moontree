@@ -93,7 +93,7 @@ class RavenMobileApp extends StatelessWidget {
             appBar: BackdropAppBar(),
             body: child!,
           ),
-          ScrimPro(),
+          TutorialLayer(),
         ]);
         return GestureDetector(
             onTap: () => streams.app.tap.add(null),

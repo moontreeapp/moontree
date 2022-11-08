@@ -1,9 +1,9 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class TutorialService {
-  List<TutorialStatus> get completed =>
-      (pros.settings.primaryIndex.getOne(SettingName.tutorial_status)!.value
-          as List<TutorialStatus>);
+  List<TutorialStatus> get completed => <TutorialStatus>[
+        ...pros.settings.primaryIndex.getOne(SettingName.tutorial_status)!.value
+      ];
 
   List<TutorialStatus> get missing => SettingProclaim.tutorials
       .where((tutorial) => !completed.contains(tutorial))

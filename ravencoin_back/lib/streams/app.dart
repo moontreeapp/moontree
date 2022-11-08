@@ -1,3 +1,4 @@
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum NavHeight { tall, short, none }
@@ -22,7 +23,7 @@ class AppStreams {
   //final locked = BehaviorSubject<bool>.seeded(false);
   final logout = BehaviorSubject<bool>.seeded(false);
   final scrim = BehaviorSubject<bool?>.seeded(false); // null = disable
-  final scrimpro = BehaviorSubject<bool?>.seeded(false); // null = disable
+  final tutorial = BehaviorSubject<TutorialStatus?>.seeded(null);
   final authenticating = BehaviorSubject<bool>.seeded(
       false); // if we are minimized because of local auth do not logout
   final browsing = BehaviorSubject<bool>.seeded(

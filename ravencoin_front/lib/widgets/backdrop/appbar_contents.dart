@@ -89,8 +89,7 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            streams.app.scrimpro.add(true);
-            print('what?');
+            services.tutorial.clear();
             //print(pros.unspents.records);
             //print(pros.addresses.byScripthash.getOne(
             //    'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));

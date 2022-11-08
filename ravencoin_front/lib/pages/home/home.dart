@@ -70,31 +70,18 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    //services.tutorial.clear();
-    //if (services.tutorial.missing.isNotEmpty) {
-    //  WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //    await showTutorials();
-    //  });
-    //}
+    if (services.tutorial.missing.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await showTutorials();
+      });
+    }
     return HomePage(appContext: appContext);
   }
 
   Future showTutorials() async {
-    var x = 0;
     for (var tutorial in services.tutorial.missing) {
-      print(x);
-      x += 1;
-      streams.app.scrim.add(true);
-      //services.tutorial.complete(TutorialStatus.blockchain);
-      await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            streams.app.scrim.add(true);
-            return AlertDialog(
-                title: Text('Password Not Recognized'),
-                content: Text(
-                    'Password does not match the password used at the time of encryption.'));
-          }).then((value) => streams.app.scrim.add(false));
+      streams.app.tutorial.add(tutorial);
+      services.tutorial.complete(tutorial);
     }
   }
 }
