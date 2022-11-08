@@ -85,13 +85,16 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-        final scaffold = Scaffold(
-          backgroundColor:
-              Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
-          extendBodyBehindAppBar: false,
-          appBar: BackdropAppBar(),
-          body: child!,
-        );
+        final scaffold = Stack(alignment: Alignment.bottomCenter, children: [
+          Scaffold(
+            backgroundColor:
+                Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
+            extendBodyBehindAppBar: false,
+            appBar: BackdropAppBar(),
+            body: child!,
+          ),
+          ScrimPro(),
+        ]);
         return GestureDetector(
             onTap: () => streams.app.tap.add(null),
             behavior: HitTestBehavior.translucent,
