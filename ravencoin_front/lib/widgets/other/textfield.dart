@@ -56,6 +56,13 @@ class TextFieldFormatted extends StatefulWidget {
   final Clip clipBehavior;
   final String? restorationId;
   final bool enableIMEPersonalizedLearning;
+  final InputBorder? border;
+  final InputBorder? focusedErrorBorder;
+  final InputBorder? errorBorder;
+  final InputBorder? focusedBorder;
+  final InputBorder? enabledBorder;
+  final InputBorder? disabledBorder;
+  final EdgeInsetsGeometry? contentPadding;
 
   final String? labelText;
   final String? hintText;
@@ -129,6 +136,13 @@ class TextFieldFormatted extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.restorationId,
     this.enableIMEPersonalizedLearning = true,
+    this.focusedErrorBorder = null,
+    this.errorBorder = null,
+    this.focusedBorder = null,
+    this.enabledBorder = null,
+    this.disabledBorder = null,
+    this.border = null,
+    this.contentPadding = null,
   }) : super(key: key);
 
   @override
@@ -137,106 +151,119 @@ class TextFieldFormatted extends StatefulWidget {
 
 class _TextFieldFormattedState extends State<TextFieldFormatted> {
   @override
-  Widget build(BuildContext context) => TextField(
-      decoration: InputDecoration(
-        focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.error, width: 2)),
-        errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.error, width: 2)),
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.primary, width: 2)),
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.black12)),
-        disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.black12)),
-        labelStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
-            color: (widget.enabled ?? true) ? null : AppColors.black38),
-        alignLabelWithHint: true,
-        floatingLabelStyle: widget.focusNode?.hasFocus ?? false
-            ? TextStyle(
-                color: widget.errorText == null
-                    ? AppColors.primary
-                    : AppColors.error)
-            : TextStyle(
-                color: widget.errorText == null
-                    ? AppColors.black60
-                    : AppColors.error),
-        contentPadding: EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
-        labelText: widget.labelText,
-        hintText: widget.hintText,
-        helperText: widget.alwaysShowHelper
-            ? widget.helperText
-            : widget.focusNode?.hasFocus ?? true
+  Widget build(BuildContext context) {
+    final decoration = widget.border != null
+        ? InputDecoration(
+            border: widget.border,
+          )
+        : InputDecoration(
+            focusedErrorBorder: widget.focusedErrorBorder ??
+                OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: AppColors.error, width: 2)),
+            errorBorder: widget.errorBorder ??
+                OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: AppColors.error, width: 2)),
+            focusedBorder: widget.focusedBorder ??
+                OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: AppColors.primary, width: 2)),
+            enabledBorder: widget.enabledBorder ??
+                OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: AppColors.black12)),
+            disabledBorder: widget.disabledBorder ??
+                OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: AppColors.black12)),
+            labelStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
+                color: (widget.enabled ?? true) ? null : AppColors.black38),
+            alignLabelWithHint: true,
+            floatingLabelStyle: widget.focusNode?.hasFocus ?? false
+                ? TextStyle(
+                    color: widget.errorText == null
+                        ? AppColors.primary
+                        : AppColors.error)
+                : TextStyle(
+                    color: widget.errorText == null
+                        ? AppColors.black60
+                        : AppColors.error),
+            contentPadding: widget.contentPadding ??
+                EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
+            labelText: widget.labelText,
+            hintText: widget.hintText,
+            helperText: widget.alwaysShowHelper
                 ? widget.helperText
-                : null,
-        // takes precedence -- only fill on field valdiation failure:
-        errorText: widget.errorText,
-        suffixIcon: widget.suffixIcon,
-        suffixText: widget.suffixText,
-        suffixStyle: widget.suffixStyle,
-        errorStyle: Theme.of(context)
-            .textTheme
-            .caption!
-            .copyWith(height: .8, color: AppColors.error),
-        helperStyle: widget.helperStyle ??
-            Theme.of(context)
+                : widget.focusNode?.hasFocus ?? true
+                    ? widget.helperText
+                    : null,
+            // takes precedence -- only fill on field valdiation failure:
+            errorText: widget.errorText,
+            suffixIcon: widget.suffixIcon,
+            suffixText: widget.suffixText,
+            suffixStyle: widget.suffixStyle,
+            errorStyle: Theme.of(context)
                 .textTheme
                 .caption!
-                .copyWith(height: .8, color: AppColors.primary),
-      ),
-      onTap: widget.onTap ?? () => setState(() {}), // solves #594
-      key: widget.key,
-      controller: widget.controller,
-      focusNode: widget.focusNode,
-      keyboardType: widget.keyboardType,
-      textInputAction: widget.textInputAction,
-      textCapitalization: widget.textCapitalization,
-      style: widget.style,
-      strutStyle: widget.strutStyle,
-      textAlign: widget.textAlign,
-      textAlignVertical: widget.textAlignVertical,
-      textDirection: widget.textDirection,
-      readOnly: widget.readOnly,
-      toolbarOptions: widget.toolbarOptions,
-      showCursor: widget.showCursor,
-      autofocus: widget.autofocus,
-      obscuringCharacter: widget.obscuringCharacter,
-      obscureText: widget.obscureText,
-      autocorrect: widget.autocorrect,
-      smartDashesType: widget.smartDashesType,
-      smartQuotesType: widget.smartQuotesType,
-      enableSuggestions: widget.enableSuggestions,
-      maxLines: widget.maxLines,
-      minLines: widget.minLines,
-      expands: widget.expands,
-      maxLength: widget.maxLength,
-      maxLengthEnforcement: widget.maxLengthEnforcement,
-      onChanged: widget.onChanged,
-      onEditingComplete: widget.onEditingComplete,
-      onSubmitted: widget.onSubmitted,
-      inputFormatters: widget.inputFormatters,
-      enabled: widget.enabled,
-      cursorWidth: widget.cursorWidth,
-      cursorHeight: widget.cursorHeight,
-      cursorRadius: widget.cursorRadius,
-      cursorColor: widget.cursorColor,
-      selectionHeightStyle: widget.selectionHeightStyle,
-      selectionWidthStyle: widget.selectionWidthStyle,
-      keyboardAppearance: widget.keyboardAppearance,
-      scrollPadding: widget.scrollPadding,
-      dragStartBehavior: widget.dragStartBehavior,
-      enableInteractiveSelection: widget.enableInteractiveSelection,
-      selectionControls: widget.selectionControls,
-      mouseCursor: widget.mouseCursor,
-      scrollController: widget.scrollController,
-      scrollPhysics: widget.scrollPhysics,
-      autofillHints: widget.autofillHints,
-      clipBehavior: widget.clipBehavior,
-      restorationId: widget.restorationId,
-      enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning);
+                .copyWith(height: .8, color: AppColors.error),
+            helperStyle: widget.helperStyle ??
+                Theme.of(context)
+                    .textTheme
+                    .caption!
+                    .copyWith(height: .8, color: AppColors.primary),
+          );
+    return TextField(
+        decoration: decoration,
+        onTap: widget.onTap ?? () => setState(() {}), // solves #594
+        key: widget.key,
+        controller: widget.controller,
+        focusNode: widget.focusNode,
+        keyboardType: widget.keyboardType,
+        textInputAction: widget.textInputAction,
+        textCapitalization: widget.textCapitalization,
+        style: widget.style,
+        strutStyle: widget.strutStyle,
+        textAlign: widget.textAlign,
+        textAlignVertical: widget.textAlignVertical,
+        textDirection: widget.textDirection,
+        readOnly: widget.readOnly,
+        toolbarOptions: widget.toolbarOptions,
+        showCursor: widget.showCursor,
+        autofocus: widget.autofocus,
+        obscuringCharacter: widget.obscuringCharacter,
+        obscureText: widget.obscureText,
+        autocorrect: widget.autocorrect,
+        smartDashesType: widget.smartDashesType,
+        smartQuotesType: widget.smartQuotesType,
+        enableSuggestions: widget.enableSuggestions,
+        maxLines: widget.maxLines,
+        minLines: widget.minLines,
+        expands: widget.expands,
+        maxLength: widget.maxLength,
+        maxLengthEnforcement: widget.maxLengthEnforcement,
+        onChanged: widget.onChanged,
+        onEditingComplete: widget.onEditingComplete,
+        onSubmitted: widget.onSubmitted,
+        inputFormatters: widget.inputFormatters,
+        enabled: widget.enabled,
+        cursorWidth: widget.cursorWidth,
+        cursorHeight: widget.cursorHeight,
+        cursorRadius: widget.cursorRadius,
+        cursorColor: widget.cursorColor,
+        selectionHeightStyle: widget.selectionHeightStyle,
+        selectionWidthStyle: widget.selectionWidthStyle,
+        keyboardAppearance: widget.keyboardAppearance,
+        scrollPadding: widget.scrollPadding,
+        dragStartBehavior: widget.dragStartBehavior,
+        enableInteractiveSelection: widget.enableInteractiveSelection,
+        selectionControls: widget.selectionControls,
+        mouseCursor: widget.mouseCursor,
+        scrollController: widget.scrollController,
+        scrollPhysics: widget.scrollPhysics,
+        autofillHints: widget.autofillHints,
+        clipBehavior: widget.clipBehavior,
+        restorationId: widget.restorationId,
+        enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning);
+  }
 }

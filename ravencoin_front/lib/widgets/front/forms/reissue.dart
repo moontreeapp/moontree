@@ -432,7 +432,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
       decimalController.text != '' && decimal >= minDecimal && decimal <= 8;
 
   void validateDecimal({int? decimal}) {
-    decimal = decimal ?? decimalController.text.toInt();
+    decimal = decimal ?? decimalController.text.asSatsInt();
     var oldValidation = decimalValidated;
     decimalValidated = decimalValidation(decimal);
     if (oldValidation != decimalValidated || !decimalValidated) {
@@ -456,13 +456,13 @@ class _ReissueAssetState extends State<ReissueAsset> {
                   assetDataValidation(ipfsController.text))) &&
           (quantityController.text == '' ||
               quantityValidation(quantityController.text.toDouble())) &&
-          decimalValidation(decimalController.text.toInt()));
+          decimalValidation(decimalController.text.asSatsInt()));
 
   /*[
         quantityController.text != '' &&
             quantityValidation(double.parse(quantityController.text)),
         decimalController.text != minDecimal.toString() &&
-            decimalValidation(decimalController.text.toInt()),
+            decimalValidation(decimalController.text.asSatsInt()),
         ipfsController.text != '' && ipfsValidation(ipfsController.text),
         reissueValue == false,
       ].any((e) => e);
@@ -485,7 +485,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
                 ? null
                 : quantityController.text.toDouble())
             : null,
-        decimals: needsDecimal ? decimalController.text.toInt() : null,
+        decimals: needsDecimal ? decimalController.text.asSatsInt() : null,
         originalQuantity: minQuantity,
         originalDecimals: minDecimal,
         originalAssetData: minIpfs == ''
@@ -560,7 +560,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void formatQuantity() =>
       quantityController.text = quantityController.text.isInt
-          ? quantityController.text.toInt().toCommaString()
+          ? quantityController.text.asSatsInt().toCommaString()
           : quantityController.text.toDouble().toCommaString();
 
   void _produceParentModal() {

@@ -7,20 +7,53 @@ import 'package:collection/collection.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class BalanceService {
-  /// Listener Logic //////////////////////////////////////////////////////////
+  /// asks the server for balances
+  /// But as it turns out we have to get the the status of every address anyway
+  /// so grabbing their unspents is just as fast as grabbing their balances
+  /// so we just do that instead (recalculateAllBalances)
+  Future calculateAllBalances({Set<Wallet>? wallets}) async {
+    wallets = pros.wallets.records.toSet();
+
+    for (var wallet in wallets) {
+      for (var address in wallet.addresses) {
+        // ask the server for the assets and balances for this address
+        // sum them up and save them as a balance
+        // balances.add(Balance(
+        //     walletId: walletId,
+        //     security: security,
+        //     confirmed: confirmed,
+        //     unconfirmed: unconfirmed));
+      }
+    }
+    //await pros.balances.saveAll(balances);
+  }
 
   /// recalculates the balance of every symbol in every wallet
   Future recalculateAllBalances({Set<String>? walletIds}) async {
     walletIds = walletIds ?? pros.wallets.ids;
     Set<Balance> balances = {};
-    await pros.balances.removeAll(
-        pros.balances.records.where((b) => walletIds!.contains(b.walletId)));
+    await pros.balances.removeAllByIds(walletIds);
     for (var walletId in walletIds) {
       for (var symbol in pros.unspents.getSymbolsByWallet(walletId)) {
         var security = pros.securities.bySymbol.getAll(symbol).firstOrNull ??
-            Security(symbol: symbol, securityType: SecurityType.RavenAsset);
-        var confirmed = pros.unspents.totalConfirmed(walletId, symbol);
-        var unconfirmed = pros.unspents.totalUnconfirmed(walletId, symbol);
+            Security(
+              symbol: symbol,
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            );
+        var confirmed = pros.unspents.totalConfirmed(
+          walletId,
+          symbol: symbol,
+          chain: security.chain,
+          net: security.net,
+        );
+        var unconfirmed = pros.unspents.totalUnconfirmed(
+          walletId,
+          symbol: symbol,
+          chain: security.chain,
+          net: security.net,
+        );
         if (confirmed + unconfirmed > 0) {
           balances.add(Balance(
               walletId: walletId,
@@ -40,8 +73,13 @@ class BalanceService {
     required int amount,
     Security? security,
   }) async {
-    pros.unspents.assertSufficientFunds(pros.wallets.currentWallet.id, amount,
-        symbol: security?.symbol);
+    pros.unspents.assertSufficientFunds(
+      pros.wallets.currentWallet.id,
+      amount,
+      symbol: security?.symbol,
+      chain: security?.chain ?? pros.settings.chain,
+      net: security?.net ?? pros.settings.net,
+    );
     var gathered = 0;
     var unspents =
         (pros.unspents.byWalletSymbol.getAll(walletId, security?.symbol))
@@ -54,17 +92,17 @@ class BalanceService {
       var randomIndex = _random.nextInt(unspents.length);
       var unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
-      gathered += unspent.value;
-      var vout = pros.vouts.byTransactionPosition
-          .getOne(unspent.transactionId, unspent.position);
+      var vout = unspent.vout;
       if (vout == null) {
         await services.download.history.getAndSaveTransactions(
           {unspent.transactionId},
         );
-        vout = pros.vouts.byTransactionPosition
-            .getOne(unspent.transactionId, unspent.position)!;
+        vout = unspent.vout!;
       }
+      //if (usedUtxos == null || !usedUtxos.contains(vout)) {
+      gathered += unspent.value;
       collection.add(vout);
+      //}
     }
     return collection;
   }

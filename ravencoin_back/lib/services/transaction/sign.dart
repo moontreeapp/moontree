@@ -11,7 +11,7 @@ extension SignEachInput on ravencoin.TransactionBuilder {
     for (var e in utxos.enumerated()) {
       int i = e[0];
       Vout utxo = e[1];
-      var keyPair = services.wallet.getAddressKeypair(utxo.address!);
+      var keyPair = await services.wallet.getAddressKeypair(utxo.address!);
       sign(
         vin: i,
         keyPair: keyPair,

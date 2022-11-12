@@ -43,7 +43,6 @@ class ReissueWaiter extends Waiter {
           print(stack);
           streams.app.snack.add(Snack(
             message: 'Error Generating Transaction: $e',
-            atBottom: true,
             positive: false,
             //details: 'Unable to reissue transaction: $e',
           ));

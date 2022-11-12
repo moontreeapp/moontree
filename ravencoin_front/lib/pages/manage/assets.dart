@@ -19,12 +19,17 @@ class _AssetState extends State<Asset> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     var symbol = data['symbol'] as String;
-    var chosenAsset = pros.assets.bySymbol.getOne(symbol)!;
+    var chosenAsset = pros.assets.primaryIndex
+        .getOne(symbol, pros.settings.chain, pros.settings.net)!;
     return BackdropLayers(
       back: CoinSpec(
           pageTitle: 'Asset',
-          security: pros.securities.bySymbolSecurityType
-              .getOne(symbol, SecurityType.RavenAsset)!),
+          security: pros.securities.primaryIndex.getOne(
+            symbol,
+            SecurityType.asset,
+            pros.settings.chain,
+            pros.settings.net,
+          )!),
       front: FrontCurve(
           height: MediaQuery.of(context).size.height - (201 + 56),
           child: Column(children: [
@@ -32,14 +37,14 @@ class _AssetState extends State<Asset> {
             NavBar(
               includeSectors: false,
               actionButtons: <Widget>[
-                if ([AssetType.Main, AssetType.Sub]
+                if ([AssetType.main, AssetType.sub]
                     .contains(chosenAsset.assetType)) ...[
                   components.buttons.actionButton(context,
                       label: 'create', onPressed: _produceSubCreateModal),
                 ],
                 if ([
-                  AssetType.Qualifier,
-                  AssetType.QualifierSub,
+                  AssetType.qualifier,
+                  AssetType.qualifierSub,
                 ].contains(chosenAsset.assetType)) ...[
                   components.buttons.actionButton(context,
                       label: 'create',
@@ -70,7 +75,7 @@ class _AssetState extends State<Asset> {
 
   void _produceMainManageModal(assetRecord.Asset asset) async {
     if (asset.reissuable &&
-        [AssetType.Main, AssetType.Sub, AssetType.Restricted]
+        [AssetType.main, AssetType.sub, AssetType.restricted]
             .contains(asset.assetType)) {
       await SelectionItems(
         context,
@@ -80,14 +85,14 @@ class _AssetState extends State<Asset> {
           () {
             Navigator.pushNamed(
               context,
-              '/reissue/' + asset.assetType.enumString.toLowerCase(),
+              '/reissue/' + asset.assetType.name.toLowerCase(),
               arguments: {'symbol': asset.symbol},
             );
           },
           () {
             ///Navigator.pushNamed(
             ///  context,
-            ///  '/issue/dividend' + assetType.enumString.toLowerCase(),
+            ///  '/issue/dividend' + assetType.name.toLowerCase(),
             ///  arguments: {'symbol': symbol},
             ///);
           },

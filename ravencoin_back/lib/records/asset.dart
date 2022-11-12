@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/extensions/object.dart';
 import 'package:ravencoin_back/extensions/validation.dart';
+import 'package:ravencoin_back/records/types/chain.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_back/utilities/utilities.dart';
 
 import '_type_id.dart';
@@ -31,6 +32,12 @@ class Asset with EquatableMixin {
   @HiveField(6)
   final int position;
 
+  @HiveField(7, defaultValue: Chain.ravencoin)
+  final Chain chain;
+
+  @HiveField(8, defaultValue: Net.main)
+  final Net net;
+
   //late final TxSource source;
   ////late final String txHash; // where it originated?
   ////late final int txPos; // the vout it originated?
@@ -44,6 +51,8 @@ class Asset with EquatableMixin {
     required this.metadata,
     required this.transactionId,
     required this.position,
+    required this.chain,
+    required this.net,
   });
 
   @override
@@ -55,58 +64,90 @@ class Asset with EquatableMixin {
         metadata,
         transactionId,
         position,
+        chain,
+        net,
       ];
 
   @override
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position)';
+      'position: $position, ${chainNetReadable(chain, net)})';
 
-  static String assetKey(String symbol) => symbol;
-  String get id => symbol;
-  String? get parentId {
-    if (assetType == AssetType.Sub) {
+  factory Asset.from(
+    Asset asset, {
+    int? satsInCirculation,
+    int? divisibility,
+    bool? reissuable,
+    String? metadata,
+    String? transactionId,
+    int? position,
+    String? symbol,
+    Chain? chain,
+    Net? net,
+  }) {
+    return Asset(
+      satsInCirculation: satsInCirculation ?? asset.satsInCirculation,
+      divisibility: divisibility ?? asset.divisibility,
+      reissuable: reissuable ?? asset.reissuable,
+      metadata: metadata ?? asset.metadata,
+      transactionId: transactionId ?? asset.transactionId,
+      position: position ?? asset.position,
+      symbol: symbol ?? (chain != null ? chainSymbol(chain) : asset.symbol),
+      chain: chain ?? asset.chain,
+      net: net ?? asset.net,
+    );
+  }
+
+  static String key(String symbol, Chain chain, Net net) =>
+      '$symbol:${chainNetKey(chain, net)}';
+
+  String get id => key(symbol, chain, net);
+  String? get parentSymbol {
+    if (assetType == AssetType.sub) {
       var splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
     }
-    if (assetType == AssetType.SubAdmin) {
+    if (assetType == AssetType.subAdmin) {
       var splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
     }
-    if (assetType == AssetType.QualifierSub) {
+    if (assetType == AssetType.qualifierSub) {
       var splits = symbol.split('/#');
       return splits.sublist(0, splits.length - 1).join('/#');
     }
-    if (assetType == AssetType.NFT) {
+    if (assetType == AssetType.unique) {
       var splits = symbol.split('#');
       return splits.sublist(0, splits.length - 1).join('#');
     }
-    if (assetType == AssetType.Channel) {
+    if (assetType == AssetType.channel) {
       var splits = symbol.split('~');
       return splits.sublist(0, splits.length - 1).join('~');
     }
     return null;
   }
 
+  String? get parentId =>
+      parentSymbol == null ? null : key(parentSymbol!, chain, net);
+
   String? get shortName {
-    if (assetType == AssetType.Sub) {
+    if (assetType == AssetType.sub) {
       var splits = symbol.split('/');
       return splits[splits.length - 1];
     }
-    if (assetType == AssetType.SubAdmin) {
+    if (assetType == AssetType.subAdmin) {
       var splits = symbol.split('/');
       return splits[splits.length - 1];
     }
-    if (assetType == AssetType.QualifierSub) {
+    if (assetType == AssetType.qualifierSub) {
       var splits = symbol.split('/#');
       return splits[splits.length - 1];
     }
-    if (assetType == AssetType.NFT) {
+    if (assetType == AssetType.unique) {
       var splits = symbol.split('#');
       return splits[splits.length - 1];
     }
-    if (assetType == AssetType.Channel) {
+    if (assetType == AssetType.channel) {
       var splits = symbol.split('~');
       return splits[splits.length - 1];
     }
@@ -120,24 +161,24 @@ class Asset with EquatableMixin {
   bool get hasMetadata => metadata != '';
 
   bool get isAdmin =>
-      assetType == AssetType.Admin || assetType == AssetType.SubAdmin;
+      assetType == AssetType.admin || assetType == AssetType.subAdmin;
 
-  bool get isSubAdmin => assetType == AssetType.SubAdmin;
+  bool get isSubAdmin => assetType == AssetType.subAdmin;
 
   bool get isQualifier =>
-      assetType == AssetType.Qualifier || assetType == AssetType.QualifierSub;
+      assetType == AssetType.qualifier || assetType == AssetType.qualifierSub;
 
   bool get isAnySub =>
-      assetType == AssetType.QualifierSub ||
-      assetType == AssetType.SubAdmin ||
-      assetType == AssetType.Sub ||
-      assetType == AssetType.NFT ||
-      assetType == AssetType.Channel;
+      assetType == AssetType.qualifierSub ||
+      assetType == AssetType.subAdmin ||
+      assetType == AssetType.sub ||
+      assetType == AssetType.unique ||
+      assetType == AssetType.channel;
 
-  bool get isRestricted => assetType == AssetType.Restricted;
-  bool get isMain => assetType == AssetType.Main;
-  bool get isNFT => assetType == AssetType.NFT;
-  bool get isChannel => assetType == AssetType.NFT;
+  bool get isRestricted => assetType == AssetType.restricted;
+  bool get isMain => assetType == AssetType.main;
+  bool get isNFT => assetType == AssetType.unique;
+  bool get isChannel => assetType == AssetType.unique;
 
   String get baseSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
       ? symbol.substring(1, symbol.length)
@@ -157,45 +198,45 @@ class Asset with EquatableMixin {
 
   static AssetType assetTypeOf(String symbol) {
     if (symbol.startsWith('#') && symbol.contains('/')) {
-      return AssetType.QualifierSub;
+      return AssetType.qualifierSub;
     }
     if (symbol.startsWith('#')) {
-      return AssetType.Qualifier;
+      return AssetType.qualifier;
     }
     if (symbol.startsWith('\$')) {
-      return AssetType.Restricted;
+      return AssetType.restricted;
     }
     if (symbol.contains('#')) {
-      return AssetType.NFT;
+      return AssetType.unique;
     }
     if (symbol.contains('~')) {
-      return AssetType.Channel;
+      return AssetType.channel;
     }
     if (symbol.contains('/') && symbol.endsWith('!')) {
-      return AssetType.SubAdmin;
+      return AssetType.subAdmin;
     }
     if (symbol.contains('/')) {
-      return AssetType.Sub;
+      return AssetType.sub;
     }
     if (symbol.endsWith('!')) {
-      return AssetType.Admin;
+      return AssetType.admin;
     }
-    return AssetType.Main;
+    return AssetType.main;
   }
 
-  String get assetTypeName => assetType.enumString;
+  String get assetTypeName => assetType.name;
 
   double get amount => utils.satToAmount(satsInCirculation);
 }
 
 enum AssetType {
-  Main,
-  Admin,
-  Restricted,
-  NFT,
-  Channel,
-  Sub,
-  SubAdmin,
-  Qualifier,
-  QualifierSub,
+  main,
+  admin,
+  restricted,
+  unique,
+  channel,
+  sub,
+  subAdmin,
+  qualifier,
+  qualifierSub,
 }

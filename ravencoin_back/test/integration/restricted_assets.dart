@@ -12,8 +12,6 @@ void main() async {
   final wallet = pros.wallets.primaryIndex.values.first as LeaderWallet;
   sleep(Duration(seconds: 10));
 
-  print(wallet.unusedExternalAddress);
-
   test('query info', () async {
     var client =
         // RavenElectrumClient(await connect('testnet.rvn.rocks'));

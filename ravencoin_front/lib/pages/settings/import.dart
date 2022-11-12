@@ -6,6 +6,8 @@ import 'package:ravencoin_back/streams/import.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/storage.dart';
+import 'package:ravencoin_front/services/wallet.dart'
+    show getEntropy, saveSecret;
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -268,11 +270,20 @@ class _ImportState extends State<Import> {
       text = resp;
     }
     */
+
+    /// save the key
+
+    /// save the wallet
     components.loading.screen(
       message: 'Importing',
       staticImage: true,
       playCount: 2,
-      then: () => streams.import.attempt.add(ImportRequest(text: text)),
+      then: () async => streams.import.attempt.add(ImportRequest(
+        text: text,
+        /*onSuccess: populateWalletsWithSensitives*/
+        getEntropy: await getEntropy,
+        saveSecret: await saveSecret,
+      )),
     );
   }
 }

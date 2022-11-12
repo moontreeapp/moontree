@@ -21,7 +21,8 @@ class AssetListener {
   Future<void> grabMetadataForMaster(Asset asset) async {
     // master assets should look at the ipfs on the actual unique assets
     // what if we don't hold that asset? we should pull it?
-    var unique = pros.assets.bySymbol.getOne(asset.baseSymbol);
+    var unique = pros.assets.primaryIndex
+        .getOne(asset.baseSymbol, asset.chain, asset.net);
     if (unique == null) {
       /// we should pull the asset data for this asset even if we don't own the
       /// asset because we need the ipfshash of it for master asset
@@ -48,6 +49,8 @@ class AssetListener {
         var ipfs = IpfsMiniExplorer(asset.metadata);
         var resp = await ipfs.get();
         await pros.metadatas.save(Metadata(
+            chain: pros.settings.chain,
+            net: pros.settings.net,
             symbol: asset.symbol,
             metadata: asset.metadata,
             data: resp,
@@ -75,6 +78,8 @@ class LogoListener {
       var ipfs = IpfsMiniExplorer(hash);
       var resp = await ipfs.get();
       pros.metadatas.save(Metadata(
+        chain: pros.settings.chain,
+        net: pros.settings.net,
         symbol: metadata.symbol,
         metadata: hash,
         data: resp,

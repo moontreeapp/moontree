@@ -7,11 +7,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/utilities/lock.dart';
 
-enum HiveLoaded { True, False, Partial }
+enum HiveLoaded { yes, no, partial }
 
 class DataLoadingHelper {
   final _loadedLock = ReaderWriterLock();
-  HiveLoaded _loaded = HiveLoaded.False;
+  HiveLoaded _loaded = HiveLoaded.no;
   late HiveInitializer hiveInit;
 
   DataLoadingHelper() {
@@ -19,7 +19,7 @@ class DataLoadingHelper {
   }
 
   Future setupDatabase() async {
-    await hiveInit.setUp(HiveLoadingStep.All);
+    await hiveInit.setUp(HiveLoadingStep.all);
   }
 
   Future setupDatabaseStart() async {
@@ -27,21 +27,21 @@ class DataLoadingHelper {
   }
 
   Future setupDatabase1() async {
-    await hiveInit.setUp(HiveLoadingStep.Lock);
+    await hiveInit.setUp(HiveLoadingStep.lock);
   }
 
   Future setupDatabase2() async {
-    await hiveInit.setUp(HiveLoadingStep.Login);
+    await hiveInit.setUp(HiveLoadingStep.login);
   }
 
   Future isPartiallyLoaded() async =>
-      await _loadedLock.read(() => _loaded == HiveLoaded.Partial);
+      await _loadedLock.read(() => _loaded == HiveLoaded.partial);
 
   Future isLoaded() async =>
-      await _loadedLock.read(() => _loaded == HiveLoaded.True);
+      await _loadedLock.read(() => _loaded == HiveLoaded.yes);
 
   Future setupWaiters() async {
-    initWaiters(HiveLoadingStep.All);
+    initWaiters(HiveLoadingStep.all);
     unawaited(waiters.app.logoutThread());
     //initListeners();
     //await pros.settings.save(
@@ -49,14 +49,14 @@ class DataLoadingHelper {
   }
 
   Future setupWaiters1() async {
-    initWaiters(HiveLoadingStep.Lock);
-    await _loadedLock.write(() => _loaded = HiveLoaded.Partial);
+    initWaiters(HiveLoadingStep.lock);
+    await _loadedLock.write(() => _loaded = HiveLoaded.partial);
   }
 
   Future setupWaiters2() async {
-    initWaiters(HiveLoadingStep.Login);
+    initWaiters(HiveLoadingStep.login);
     unawaited(waiters.app.logoutThread());
     //initListeners();
-    await _loadedLock.write(() => _loaded = HiveLoaded.True);
+    await _loadedLock.write(() => _loaded = HiveLoaded.yes);
   }
 }

@@ -8,14 +8,10 @@ export 'extensions/extensions.dart';
 
 export 'hive_initializer.dart';
 export 'init.dart';
+export 'version.dart';
 export 'joins/joins.dart';
 
 export 'utilities/utilities.dart';
 export 'lingo/lingo.dart';
 
 export 'package:proclaim/change.dart';
-
-const ALPHA_VERSION = '1.3.9-alpha+13~1';
-const BETA_VERSION = '1.0.1-beta+0~1';
-const RELEASE_VERSION = '1.0.0+0~1';
-const VERSION = BETA_VERSION;

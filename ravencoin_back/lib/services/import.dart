@@ -14,8 +14,16 @@ class ImportFrom {
             importFormat ?? services.wallet.import.detectImportType(text);
 
   //Future<bool> handleImport() async {
-  Future<Tuple3<bool, List<String?>, List<String?>>> handleImport() async {
-    var results = await services.wallet.import.handleImport(importFormat, text);
+  Future<Tuple3<bool, List<String?>, List<String?>>> handleImport(
+    Future<String> Function(String id)? getEntropy,
+    Future<void> Function(Secret secret)? saveSecret,
+  ) async {
+    var results = await services.wallet.import.handleImport(
+      importFormat,
+      text,
+      getEntropy,
+      saveSecret,
+    );
     var importedTitles = <String?>[];
     var importedMsgs = <String?>[];
     for (var result in results) {
@@ -43,7 +51,7 @@ class ImportFrom {
   }
 
   // returns null if unable to decrypt, otherwise, the decrypted String
-  static String? maybeDecrypt({
+  static String maybeDecrypt({
     required String text,
     required CipherBase cipher,
   }) {
@@ -51,9 +59,6 @@ class ImportFrom {
         services.password.required && text.contains(RegExp(r'^[a-fA-F0-9]+$'))
             ? hexx.hexToAscii(hexx.decrypt(text, cipher))
             : text;
-    if (services.wallet.import.detectImportType(decrypted) == null) {
-      return null;
-    }
     return decrypted;
   }
 }

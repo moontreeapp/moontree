@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -53,20 +54,53 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       : Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.error);
 
   Future<void> show() async {
+    /// don't show snackbars on login screen
+    if (['Createlogin', 'Login'].contains(streams.app.page.value) &&
+        !snack!.showOnLogin) {
+      return;
+    }
+    //final tall = streams.app.navHeight.value == NavHeight.tall; // default
+    final short = streams.app.navHeight.value == NavHeight.short;
+    final none = streams.app.navHeight.value == NavHeight.none ||
+        (!short && streams.app.page.value != 'Home') ||
+        (streams.app.page.value == 'Home' && streams.app.setting.value != null);
+    final copy = pros.settings.developerMode && snack!.copy != null;
+    final row = Row(
+        mainAxisAlignment:
+            copy ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+        children: [
+          Text(
+            snack!.message,
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+            style: style(),
+          ),
+          if (copy)
+            Text(
+              snack!.label ?? snack!.copy ?? 'copy',
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+              style: style(),
+            )
+        ]);
     var msg = GestureDetector(
         onTap: () {
-          print('clearing snackbar?');
+          if (copy) {
+            Clipboard.setData(ClipboardData(text: snack!.copy));
+          }
           ScaffoldMessenger.of(context).clearSnackBars();
         },
-        child: snack!.atBottom
-            ? Padding(
-                padding: EdgeInsets.only(left: 8, right: 8),
-                child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      snack!.message,
-                      style: style(),
-                    )))
+        child: none
+            ? Padding(padding: EdgeInsets.only(left: 0, right: 0), child: row
+                //snack!.message.length > 50
+                //    ? FittedBox(
+                //        fit: BoxFit.fitWidth,
+                //        child: Text(
+                //          snack!.message,
+                //          style: style(),
+                //        ))
+                //    :
+                )
             : Stack(alignment: Alignment.bottomCenter, children: [
                 Container(
                     alignment: Alignment.topLeft,
@@ -75,13 +109,9 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                         color: AppColors.snackBar,
                         borderRadius: components.shape.topRoundedBorder8),
                     child: Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16, top: 12),
-                        child: Text(
-                          snack!.message,
-                          maxLines: 1,
-                          overflow: TextOverflow.fade,
-                          style: style(),
-                        ))),
+                      padding: EdgeInsets.only(left: 16, right: 16, top: 12),
+                      child: row,
+                    )),
                 Container(
                     height: 16,
                     decoration: BoxDecoration(
@@ -105,7 +135,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                               blurRadius: 10)
                         ]))
               ]));
-    if (snack!.atBottom) {
+    if (none) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 1,
         dismissDirection: DismissDirection.horizontal,
@@ -113,8 +143,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         shape: components.shape.topRounded8,
         content: msg,
       ));
-    } else if (snack!.atMiddle) {
-      streams.app.hideNav.add(false);
+    } else if (short) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
         dismissDirection: DismissDirection.none,
@@ -122,12 +151,14 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         shape: components.shape.topRounded8,
         content: msg,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 51.6 : 60).figmaH),
+        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 32 : 60).figmaH),
         padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
-        //action: SnackBarAction(
-        //    label: ' ',
-        //    onPressed: () =>
-        //        Clipboard.setData(ClipboardData(text: snack!.message))),
+        //action: (snack!.copy != null)
+        //    ? SnackBarAction(
+        //        label: ' ',
+        //        onPressed: () =>
+        //            Clipboard.setData(ClipboardData(text: snack!.copy)))
+        //    : null,
       ));
     } else /*if (snack!.link == null && snack!.details == null)*/ {
       /// make sure we don't display until we've been sent back home
@@ -141,7 +172,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       }
 
       /// this configuration of the snackbar always shows on top of the nav bar
-      streams.app.hideNav.add(false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
         dismissDirection: DismissDirection.none,
@@ -149,12 +179,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         shape: components.shape.topRounded8,
         content: msg,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 76 : 106).figmaH),
+        margin: EdgeInsets.only(bottom: (Platform.isIOS ? 77 : 106).figmaH),
         padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
-        //action: SnackBarAction(
-        //    label: ' ',
-        //    onPressed: () =>
-        //        Clipboard.setData(ClipboardData(text: snack!.message))),
       ));
     }
     /*

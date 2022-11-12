@@ -55,9 +55,13 @@ class TextComponents {
       return pros.securities.USD;
     }
     return security ??
-        pros.securities.bySymbolSecurityType
-            .getOne(symbol, SecurityType.RavenAsset) ??
-        Security(symbol: symbol, securityType: SecurityType.RavenAsset);
+        pros.securities.primaryIndex.getOne(symbol, SecurityType.asset,
+            pros.settings.chain, pros.settings.net) ??
+        Security(
+            symbol: symbol,
+            securityType: SecurityType.asset,
+            chain: pros.settings.chain,
+            net: pros.settings.net);
   }
 
   Asset? getAssetOf({
@@ -69,10 +73,15 @@ class TextComponents {
       return null;
     }
     security = security ??
-        pros.securities.bySymbolSecurityType
-            .getOne(symbol, SecurityType.RavenAsset) ??
-        Security(symbol: symbol, securityType: SecurityType.RavenAsset);
-    return pros.assets.bySymbol.getOne(symbol);
+        pros.securities.primaryIndex.getOne(symbol, SecurityType.asset,
+            pros.settings.chain, pros.settings.net) ??
+        Security(
+            symbol: symbol,
+            securityType: SecurityType.asset,
+            chain: pros.settings.chain,
+            net: pros.settings.net);
+    return pros.assets.primaryIndex
+        .getOne(symbol, security.chain, security.net);
   }
 
   String getSymbol({
@@ -87,7 +96,7 @@ class TextComponents {
   }
 
   Widget get passwordWarning => Text(
-        'Your password cannot be recoverd.\nDo not forget your password.',
+        'Your password cannot be recovered.\nDo not forget your password.',
         textAlign: TextAlign.center,
         style: Theme.of(components.navigator.routeContext!)
             .textTheme

@@ -58,6 +58,7 @@ class _SendState extends State<Send> {
   bool showPaste = false;
   String clipboard = '';
   final ScrollController scrollController = ScrollController();
+  bool clicked = false;
 
   bool rvnValidation() =>
       pros.balances.primaryIndex
@@ -67,7 +68,6 @@ class _SendState extends State<Send> {
   void tellUserNoRVN() => streams.app.snack.add(Snack(
         message: 'No Ravencoin in wallet - fees are paid in Ravencoin',
         positive: false,
-        atMiddle: true,
       ));
 
   @override
@@ -234,13 +234,23 @@ class _SendState extends State<Send> {
     data = populateData(context, data);
     var symbol = streams.spend.form.value?.symbol ?? pros.securities.RVN.symbol;
     symbol = symbol == 'Ravencoin' ? pros.securities.RVN.symbol : symbol;
-    security = pros.securities.bySymbol.getAll(symbol).first;
+    security = pros.securities.primaryIndex.getOne(
+        symbol,
+        symbol == 'RVN' && pros.settings.chain == Chain.ravencoin ||
+                symbol == 'EVR' && pros.settings.chain == Chain.evrmore
+            ? SecurityType.crypto
+            : SecurityType.asset,
+        pros.settings.chain,
+        pros.settings.net)!;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
       handlePopulateFromQR(data['qrCode']);
       data.remove('qrCode');
     }
-    divisibility = pros.assets.bySymbol.getOne(symbol)?.divisibility ?? 8;
+    divisibility = pros.assets.primaryIndex
+            .getOne(symbol, security.chain, security.net)
+            ?.divisibility ??
+        8;
     var possibleHoldings = [
       for (var balance in Current.holdings)
         if (balance.security.symbol == symbol) utils.satToAmount(balance.value)
@@ -345,7 +355,7 @@ class _SendState extends State<Send> {
                   padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.expand_more_rounded,
                       color: Color(0xDE000000))),
-              onPressed: () => _produceAssetModal(),
+              onPressed: _produceAssetModal,
             )),
         onTap: () {
           _produceAssetModal();
@@ -408,7 +418,6 @@ class _SendState extends State<Send> {
           //DecimalTextInputFormatter(decimalRange: divisibility)
           FilteringTextInputFormatter(RegExp(r'[.0-9]'), allow: true)
         ],
-
         labelText: 'Amount',
         hintText: 'Quantity',
         errorText: sendAmount.text == ''
@@ -477,7 +486,9 @@ class _SendState extends State<Send> {
             fee: sendFee.text,
             amount: asDouble(visibleAmount),
           ));
-          FocusScope.of(context).requestFocus(sendFeeFocusNode);
+          //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
+          //FocusScope.of(context).requestFocus(sendFeeFocusNode);
+          FocusScope.of(context).unfocus();
           setState(() {});
         },
       );
@@ -486,6 +497,10 @@ class _SendState extends State<Send> {
       ['', '.'].contains(visibleAmount) ? 0 : double.parse(visibleAmount);
 
   Widget get sendFeeField => TextFieldFormatted(
+        onTap: () {
+          _produceFeeModal();
+          setState(() {});
+        },
         focusNode: sendFeeFocusNode,
         controller: sendFee,
         readOnly: true,
@@ -493,15 +508,14 @@ class _SendState extends State<Send> {
         labelText: 'Transaction Speed',
         hintText: 'Standard',
         suffixIcon: IconButton(
-          icon: Padding(
-              padding: EdgeInsets.only(right: 14),
-              child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
-          onPressed: () => _produceFeeModal(),
-        ),
-        onTap: () {
-          _produceFeeModal();
-          setState(() {});
-        },
+            icon: Padding(
+                padding: EdgeInsets.only(right: 14),
+                child:
+                    Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+            onPressed: () {
+              _produceFeeModal();
+              setState(() {});
+            }),
         onChanged: (String? newValue) {
           feeGoal = {
                 'Cheap': ravencoin.TxGoals.cheap,
@@ -585,7 +599,7 @@ class _SendState extends State<Send> {
 
   bool _validateAddress([String? address]) =>
       sendAddress.text == '' ||
-      (pros.settings.net == Net.Main
+      (pros.settings.net == Net.main
           ? sendAddress.text.isAddressRVN
           : sendAddress.text.isAddressRVNt);
 
@@ -643,7 +657,7 @@ class _SendState extends State<Send> {
     visibleAmount = verifyVisibleAmount(sendAmount.text);
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
-      var sendAmountAsSats = utils.amountToSat(double.parse(sendAmount.text));
+      var sendAmountAsSats = utils.textAmountToSat(sendAmount.text);
       if (holding >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
           sendAll: holding == visibleAmount.toDouble(),
@@ -655,8 +669,12 @@ class _SendState extends State<Send> {
           feeGoal: feeGoal,
           security: sendAsset.text == 'Ravencoin'
               ? null
-              : pros.securities.bySymbolSecurityType
-                  .getOne(sendAsset.text, SecurityType.RavenAsset),
+              : pros.securities.primaryIndex.getOne(
+                  sendAsset.text,
+                  SecurityType.asset,
+                  pros.settings.chain,
+                  pros.settings.net,
+                ),
           assetMemo: sendAsset.text != 'Ravencoin' &&
                   sendMemo.text != '' &&
                   sendMemo.text.isIpfs
@@ -684,8 +702,14 @@ class _SendState extends State<Send> {
       components.buttons.actionButton(
         context,
         focusNode: previewFocusNode,
-        enabled: !disabled,
-        onPressed: () => startSend(),
+        enabled: !disabled && !clicked,
+        label: !clicked ? 'Preview' : 'Generating Transaction...',
+        onPressed: () {
+          setState(() {
+            clicked = true;
+          });
+          startSend();
+        },
         disabledOnPressed: () {
           if (!rvnValidation()) {
             tellUserNoRVN();
@@ -712,7 +736,10 @@ class _SendState extends State<Send> {
           items: [
             ['To', sendAddress.text],
             if (addressName != '') ['Known As', addressName],
-            ['Amount', visibleAmount],
+            [
+              'Amount',
+              sendRequest.sendAll ? 'calculating amount...' : visibleAmount
+            ],
             if (sendMemo.text != '') ['Memo', sendMemo.text],
             if (sendNote.text != '') ['Note', sendNote.text],
           ],
@@ -726,6 +753,9 @@ class _SendState extends State<Send> {
         )
       },
     );
+    setState(() {
+      clicked = false;
+    });
   }
 
   void _produceAssetModal() {

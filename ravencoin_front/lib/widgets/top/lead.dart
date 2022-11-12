@@ -70,16 +70,39 @@ class _PageLead extends State<PageLead> {
     if (loading && pageTitle != 'Network') {
       return Container();
     }
-    if (settingTitle?.startsWith('/settings/') ?? false) {
+    if (pageTitle == 'Home' &&
+        (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-          onPressed: () => streams.app.setting.add('/settings'));
+          onPressed: () {
+            if (streams.app.scrim.value == true) return;
+            streams.app.setting.add('/settings');
+            //Navigator.pop(components.navigator.routeContext ?? context);
+            //Navigator.pop(components.navigator.routeContext ?? context);
+            //Navigator.pushReplacementNamed(
+            //    components.navigator.routeContext ?? context, '/home',
+            //    arguments: {});
+            //streams.app.setting.add(settingTitle);
+          });
     }
+    if (pageTitle != 'Home' &&
+        (settingTitle?.startsWith('/settings/') ?? false)) {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            if (streams.app.scrim.value == true) return;
+            Navigator.pop(components.navigator.routeContext ?? context);
+            streams.app.setting.add(settingTitle);
+          });
+    }
+
     if (pageTitle == 'Home') {
       return IconButton(
           splashRadius: 24,
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             ScaffoldMessenger.of(context).clearSnackBars();
             streams.app.fling.add(true);
           },
@@ -87,7 +110,7 @@ class _PageLead extends State<PageLead> {
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));
     }
     if (pageTitle == '') {
-      return Container();
+      //return Container();
     }
     if (pageTitle == 'Splash') {
       return Container();
@@ -108,6 +131,7 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           icon: Icon(Icons.close_rounded, color: Colors.white),
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             streams.app.fling.add(false);
             if (pageTitle == 'Send') streams.spend.form.add(null);
             if (xlead) streams.app.xlead.add(false);
@@ -129,15 +153,52 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
+            if (streams.app.scrim.value == true) return;
             streams.app.fling.add(false);
             if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.pop(components.navigator.routeContext ?? context);
+          });
+    }
+    if (['Createlogin'].contains(pageTitle)) {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            if (streams.app.scrim.value == true) return;
+            Navigator.pushReplacementNamed(
+              components.navigator.routeContext ?? context,
+              '/security/create/setup',
+            );
+            streams.app.splash.add(false);
+          });
+    }
+    if (['BackupConfirm', 'Mining'].contains(pageTitle)) {
+      /// the reason for this is after we took out encryptedEntropy from
+      /// LeaderWallets we needed to make all the functions dealing with getting
+      /// sensitive information futures, and since they're futures, we had to
+      /// change the way we get that data to display it for backup purposes.
+      /// so we no longer can get it on the verification page initstate because
+      /// that can't support futures, so we have to get it on show and pass it
+      /// to the verify page. but when you hit back on verify page it doesn't
+      /// change the value that's passed to it, even though you hit the button
+      /// again, instead it keeps the state of the verify page intact. therefore
+      /// we will simply move them back to the home page and they'll have to
+      /// start the whole process again if they try to cheat.
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            if (streams.app.scrim.value == true) return;
+            if (pageTitle == 'Transaction') streams.spend.form.add(null);
+            Navigator.popUntil(components.navigator.routeContext ?? context,
+                ModalRoute.withName('/home'));
           });
     }
     return IconButton(
         splashRadius: 24,
         icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
         onPressed: () {
+          if (streams.app.scrim.value == true) return;
           if (pageTitle == 'Transaction') streams.spend.form.add(null);
           Navigator.pop(components.navigator.routeContext ?? context);
         });

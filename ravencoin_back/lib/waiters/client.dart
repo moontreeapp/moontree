@@ -102,18 +102,22 @@ class RavenClientWaiter extends Waiter {
     );
     */
 
-    /// when we become active and we don't have a connection, reconnect.
+    /// when we become active establish connection.
     listen(
       'streams.app.active',
       streams.app.active,
       (bool active) async {
         if (active) {
-          print(
-              'CONNECTION STATUS: ${streams.client.connected.value.enumString} ACTIVE $active');
-          print('PINGING ELECTRUM SERVER');
-          await services.client.api.ping();
-          print(
-              'CONNECTION STATUS: ${streams.client.connected.value.enumString}');
+          try {
+            //print(
+            //    'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE $active');
+            //print('PINGING ELECTRUM SERVER');
+            await services.client.api.ping();
+            //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
+          } catch (e) {
+            print(e);
+            await services.client.createClient();
+          }
         }
       },
     );
@@ -132,12 +136,16 @@ class RavenClientWaiter extends Waiter {
       (Tuple2 tuple) async {
         //RavenElectrumClient? client = tuple.item1;
         /// I think this is getting called when the app becomes active again without a working client
-        print(
-            'CONNECTION STATUS: ${streams.client.connected.value.enumString} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
-        print('PINGING ELECTRUM SERVER');
-        await services.client.api.ping();
-        print(
-            'CONNECTION STATUS: ${streams.client.connected.value.enumString}');
+        try {
+          //print(
+          //    'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
+          //print('PINGING ELECTRUM SERVER');
+          await services.client.api.ping();
+          //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
+        } catch (e) {
+          print('unable to ping...');
+          await services.client.createClient();
+        }
         //try {
         //  client!.ping();
         //} on StateError {

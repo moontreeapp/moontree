@@ -80,7 +80,7 @@ void main() {
     //print(SettingName.Electrum_Url.hashCode);
     //print(SettingName.Electrum_Url.runtimeType);
     //print(SettingName.Electrum_Url.toString().split('.')[1]);
-    ////print(SettingName.Electrum_Url.enumString);
+    ////print(SettingName.Electrum_Url.name);
     //print(SettingName.Electrum_Url.index);
     //print(SettingName.Electrum_Url == SettingName.Electrum_Url);
     //print(SettingName.Electrum_Url is Object);

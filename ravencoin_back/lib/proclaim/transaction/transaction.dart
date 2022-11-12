@@ -1,0 +1,21 @@
+import 'package:collection/collection.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:proclaim/proclaim.dart';
+
+part 'transaction.keys.dart';
+
+class TransactionProclaim extends Proclaim<_IdKey, Transaction> {
+  late IndexMultiple<_HeightKey, Transaction> byHeight;
+  late IndexMultiple<_ConfirmedKey, Transaction> byConfirmed;
+  static const maxInt = 1 << 63;
+
+  TransactionProclaim() : super(_IdKey()) {
+    byHeight = addIndexMultiple('height', _HeightKey());
+    byConfirmed = addIndexMultiple('confirmed', _ConfirmedKey());
+  }
+
+  List<Transaction> get chronological => pros.transactions.records.toList()
+    ..sort((a, b) => (b.height ?? maxInt).compareTo(a.height ?? maxInt));
+
+  List<Transaction> get mempool => pros.transactions.byConfirmed.getAll(false);
+}

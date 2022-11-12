@@ -7,6 +7,7 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
+import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class ElectrumNetwork extends StatefulWidget {
@@ -42,8 +43,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
           value != connectionStatus &&
           pressed) {
         setState(() {});
-        streams.app.snack
-            .add(Snack(message: 'Successfully Connected', atBottom: true));
+        streams.app.snack.add(Snack(message: 'Successfully Connected'));
       }
     }));
   }
@@ -69,12 +69,19 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: services.password.askCondition
-              ? VerifyPassword(parentState: this)
+              ? VerifyAuthentication(parentState: this)
               : body(),
         )));
   }
 
   Widget body() => CustomScrollView(slivers: <Widget>[
+        //SliverToBoxAdapter(
+        //    child: Padding(
+        //        padding:
+        //            EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 16),
+        //        child: Container(
+        //            alignment: Alignment.topLeft, child: NetworkChoice()))),
+
         //SliverToBoxAdapter(child: SizedBox(height: 6)),
         //SliverToBoxAdapter(
         //    child: Padding(
@@ -84,10 +91,30 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         SliverToBoxAdapter(
             child: Padding(
                 padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
+                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: serverTextField)),
-        SliverToBoxAdapter(
-            child: Container(height: MediaQuery.of(context).size.height / 2)),
+        if (pros.settings.advancedDeveloperMode)
+          SliverToBoxAdapter(
+              child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('Most Recent Network Activity',
+                            style: Theme.of(context).textTheme.bodyText1),
+                      ]))),
+        if (pros.settings.advancedDeveloperMode)
+          SliverToBoxAdapter(
+              child: Padding(
+                  padding:
+                      EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
+                  child: Container(
+                      alignment: Alignment.topLeft,
+                      child: DownloadActivity()))),
+
+        //SliverToBoxAdapter(
+        //    child: Container(height: MediaQuery.of(context).size.height / 2)),
         SliverFillRemaining(
             hasScrollBody: false,
             child: Column(
@@ -172,17 +199,22 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   bool validateDomainPort(String value) =>
       value.contains(':') && value.split(':').last.isInt;
 
-  void save() {
+  void save() async {
     var port = serverAddress.text.split(':').last;
     var domain = serverAddress.text
         .substring(0, serverAddress.text.lastIndexOf(port) - 1);
-    services.client.saveElectrumAddress(
-      domain: domain,
-      port: int.parse(port),
+    components.loading.screen(
+      message: 'Connecting',
+      playCount: 1,
+      then: () async {
+        await services.client.saveElectrumAddress(
+          domain: domain,
+          port: int.parse(port),
+        );
+        await services.client.createClient();
+      },
+      returnHome: true,
     );
-    // flush out current connection and allow waiter to reestablish one
-    services.client.createClient();
-    components.loading.screen(message: 'Connecting', returnHome: false);
     pressed = true;
   }
 }

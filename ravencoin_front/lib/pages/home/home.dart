@@ -54,6 +54,10 @@ class _HomeState extends State<Home> {
         //streams.app.triggers.add(null);
       }
     }));
+    listeners.add(streams.app.wallet.refresh.listen((bool value) {
+      print('told to Refresh');
+      setState(() {});
+    }));
   }
 
   @override

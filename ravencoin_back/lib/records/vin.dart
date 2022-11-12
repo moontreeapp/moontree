@@ -49,7 +49,7 @@ class Vin with EquatableMixin {
       .convert(utf8.encode('$transactionId$voutTransactionId$voutPosition'))
       .toString();
 
-  String get voutId => Vout.getVoutId(voutTransactionId, voutPosition);
+  String get voutId => Vout.key(voutTransactionId, voutPosition);
 
   /// having a vin that is a coinbase is an edge case for us,
   /// so in order to preserve simplicity we override the typical values as

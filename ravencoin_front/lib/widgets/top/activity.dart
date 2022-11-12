@@ -5,6 +5,8 @@ import 'package:lottie/lottie.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
+import 'package:ravencoin_front/widgets/front/choices/download_queue_count.dart';
 
 class ActivityLight extends StatefulWidget {
   ActivityLight({Key? key}) : super(key: key);
@@ -29,13 +31,10 @@ class _ActivityLightState extends State<ActivityLight>
       }
     }));
     listeners.add(streams.client.busy.listen((bool value) async {
-      if (!services.client.subscribe.startupProcessRunning) {
-        if (!connectionBusy && value) {
-          setState(() => connectionBusy = value);
-        } else if (connectionBusy && !value) {
-          // todo wait til a good time to stop
-          setState(() => connectionBusy = value);
-        }
+      if (!connectionBusy && value) {
+        setState(() => connectionBusy = value);
+      } else if (connectionBusy && !value) {
+        setState(() => connectionBusy = value);
       }
     }));
     listeners.add(streams.app.page.listen((value) {
@@ -57,14 +56,21 @@ class _ActivityLightState extends State<ActivityLight>
 
   @override
   Widget build(BuildContext context) {
-    return pageTitle == 'Login'
+    return ['Login', 'Createlogin'].contains(pageTitle)
         ? Container()
         : connectionBusy
             ? GestureDetector(
                 onTap: () => components.message.giveChoices(
                   components.navigator.routeContext!,
-                  title: activityMessage.title,
+                  title: activityMessage.title ?? 'Network Activity',
                   content: activityMessage.message,
+                  child: activityMessage.message == '' ||
+                          activityMessage.message == null
+                      ? (pros.settings.advancedDeveloperMode == true
+                          //? DownloadQueueCount()
+                          ? DownloadActivity()
+                          : null)
+                      : null,
                   behaviors: {
                     'ok': () {
                       Navigator.of(components.navigator.routeContext!).pop();

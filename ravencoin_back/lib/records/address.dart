@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
 import '_type_id.dart';
-import 'node_exposure.dart';
-import 'net.dart';
+import 'types/node_exposure.dart';
+import 'types/net.dart';
 
 part 'address.g.dart';
 
@@ -32,8 +32,8 @@ class Address with EquatableMixin {
     required this.address,
     required this.walletId,
     required this.hdIndex,
-    this.exposure = NodeExposure.External,
-    this.net = Net.Test,
+    this.exposure = NodeExposure.external,
+    this.net = Net.test,
   });
 
   @override
@@ -53,7 +53,7 @@ class Address with EquatableMixin {
 
   int compareTo(Address other) {
     if (exposure != other.exposure) {
-      return exposure == NodeExposure.Internal ? -1 : 1;
+      return exposure == NodeExposure.internal ? -1 : 1;
     }
     return hdIndex < other.hdIndex ? -1 : 1;
   }

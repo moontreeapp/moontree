@@ -71,8 +71,12 @@ class _NavMenuState extends State<NavMenu> {
                     link,
                     arguments: arguments,
                   );
-                  streams.app.setting.add(null);
-                  streams.app.fling.add(false);
+
+                  /// moved to loader in case we come back to holdings list
+                  /// but generally we want to come back to the settings if
+                  /// we came from it:
+                  //streams.app.setting.add(null);
+                  //streams.app.fling.add(false);
                 } else {
                   streams.app.setting.add(link);
                 }
@@ -118,6 +122,16 @@ class _NavMenuState extends State<NavMenu> {
                   );
                 }
               }),
+          if (pros.settings.developerMode && Current.balanceRVN.value > 0
+
+          //// should be able to handle this edgecase now, untested
+          //&& Current.wallet.unspents.length < 1000
+          )
+            destination(
+              icon: MdiIcons.broom,
+              name: 'Sweep',
+              link: '/settings/sweep',
+            ),
         ],
       ),
       '/settings/settings': ListView(
@@ -126,9 +140,17 @@ class _NavMenuState extends State<NavMenu> {
         children: [
           destination(
             icon: Icons.lock_rounded,
-            name: 'Password',
-            link: '/security/change',
+            name: 'Security',
+            link: '/security/method/change',
           ),
+          /*
+          if (!pros.settings.authMethodIsNativeSecurity)
+            destination(
+              icon: Icons.lock_rounded,
+              name: 'Password',
+              link: '/security/password/change',
+            ),
+            */
           /*
           destination(
               icon: MdiIcons.accountCog,
@@ -140,24 +162,67 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Network',
             link: '/settings/network',
           ),
+          if (pros.settings.advancedDeveloperMode)
+            destination(
+              icon: Icons.format_list_bulleted_rounded,
+              name: 'Addresses',
+              link: '/addresses',
+            ),
+          if (pros.settings.developerMode)
+            destination(
+              icon: MdiIcons.pickaxe,
+              name: 'Mining',
+              link: '/settings/network/mining',
+            ),
+          if (pros.settings.advancedDeveloperMode)
+            destination(
+              icon: MdiIcons.database,
+              name: 'Database',
+              link: '/settings/database',
+            ),
+          if (pros.settings.advancedDeveloperMode == true)
+            destination(
+              icon: MdiIcons.rocketLaunchOutline,
+              name: 'Advanced',
+              link: '/settings/advanced',
+            ),
+          if (pros.settings.developerMode == true)
+          destination(
+            icon: MdiIcons.devTo,
+            name: 'Developer',
+            link: '/settings/developer',
+          ),
         ],
       ),
       '/settings': ListView(
         shrinkWrap: true,
         padding: EdgeInsets.all(0),
         children: [
-          destination(
-            icon: MdiIcons.shieldKey,
-            name: 'Import / Export',
-            link: '/settings/import_export',
-            arrow: true,
-          ),
-          if (Current.wallet is LeaderWallet)
+          if (pros.settings.developerMode)
             destination(
-              icon: MdiIcons.drawPen,
-              name: 'Backup',
-              link: '/security/backup',
+              icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant, //
+              name: 'Blockchain',
+              link: '/settings/network/blockchain',
             ),
+          if (!pros.settings.developerMode)
+            destination(
+                icon: MdiIcons.shieldKey,
+                name: 'Import',
+                link: '/settings/import'),
+          if (pros.settings.developerMode)
+            destination(
+              icon: MdiIcons.shieldKey,
+              name: 'Import & Export',
+              link: '/settings/import_export',
+              arrow: true,
+            ),
+          destination(
+            icon: MdiIcons.drawPen,
+            name: 'Backup',
+            link: Current.wallet is LeaderWallet
+                ? '/security/backup'
+                : '/security/backupKeypair',
+          ),
           destination(
             icon: Icons.settings,
             name: 'Settings',
@@ -183,11 +248,6 @@ class _NavMenuState extends State<NavMenu> {
           ),
           /*
           destination(
-            icon: Icons.info_rounded,
-            name: 'Wallet',
-            link: '/wallet',
-          ),
-          destination(
               icon: Icons.info_outline_rounded,
               name: 'Clear Database',
               link: '/home',
@@ -199,6 +259,7 @@ class _NavMenuState extends State<NavMenu> {
                 
               }),
           */
+          SizedBox(height: 16),
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(

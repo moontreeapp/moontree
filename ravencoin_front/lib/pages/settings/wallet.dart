@@ -63,7 +63,7 @@ class _WalletViewState extends State<WalletView> {
     secret = data['secret'] ?? '';
     data['secretName'] = SecretType.mnemonic;
     secretName = (data['secretName'] as SecretType)
-        .enumString
+        .name
         .toTitleCase(underscoresAsSpace: true);
     wallet = data['wallet'] = Current.wallet;
     walletType = wallet is LeaderWallet ? 'LeaderWallet' : 'SingleWallet';
@@ -73,10 +73,8 @@ class _WalletViewState extends State<WalletView> {
     if (wallet.cipher != null) {
       address = address ??
           (wallet is LeaderWallet
-              ? services.wallet.leader
-                  .getNextEmptyWallet(wallet as LeaderWallet,
-                      exposure: NodeExposure.External)
-                  .address
+              ? services.wallet.getEmptyAddress(
+                  wallet as LeaderWallet, NodeExposure.external)
               : services.wallet.single
                   .getKPWallet(wallet as SingleWallet)
                   .address);
@@ -137,6 +135,7 @@ class _WalletViewState extends State<WalletView> {
           controller: _scrollController,
           padding: EdgeInsets.all(20.0),
           children: <Widget>[
+            /*
             Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
                 style: TextStyle(color: Theme.of(context).bad)),
             SizedBox(height: 15.0),
@@ -158,6 +157,7 @@ class _WalletViewState extends State<WalletView> {
                     ? 'Hide ' + secretName + ' Secret'
                     : 'Show ' + secretName + ' Secret')),
             SizedBox(height: 30.0),
+            */
             Text('Wallet Addresses'),
             SizedBox(height: 10.0),
             Center(
@@ -213,9 +213,9 @@ class _WalletViewState extends State<WalletView> {
                     //        walletAddress.address)
                     .toList();
                 address = walletAddress.address;
-                privateKey = services.wallet.leader
-                    .getSubWalletFromAddress(walletAddress)
-                    .wif; // .wif is the format that raven-Qt-testnet expects
+                //privateKey = (await services.wallet.leader
+                //        .getSubWalletFromAddress(walletAddress))
+                //    .wif; // .wif is the format that raven-Qt-testnet expects
                 //.base58Priv;
                 //.privKey;
                 exposureAndIndex = Column(children: [
@@ -226,7 +226,7 @@ class _WalletViewState extends State<WalletView> {
                         'Index: ' + walletAddress.hdIndex.toString(),
                       ),
                       Text(
-                        (walletAddress.exposure == NodeExposure.Internal
+                        (walletAddress.exposure == NodeExposure.internal
                             ? 'Internal (change)'
                             : 'External (receive)'),
                       ),
@@ -245,16 +245,18 @@ class _WalletViewState extends State<WalletView> {
                           style: Theme.of(context).textTheme.caption),
                     ],
                   ),
+                  /*
                   SizedBox(height: 10),
                   SelectableText(
                     'private key: ' + (privateKey ?? 'unknown'),
                   ),
+                  */
                 ]);
               }),
               title: Wrap(
                 alignment: WrapAlignment.spaceBetween,
                 children: [
-                  (walletAddress.exposure == NodeExposure.Internal
+                  (walletAddress.exposure == NodeExposure.internal
                       ? components.icons.out(context)
                       : components.icons.income(context)),
                   Text(walletAddress.address,

@@ -11,23 +11,22 @@ class AppBarScrim extends StatefulWidget {
 
 class _AppBarScrimState extends State<AppBarScrim> {
   late List listeners = [];
-  final Duration waitForSheetDrop = Duration(milliseconds: 50);
-  bool applyScrim = false;
+  final Duration waitForSheetDrop = Duration(milliseconds: 10);
+  bool? applyScrim = false;
 
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.scrim.listen((bool value) async {
-      if (applyScrim && !value) {
-        await Future.delayed(waitForSheetDrop);
-        setState(() {
-          applyScrim = value;
-        });
+    listeners.add(streams.app.scrim.listen((bool? value) async {
+      if (value == null) {
+        setState(() => applyScrim = null);
       }
-      if (!applyScrim && value) {
-        setState(() {
-          applyScrim = value;
-        });
+      if (applyScrim == true && value == false) {
+        await Future.delayed(waitForSheetDrop);
+        setState(() => applyScrim = value);
+      }
+      if (applyScrim == false && value == true) {
+        setState(() => applyScrim = value);
       }
     }));
   }
@@ -43,15 +42,21 @@ class _AppBarScrimState extends State<AppBarScrim> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () async {
-          Navigator.of(components.navigator.routeContext!)
-              .popUntil(ModalRoute.withName('/home'));
-          streams.app.scrim.add(false);
-        },
-        child: Container(
-          //  duration: waitForSheetDrop, // to make it look better, causes #604
-          color: applyScrim ? Colors.black38 : Colors.transparent,
-          height: applyScrim ? 56 : 0,
-        ));
+      onTap: () async {
+        Navigator.of(components.navigator.routeContext!)
+            .popUntil(ModalRoute.withName('/home'));
+        streams.app.scrim.add(false);
+      },
+      child: applyScrim != null
+          ? AnimatedContainer(
+              duration: waitForSheetDrop, // to make it look better, causes #604
+              color: applyScrim == true ? Colors.black38 : Colors.transparent,
+              height: applyScrim == true ? 56 : 0,
+            )
+          : Container(
+              color: Colors.transparent,
+              height: 0,
+            ),
+    );
   }
 }

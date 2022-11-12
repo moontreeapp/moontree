@@ -18,29 +18,61 @@ class SingleWallet extends Wallet {
     required String id,
     required this.encryptedWIF,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
+    bool skipHistory = false,
     String? name,
+    Future<String> Function(String id)? getWif,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
-          name: name,
           backedUp: true,
-        );
+          skipHistory: skipHistory,
+          name: name,
+        ) {
+    _getWif = getWif;
+  }
+
+  Future<String> Function(String id)? _getWif;
+
+  factory SingleWallet.from(
+    SingleWallet existing, {
+    String? id,
+    String? encryptedWIF,
+    CipherUpdate? cipherUpdate,
+    bool? skipHistory,
+    String? name,
+    Future<String> Function(String id)? getWif,
+  }) =>
+      SingleWallet(
+        id: id ?? existing.id,
+        encryptedWIF: encryptedWIF ?? existing.encryptedWIF,
+        cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
+        skipHistory: skipHistory ?? existing.skipHistory,
+        name: name ?? existing.name,
+        getWif: getWif ?? existing.getWif,
+      );
 
   @override
-  List<Object?> get props => [id, cipherUpdate, encryptedWIF];
+  List<Object?> get props =>
+      [id, cipherUpdate, encryptedWIF, skipHistory, name];
 
   @override
-  String toString() => 'SingleWallet($id, $encryptedWIF, $cipherUpdate)';
+  String toString() =>
+      'SingleWallet($id, $encryptedWIF, $cipherUpdate, $skipHistory, $name)';
 
   @override
   String get encrypted => encryptedWIF;
 
   @override
-  String secret(CipherBase cipher) => EncryptedWIF(encrypted, cipher).secret;
+  Future<String> secret(CipherBase cipher) async =>
+      EncryptedWIF(encrypted, cipher).secret;
 
   @override
-  KPWallet seedWallet(CipherBase cipher, {Net net = Net.Main}) =>
-      SingleSelfWallet(secret(cipher)).wallet;
+  Future<KPWallet> seedWallet(
+    CipherBase cipher, {
+    Chain chain = Chain.ravencoin,
+    Net net = Net.main,
+  }) async =>
+      SingleSelfWallet(await secret(cipher)).wallet;
 
   @override
   SecretType get secretType => EncryptedWIF.secretType;
@@ -49,10 +81,27 @@ class SingleWallet extends Wallet {
   WalletType get walletType => WalletType.single;
 
   @override
-  String get secretTypeToString => secretType.enumString;
+  String get secretTypeToString => secretType.name;
 
   @override
-  String get walletTypeToString => walletType.enumString;
+  String get walletTypeToString => walletType.name;
 
-  String? get publicKey => services.wallet.single.getKPWallet(this).pubKey;
+  void setSecret(Future<String> Function(String id) getSecret) =>
+      _getWif = getSecret;
+
+  Future<String?> get publicKey async => (await kpWallet).pubKey;
+
+  Future<String> Function(String id)? get getWif => _getWif;
+
+  Future<KPWallet> get kpWallet async =>
+      KPWallet.fromWIF((await wif), pros.settings.network);
+
+  Future<String> get wif async => (await ewif).wif;
+
+  Future<EncryptedWIF> get ewif async => EncryptedWIF(
+        encryptedWIF == ''
+            ? await (_getWif ?? ((_) async => ''))(id)
+            : encryptedWIF,
+        cipher!,
+      );
 }

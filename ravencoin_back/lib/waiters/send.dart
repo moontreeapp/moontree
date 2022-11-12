@@ -16,13 +16,6 @@ class SendWaiter extends Waiter {
         print('SEND REQUEST $sendRequest');
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         try {
-          /// must wait on syncing because need everything downloaded before
-          /// attempting to create a transaction. client might be busy doing
-          /// other things, so we ask if download is complete too
-          while (streams.client.busy.value &&
-              services.download.history.isComplete) {
-            await Future.delayed(Duration(seconds: 1));
-          }
           tuple = await services.transaction.make.transactionBy(sendRequest);
           ravencoin.Transaction tx = tuple.item1;
           SendEstimate estimate = tuple.item2;
@@ -41,9 +34,7 @@ class SendWaiter extends Waiter {
           streams.spend.make.add(null);
         } on InsufficientFunds {
           streams.app.snack.add(Snack(
-              message: 'Send Failure: Insufficient Funds',
-              atBottom: true,
-              positive: false));
+              message: 'Send Failure: Insufficient Funds', positive: false));
           streams.spend.success.add(false);
         }
         // catch (e) {
@@ -73,11 +64,26 @@ class SendWaiter extends Waiter {
         print('txid');
         print(txid);
         if (txid != '') {
-          streams.app.snack.add(Snack(
-            message: 'Successfully Sent', //: ${txid.cutOutMiddle(length: 3)}
-            //label: 'Transaction ID',
-            //link: 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
-          ));
+          // delete utxos if they're specified
+          if (transactionNote.usedUtxos != null) {
+            for (var vout in transactionNote.usedUtxos!) {
+              final unspent = vout.unspent;
+              if (unspent != null) {
+                await pros.unspents.remove(unspent);
+              }
+            }
+            await pros.vouts.removeAll(transactionNote.usedUtxos!);
+          }
+          // able to disable snack
+          if (transactionNote.successMsg != '') {
+            streams.app.snack.add(Snack(
+              message: transactionNote.successMsg ?? 'Successfully Sent',
+              label: txid.cutOutMiddle(length: 3),
+              copy: txid,
+              //label: 'Transaction ID',
+              //link: 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=$txid'
+            ));
+          }
           streams.spend.success.add(true);
         } else {
           streams.app.snack.add(Snack(

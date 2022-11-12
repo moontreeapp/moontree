@@ -60,6 +60,7 @@ class RavenMobileApp extends StatelessWidget {
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
   @override
   Widget build(BuildContext context) {
+    components.navigator.mainContext = context;
     //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //    overlays: [SystemUiOverlay.top]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,

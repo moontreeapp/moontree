@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ravencoin_back/records/vout.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:ravencoin_back/utilities/utilities.dart';
@@ -23,14 +24,22 @@ class Spend {
 class TransactionNote with ToStringMixin {
   String txHex;
   String? note;
+  String? successMsg;
+  Set<Vout>? usedUtxos;
 
-  TransactionNote({required this.txHex, this.note});
+  TransactionNote({
+    required this.txHex,
+    this.note,
+    this.successMsg,
+    this.usedUtxos,
+  });
 
   @override
-  List<Object> get props => [txHex, note ?? 'null'];
+  List<Object> get props =>
+      [txHex, note ?? 'null', successMsg ?? 'null', usedUtxos ?? 'null'];
 
   @override
-  List<String> get propNames => ['txHex', 'note?'];
+  List<String> get propNames => ['txHex', 'note?', 'successMsg?', 'usedUtxos?'];
 }
 
 class SpendForm with EquatableMixin {

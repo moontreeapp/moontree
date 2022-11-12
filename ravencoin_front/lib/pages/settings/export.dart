@@ -140,7 +140,7 @@ class _ExportState extends State<Export> {
           enabled: true,
           label: 'Share',
           onPressed: () async {
-            await Share.share(rawExport ?? 'Invalid wallet data');
+            await Share.share(await rawExport ?? 'Invalid wallet data');
           },
         ),
         if (!Platform.isIOS) SizedBox(width: 16),
@@ -167,7 +167,7 @@ class _ExportState extends State<Export> {
 
   Future<File?> export() async => await storage.writeExport(
         filename: filePrefix + today,
-        rawExport: rawExport,
+        rawExport: await rawExport,
       );
 
   String get filePrefix => 'moontree_backup_';
@@ -179,9 +179,9 @@ class _ExportState extends State<Export> {
       '_' +
       DateTime.now().year.toString().substring(2);
 
-  String? get rawExport => wallets == null
+  Future<String?> get rawExport async => wallets == null
       ? null
-      : jsonEncode(services.wallet.export.structureForExport(wallets!));
+      : jsonEncode(await services.wallet.export.structureForExport(wallets!));
 
   void _produceWalletModal() async {
     await SelectionItems(context, modalSet: SelectionSet.Wallets)

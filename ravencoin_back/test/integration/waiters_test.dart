@@ -8,11 +8,11 @@ void main() async {
   var hiveInit = HiveInitializer(destroyOnTeardown: true);
 
   setUp(() async {
-    await hiveInit.setUp(HiveLoadingStep.All);
+    await hiveInit.setUp(HiveLoadingStep.all);
     pros.settings.setSource(MapSource({
       '0': Setting(
-          name: SettingName.Electrum_Domain, value: 'testnet.rvn.rocks'),
-      '1': Setting(name: SettingName.Electrum_Port, value: 50002),
+          name: SettingName.electrum_domain, value: 'testnet.rvn.rocks'),
+      '1': Setting(name: SettingName.electrum_port, value: 50002),
     }));
 
     waiters.leader.init();
@@ -24,7 +24,6 @@ void main() async {
     waiters.block.init();
     waiters.send.init();
     waiters.import.init();
-    waiters.password.init();
     waiters.rate.init(RVNtoFiat());
   });
 

@@ -6,42 +6,35 @@ import 'waiter.dart';
 class AppWaiter extends Waiter {
   DateTime lastActiveTime = DateTime.now();
   int gracePeriod = 60 * 5;
-  Timer? _timer;
 
   void init({Object? reconnect}) {
-    /// when app has been inactive for 2 minutes logout
+    /// logout on minimize
     listen(
       'streams.app.active',
       streams.app.active,
       (bool active) async {
-        if (active) {
-          _timer?.cancel();
-          _timer = null;
-        } else if (!active && services.password.required) {
-          _timer = Timer(
-            Duration(seconds: gracePeriod),
-            () {
-              if (!streams.app.active.value) {
-                streams.app.logout.add(true);
-              }
-            },
-          );
+        if (!active &&
+            services.password.required &&
+            streams.app.authenticating.value == false &&
+            streams.app.browsing.value == false) {
+          streams.app.logout.add(true);
+        } else if (active) {
+          streams.app.browsing.add(false);
         }
       },
     );
 
-    /// when app isn't used for 2 minutes lock
+    /// when app isn't used for 5 minutes lock
     /// we know the user is active by navigation events and gestures that aren't
     /// captured by a button or anything
     listen(
       'streams.app.tap',
       streams.app.tap,
-      (bool? value) async {
-        lastActiveTime = DateTime.now();
-      },
+      (bool? value) async => lastActiveTime = DateTime.now(),
     );
   }
 
+  /// only active when the app is active
   Future<void> logoutThread() async {
     while (true) {
       var x = DateTime.now().difference(lastActiveTime).inSeconds;

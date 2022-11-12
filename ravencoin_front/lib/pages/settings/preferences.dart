@@ -13,7 +13,7 @@ class _PreferencesState extends State<Preferences> {
 
   @override
   Widget build(BuildContext context) {
-    var name = pros.settings.primaryIndex.getOne(SettingName.User_Name)?.value;
+    var name = pros.settings.primaryIndex.getOne(SettingName.user_name)?.value;
     if (name != null) {
       yourName.text = name;
     }
@@ -34,7 +34,7 @@ class _PreferencesState extends State<Preferences> {
             ),
             onEditingComplete: () async {
               await pros.settings.save(
-                  Setting(name: SettingName.User_Name, value: yourName.text));
+                  Setting(name: SettingName.user_name, value: yourName.text));
               alertSuccess();
             },
           ),
@@ -44,13 +44,13 @@ class _PreferencesState extends State<Preferences> {
               contentPadding: EdgeInsets.all(0),
               title: Text('Send immediately (without confirmation)'),
               value: pros.settings.primaryIndex
-                  .getOne(SettingName.Send_Immediate)!
+                  .getOne(SettingName.send_immediate)!
                   .value,
               onChanged: (bool? value) async {
                 await pros.settings.save(Setting(
-                    name: SettingName.Send_Immediate,
+                    name: SettingName.send_immediate,
                     value: !pros.settings.primaryIndex
-                        .getOne(SettingName.Send_Immediate)!
+                        .getOne(SettingName.send_immediate)!
                         .value));
                 setState(() {});
               }),

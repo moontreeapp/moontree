@@ -52,7 +52,7 @@ bool unsCondition(String address) =>
 /// known format from which we could potentially derive a valid RVN address
 String validateAddressType(String address) => rvnCondition(address)
     ? 'RVN'
-    : rvnCondition(address, net: Net.Test)
+    : rvnCondition(address, net: Net.test)
         ? 'RVNt'
         //: unsCondition(address)
         //    ? 'UNS'

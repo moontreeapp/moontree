@@ -1,12 +1,12 @@
 part of 'joins.dart';
 
 extension MetadataBelongsToAsset on Metadata {
-  Asset? get asset => pros.assets.bySymbol.getOne(symbol);
+  Asset? get asset => pros.assets.primaryIndex.getOne(symbol, chain, net);
 }
 
 extension MetadataHasOneParent on Metadata {
   Metadata? get parentMetadata => parent != null
-      ? pros.metadatas.bySymbolMetadata.getOne(symbol, parent!)
+      ? pros.metadatas.primaryIndex.getOne(symbol, parent!, chain, net)
       : null;
 }
 

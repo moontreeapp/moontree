@@ -157,8 +157,12 @@ class GenericCreateRequest with ToStringMixin {
         'parent',
       ];
 
-  Security get security =>
-      Security(symbol: fullName, securityType: SecurityType.RavenAsset);
+  Security get security => Security(
+        symbol: fullName,
+        securityType: SecurityType.asset,
+        chain: pros.settings.chain,
+        net: pros.settings.net,
+      );
 }
 
 class GenericReissueRequest with ToStringMixin {
@@ -234,8 +238,12 @@ class GenericReissueRequest with ToStringMixin {
         'parent',
       ];
 
-  Security get security =>
-      Security(symbol: fullName, securityType: SecurityType.RavenAsset);
+  Security get security => Security(
+        symbol: fullName,
+        securityType: SecurityType.asset,
+        chain: pros.settings.chain,
+        net: pros.settings.net,
+      );
 }
 
 class SendRequest with ToStringMixin {
@@ -499,7 +507,8 @@ class TransactionMaker {
 
     var feeSats = 0;
     var utxosRaven = <Vout>[];
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -563,7 +572,11 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: parentAsset, securityType: SecurityType.RavenAsset))
+              symbol: parentAsset,
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            ))
         : <Vout>[];
     var securityIn = 0;
     for (var utxo in utxosSecurity) {
@@ -571,7 +584,8 @@ class TransactionMaker {
     }
     var securityChange = securityIn - 100000000;
 
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -643,10 +657,14 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: estimate.security!.symbol.substring(1) + '!',
-                securityType: SecurityType.RavenAsset))
+              symbol: estimate.security!.symbol.substring(1) + '!',
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            ))
         : <Vout>[];
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -718,9 +736,13 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
-            symbol: estimate.security!.symbol.substring(1) + '!',
-            securityType: SecurityType.RavenAsset));
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+          symbol: estimate.security!.symbol.substring(1) + '!',
+          securityType: SecurityType.asset,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ));
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -792,17 +814,21 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 sat for ownership asset
         security: Security(
-            symbol: estimate.security!.symbol[0] == '\$'
-                ? estimate.security!.symbol.substring(1) + '!'
-                : estimate.security!.symbol,
-            securityType: SecurityType.RavenAsset));
+          symbol: estimate.security!.symbol[0] == '\$'
+              ? estimate.security!.symbol.substring(1) + '!'
+              : estimate.security!.symbol,
+          securityType: SecurityType.asset,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ));
     var securityIn = 0; // May be qualifier
     for (var utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
     }
     var securityChange = securityIn - 100000000;
 
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -871,9 +897,13 @@ class TransactionMaker {
         walletId: wallet.id,
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
-            symbol: estimate.security!.symbol + '!',
-            securityType: SecurityType.RavenAsset));
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+          symbol: estimate.security!.symbol + '!',
+          securityType: SecurityType.asset,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ));
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -938,7 +968,8 @@ class TransactionMaker {
     var feeSats = 0;
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -1003,10 +1034,14 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: parentAsset + '!',
-                securityType: SecurityType.RavenAsset))
+              symbol: parentAsset + '!',
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            ))
         : <Vout>[];
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -1071,10 +1106,14 @@ class TransactionMaker {
             walletId: wallet.id,
             amount: 100000000,
             security: Security(
-                symbol: parentAsset + '!',
-                securityType: SecurityType.RavenAsset))
+              symbol: parentAsset + '!',
+              securityType: SecurityType.asset,
+              chain: pros.settings.chain,
+              net: pros.settings.net,
+            ))
         : <Vout>[];
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     var extraFee = (estimate.security!.symbol.contains('~')
         ? pros.settings.network.burnAmounts.issueMessage
@@ -1133,7 +1172,8 @@ class TransactionMaker {
     var utxosRaven = <Vout>[];
     var utxosSecurity = await services.balance.collectUTXOs(
         walletId: wallet.id, amount: 100000000, security: estimate.security!);
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -1199,7 +1239,8 @@ class TransactionMaker {
     var securityChange =
         estimate.security == null ? 0 : securityIn - estimate.amount;
     // must wait for addesses ...?
-    var returnAddress = services.wallet.getEmptyAddress(wallet, internal: true);
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
@@ -1262,7 +1303,9 @@ class TransactionMaker {
     int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder makeTxBuilder(
-        List<Vout> utxos, SendEstimate estimate) {
+      List<Vout> utxos,
+      SendEstimate estimate,
+    ) {
       var total = 0;
       var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
       for (var utxo in utxos) {
@@ -1295,6 +1338,186 @@ class TransactionMaker {
     estimate.setAmount(estimate.amount - estimate.fees);
     txb = makeTxBuilder(utxos, estimate);
     await txb.signEachInput(utxos);
+    tx = txb.build();
+    return Tuple2(tx, estimate);
+  }
+
+  /// we can skip the while loop because we know we want to include all unspents
+  /// asside from taking a shortcut, this function is actually necessary because
+  /// the other transaction function assume the amount is constant and adds fees
+  /// onto it but when sending all you want the fee taken out of the send amount
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>> transactionSweepAll(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    required Set<Security> securities,
+    TxGoal? goal,
+    Set<int>? previousFees,
+    int? assetMemoExpiry,
+  }) async {
+    ravencoin.TransactionBuilder makeTxBuilder(
+      List<Vout> utxosCurrency,
+      Map<Security, List<Vout>> utxosBySecurity,
+      SendEstimate estimate,
+    ) {
+      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      for (var utxo in utxosCurrency) {
+        print('ADDING INPUTS:');
+        print(utxo.transactionId);
+        print(utxo.position);
+        print(utxo.security?.symbol);
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      //print('ADDING OUTPUT:');
+      //print(toAddress);
+      //print(estimate.amount);
+      txb.addOutput(toAddress, estimate.amount,
+          asset: null, memo: null, expiry: null);
+      for (var utxo in utxosBySecurity.values.expand((e) => e)) {
+        print('ADDING MORE INPUTS:');
+        print(utxo.transactionId);
+        print(utxo.position);
+        print(utxo.security?.symbol);
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      for (var entry in utxosBySecurity.entries) {
+        final amount = entry.value
+            .fold(0, (int? agg, Vout v) => v.assetValue! + (agg ?? 0));
+        print('ADDING OUTPUT:');
+        print(toAddress);
+        print(amount);
+        print(entry.key.symbol);
+        txb.addOutput(toAddress, amount,
+            asset: entry.key.symbol, memo: null, expiry: null);
+      }
+      return txb;
+    }
+
+    print('in sendall');
+    var utxosCurrency = await services.balance.collectUTXOs(
+      walletId: wallet.id,
+      amount: estimate.amount,
+      security: null,
+    );
+    var utxosBySecurity = <Security, List<Vout>>{};
+    for (var security in securities) {
+      utxosBySecurity[security] = await services.balance.collectUTXOs(
+        walletId: wallet.id,
+        amount: pros.balances.primaryIndex.getOne(wallet.id, security)!.value,
+        security: security,
+      );
+    }
+    var txb = makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
+    var tx = txb.buildSpoofedSigs();
+    estimate.setFees(tx.fee(goal: goal));
+    estimate.setAmount(estimate.amount - estimate.fees);
+    txb = makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
+    await txb.signEachInput(
+        utxosCurrency + utxosBySecurity.values.expand((e) => e).toList());
+    // gives error: incomplete transaction even though inputs and outputs are there and signed, I think.
+    tx = txb.build();
+    return Tuple2(tx, estimate);
+  }
+
+  /// transactionSweepAll above is only called when it is known there are no
+  /// more than 1000 inputs. This function is called when there are more than
+  /// 1000 asset inputs.
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>>
+      transactionSweepAssetIncrementally(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    required Map<Security, List<Vout>> utxosBySecurity,
+    TxGoal? goal,
+    int? assetMemoExpiry,
+  }) async {
+    ravencoin.TransactionBuilder? txb;
+    ravencoin.Transaction tx;
+    var feeSats = 0;
+    // Grab required assets for transfer amount
+    var utxosRaven = <Vout>[];
+    var utxosSecurity = utxosBySecurity.values.expand((e) => e).toList();
+    // must wait for addesses ...?
+    var returnAddress =
+        services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
+    var returnRaven = -1; // Init to bad val
+    while (returnRaven < 0 || feeSats != estimate.fees) {
+      feeSats = estimate.fees;
+      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      // Grab required RVN for fee (plus amount, maybe)
+      utxosRaven = await services.balance
+          .collectUTXOs(walletId: wallet.id, amount: feeSats, security: null);
+      var satsIn = 0;
+      // We also add inputs in this loop
+      for (var utxo in utxosRaven) {
+        txb.addInput(utxo.transactionId, utxo.position);
+        satsIn += utxo.rvnValue;
+      }
+      for (var utxo in utxosSecurity) {
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      returnRaven = satsIn - feeSats;
+      if (returnRaven > 0) {
+        txb.addOutput(returnAddress, returnRaven);
+      }
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
+      for (var entry in utxosBySecurity.entries) {
+        txb.addOutput(
+            toAddress,
+            entry.value
+                .fold(0, (int? agg, Vout v) => v.assetValue! + (agg ?? 0)),
+            asset: entry.key.symbol,
+            memo: estimate.assetMemo,
+            expiry: assetMemoExpiry);
+      }
+      tx = txb.buildSpoofedSigs();
+      estimate.setFees(tx.fee(goal: goal));
+    }
+    await txb!.signEachInput(utxosRaven + utxosSecurity);
+    tx = txb.build();
+    return Tuple2(tx, estimate);
+  }
+
+  Future<Tuple2<ravencoin.Transaction, SendEstimate>>
+      transactionSendAllRVNIncrementally(
+    String toAddress,
+    SendEstimate estimate, {
+    required Wallet wallet,
+    required List<Vout> utxosCurrency,
+    TxGoal? goal,
+    int? assetMemoExpiry,
+  }) async {
+    ravencoin.TransactionBuilder makeTxBuilder(
+      List<Vout> utxos,
+      SendEstimate estimate,
+    ) {
+      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      for (var utxo in utxos) {
+        txb.addInput(utxo.transactionId, utxo.position);
+      }
+      print('extimate.assetMemo: ${estimate.assetMemo}');
+      txb.addOutput(
+        toAddress,
+        estimate.amount,
+        asset: estimate.security?.symbol,
+        memo: estimate.assetMemo,
+        expiry: assetMemoExpiry,
+      );
+      if (estimate.memo != null) {
+        txb.addMemo(estimate.memo);
+      }
+      return txb;
+    }
+
+    print('in sendall');
+    var txb = makeTxBuilder(utxosCurrency, estimate);
+    var tx = txb.buildSpoofedSigs();
+    estimate.setFees(tx.fee(goal: goal));
+    estimate.setAmount(estimate.amount - estimate.fees);
+    txb = makeTxBuilder(utxosCurrency, estimate);
+    await txb.signEachInput(utxosCurrency);
     tx = txb.build();
     return Tuple2(tx, estimate);
   }

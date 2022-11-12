@@ -4,11 +4,67 @@ import 'dart:io';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:proclaim/proclaim.dart';
 
-Future deleteDatabase() async {
-  services.wallet.leader.registry.indexRegistry.clear();
-  await services.download.history.clearDownloadState();
+/// erases data concerning transactions and the like, leaves assets alone.
+Future<void> eraseTransactionData({
+  bool quick = false,
+  bool keepBalances = false,
+}) async {
+  //await pros.blocks.removeAll(pros.blocks.records);
+  if (quick) {
+    await pros.vouts.delete();
+    await pros.vins.delete();
+    await pros.transactions.delete();
+  } else {
+    await pros.vouts.clear();
+    await pros.vins.clear();
+    await pros.transactions.clear();
+  }
+}
+
+Future<void> eraseUnspentData({
+  bool quick = false,
+  bool keepBalances = false,
+}) async {
+  if (quick) {
+    await pros.statuses.delete();
+    await pros.unspents.delete();
+    if (!keepBalances) {
+      await pros.balances.delete();
+    }
+  } else {
+    await pros.statuses.clear();
+    await pros.unspents.clear();
+    if (!keepBalances) {
+      await pros.balances.clear();
+    }
+  }
+}
+
+Future<void> eraseAddressData({bool quick = false}) async {
+  if (quick) {
+    await pros.addresses.delete();
+  } else {
+    await pros.addresses.clear();
+  }
+}
+
+void resetInMemoryState() {
+  services.client.subscribe.unsubscribeAddressesAll();
+  services.client.subscribe.unsubscribeAssetsAll();
   services.client.subscribe.subscriptionHandlesAddress.clear();
   services.client.subscribe.subscriptionHandlesAsset.clear();
+  services.download.overrideGettingStarted = false;
+  services.download.history.calledAllDoneProcess = 0;
+  services.download.queue.addresses.clear();
+  services.download.queue.transactions.clear();
+  services.download.queue.dangling.clear();
+  services.download.queue.updated = false;
+  services.download.queue.address = null;
+  services.download.queue.transactionSet = null;
+}
+
+Future deleteDatabase() async {
+  resetInMemoryState();
   try {
     await pros.addresses.clear();
     await pros.assets.clear();

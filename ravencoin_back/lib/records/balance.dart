@@ -2,7 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:ravencoin_back/records/security.dart';
+import 'package:ravencoin_back/records/types/chain.dart';
+import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_back/utilities/exceptions.dart';
+import 'package:ravencoin_back/utilities/transform.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 
 import '_type_id.dart';
@@ -31,6 +34,21 @@ class Balance with EquatableMixin {
     required this.unconfirmed,
   });
 
+  factory Balance.from(
+    Balance balance, {
+    String? walletId,
+    Security? security,
+    int? confirmed,
+    int? unconfirmed,
+  }) {
+    return Balance(
+      walletId: walletId ?? balance.walletId,
+      security: security ?? balance.security,
+      confirmed: confirmed ?? balance.confirmed,
+      unconfirmed: unconfirmed ?? balance.unconfirmed,
+    );
+  }
+
   @override
   List<Object> get props => [walletId, security, confirmed, unconfirmed];
 
@@ -42,13 +60,12 @@ class Balance with EquatableMixin {
     required String walletId,
     required Security security,
     required ScripthashBalance balance,
-  }) {
-    return Balance(
-        walletId: walletId,
-        security: security,
-        confirmed: balance.confirmed,
-        unconfirmed: balance.unconfirmed);
-  }
+  }) =>
+      Balance(
+          walletId: walletId,
+          security: security,
+          confirmed: balance.confirmed,
+          unconfirmed: balance.unconfirmed);
 
   factory Balance.fromBalance(
     Balance balance, {
@@ -56,30 +73,26 @@ class Balance with EquatableMixin {
     Security? security,
     int? confirmed,
     int? unconfirmed,
-  }) {
-    return Balance(
-        walletId: walletId ?? balance.walletId,
-        security: security ?? balance.security,
-        confirmed: confirmed ?? balance.confirmed,
-        unconfirmed: unconfirmed ?? balance.unconfirmed);
-  }
+  }) =>
+      Balance(
+          walletId: walletId ?? balance.walletId,
+          security: security ?? balance.security,
+          confirmed: confirmed ?? balance.confirmed,
+          unconfirmed: unconfirmed ?? balance.unconfirmed);
 
-  String get id => Balance.balanceKey(walletId, security);
+  String get id => Balance.key(walletId, security);
 
-  static String balanceKey(String walletId, Security security) =>
+  static String key(String walletId, Security security) =>
       '$walletId:${security.id}';
 
-  int get value {
-    return confirmed + unconfirmed;
-  }
+  int get value => confirmed + unconfirmed;
 
-  double get rvn {
-    return (confirmed / 100000000); //+ (unconfirmed / 100000000);
-  }
+  double get amount => satToAmount(confirmed + unconfirmed);
 
-  String get valueRVN {
-    return NumberFormat('RVN #,##0.00000000', 'en_US').format(rvn);
-  }
+  double get rvn => (confirmed / 100000000); //+ (unconfirmed / 100000000);
+
+  String get valueRVN =>
+      NumberFormat('RVN #,##0.00000000', 'en_US').format(rvn);
 
   Balance operator +(Balance balance) {
     // its ok if they don't match.
@@ -103,26 +116,18 @@ class BalanceUSD {
 
   BalanceUSD({required this.confirmed, required this.unconfirmed});
 
-  double get value {
-    return confirmed + unconfirmed;
-  }
+  double get value => confirmed + unconfirmed;
 
-  String get valueUSD {
-    return NumberFormat('\$ #,##0.00', 'en_US')
-        .format((confirmed /*+ unconfirmed*/) /*.toStringAsFixed(2)*/);
-  }
+  String get valueUSD => NumberFormat('\$ #,##0.00', 'en_US')
+      .format((confirmed /*+ unconfirmed*/) /*.toStringAsFixed(2)*/);
 
-  BalanceUSD operator +(BalanceUSD balanceUSD) {
-    return BalanceUSD(
-        confirmed: confirmed + balanceUSD.confirmed,
-        unconfirmed: unconfirmed + balanceUSD.unconfirmed);
-  }
+  BalanceUSD operator +(BalanceUSD balanceUSD) => BalanceUSD(
+      confirmed: confirmed + balanceUSD.confirmed,
+      unconfirmed: unconfirmed + balanceUSD.unconfirmed);
 
-  BalanceUSD operator *(Balance balance) {
-    return BalanceUSD(
-        confirmed: confirmed * balance.confirmed,
-        unconfirmed: unconfirmed * balance.unconfirmed);
-  }
+  BalanceUSD operator *(Balance balance) => BalanceUSD(
+      confirmed: confirmed * balance.confirmed,
+      unconfirmed: unconfirmed * balance.unconfirmed);
 
   @override
   String toString() => 'BalanceUSD($confirmed, $unconfirmed)';
@@ -134,13 +139,9 @@ class BalanceRaw {
 
   BalanceRaw({required this.confirmed, required this.unconfirmed});
 
-  int get value {
-    return confirmed + unconfirmed;
-  }
+  int get value => confirmed + unconfirmed;
 
-  BalanceRaw operator +(BalanceRaw balanceUSD) {
-    return BalanceRaw(
-        confirmed: confirmed + balanceUSD.confirmed,
-        unconfirmed: unconfirmed + balanceUSD.unconfirmed);
-  }
+  BalanceRaw operator +(BalanceRaw balanceUSD) => BalanceRaw(
+      confirmed: confirmed + balanceUSD.confirmed,
+      unconfirmed: unconfirmed + balanceUSD.unconfirmed);
 }

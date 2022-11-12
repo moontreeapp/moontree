@@ -26,7 +26,8 @@ class _ConnectionLightState extends State<ConnectionLight>
   };
   /* alternative */
   bool connectionBusy = false;
-  bool busy = false;
+  /* blinking animations */
+  //bool busy = false;
 
   /* fancy movement animations
   bool connectionBusy = false;
@@ -85,173 +86,77 @@ class _ConnectionLightState extends State<ConnectionLight>
         });
       }
     }));
-    /* fancy movement animations
-    createAnimations();
-    listeners.add(streams.client.connected.listen((ConnectionStatus value) {
-      if (value != connectionStatus) {
-        setState(() {
-          connectionStatus = value;
-          connectionStatusColor = connectionColor[value]!;
-        });
-      }
-    }));
     listeners.add(streams.client.busy.listen((bool value) async {
-      if (!connectionBusy && value) {
-        setState(() => connectionBusy = value);
-      } else if (connectionBusy && !value) {
-        final yd = _controllerV.toStringDetails().split(' ').first;
-        final y = _controllerV.value;
-        if (yd == '▶') {
-          if (y <= .5) {
-            await Future.delayed(
-                Duration(milliseconds: ((.5 - y) * 1236).toInt().abs()));
-            _controllerV.stop();
-          } else if (y > .5) {
-            await Future.delayed(
-                Duration(milliseconds: (.5 + (1 - y) * 1236).toInt().abs()));
-            _controllerV.stop();
-          }
-        }
-        if (yd == '◀') {
-          if (y <= .5) {
-            await Future.delayed(
-                Duration(milliseconds: ((.5 + y) * 1236).toInt().abs()));
-            _controllerV.stop();
-          } else if (y > .5) {
-            await Future.delayed(
-                Duration(milliseconds: ((y - .5) * 1236).toInt().abs()));
-            _controllerV.stop();
-          }
-        }
-        final xd = _controllerH.toStringDetails().split(' ').first;
-        final x = _controllerH.value;
-        if (xd == '▶') {
-          if (x <= .5) {
-            await Future.delayed(
-                Duration(milliseconds: ((.5 - x) * 2000).toInt().abs()));
-            _controllerH.stop();
-          } else if (x > .5) {
-            await Future.delayed(
-                Duration(milliseconds: (.5 + (1 - x) * 2000).toInt().abs()));
-            _controllerH.stop();
-          }
-        }
-        if (xd == '◀') {
-          if (x <= .5) {
-            await Future.delayed(
-                Duration(milliseconds: ((.5 + x) * 2000).toInt().abs()));
-            _controllerH.stop();
-          } else if (x > .5) {
-            await Future.delayed(
-                Duration(milliseconds: ((x - .5) * 2000).toInt().abs()));
-            _controllerH.stop();
-          }
-        }
-        if (streams.client.busy.value == value) {
-          setState(() => connectionBusy = value);
-        }
-      }
-    }));*/
-    /* alternative to fancy movement animations - blinking */
-    listeners.add(streams.client.busy.listen((bool value) async {
-      if (value && !connectionBusy) {
-        setState(() => connectionBusy = value);
-        rebuildMe();
-      }
-      if (!value && connectionBusy) {
+      if (value != connectionBusy) {
         setState(() => connectionBusy = value);
       }
+
+      /* blinking animations */
+      //if (value && !connectionBusy) {
+      //  setState(() => connectionBusy = value);
+      //  //rebuildMe();
+      //}
+      //if (!value && connectionBusy) {
+      //  setState(() => connectionBusy = value);
+      //}
     }));
   }
 
   @override
   void dispose() {
-    /* fancy movement animations
-    _controllerH.dispose();
-    _controllerV.dispose();*/
     for (var listener in listeners) {
       listener.cancel();
     }
     super.dispose();
   }
 
-  Future<void> rebuildMe() async {
-    await Future.delayed(Duration(milliseconds: 600));
-    if (connectionBusy) {
-      // don't blink when spinner runs... separate into different streams?
-      if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
-          !services.wallet.leader.newLeaderProcessRunning) {
-        setState(() => busy = !busy);
-      }
-      rebuildMe();
-    } else {
-      if (busy) {
-        setState(() => busy = !busy);
-      }
-    }
-  }
+  /* blinking animations */
+  //Future<void> rebuildMe() async {
+  //  await Future.delayed(Duration(milliseconds: 600));
+  //  if (connectionBusy) {
+  //    // don't blink when spinner runs... separate into different streams?
+  //    if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
+  //        !services.wallet.leader.newLeaderProcessRunning) {
+  //      setState(() => busy = !busy);
+  //    }
+  //    rebuildMe();
+  //  } else {
+  //    if (busy) {
+  //      setState(() => busy = !busy);
+  //    }
+  //  }
+  //}
 
   @override
   Widget build(BuildContext context) {
-    /* fancy movement animations
-    var icon = ColorFiltered(
-        colorFilter: ColorFilter.mode(
-          connectionStatusColor,
-          BlendMode.srcATop),
-        child: SvgPicture.asset('assets/status/icon.svg'));
-    return
-    connectionBusy
-        ? GestureDetector(
-            onTap: () => streams.client.busy.add(false),
-            child:
-
-                /// you might like this
-                //    () {
-                //  _controllerH.value = .5;
-                //  _controllerV.value = .5;
-                //  _controllerH.repeat(reverse: true);
-                //  _controllerV.repeat(reverse: true);
-                //  return SlideTransition(
-                //      position: _offsetAnimationH,
-                //      child: SlideTransition(
-                //        position: _offsetAnimationV,
-                //        child: icon,
-                //      ));
-                //}()
-                Container(
-                    width: 36,
-                    alignment: Alignment.centerLeft,
-                    child: Lottie.asset(
-                      'assets/spinner/moontree_spinner_v2_002_1_recolored.json',
-                      animate: true,
-                      repeat: true,
-                      width: 56 / 2,
-                      height: 56 / 2,
-                      alignment: Alignment.centerLeft,
-                    )),
-          )
-        : */
-    /* alternative */
+    final circleIcon = AnimatedContainer(
+      duration: Duration(milliseconds: 200),
+      height: 8,
+      width: 8,
+      decoration: BoxDecoration(
+        color: connectionStatus == ConnectionStatus.connected &&
+                connectionBusy // && busy
+            ? AppColors.logoGreen
+            : connectionStatusColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
     return Container(
         alignment: Alignment.center,
         child: IconButton(
           splashRadius: 24,
           padding: EdgeInsets.zero,
-          icon: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            height: 8,
-            width: 8,
-            decoration: BoxDecoration(
-              color: connectionStatus == ConnectionStatus.connected && busy
-                  ? AppColors.logoGreen
-                  : connectionStatusColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
+          icon: circleIcon,
           onPressed: () {
-            print(streams.app.page.value);
-            if (!['Login', 'Createlogin', 'Network', 'Scan']
-                .contains(streams.app.page.value)) {
+            if (streams.app.scrim.value == true) return;
+            if (streams.app.loading.value == true) return;
+            if (![
+              'Login',
+              'Createlogin',
+              'Network',
+              'Scan',
+              'Setup',
+            ].contains(streams.app.page.value)) {
               ScaffoldMessenger.of(context).clearSnackBars();
               streams.app.xlead.add(true);
               Navigator.of(components.navigator.routeContext!)

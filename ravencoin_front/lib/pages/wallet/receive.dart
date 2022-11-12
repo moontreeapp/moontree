@@ -89,16 +89,21 @@ class _ReceiveState extends State<Receive> {
     fetchedNames = requestMessage.text.length <= 32
         ? (await services.client.api.getAssetNames(requestMessage.text))
             .toList()
-            .map((e) =>
-                Security(symbol: e, securityType: SecurityType.RavenAsset))
+            .map((e) => Security(
+                  symbol: e,
+                  securityType: SecurityType.asset,
+                  chain: pros.settings.chain,
+                  net: pros.settings.net,
+                ))
             .toList()
         : [];
   }
 
   @override
   Widget build(BuildContext context) {
+    streams.app.navHeight.add(NavHeight.short);
     username =
-        pros.settings.primaryIndex.getOne(SettingName.User_Name)?.value ?? '';
+        pros.settings.primaryIndex.getOne(SettingName.user_name)?.value ?? '';
     data = populateData(context, data);
     requestMessage.text = requestMessage.text == ''
         ? data['symbol'] != null && data['symbol'] != ''
@@ -107,7 +112,7 @@ class _ReceiveState extends State<Receive> {
         : requestMessage.text;
     address = services.wallet.getEmptyAddress(
       Current.wallet,
-      random: false,
+      NodeExposure.external,
       address: address,
     );
     uri = uri == '' ? address! : uri;
@@ -149,8 +154,7 @@ class _ReceiveState extends State<Receive> {
                                 Clipboard.setData(
                                     new ClipboardData(text: address));
                                 streams.app.snack.add(Snack(
-                                    message: 'Address Copied to Clipboard',
-                                    atBottom: true));
+                                    message: 'Address copied to clipboard'));
                                 // not formatted the same...
                                 //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
                                 //  content: new Text("Copied to Clipboard"),
@@ -159,9 +163,8 @@ class _ReceiveState extends State<Receive> {
                               onLongPress: () {
                                 Clipboard.setData(new ClipboardData(
                                     text: rawAddress ? address : uri));
-                                streams.app.snack.add(Snack(
-                                    message: 'URI Copied to Clipboard',
-                                    atBottom: true));
+                                streams.app.snack.add(
+                                    Snack(message: 'URI copied to clipboard'));
                                 // not formatted the same...
                                 //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
                                 //  content: new Text("Copied to Clipboard"),
@@ -294,7 +297,7 @@ class _ReceiveState extends State<Receive> {
                               //            return [
                               //              Security(
                               //                  symbol: 'testing',
-                              //                  securityType: SecurityType.Fiat)
+                              //                  securityType: SecurityType.fiat)
                               //            ];
                               //          }
                               //          if (requestMessage.text.length >= 3) {
@@ -302,7 +305,7 @@ class _ReceiveState extends State<Receive> {
                               //          }
                               //          //(await services.client.api.getAllAssetNames(textEditingValue.text)).map((String s) => Security(
                               //          //        symbol: s,
-                              //          //        securityType: SecurityType.RavenAsset));
+                              //          //        securityType: SecurityType.asset));
                               //          return securities.data
                               //              .where((Security option) => option.symbol
                               //                  .contains(requestMessage.text.toUpperCase()))

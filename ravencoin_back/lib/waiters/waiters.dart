@@ -7,13 +7,11 @@ import 'client.dart';
 import 'create.dart';
 import 'import.dart';
 import 'leader.dart';
-import 'password.dart';
 import 'rate.dart';
 import 'reissue.dart';
 import 'send.dart';
 import 'setting.dart';
 import 'single.dart';
-import 'unspent.dart';
 
 class waiters {
   static AddressWaiter address = AddressWaiter();
@@ -23,13 +21,11 @@ class waiters {
   static BlockWaiter block = BlockWaiter();
   static CreateWaiter create = CreateWaiter();
   static ImportWaiter import = ImportWaiter();
-  static PasswordWaiter password = PasswordWaiter();
   static RateWaiter rate = RateWaiter();
   static RavenClientWaiter client = RavenClientWaiter();
   static ReissueWaiter reissue = ReissueWaiter();
   static SendWaiter send = SendWaiter();
   static SettingWaiter setting = SettingWaiter();
-  static UnspentWaiter unspent = UnspentWaiter();
   // Wallets
   static LeaderWaiter leader = LeaderWaiter();
   static SingleWaiter single = SingleWaiter();

@@ -30,41 +30,43 @@ class FixtureSet1 extends FixtureSet {
             address: 'address 0 address',
             walletId: '0',
             hdIndex: 0,
-            exposure: NodeExposure.Internal,
-            net: Net.Test),
+            exposure: NodeExposure.internal,
+            net: Net.test),
         '1': Address(
             id: '1',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 1,
-            exposure: NodeExposure.External,
-            net: Net.Test),
+            exposure: NodeExposure.external,
+            net: Net.test),
         '2': Address(
             id: '2',
             address: 'address 2 address',
             walletId: '0',
             hdIndex: 2,
-            exposure: NodeExposure.External,
-            net: Net.Test),
+            exposure: NodeExposure.external,
+            net: Net.test),
         '3': Address(
             id: '3',
             address: 'address 3 address',
             walletId: '0',
             hdIndex: 3,
-            exposure: NodeExposure.External,
-            net: Net.Test),
+            exposure: NodeExposure.external,
+            net: Net.test),
         '100': Address(
             id: '100',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 3,
-            exposure: NodeExposure.External,
-            net: Net.Test),
+            exposure: NodeExposure.external,
+            net: Net.test),
       };
 
   @override
   Map<String, Asset> get assets => {
         '0': Asset(
+          chain: Chain.ravencoin,
+            net: Net.test, 
             symbol: 'MOONTREE',
             satsInCirculation: 1000,
             divisibility: 0,
@@ -73,6 +75,8 @@ class FixtureSet1 extends FixtureSet {
             transactionId: '10',
             position: 2),
         '1': Asset(
+          chain: Chain.ravencoin,
+            net: Net.test,
             symbol: 'MOONTREE1',
             satsInCirculation: 1000,
             divisibility: 2,
@@ -88,13 +92,20 @@ class FixtureSet1 extends FixtureSet {
             walletId: '0',
             confirmed: 15000000,
             unconfirmed: 10000000,
-            security:
-                Security(symbol: 'RVN', securityType: SecurityType.Crypto)),
+            security: Security(
+                symbol: 'RVN',
+                securityType: SecurityType.crypto,
+                chain: Chain.ravencoin,
+                net: Net.test)),
         '1': Balance(
             walletId: '0',
             confirmed: 100,
             unconfirmed: 0,
-            security: Security(symbol: 'USD', securityType: SecurityType.Fiat)),
+            security: Security(
+                symbol: 'USD',
+                securityType: SecurityType.fiat,
+                chain: Chain.none,
+                net: Net.test)),
       };
 
   @override
@@ -106,16 +117,18 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Cipher> get ciphers => {
         '0': Cipher(
-            cipherType: CipherType.None, passwordId: 0, cipher: CipherNone())
+            cipherType: CipherType.none, passwordId: 0, cipher: CipherNone())
       };
 
   @override
   Map<String, Metadata> get metadatas => {
-        Metadata.metadataKey('MOONTREE', 'metadata'): Metadata(
+        Metadata.key('MOONTREE', 'metadata', Chain.ravencoin, Net.test): Metadata(
+            chain: Chain.ravencoin,
+            net: Net.test,
             symbol: 'MOONTREE',
             metadata: 'metadata',
             data: null,
-            kind: MetadataType.Unknown,
+            kind: MetadataType.unknown,
             parent: null,
             logo: false)
       };
@@ -126,31 +139,56 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Rate> get rates => {
         'RVN:Crypto:USD:Fiat': Rate(
-            base: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
-            quote: Security(symbol: 'USD', securityType: SecurityType.Fiat),
+            base: Security(
+                symbol: 'RVN',
+                securityType: SecurityType.crypto,
+                chain: Chain.ravencoin,
+                net: Net.test),
+            quote: Security(
+                symbol: 'USD',
+                securityType: SecurityType.fiat,
+                chain: Chain.none,
+                net: Net.test),
             rate: .1),
         'MOONTREE:RavenAsset:RVN:Crypto': Rate(
             base: Security(
-                symbol: 'MOONTREE', securityType: SecurityType.RavenAsset),
-            quote: Security(symbol: 'RVN', securityType: SecurityType.Crypto),
+                symbol: 'MOONTREE',
+                securityType: SecurityType.asset,
+                chain: Chain.ravencoin,
+                net: Net.test),
+            quote: Security(
+                symbol: 'RVN',
+                securityType: SecurityType.crypto,
+                chain: Chain.ravencoin,
+                net: Net.test),
             rate: 100),
       };
 
   @override
   Map<String, Security> get securities => {
-        'RVN:Crypto':
-            Security(symbol: 'RVN', securityType: SecurityType.Crypto),
-        'USD:Fiat': Security(symbol: 'USD', securityType: SecurityType.Fiat),
-        'MOONTREE:RavenAsset':
-            Security(symbol: 'MOONTREE', securityType: SecurityType.RavenAsset),
+        'RVN:Crypto': Security(
+            symbol: 'RVN',
+            securityType: SecurityType.crypto,
+            chain: Chain.ravencoin,
+            net: Net.test),
+        'USD:Fiat': Security(
+            symbol: 'USD',
+            securityType: SecurityType.fiat,
+            chain: Chain.none,
+            net: Net.test),
+        'MOONTREE:RavenAsset': Security(
+            symbol: 'MOONTREE',
+            securityType: SecurityType.asset,
+            chain: Chain.ravencoin,
+            net: Net.test),
       };
 
   @override
   Map<String, Setting> get settings => {
-        'Send_Immediate':
-            Setting(name: SettingName.Send_Immediate, value: true),
-        'User_Name':
-            Setting(name: SettingName.User_Name, value: 'Satoshi Nakamoto'),
+        'send_immediate':
+            Setting(name: SettingName.send_immediate, value: true),
+        'user_name':
+            Setting(name: SettingName.user_name, value: 'Satoshi Nakamoto'),
       };
 
   @override
@@ -308,16 +346,16 @@ class FixtureSet1 extends FixtureSet {
     return {
       '0': LeaderWallet(
           id: '0',
-          cipherUpdate: CipherUpdate(CipherType.None),
+          cipherUpdate: CipherUpdate(CipherType.none),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
       // has no addresses
       '1': LeaderWallet(
           id: '1',
-          cipherUpdate: CipherUpdate(CipherType.None),
+          cipherUpdate: CipherUpdate(CipherType.none),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
       '2': LeaderWallet(
           id: '2',
-          cipherUpdate: CipherUpdate(CipherType.None),
+          cipherUpdate: CipherUpdate(CipherType.none),
           encryptedEntropy: bip39.mnemonicToEntropy(phrase)),
     };
   }
