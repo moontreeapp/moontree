@@ -77,7 +77,7 @@ class _NavBarState extends State<NavBar> {
     walletHasTransactions = Current.wallet.transactions.isNotEmpty;
     walletIsEmpty = Current.wallet.balances.isEmpty;
     streams.app.navHeight
-        .add(widget.includeSectors ? NavHeight.tall : NavHeight.short);
+        .add(false /*widget.includeSectors*/ ? NavHeight.tall : NavHeight.short);
     return components.containers.navBar(context,
         tall: false /*widget.includeSectors*/,
         child: SingleChildScrollView(
