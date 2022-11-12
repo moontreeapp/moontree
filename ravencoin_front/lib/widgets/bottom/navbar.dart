@@ -77,9 +77,9 @@ class _NavBarState extends State<NavBar> {
     walletHasTransactions = Current.wallet.transactions.isNotEmpty;
     walletIsEmpty = Current.wallet.balances.isEmpty;
     streams.app.navHeight
-        .add(widget.includeSectors ? NavHeight.tall : NavHeight.short);
+        .add(false /*widget.includeSectors*/ ? NavHeight.tall : NavHeight.short);
     return components.containers.navBar(context,
-        tall: widget.includeSectors,
+        tall: false /*widget.includeSectors*/,
         child: SingleChildScrollView(
           child: Column(
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,7 +92,7 @@ class _NavBarState extends State<NavBar> {
                 children:
                     actionButtons.intersperse(SizedBox(width: 16)).toList(),
               ),
-              if (widget.includeSectors) ...[
+              if (false /*widget.includeSectors*/) ...[
                 SizedBox(height: 6),
                 Padding(
                     padding: EdgeInsets.only(left: 0, right: 0),
