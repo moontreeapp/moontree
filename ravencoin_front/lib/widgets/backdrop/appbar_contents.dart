@@ -79,7 +79,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -89,7 +89,11 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            services.tutorial.clear();
+            //services.tutorial.clear();
+            //streams.app.snack.add(Snack(
+            //    message:
+            //        'Tutorial cleared 12345 678 91 321654   68798462163546 87698 43 13 54 687 6 874 61321 3 57 687 68 746 41 ',
+            //    copy: 'copy'));
             //print(pros.unspents.records);
             //print(pros.addresses.byScripthash.getOne(
             //    'e5886c1ed52b9b59a10cb17e7430f26d293b213777b0dc30f999bee9a9cde566'));

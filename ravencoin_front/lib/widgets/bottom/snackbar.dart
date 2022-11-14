@@ -68,20 +68,35 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     final row = Row(
         mainAxisAlignment:
             copy ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            snack!.message,
-            maxLines: 1,
-            overflow: TextOverflow.fade,
-            style: style(),
-          ),
+          copy
+              ? Container(
+                  width: (MediaQuery.of(context).size.width - 32) * 0.75,
+                  child: Text(
+                    snack!.message,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: style(),
+                  ))
+              : Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: Text(
+                    snack!.message,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: style(),
+                  )),
           if (copy)
-            Text(
-              snack!.label ?? snack!.copy ?? 'copy',
-              maxLines: 1,
-              overflow: TextOverflow.fade,
-              style: style(),
-            )
+            Container(
+                width: (MediaQuery.of(context).size.width - 32) * 0.25,
+                child: Text(
+                  snack!.label ?? snack!.copy ?? 'copy',
+                  textAlign: TextAlign.right,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: style(),
+                ))
         ]);
     var msg = GestureDetector(
         onTap: () {
@@ -91,27 +106,18 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           ScaffoldMessenger.of(context).clearSnackBars();
         },
         child: none
-            ? Padding(padding: EdgeInsets.only(left: 0, right: 0), child: row
-                //snack!.message.length > 50
-                //    ? FittedBox(
-                //        fit: BoxFit.fitWidth,
-                //        child: Text(
-                //          snack!.message,
-                //          style: style(),
-                //        ))
-                //    :
-                )
+            ? Padding(padding: EdgeInsets.only(left: 0, right: 0), child: row)
             : Stack(alignment: Alignment.bottomCenter, children: [
                 Container(
-                    alignment: Alignment.topLeft,
-                    height: 64,
-                    decoration: BoxDecoration(
-                        color: AppColors.snackBar,
-                        borderRadius: components.shape.topRoundedBorder8),
-                    child: Padding(
+                  alignment: Alignment.topLeft,
+                  height: 64,
+                  decoration: BoxDecoration(
+                      color: AppColors.snackBar,
+                      borderRadius: components.shape.topRoundedBorder8),
+                  child: Padding(
                       padding: EdgeInsets.only(left: 16, right: 16, top: 12),
-                      child: row,
-                    )),
+                      child: row),
+                ),
                 Container(
                     height: 16,
                     decoration: BoxDecoration(
