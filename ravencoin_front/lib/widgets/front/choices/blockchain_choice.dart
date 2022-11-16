@@ -4,7 +4,6 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/bottom/selection_items.dart';
 import 'package:ravencoin_front/widgets/other/textfield.dart';
 import 'package:ravencoin_front/widgets/assets/icons.dart';
-import 'package:ravencoin_front/widgets/assets/filters.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -70,9 +69,9 @@ class _BlockchainChoice extends State<BlockchainChoice> {
                     padding: EdgeInsets.only(right: 14),
                     child: Icon(Icons.expand_more_rounded,
                         color: Color(0xDE000000))),
-                onPressed: _produceAssetModal,
+                onPressed: _produceBlockchainModal,
               ),
-              onTap: _produceAssetModal,
+              onTap: _produceBlockchainModal,
               onEditingComplete: () async {
                 FocusScope.of(context).requestFocus(choiceFocus);
               },
@@ -81,7 +80,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
     );
   }
 
-  void _produceAssetModal() => produceAssetModal(
+  void _produceBlockchainModal() => produceBlockchainModal(
         context,
         first: (Tuple2<Chain, Net> value) => setState(() {
           chainChoice = value.item1;
@@ -93,33 +92,32 @@ class _BlockchainChoice extends State<BlockchainChoice> {
       );
 }
 
-void produceAssetModal(
+void produceBlockchainModal(
   BuildContext context, {
   Function(Tuple2<Chain, Net>)? first,
   Function? second,
 }) =>
     SimpleSelectionItems(context, items: [
-      if (pros.settings.developerMode)
-        ListTile(
-            dense: true,
-            leading: icons.evrmore(height: 24, width: 24, circled: true),
-            title: Text('Evrmore',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: AppColors.black87)),
-            trailing:
-                streams.client.connected.value == ConnectionStatus.connected &&
-                        pros.settings.chain == Chain.evrmore &&
-                        pros.settings.net == Net.main
-                    ? Icon(Icons.check_rounded, color: AppColors.primary)
-                    : null,
-            onTap: () => changeChainNet(
-                  context,
-                  Tuple2(Chain.evrmore, Net.main),
-                  first: first,
-                  second: second,
-                )),
+      ListTile(
+          dense: true,
+          leading: icons.evrmore(height: 24, width: 24, circled: true),
+          title: Text('Evrmore',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1!
+                  .copyWith(color: AppColors.black87)),
+          trailing:
+              streams.client.connected.value == ConnectionStatus.connected &&
+                      pros.settings.chain == Chain.evrmore &&
+                      pros.settings.net == Net.main
+                  ? Icon(Icons.check_rounded, color: AppColors.primary)
+                  : null,
+          onTap: () => changeChainNet(
+                context,
+                Tuple2(Chain.evrmore, Net.main),
+                first: first,
+                second: second,
+              )),
       ListTile(
           dense: true,
           leading: icons.ravencoin(height: 24, width: 24, circled: true),

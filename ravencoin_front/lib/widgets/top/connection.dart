@@ -7,7 +7,7 @@ import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/front/choices/blockchain_choice.dart'
-    show produceAssetModal;
+    show produceBlockchainModal;
 
 class ConnectionLight extends StatefulWidget {
   ConnectionLight({Key? key}) : super(key: key);
@@ -186,7 +186,7 @@ class _ConnectionLightState extends State<ConnectionLight>
     ].contains(streams.app.page.value)) {
       ScaffoldMessenger.of(context).clearSnackBars();
       streams.app.xlead.add(true);
-      produceAssetModal(components.navigator.routeContext!);
+      produceBlockchainModal(components.navigator.routeContext!);
       //Navigator.of(components.navigator.routeContext!)
       //    .pushNamed('/settings/network/blockchain');
     }
