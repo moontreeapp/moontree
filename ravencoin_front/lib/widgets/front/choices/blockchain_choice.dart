@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
+import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/bottom/selection_items.dart';
 import 'package:ravencoin_front/widgets/other/textfield.dart';
 import 'package:ravencoin_front/widgets/assets/icons.dart';
-import 'package:tuple/tuple.dart';
-import 'package:flutter/material.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_front/components/components.dart';
 
 class BlockchainChoice extends StatefulWidget {
   final dynamic data;
@@ -141,7 +141,7 @@ void produceBlockchainModal(
                   second: second,
                 )
               : null),
-      if (pros.settings.advancedDeveloperMode)
+      if (services.developer.advancedDeveloperMode)
         ListTile(
             leading: icons.evrmoreTest(height: 24, width: 24, circled: true),
             title: Text('Evrmore testnet',
@@ -160,7 +160,7 @@ void produceBlockchainModal(
                     second: second,
                   )
                 : null),
-      if (pros.settings.developerMode)
+      if (services.developer.developerMode)
         ListTile(
             leading: icons.ravencoinTest(height: 24, width: 24, circled: true),
             title: Text('Ravencoin testnet',

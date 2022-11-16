@@ -133,32 +133,4 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   bool get authMethodIsNativeSecurity =>
       primaryIndex.getOne(SettingName.auth_method)!.value ==
       AuthMethod.nativeSecurity;
-
-  bool get developerMode => [FeatureLevel.normal, FeatureLevel.expert]
-      .contains(primaryIndex.getOne(SettingName.mode_dev)?.value);
-
-  bool get advancedDeveloperMode =>
-      primaryIndex.getOne(SettingName.mode_dev)?.value == FeatureLevel.expert;
-
-  Future toggleDevMode([bool? turnOn]) async => await save(
-        Setting(
-            name: SettingName.mode_dev,
-            value: turnOn == true
-                ? FeatureLevel.normal
-                : turnOn == null
-                    ? (developerMode ? FeatureLevel.easy : FeatureLevel.normal)
-                    : FeatureLevel.easy),
-      );
-
-  Future toggleAdvDevMode([bool? turnOn]) async => await save(
-        Setting(
-            name: SettingName.mode_dev,
-            value: turnOn == true
-                ? FeatureLevel.expert
-                : turnOn == null
-                    ? (advancedDeveloperMode
-                        ? FeatureLevel.easy
-                        : FeatureLevel.expert)
-                    : FeatureLevel.easy),
-      );
 }

@@ -64,7 +64,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     final none = streams.app.navHeight.value == NavHeight.none ||
         (!short && streams.app.page.value != 'Home') ||
         (streams.app.page.value == 'Home' && streams.app.setting.value != null);
-    final copy = pros.settings.developerMode && snack!.copy != null;
+    final copy = services.developer.developerMode && snack!.copy != null;
     final row = Row(
         mainAxisAlignment:
             copy ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,

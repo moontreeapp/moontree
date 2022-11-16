@@ -122,7 +122,7 @@ class _NavMenuState extends State<NavMenu> {
                   );
                 }
               }),
-          if (pros.settings.developerMode && Current.balanceRVN.value > 0)
+          if (services.developer.developerMode && Current.balanceRVN.value > 0)
             destination(
               icon: MdiIcons.broom,
               name: 'Sweep',
@@ -159,7 +159,7 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/network',
           ),
           */
-          if (pros.settings.advancedDeveloperMode)
+          if (services.developer.advancedDeveloperMode)
             destination(
               icon: Icons.format_list_bulleted_rounded,
               name: 'Addresses',
@@ -170,13 +170,13 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Mining',
             link: '/settings/network/mining',
           ),
-          if (pros.settings.developerMode)
+          if (services.developer.developerMode)
             destination(
               icon: MdiIcons.database,
               name: 'Database',
               link: '/settings/database',
             ),
-          if (pros.settings.advancedDeveloperMode == true)
+          if (services.developer.advancedDeveloperMode == true)
             destination(
               icon: MdiIcons.rocketLaunchOutline,
               name: 'Advanced',
@@ -198,18 +198,18 @@ class _NavMenuState extends State<NavMenu> {
             name: 'Blockchain',
             link: '/settings/network/blockchain',
           ),
-          if (!pros.settings.developerMode)
+          if (!services.developer.developerMode)
             destination(
                 icon: MdiIcons.shieldKey,
                 name: 'Import',
                 link: '/settings/import'),
-          if (!pros.settings.developerMode && Current.balanceRVN.value > 0)
+          if (!services.developer.developerMode && Current.balanceRVN.value > 0)
             destination(
               icon: MdiIcons.broom,
               name: 'Sweep',
               link: '/settings/sweep',
             ),
-          if (pros.settings.developerMode)
+          if (services.developer.developerMode)
             destination(
               icon: MdiIcons.shieldKey,
               name: 'Import & Export',

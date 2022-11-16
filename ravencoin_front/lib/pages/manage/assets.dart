@@ -35,7 +35,7 @@ class _AssetState extends State<Asset> {
           child: Column(children: [
             Expanded(child: AssetDetails(symbol: symbol)),
             NavBar(
-              placeholderManage: !pros.settings.developerMode,
+              placeholderManage: !services.developer.developerMode,
               includeSectors: false,
               actionButtons: <Widget>[
                 if ([AssetType.main, AssetType.sub]

@@ -23,7 +23,7 @@ class DatabaseOptions extends StatelessWidget {
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft, child: ResyncChoice()))),
-        if (pros.settings.advancedDeveloperMode)
+        if (services.developer.advancedDeveloperMode)
           SliverToBoxAdapter(
               child: Padding(
                   padding:

@@ -54,7 +54,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
   Widget get icon => GestureDetector(
         onTap: () async {
-          if (pros.settings.developerMode) {
+          if (services.developer.developerMode) {
             controller.reverse();
             await Future.delayed(Duration(milliseconds: 240));
             setState(() => front = !front);

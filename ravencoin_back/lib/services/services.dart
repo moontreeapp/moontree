@@ -6,6 +6,7 @@ import 'cipher.dart';
 import 'client.dart';
 import 'transaction/transaction.dart';
 import 'password.dart';
+import 'developer.dart';
 import 'rate.dart';
 import 'tutorial.dart';
 import 'wallet.dart';
@@ -23,4 +24,5 @@ class services {
   static DownloadService download = DownloadService();
   static TutorialService tutorial = TutorialService();
   static VersionService version = VersionService();
+  static DeveloperService developer = DeveloperService();
 }

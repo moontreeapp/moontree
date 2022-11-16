@@ -91,7 +91,7 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
                     padding: EdgeInsets.only(
                         left: 16, right: 16, top: 16, bottom: 16),
                     child: serverTextField)),
-            if (pros.settings.advancedDeveloperMode)
+            if (services.developer.advancedDeveloperMode)
               SliverToBoxAdapter(
                   child: Padding(
                       padding: EdgeInsets.only(
@@ -102,7 +102,7 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
                             Text('Most Recent Network Activity',
                                 style: Theme.of(context).textTheme.bodyText1),
                           ]))),
-            if (pros.settings.advancedDeveloperMode)
+            if (services.developer.advancedDeveloperMode)
               SliverToBoxAdapter(
                   child: Padding(
                       padding: EdgeInsets.only(

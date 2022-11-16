@@ -153,7 +153,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   void setWalletsSecurities() async {
     try {
-      if (!pros.settings.developerMode) {
+      if (!services.developer.developerMode) {
         throw Exception('short circuit');
       }
       final unspents = pros.unspents.records
@@ -186,7 +186,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   List<Widget> holdingsIndicators(Wallet wallet) {
     var ret = <Widget>[];
-    if (pros.settings.developerMode) {
+    if (services.developer.developerMode) {
       for (var s in pros.securities.cryptos) {
         if (walletsSecurities[wallet]!.contains(s)) {
           ret.add(Container(
@@ -200,7 +200,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   void setHoldingsIndicatorsSize() {
     indicatorWidth = 24;
-    if (pros.settings.developerMode) {
+    if (services.developer.developerMode) {
       for (var wallet in wallets) {
         for (var s in pros.securities.cryptos) {
           if (walletsSecurities[wallet]!.contains(s)) {
@@ -371,7 +371,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
         components.navigator.routeContext!,
         then: () => dropDownActive = false,
         items: [
-              if (pros.settings.developerMode == true)
+              if (services.developer.developerMode == true)
                 ListTile(
                   visualDensity: VisualDensity.compact,
                   onTap: () async {
@@ -406,7 +406,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                 .copyWith(color: AppColors.primary),
                           )),
                 ),
-              if (pros.settings.advancedDeveloperMode == true)
+              if (services.developer.advancedDeveloperMode == true)
                 ListTile(
                   visualDensity: VisualDensity.compact,
                   onTap: () async {
@@ -434,7 +434,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                       }
                     },
                     leading: walletsSecurities[wallet]!.isEmpty ||
-                            !pros.settings.developerMode
+                            !services.developer.developerMode
                         ? Icon(
                             Icons.account_balance_wallet_rounded,
                             color: AppColors.primary,
@@ -445,7 +445,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     title: Text(wallet.name,
                         style: Theme.of(context).textTheme.bodyText1),
                     // awaiting design..........
-                    trailing: !pros.settings.developerMode
+                    trailing: !services.developer.developerMode
                         ? null
                         : Row(
                             mainAxisSize: MainAxisSize.min,

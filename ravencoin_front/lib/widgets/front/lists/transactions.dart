@@ -100,7 +100,7 @@ class _TransactionListState extends State<TransactionList> {
                   softWrap: true,
                   maxLines: 10,
                 )),
-            if (pros.settings.developerMode)
+            if (services.developer.developerMode)
               components.buttons.actionButtonSoft(
                 context,
                 label: 'Go to Settings',

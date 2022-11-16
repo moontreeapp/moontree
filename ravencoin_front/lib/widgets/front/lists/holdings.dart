@@ -308,7 +308,7 @@ class _HoldingList extends State<HoldingList> {
           onLongPress: _togglePath,
           leading: leadingIcon(holding),
           title: title(holding),
-          trailing: pros.settings.developerMode == true
+          trailing: services.developer.developerMode == true
               ? ((holding.symbol == rvn || holding.symbol == evr) && !isEmpty
                   ? GestureDetector(
                       onTap: () =>
@@ -363,7 +363,7 @@ class _HoldingList extends State<HoldingList> {
 
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = <Widget>[];
-    if ( //pros.settings.advancedDeveloperMode == true ||
+    if ( //services.developer.advancedDeveloperMode == true ||
         streams.claim.unclaimed.value.isNotEmpty &&
             (pros.settings.chain == Chain.evrmore &&
                 pros.blocks.records.first.height <= 60 * 24 * 60 &&
@@ -402,7 +402,7 @@ class _HoldingList extends State<HoldingList> {
                 ...assetHoldings,
                 ...[components.empty.blankNavArea(context)]
               ]);
-    //if (pros.settings.advancedDeveloperMode == true) {
+    //if (services.developer.advancedDeveloperMode == true) {
     //  return RefreshIndicator(
     //    onRefresh: () async {
     //      streams.app.snack.add(Snack(message: 'Resyncing...'));
@@ -574,7 +574,7 @@ class _HoldingList extends State<HoldingList> {
                 child: Text(
                     holding.symbol == rvn || holding.symbol == evr
                         ? symbolName(holding.symbol)
-                        : pros.settings.developerMode && showPath
+                        : services.developer.developerMode && showPath
                             ? holding.symbol
                             : holding.last,
                     style: Theme.of(context).textTheme.bodyText1),
