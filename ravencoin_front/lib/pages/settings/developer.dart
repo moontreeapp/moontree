@@ -29,13 +29,19 @@ class DeveloperOptions extends StatelessWidget {
                               await services.developer.toggleDevMode(value);
                               if (!services.developer
                                   .postToggleBlockchainCheck()) {
-                                changeChainNet(
-                                    context,
+                                if (pros.settings.net == Net.test &&
                                     services
                                         .developer
                                         .featureLevelBlockchainMap[
                                             services.developer.userLevel]!
-                                        .first);
+                                        .contains(Tuple2(
+                                            pros.settings.chain, Net.main))) {
+                                  changeChainNet(context,
+                                      Tuple2(pros.settings.chain, Net.main));
+                                } else {
+                                  changeChainNet(context,
+                                      Tuple2(Chain.ravencoin, Net.main));
+                                }
                               }
                             })))),
           ]),

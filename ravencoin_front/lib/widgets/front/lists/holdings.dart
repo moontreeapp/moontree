@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
@@ -196,10 +195,16 @@ class _HoldingList extends State<HoldingList> {
               'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
           placeholderType: PlaceholderType.wallet);
     } else if (balances.isEmpty && transactions.isEmpty && busy) {
-      return components.empty.getAssetsPlaceholder(context,
-          scrollController: widget.scrollController,
-          count: max(holdingCount, 1),
-          holding: true);
+      return GestureDetector(
+          // did not refresh fall back...
+          onTap: () => setState(() {
+                print('tapped shimmer');
+                FocusScope.of(context).unfocus;
+              }),
+          child: components.empty.getAssetsPlaceholder(context,
+              scrollController: widget.scrollController,
+              count: max(holdingCount, 1),
+              holding: true));
     } else if (balances.isEmpty && transactions.isEmpty && !busy) {
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
@@ -414,6 +419,7 @@ class _HoldingList extends State<HoldingList> {
     //}
     return GestureDetector(
       onTap: () async => setState(() {
+        print('tapped');
         FocusScope.of(context).unfocus;
       }),
       child: listView,

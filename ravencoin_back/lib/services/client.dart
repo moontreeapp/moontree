@@ -355,7 +355,17 @@ class SubscribeService {
 
             services.wallet.leader.newLeaderProcessRunning = false;
           }
-          if (wallet.id == pros.settings.currentWalletId) {
+          Wallet currentWallet =
+              pros.wallets.primaryIndex.getOne(pros.settings.currentWalletId)!;
+          if (wallet.id == pros.settings.currentWalletId ||
+              (currentWallet is LeaderWallet &&
+                  services.wallet.leader.gapSatisfied(currentWallet) &&
+                  subscriptionHandlesAddress
+                      .containsKey(pros.settings.currentWalletId) &&
+                  subscriptionHandlesAddress[pros.settings.currentWalletId]!
+                          .keys
+                          .length ==
+                      currentWallet.addresses.length)) {
             streams.app.wallet.refresh.add(true);
           }
         }

@@ -103,83 +103,35 @@ void produceBlockchainModal(
   Function? second,
 }) =>
     SimpleSelectionItems(context, items: [
-      ListTile(
-          dense: true,
-          leading: icons.evrmore(height: 24, width: 24, circled: true),
-          title: Text('Evrmore',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .copyWith(color: AppColors.black87)),
-          trailing: isSelected(Chain.evrmore, Net.main) && isConnected()
-              ? Icon(Icons.check_rounded, color: AppColors.primary)
-              : null,
-          onTap: () => !(isSelected(Chain.evrmore, Net.main) && isConnected())
-              ? changeChainNet(
-                  context,
-                  Tuple2(Chain.evrmore, Net.main),
-                  first: first,
-                  second: second,
-                )
-              : null),
-      ListTile(
-          dense: true,
-          leading: icons.ravencoin(height: 24, width: 24, circled: true),
-          title: Text('Ravencoin',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .copyWith(color: AppColors.black87)),
-          trailing: isSelected(Chain.ravencoin, Net.main) && isConnected()
-              ? Icon(Icons.check_rounded, color: AppColors.primary)
-              : null,
-          onTap: () => !(isSelected(Chain.ravencoin, Net.main) && isConnected())
-              ? changeChainNet(
-                  context,
-                  Tuple2(Chain.ravencoin, Net.main),
-                  first: first,
-                  second: second,
-                )
-              : null),
-      if (services.developer.advancedDeveloperMode)
-        ListTile(
-            leading: icons.evrmoreTest(height: 24, width: 24, circled: true),
-            title: Text('Evrmore testnet',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: AppColors.black87)),
-            trailing: isSelected(Chain.evrmore, Net.test) && isConnected()
-                ? Icon(Icons.check_rounded, color: AppColors.primary)
-                : null,
-            onTap: () => !(isSelected(Chain.evrmore, Net.test) && isConnected())
-                ? changeChainNet(
-                    context,
-                    Tuple2(Chain.evrmore, Net.test),
-                    first: first,
-                    second: second,
-                  )
-                : null),
-      if (services.developer.developerMode)
-        ListTile(
-            leading: icons.ravencoinTest(height: 24, width: 24, circled: true),
-            title: Text('Ravencoin testnet',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: AppColors.black87)),
-            trailing: isSelected(Chain.ravencoin, Net.test) && isConnected()
-                ? Icon(Icons.check_rounded, color: AppColors.primary)
-                : null,
-            onTap: () =>
-                !(isSelected(Chain.ravencoin, Net.test) && isConnected())
-                    ? changeChainNet(
-                        context,
-                        Tuple2(Chain.ravencoin, Net.test),
-                        first: first,
-                        second: second,
-                      )
-                    : null),
+      for (var x in [
+        ChainBundle(icons.evrmore, 'Evrmore', Chain.evrmore, Net.main),
+        ChainBundle(icons.ravencoin, 'Ravencoin', Chain.ravencoin, Net.main),
+        ChainBundle(
+            icons.evrmoreTest, 'Evrmore testnet', Chain.evrmore, Net.test),
+        ChainBundle(icons.ravencoinTest, 'Ravencoin testnet', Chain.ravencoin,
+            Net.test),
+      ])
+        if (services
+            .developer.featureLevelBlockchainMap[services.developer.userLevel]!
+            .contains(Tuple2(x.chain, x.net)))
+          ListTile(
+              leading: x.icon(height: 24, width: 24, circled: true),
+              title: Text(x.name,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: AppColors.black87)),
+              trailing: isSelected(x.chain, x.net) && isConnected()
+                  ? Icon(Icons.check_rounded, color: AppColors.primary)
+                  : null,
+              onTap: () => !(isSelected(x.chain, x.net) && isConnected())
+                  ? changeChainNet(
+                      context,
+                      Tuple2(x.chain, x.net),
+                      first: first,
+                      second: second,
+                    )
+                  : null),
     ]).build();
 
 void changeChainNet(
@@ -199,4 +151,16 @@ void changeChainNet(
   await services.client.switchNetworks(chain: value.item1, net: value.item2);
   streams.app.snack.add(Snack(message: 'Successfully connected'));
   (second ?? () {})();
+}
+
+class ChainBundle {
+  final Widget Function({
+    double? height,
+    double? width,
+    bool circled,
+  }) icon;
+  final String name;
+  final Chain chain;
+  final Net net;
+  ChainBundle(this.icon, this.name, this.chain, this.net);
 }

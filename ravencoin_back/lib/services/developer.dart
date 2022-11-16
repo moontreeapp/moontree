@@ -1,29 +1,28 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:tuple/tuple.dart';
 
-Tuple2<Chain, Net> _makeTuple(Chain chain, Net net) =>
-    Tuple2(Chain.evrmore, Net.main);
+Tuple2<Chain, Net> _makeTuple(Chain chain, Net net) => Tuple2(chain, net);
 
 class DeveloperService {
   Map<FeatureLevel, List<Tuple2<Chain, Net>>> featureLevelBlockchainMap = {
     FeatureLevel.easy: [
-      _makeTuple(Chain.ravencoin, Net.main),
       _makeTuple(Chain.evrmore, Net.main),
+      _makeTuple(Chain.ravencoin, Net.main),
     ],
     FeatureLevel.normal: [
-      _makeTuple(Chain.ravencoin, Net.main),
       _makeTuple(Chain.evrmore, Net.main),
+      _makeTuple(Chain.ravencoin, Net.main),
       _makeTuple(Chain.ravencoin, Net.test),
     ],
     FeatureLevel.expert: [
-      _makeTuple(Chain.ravencoin, Net.main),
       _makeTuple(Chain.evrmore, Net.main),
-      _makeTuple(Chain.ravencoin, Net.test),
+      _makeTuple(Chain.ravencoin, Net.main),
       _makeTuple(Chain.evrmore, Net.test),
+      _makeTuple(Chain.ravencoin, Net.test),
     ],
   };
 
-  bool get userLevel =>
+  FeatureLevel get userLevel =>
       pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value ??
       FeatureLevel.easy;
 
