@@ -43,8 +43,9 @@ class _AppBarScrimState extends State<AppBarScrim> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        Navigator.of(components.navigator.routeContext!)
-            .popUntil(ModalRoute.withName('/home'));
+        //Navigator.of(components.navigator.routeContext!)
+        //    .popUntil(ModalRoute.withName('/home'));
+        Navigator.of(components.navigator.routeContext!).pop();
         streams.app.scrim.add(false);
       },
       child: applyScrim != null
