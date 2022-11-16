@@ -92,6 +92,11 @@ class _BlockchainChoice extends State<BlockchainChoice> {
       );
 }
 
+isSelected(Chain chain, Net net) =>
+    pros.settings.chain == chain && pros.settings.net == net;
+
+isConnected() => streams.client.connected.value == ConnectionStatus.connected;
+
 void produceBlockchainModal(
   BuildContext context, {
   Function(Tuple2<Chain, Net>)? first,
@@ -106,18 +111,17 @@ void produceBlockchainModal(
                   .textTheme
                   .bodyText1!
                   .copyWith(color: AppColors.black87)),
-          trailing:
-              streams.client.connected.value == ConnectionStatus.connected &&
-                      pros.settings.chain == Chain.evrmore &&
-                      pros.settings.net == Net.main
-                  ? Icon(Icons.check_rounded, color: AppColors.primary)
-                  : null,
-          onTap: () => changeChainNet(
-                context,
-                Tuple2(Chain.evrmore, Net.main),
-                first: first,
-                second: second,
-              )),
+          trailing: isSelected(Chain.evrmore, Net.main) && isConnected()
+              ? Icon(Icons.check_rounded, color: AppColors.primary)
+              : null,
+          onTap: () => !(isSelected(Chain.evrmore, Net.main) && isConnected())
+              ? changeChainNet(
+                  context,
+                  Tuple2(Chain.evrmore, Net.main),
+                  first: first,
+                  second: second,
+                )
+              : null),
       ListTile(
           dense: true,
           leading: icons.ravencoin(height: 24, width: 24, circled: true),
@@ -126,18 +130,17 @@ void produceBlockchainModal(
                   .textTheme
                   .bodyText1!
                   .copyWith(color: AppColors.black87)),
-          trailing:
-              streams.client.connected.value == ConnectionStatus.connected &&
-                      pros.settings.chain == Chain.ravencoin &&
-                      pros.settings.net == Net.main
-                  ? Icon(Icons.check_rounded, color: AppColors.primary)
-                  : null,
-          onTap: () => changeChainNet(
-                context,
-                Tuple2(Chain.ravencoin, Net.main),
-                first: first,
-                second: second,
-              )),
+          trailing: isSelected(Chain.ravencoin, Net.main) && isConnected()
+              ? Icon(Icons.check_rounded, color: AppColors.primary)
+              : null,
+          onTap: () => !(isSelected(Chain.ravencoin, Net.main) && isConnected())
+              ? changeChainNet(
+                  context,
+                  Tuple2(Chain.ravencoin, Net.main),
+                  first: first,
+                  second: second,
+                )
+              : null),
       if (pros.settings.advancedDeveloperMode)
         ListTile(
             leading: icons.evrmoreTest(height: 24, width: 24, circled: true),
@@ -146,18 +149,17 @@ void produceBlockchainModal(
                     .textTheme
                     .bodyText1!
                     .copyWith(color: AppColors.black87)),
-            trailing:
-                streams.client.connected.value == ConnectionStatus.connected &&
-                        pros.settings.chain == Chain.evrmore &&
-                        pros.settings.net == Net.test
-                    ? Icon(Icons.check_rounded, color: AppColors.primary)
-                    : null,
-            onTap: () => changeChainNet(
-                  context,
-                  Tuple2(Chain.evrmore, Net.test),
-                  first: first,
-                  second: second,
-                )),
+            trailing: isSelected(Chain.evrmore, Net.test) && isConnected()
+                ? Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+            onTap: () => !(isSelected(Chain.evrmore, Net.test) && isConnected())
+                ? changeChainNet(
+                    context,
+                    Tuple2(Chain.evrmore, Net.test),
+                    first: first,
+                    second: second,
+                  )
+                : null),
       if (pros.settings.developerMode)
         ListTile(
             leading: icons.ravencoinTest(height: 24, width: 24, circled: true),
@@ -166,18 +168,18 @@ void produceBlockchainModal(
                     .textTheme
                     .bodyText1!
                     .copyWith(color: AppColors.black87)),
-            trailing:
-                streams.client.connected.value == ConnectionStatus.connected &&
-                        pros.settings.chain == Chain.ravencoin &&
-                        pros.settings.net == Net.test
-                    ? Icon(Icons.check_rounded, color: AppColors.primary)
-                    : null,
-            onTap: () => changeChainNet(
-                  context,
-                  Tuple2(Chain.ravencoin, Net.test),
-                  first: first,
-                  second: second,
-                )),
+            trailing: isSelected(Chain.ravencoin, Net.test) && isConnected()
+                ? Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+            onTap: () =>
+                !(isSelected(Chain.ravencoin, Net.test) && isConnected())
+                    ? changeChainNet(
+                        context,
+                        Tuple2(Chain.ravencoin, Net.test),
+                        first: first,
+                        second: second,
+                      )
+                    : null),
     ]).build();
 
 void changeChainNet(
