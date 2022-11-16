@@ -145,4 +145,29 @@ class WalletService {
       address ?? wallet.minimumEmptyAddress(exposure).address; // all
   //address ?? wallet.firstEmptyInGap(exposure).address; // gap only
   /// actaully we should fill all the gaps first according to bip44 spec
+
+  /// this settings controls the behavior of this service
+  Future setMinerMode(bool value, {Wallet? wallet}) async {
+    wallet ??= currentWallet;
+    if (wallet.skipHistory != value) {
+      if (wallet is LeaderWallet) {
+        await pros.wallets.save(LeaderWallet.from(
+          wallet,
+          skipHistory: value,
+        ));
+      } else if (wallet is SingleWallet) {
+        await pros.wallets.save(SingleWallet.from(
+          wallet,
+          skipHistory: value,
+        ));
+      }
+    }
+
+    /// might belong in waiter but no need to make a new waiter just for this.
+    if (value && wallet == currentWallet) {
+      await services.download.queue.reset();
+    } else {
+      await services.download.queue.process();
+    }
+  }
 }

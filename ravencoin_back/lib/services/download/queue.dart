@@ -15,31 +15,6 @@ class QueueService {
   static const Duration queueTimer = Duration(seconds: 1);
   StreamSubscription? periodic;
 
-  /// this settings controls the behavior of this service
-  Future setMinerMode(bool value) async {
-    final currentWallet = services.wallet.currentWallet;
-    if (currentWallet.skipHistory != value) {
-      if (currentWallet is LeaderWallet) {
-        await pros.wallets.save(LeaderWallet.from(
-          currentWallet,
-          skipHistory: value,
-        ));
-      } else if (currentWallet is SingleWallet) {
-        await pros.wallets.save(SingleWallet.from(
-          currentWallet,
-          skipHistory: value,
-        ));
-      }
-    }
-
-    /// might belong in waiter but no need to make a new waiter just for this.
-    if (value) {
-      await reset();
-    } else {
-      await process();
-    }
-  }
-
   void retry() => periodic == null
       ? periodic =
           Stream.periodic(queueTimer).listen((_) async => await process())

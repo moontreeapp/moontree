@@ -44,7 +44,6 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    streams.app.navHeight.add(NavHeight.none);
     transactionRecord = data['transactionRecord'];
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);

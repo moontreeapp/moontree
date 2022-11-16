@@ -26,6 +26,10 @@ class DeveloperService {
       pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value ??
       FeatureLevel.easy;
 
+  bool get easyMode =>
+      FeatureLevel.easy ==
+      pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value;
+
   bool get developerMode => [FeatureLevel.normal, FeatureLevel.expert]
       .contains(pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value);
 
@@ -56,6 +60,31 @@ class DeveloperService {
       );
 
   /// indicates we should turns off settings unavailable to non-developers
-  bool postToggleBlockchainCheck() => featureLevelBlockchainMap[userLevel]!
-      .contains(_makeTuple(pros.settings.chain, pros.settings.net));
+  Tuple2<Chain, Net>? postToggleBlockchainCheck() {
+    if (!featureLevelBlockchainMap[userLevel]!
+        .contains(_makeTuple(pros.settings.chain, pros.settings.net))) {
+      if (pros.settings.net == Net.test &&
+          services.developer
+              .featureLevelBlockchainMap[services.developer.userLevel]!
+              .contains(Tuple2(pros.settings.chain, Net.main))) {
+        return Tuple2(pros.settings.chain, Net.main);
+      } else {
+        return Tuple2(Chain.ravencoin, Net.main);
+      }
+    }
+    return null;
+  }
+
+  /// turns out this isn't needed yet - it's where we can turn off settings if
+  /// they go back to easy mode and the current settings are not available in
+  /// that mode. there are no settings they can change right now, miner mode
+  /// used to be a dev mode thing, but now it's not so that's the example here:
+  Future<void> postToggleFeatureCheck() async {
+    //  if (!easyMode) return;
+    //  for (var wallet in pros.wallets.records) {
+    //    if (services.wallet.currentWallet.minerMode) {
+    //      await services.wallet.setMinerMode(false, wallet: wallet);
+    //    }
+    //  }
+  }
 }

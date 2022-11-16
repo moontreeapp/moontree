@@ -58,11 +58,44 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         !snack!.showOnLogin) {
       return;
     }
-    //final tall = streams.app.navHeight.value == NavHeight.tall; // default
-    final short = streams.app.navHeight.value == NavHeight.short;
-    final none = streams.app.navHeight.value == NavHeight.none ||
-        (!short && streams.app.page.value != 'Home') ||
-        (streams.app.page.value == 'Home' && streams.app.setting.value != null);
+
+    final NavHeight navHeight;
+    if (streams.app.page.value == 'Home' && streams.app.setting.value == null) {
+      navHeight = NavHeight.short; // should be tall
+    } else if (streams.app.page.value == 'Home' &&
+        streams.app.setting.value != null) {
+      navHeight = NavHeight.none;
+    } else if (['Support'].contains(streams.app.page.value)) {
+      navHeight = NavHeight.tall;
+    } else if ([
+      'Createlogin',
+      'Login',
+      'Locked',
+      'Change',
+      'Mining',
+      'Database',
+      'Developer',
+      'Advanced',
+      'Addresses',
+      'Transaction',
+    ].contains(streams.app.page.value)) {
+      navHeight = NavHeight.none;
+    } else if ([
+      'Blockchain',
+      'Import',
+      'Sweep',
+      'Backup',
+      'BackupConfirm',
+      'Receive',
+      'Transactions',
+      'Send',
+      'Checkout',
+    ].contains(streams.app.page.value)) {
+      navHeight = NavHeight.short;
+    } else {
+      navHeight = streams.app.navHeight.value;
+    }
+
     final copy = services.developer.developerMode && snack!.copy != null;
     final row = Row(
         mainAxisAlignment:
@@ -79,13 +112,13 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                     style: style(),
                   ))
               : Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  //width: (MediaQuery.of(context).size.width - 32),
                   child: Text(
-                    snack!.message,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: style(),
-                  )),
+                  snack!.message,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: style(),
+                )),
           if (copy)
             Container(
                 width: (MediaQuery.of(context).size.width - 32) * 0.25,
@@ -104,8 +137,11 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           }
           ScaffoldMessenger.of(context).clearSnackBars();
         },
-        child: none
-            ? Padding(padding: EdgeInsets.only(left: 0, right: 0), child: row)
+        child: navHeight == NavHeight.none
+            ? Padding(
+                padding:
+                    EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
+                child: row)
             : Stack(alignment: Alignment.bottomCenter, children: [
                 Container(
                   alignment: Alignment.topLeft,
@@ -120,7 +156,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                 Container(
                     height: 16,
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.transparent,
                         borderRadius: components.shape.topRoundedBorder16,
                         boxShadow: [
                           // this one is to hide the shadow put on snackbars by default
@@ -140,15 +176,16 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                               blurRadius: 10)
                         ]))
               ]));
-    if (none) {
+    if (navHeight == NavHeight.none) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 1,
         dismissDirection: DismissDirection.horizontal,
         backgroundColor: AppColors.snackBar,
         shape: components.shape.topRounded8,
         content: msg,
+        padding: EdgeInsets.only(left: 0, right: 0),
       ));
-    } else if (short) {
+    } else if (navHeight == NavHeight.short) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         elevation: 0,
         dismissDirection: DismissDirection.none,
