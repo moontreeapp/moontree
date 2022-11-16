@@ -671,11 +671,6 @@ class SimpleSelectionItems {
           /// failed attempt to use set state
           //return StatefulBuilder(builder: (BuildContext context,
           //    StateSetter setState /*You can rename this!*/) {
-          List<Widget> children = [
-            ...[SizedBox(height: 8)],
-            ...items,
-            ...[SizedBox(height: 8)],
-          ];
           return DraggableScrollableSheet(
             controller: draggableScrollController,
             snap: false,
@@ -690,7 +685,11 @@ class SimpleSelectionItems {
                   child: ListView(
                     shrinkWrap: true,
                     controller: scrollController,
-                    children: children,
+                    children: <Widget>[
+                      ...[SizedBox(height: 8)],
+                      ...items,
+                      ...[SizedBox(height: 8)],
+                    ],
                   ));
             }),
           );
