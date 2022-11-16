@@ -27,21 +27,12 @@ class DeveloperOptions extends StatelessWidget {
                             initial: services.developer.developerMode,
                             onChanged: (value) async {
                               await services.developer.toggleDevMode(value);
-                              if (!services.developer
-                                  .postToggleBlockchainCheck()) {
-                                if (pros.settings.net == Net.test &&
-                                    services
-                                        .developer
-                                        .featureLevelBlockchainMap[
-                                            services.developer.userLevel]!
-                                        .contains(Tuple2(
-                                            pros.settings.chain, Net.main))) {
-                                  changeChainNet(context,
-                                      Tuple2(pros.settings.chain, Net.main));
-                                } else {
-                                  changeChainNet(context,
-                                      Tuple2(Chain.ravencoin, Net.main));
-                                }
+                              await services.developer.postToggleFeatureCheck();
+                              final chainNet = services.developer
+                                  .postToggleBlockchainCheck();
+                              if (chainNet != null) {
+                                changeChainNet(context,
+                                    Tuple2(chainNet.item1, chainNet.item2));
                               }
                             })))),
           ]),

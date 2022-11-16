@@ -355,8 +355,7 @@ class SubscribeService {
 
             services.wallet.leader.newLeaderProcessRunning = false;
           }
-          Wallet currentWallet =
-              pros.wallets.primaryIndex.getOne(pros.settings.currentWalletId)!;
+          Wallet currentWallet = services.wallet.currentWallet;
           if (wallet.id == pros.settings.currentWalletId ||
               (currentWallet is LeaderWallet &&
                   services.wallet.leader.gapSatisfied(currentWallet) &&
