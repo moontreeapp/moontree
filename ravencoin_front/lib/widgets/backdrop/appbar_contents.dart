@@ -79,7 +79,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -89,23 +89,10 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            for (var x in [
-              ChainBundle(icons.evrmore, 'Evrmore', Chain.evrmore, Net.main),
-              ChainBundle(
-                  icons.ravencoin, 'Ravencoin', Chain.ravencoin, Net.main),
-              ChainBundle(icons.evrmoreTest, 'Evrmore testnet', Chain.evrmore,
-                  Net.test),
-              ChainBundle(icons.ravencoinTest, 'Ravencoin testnet',
-                  Chain.ravencoin, Net.test),
-            ]) {
-              print(Tuple2(x.chain, x.net));
-              print(services.developer.userLevel);
-              print(services.developer
-                  .featureLevelBlockchainMap[services.developer.userLevel]!);
-              print(services.developer
-                  .featureLevelBlockchainMap[services.developer.userLevel]!
-                  .contains(Tuple2(x.chain, x.net)));
-            }
+            streams.app.snack.add(Snack(
+                message:
+                    '${streams.app.page.value} | ${streams.app.setting.value}',
+                showOnLogin: true));
           },
           child: appBar,
         )
