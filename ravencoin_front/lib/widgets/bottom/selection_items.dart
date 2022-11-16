@@ -649,7 +649,7 @@ class SimpleSelectionItems {
 
   SimpleSelectionItems(this.context, {required this.items, this.then});
 
-  Future<void> produceModal(List items) async {
+  Future<void> build() async {
     await showModalBottomSheet<void>(
         context: context, //components.navigator.mainContext!,
         elevation: 1,
@@ -663,7 +663,7 @@ class SimpleSelectionItems {
           DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
           var minExtent =
-              min((items.length * 52 + 16).ofMediaHeight(context), 0.5);
+              min((items.length * 52 + 16 + 24).ofMediaHeight(context), 0.5);
           var initialExtent = minExtent;
           var maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
           maxExtent = min(1.0, max(minExtent, maxExtent));
@@ -671,6 +671,11 @@ class SimpleSelectionItems {
           /// failed attempt to use set state
           //return StatefulBuilder(builder: (BuildContext context,
           //    StateSetter setState /*You can rename this!*/) {
+          List<Widget> children = [
+            ...[SizedBox(height: 8)],
+            ...items,
+            ...[SizedBox(height: 8)],
+          ];
           return DraggableScrollableSheet(
             controller: draggableScrollController,
             snap: false,
@@ -681,14 +686,11 @@ class SimpleSelectionItems {
             builder: ((context, scrollController) {
               return FrontCurve(
                   fuzzyTop: true,
+                  alignment: Alignment.topCenter,
                   child: ListView(
                     shrinkWrap: true,
                     controller: scrollController,
-                    children: <Widget>[
-                      ...[SizedBox(height: 8)],
-                      ...items,
-                      ...[SizedBox(height: 8)],
-                    ],
+                    children: children,
                   ));
             }),
           );
@@ -701,10 +703,6 @@ class SimpleSelectionItems {
         then!();
       }
     });
-  }
-
-  Future<void> build() async {
-    produceModal([for (Widget item in items) item]);
   }
 }
 

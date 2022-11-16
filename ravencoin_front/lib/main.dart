@@ -64,7 +64,7 @@ class RavenMobileApp extends StatelessWidget {
     //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //    overlays: [SystemUiOverlay.top]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+        overlays: [SystemUiOverlay.top]);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
