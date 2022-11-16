@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/import.dart';
@@ -54,6 +55,14 @@ class _ImportState extends State<Import> {
     super.dispose();
   }
 
+  Future<String> getClip() async {
+    ClipboardData? clip = await Clipboard.getData('text/plain');
+    if (clip != null) {
+      return clip.text ?? '';
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
@@ -72,14 +81,17 @@ class _ImportState extends State<Import> {
             },
             child: FrontCurve(
               fuzzyTop: false,
-              child: body(),
+              child: FutureBuilder(
+                  initialData: null,
+                  future: getClip(),
+                  builder: (context, snapshot) => body(snapshot.data)),
             )));
   }
 
-  Widget body() => Column(
+  Widget body(clip) => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          file == null ? textInputField : filePicked,
+          file == null ? textInputField(clip) : filePicked,
           components.containers.navBar(
             context,
             child: Row(
@@ -97,7 +109,7 @@ class _ImportState extends State<Import> {
         ],
       );
 
-  Widget get textInputField => Container(
+  Widget textInputField(clip) => Container(
       height: 200,
       padding: EdgeInsets.only(
         top: 16,
@@ -121,13 +133,23 @@ class _ImportState extends State<Import> {
               importFormatDetected == 'Unknown' ? null : importFormatDetected,
           errorText:
               importFormatDetected == 'Unknown' ? importFormatDetected : null,
-          suffixIcon: IconButton(
-            icon: Icon(importVisible ? Icons.visibility : Icons.visibility_off,
-                color: AppColors.black60),
-            onPressed: () => setState(() {
-              importVisible = !importVisible;
-            }),
-          ),
+          suffixIcon: Column(children: [
+            if (validateValue(clip))
+              IconButton(
+                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                  onPressed: () => setState(() {
+                        words.text = clip;
+                        enableImport();
+                      })),
+            IconButton(
+              icon: Icon(
+                  importVisible ? Icons.visibility : Icons.visibility_off,
+                  color: AppColors.black60),
+              onPressed: () => setState(() {
+                importVisible = !importVisible;
+              }),
+            )
+          ]),
           onChanged: (value) => enableImport(),
           onEditingComplete: () {
             enableImport();
@@ -173,6 +195,10 @@ class _ImportState extends State<Import> {
           setState(() {});
         },
       );
+
+  bool validateValue(String? given) =>
+      services.wallet.import.detectImportType((given ?? words.text).trim()) !=
+      ImportFormat.invalid;
 
   void enableImport({String? given}) {
     var oldImportFormatDetected = importFormatDetected;
