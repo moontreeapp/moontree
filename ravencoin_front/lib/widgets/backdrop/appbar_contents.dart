@@ -79,7 +79,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -89,10 +89,12 @@ class BackdropAppBarContents extends StatelessWidget
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            streams.app.snack.add(Snack(
-                message:
-                    '${streams.app.page.value} | ${streams.app.setting.value}',
-                showOnLogin: true));
+            if (services.developer.advancedDeveloperMode) {
+              streams.app.snack.add(Snack(
+                  message:
+                      '${streams.app.page.value} | ${streams.app.setting.value}',
+                  showOnLogin: true));
+            }
           },
           child: appBar,
         )
