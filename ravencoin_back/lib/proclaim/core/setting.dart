@@ -1,10 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:proclaim/proclaim.dart';
-
-import 'package:ravencoin_back/extensions/object.dart';
 import 'package:ravencoin_back/records/records.dart';
-import 'package:ravencoin_back/version.dart';
-
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show NetworkType;
 
 part 'setting.keys.dart';

@@ -195,7 +195,6 @@ void changeChainNet(
     message:
         'Connecting to ${value.item1.name.toTitleCase()}${value.item2 == Net.test ? ' ' + value.item2.name.toTitleCase() : ''}',
     returnHome: false,
-    playCount: 5,
   );
   await services.client.switchNetworks(chain: value.item1, net: value.item2);
   streams.app.snack.add(Snack(message: 'Successfully connected'));

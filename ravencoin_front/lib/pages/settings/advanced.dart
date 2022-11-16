@@ -30,7 +30,7 @@ class AdvancedDeveloperOptions extends StatelessWidget {
                           'Unlocks experimental functionality. Use at your own risk. Make a paper backup of all wallets first.',
                       initial: services.developer.advancedDeveloperMode,
                       onChanged: (value) async =>
-                          await pros.settings.toggleAdvDevMode(value),
+                          await services.developer.toggleAdvDevMode(value),
                     )))),
       ]);
 }

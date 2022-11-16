@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_back/streams/streams.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 
