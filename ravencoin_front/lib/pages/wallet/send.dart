@@ -376,6 +376,12 @@ class _SendState extends State<Send> {
       Visibility(visible: addressName != '', child: Text('To: $addressName'));
 
   Widget get sendAddressField => TextFieldFormatted(
+        onTap: () async {
+          clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+          print(clipboard);
+          print(_validateAddress(clipboard));
+          setState(() {});
+        },
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
         textInputAction: TextInputAction.next,
@@ -387,6 +393,13 @@ class _SendState extends State<Send> {
         hintText: 'Address',
         errorText: sendAddress.text != '' && !_validateAddress(sendAddress.text)
             ? 'Unrecognized Address'
+            : null,
+        suffixIcon: clipboard != '' && _validateAddress(clipboard)
+            ? IconButton(
+                icon: Padding(
+                    padding: EdgeInsets.only(right: 14),
+                    child: Icon(Icons.paste_rounded, color: Color(0xDE000000))),
+                onPressed: () => setState(() => sendAddress.text = clipboard))
             : null,
         onChanged: (value) {
           /// just always put it in
@@ -603,15 +616,17 @@ class _SendState extends State<Send> {
         setState(() {});
       });
 
-  bool _validateAddress([String? address]) =>
-      sendAddress.text == '' ||
-      (pros.settings.chain == Chain.ravencoin
-          ? pros.settings.net == Net.main
-              ? sendAddress.text.isAddressRVN
-              : sendAddress.text.isAddressRVNt
-          : pros.settings.net == Net.main
-              ? sendAddress.text.isAddressEVR
-              : sendAddress.text.isAddressEVRt);
+  bool _validateAddress([String? address]) {
+    address ??= sendAddress.text;
+    return address == '' ||
+        (pros.settings.chain == Chain.ravencoin
+            ? pros.settings.net == Net.main
+                ? address.isAddressRVN
+                : address.isAddressRVNt
+            : pros.settings.net == Net.main
+                ? address.isAddressEVR
+                : address.isAddressEVRt);
+  }
 
   // ignore: unused_element
   bool _validateAddressColor([String? address]) {
