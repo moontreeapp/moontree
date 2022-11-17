@@ -432,7 +432,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                         await switchWallet(wallet.id);
                       }
                     },
-                    leading: walletsSecurities[wallet]!.isEmpty ||
+                    leading: walletsSecurities[wallet] == null ||
+                            walletsSecurities[wallet]!.isEmpty ||
                             !services.developer.developerMode
                         ? Icon(
                             Icons.account_balance_wallet_rounded,
