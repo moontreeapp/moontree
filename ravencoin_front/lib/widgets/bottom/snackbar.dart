@@ -54,7 +54,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   Future<void> show() async {
     /// don't show snackbars on login screen
-    if (['Createlogin', 'Login'].contains(streams.app.page.value) &&
+    if (['Setup', 'Createlogin', 'Login'].contains(streams.app.page.value) &&
         !snack!.showOnLogin) {
       return;
     }
@@ -68,6 +68,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     } else if (['Support'].contains(streams.app.page.value)) {
       navHeight = NavHeight.tall;
     } else if ([
+      'Setup',
       'Createlogin',
       'Login',
       'Locked',
