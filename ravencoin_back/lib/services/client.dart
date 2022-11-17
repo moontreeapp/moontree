@@ -88,7 +88,6 @@ class ClientService {
     lastActiveTime = DateTime.now();
     await periodicTimer?.cancel();
     periodicTimer = Stream.periodic(inactiveGracePeriod).listen((_) async {
-      print(DateTime.now().difference(lastActiveTime).inSeconds);
       if (streams.client.busy.value &&
           DateTime.now().difference(lastActiveTime).inSeconds >=
               inactiveGracePeriod.inSeconds) {
