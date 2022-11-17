@@ -11,6 +11,7 @@ import 'package:ravencoin_front/services/wallet.dart'
     show getEntropy, saveSecret;
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/data.dart';
+import 'package:ravencoin_front/widgets/other/selection_control.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class Import extends StatefulWidget {
@@ -118,6 +119,8 @@ class _ImportState extends State<Import> {
       ),
       child: TextFieldFormatted(
           focusNode: wordsFocus,
+          selectionControls: CustomMaterialTextSelectionControls(
+              context: components.navigator.scaffoldContext, alwaysBelow: true),
           enableInteractiveSelection: true,
           autocorrect: false,
           controller: words,
