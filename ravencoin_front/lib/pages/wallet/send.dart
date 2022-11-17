@@ -59,6 +59,7 @@ class _SendState extends State<Send> {
   String clipboard = '';
   final ScrollController scrollController = ScrollController();
   bool clicked = false;
+  bool loaded = false;
 
   bool rvnValidation() =>
       pros.balances.primaryIndex
@@ -86,6 +87,7 @@ class _SendState extends State<Send> {
         ));
       }
     }
+    loaded = false;
 
     /// #612
     //sendAsset.text = sendAsset.text == ''
@@ -272,6 +274,10 @@ class _SendState extends State<Send> {
     } catch (e) {
       visibleFiatAmount = '';
     }
+    if (!loaded) {
+      FocusScope.of(context).unfocus();
+      loaded = true;
+    }
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(), child: body());
   }
@@ -378,13 +384,13 @@ class _SendState extends State<Send> {
   Widget get sendAddressField => TextFieldFormatted(
         onTap: () async {
           clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-          print(clipboard);
-          print(_validateAddress(clipboard));
           setState(() {});
         },
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
         textInputAction: TextInputAction.next,
+        //selectionControls: CustomMaterialTextSelectionControls(
+        //    context: components.navigator.routeContext, alwaysBelow: false),
         autocorrect: false,
         inputFormatters: [
           FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
