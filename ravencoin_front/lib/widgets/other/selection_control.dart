@@ -13,10 +13,9 @@ const double _kToolbarContentDistance = 8.0;
 class CustomMaterialTextSelectionControls
     extends MaterialTextSelectionControls {
   BuildContext? context;
-  bool? alwaysBelow;
+  Offset? offset;
 
-  CustomMaterialTextSelectionControls({this.context, this.alwaysBelow = false})
-      : super();
+  CustomMaterialTextSelectionControls({this.context, this.offset}) : super();
 
   /// Returns the size of the Material handle.
   @override
@@ -37,6 +36,7 @@ class CustomMaterialTextSelectionControls
   ) {
     return _TextSelectionControlsToolbar(
       context: this.context ?? context,
+      offset: this.offset,
       globalEditableRegion: globalEditableRegion,
       textLineHeight: textLineHeight,
       selectionMidpoint: selectionMidpoint,
@@ -134,9 +134,11 @@ class _TextSelectionToolbarItemData {
 // The highest level toolbar widget, built directly by buildToolbar.
 class _TextSelectionControlsToolbar extends StatefulWidget {
   final BuildContext? context;
+  final Offset? offset;
 
   const _TextSelectionControlsToolbar({
     required this.context,
+    required this.offset,
     required this.clipboardStatus,
     required this.delegate,
     required this.endpoints,
@@ -269,8 +271,10 @@ class _TextSelectionControlsToolbarState
     }
 
     return TextSelectionToolbar(
-      anchorAbove: anchorAbove + Offset(0, 20),
-      anchorBelow: anchorBelow,
+      anchorAbove:
+          widget.offset != null ? (anchorAbove + widget.offset!) : anchorAbove,
+      anchorBelow:
+          widget.offset != null ? (anchorBelow + widget.offset!) : anchorBelow,
       children: itemDatas
           .asMap()
           .entries
