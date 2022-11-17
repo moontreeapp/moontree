@@ -152,37 +152,35 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       : wallets;
 
   void setWalletsSecurities() async {
-    try {
-      if (!services.developer.developerMode) {
-        wallets = pros.wallets.ordered;
-        throw Exception('short circuit');
-      }
-      final unspents = pros.unspents.records
-          .where((e) => pros.securities.cryptos.contains(e.security))
+    if (!services.developer.developerMode) {
+      wallets = pros.wallets.ordered;
+      return;
+    }
+    final unspents = pros.unspents.records
+        .where((e) => pros.securities.cryptos.contains(e.security))
+        .toList();
+    for (var w in pros.wallets.records) {
+      walletsSecurities[w] = pros.securities.cryptos
+          .where((s) => unspents
+              .where((u) => u.walletId == w.id && u.security == s)
+              .isNotEmpty)
           .toList();
-      for (var w in pros.wallets.records) {
-        walletsSecurities[w] = pros.securities.cryptos
-            .where((s) => unspents
-                .where((u) => u.walletId == w.id && u.security == s)
-                .isNotEmpty)
-            .toList();
 
-        /// for testing
-        //walletsSecurities[w]!.add(pros.securities.RVNt);
-        //walletsSecurities[w]!.add(pros.securities.EVR);
-        //walletsSecurities[w]!.add(pros.securities.RVN);
-        //walletsSecurities[w]!.add(pros.securities.EVRt);
+      /// for testing
+      //walletsSecurities[w]!.add(pros.securities.RVNt);
+      //walletsSecurities[w]!.add(pros.securities.EVR);
+      //walletsSecurities[w]!.add(pros.securities.RVN);
+      //walletsSecurities[w]!.add(pros.securities.EVRt);
+    }
+    wallets = [];
+    final currentCrypto = pros.securities.currentCrypto;
+    for (var ws in walletsSecurities.entries) {
+      if (ws.value.contains(currentCrypto)) {
+        wallets.add(ws.key);
       }
-      wallets = [];
-      final currentCrypto = pros.securities.currentCrypto;
-      for (var ws in walletsSecurities.entries) {
-        if (ws.value.contains(currentCrypto)) {
-          wallets.add(ws.key);
-        }
-      }
-      wallets = pros.wallets.order(wallets);
-      setHoldingsIndicatorsSize();
-    } catch (e) {}
+    }
+    wallets = pros.wallets.order(wallets);
+    setHoldingsIndicatorsSize();
   }
 
   List<Widget> holdingsIndicators(Wallet wallet) {
