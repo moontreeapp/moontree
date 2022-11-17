@@ -391,7 +391,7 @@ class _SendState extends State<Send> {
         controller: sendAddress,
         textInputAction: TextInputAction.next,
         selectionControls: CustomMaterialTextSelectionControls(
-            context: components.navigator.routeContext),
+            context: components.navigator.scaffoldContext),
         autocorrect: false,
         inputFormatters: [
           FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
