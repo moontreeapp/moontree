@@ -63,6 +63,7 @@ dependencies:
   ravencoin_wallet: ^3.0.0
   #open_settings: ^2.0.2
   app_settings: ^4.1.8
+  bloc: ^8.1.0
 
 dependency_overrides:
   ravencoin_back:

@@ -14,3 +14,7 @@ extension SecurityHasOneUSDRate on Security {
       .getOne(pros.securities.RVN, pros.securities.USD)
       ?.rate;
 }
+
+extension SecurityMayHaveAName on Security {
+  String get name => symbolName(symbol);
+}
