@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -82,14 +83,17 @@ class _ImportState extends State<Import> {
             },
             child: FrontCurve(
               fuzzyTop: false,
-              child: FutureBuilder(
-                  initialData: null,
-                  future: getClip(),
-                  builder: (context, snapshot) => body(snapshot.data)),
+              child: Platform.isIOS
+                  ? body()
+                  : FutureBuilder(
+                      initialData: null,
+                      future: getClip(),
+                      builder: (context, snapshot) =>
+                          body(snapshot.data as String?)),
             )));
   }
 
-  Widget body(clip) => Column(
+  Widget body([String? clip]) => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           file == null ? textInputField(clip) : filePicked,
@@ -110,7 +114,7 @@ class _ImportState extends State<Import> {
         ],
       );
 
-  Widget textInputField(clip) => Container(
+  Widget textInputField([String? clip]) => Container(
       height: 200,
       padding: EdgeInsets.only(
         top: 16,
@@ -137,14 +141,8 @@ class _ImportState extends State<Import> {
               importFormatDetected == 'Unknown' ? null : importFormatDetected,
           errorText:
               importFormatDetected == 'Unknown' ? importFormatDetected : null,
-          suffixIcon: Column(children: [
-            if (validateValue(clip))
-              IconButton(
-                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-                  onPressed: () => setState(() {
-                        words.text = clip;
-                        enableImport();
-                      })),
+          suffixIcon:
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             IconButton(
               icon: Icon(
                   importVisible ? Icons.visibility : Icons.visibility_off,
@@ -152,7 +150,33 @@ class _ImportState extends State<Import> {
               onPressed: () => setState(() {
                 importVisible = !importVisible;
               }),
-            )
+            ),
+            if (clip != null && validateValue(clip))
+              IconButton(
+                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                  onPressed: () => setState(() {
+                        words.text = clip;
+                        enableImport();
+                      })),
+            if (clip == null)
+              IconButton(
+                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                  onPressed: () async {
+                    final clip = await getClip();
+                    setState(() {
+                      words.text = clip;
+                      enableImport();
+                    });
+                  }),
+            IconButton(
+                icon: Icon(Icons.clear_rounded,
+                    color: words.text != ''
+                        ? AppColors.black60
+                        : AppColors.black12),
+                onPressed: () => setState(() {
+                      importFormatDetected = '';
+                      words.text = '';
+                    })),
           ]),
           onChanged: (value) => enableImport(),
           onEditingComplete: () {

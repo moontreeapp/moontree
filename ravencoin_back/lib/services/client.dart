@@ -17,6 +17,10 @@ class ClientService {
   final ApiService api = ApiService();
   final _clientLock = ReaderWriterLock();
   RavenElectrumClient? ravenElectrumClient;
+  DateTime lastActiveTime = DateTime.now();
+  static const Duration inactiveGracePeriod = Duration(seconds: 10);
+
+  StreamSubscription? periodicTimer;
 
   String get serverUrl =>
       '${services.client.currentDomain}:${services.client.currentPort}';
@@ -41,6 +45,8 @@ class ClientService {
   ///     return await services.client.client!.getRelayFee();
   ///   }));
   Future<T> scope<T>(Future<T> Function() callback) async {
+    /// if we haven't had a call for 10 seconds, the client isn't busy
+    lastActiveTime = DateTime.now();
     var x;
     try {
       x = await callback();
@@ -79,6 +85,15 @@ class ClientService {
   /// we want exclusive access to the creation of the client so that we
   /// don't create many connections to the electrum server all at once.
   Future<void> createClient() async {
+    lastActiveTime = DateTime.now();
+    await periodicTimer?.cancel();
+    periodicTimer = Stream.periodic(inactiveGracePeriod).listen((_) async {
+      if (streams.client.busy.value &&
+          DateTime.now().difference(lastActiveTime).inSeconds >=
+              inactiveGracePeriod.inSeconds) {
+        streams.client.busy.add(false);
+      }
+    });
     await _clientLock.writeFuture(() async {
       streams.client.connected.add(ConnectionStatus.connecting);
       Future<void> genClient() async {
@@ -339,7 +354,6 @@ class SubscribeService {
               }
             }
           }
-          streams.client.busy.add(false);
           streams.client.activity.add(ActivityMessage(active: false));
           if (services.wallet.leader.newLeaderProcessRunning) {
             if (pros.balances.isNotEmpty) {
@@ -365,6 +379,7 @@ class SubscribeService {
                           .keys
                           .length ==
                       currentWallet.addresses.length)) {
+            streams.client.busy.add(false);
             streams.app.wallet.refresh.add(true);
           }
         }

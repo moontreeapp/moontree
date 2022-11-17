@@ -76,6 +76,14 @@ class _HoldingList extends State<HoldingList> {
         setState(() {});
       }
     }));
+
+    /// when the client isn't busy anymore, refresh
+    listeners.add(streams.client.busy.listen((bool busy) async {
+      if (!busy) {
+        print('triggered by client not busy');
+        setState(() {});
+      }
+    }));
   }
 
   @override

@@ -246,12 +246,12 @@ class ImportWalletService {
         await pros.settings.setCurrentWalletId(importedChange!.record.id);
         return HandleResult(
             true,
-            'Wallet ${pros.wallets.primaryIndex.getOne(importedChange.record.id)!.name}',
+            pros.wallets.primaryIndex.getOne(importedChange.record.id)!.name,
             LingoKey.walletImportedAs);
       }
       return HandleResult(
           false,
-          'Wallet ${pros.wallets.primaryIndex.getOne(wallet.id)!.name}',
+          pros.wallets.primaryIndex.getOne(wallet.id)!.name,
           LingoKey.walletAlreadyExists);
     }
     return HandleResult(false, '', LingoKey.walletUnableToCreate);

@@ -60,14 +60,13 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   final Duration animationDuration = Duration(milliseconds: 160);
   bool dropDownActive = false;
   List<Wallet> wallets = [];
-  Map<Wallet, List<Security>> walletsSecurities = {
-    for (var w in pros.wallets.records) w: []
-  };
+  late Map<Wallet, List<Security>> walletsSecurities;
   double indicatorWidth = 24;
 
   @override
   void initState() {
     super.initState();
+    initializeWalletSecurities();
     setWalletsSecurities();
     controller = AnimationController(vsync: this, duration: animationDuration);
     slowController = AnimationController(
@@ -134,6 +133,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     }
     super.dispose();
   }
+
+  initializeWalletSecurities() =>
+      walletsSecurities = {for (var w in pros.wallets.records) w: []};
 
   void setWallets() async {
     final unspents = pros.unspents.records
@@ -395,7 +397,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                             });
                             await walletSelection();
                             await Future.delayed(Duration(milliseconds: 100));
-                            streams.app.scrim.add(true);
+                            streams.app.scrim.add(false);
                           },
                           child: Text(
                             'Show All',
@@ -572,6 +574,11 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                             }
                                                             await pros.wallets
                                                                 .remove(wallet);
+                                                            wallets = pros
+                                                                .wallets
+                                                                .ordered;
+                                                            initializeWalletSecurities();
+                                                            setWalletsSecurities();
                                                           }
                                                         });
                                                   }

@@ -383,15 +383,16 @@ class _SendState extends State<Send> {
       Visibility(visible: addressName != '', child: Text('To: $addressName'));
 
   Widget get sendAddressField => TextFieldFormatted(
-        onTap: () async {
-          clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-          setState(() {});
-        },
+        //onTap: () async {
+        //  clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+        //  setState(() {});
+        //},
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
         textInputAction: TextInputAction.next,
         selectionControls: CustomMaterialTextSelectionControls(
-            context: components.navigator.scaffoldContext),
+            context: components.navigator.scaffoldContext,
+            offset: Offset(0, 0)),
         autocorrect: false,
         inputFormatters: [
           FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
@@ -401,13 +402,18 @@ class _SendState extends State<Send> {
         errorText: sendAddress.text != '' && !_validateAddress(sendAddress.text)
             ? 'Unrecognized Address'
             : null,
-        suffixIcon: clipboard != '' && _validateAddress(clipboard)
-            ? IconButton(
+        suffixIcon: //clipboard != '' && _validateAddress(clipboard)
+            //?
+            IconButton(
                 icon: Padding(
                     padding: EdgeInsets.only(right: 14),
                     child: Icon(Icons.paste_rounded, color: Color(0xDE000000))),
-                onPressed: () => setState(() => sendAddress.text = clipboard))
-            : null,
+                onPressed: () async {
+                  clipboard =
+                      (await Clipboard.getData('text/plain'))?.text ?? '';
+                  setState(() => sendAddress.text = clipboard);
+                }),
+        //: null,
         onChanged: (value) {
           /// just always put it in
           //if (_validateAddressColor(value)) {

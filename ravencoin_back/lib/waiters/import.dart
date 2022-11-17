@@ -11,8 +11,10 @@ class ImportWaiter extends Waiter {
     streams.import.attempt.listen((ImportRequest? importRequest) async {
       if (importRequest != null) {
         /// if import is currently occuring, wait til its finished.
-        while (services.wallet.leader.newLeaderProcessRunning) {
+        var x = 0;
+        while (services.wallet.leader.newLeaderProcessRunning && x < 10) {
           await Future.delayed(Duration(seconds: 1));
+          x += 1;
         }
         var firstWallet = false;
         if (pros.wallets.records.length == 1 && pros.balances.records.isEmpty) {
