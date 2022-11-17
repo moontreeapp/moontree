@@ -154,6 +154,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   void setWalletsSecurities() async {
     try {
       if (!services.developer.developerMode) {
+        wallets = pros.wallets.ordered;
         throw Exception('short circuit');
       }
       final unspents = pros.unspents.records
