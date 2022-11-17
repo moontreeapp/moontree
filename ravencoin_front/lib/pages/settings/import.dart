@@ -83,7 +83,7 @@ class _ImportState extends State<Import> {
             },
             child: FrontCurve(
               fuzzyTop: false,
-              child: Platform.isAndroid
+              child: Platform.isIOS
                   ? body()
                   : FutureBuilder(
                       initialData: null,
