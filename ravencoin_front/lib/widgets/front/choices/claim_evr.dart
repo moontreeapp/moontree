@@ -27,6 +27,8 @@ class ClaimEvr extends StatefulWidget {
 class _ClaimEvr extends State<ClaimEvr> {
   final submitFocus = FocusNode();
   bool clicked = false;
+
+  /// removed because we are now sending to same wallet
   //late Wallet wallet;
 
   @override
@@ -55,7 +57,7 @@ class _ClaimEvr extends State<ClaimEvr> {
               returnHome: false,
               playCount: 1);
 
-          /// sending to same wallet:
+          /// removed because we are now sending to same wallet
           //final walletId = await generateWallet();
           //wallet = pros.wallets.primaryIndex.getOne(walletId)!;
           confirmSend();
@@ -79,7 +81,11 @@ class _ClaimEvr extends State<ClaimEvr> {
           subSymbol: null,
           paymentSymbol: null,
           items: [
-            ['To', Current.wallet.name],
+            [
+              'To',
+              Current.wallet.name
+              // wallet.name /// removed because we are now sending to same wallet
+            ],
             [
               'EVR',
               components.text.securityAsReadable(Current.balanceCurrency.value,
@@ -93,8 +99,11 @@ class _ClaimEvr extends State<ClaimEvr> {
             await services.transaction.claim(
                 from: Current.wallet,
                 toWalletId: Current.walletId,
+                // toWalletId: wallet.id /// removed because we are now sending to same wallet
                 note: 'Claim EVR',
                 msg: 'Successfully Claimed EVR');
+
+            /// removed because we are now sending to same wallet
             //await switchWallet(wallet.id);
           },
           buttonWord: 'Claim',
