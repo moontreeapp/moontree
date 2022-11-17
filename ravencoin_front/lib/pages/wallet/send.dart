@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/qrcode.dart';
+import 'package:ravencoin_front/widgets/other/selection_control.dart';
 
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
@@ -389,8 +390,8 @@ class _SendState extends State<Send> {
         focusNode: sendAddressFocusNode,
         controller: sendAddress,
         textInputAction: TextInputAction.next,
-        //selectionControls: CustomMaterialTextSelectionControls(
-        //    context: components.navigator.routeContext, alwaysBelow: false),
+        selectionControls: CustomMaterialTextSelectionControls(
+            context: components.navigator.routeContext),
         autocorrect: false,
         inputFormatters: [
           FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
