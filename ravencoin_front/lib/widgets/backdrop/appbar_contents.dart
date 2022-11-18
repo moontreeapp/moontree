@@ -90,10 +90,10 @@ class BackdropAppBarContents extends StatelessWidget
       ? GestureDetector(
           onTap: () async {
             if (services.developer.advancedDeveloperMode) {
-              streams.app.snack.add(Snack(
-                  message:
-                      '${streams.app.page.value} | ${streams.app.setting.value}',
-                  showOnLogin: true));
+              //streams.app.snack.add(Snack(
+              //    message:
+              //        '${streams.app.page.value} | ${streams.app.setting.value}',
+              //    showOnLogin: true));
             }
           },
           child: appBar,
