@@ -104,16 +104,16 @@ class UnspentService {
           if (utxo.txHash ==
               'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262') {
             // pass to stream
-            streams.claim.unclaimed.add({
-              ...streams.claim.unclaimed.value,
-              ...{
-                Vout.fromUnspent(utxo,
-                    toAddress: utxo.address?.address ??
-                        pros.addresses.byScripthash
-                            .getOne(utxo.scripthash)
-                            ?.address)
-              }
-            });
+            var x = streams.claim.unclaimed.value;
+            if (!x.containsKey(wallet.id)) {
+              x[wallet.id] = <Vout>{};
+            }
+            x[wallet.id]!.add(Vout.fromUnspent(utxo,
+                toAddress: utxo.address?.address ??
+                    pros.addresses.byScripthash
+                        .getOne(utxo.scripthash)
+                        ?.address));
+            streams.claim.unclaimed.add(x);
           }
         }
       }

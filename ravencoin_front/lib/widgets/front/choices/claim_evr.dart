@@ -88,8 +88,10 @@ class _ClaimEvr extends State<ClaimEvr> {
             ],
             [
               'EVR',
-              components.text.securityAsReadable(Current.balanceCurrency.value,
-                  security: Current.balanceCurrency.security, asUSD: false)
+              services.conversion.securityAsReadable(
+                  Current.balanceCurrency.value,
+                  security: Current.balanceCurrency.security,
+                  asUSD: false)
             ],
           ],
           fees: null,

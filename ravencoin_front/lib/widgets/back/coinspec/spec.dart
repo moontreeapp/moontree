@@ -69,7 +69,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
       amountSat = holdingSat;
     }
     try {
-      visibleFiatAmount = components.text.securityAsReadable(
+      visibleFiatAmount = services.conversion.securityAsReadable(
           utils.amountToSat(double.parse(visibleAmount)),
           symbol: symbol,
           asUSD: true);
@@ -120,7 +120,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                     .bodyText2!
                     .copyWith(color: AppColors.offWhite)),
             Text(
-                components.text.securityAsReadable(holdingSat - amountSat,
+                services.conversion.securityAsReadable(holdingSat - amountSat,
                     symbol: symbol, asUSD: false),
                 style: (holding - amount) >= 0
                     ? Theme.of(context)

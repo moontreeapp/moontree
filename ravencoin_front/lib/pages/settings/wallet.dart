@@ -284,11 +284,11 @@ class _WalletViewState extends State<WalletView> {
               //trailing: Text('address.value'),
               //trailing: (address.value > 0
               //    ? Text(
-              //        components.text.securityAsReadable(transaction.value,
+              //        services.conversion.securityAsReadable(transaction.value,
               //            security: transaction.security, asUSD: showUSD),
               //        style: TextStyle(color: Theme.of(context).good))
               //    : Text(
-              //        components.text.securityAsReadable(transaction.value,
+              //        services.conversion.securityAsReadable(transaction.value,
               //            security: transaction.security, asUSD: showUSD),
               //        style: TextStyle(color: Theme.of(context).bad))),
               //leading: components.icons.assetAvatar(transaction.security.symbol)

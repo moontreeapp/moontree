@@ -61,9 +61,11 @@ dependencies:
   #   git: https://github.com/moontreeapp/ravencoin_back.git
   ravencoin_electrum: ^2.0.0
   ravencoin_wallet: ^3.0.0
+  utils: ^1.0.0
   #open_settings: ^2.0.2
   app_settings: ^4.1.8
   bloc: ^8.1.0
+  flutter_bloc: ^8.1.1
 
 dependency_overrides:
   ravencoin_back:
@@ -74,6 +76,8 @@ dependency_overrides:
     path: ../../proclaim
   ravencoin_wallet:
     path: ../../ravencoin_wallet
+  utils:
+    path: ../../utils   
   #screenshot_callback:
   #  git:
   #    url: https://github.com/ousvat/flutter_screenshot_callback.git

@@ -96,7 +96,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       ret.addAll([
         // USD amount of balance fix!
         Text(
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               widget.holdingSat,
               symbol: widget.symbol,
               asUSD: true,
@@ -129,7 +129,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       children: front ? selectionList : selectionList.reversed.toList());
 
   Widget get frontText {
-    var holding = components.text.securityAsReadable(
+    var holding = services.conversion.securityAsReadable(
       widget.holdingSat,
       symbol: widget.symbol,
       asUSD: false,

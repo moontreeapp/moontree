@@ -155,7 +155,7 @@ class _TransactionListState extends State<TransactionList> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  components.text.securityAsReadable(
+                                  services.conversion.securityAsReadable(
                                       transactionRecord.value,
                                       security: transactionRecord.security,
                                       asUSD: showUSD),

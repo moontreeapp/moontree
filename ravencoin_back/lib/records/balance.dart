@@ -87,7 +87,7 @@ class Balance with EquatableMixin {
 
   int get value => confirmed + unconfirmed;
 
-  double get amount => satToAmount(confirmed + unconfirmed);
+  double get amount => satToAmount(value);
 
   double get rvn => (confirmed / 100000000); //+ (unconfirmed / 100000000);
 

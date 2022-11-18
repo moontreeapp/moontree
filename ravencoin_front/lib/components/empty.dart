@@ -1,10 +1,10 @@
+import 'package:utils/list.dart' show range;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
-import 'package:ravencoin_front/utils/zips.dart';
-import 'package:shimmer/shimmer.dart';
 
 class EmptyComponents {
   EmptyComponents();
