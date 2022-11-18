@@ -41,7 +41,7 @@ extension ByVoutIdMethodsForUnspent on Index<_VoutIdKey, Unspent> {
 
 class _SecurityKey extends Key<Unspent> {
   @override
-  String getKey(Unspent unspent) => unspent.security.id;
+  String getKey(Unspent unspent) => unspent.security?.id ?? '';
 }
 
 extension BySecurityMethodsForUnspent on Index<_SecurityKey, Unspent> {
@@ -52,7 +52,7 @@ extension BySecurityMethodsForUnspent on Index<_SecurityKey, Unspent> {
 
 class _SecurityTypeKey extends Key<Unspent> {
   @override
-  String getKey(Unspent unspent) => unspent.security.securityType.name;
+  String getKey(Unspent unspent) => unspent.security?.securityType.name ?? '';
 }
 
 extension BySecurityTypeMethodsForUnspent on Index<_SecurityTypeKey, Unspent> {
