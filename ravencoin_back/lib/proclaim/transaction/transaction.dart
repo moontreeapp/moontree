@@ -18,4 +18,6 @@ class TransactionProclaim extends Proclaim<_IdKey, Transaction> {
     ..sort((a, b) => (b.height ?? maxInt).compareTo(a.height ?? maxInt));
 
   List<Transaction> get mempool => pros.transactions.byConfirmed.getAll(false);
+
+  List<Transaction> get confirmed => pros.transactions.byConfirmed.getAll(true);
 }

@@ -144,8 +144,8 @@ class HistoryService {
           .where((transactionId) =>
               transactionId !=
                   'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262' && // don't download genesis block of Evrmore, it's too big.
-              !pros.vouts.records
-                  .map((e) => e.transactionId)
+              !pros.transactions.confirmed
+                  .map((e) => e.id)
                   .contains(transactionId))
           .toSet();
 
