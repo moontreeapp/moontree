@@ -1,6 +1,6 @@
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:ravencoin_front/utils/zips.dart';
+import 'package:utils/zips.dart' show zipMap;
 
 class AppColors {
   static List<Color> get colors => [

@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/services/wallet/constants.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/wallet.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show TxGoals, TxGoal;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show FeeRate, FeeRates;
 
 class SweepPage extends StatefulWidget {
   @override
@@ -33,7 +31,7 @@ class _SweepPageState extends State<SweepPage> {
   //bool sweepAssets = true;
   bool dropDownActive = false;
   String walletId = '';
-  TxGoal fee = TxGoals.standard;
+  FeeRate fee = FeeRates.standard;
   String clipboard = '';
   bool clicked = false;
 
@@ -286,7 +284,7 @@ class _SweepPageState extends State<SweepPage> {
             visualDensity: VisualDensity.compact,
             onTap: () async {
               Navigator.pop(components.navigator.routeContext!);
-              fee = TxGoals.standard;
+              fee = FeeRates.standard;
               feeController.text = 'Standard';
             },
             leading: Icon(MdiIcons.speedometerMedium, color: AppColors.primary),
@@ -297,7 +295,7 @@ class _SweepPageState extends State<SweepPage> {
             visualDensity: VisualDensity.compact,
             onTap: () async {
               Navigator.pop(components.navigator.routeContext!);
-              fee = TxGoals.fast;
+              fee = FeeRates.fast;
               feeController.text = 'Fast';
             },
             leading: Icon(MdiIcons.speedometer, color: AppColors.primary),

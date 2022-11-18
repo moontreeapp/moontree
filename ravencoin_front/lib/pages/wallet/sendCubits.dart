@@ -1,14 +1,17 @@
+/*
 import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/qrcode.dart';
 import 'package:ravencoin_front/widgets/other/selection_control.dart';
 
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show FeeRate, FeeRates;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravencoin;
 
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
@@ -32,22 +35,17 @@ class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
   SpendForm? spendForm;
-  late Security security;
   double? minHeight;
-  String sendAmountText = '';
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
   final sendFee = TextEditingController();
   final sendMemo = TextEditingController();
   final sendNote = TextEditingController();
-  late int divisibility = 8;
   String visibleAmount = '0';
-  String visibleFiatAmount = '';
   bool validatedAddress = true;
   String validatedAmount = '-1';
   bool useWallet = false;
-  double holding = 0.0;
   FocusNode sendAssetFocusNode = FocusNode();
   FocusNode sendAddressFocusNode = FocusNode();
   FocusNode sendAmountFocusNode = FocusNode();
@@ -55,7 +53,7 @@ class _SendState extends State<Send> {
   FocusNode sendMemoFocusNode = FocusNode();
   FocusNode sendNoteFocusNode = FocusNode();
   FocusNode previewFocusNode = FocusNode();
-  FeeRate feeRate = FeeRates.standard;
+  ravencoin.FeeRate feeRate = ravencoin.FeeRates.standard;
   String addressName = '';
   bool showPaste = false;
   String clipboard = '';
@@ -239,402 +237,133 @@ class _SendState extends State<Send> {
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
-    var symbol = streams.spend.form.value?.symbol ??
-        pros.securities.currentCrypto.symbol;
-    symbol = symbol == chainName(pros.settings.chain)
-        ? pros.securities.currentCrypto.symbol
-        : symbol;
-    security = pros.securities.primaryIndex.getOne(
-        symbol,
-        symbol == 'RVN' && pros.settings.chain == Chain.ravencoin ||
-                symbol == 'EVR' && pros.settings.chain == Chain.evrmore
-            ? SecurityType.crypto
-            : SecurityType.asset,
-        pros.settings.chain,
-        pros.settings.net)!;
     useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
       handlePopulateFromQR(data['qrCode']);
       data.remove('qrCode');
-    }
-    divisibility = pros.assets.primaryIndex
-            .getOne(symbol, security.chain, security.net)
-            ?.divisibility ??
-        8;
-    var possibleHoldings = [
-      for (var balance in Current.holdings)
-        if (balance.security.symbol == symbol) utils.satToAmount(balance.value)
-    ];
-    if (possibleHoldings.length > 0) {
-      holding = possibleHoldings[0];
-    }
-    try {
-      visibleFiatAmount = services.conversion.securityAsReadable(
-          utils.amountToSat(double.parse(visibleAmount)),
-          symbol: symbol,
-          asUSD: true);
-    } catch (e) {
-      visibleFiatAmount = '';
     }
     if (!loaded) {
       FocusScope.of(context).unfocus();
       loaded = true;
     }
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(), child: body());
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: BlocProvider<SimpleSendFormCubit>(
+          create: (context) => SimpleSendFormCubit(),
+          child: BlocBuilder<SimpleSendFormCubit, SimpleSendFormState>(
+              bloc: BlocProvider.of<SimpleSendFormCubit>(context)..enter(),
+              builder: (context, state) {
+                final cubit = BlocProvider.of<SimpleSendFormCubit>(context);
+                return BackdropLayers(
+                  backAlignment: Alignment.bottomCenter,
+                  frontAlignment: Alignment.topCenter,
+                  front: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      CoinSpec(
+                          pageTitle: 'Send',
+                          security: state.security,
+                          color: Theme.of(context).backgroundColor),
+                      FrontCurve(
+                          fuzzyTop: false,
+                          height: 8,
+                          frontLayerBoxShadow: [
+                            BoxShadow(
+                                color: const Color(0x33000000),
+                                offset: Offset(0, -2),
+                                blurRadius: 3),
+                            BoxShadow(
+                                color: const Color(0xFFFFFFFF),
+                                offset: Offset(0, 2),
+                                blurRadius: 1),
+                            BoxShadow(
+                                color: const Color(0x1FFFFFFF),
+                                offset: Offset(0, 3),
+                                blurRadius: 2),
+                            BoxShadow(
+                                color: const Color(0x3DFFFFFF),
+                                offset: Offset(0, 4),
+                                blurRadius: 4),
+                          ]),
+                    ],
+                  ),
+                  back: Container(
+                      color: AppColors.white,
+                      child: Stack(
+                        children: [
+                          ListView(
+                            physics: ClampingScrollPhysics(),
+                            padding: EdgeInsets.only(
+                                left: 16, right: 16, top: 16, bottom: 0),
+                            children: <Widget>[
+                              SizedBox(height: 8),
+                              if (Platform.isIOS) SizedBox(height: 8),
+                              Container(height: 201),
+                              SizedBox(height: 8),
+                              SendAssetField(
+                                cubit: cubit,
+                                state: state,
+                                focus: sendAssetFocusNode,
+                                nextFocus: sendAddressFocusNode,
+                              ),
+                              SizedBox(height: 16),
+                              //toName,
+                              SendAddressField(
+                                cubit: cubit,
+                                state: state,
+                                focus: sendAddressFocusNode,
+                                nextFocus: sendAmountFocusNode,
+                              ),
+                              SizedBox(height: 16),
+                              SendAmountField(
+                                cubit: cubit,
+                                state: state,
+                                focus: sendAmountFocusNode,
+                                nextFocus: sendAmountFocusNode,
+                              ),
+                              SizedBox(height: 16),
+                              SendFeeField(
+                                cubit: cubit,
+                                state: state,
+                                focus: sendFeeFocusNode,
+                                nextFocus: sendFeeFocusNode,
+                              ),
+                              SizedBox(height: 16),
+                              SendMemoField(
+                                cubit: cubit,
+                                state: state,
+                                focus: sendMemoFocusNode,
+                                nextFocus: sendNoteFocusNode,
+                              ),
+                              SizedBox(height: 16),
+                              SendNoteField(
+                                cubit: cubit,
+                                state: state,
+                                focus: sendNoteFocusNode,
+                                nextFocus: previewFocusNode,
+                              ),
+                              SizedBox(height: 8),
+                              SizedBox(height: 56),
+                              SizedBox(height: 16),
+                            ],
+                          ),
+                          KeyboardHidesWidgetWithDelay(
+                              child: components.buttons.layeredButtons(
+                            context,
+                            buttons: [
+                              sendTransactionButton(disabled: !allValidation())
+                            ],
+                            widthSpacer: SizedBox(width: 16),
+                          ))
+                        ],
+                      )),
+                );
+              })),
+    );
   }
-
-  Widget body() => BackdropLayers(
-        backAlignment: Alignment.bottomCenter,
-        frontAlignment: Alignment.topCenter,
-        front: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            CoinSpec(
-                pageTitle: 'Send',
-                security: security,
-                color: Theme.of(context).backgroundColor),
-            FrontCurve(fuzzyTop: false, height: 8, frontLayerBoxShadow: [
-              BoxShadow(
-                  color: const Color(0x33000000),
-                  offset: Offset(0, -2),
-                  blurRadius: 3),
-              BoxShadow(
-                  color: const Color(0xFFFFFFFF),
-                  offset: Offset(0, 2),
-                  blurRadius: 1),
-              BoxShadow(
-                  color: const Color(0x1FFFFFFF),
-                  offset: Offset(0, 3),
-                  blurRadius: 2),
-              BoxShadow(
-                  color: const Color(0x3DFFFFFF),
-                  offset: Offset(0, 4),
-                  blurRadius: 4),
-            ]),
-          ],
-        ),
-        back: content(scrollController),
-      );
-
-  Widget content(ScrollController scrollController) => Container(
-      color: AppColors.white,
-      child: Stack(
-        children: [
-          ListView(
-            physics: ClampingScrollPhysics(),
-            padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
-            children: <Widget>[
-              SizedBox(height: 8),
-              if (Platform.isIOS) SizedBox(height: 8),
-              Container(height: 201),
-              SizedBox(height: 8),
-              sendAssetField,
-              SizedBox(height: 16),
-              //toName,
-              sendAddressField,
-              SizedBox(height: 16),
-              sendAmountField,
-              SizedBox(height: 16),
-              sendFeeField,
-              SizedBox(height: 16),
-              sendMemoField,
-              SizedBox(height: 16),
-              sendNoteField,
-              SizedBox(height: 8),
-              SizedBox(height: 56),
-              SizedBox(height: 16),
-            ],
-          ),
-          KeyboardHidesWidgetWithDelay(
-              child: components.buttons.layeredButtons(
-            context,
-            buttons: [sendTransactionButton(disabled: !allValidation())],
-            widthSpacer: SizedBox(width: 16),
-          ))
-        ],
-      ));
-
-  Widget get sendAssetField => TextFieldFormatted(
-        focusNode: sendAssetFocusNode,
-        controller: sendAsset,
-        readOnly: true,
-        textInputAction: TextInputAction.next,
-        decoration: components.styles.decorations.textField(context,
-            focusNode: sendAssetFocusNode,
-            labelText: 'Asset',
-            hintText: chainName(pros.settings.chain),
-            suffixIcon: IconButton(
-              icon: Padding(
-                  padding: EdgeInsets.only(right: 14),
-                  child: Icon(Icons.expand_more_rounded,
-                      color: Color(0xDE000000))),
-              onPressed: _produceAssetModal,
-            )),
-        onTap: () {
-          _produceAssetModal();
-          setState(() {});
-        },
-        onEditingComplete: () async {
-          FocusScope.of(context).requestFocus(sendAddressFocusNode);
-        },
-      );
-
-  Widget get toName =>
-      Visibility(visible: addressName != '', child: Text('To: $addressName'));
-
-  Widget get sendAddressField => TextFieldFormatted(
-        //onTap: () async {
-        //  clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-        //  setState(() {});
-        //},
-        focusNode: sendAddressFocusNode,
-        controller: sendAddress,
-        textInputAction: TextInputAction.next,
-        selectionControls: CustomMaterialTextSelectionControls(
-            context: components.navigator.scaffoldContext,
-            offset: Offset(0, 0)),
-        autocorrect: false,
-        inputFormatters: [
-          FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
-        ],
-        labelText: 'To',
-        hintText: 'Address',
-        errorText: sendAddress.text != '' && !_validateAddress(sendAddress.text)
-            ? 'Unrecognized Address'
-            : null,
-        suffixIcon: //clipboard != '' && _validateAddress(clipboard)
-            //?
-            IconButton(
-                icon: Padding(
-                    padding: EdgeInsets.only(right: 14),
-                    child: Icon(Icons.paste_rounded, color: Color(0xDE000000))),
-                onPressed: () async {
-                  clipboard =
-                      (await Clipboard.getData('text/plain'))?.text ?? '';
-                  //setState(() => sendAddress.text = clipboard);
-                  streams.spend.form.add(SpendForm.merge(
-                    form: streams.spend.form.value,
-                    symbol: sendAsset.text,
-                    fee: sendFee.text,
-                    address: clipboard,
-                  ));
-                }),
-        //: null,
-        onChanged: (value) {
-          /// just always put it in
-          //if (_validateAddressColor(value)) {
-          streams.spend.form.add(SpendForm.merge(
-            form: streams.spend.form.value,
-            symbol: sendAsset.text,
-            fee: sendFee.text,
-            address: value,
-          ));
-          //}
-        },
-        onEditingComplete: () {
-          /// just always put it in
-          //if (_validateAddressColor(sendAddress.text)) {
-          streams.spend.form.add(SpendForm.merge(
-            form: streams.spend.form.value,
-            symbol: sendAsset.text,
-            fee: sendFee.text,
-            address: sendAddress.text,
-          ));
-          //}
-          FocusScope.of(context).requestFocus(sendAmountFocusNode);
-          setState(() {});
-        },
-      );
-
-  Widget get sendAmountField => TextFieldFormatted(
-        focusNode: sendAmountFocusNode,
-        controller: sendAmount,
-        textInputAction: TextInputAction.next,
-        keyboardType:
-            TextInputType.numberWithOptions(decimal: true, signed: false),
-        inputFormatters: <TextInputFormatter>[
-          //DecimalTextInputFormatter(decimalRange: divisibility)
-          FilteringTextInputFormatter(RegExp(r'[.0-9]'), allow: true)
-        ],
-        labelText: 'Amount',
-        hintText: 'Quantity',
-        errorText: sendAmount.text == ''
-            ? null
-            //: sendAmount.text.split('.').length > 1
-            //    ? 'invalid number'
-            : sendAmount.text == '0.0'
-                ? 'must be greater than 0'
-                : asDouble(sendAmount.text) > holding
-                    ? 'too large'
-                    : (String x) {
-                        if (x.isNumeric) {
-                          var y = x.toNum();
-                          if (y != null && y.isRVNAmount) {
-                            return true;
-                          }
-                        }
-                        return false;
-                      }(sendAmount.text)
-                        ? null
-                        : 'Unrecognized Amount',
-        // put ability to put it in as USD here
-        /* // functionality has been moved to header
-                    suffixText: sendAll ? "don't send all" : 'send all',
-                    suffixStyle: Theme.of(context).textTheme.caption,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                          sendAll ? Icons.not_interested : Icons.all_inclusive,
-                          color: Color(0xFF606060)),
-                      onPressed: () {
-                        if (!sendAll) {
-                          sendAll = true;
-                          sendAmount.text = holding.toString();
-                        } else {
-                          sendAll = false;
-                          sendAmount.text = '';
-                        }
-                        verifyVisibleAmount(sendAmount.text);
-                      },
-                    ),
-                    */
-        onChanged: (value) {
-          if (asDouble(value) > holding) {
-            value = holding.toString();
-            sendAmount.text = holding.toString();
-          }
-          visibleAmount = verifyVisibleAmount(value);
-          streams.spend.form.add(SpendForm.merge(
-            form: streams.spend.form.value,
-            symbol: sendAsset.text,
-            fee: sendFee.text,
-            amount: asDouble(visibleAmount),
-          ));
-        },
-        onEditingComplete: () {
-          //sendAmount.text = cleanDecAmount(
-          //  sendAmount.text,
-          //  zeroToBlank: true,
-          //);
-          sendAmount.text =
-              enforceDivisibility(sendAmount.text, divisibility: divisibility);
-          visibleAmount = verifyVisibleAmount(sendAmount.text);
-          streams.spend.form.add(SpendForm.merge(
-            form: streams.spend.form.value,
-            symbol: sendAsset.text,
-            fee: sendFee.text,
-            amount: asDouble(visibleAmount),
-          ));
-          //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
-          //FocusScope.of(context).requestFocus(sendFeeFocusNode);
-          FocusScope.of(context).unfocus();
-          setState(() {});
-        },
-      );
 
   double asDouble(String visibleAmount) =>
       ['', '.'].contains(visibleAmount) ? 0 : double.parse(visibleAmount);
-
-  Widget get sendFeeField => TextFieldFormatted(
-        onTap: () {
-          _produceFeeModal();
-          setState(() {});
-        },
-        focusNode: sendFeeFocusNode,
-        controller: sendFee,
-        readOnly: true,
-        textInputAction: TextInputAction.next,
-        labelText: 'Transaction Speed',
-        hintText: 'Standard',
-        suffixIcon: IconButton(
-            icon: Padding(
-                padding: EdgeInsets.only(right: 14),
-                child:
-                    Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
-            onPressed: () {
-              _produceFeeModal();
-              setState(() {});
-            }),
-        onChanged: (String? newValue) {
-          feeRate = {
-                'Cheap': FeeRates.cheap,
-                'Standard': FeeRates.standard,
-                'Fast': FeeRates.fast,
-              }[newValue] ??
-              FeeRates.standard;
-          FocusScope.of(context).requestFocus(sendMemoFocusNode);
-          setState(() {});
-        },
-      );
-
-  Widget get sendMemoField => TextFieldFormatted(
-      onTap: () async {
-        clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-        setState(() {});
-      },
-      focusNode: sendMemoFocusNode,
-      controller: sendMemo,
-      textInputAction: TextInputAction.next,
-      labelText: 'Memo',
-      hintText: 'IPFS',
-      helperText:
-          sendMemoFocusNode.hasFocus ? 'will be saved on the blockchain' : null,
-      helperStyle: Theme.of(context)
-          .textTheme
-          .caption!
-          .copyWith(height: .7, color: AppColors.primary),
-      errorText: verifyMemo() ? null : 'too long',
-      suffixIcon: clipboard.isAssetData || clipboard.isIpfs
-          ? IconButton(
-              icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-              onPressed: () async {
-                sendMemo.text =
-                    (await Clipboard.getData('text/plain'))?.text ?? '';
-              })
-          : null,
-      onChanged: (value) {
-        setState(() {});
-      },
-      onEditingComplete: () {
-        FocusScope.of(context).requestFocus(sendNoteFocusNode);
-        setState(() {});
-      });
-
-  Widget get sendNoteField => TextFieldFormatted(
-      onTap: () async {
-        clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-        setState(() {});
-      },
-      focusNode: sendNoteFocusNode,
-      controller: sendNote,
-      textInputAction: TextInputAction.next,
-      labelText: 'Note',
-      hintText: 'Purchase',
-      helperText:
-          sendNoteFocusNode.hasFocus ? 'will be saved to your phone' : null,
-      helperStyle: Theme.of(context)
-          .textTheme
-          .caption!
-          .copyWith(height: .7, color: AppColors.primary),
-      suffixIcon: clipboard == '' ||
-              clipboard.isIpfs ||
-              clipboard.isAddressRVN ||
-              clipboard.isAddressRVNt
-          ? null
-          : IconButton(
-              icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-              onPressed: () async {
-                sendNote.text =
-                    (await Clipboard.getData('text/plain'))?.text ?? '';
-              },
-            ),
-      onChanged: (value) {
-        setState(() {});
-      },
-      onEditingComplete: () {
-        FocusScope.of(context).requestFocus(previewFocusNode);
-        setState(() {});
-      });
 
   bool _validateAddress([String? address]) {
     address ??= sendAddress.text;
@@ -668,7 +397,8 @@ class _SendState extends State<Send> {
     if (amount == '0' || amount != value) {
     } else {
       // todo: estimate fee
-      if (amount != '' && double.parse(amount) <= holding) {
+      if (amount != '' &&
+          double.parse(amount) <= state.security.balance.value) {
       } else {}
     }
     //setState(() => {});
@@ -687,7 +417,7 @@ class _SendState extends State<Send> {
     if (sendAmount.text == '') {
       return false;
     } else {
-      return holding >= double.parse(sendAmount.text);
+      return state.security.balance.value >= double.parse(sendAmount.text);
     }
   }
 
@@ -703,12 +433,12 @@ class _SendState extends State<Send> {
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       var sendAmountAsSats = utils.textAmountToSat(sendAmount.text);
-      if (holding >= double.parse(sendAmount.text)) {
+      if (state.security.balance.value >= double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
-          sendAll: holding == visibleAmount.toDouble(),
+          sendAll: state.security.balance.value == visibleAmount.toDouble(),
           wallet: Current.wallet,
           sendAddress: sendAddress.text,
-          holding: holding,
+          holding: state.security.balance.value,
           visibleAmount: visibleAmount,
           sendAmountAsSats: sendAmountAsSats,
           feeRate: feeRate,
@@ -820,3 +550,381 @@ class _SendState extends State<Send> {
     SelectionItems(context, modalSet: SelectionSet.Fee).build();
   }
 }
+
+class SendAssetField extends StatelessWidget {
+  final Cubit cubit;
+  final State state;
+  final FocusNode focus;
+  final FocusNode nextFocus;
+  SendAssetField({
+    Key? key,
+    required this.cubit,
+    required this.state,
+    required this.focus,
+    required this.nextFocus,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => TextFieldFormatted(
+        focusNode: focus,
+        controller: sendAsset,
+        readOnly: true,
+        textInputAction: TextInputAction.next,
+        decoration: components.styles.decorations.textField(context,
+            focusNode: focus,
+            labelText: 'Asset',
+            hintText: chainName(pros.settings.chain),
+            suffixIcon: IconButton(
+              icon: Padding(
+                  padding: EdgeInsets.only(right: 14),
+                  child: Icon(Icons.expand_more_rounded,
+                      color: Color(0xDE000000))),
+              onPressed: _produceAssetModal,
+            )),
+        onTap: () {
+          _produceAssetModal();
+          setState(() {});
+        },
+        onEditingComplete: () async {
+          FocusScope.of(context).requestFocus(nextFocus);
+        },
+      );
+}
+
+class ToName extends StatelessWidget {
+  final Cubit cubit;
+  final State state;
+  final FocusNode focus;
+  final FocusNode nextFocus;
+  ToName({
+    Key? key,
+    required this.cubit,
+    required this.state,
+    required this.focus,
+    required this.nextFocus,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+      Visibility(visible: addressName != '', child: Text('To: $addressName'));
+}
+
+class SendAddressField extends StatelessWidget {
+  final Cubit cubit;
+  final State state;
+  final FocusNode focus;
+  final FocusNode nextFocus;
+  SendAddressField({
+    Key? key,
+    required this.cubit,
+    required this.state,
+    required this.focus,
+    required this.nextFocus,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => TextFieldFormatted(
+        //onTap: () async {
+        //  clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+        //  setState(() {});
+        //},
+        focusNode: focus,
+        controller: sendAddress,
+        textInputAction: TextInputAction.next,
+        selectionControls: CustomMaterialTextSelectionControls(
+            context: components.navigator.scaffoldContext,
+            offset: Offset(0, 0)),
+        autocorrect: false,
+        inputFormatters: [
+          FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'), allow: true)
+        ],
+        labelText: 'To',
+        hintText: 'Address',
+        errorText: sendAddress.text != '' && !_validateAddress(sendAddress.text)
+            ? 'Unrecognized Address'
+            : null,
+        suffixIcon: //clipboard != '' && _validateAddress(clipboard)
+            //?
+            IconButton(
+                icon: Padding(
+                    padding: EdgeInsets.only(right: 14),
+                    child: Icon(Icons.paste_rounded, color: Color(0xDE000000))),
+                onPressed: () async {
+                  clipboard =
+                      (await Clipboard.getData('text/plain'))?.text ?? '';
+                  setState(() => sendAddress.text = clipboard);
+                }),
+        //: null,
+        onChanged: (value) {
+          /// just always put it in
+          //if (_validateAddressColor(value)) {
+          streams.spend.form.add(SpendForm.merge(
+            form: streams.spend.form.value,
+            symbol: sendAsset.text,
+            fee: sendFee.text,
+            address: value,
+          ));
+          //}
+        },
+        onEditingComplete: () {
+          /// just always put it in
+          //if (_validateAddressColor(sendAddress.text)) {
+          streams.spend.form.add(SpendForm.merge(
+            form: streams.spend.form.value,
+            symbol: sendAsset.text,
+            fee: sendFee.text,
+            address: sendAddress.text,
+          ));
+          //}
+          FocusScope.of(context).requestFocus(nextFocus);
+          setState(() {});
+        },
+      );
+}
+
+class SendAmountField extends StatelessWidget {
+  final Cubit cubit;
+  final State state;
+  final FocusNode focus;
+  final FocusNode nextFocus;
+  SendAmountField({
+    Key? key,
+    required this.cubit,
+    required this.state,
+    required this.focus,
+    required this.nextFocus,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => TextFieldFormatted(
+        focusNode: focus,
+        controller: sendAmount,
+        textInputAction: TextInputAction.next,
+        keyboardType:
+            TextInputType.numberWithOptions(decimal: true, signed: false),
+        inputFormatters: <TextInputFormatter>[
+          //DecimalTextInputFormatter(decimalRange: divisibility)
+          FilteringTextInputFormatter(RegExp(r'[.0-9]'), allow: true)
+        ],
+        labelText: 'Amount',
+        hintText: 'Quantity',
+        errorText: sendAmount.text == ''
+            ? null
+            //: sendAmount.text.split('.').length > 1
+            //    ? 'invalid number'
+            : sendAmount.text == '0.0'
+                ? 'must be greater than 0'
+                : asDouble(sendAmount.text) > state.security.balance.value
+                    ? 'too large'
+                    : (String x) {
+                        if (x.isNumeric) {
+                          var y = x.toNum();
+                          if (y != null && y.isRVNAmount) {
+                            return true;
+                          }
+                        }
+                        return false;
+                      }(sendAmount.text)
+                        ? null
+                        : 'Unrecognized Amount',
+        // put ability to put it in as USD here
+        /* // functionality has been moved to header
+                    suffixText: sendAll ? "don't send all" : 'send all',
+                    suffixStyle: Theme.of(context).textTheme.caption,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          sendAll ? Icons.not_interested : Icons.all_inclusive,
+                          color: Color(0xFF606060)),
+                      onPressed: () {
+                        if (!sendAll) {
+                          sendAll = true;
+                          sendAmount.text = holding.toString();
+                        } else {
+                          sendAll = false;
+                          sendAmount.text = '';
+                        }
+                        verifyVisibleAmount(sendAmount.text);
+                      },
+                    ),
+                    */
+        onChanged: (value) {
+          if (asDouble(value) > state.security.balance.value) {
+            value = state.security.balance.value.toString();
+            sendAmount.text = state.security.balance.value.toString();
+          }
+          visibleAmount = verifyVisibleAmount(value);
+          streams.spend.form.add(SpendForm.merge(
+            form: streams.spend.form.value,
+            symbol: sendAsset.text,
+            fee: sendFee.text,
+            amount: asDouble(visibleAmount),
+          ));
+        },
+        onEditingComplete: () {
+          //sendAmount.text = cleanDecAmount(
+          //  sendAmount.text,
+          //  zeroToBlank: true,
+          //);
+          sendAmount.text = enforceDivisibility(sendAmount.text,
+              divisibility: state.security.divisibility);
+          visibleAmount = verifyVisibleAmount(sendAmount.text);
+          streams.spend.form.add(SpendForm.merge(
+            form: streams.spend.form.value,
+            symbol: sendAsset.text,
+            fee: sendFee.text,
+            amount: asDouble(visibleAmount),
+          ));
+          //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
+          //FocusScope.of(context).requestFocus(sendFeeFocusNode);
+          FocusScope.of(context).unfocus();
+          setState(() {});
+        },
+      );
+}
+
+class SendFeeField extends StatelessWidget {
+  final Cubit cubit;
+  final State state;
+  final FocusNode focus;
+  final FocusNode nextFocus;
+  SendFeeField({
+    Key? key,
+    required this.cubit,
+    required this.state,
+    required this.focus,
+    required this.nextFocus,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => TextFieldFormatted(
+        onTap: () {
+          _produceFeeModal();
+          setState(() {});
+        },
+        focusNode: focus,
+        controller: sendFee,
+        readOnly: true,
+        textInputAction: TextInputAction.next,
+        labelText: 'Transaction Speed',
+        hintText: 'Standard',
+        suffixIcon: IconButton(
+            icon: Padding(
+                padding: EdgeInsets.only(right: 14),
+                child:
+                    Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
+            onPressed: () {
+              _produceFeeModal();
+              setState(() {});
+            }),
+        onChanged: (String? newValue) {
+          feeRate = {
+                'Cheap': ravencoin.FeeRates.cheap,
+                'Standard': ravencoin.FeeRates.standard,
+                'Fast': ravencoin.FeeRates.fast,
+              }[newValue] ??
+              ravencoin.FeeRates.standard;
+          FocusScope.of(context).requestFocus(nextFocus);
+          setState(() {});
+        },
+      );
+}
+
+class SendMemoField extends StatelessWidget {
+  final Cubit cubit;
+  final State state;
+  final FocusNode focus;
+  final FocusNode nextFocus;
+  SendMemoField({
+    Key? key,
+    required this.cubit,
+    required this.state,
+    required this.focus,
+    required this.nextFocus,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => TextFieldFormatted(
+      onTap: () async {
+        clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+        setState(() {});
+      },
+      focusNode: focus,
+      controller: sendMemo,
+      textInputAction: TextInputAction.next,
+      labelText: 'Memo',
+      hintText: 'IPFS',
+      helperText:
+          sendMemoFocusNode.hasFocus ? 'will be saved on the blockchain' : null,
+      helperStyle: Theme.of(context)
+          .textTheme
+          .caption!
+          .copyWith(height: .7, color: AppColors.primary),
+      errorText: verifyMemo() ? null : 'too long',
+      suffixIcon: clipboard.isAssetData || clipboard.isIpfs
+          ? IconButton(
+              icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+              onPressed: () async {
+                sendMemo.text =
+                    (await Clipboard.getData('text/plain'))?.text ?? '';
+              })
+          : null,
+      onChanged: (value) {
+        setState(() {});
+      },
+      onEditingComplete: () {
+        FocusScope.of(context).requestFocus(nextFocus);
+        setState(() {});
+      });
+}
+
+class SendNoteField extends StatelessWidget {
+  final Cubit cubit;
+  final State state;
+  final FocusNode focus;
+  final FocusNode nextFocus;
+  SendNoteField({
+    Key? key,
+    required this.cubit,
+    required this.state,
+    required this.focus,
+    required this.nextFocus,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => TextFieldFormatted(
+      onTap: () async {
+        clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
+        setState(() {});
+      },
+      focusNode: focus,
+      controller: sendNote,
+      textInputAction: TextInputAction.next,
+      labelText: 'Note',
+      hintText: 'Purchase',
+      helperText:
+          sendNoteFocusNode.hasFocus ? 'will be saved to your phone' : null,
+      helperStyle: Theme.of(context)
+          .textTheme
+          .caption!
+          .copyWith(height: .7, color: AppColors.primary),
+      suffixIcon: clipboard == '' ||
+              clipboard.isIpfs ||
+              clipboard.isAddressRVN ||
+              clipboard.isAddressRVNt
+          ? null
+          : IconButton(
+              icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+              onPressed: () async {
+                sendNote.text =
+                    (await Clipboard.getData('text/plain'))?.text ?? '';
+              },
+            ),
+      onChanged: (value) {
+        setState(() {});
+      },
+      onEditingComplete: () {
+        FocusScope.of(context).requestFocus(nextFocus);
+        setState(() {});
+      });
+}
+*/

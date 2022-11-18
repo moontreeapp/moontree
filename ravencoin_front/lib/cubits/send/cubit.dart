@@ -1,37 +1,40 @@
-import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_front/cubits/state.dart';
+import 'package:ravencoin_wallet/ravencoin_wallet.dart'
+    show FeeRate, FeeRates, standardFee, cheapFee, fastFee;
+import 'package:utils/zips.dart' show zipLists;
 
 part 'state.dart';
 
-class SimpleSendForm extends Cubit<SimpleSendFormState> {
-  SimpleSendForm() : super(SimpleSendFormState.initial());
+class SimpleSendFormCubit extends Cubit<SimpleSendFormState> {
+  SimpleSendFormCubit() : super(SimpleSendFormState.initial());
 
   SimpleSendFormState submitting() => state.load(isSubmitting: true);
 
   Future<SimpleSendFormState> set(
-    String? symbol,
-    double? amount,
-    String? fee,
-    String? note,
+    Security? security,
     String? address,
+    double? amount,
+    FeeRate? fee,
+    String? memo,
+    String? note,
     String? addressName,
     bool? isSubmitting,
   ) async =>
       state.load(
-        symbol: symbol,
+        security: security,
+        address: address,
         amount: amount,
         fee: fee,
+        memo: memo,
         note: note,
-        address: address,
         addressName: addressName,
         isSubmitting: isSubmitting,
       );
 
-  //void enter() async {
-  //  emit(await load());
-  //}
+  void enter() async => emit(state);
 
   //void submit() async {
   //  emit(await submitSend());

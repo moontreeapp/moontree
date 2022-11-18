@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/colors.dart';
-import 'package:ravencoin_front/utils/zips.dart';
+import 'package:utils/list.dart' show range;
 
 enum PlaceholderType { wallet, asset, swap }
 

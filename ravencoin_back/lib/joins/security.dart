@@ -18,3 +18,15 @@ extension SecurityHasOneUSDRate on Security {
 extension SecurityMayHaveAName on Security {
   String get name => symbolName(symbol);
 }
+
+extension SecurityHasADivisibility on Security {
+  int get divisibility => asset?.divisibility ?? 8;
+}
+
+extension SecurityHasBalances on Security {
+  List<Balance> get balances => pros.balances.bySecurity.getAll(this);
+  Balance? get balance => pros.balances.bySecurity
+      .getAll(this)
+      .where((b) => b.walletId == pros.settings.currentWalletId)
+      .firstOrNull;
+}

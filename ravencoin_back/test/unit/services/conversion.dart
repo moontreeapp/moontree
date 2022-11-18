@@ -1,20 +1,15 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_front/components/text.dart';
-import '../../fixtures/fixtures.dart' as fixtures;
 
 void main() {
-  final Security security = Security(
+  final security = Security(
       symbol: 'MOONTREE',
       securityType: SecurityType.asset,
       chain: Chain.ravencoin,
       net: Net.test);
-  final textC = TextComponents();
+  final textC = services.conversion;
 
   group('securityAsReadable', () {
-    setUp(fixtures.useFixtureSources);
-    tearDown(fixtures.deleteDatabase);
-
     test('asset amount without divisibility', () {
       expect(textC.securityAsReadable(0, symbol: 'MOONTREE'), '0');
       expect(textC.securityAsReadable(123, symbol: 'MOONTREE'), '123');

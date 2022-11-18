@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:utils/extensions/map.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
@@ -136,7 +137,8 @@ class _NavBarState extends State<NavBar> {
                           //                .where((u) => u.height == 0)
                           //                .length >
                           //            0)
-                          streams.claim.unclaimed.value.isEmpty &&
+                          streams.claim.unclaimed.value
+                                  .getOr(Current.walletId, <Vout>{}).isEmpty &&
                               (!walletIsEmpty &&
                                   connectionStatus ==
                                       ConnectionStatus.connected),

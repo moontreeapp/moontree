@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -35,6 +37,7 @@ class _ReceiveState extends State<Receive> {
   String username = '';
   String? errorText;
   List<Security> fetchedNames = <Security>[];
+  List<StreamSubscription> listeners = [];
 
   bool get rawAddress =>
       requestMessage.text == '' &&
@@ -73,10 +76,36 @@ class _ReceiveState extends State<Receive> {
     //var s = Stopwatch()..start();
     requestMessage.addListener(_printLatestValue);
     //print('init: ${s.elapsed}');
+    /// when the client isn't busy anymore, refresh
+    listeners.add(streams.client.busy.listen((bool busy) async {
+      if (!busy && Current.wallet.addresses.isNotEmpty) {
+        print('receive triggered by client not busy');
+        address = null;
+        setState(() {});
+      }
+    }));
+
+    listeners.add(pros.addresses.change.listen((Change<Address> change) async {
+      change.when(
+          loaded: (_) {},
+          added: (_) {
+            if (Current.wallet.externalAddresses.length == 1 ||
+                Current.wallet.addresses.length > 39) {
+              print('receive triggered by new address');
+              address = null;
+              setState(() {});
+            }
+          },
+          updated: (_) {},
+          removed: (_) {});
+    }));
   }
 
   @override
   void dispose() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
     // Clean up the controller when the widget is disposed.
     requestMessage.dispose();
     requestAmount.dispose();

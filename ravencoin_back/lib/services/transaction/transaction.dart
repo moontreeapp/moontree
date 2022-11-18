@@ -1,8 +1,8 @@
-import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
+import 'package:utils/extensions/map.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show TxGoals;
+import 'package:ravencoin_wallet/ravencoin_wallet.dart' show FeeRates;
 
 import 'maker.dart';
 
@@ -461,8 +461,8 @@ class TransactionService {
       pros.wallets.primaryIndex.getOne(toWalletId)!,
       NodeExposure.external,
     );
-    final utxos = streams.claim.unclaimed.value;
-    final claimAmount = streams.claim.unclaimed.value
+    final utxos = streams.claim.unclaimed.value.getOr(from.id, <Vout>{});
+    final claimAmount = utxos
         .map((e) => e.rvnValue)
         .reduce((value, element) => value + element);
 
@@ -470,7 +470,7 @@ class TransactionService {
       destinationAddress,
       SendEstimate(claimAmount, memo: memo, utxos: utxos.toList()),
       wallet: from,
-      goal: TxGoals.standard,
+      feeRate: FeeRates.standard,
     );
     streams.spend.send.add(TransactionNote(
       txHex: txEstimate.item1.toHex(),
@@ -518,7 +518,7 @@ class TransactionService {
             SendEstimate(from.RVNValue, memo: memo),
             wallet: from,
             securities: assetBalances.map((e) => e.security).toSet(),
-            goal: TxGoals.standard,
+            feeRate: FeeRates.standard,
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
@@ -566,7 +566,7 @@ class TransactionService {
               SendEstimate(balance.value,
                   security: balance.security, memo: memo),
               wallet: from,
-              goal: TxGoals.standard,
+              feeRate: FeeRates.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
@@ -607,7 +607,7 @@ class TransactionService {
                       security: null, memo: memo), // essentially ignored
                   utxosBySecurity: utxosBySecurity,
                   wallet: from,
-                  goal: TxGoals.standard,
+                  feeRate: FeeRates.standard,
                 );
                 streams.spend.send.add(TransactionNote(
                   txHex: txEstimate.item1.toHex(),
@@ -630,7 +630,7 @@ class TransactionService {
                   security: null, memo: memo), // essentially ignored
               utxosBySecurity: utxosBySecurity,
               wallet: from,
-              goal: TxGoals.standard,
+              feeRate: FeeRates.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
@@ -655,7 +655,7 @@ class TransactionService {
           destinationAddress,
           SendEstimate(from.RVNValue, memo: memo),
           wallet: from,
-          goal: TxGoals.standard,
+          feeRate: FeeRates.standard,
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
@@ -686,7 +686,7 @@ class TransactionService {
               SendEstimate(total, security: null, memo: memo),
               utxosCurrency: utxos,
               wallet: from,
-              goal: TxGoals.standard,
+              feeRate: FeeRates.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
@@ -708,7 +708,7 @@ class TransactionService {
                 security: null, memo: memo), // essentially ignored
             utxosCurrency: utxos,
             wallet: from,
-            goal: TxGoals.standard,
+            feeRate: FeeRates.standard,
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
@@ -762,7 +762,7 @@ class TransactionService {
           destinationAddress,
           SendEstimate(balance.value, security: balance.security),
           wallet: from,
-          goal: TxGoals.standard,
+          feeRate: FeeRates.standard,
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
@@ -778,7 +778,7 @@ class TransactionService {
         destinationAddress,
         SendEstimate(balance.value - fees, security: null),
         wallet: from,
-        goal: TxGoals.standard,
+        feeRate: FeeRates.standard,
       );
       streams.spend.send.add(TransactionNote(
         txHex: txEstimate.item1.toHex(),

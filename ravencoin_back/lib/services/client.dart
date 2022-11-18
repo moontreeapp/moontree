@@ -2,12 +2,12 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:utils/extensions/map.dart';
 
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/utilities/database.dart' as database;
 import 'package:ravencoin_back/utilities/lock.dart';
-import 'package:ravencoin_back/waiters/client.dart';
 import 'package:ravencoin_electrum/ravencoin_electrum.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
@@ -342,7 +342,8 @@ class SubscribeService {
           startupProcessRunning = false;
           if (!services.download.history.busy) {
             /// CLAIM FEATURE
-            if (streams.claim.unclaimed.value.isNotEmpty) {
+            if (streams.claim.unclaimed.value
+                .getOr(wallet.id, <Vout>{}).isNotEmpty) {
               /// CLAIM FEATURE, do nothing.
             } else {
               await services.download.history

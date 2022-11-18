@@ -4,6 +4,7 @@ import 'authentication.dart';
 import 'balance.dart';
 import 'cipher.dart';
 import 'client.dart';
+import 'conversion.dart';
 import 'transaction/transaction.dart';
 import 'password.dart';
 import 'developer.dart';
@@ -25,4 +26,5 @@ class services {
   static TutorialService tutorial = TutorialService();
   static VersionService version = VersionService();
   static DeveloperService developer = DeveloperService();
+  static ConversionService conversion = ConversionService();
 }

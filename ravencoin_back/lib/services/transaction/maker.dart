@@ -252,7 +252,7 @@ class SendRequest with ToStringMixin {
   late double holding;
   late String visibleAmount;
   late int sendAmountAsSats;
-  late TxGoal feeGoal;
+  late FeeRate feeRate;
   late Wallet wallet;
   late Security? security;
   late String? assetMemo;
@@ -265,7 +265,7 @@ class SendRequest with ToStringMixin {
     required this.holding,
     required this.visibleAmount,
     required this.sendAmountAsSats,
-    required this.feeGoal,
+    required this.feeRate,
     required this.wallet,
     this.security,
     this.assetMemo,
@@ -280,7 +280,7 @@ class SendRequest with ToStringMixin {
         holding,
         visibleAmount,
         sendAmountAsSats,
-        feeGoal,
+        feeRate,
         wallet,
         security ?? '?',
         assetMemo ?? '?',
@@ -294,7 +294,7 @@ class SendRequest with ToStringMixin {
         'holding',
         'visibleAmount',
         'sendAmountAsSats',
-        'feeGoal',
+        'feeRate',
         'wallet',
         'security',
         'assetMemo',
@@ -388,14 +388,14 @@ class TransactionMaker {
             sendRequest.sendAddress,
             estimate,
             wallet: sendRequest.wallet,
-            goal: sendRequest.feeGoal,
+            feeRate: sendRequest.feeRate,
             /*assetMemoExpiry: not captured yet*/
           )
         : await transaction(
             sendRequest.sendAddress,
             estimate,
             wallet: sendRequest.wallet,
-            goal: sendRequest.feeGoal,
+            feeRate: sendRequest.feeRate,
             /*assetMemoExpiry: not captured yet*/
           );
     return tuple;
@@ -417,7 +417,7 @@ class TransactionMaker {
             estimate,
             wallet: createRequest.wallet,
             ipfsData: createRequest.assetData,
-            goal: TxGoals.standard,
+            feeRate: FeeRates.standard,
           )
         : createRequest.isSub
             ? await transactionCreateSubAsset(
@@ -427,7 +427,7 @@ class TransactionMaker {
                 createRequest.reissuable ?? false,
                 wallet: createRequest.wallet,
                 ipfsData: createRequest.assetData,
-                goal: TxGoals.standard,
+                feeRate: FeeRates.standard,
               )
             :
             // Restricted and Qualifier
@@ -437,7 +437,7 @@ class TransactionMaker {
                 createRequest.reissuable ?? false,
                 wallet: createRequest.wallet,
                 ipfsData: createRequest.assetData,
-                goal: TxGoals.standard,
+                feeRate: FeeRates.standard,
               );
   }
 
@@ -464,7 +464,7 @@ class TransactionMaker {
                 reissueRequest.assetData == reissueRequest.originalAssetData
                     ? null
                     : reissueRequest.assetData,
-            goal: TxGoals.standard)
+            feeRate: FeeRates.standard)
         : await transactionReissueAsset(
             estimate,
             reissueRequest.originalDecimals ?? 0,
@@ -478,7 +478,7 @@ class TransactionMaker {
                 reissueRequest.assetData == reissueRequest.originalAssetData
                     ? null
                     : reissueRequest.assetData,
-            goal: TxGoals.standard);
+            feeRate: FeeRates.standard);
   }
 
   Future<Tuple2<ravencoin.Transaction, SendEstimate>>
@@ -486,7 +486,7 @@ class TransactionMaker {
     SendEstimate estimate, {
     required Wallet wallet,
     Uint8List? ipfsData,
-    TxGoal? goal,
+    FeeRate? feeRate,
     String? newAssetToAddress,
   }) async {
     ravencoin.TransactionBuilder? txb;
@@ -530,7 +530,7 @@ class TransactionMaker {
         txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueQualifier);
     await txb!.signEachInput(utxosRaven);
@@ -544,7 +544,7 @@ class TransactionMaker {
     String parentAsset, {
     required Wallet wallet,
     Uint8List? ipfsData,
-    TxGoal? goal,
+    FeeRate? feeRate,
     String? newAssetToAddress,
     String? parentAssetToAddress,
   }) async {
@@ -617,7 +617,7 @@ class TransactionMaker {
             asset: parentAsset);
       }
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueSubQualifier);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
@@ -635,7 +635,7 @@ class TransactionMaker {
     String? parentAssetToAddress,
     Uint8List? ipfsData,
     String? verifier,
-    TxGoal? goal,
+    FeeRate? feeRate,
   }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
@@ -694,7 +694,7 @@ class TransactionMaker {
         txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueRestricted);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
@@ -714,7 +714,7 @@ class TransactionMaker {
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    TxGoal? goal,
+    FeeRate? feeRate,
   }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
@@ -778,7 +778,7 @@ class TransactionMaker {
       }
 
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(pros.settings.network.burnAmounts.reissue);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
@@ -793,7 +793,7 @@ class TransactionMaker {
     bool tag, {
     required Wallet wallet,
     String? qualifierToAddress,
-    TxGoal? goal,
+    FeeRate? feeRate,
   }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
@@ -862,7 +862,7 @@ class TransactionMaker {
       }
 
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(pros.settings.network.burnAmounts.addTag);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
@@ -880,7 +880,7 @@ class TransactionMaker {
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    TxGoal? goal,
+    FeeRate? feeRate,
   }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
@@ -938,7 +938,7 @@ class TransactionMaker {
       }
 
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(pros.settings.network.burnAmounts.reissue);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
@@ -955,7 +955,7 @@ class TransactionMaker {
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    TxGoal? goal,
+    FeeRate? feeRate,
   }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
@@ -997,7 +997,7 @@ class TransactionMaker {
         txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueMain);
     await txb!.signEachInput(utxosRaven);
@@ -1015,7 +1015,7 @@ class TransactionMaker {
     String? parentOwnershipToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    TxGoal? goal,
+    FeeRate? feeRate,
   }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
@@ -1070,7 +1070,7 @@ class TransactionMaker {
         txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueSub);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
@@ -1087,7 +1087,7 @@ class TransactionMaker {
     String? newAssetToAddress,
     String? parentOwnershipToAddress,
     Uint8List? ipfsData,
-    TxGoal? goal,
+    FeeRate? feeRate,
   }) async {
     ravencoin.TransactionBuilder? txb;
     ravencoin.Transaction tx;
@@ -1140,7 +1140,7 @@ class TransactionMaker {
         txb.addChangeToAssetCreationOrReissuance(1, returnAddress, returnRaven);
       }
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setExtraFees(extraFee);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
@@ -1152,7 +1152,7 @@ class TransactionMaker {
       transactionBroadcastMessage(
     SendEstimate estimate, {
     required Wallet wallet,
-    TxGoal? goal,
+    FeeRate? feeRate,
   }) async {
     if (!(estimate.security!.symbol.contains('!') ||
         estimate.security!.symbol.contains('~'))) {
@@ -1200,7 +1200,7 @@ class TransactionMaker {
       );
 
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1211,7 +1211,7 @@ class TransactionMaker {
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
-    TxGoal? goal,
+    FeeRate? feeRate,
     int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder? txb;
@@ -1276,7 +1276,7 @@ class TransactionMaker {
         );
       }
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     estimate.setUTXOs(utxosRaven + utxosSecurity);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
@@ -1292,7 +1292,7 @@ class TransactionMaker {
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
-    TxGoal? goal,
+    FeeRate? feeRate,
     Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
@@ -1326,7 +1326,7 @@ class TransactionMaker {
     );
     var txb = makeTxBuilder(utxos, estimate);
     var tx = txb.buildSpoofedSigs();
-    estimate.setFees(tx.fee(goal: goal));
+    estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
     txb = makeTxBuilder(utxos, estimate);
     estimate.setUTXOs(utxos);
@@ -1344,7 +1344,7 @@ class TransactionMaker {
     SendEstimate estimate, {
     required Wallet wallet,
     required Set<Security> securities,
-    TxGoal? goal,
+    FeeRate? feeRate,
     Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
@@ -1389,7 +1389,7 @@ class TransactionMaker {
     }
     var txb = makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
     var tx = txb.buildSpoofedSigs();
-    estimate.setFees(tx.fee(goal: goal));
+    estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
     txb = makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
     final spentUtxos =
@@ -1410,7 +1410,7 @@ class TransactionMaker {
     SendEstimate estimate, {
     required Wallet wallet,
     required Map<Security, List<Vout>> utxosBySecurity,
-    TxGoal? goal,
+    FeeRate? feeRate,
     int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder? txb;
@@ -1455,7 +1455,7 @@ class TransactionMaker {
             expiry: assetMemoExpiry);
       }
       tx = txb.buildSpoofedSigs();
-      estimate.setFees(tx.fee(goal: goal));
+      estimate.setFees(tx.fee(goal: feeRate));
     }
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1469,7 +1469,7 @@ class TransactionMaker {
     SendEstimate estimate, {
     required Wallet wallet,
     required List<Vout> utxosCurrency,
-    TxGoal? goal,
+    FeeRate? feeRate,
     int? assetMemoExpiry,
   }) async {
     ravencoin.TransactionBuilder makeTxBuilder(
@@ -1495,7 +1495,7 @@ class TransactionMaker {
 
     var txb = makeTxBuilder(utxosCurrency, estimate);
     var tx = txb.buildSpoofedSigs();
-    estimate.setFees(tx.fee(goal: goal));
+    estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
     estimate.setUTXOs(utxosCurrency);
     txb = makeTxBuilder(utxosCurrency, estimate);
@@ -1510,7 +1510,7 @@ class TransactionMaker {
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
-    TxGoal? goal,
+    FeeRate? feeRate,
     Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
@@ -1538,7 +1538,7 @@ class TransactionMaker {
     var utxos = estimate.utxos;
     var txb = makeTxBuilder(utxos, estimate);
     var tx = txb.buildSpoofedSigs();
-    estimate.setFees(tx.fee(goal: goal));
+    estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
     txb = makeTxBuilder(utxos, estimate);
     await txb.signEachInput(utxos);

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:collection/collection.dart';
-
+import 'package:utils/extensions/map.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -377,7 +377,8 @@ class _HoldingList extends State<HoldingList> {
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = <Widget>[];
     if ( //services.developer.advancedDeveloperMode == true ||
-        streams.claim.unclaimed.value.isNotEmpty &&
+        streams.claim.unclaimed.value
+                .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
             (pros.settings.chain == Chain.evrmore &&
                 pros.blocks.records.first.height <= 60 * 24 * 60 &&
                 pros.unspents.records.where((u) => u.height == 0).length > 0)) {
@@ -483,61 +484,61 @@ class _HoldingList extends State<HoldingList> {
         ],
         values: [
           if (holding.main != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.main!.value,
               security: holding.main!.security,
               asUSD: showUSD,
             ),
           if (holding.sub != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.sub!.value,
               security: holding.sub!.security,
               asUSD: showUSD,
             ),
           if (holding.subAdmin != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.subAdmin!.value,
               security: holding.subAdmin!.security,
               asUSD: showUSD,
             ),
           if (holding.admin != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.admin!.value,
               security: holding.admin!.security,
               asUSD: showUSD,
             ),
           if (holding.restricted != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.restricted!.value,
               security: holding.restricted!.security,
               asUSD: showUSD,
             ),
           if (holding.restrictedAdmin != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.restrictedAdmin!.value,
               security: holding.restrictedAdmin!.security,
               asUSD: showUSD,
             ),
           if (holding.qualifier != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.qualifier!.value,
               security: holding.qualifier!.security,
               asUSD: showUSD,
             ),
           if (holding.qualifierSub != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.qualifierSub!.value,
               security: holding.qualifierSub!.security,
               asUSD: showUSD,
             ),
           if (holding.nft != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.nft!.value,
               security: holding.nft!.security,
               asUSD: showUSD,
             ),
           if (holding.channel != null)
-            components.text.securityAsReadable(
+            services.conversion.securityAsReadable(
               holding.channel!.value,
               security: holding.channel!.security,
               asUSD: showUSD,
@@ -602,15 +603,16 @@ class _HoldingList extends State<HoldingList> {
                   if (holding.restricted != null) 'Restricted',
                   if (holding.restrictedAdmin != null) 'Restricted Admin',
                 ].join(', ')
-              : components.text.securityAsReadable(holding.balance?.value ?? 0,
-                  security: holding.balance?.security ??
-                      Security(
-                        symbol: 'unknown',
-                        securityType: SecurityType.fiat,
-                        chain: Chain.none,
-                        net: Net.test,
-                      ),
-                  asUSD: showUSD),
+              : services.conversion
+                  .securityAsReadable(holding.balance?.value ?? 0,
+                      security: holding.balance?.security ??
+                          Security(
+                            symbol: 'unknown',
+                            securityType: SecurityType.fiat,
+                            chain: Chain.none,
+                            net: Net.test,
+                          ),
+                      asUSD: showUSD),
           style: Theme.of(context)
               .textTheme
               .bodyText2!
