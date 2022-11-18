@@ -94,7 +94,7 @@ class _ClaimEvr extends State<ClaimEvr> {
           ],
           fees: null,
           total: null,
-          confirm: 'Press Claim to complete transaction.',
+          confirm: 'Are you sure you want to claim your EVR?',
           buttonAction: () async {
             await services.transaction.claim(
                 from: Current.wallet,
