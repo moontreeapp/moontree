@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intersperse/intersperse.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/app.dart';
