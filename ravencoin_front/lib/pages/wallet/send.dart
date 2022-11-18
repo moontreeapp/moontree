@@ -34,6 +34,7 @@ class _SendState extends State<Send> {
   SpendForm? spendForm;
   late Security security;
   double? minHeight;
+  String sendAmountText = '';
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
@@ -411,7 +412,13 @@ class _SendState extends State<Send> {
                 onPressed: () async {
                   clipboard =
                       (await Clipboard.getData('text/plain'))?.text ?? '';
-                  setState(() => sendAddress.text = clipboard);
+                  //setState(() => sendAddress.text = clipboard);
+                  streams.spend.form.add(SpendForm.merge(
+                    form: streams.spend.form.value,
+                    symbol: sendAsset.text,
+                    fee: sendFee.text,
+                    address: clipboard,
+                  ));
                 }),
         //: null,
         onChanged: (value) {
