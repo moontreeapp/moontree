@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_wallet/ravencoin_wallet.dart' show TxGoals;
-import 'package:tuple/tuple.dart';
 
 import 'maker.dart';
 
