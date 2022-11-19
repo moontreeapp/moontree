@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:electrum_adapter/electrum_adapter.dart';
 
 class AssetService {
   String adminOrRestrictedToMainSlash(String symbol) => symbol.endsWith('!')

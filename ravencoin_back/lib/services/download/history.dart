@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:tuple/tuple.dart';
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class HistoryService {

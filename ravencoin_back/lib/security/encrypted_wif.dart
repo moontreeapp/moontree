@@ -6,7 +6,7 @@ import 'package:bs58check/bs58check.dart' as bs58;
 import 'package:ravencoin_back/security/cipher_base.dart';
 import 'package:ravencoin_back/utilities/hex.dart' as hex;
 import 'package:ravencoin_back/proclaim/proclaim.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 import 'encrypted_wallet_secret.dart';
 

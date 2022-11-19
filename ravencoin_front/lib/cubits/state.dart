@@ -20,7 +20,7 @@ class CubitState with EquatableMixin {
   factory CubitState.load({required CubitState form, bool? isSubmitting}) =>
       CubitState(isSubmitting: isSubmitting ?? form.isSubmitting);
 
-  //import 'package:utils/zips.dart' show zipLists;
+  //import 'package:moontree_utils/zips.dart' show zipLists;
   //@override
   //bool operator ==(Object other) =>
   //    other.runtimeType == this.runtimeType &&

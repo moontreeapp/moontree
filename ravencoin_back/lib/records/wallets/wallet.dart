@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 export 'extended_wallet_base.dart';
 

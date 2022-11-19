@@ -1,6 +1,6 @@
 import 'package:ravencoin_back/extensions/string.dart';
-import 'package:ravencoin_wallet/src/address.dart' show Address;
-import 'package:ravencoin_wallet/src/models/networks.dart' as networks;
+import 'package:wallet_utils/src/address.dart' show Address;
+import 'package:wallet_utils/src/models/networks.dart' as networks;
 
 // https://github.com/RavenProject/Ravencoin/blob/master/src/assets/assets.cpp
 final int MAX_NAME_LENGTH = 30; // Without $, !

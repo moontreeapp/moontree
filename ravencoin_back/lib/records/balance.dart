@@ -6,7 +6,7 @@ import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_back/utilities/exceptions.dart';
 import 'package:ravencoin_back/utilities/transform.dart';
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:electrum_adapter/electrum_adapter.dart';
 
 import '_type_id.dart';
 

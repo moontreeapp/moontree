@@ -3,7 +3,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:quiver/iterables.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet;
+import 'package:wallet_utils/wallet_utils.dart' show HDWallet;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:ravencoin_back/utilities/hex.dart' as hex;
 

@@ -3,9 +3,9 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/ravencoin_wallet/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/ravencoin_wallet/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/ravencoin_wallet/build" />
+      <excludeFolder url="file://$MODULE_DIR$/wallet_utils/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/wallet_utils/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/wallet_utils/build" />
       <excludeFolder url="file://$MODULE_DIR$/ravencoin_front/build" />
       <excludeFolder url="file://$MODULE_DIR$/ravencoin_front/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/ravencoin_front/.pub" />

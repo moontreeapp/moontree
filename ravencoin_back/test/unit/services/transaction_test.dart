@@ -1,7 +1,7 @@
 // dart test .\test\unit\services\transaction_test.dart
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 import 'package:test/test.dart';
 
 import 'package:ravencoin_back/services/transaction/maker.dart';

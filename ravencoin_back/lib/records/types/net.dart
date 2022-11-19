@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 import '../_type_id.dart';
 

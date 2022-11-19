@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import '../fixtures/fixtures_live.dart';
 

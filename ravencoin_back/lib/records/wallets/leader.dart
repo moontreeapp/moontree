@@ -9,7 +9,7 @@ import 'package:ravencoin_back/utilities/hex.dart' as hex;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/utilities/seed_wallet.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravenwallet;
+import 'package:wallet_utils/wallet_utils.dart' as ravenwallet;
 
 import '../_type_id.dart';
 

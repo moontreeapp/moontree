@@ -2,9 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/cubits/state.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart'
+import 'package:wallet_utils/wallet_utils.dart'
     show FeeRate, FeeRates, standardFee, cheapFee, fastFee;
-import 'package:utils/zips.dart' show zipLists;
+import 'package:moontree_utils/zips.dart' show zipLists;
 
 part 'state.dart';
 

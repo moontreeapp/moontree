@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/utilities/hex.dart' as hex;
 
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...

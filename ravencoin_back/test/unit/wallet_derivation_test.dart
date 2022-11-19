@@ -6,7 +6,7 @@ import 'package:ravencoin_back/records/records.dart';
 import 'package:ravencoin_back/security/cipher_none.dart';
 import 'package:ravencoin_back/security/encrypted_wif.dart';
 import 'package:ravencoin_back/utilities/random.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 import 'package:test/test.dart';
 import 'package:bip39/bip39.dart' as bip39;
 

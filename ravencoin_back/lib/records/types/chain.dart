@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:ravencoin_back/extensions/string.dart';
 import 'package:ravencoin_back/records/types/net.dart';
-import 'package:ravencoin_wallet/src/models/networks.dart'
+import 'package:wallet_utils/src/models/networks.dart'
     show NetworkType, mainnet, testnet, evrmoreMainnet, evrmoreTestnet;
 import '../_type_id.dart';
 

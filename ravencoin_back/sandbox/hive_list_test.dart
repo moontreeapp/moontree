@@ -1,5 +1,5 @@
 // dart --no-sound-null-safety test test/unit/hive_list_test.dart --concurrency=1
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:test/test.dart';
 import 'package:hive/hive.dart';
 import 'package:ravencoin_back/records/records.dart';

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_electrum/methods/scripthash/unspent.dart';
+import 'package:electrum_adapter/methods/scripthash/unspent.dart';
 
 import '_type_id.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:collection/collection.dart';
-import 'package:utils/extensions/map.dart';
+import 'package:moontree_utils/extensions/map.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -377,10 +377,10 @@ class _HoldingList extends State<HoldingList> {
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = <Widget>[];
     if (streams.claim.unclaimed.value
-                .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
-            (pros.settings.chain == Chain.evrmore &&
-                pros.blocks.records.first.height <= 60 * 24 * 60 &&
-                pros.unspents.records.where((u) => u.height == 0).length > 0)) {
+            .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
+        (pros.settings.chain == Chain.evrmore &&
+            pros.blocks.records.first.height <= 60 * 24 * 60 &&
+            pros.unspents.records.where((u) => u.height == 0).length > 0)) {
       claimInvite.add(ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),

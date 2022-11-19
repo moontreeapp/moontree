@@ -8,7 +8,7 @@ import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/wallet.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show FeeRate, FeeRates;
+import 'package:wallet_utils/wallet_utils.dart' show FeeRate, FeeRates;
 
 class SweepPage extends StatefulWidget {
   @override

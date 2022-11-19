@@ -1,5 +1,5 @@
 import 'package:ravencoin_back/utilities/hex.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart'
+import 'package:wallet_utils/wallet_utils.dart'
     show KPWallet, NetworkType, ECPair;
 
 import 'package:ravencoin_back/ravencoin_back.dart';

@@ -8,7 +8,7 @@ import 'package:ravencoin_front/utils/qrcode.dart';
 import 'package:ravencoin_front/widgets/other/selection_control.dart';
 
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show FeeRate, FeeRates;
+import 'package:wallet_utils/wallet_utils.dart' show FeeRate, FeeRates;
 
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';

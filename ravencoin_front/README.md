@@ -19,7 +19,7 @@ Next, create an empty directory. It will hold the following projects:
 - ravencoin_front
 - ravencoin_back
 - raven_electrum
-- ravencoin_wallet
+- wallet_utils
 - reservoir
 
 Then, clone each project inside the empty directory:
@@ -28,7 +28,7 @@ Then, clone each project inside the empty directory:
 git clone git@github.com:moontreeapp/ravencoin_front.git
 git clone git@github.com:moontreeapp/ravencoin_back.git
 git clone git@github.com:moontreeapp/raven_electrum.git
-git clone git@github.com:moontreeapp/ravencoin_wallet.git
+git clone git@github.com:moontreeapp/wallet_utils.git
 git clone git@github.com:moontreeapp/reservoir.git
 ```
 

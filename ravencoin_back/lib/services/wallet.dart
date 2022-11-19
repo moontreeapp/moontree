@@ -1,4 +1,4 @@
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show ECPair, WalletBase;
+import 'package:wallet_utils/wallet_utils.dart' show ECPair, WalletBase;
 import 'package:bip39/bip39.dart' as bip39;
 
 import 'package:ravencoin_back/ravencoin_back.dart';

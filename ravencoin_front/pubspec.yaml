@@ -48,7 +48,7 @@ dependencies:
   path_provider: ^2.0.11 # to get the correct path to store our file
   permission_handler: ^10.1.0 # to handle the permissions to read and write files
   platform_device_id: ^1.0.1
-  proclaim: ^2.0.0
+  proclaim: ^4.0.1
   qr_code_scanner: ^1.0.1
   qr_flutter: ^4.0.0
   rxdart: ^0.27.5
@@ -59,9 +59,9 @@ dependencies:
   ravencoin_back: ^1.0.0
   # ravencoin_back:
   #   git: https://github.com/moontreeapp/ravencoin_back.git
-  ravencoin_electrum: ^2.0.0
-  ravencoin_wallet: ^3.0.0
-  utils: ^1.0.0
+  electrum_adapter: ^2.0.0
+  wallet_utils: ^3.0.0
+  moontree_utils: ^1.0.0
   #open_settings: ^2.0.2
   app_settings: ^4.1.8
   bloc: ^8.1.0
@@ -70,14 +70,14 @@ dependencies:
 dependency_overrides:
   ravencoin_back:
     path: ../ravencoin_back
-  ravencoin_electrum:
-    path: ../../ravencoin_electrum
-  proclaim:
-    path: ../../proclaim
-  ravencoin_wallet:
-    path: ../../ravencoin_wallet
-  utils:
-    path: ../../utils   
+  #electrum_adapter:
+  #  path: ../../electrum_adapter
+  #proclaim:
+  #  path: ../../proclaim
+  #wallet_utils:
+  #  path: ../../wallet_utils
+  #moontree_utils:
+  #  path: ../../moontree_utils   
   #screenshot_callback:
   #  git:
   #    url: https://github.com/ousvat/flutter_screenshot_callback.git

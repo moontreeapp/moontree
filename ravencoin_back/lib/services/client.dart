@@ -2,13 +2,13 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:utils/extensions/map.dart';
+import 'package:moontree_utils/extensions/map.dart';
 
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/utilities/database.dart' as database;
 import 'package:ravencoin_back/utilities/lock.dart';
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 /// client creation, logic, and settings.s

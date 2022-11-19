@@ -1,8 +1,8 @@
 import 'package:intl/intl.dart';
-import 'package:utils/extensions/map.dart';
+import 'package:moontree_utils/extensions/map.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show FeeRates;
+import 'package:wallet_utils/wallet_utils.dart' show FeeRates;
 
 import 'maker.dart';
 

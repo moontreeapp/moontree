@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:utils/extensions/map.dart';
+import 'package:moontree_utils/extensions/map.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
