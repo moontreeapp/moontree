@@ -376,12 +376,33 @@ class _HoldingList extends State<HoldingList> {
 
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = <Widget>[];
+    streams.claim.unclaimed.value
+            .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
+        (pros.settings.chain == Chain.evrmore &&
+            pros.blocks.records.first.height <= 60 * 24 * 60 &&
+            pros.unspents.records.where((u) => u.height == 0).length > 0);
+    print('streams.claim.unclaimed.value | ${streams.claim.unclaimed.value}');
+    print(
+        'streams.claim.unclaimed.value.getOr(Current.walletId, <Vout>{}).isNotEmpty | ${streams.claim.unclaimed.value.getOr(Current.walletId, <Vout>{}).isNotEmpty}');
+    print('pros.settings.chain  | ${pros.settings.chain}');
+    print(
+        'pros.settings.chain == Chain.evrmore | ${pros.settings.chain == Chain.evrmore}');
+    print(
+        'pros.blocks.records.first.height | ${pros.blocks.records.first.height}');
+    print(
+        'pros.blocks.records.first.height <= 60 * 24 * 60 | ${pros.blocks.records.first.height <= 60 * 24 * 60}');
+    print(
+        'pros.unspents.records.where((u) => u.height == 0).length | ${pros.unspents.records.where((u) => u.height == 0).length}');
+    print(
+        'pros.unspents.records.where((u) => u.height == 0).length > 0 | ${pros.unspents.records.where((u) => u.height == 0).length > 0}');
+
     if ( //services.developer.advancedDeveloperMode == true ||
         streams.claim.unclaimed.value
                 .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
             (pros.settings.chain == Chain.evrmore &&
                 pros.blocks.records.first.height <= 60 * 24 * 60 &&
                 pros.unspents.records.where((u) => u.height == 0).length > 0)) {
+      print('IN Claim Logic for Wallet ${Current.wallet.name}');
       claimInvite.add(ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
