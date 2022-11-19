@@ -1,4 +1,4 @@
-import 'package:moontree_utils/list.dart' show range;
+import 'package:moontree_utils/src/list.dart' show range;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';

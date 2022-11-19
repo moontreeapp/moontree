@@ -1,6 +1,6 @@
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:moontree_utils/zips.dart' show zipMap;
+import 'package:moontree_utils/src/zips.dart' show zipMap;
 
 class AppColors {
   static List<Color> get colors => [

@@ -4,7 +4,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/cubits/state.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show FeeRate, FeeRates, standardFee, cheapFee, fastFee;
-import 'package:moontree_utils/zips.dart' show zipLists;
+import 'package:moontree_utils/src/zips.dart' show zipLists;
 
 part 'state.dart';
 
