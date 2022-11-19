@@ -376,8 +376,7 @@ class _HoldingList extends State<HoldingList> {
 
     /// in this case we're looking at an wallet in the EVR blockchain
     final claimInvite = <Widget>[];
-    if ( //services.developer.advancedDeveloperMode == true ||
-        streams.claim.unclaimed.value
+    if (streams.claim.unclaimed.value
                 .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
             (pros.settings.chain == Chain.evrmore &&
                 pros.blocks.records.first.height <= 60 * 24 * 60 &&
