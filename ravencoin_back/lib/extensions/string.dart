@@ -79,8 +79,8 @@ extension StringNumericExtension on String {
       s[1] = s[1] + '0' * (divisibility - s.last.length);
     }
     var textSats = '${s.first}${s.last}';
-    if (textSats.length > 15) {
-      return int.parse(textSats.substring(0, 15));
+    if (textSats.length > 19) {
+      return int.parse(textSats.substring(0, 19));
     }
     return int.parse(textSats);
   }
@@ -91,8 +91,8 @@ extension StringNumericExtension on String {
       split('.').first,
       chars: utils.strings.punctuation + utils.strings.whiteSapce,
     );
-    if (text.length > 15) {
-      text = text.substring(0, 15);
+    if (text.length > 19) {
+      text = text.substring(0, 19);
     }
     if (text == '') {
       return 0;
