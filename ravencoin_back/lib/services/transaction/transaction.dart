@@ -139,13 +139,13 @@ class TransactionService {
                 //feeFlag = true;
                 var utxos = pros.unspents.records
                     .where((u) => u.transactionId == vin.transactionId);
-                var utxo;
+                Unspent utxo;
                 if (utxos.isNotEmpty) {
                   utxo = utxos.first;
                   vinVout = Vout.fromUnspent(utxo,
                       //simulate fee since it's hard to determin for claims
                       rvnValue: utxo.value - 211200,
-                      toAddress: utxo.address?.address ??
+                      toAddress: //utxo.address?.address ??
                           pros.addresses.byScripthash
                               .getOne(utxo.scripthash)
                               ?.address);
