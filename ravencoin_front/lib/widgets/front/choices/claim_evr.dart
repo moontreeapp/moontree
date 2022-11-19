@@ -9,11 +9,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/services/lookup.dart';
-import 'package:ravencoin_front/services/wallet.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 
 class ClaimEvr extends StatefulWidget {
@@ -104,6 +102,14 @@ class _ClaimEvr extends State<ClaimEvr> {
                 // toWalletId: wallet.id /// removed because we are now sending to same wallet
                 note: 'Claim EVR',
                 msg: 'Successfully Claimed EVR');
+
+            /// clear out the unclaimed vouts so we don't see the claim button again
+            var x = streams.claim.unclaimed.value;
+            if (x.containsKey(Current.walletId)) {
+              x[Current.walletId] = <Vout>{};
+              streams.claim.unclaimed.add(x);
+            }
+            streams.app.wallet.refresh.add(true);
 
             /// removed because we are now sending to same wallet
             //await switchWallet(wallet.id);
