@@ -22,10 +22,10 @@ dependencies:
   tuple: ^2.0.0
   intl: ^0.17.0
   serverpod_client: ^0.9.8
-  electrum_adapter: ^2.0.0
+  electrum_adapter: ^2.0.1
   proclaim: ^4.0.1
-  wallet_utils: ^3.0.0
-  moontree_utils: ^1.0.0
+  wallet_utils: ^3.0.1
+  moontree_utils: ^1.0.1
 
 #dependency_overrides:
   #proclaim:
