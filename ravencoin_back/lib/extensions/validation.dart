@@ -14,7 +14,7 @@ extension AmountValidationDoubleExtension on double {
 
 extension RVNNumericValidationExtension on String {
   bool get isInt {
-    if (length > 15 || contains('.')) {
+    if (length > 19 || contains('.')) {
       return false;
     }
     try {
@@ -30,7 +30,9 @@ extension RVNNumericValidationExtension on String {
       var num = split('.');
       var whole = num.first;
       var remainder = num.sublist(1).join('');
-      if (whole.length > 15 || remainder.length > 8) {
+      if ((whole.length > 14 && whole.contains(',')) ||
+          (whole.length > 11 && !whole.contains(',')) ||
+          remainder.length > 8) {
         return false;
       }
     }
