@@ -785,7 +785,8 @@ class _SendState extends State<Send> {
             if (addressName != '') ['Known As', addressName],
             [
               'Amount',
-              sendRequest.sendAll ? 'calculating amount...' : visibleAmount
+              //sendRequest.sendAll ? // take the calculated amount instead
+              'calculating amount...' //: visibleAmount
             ],
             if (sendMemo.text != '') ['Memo', sendMemo.text],
             if (sendNote.text != '') ['Note', sendNote.text],

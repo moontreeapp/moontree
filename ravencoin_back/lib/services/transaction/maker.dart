@@ -355,6 +355,16 @@ class SendEstimate with ToStringMixin {
 
   int get changeDue => utxoTotal - total;
 
+  // expects the security to be null if crypto
+  int get inferredTransactionFee => security == null
+      ? utxoTotal - (amount + changeDue + extraFees)
+      : utxos.fold(
+              0,
+              (int total, vout) =>
+                  total +
+                  vout.securityValue(security: pros.securities.currentCrypto)) -
+          extraFees;
+
   factory SendEstimate.copy(SendEstimate detail) {
     return SendEstimate(detail.amount,
         fees: detail.fees, utxos: detail.utxos.toList());
