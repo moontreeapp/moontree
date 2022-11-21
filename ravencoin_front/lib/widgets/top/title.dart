@@ -35,6 +35,7 @@ class PageTitle extends StatefulWidget {
     'Restricted': 'Create',
     'Createlogin': 'Setup',
     'Login': 'Locked',
+    'Backupintro': 'Backup',
   };
   static Map<String, String> pageMapReissue = const {
     'Main': 'Reissue',

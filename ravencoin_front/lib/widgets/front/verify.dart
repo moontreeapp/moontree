@@ -61,7 +61,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
       data = {};
     }
 
-    if (!widget.auto &&
+    if (widget.auto &&
         pros.settings.authMethodIsNativeSecurity &&
         (data['autoInitiateUnlock'] ?? true)) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -80,7 +80,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
             context,
             columnWidgets: <Widget>[
               if (widget.intro != null) widget.intro!,
-              if (widget.safe != null) widget.safe!,
+              //if (widget.safe != null) widget.safe!,
               Container(
                   height: (MediaQuery.of(context).size.height) *
                       (.3 -

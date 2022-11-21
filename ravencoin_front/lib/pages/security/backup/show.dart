@@ -34,7 +34,6 @@ class _BackupSeedState extends State<BackupSeed>
   FocusNode showFocus = FocusNode();
   bool failedAttempt = false;
   bool enabled = true;
-  int buildCount = 0;
   //ScreenshotCallback screenshotCallback = ScreenshotCallback();
 
   /// from exploring animations - want to return to
@@ -96,7 +95,6 @@ class _BackupSeedState extends State<BackupSeed>
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
-    buildCount += 1;
     return FutureBuilder<List<String>>(
         future: getSecret,
         builder: (context, AsyncSnapshot<List<String>> snapshot) {
@@ -108,34 +106,13 @@ class _BackupSeedState extends State<BackupSeed>
                     buttonLabel: 'Show Seed',
                     intro: intro,
                     safe: safe,
-                    auto: false,
-                  )
-                : buildCount == 1
-                    ? firstBody()
-                    : body();
+                    auto: true)
+                : body();
           } else {
             return CircularProgressIndicator();
           }
         });
   }
-
-  Widget firstBody() => BackdropLayers(
-      back: BlankBack(),
-      front: FrontCurve(
-        child: components.page.form(
-          context,
-          columnWidgets: <Widget>[safe],
-          buttons: [
-            components.buttons.actionButton(
-              context,
-              label: 'BACKUP',
-              onPressed: () {
-                setState(() {});
-              },
-            ),
-          ],
-        ),
-      ));
 
   Widget body() => BackdropLayers(
       back: BlankBack(),

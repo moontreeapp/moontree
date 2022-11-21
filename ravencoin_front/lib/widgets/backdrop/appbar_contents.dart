@@ -112,8 +112,9 @@ class BackdropAppBarContents extends StatelessWidget
         shape: shape,
         automaticallyImplyLeading: false,
         elevation: 0,
-        leading: ['ChooseMethod', 'Login', 'Setup', 'Backup']
-                .contains(streams.app.page.value)
+        leading: ['ChooseMethod', 'Login', 'Setup', 'Backupintro']
+                    .contains(streams.app.page.value) ||
+                streams.app.lead.value == LeadIcon.none
             ? null
             : PageLead(mainContext: context),
         centerTitle: spoof,

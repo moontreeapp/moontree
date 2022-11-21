@@ -10,19 +10,18 @@ Future<void> login(BuildContext context) async {
   await services.cipher.updateWallets();
   services.cipher.cleanupCiphers();
   services.cipher.loginTime();
-  streams.app.triggers.add(ThresholdTrigger.backup);
+  //streams.app.triggers.add(ThresholdTrigger.backup);
   streams.app.context.add(AppContext.wallet);
   streams.app.splash.add(false); // trigger to refresh app bar again
   streams.app.logout.add(false);
   streams.app.verify.add(true);
 
   if (Current.wallet is LeaderWallet &&
-      streams.app.triggers.value == ThresholdTrigger.backup &&
+      //streams.app.triggers.value == ThresholdTrigger.backup &&
       !Current.wallet.backedUp) {
-    streams.app.lead.add(LeadIcon.none);
     Navigator.pushReplacementNamed(context, '/home', arguments: {});
     Navigator.of(context).pushNamed(
-      '/security/backup',
+      '/security/backup/backupintro',
       arguments: {'fadeIn': true},
     );
   } else {

@@ -123,6 +123,7 @@ class _PageLead extends State<PageLead> {
           icon: Icon(Icons.close_rounded, color: Colors.white),
           onPressed: () {
             if (streams.app.scrim.value == true) return;
+            streams.app.lead.add(LeadIcon.pass);
             streams.app.fling.add(false);
             if (pageTitle == 'Send') streams.spend.form.add(null);
             if (xlead == LeadIcon.dismiss) streams.app.lead.add(LeadIcon.pass);
@@ -181,8 +182,23 @@ class _PageLead extends State<PageLead> {
           onPressed: () {
             if (streams.app.scrim.value == true) return;
             if (pageTitle == 'Transaction') streams.spend.form.add(null);
+            Navigator.popUntil(
+                components.navigator.routeContext ?? context,
+                //ModalRoute.withName('/home') ||
+                ModalRoute.withName('/security/backup/backupintro'));
+            streams.app.lead.add(LeadIcon.pass); // replace with a refresh trigger?
+          });
+    }
+    if (['Backup'].contains(pageTitle)) {
+      return IconButton(
+          splashRadius: 24,
+          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            if (streams.app.scrim.value == true) return;
+            if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.popUntil(components.navigator.routeContext ?? context,
-                ModalRoute.withName('/home'));
+                ModalRoute.withName('/security/backup/backupintro'));
+            streams.app.lead.add(LeadIcon.pass); // replace with a refresh trigger?
           });
     }
     return IconButton(
