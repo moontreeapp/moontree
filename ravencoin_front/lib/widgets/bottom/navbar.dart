@@ -163,7 +163,7 @@ class _NavBarState extends State<NavBar> {
                                 ThresholdTrigger.backup &&
                             !Current.wallet.backedUp) {
                           await Future.delayed(Duration(milliseconds: 800));
-                          streams.app.xlead.add(true);
+                          streams.app.lead.add(LeadIcon.dismiss);
                           Navigator.of(components.navigator.routeContext!)
                               .pushNamed(
                             '/security/backup',
@@ -182,7 +182,7 @@ class _NavBarState extends State<NavBar> {
                       streams.app.triggers.value == ThresholdTrigger.backup &&
                       !Current.wallet.backedUp) {
                     await Future.delayed(Duration(milliseconds: 800));
-                    streams.app.xlead.add(true);
+                    streams.app.lead.add(LeadIcon.dismiss);
                     Navigator.of(components.navigator.routeContext!).pushNamed(
                       '/security/backup',
                       arguments: {'fadeIn': true},

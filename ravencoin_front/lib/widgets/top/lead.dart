@@ -2,6 +2,7 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 
 class PageLead extends StatefulWidget {
@@ -16,7 +17,7 @@ class PageLead extends StatefulWidget {
 class _PageLead extends State<PageLead> {
   late String pageTitle = '';
   late String? settingTitle = null;
-  late bool xlead = false;
+  late LeadIcon xlead = LeadIcon.pass;
   late bool loading = false;
   late List listeners = [];
 
@@ -44,7 +45,7 @@ class _PageLead extends State<PageLead> {
         });
       }
     }));
-    listeners.add(streams.app.xlead.listen((value) {
+    listeners.add(streams.app.lead.listen((LeadIcon value) {
       if (value != xlead) {
         setState(() {
           xlead = value;
@@ -112,21 +113,11 @@ class _PageLead extends State<PageLead> {
     if (pageTitle == '') {
       //return Container();
     }
-    if (pageTitle == 'Splash') {
+    if (xlead == LeadIcon.none || ['Splash', 'Login'].contains(pageTitle)) {
       return Container();
     }
-    if (pageTitle == 'Login') {
-      return Container();
-      //return Container(
-      //  height: 24,
-      //  padding: EdgeInsets.only(left: 16),
-      //  child: SvgPicture.asset(
-      //    'assets/icons/menu/menu.svg',
-      //    color: AppColors.black38,
-      //  ),
-      //);
-    }
-    if (xlead || ['Send', 'Scan', 'Receive'].contains(pageTitle)) {
+    if (xlead == LeadIcon.dismiss ||
+        ['Send', 'Scan', 'Receive'].contains(pageTitle)) {
       return IconButton(
           splashRadius: 24,
           icon: Icon(Icons.close_rounded, color: Colors.white),
@@ -134,7 +125,7 @@ class _PageLead extends State<PageLead> {
             if (streams.app.scrim.value == true) return;
             streams.app.fling.add(false);
             if (pageTitle == 'Send') streams.spend.form.add(null);
-            if (xlead) streams.app.xlead.add(false);
+            if (xlead == LeadIcon.dismiss) streams.app.lead.add(LeadIcon.pass);
             Navigator.pop(components.navigator.routeContext ?? context);
           });
     }

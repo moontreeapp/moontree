@@ -1,3 +1,4 @@
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:wallet_utils/wallet_utils.dart' show ECPair, WalletBase;
 import 'package:bip39/bip39.dart' as bip39;
 

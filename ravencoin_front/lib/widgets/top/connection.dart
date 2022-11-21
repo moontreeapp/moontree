@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
@@ -185,7 +186,7 @@ class _ConnectionLightState extends State<ConnectionLight>
       'Setup',
     ].contains(streams.app.page.value)) {
       ScaffoldMessenger.of(context).clearSnackBars();
-      streams.app.xlead.add(true);
+      streams.app.lead.add(LeadIcon.dismiss);
       produceBlockchainModal(components.navigator.routeContext!);
       //Navigator.of(components.navigator.routeContext!)
       //    .pushNamed('/settings/network/blockchain');

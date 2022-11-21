@@ -141,7 +141,13 @@ class _VerifySeedState extends State<VerifySeed> {
           }
           streams.app.setting.add(null);
           streams.app.fling.add(false);
-          Navigator.popUntil(context, ModalRoute.withName('/home'));
+          streams.app.lead.add(LeadIcon.pass);
+          try {
+            Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+          } catch (e) {
+            print('home not found');
+            Navigator.of(context).pushReplacementNamed('/home');
+          }
           streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
         },
       );

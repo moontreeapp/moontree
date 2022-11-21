@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
@@ -15,6 +16,7 @@ class BackdropAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _BackdropAppBarState extends State<BackdropAppBar> {
   late List listeners = [];
+  LeadIcon lead = LeadIcon.pass;
 
   @override
   void initState() {
@@ -25,6 +27,11 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
     listeners.add(streams.app.logout.listen((bool value) {
       if (value && streams.app.page.value != 'Login') {
         logout();
+      }
+    }));
+    listeners.add(streams.app.lead.listen((LeadIcon value) {
+      if (lead != value) {
+        setState(() => lead = value);
       }
     }));
   }

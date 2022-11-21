@@ -229,9 +229,7 @@ class _CreateNativeState extends State<CreateNative> {
         focusNode: unlockFocus,
         enabled: readyToUnlock(),
         label: 'Setup',
-        onPressed: () async {
-          await submitSetup();
-        },
+        onPressed: () async => await submitSetup(),
       );
 
   Widget get nativeButton => components.buttons.actionButton(
@@ -239,9 +237,7 @@ class _CreateNativeState extends State<CreateNative> {
         focusNode: unlockFocus,
         enabled: readyToUnlock(),
         label: enabled ? 'Create Wallet' : 'Creating Wallet...',
-        onPressed: () async {
-          await submit();
-        },
+        onPressed: () async => await submit(),
       );
 
   Future submitSetup() async {

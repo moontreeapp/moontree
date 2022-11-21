@@ -86,8 +86,10 @@ NetworkType networkOf(Chain chain, Net net) {
 ///50002 - mainnet ssl rvn
 ///50011 - testnet tcp rvnt
 ///50012 - testnet ssl rvnt
-///50021 - testnet tcp evr
-///50022 - testnet ssl evr
+///50021 - mainnet tcp evr
+///50022 - mainnet ssl evr
+///50031 - testnet tcp evr
+///50032 - testnet ssl evr
 int portOf(Chain chain, Net net) {
   if (chain == Chain.ravencoin && net == Net.main) {
     return 50002;
@@ -96,7 +98,7 @@ int portOf(Chain chain, Net net) {
     return 50012;
   }
   if (chain == Chain.evrmore && net == Net.main) {
-    return 50022; //return 8820;
+    return 50022;
   }
   if (chain == Chain.evrmore && net == Net.test) {
     return 50032;

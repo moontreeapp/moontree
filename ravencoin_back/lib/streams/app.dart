@@ -3,6 +3,14 @@ import 'package:rxdart/rxdart.dart';
 
 enum NavHeight { tall, short, none }
 
+enum LeadIcon {
+  none, // remove
+  dismiss, // exit, x (effectively back)
+  back, // back arrow
+  menu, // hamburger
+  pass, // no override logic
+}
+
 class AppStreams {
   final status = appStatus$;
   final active = appActive$;
@@ -11,7 +19,7 @@ class AppStreams {
   final verify = BehaviorSubject<bool>.seeded(false);
   final page = BehaviorSubject<String>.seeded('main');
   final setting = BehaviorSubject<String?>.seeded(null);
-  final xlead = BehaviorSubject<bool>.seeded(false);
+  final lead = BehaviorSubject<LeadIcon>.seeded(LeadIcon.pass);
   final context = BehaviorSubject<AppContext>.seeded(AppContext.login);
   final snack = BehaviorSubject<Snack?>.seeded(null);
   final navHeight = BehaviorSubject<NavHeight>.seeded(NavHeight.none);

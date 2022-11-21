@@ -15,6 +15,7 @@ class VerifyAuthentication extends StatefulWidget {
   final String? suffix;
   final Widget? intro;
   final Widget? safe;
+  final bool auto;
 
   VerifyAuthentication({
     Key? key,
@@ -23,6 +24,7 @@ class VerifyAuthentication extends StatefulWidget {
     this.suffix,
     this.intro,
     this.safe,
+    this.auto = true,
   }) : super(key: key);
 
   @override
@@ -59,7 +61,8 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
       data = {};
     }
 
-    if (pros.settings.authMethodIsNativeSecurity &&
+    if (!widget.auto &&
+        pros.settings.authMethodIsNativeSecurity &&
         (data['autoInitiateUnlock'] ?? true)) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await submit();

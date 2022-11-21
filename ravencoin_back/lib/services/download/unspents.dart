@@ -8,11 +8,13 @@ enum ValueType { confirmed, unconfirmed }
 
 /// we use the electrum server directly for determining our UTXO set
 class UnspentService {
-  void _maybeTriggerBackup(Iterable<ScripthashUnspent> unspents) {
-    if (unspents.isNotEmpty && pros.unspents.isEmpty) {
-      streams.app.triggers.add(ThresholdTrigger.backup);
-    }
-  }
+  /// instead of setting trigger for backup when unspents are discovered...
+  /// set them when wallets is created.
+  //void _maybeTriggerBackup(Iterable<ScripthashUnspent> unspents) {
+  //  if (unspents.isNotEmpty && pros.unspents.isEmpty) {
+  //    streams.app.triggers.add(ThresholdTrigger.backup);
+  //  }
+  //}
 
   void _maybeSubscribeToAsset({
     required String symbol,
@@ -76,8 +78,8 @@ class UnspentService {
       }
     }
 
-    _maybeTriggerBackup(currencyUtxos);
-    _maybeTriggerBackup(assetUtxos);
+    //_maybeTriggerBackup(currencyUtxos);
+    //_maybeTriggerBackup(assetUtxos);
 
     // only save if there's something new, in that case erase all, save all.
     var existing = pros.unspents.byScripthashes(scripthashes).toSet();

@@ -34,6 +34,7 @@ class _BackupSeedState extends State<BackupSeed>
   FocusNode showFocus = FocusNode();
   bool failedAttempt = false;
   bool enabled = true;
+  int buildCount = 0;
   //ScreenshotCallback screenshotCallback = ScreenshotCallback();
 
   /// from exploring animations - want to return to
@@ -95,6 +96,7 @@ class _BackupSeedState extends State<BackupSeed>
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
+    buildCount += 1;
     return FutureBuilder<List<String>>(
         future: getSecret,
         builder: (context, AsyncSnapshot<List<String>> snapshot) {
@@ -106,13 +108,34 @@ class _BackupSeedState extends State<BackupSeed>
                     buttonLabel: 'Show Seed',
                     intro: intro,
                     safe: safe,
+                    auto: false,
                   )
-                : body();
+                : buildCount == 1
+                    ? firstBody()
+                    : body();
           } else {
             return CircularProgressIndicator();
           }
         });
   }
+
+  Widget firstBody() => BackdropLayers(
+      back: BlankBack(),
+      front: FrontCurve(
+        child: components.page.form(
+          context,
+          columnWidgets: <Widget>[safe],
+          buttons: [
+            components.buttons.actionButton(
+              context,
+              label: 'BACKUP',
+              onPressed: () {
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+      ));
 
   Widget body() => BackdropLayers(
       back: BlankBack(),
@@ -121,8 +144,8 @@ class _BackupSeedState extends State<BackupSeed>
         components.page.form(
           context,
           columnWidgets: <Widget>[
-            instructions,
-            warning,
+            _instructions,
+            _warning,
             if (smallScreen) words,
           ],
           buttons: [submitButton],
@@ -163,29 +186,9 @@ class _BackupSeedState extends State<BackupSeed>
             .copyWith(color: AppColors.error),
       ));
 
-  Widget get instructions => Container(
-      //height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'Please backup your wallet by writing down these words on a piece of paper.',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.black),
-      ));
+  Widget get _instructions => instructions(context);
 
-  Widget get warning => Container(
-      //height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'You will need these words for recovery.',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.error),
-      ));
+  Widget get _warning => warning(context);
 
   Widget get wordsInStack => Container(
       height: (1 - 72.ofAppHeight).ofAppHeight,
@@ -212,7 +215,7 @@ class _BackupSeedState extends State<BackupSeed>
   Widget get submitButton => components.buttons.actionButton(
         context,
         enabled: true,
-        label: 'Next',
+        label: 'Verify',
         link: '/security/backupConfirm',
         arguments: () {
           //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
@@ -223,6 +226,7 @@ class _BackupSeedState extends State<BackupSeed>
           Map<int, SecretWord> shuffled = {
             for (var s in shuffledList.enumerated()) s[0]: s[1]
           };
+          streams.app.lead.add(LeadIcon.back);
           return {
             'secret': secret,
             'shuffled': shuffled,
@@ -279,3 +283,27 @@ class MeasureSize extends SingleChildRenderObjectWidget {
     return MeasureSizeRenderObject(onChange);
   }
 }
+
+Widget instructions(BuildContext context) => Container(
+    //height: 48,
+    alignment: Alignment.topCenter,
+    child: Text(
+      'Please backup your wallet by writing down these words on a piece of paper.',
+      textAlign: TextAlign.center,
+      style: Theme.of(context)
+          .textTheme
+          .subtitle1!
+          .copyWith(color: AppColors.black),
+    ));
+
+Widget warning(BuildContext context) => Container(
+    //height: 48,
+    alignment: Alignment.topCenter,
+    child: Text(
+      'You will need these words for recovery.',
+      textAlign: TextAlign.center,
+      style: Theme.of(context)
+          .textTheme
+          .subtitle1!
+          .copyWith(color: AppColors.error),
+    ));
