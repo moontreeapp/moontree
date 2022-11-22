@@ -16,6 +16,7 @@ class VerifyAuthentication extends StatefulWidget {
   final Widget? intro;
   final Widget? safe;
   final bool auto;
+  final bool asLoginTime;
 
   VerifyAuthentication({
     Key? key,
@@ -25,6 +26,7 @@ class VerifyAuthentication extends StatefulWidget {
     this.intro,
     this.safe,
     this.auto = true,
+    this.asLoginTime = true,
   }) : super(key: key);
 
   @override
@@ -207,6 +209,9 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
     final validate = await localAuthApi.authenticate();
     streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
+      if (widget.asLoginTime) {
+        services.cipher.loginTime();
+      }
       streams.app.verify.add(true);
       widget.parentState?.setState(() {});
       (data['onSuccess'] ?? () {})();

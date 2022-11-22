@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_front/pages/security/backup/show.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:ravencoin_front/components/components.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -70,16 +68,19 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final backupCondition = (Current.wallet is LeaderWallet &&
-        streams.app.triggers.value == ThresholdTrigger.backup &&
-        !Current.wallet.backedUp);
+    final backupCondition =
+        (streams.app.triggers.value == ThresholdTrigger.backup &&
+            !Current.wallet.backedUp);
     if (backupCondition) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        streams.app.lead.add(LeadIcon.none);
-        Navigator.of(context).pushNamed(
-          '/security/backup',
-          arguments: {'fadeIn': true},
-        );
+        if (!['Backupintro', 'Backup', 'BackupConfirm']
+            .contains(streams.app.page.value)) {
+          streams.app.lead.add(LeadIcon.none);
+          Navigator.of(context).pushNamed(
+            '/security/backup/backupintro',
+            arguments: {'fadeIn': true},
+          );
+        }
       });
       //  return BackdropLayers(
       //      back: BlankBack(),

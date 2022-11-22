@@ -166,7 +166,7 @@ class _NavBarState extends State<NavBar> {
                           streams.app.lead.add(LeadIcon.dismiss);
                           Navigator.of(components.navigator.routeContext!)
                               .pushNamed(
-                            '/security/backup',
+                            '/security/backup/backupintro',
                             arguments: {'fadeIn': true},
                           );
                         }
@@ -184,7 +184,7 @@ class _NavBarState extends State<NavBar> {
                     await Future.delayed(Duration(milliseconds: 800));
                     streams.app.lead.add(LeadIcon.dismiss);
                     Navigator.of(components.navigator.routeContext!).pushNamed(
-                      '/security/backup',
+                      '/security/backup/backupintro',
                       arguments: {'fadeIn': true},
                     );
                   }

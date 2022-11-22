@@ -17,6 +17,7 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/device.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
+import 'package:ravencoin_front/utils/login.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -324,8 +325,6 @@ class _CreatePasswordState extends State<CreatePassword> {
         saveSecret: saveSecret,
       );
       await exitProcess();
-      streams.app.context.add(AppContext.wallet);
-      streams.app.verify.add(true);
     } else {
       setState(() {
         password.text = '';
@@ -335,15 +334,6 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   Future<void> exitProcess() async {
     await setupWallets();
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
-    services.cipher.initCiphers(
-      altPassword: password.text,
-      altSalt: await SecureStorage.authenticationKey,
-    );
-    await services.cipher.updateWallets();
-    services.cipher.cleanupCiphers();
-    services.cipher.loginTime();
-    streams.app.splash.add(false); // trigger to refresh app bar again
-    streams.app.logout.add(false);
+    login(context, password: password.text);
   }
 }

@@ -184,6 +184,9 @@ class _ConnectionLightState extends State<ConnectionLight>
       'Network',
       'Scan',
       'Setup',
+      'Backupintro',
+      'BackupConfirm',
+      'Backup',
     ].contains(streams.app.page.value)) {
       ScaffoldMessenger.of(context).clearSnackBars();
       streams.app.lead.add(LeadIcon.dismiss);

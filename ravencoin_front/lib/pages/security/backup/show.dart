@@ -106,7 +106,9 @@ class _BackupSeedState extends State<BackupSeed>
                     buttonLabel: 'Show Seed',
                     intro: intro,
                     safe: safe,
-                    auto: true)
+                    auto: true,
+                    asLoginTime: true,
+                  )
                 : body();
           } else {
             return CircularProgressIndicator();

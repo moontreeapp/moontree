@@ -148,7 +148,11 @@ class _VerifySeedState extends State<VerifySeed> {
             print('home not found');
             Navigator.of(context).pushReplacementNamed('/home');
           }
-          streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
+          if (services.tutorial.missing.isEmpty) {
+            streams.app.snack
+                .add(Snack(message: 'Successfully Verified Backup'));
+          }
+          streams.app.wallet.refresh.add(true);
         },
       );
 }

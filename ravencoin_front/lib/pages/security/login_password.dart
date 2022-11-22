@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ravencoin_front/utils/login.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -89,7 +90,7 @@ class _LoginPasswordState extends State<LoginPassword> {
         salt: key,
         saltedHashedPassword: await getLatestSaltedHashedPassword())) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await login(key);
+        await initiateLogin(key);
       });
     }
   }
@@ -342,7 +343,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       streams.app.snack
           .add(Snack(message: 'Migration complete...', showOnLogin: true));
 
-      await login(password.text, refresh: true);
+      await initiateLogin(password.text, refresh: true);
     } else if (await services.password.lockout
             .handleVerificationAttempt(await validate()) &&
         passwordText == null) {
@@ -350,7 +351,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       if (passwordText != password.text) {
         setState(() => passwordText = password.text);
       }
-      login(password.text,
+      initiateLogin(password.text,
           refresh: (services.version.snapshot?.currentBuild ?? 0) <=
                   (Platform.isIOS ? 20 : 4) &&
               (services.version.snapshot?.buildUpdated ?? false));
@@ -362,7 +363,8 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
   }
 
-  Future<void> login(String providedPassword, {bool refresh = false}) async {
+  Future<void> initiateLogin(String providedPassword,
+      {bool refresh = false}) async {
     /// there are existing wallets, we should populate them with sensitives now.
     await populateWalletsWithSensitives();
     if (!consented) {
@@ -371,23 +373,13 @@ class _LoginPasswordState extends State<LoginPassword> {
     if (refresh) {
       //services.download.overrideGettingStarted = true;
     }
-    try {
-      Navigator.pushReplacementNamed(context, '/home', arguments: {});
-    } catch (e) {
-      print(e);
-    }
+    //try {
+    //  Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    //} catch (e) {
+    //  print(e);
+    //}
     // create ciphers for wallets we have
-    services.cipher.initCiphers(
-      altPassword: providedPassword,
-      altSalt: await SecureStorage.authenticationKey,
-    );
-    await services.cipher.updateWallets();
-    services.cipher.cleanupCiphers();
-    services.cipher.loginTime();
-    streams.app.context.add(AppContext.wallet);
-    streams.app.splash.add(false); // trigger to refresh app bar again
-    streams.app.logout.add(false);
-    streams.app.verify.add(true);
+    login(context, password: providedPassword);
     if (refresh) {
       streams.app.snack
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));

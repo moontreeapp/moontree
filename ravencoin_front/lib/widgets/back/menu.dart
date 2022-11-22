@@ -117,7 +117,7 @@ class _NavMenuState extends State<NavMenu> {
                   await Future.delayed(Duration(milliseconds: 800));
                   streams.app.lead.add(LeadIcon.dismiss);
                   Navigator.of(components.navigator.routeContext!).pushNamed(
-                    '/security/backup',
+                    '/security/backup/backupintro',
                     arguments: {'fadeIn': true},
                   );
                 }
@@ -220,7 +220,7 @@ class _NavMenuState extends State<NavMenu> {
             icon: MdiIcons.drawPen,
             name: 'Backup',
             link: Current.wallet is LeaderWallet
-                ? '/security/backup'
+                ? '/security/backup/backupintro'
                 : '/security/backupKeypair',
           ),
           destination(
