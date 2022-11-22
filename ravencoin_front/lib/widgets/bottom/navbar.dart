@@ -155,40 +155,16 @@ class _NavBarState extends State<NavBar> {
                               .add(Snack(message: 'Claimed your EVR first.'));
                         }
                       },
-                      onPressed: () async {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/transaction/send');
-                        if (Current.wallet is LeaderWallet &&
-                            streams.app.triggers.value ==
-                                ThresholdTrigger.backup &&
-                            !Current.wallet.backedUp) {
-                          await Future.delayed(Duration(milliseconds: 800));
-                          streams.app.lead.add(LeadIcon.dismiss);
+                      onPressed: () =>
                           Navigator.of(components.navigator.routeContext!)
-                              .pushNamed(
-                            '/security/backup/backupintro',
-                            arguments: {'fadeIn': true},
-                          );
-                        }
-                      },
+                              .pushNamed('/transaction/send'),
                     ),
               components.buttons.actionButton(
                 context,
                 label: 'receive',
-                onPressed: () async {
-                  Navigator.of(components.navigator.routeContext!)
-                      .pushNamed('/transaction/receive');
-                  if (Current.wallet is LeaderWallet &&
-                      streams.app.triggers.value == ThresholdTrigger.backup &&
-                      !Current.wallet.backedUp) {
-                    await Future.delayed(Duration(milliseconds: 800));
-                    streams.app.lead.add(LeadIcon.dismiss);
-                    Navigator.of(components.navigator.routeContext!).pushNamed(
-                      '/security/backup/backupintro',
-                      arguments: {'fadeIn': true},
-                    );
-                  }
-                },
+                onPressed: () =>
+                    Navigator.of(components.navigator.routeContext!)
+                        .pushNamed('/transaction/receive'),
               )
             ]
           : widget.appContext == AppContext.manage

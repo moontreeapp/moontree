@@ -109,19 +109,7 @@ class _NavMenuState extends State<NavMenu> {
               icon: MdiIcons.keyMinus,
               name: 'Export',
               link: '/settings/export',
-              disabled: true,
-              executeAfter: () async {
-                if (Current.wallet is LeaderWallet &&
-                    streams.app.triggers.value == ThresholdTrigger.backup &&
-                    !Current.wallet.backedUp) {
-                  await Future.delayed(Duration(milliseconds: 800));
-                  streams.app.lead.add(LeadIcon.dismiss);
-                  Navigator.of(components.navigator.routeContext!).pushNamed(
-                    '/security/backup/backupintro',
-                    arguments: {'fadeIn': true},
-                  );
-                }
-              }),
+              disabled: true),
           if (services.developer.developerMode && Current.balanceRVN.value > 0)
             destination(
               icon: MdiIcons.broom,
