@@ -263,10 +263,6 @@ class _HoldingList extends State<HoldingList> {
       return _holdingsView(context);
     } else if (balances.isNotEmpty) {
       return _holdingsView(context);
-      //return RefreshIndicator(
-      //  child:
-      //  onRefresh: () => refresh(),
-      //);
     } else {
       return _holdingsView(context);
     }
@@ -317,7 +313,7 @@ class _HoldingList extends State<HoldingList> {
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () => onTap(wallet, holding),
+          onTap: () async => await onTap(wallet, holding),
           onLongPress: _togglePath,
           leading: leadingIcon(holding),
           title: title(holding),
@@ -426,15 +422,38 @@ class _HoldingList extends State<HoldingList> {
     //  );
     //}
     return GestureDetector(
-      onTap: () async => setState(() {
-        print('tapped');
-        FocusScope.of(context).unfocus;
-      }),
+      onTap: () async {
+        await services.balance.recalculateAllBalances();
+        setState(() {
+          print('tapped');
+          FocusScope.of(context).unfocus;
+        });
+      },
       child: listView,
     );
   }
 
-  void onTap(Wallet? wallet, AssetHolding holding) {
+  Future<void> onTap(Wallet? wallet, AssetHolding holding) async {
+    final unspentSum = [
+      ...[
+        for (var x
+            in Current.wallet.unspents.where((u) => u.symbol == holding.symbol))
+          x.value
+      ],
+      ...[0]
+    ].sum;
+    final unspentBal = [
+      ...[
+        for (var x in Current.wallet.balances
+            .where((b) => b.security.symbol == holding.symbol))
+          x.value
+      ],
+      ...[0]
+    ].sum;
+    if (unspentSum != unspentBal) {
+      await services.balance.recalculateAllBalances();
+      setState(() {});
+    }
     if (overrideGettingStarted) {
       //components.message.giveChoices(context,
       //    title: 'Still Syncing',

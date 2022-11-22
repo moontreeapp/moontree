@@ -19,5 +19,6 @@ void initWaiters(HiveLoadingStep step) {
     waiters.import.init();
     waiters.create.init();
     waiters.reissue.init();
+    waiters.unspent.init();
   }
 }

@@ -79,7 +79,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -94,6 +94,14 @@ class BackdropAppBarContents extends StatelessWidget
               //    message:
               //        '${streams.app.page.value} | ${streams.app.setting.value}',
               //    showOnLogin: true));
+              //
+              //print(pros.addresses.byAddress
+              //    .getOne('Eagq7rNFUEnR7kciQafV38kzpocef74J44'));
+              //4779042ef9d30eb2b1f5a1afbf286f30a4c5d0634d3030b9e00ccda76084985f
+              //
+              //await services.balance.recalculateAllBalances();
+              //print([for (var x in Current.wallet.unspents) x.value].sum());
+              //print([for (var x in Current.wallet.balances) x.value].sum());
             }
           },
           child: appBar,

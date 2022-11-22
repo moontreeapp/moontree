@@ -37,11 +37,6 @@ class _TransactionListState extends State<TransactionList> {
   @override
   void initState() {
     super.initState();
-    transactionCount = widget.symbol == null
-        ? pros.vouts.records.map((v) => v.security == null).length
-        : pros.vouts.records
-            .map((v) => v.security?.symbol == widget.symbol)
-            .length;
     listeners.add(
         pros.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
@@ -53,9 +48,7 @@ class _TransactionListState extends State<TransactionList> {
           .where((change) => change.record.security?.symbol == widget.symbol);
       if (items.isNotEmpty) {
         print('refreshing list - vouts');
-        setState(() {
-          transactionCount = items.length;
-        });
+        setState(() {});
       }
     }));
     listeners.add(pros.rates.batchedChanges.listen((batchedChanges) {
@@ -89,6 +82,13 @@ class _TransactionListState extends State<TransactionList> {
   Widget build(BuildContext context) {
     transactions = widget.transactions ??
         services.transaction.getTransactionRecords(wallet: Current.wallet);
+    if (transactions.isEmpty) {
+      transactionCount = pros.unspents.bySymbol
+          .getAll(widget.symbol ?? pros.securities.currentCrypto.symbol)
+          .length;
+    } else {
+      transactionCount = transactions.length;
+    }
     return transactions.isEmpty && services.wallet.currentWallet.minerMode
         ? Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Container(
@@ -112,16 +112,13 @@ class _TransactionListState extends State<TransactionList> {
             //? components.empty.transactions(context, msg: widget.msg)
             ? components.empty.getTransactionsPlaceholder(context,
                 scrollController: widget.scrollController!,
-                count: min(10, transactionCount))
+                count: transactionCount == 0 ? 1 : min(10, transactionCount))
             : Container(
                 alignment: Alignment.center,
-                child:
-                    //RefreshIndicator(
-                    //  child:
-                    _transactionsView(context),
-                //  onRefresh: () => refresh(),
-                //)
-              );
+                child: RefreshIndicator(
+                  child: _transactionsView(context),
+                  onRefresh: () => refresh(),
+                ));
   }
 
   ListView _transactionsView(BuildContext context) => ListView(
