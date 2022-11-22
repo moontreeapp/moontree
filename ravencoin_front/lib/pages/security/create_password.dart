@@ -333,6 +333,11 @@ class _CreatePasswordState extends State<CreatePassword> {
   }
 
   Future<void> exitProcess() async {
+    await components.loading.screen(
+      message: 'Creating Wallet',
+      returnHome: false,
+      playCount: 4,
+    );
     await setupWallets();
     login(context, password: password.text);
   }

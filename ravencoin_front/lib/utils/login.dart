@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
-import 'package:ravencoin_back/ravencoin_back.dart';
 
 Future<void> login(
   BuildContext context, {

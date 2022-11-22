@@ -55,7 +55,10 @@ class _VerifySeedState extends State<VerifySeed> {
     shuffled = data['shuffled']!;
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: BackdropLayers(
+            back: BlankBack(), front: FrontCurve(child: body())));
   }
 
   Widget body() => Stack(children: [

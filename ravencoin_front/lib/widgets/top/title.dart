@@ -377,6 +377,10 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   visualDensity: VisualDensity.compact,
                   onTap: () async {
                     Navigator.pop(components.navigator.routeContext!);
+                    await components.loading.screen(
+                        message: 'Creating Wallet',
+                        returnHome: true,
+                        playCount: 3);
                     final walletId = await generateWallet();
                     await switchWallet(walletId);
                   },

@@ -270,6 +270,11 @@ class _CreateNativeState extends State<CreateNative> {
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
+      await components.loading.screen(
+        message: 'Creating Wallet',
+        returnHome: false,
+        playCount: 4,
+      );
       if (pros.passwords.records.isEmpty) {
         //services.cipher.initCiphers(altPassword: key, altSalt: key);
         await services.authentication.setPassword(
@@ -286,6 +291,7 @@ class _CreateNativeState extends State<CreateNative> {
       //    behaviors: {
       //      'ok': () => Navigator.of(context).pop(),
       //    });
+
       login(context);
     } else {
       if (localAuthApi.reason == AuthenticationResult.error) {

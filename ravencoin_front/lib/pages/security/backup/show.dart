@@ -95,25 +95,27 @@ class _BackupSeedState extends State<BackupSeed>
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
-    return FutureBuilder<List<String>>(
-        future: getSecret,
-        builder: (context, AsyncSnapshot<List<String>> snapshot) {
-          if (snapshot.hasData) {
-            secret = snapshot.data!;
-            return services.password.askCondition
-                ? VerifyAuthentication(
-                    parentState: this,
-                    buttonLabel: 'Show Seed',
-                    intro: intro,
-                    safe: safe,
-                    auto: true,
-                    asLoginTime: true,
-                  )
-                : body();
-          } else {
-            return CircularProgressIndicator();
-          }
-        });
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: FutureBuilder<List<String>>(
+            future: getSecret,
+            builder: (context, AsyncSnapshot<List<String>> snapshot) {
+              if (snapshot.hasData) {
+                secret = snapshot.data!;
+                return services.password.askCondition
+                    ? VerifyAuthentication(
+                        parentState: this,
+                        buttonLabel: 'Show Seed',
+                        intro: intro,
+                        safe: safe,
+                        auto: true,
+                        asLoginTime: true,
+                      )
+                    : body();
+              } else {
+                return CircularProgressIndicator();
+              }
+            }));
   }
 
   Widget body() => BackdropLayers(
