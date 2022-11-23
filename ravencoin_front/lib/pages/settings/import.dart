@@ -37,6 +37,7 @@ class _ImportState extends State<Import> {
   String? finalText;
   String? finalAccountId;
   bool importVisible = true;
+  bool submittedAttempt = false;
 
   @override
   void initState() {
@@ -139,8 +140,11 @@ class _ImportState extends State<Import> {
           hintText: 'Please enter seed words, a WIF, or a private key.',
           helperText:
               importFormatDetected == 'Unknown' ? null : importFormatDetected,
-          errorText:
-              importFormatDetected == 'Unknown' ? importFormatDetected : null,
+          errorText: submittedAttempt
+              ? importFormatDetected == 'Unknown'
+                  ? importFormatDetected
+                  : null
+              : null,
           suffixIcon:
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             IconButton(
@@ -178,7 +182,10 @@ class _ImportState extends State<Import> {
                       words.text = '';
                     })),
           ]),
-          onChanged: (value) => enableImport(),
+          onChanged: (value) {
+            submittedAttempt = false;
+            enableImport();
+          },
           onEditingComplete: () {
             enableImport();
             FocusScope.of(context).requestFocus(submitFocus);
@@ -206,13 +213,25 @@ class _ImportState extends State<Import> {
         Divider(),
       ]);
 
-  Widget submitButton([String? label]) => components.buttons.actionButton(
-      context,
-      enabled: importEnabled,
-      focusNode: submitFocus,
-      label: (label ?? 'Import').toUpperCase(),
-      disabledIcon: components.icons.importDisabled(context),
-      onPressed: () async => await attemptImport(file?.content ?? words.text));
+  Widget submitButton([String? label]) =>
+      components.buttons.actionButton(context,
+          enabled: true, // importEnabled,
+          focusNode: submitFocus,
+          label: (label ?? 'Import').toUpperCase(),
+          disabledIcon: components.icons.importDisabled(context),
+          onPressed: () async {
+        setState(() {
+          submittedAttempt = true;
+        });
+        if (importEnabled) {
+          await attemptImport(file?.content ?? words.text);
+        } else {
+          enableImport();
+          if (importEnabled) {
+            await attemptImport(file?.content ?? words.text);
+          }
+        }
+      });
 
   Widget get fileButton => components.buttons.actionButton(
         context,
