@@ -164,7 +164,7 @@ class _PageLead extends State<PageLead> {
             streams.app.splash.add(false);
           });
     }
-    if (['BackupConfirm', 'Mining'].contains(pageTitle)) {
+    if (['BackupConfirm', 'Backup'].contains(pageTitle)) {
       /// the reason for this is after we took out encryptedEntropy from
       /// LeaderWallets we needed to make all the functions dealing with getting
       /// sensitive information futures, and since they're futures, we had to
@@ -185,22 +185,15 @@ class _PageLead extends State<PageLead> {
             Navigator.popUntil(
                 components.navigator.routeContext ?? context,
                 //ModalRoute.withName('/home') ||
-                ModalRoute.withName('/security/backup/backupintro'));
-            streams.app.lead.add(LeadIcon.pass); // replace with a refresh trigger?
+                ModalRoute.withName(components.navigator
+                        .nameIsInStack('/security/backup/backupintro')
+                    ? '/security/backup/backupintro'
+                    : '/home'));
+            streams.app.lead
+                .add(LeadIcon.pass); // replace with a refresh trigger?
           });
     }
-    if (['Backup'].contains(pageTitle)) {
-      return IconButton(
-          splashRadius: 24,
-          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
-          onPressed: () {
-            if (streams.app.scrim.value == true) return;
-            if (pageTitle == 'Transaction') streams.spend.form.add(null);
-            Navigator.popUntil(components.navigator.routeContext ?? context,
-                ModalRoute.withName('/security/backup/backupintro'));
-            streams.app.lead.add(LeadIcon.pass); // replace with a refresh trigger?
-          });
-    }
+
     return IconButton(
         splashRadius: 24,
         icon: Icon(Icons.chevron_left_rounded, color: Colors.white),

@@ -208,7 +208,7 @@ class _NavMenuState extends State<NavMenu> {
             icon: MdiIcons.drawPen,
             name: 'Backup',
             link: Current.wallet is LeaderWallet
-                ? '/security/backup/backupintro'
+                ? '/security/backup'
                 : '/security/backupKeypair',
           ),
           destination(

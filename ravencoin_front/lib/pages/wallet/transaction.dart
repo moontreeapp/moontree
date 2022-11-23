@@ -192,9 +192,8 @@ class _TransactionPageState extends State<TransactionPage> {
               link(
                 title: 'Transaction Info',
                 text: 'ID',
-                url: pros.settings.chain == Chain.evrmore
-                    ? 'https://evr.explorer.monster/tx/'
-                    : 'https://rvn${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
+                url:
+                    'https://${chainSymbol(pros.settings.chain)}${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
                 description: 'info',
               ),
               if (transactionMemo != null)
