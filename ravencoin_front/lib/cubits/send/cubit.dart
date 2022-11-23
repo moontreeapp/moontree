@@ -8,9 +8,11 @@ import 'package:moontree_utils/src/zips.dart' show zipLists;
 
 part 'state.dart';
 
-class SimpleSendFormCubit extends SetCubit<SimpleSendFormState> {
+class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
+    with SetCubitMixin {
   SimpleSendFormCubit() : super(SimpleSendFormState.initial());
 
+  // should this emit?
   @override
   Future<SimpleSendFormState> set({
     Security? security,
@@ -32,4 +34,12 @@ class SimpleSendFormCubit extends SetCubit<SimpleSendFormState> {
         addressName: addressName,
         isSubmitting: isSubmitting,
       );
+
+  // should this emit?
+  SimpleSendFormState submitting() => state.load(isSubmitting: true);
+
+  void enter() async => emit(state);
+  //void submit() async {
+  //  emit(await submitSend());
+  //}
 }

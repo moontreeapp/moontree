@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:ravencoin_front/concepts/concepts.dart';
+import 'package:ravencoin_front/concepts/concept.dart';
+import 'package:ravencoin_front/theme/colors.dart';
 
 enum FeeOption {
   fast,
@@ -8,20 +9,31 @@ enum FeeOption {
   slow,
 }
 
-//class FeeConcept extends Concept {
-//  final FeeOption option;
-//  final IconData icon;
-//  const FeeConcept({required this.option, required this.icon}) : super(option);
-//}
-
-class FeeConcept extends Concept<FeeOption> {
-  final IconData icon;
-  const FeeConcept({required option, required this.icon}) : super(option);
+class _FeeConcept extends Concept<FeeOption> {
+  final IconData iconData;
+  const _FeeConcept({required option, required this.iconData}) : super(option);
+  Icon get icon => Icon(iconData, color: AppColors.primary);
+  Icon iconFrom(double? size, Color? color, String? semanticLabel,
+          TextDirection? textDirection, List<Shadow>? shadows) =>
+      Icon(iconData,
+          size: size,
+          color: color,
+          semanticLabel: semanticLabel,
+          textDirection: textDirection,
+          shadows: shadows);
 }
 
-const fastFeeRate =
-    FeeConcept(option: FeeOption.fast, icon: MdiIcons.speedometer);
-const standardFeeRate =
-    FeeConcept(option: FeeOption.standard, icon: MdiIcons.speedometerMedium);
-const slowFeeRate =
-    FeeConcept(option: FeeOption.slow, icon: MdiIcons.speedometerSlow);
+class fees {
+  static const fast = _FeeConcept(
+    option: FeeOption.fast,
+    iconData: MdiIcons.speedometer,
+  );
+  static const standard = _FeeConcept(
+    option: FeeOption.standard,
+    iconData: MdiIcons.speedometerMedium,
+  );
+  static const slow = _FeeConcept(
+    option: FeeOption.slow,
+    iconData: MdiIcons.speedometerSlow,
+  );
+}

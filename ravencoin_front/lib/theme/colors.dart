@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:moontree_utils/src/zips.dart' show zipMap;
 
 class AppColors {
-  static List<Color> get colors => [
+  static List<Color> get palette => [
         error,
         const Color(0xFFEC407A),
         const Color(0xFFAB47BC),
@@ -22,32 +22,32 @@ class AppColors {
         const Color(0xFFFF7043),
       ];
 
-  static Color get error => const Color(0xFFEF5350);
-  static Color get success => const Color(0xFF66BB6A);
-  static Color get lightGreen => const Color(0xFF9CCC65);
-  static Color get primary => const Color(0xFF5C6BC0);
-  static Color get lime => const Color(0xFFD4E157);
-  static Color get yellow => const Color(0xFFFFEE58);
-  static Color get primaryDisabled => const Color(0xFFC1C7E7);
-  static Color get snackBar => const Color(0xFF212121);
-  static Color get logoGreen => const Color(0xFF94DF3F);
-  static Color get logoBlue => const Color(0xFF54A3E3);
+  static const error = const Color(0xFFEF5350);
+  static const success = const Color(0xFF66BB6A);
+  static const lightGreen = const Color(0xFF9CCC65);
+  static const primary = const Color(0xFF5C6BC0);
+  static const lime = const Color(0xFFD4E157);
+  static const yellow = const Color(0xFFFFEE58);
+  static const primaryDisabled = const Color(0xFFC1C7E7);
+  static const snackBar = const Color(0xFF212121);
+  static const logoGreen = const Color(0xFF94DF3F);
+  static const logoBlue = const Color(0xFF54A3E3);
 
   // .12 Colors.white.withAlpha(12)
-  static Color get white12 => const Color(0x1FFFFFFF);
-  static Color get white38 => const Color(0x61FFFFFF);
-  static Color get white60 => const Color(0x99FFFFFF);
-  static Color get white87 => const Color(0xDEFFFFFF);
-  static Color get white => const Color(0xFFFFFFFF);
-  static Color get black12 => const Color(0x1F000000);
-  static Color get black38 => const Color(0x61000000);
-  static Color get black60 => const Color(0x99000000);
-  static Color get black87 => const Color(0xDE000000);
-  static Color get black => const Color(0xFF000000);
-  static Color get divider => black12;
-  static Color get disabled => black38;
-  static Color get offBlack => black87;
-  static Color get offWhite => white87;
+  static const white12 = const Color(0x1FFFFFFF);
+  static const white38 = const Color(0x61FFFFFF);
+  static const white60 = const Color(0x99FFFFFF);
+  static const white87 = const Color(0xDEFFFFFF);
+  static const white = const Color(0xFFFFFFFF);
+  static const black12 = const Color(0x1F000000);
+  static const black38 = const Color(0x61000000);
+  static const black60 = const Color(0x99000000);
+  static const black87 = const Color(0xDE000000);
+  static const black = const Color(0xFF000000);
+  static const divider = black12;
+  static const disabled = black38;
+  static const offBlack = black87;
+  static const offWhite = white87;
 
   static List<Color> get whites => [
         white12,
@@ -93,22 +93,22 @@ class AppColors {
   static Color get androidSystemBar => primary.withOpacity(1 - .12);
   static Color get scrim => black.withOpacity(1 - .38);
 
-  List<Color> get backgroundColors => colors
+  List<Color> get backgroundColors => palette
       .where((Color color) => ![lime, yellow, primary].contains(color))
       .toList();
 
   List<Color> foregroundColors(Color background) {
     var index = backgroundColors.indexOf(background);
-    var allIndex = colors.indexOf(background);
+    var allIndex = palette.indexOf(background);
     var length = backgroundColors.length;
     var ret = <Color>[];
     if (index == 0) {
-      ret = colors.sublist(2, colors.length - 1);
+      ret = palette.sublist(2, palette.length - 1);
     } else if (index == length - 1) {
-      ret = colors.sublist(1, colors.length - 2);
+      ret = palette.sublist(1, palette.length - 2);
     } else {
-      ret = colors.where((Color color) {
-        if (![colors[index - 1], colors[index], colors[index + 1]]
+      ret = palette.where((Color color) {
+        if (![palette[index - 1], palette[index], palette[index + 1]]
             .contains(color)) {
           return true;
         }
@@ -149,7 +149,7 @@ class AppColors {
       <int>[];
 
   Set<Color> noGood(int index) =>
-      {for (var i in tooClose(index) + tooClash(index)) colors[i]};
+      {for (var i in tooClose(index) + tooClash(index)) palette[i]};
 
   Map<int, Color> get primaryMap =>
       zipMap(primaryNumbers + lightPrimaryNumbers, primaries + lightPrimaries)

@@ -1,3 +1,4 @@
+/*
 import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:ravencoin_front/cubits/send/cubit.dart';
-import 'package:ravencoin_front/cubits/state.dart';
+import 'package:ravencoin_front/cubits/parents.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/qrcode.dart';
@@ -821,5 +822,4 @@ class ToName extends StatelessWidget {
       Visibility(visible: addressName != '', child: Text('To: $addressName'));
 }
 
-/*
 */

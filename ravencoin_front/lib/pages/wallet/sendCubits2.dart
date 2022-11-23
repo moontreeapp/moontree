@@ -1,10 +1,11 @@
+/*
 import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
-import 'package:ravencoin_front/concepts/fee.dart';
+import 'package:ravencoin_front/concepts/concepts.dart' as concepts;
 import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/cubits/parents.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
@@ -53,6 +54,8 @@ class _SendState extends State<Send> {
   String addressName = '';
   double? minHeight;
   String visibleAmount = '0';
+  bool clicked = false;
+  bool validatedAddress = true;
 
   @override
   void initState() {
@@ -194,12 +197,18 @@ class _SendState extends State<Send> {
                                                     color: Color(0xDE000000))),
                                             onPressed: _produceAssetModal,
                                           )),
-                                  onTap: () {
-                                    _produceAssetModal();
-                                    setState(() {});
+                                  onTap: _produceAssetModal,
+                                  onChanged: (value) {
+                                    cubit.set(
+                                        security: pros.securities
+                                                .ofCurrent(symbolName(value)) ??
+                                            pros.securities.currentCrypto);
                                   },
                                   onEditingComplete: () async {
-                                    cubit.set(security: )
+                                    cubit.set(
+                                        security: pros.securities.ofCurrent(
+                                                symbolName(sendAsset.text)) ??
+                                            pros.securities.currentCrypto);
                                     FocusScope.of(context)
                                         .requestFocus(sendAddressFocusNode);
                                   },
@@ -310,7 +319,8 @@ class _SendState extends State<Send> {
                                           (state.security.balance?.value ?? 0)
                                               .toString();
                                     }
-                                    visibleAmount = verifyVisibleAmount(value);
+                                    visibleAmount =
+                                        verifyVisibleAmount(value, state);
                                     cubit.set(amount: asDouble(visibleAmount));
                                   },
                                   onEditingComplete: () {
@@ -318,8 +328,8 @@ class _SendState extends State<Send> {
                                         sendAmount.text,
                                         divisibility:
                                             state.security.divisibility);
-                                    visibleAmount =
-                                        verifyVisibleAmount(sendAmount.text);
+                                    visibleAmount = verifyVisibleAmount(
+                                        sendAmount.text, state);
                                     cubit.set(amount: asDouble(visibleAmount));
                                     //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
                                     //FocusScope.of(context).requestFocus(sendFeeFocusNode);
@@ -327,10 +337,7 @@ class _SendState extends State<Send> {
                                   },
                                 ),
                                 TextFieldFormatted(
-                                  onTap: () {
-                                    _produceFeeModal();
-                                    setState(() {});
-                                  },
+                                  onTap: _produceFeeModal,
                                   focusNode: sendFeeFocusNode,
                                   controller: sendFee,
                                   readOnly: true,
@@ -342,10 +349,7 @@ class _SendState extends State<Send> {
                                           padding: EdgeInsets.only(right: 14),
                                           child: Icon(Icons.expand_more_rounded,
                                               color: Color(0xDE000000))),
-                                      onPressed: () {
-                                        _produceFeeModal();
-                                        setState(() {});
-                                      }),
+                                      onPressed: _produceFeeModal),
                                   onChanged: (String newValue) {
                                     //sendFee.text = newValue; //necessary?
                                     cubit.set(
@@ -469,7 +473,7 @@ class _SendState extends State<Send> {
     return validatedAddress;
   }
 
-  String verifyVisibleAmount(String value) {
+  String verifyVisibleAmount(String value, SimpleSendFormState state) {
     var amount = cleanDecAmount(value);
     try {
       if (value != '') {
@@ -482,7 +486,7 @@ class _SendState extends State<Send> {
     } else {
       // todo: estimate fee
       if (amount != '' &&
-          double.parse(amount) <= state.security.balance.value) {
+          double.parse(amount) <= (state.security.balance?.value ?? 0)) {
       } else {}
     }
     //setState(() => {});
@@ -496,7 +500,7 @@ class _SendState extends State<Send> {
     return sendAddress.text != '' && _validateAddress() && verifyMemo();
   }
 
-  bool holdingValidation() {
+  bool holdingValidation(SimpleSendFormState state) {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     if (sendAmount.text == '') {
       return false;
@@ -619,7 +623,7 @@ class _SendState extends State<Send> {
     });
   }
 
-  void _produceAssetModal(SimpleSendFormCubit cubit) {
+  void _produceAssetModal() {
     final tail = Current.holdingNames
         .where((item) => item != pros.securities.currentCrypto.symbol)
         .toList();
@@ -627,58 +631,45 @@ class _SendState extends State<Send> {
         .where((item) => item == pros.securities.currentCrypto.symbol)
         .toList();
     SimpleSelectionItems(context, items: [
-      for (var name in  head + tail)
-      ListTile(
-      visualDensity: VisualDensity.compact,
-      onTap: () {
-        Navigator.pop(context);
-        cubit.set(
-            security: pros.securities.ofCurrent(symbolName(name)) ??
-                pros.securities.currentCrypto);
-      },
-      leading: components.icons.assetAvatar(
-          name == 'Ravencoin'
-              ? pros.securities.RVN.symbol
-              : name == 'Evrmore'
-                  ? pros.securities.EVR.symbol
-                  : name,
-          height: 24,
-          width: 24,
-          net: pros.settings.net),
-      title: Text(
-          name == pros.securities.currentCrypto.symbol
-              ? symbolName(name)
-              : name,
-          style: Theme.of(context).textTheme.bodyText1))
-      
+      for (var name in head + tail)
+        ListTile(
+            visualDensity: VisualDensity.compact,
+            onTap: () {
+              Navigator.pop(context);
+              sendAsset.text = name;
+            },
+            leading: components.icons.assetAvatar(
+                name == 'Ravencoin'
+                    ? pros.securities.RVN.symbol
+                    : name == 'Evrmore'
+                        ? pros.securities.EVR.symbol
+                        : name,
+                height: 24,
+                width: 24,
+                net: pros.settings.net),
+            title: Text(symbolName(name),
+                style: Theme.of(context).textTheme.bodyText1))
     ]).build();
     //SelectionItems(context, modalSet: SelectionSet.Holdings)
     //    .build(holdingNames: head + tail);
   }
 
-  void _produceFeeModal(SimpleSendFormCubit cubit) {
+  void _produceFeeModal() {
     SimpleSelectionItems(context, items: [
-
-      for (var feeOption in  [StandardFeeRate(), FastFeeRate()])
-      ListTile(
-        visualDensity: VisualDensity.compact,
-        onTap: () {
-          Navigator.pop(context);
-          sendFee.text = feeOption.name;
-        },
-        leading: () {
-          feeOption == SelectionOption.Fast ? MdiIcons.speedometer: ,
-        title: title ??
-            Text(asString(name), style: Theme.of(context).textTheme.bodyText1),
-        trailing: value != null
-            ? Text(value,
-                style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                    fontWeight: FontWeights.bold,
-                    letterSpacing: 0.1,
-                    color: AppColors.black60))
-            : null,
-      )]).build();
-    SelectionItems(context, modalSet: SelectionSet.Fee).build();
+      for (var feeOption in [concepts.fees.fast, concepts.fees.standard])
+        ListTile(
+          visualDensity: VisualDensity.compact,
+          onTap: () {
+            Navigator.pop(context);
+            sendFee.text = feeOption.nameTitlecase;
+          },
+          leading: feeOption.icon,
+          title: Text(feeOption.nameTitlecase,
+              style: Theme.of(context).textTheme.bodyText1),
+          trailing: null,
+        )
+    ]).build();
+    //SelectionItems(context, modalSet: SelectionSet.Fee).build();
   }
 }
 
@@ -700,5 +691,5 @@ class ToName extends StatelessWidget {
       Visibility(visible: addressName != '', child: Text('To: $addressName'));
 }
 
-/*
+
 */
