@@ -102,6 +102,31 @@ class BackdropAppBarContents extends StatelessWidget
               //await services.balance.recalculateAllBalances();
               //print([for (var x in Current.wallet.unspents) x.value].sum());
               //print([for (var x in Current.wallet.balances) x.value].sum());
+              //
+              //for (var x in Current.wallet.balances) {
+              //  print(x);
+              //}
+              //for (var x in Current.wallet.unspents) {
+              //  print(x);
+              //}
+              //print(pros.addresses.byAddress
+              //    .getOne('EZxVbSaaJpRBoNE3q9hTuqWxhL7vbJMkvV'));
+              //for (var x in pros.assets) {
+              //  print(x);
+              //}
+              //for (var x in pros.securities) {
+              //  print(x);
+              //}
+              //
+              print(await services.client.api.getAssetUnspents([
+                'c38edbf38b247807f581f8d2ef4094e62f1d71179fcd799a959136898caf83da'
+              ]));
+              print(pros.addresses.byScripthash.getOne(
+                  'c38edbf38b247807f581f8d2ef4094e62f1d71179fcd799a959136898caf83da'));
+              //print(await services.client.api.getAssetUnspents([
+              //  '577d2e12c4e221a0ba98a8225d58d54b7353a3615a59d4bf5fae2898f623a261'
+              //]));
+              print(pros.unspents.getSymbolsByWallet(Current.walletId));
             }
           },
           child: appBar,

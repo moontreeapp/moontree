@@ -12,9 +12,6 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:shimmer/shimmer.dart';
 
-final rvn = pros.securities.RVN.symbol;
-final evr = pros.securities.EVR.symbol;
-
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
   final ScrollController? scrollController;
@@ -42,6 +39,7 @@ class _HoldingList extends State<HoldingList> {
   Set<Address> addresses = {};
   TextEditingController searchController = TextEditingController();
   bool overrideGettingStarted = false;
+  late Security currentCrypto;
 
   int getCount() {
     var x = Current.wallet.holdingCount;
@@ -118,6 +116,8 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
+    currentCrypto = pros.securities.currentCrypto;
+
     balances = Current.wallet.balances.toSet();
     addresses = Current.wallet.addresses.toSet();
     final transactions = Current.wallet.transactions.toSet();
@@ -318,7 +318,7 @@ class _HoldingList extends State<HoldingList> {
           leading: leadingIcon(holding),
           title: title(holding),
           trailing: services.developer.developerMode == true
-              ? ((holding.symbol == rvn || holding.symbol == evr) && !isEmpty
+              ? ((holding.symbol == currentCrypto.symbol) && !isEmpty
                   ? GestureDetector(
                       onTap: () =>
                           setState(() => showSearchBar = !showSearchBar),
@@ -339,7 +339,7 @@ class _HoldingList extends State<HoldingList> {
                             ))
                   : null)
               : null);
-      if (holding.symbol == rvn || holding.symbol == evr) {
+      if (holding.symbol == currentCrypto.symbol) {
         rvnHolding.add(Container(
             //duration: Duration(milliseconds: 500),
             child: Column(
@@ -598,14 +598,14 @@ class _HoldingList extends State<HoldingList> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           Container(
-              width: holding.symbol == rvn || holding.symbol == evr
+              width: holding.symbol == currentCrypto.symbol
                   ? MediaQuery.of(context).size.width / 2
                   : MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    holding.symbol == rvn || holding.symbol == evr
+                    holding.symbol == currentCrypto.symbol
                         ? symbolName(holding.symbol)
                         : services.developer.developerMode && showPath
                             ? holding.symbol

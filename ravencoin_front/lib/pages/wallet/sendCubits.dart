@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ravencoin_front/cubits/send/cubit.dart';
+import 'package:ravencoin_front/cubits/state.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/qrcode.dart';
@@ -74,7 +75,6 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
-    //minHeight = 1 - (201 + 16) / MediaQuery.of(context).size.height;
     if (!rvnValidation()) {
       tellUserNoRVN();
       if (streams.spend.form.value?.symbol == null ||
@@ -88,24 +88,9 @@ class _SendState extends State<Send> {
       }
     }
     loaded = false;
-
-    /// #612
-    //sendAsset.text = sendAsset.text == ''
-    //    ? (pros.balances.primaryIndex
-    //                .getOne(Current.walletId, pros.securities.currentCrypto) !=
-    //            null
-    //        ? 'Ravencoin'
-    //        : pros.balances.first.security.symbol)
-    //    : sendAsset.text;
     sendAsset.text =
         sendAsset.text == '' ? chainName(pros.settings.chain) : sendAsset.text;
     sendFee.text = sendFee.text == '' ? 'Standard' : sendFee.text;
-    //sendAssetFocusNode.addListener(refresh);
-    //sendAddressFocusNode.addListener(refresh);
-    //sendAmountFocusNode.addListener(refresh);
-    //sendFeeFocusNode.addListener(refresh);
-    //sendMemoFocusNode.addListener(refresh);
-    //sendNoteFocusNode.addListener(refresh);
     listeners.add(streams.spend.form.listen((SpendForm? value) {
       if (value != null) {
         if (spendForm != value) {
@@ -176,13 +161,6 @@ class _SendState extends State<Send> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
-    //sendAssetFocusNode.removeListener(refresh);
-    //sendAddressFocusNode.removeListener(refresh);
-    //sendAmountFocusNode.removeListener(refresh);
-    //sendFeeFocusNode.removeListener(refresh);
-    //sendMemoFocusNode.removeListener(refresh);
-    //sendNoteFocusNode.removeListener(refresh);
     sendAssetFocusNode.dispose();
     sendAddressFocusNode.dispose();
     sendAmountFocusNode.dispose();
@@ -553,7 +531,7 @@ class _SendState extends State<Send> {
 
 class SendAssetField extends StatelessWidget {
   final Cubit cubit;
-  final State state;
+  final CubitState state;
   final FocusNode focus;
   final FocusNode nextFocus;
   SendAssetField({
@@ -593,7 +571,7 @@ class SendAssetField extends StatelessWidget {
 
 class ToName extends StatelessWidget {
   final Cubit cubit;
-  final State state;
+  final CubitState state;
   final FocusNode focus;
   final FocusNode nextFocus;
   ToName({
@@ -611,7 +589,7 @@ class ToName extends StatelessWidget {
 
 class SendAddressField extends StatelessWidget {
   final Cubit cubit;
-  final State state;
+  final CubitState state;
   final FocusNode focus;
   final FocusNode nextFocus;
   SendAddressField({
@@ -684,7 +662,7 @@ class SendAddressField extends StatelessWidget {
 
 class SendAmountField extends StatelessWidget {
   final Cubit cubit;
-  final State state;
+  final CubitState state;
   final FocusNode focus;
   final FocusNode nextFocus;
   SendAmountField({
@@ -784,7 +762,7 @@ class SendAmountField extends StatelessWidget {
 
 class SendFeeField extends StatelessWidget {
   final Cubit cubit;
-  final State state;
+  final CubitState state;
   final FocusNode focus;
   final FocusNode nextFocus;
   SendFeeField({
@@ -831,7 +809,7 @@ class SendFeeField extends StatelessWidget {
 
 class SendMemoField extends StatelessWidget {
   final Cubit cubit;
-  final State state;
+  final CubitState state;
   final FocusNode focus;
   final FocusNode nextFocus;
   SendMemoField({
@@ -879,7 +857,7 @@ class SendMemoField extends StatelessWidget {
 
 class SendNoteField extends StatelessWidget {
   final Cubit cubit;
-  final State state;
+  final CubitState state;
   final FocusNode focus;
   final FocusNode nextFocus;
   SendNoteField({
@@ -927,4 +905,5 @@ class SendNoteField extends StatelessWidget {
         setState(() {});
       });
 }
+
 */
