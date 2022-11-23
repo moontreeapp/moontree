@@ -813,6 +813,28 @@ class _SendState extends State<Send> {
     final head = Current.holdingNames
         .where((item) => item == pros.securities.currentCrypto.symbol)
         .toList();
+
+    /// testing - works fine, will use in cubit version
+    //SimpleSelectionItems(context, items: [
+    //  for (var name in head + tail)
+    //    ListTile(
+    //        visualDensity: VisualDensity.compact,
+    //        onTap: () {
+    //          Navigator.pop(context);
+    //          sendAsset.text = symbolName(name);
+    //        },
+    //        leading: components.icons.assetAvatar(
+    //            name == 'Ravencoin'
+    //                ? pros.securities.RVN.symbol
+    //                : name == 'Evrmore'
+    //                    ? pros.securities.EVR.symbol
+    //                    : name,
+    //            height: 24,
+    //            width: 24,
+    //            net: pros.settings.net),
+    //        title: Text(symbolName(name),
+    //            style: Theme.of(context).textTheme.bodyText1))
+    //]).build();
     SelectionItems(context, modalSet: SelectionSet.Holdings)
         .build(holdingNames: head + tail);
   }

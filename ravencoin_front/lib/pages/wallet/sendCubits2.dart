@@ -1,40 +1,34 @@
-/*
 import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
-import 'package:ravencoin_front/concepts/concepts.dart' as concepts;
-import 'package:ravencoin_front/cubits/send/cubit.dart';
-import 'package:ravencoin_front/cubits/parents.dart';
-import 'package:ravencoin_front/pages/misc/checkout.dart';
-import 'package:ravencoin_front/theme/theme.dart';
-import 'package:ravencoin_front/utils/qrcode.dart';
-import 'package:ravencoin_front/widgets/other/selection_control.dart';
-
-import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:wallet_utils/wallet_utils.dart' as ravencoin;
-
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
-
+import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/concepts/concepts.dart' as concepts;
+import 'package:ravencoin_front/widgets/other/selection_control.dart';
+import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/theme/theme.dart';
+import 'package:ravencoin_front/pages/misc/checkout.dart';
+import 'package:ravencoin_front/utils/qrcode.dart';
 import 'package:ravencoin_front/utils/params.dart';
 import 'package:ravencoin_front/utils/data.dart';
 
-class Send extends StatefulWidget {
+class Send2 extends StatefulWidget {
   final dynamic data;
-  const Send({this.data}) : super();
+  const Send2({this.data}) : super();
 
   @override
-  _SendState createState() => _SendState();
+  _Send2State createState() => _Send2State();
 }
 
-class _SendState extends State<Send> {
+class _Send2State extends State<Send2> {
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
   final sendAsset = TextEditingController();
@@ -112,6 +106,11 @@ class _SendState extends State<Send> {
       setState(() {});
     }
   }
+
+  void announceNoCoin() => streams.app.snack.add(Snack(
+        message: 'No coin in wallet - unable to pay fees',
+        positive: false,
+      ));
 
   @override
   Widget build(BuildContext context) {
@@ -201,18 +200,19 @@ class _SendState extends State<Send> {
                                   onChanged: (value) {
                                     cubit.set(
                                         security: pros.securities
-                                                .ofCurrent(symbolName(value)) ??
+                                                .ofCurrent(nameSymbol(value)) ??
                                             pros.securities.currentCrypto);
                                   },
                                   onEditingComplete: () async {
                                     cubit.set(
                                         security: pros.securities.ofCurrent(
-                                                symbolName(sendAsset.text)) ??
+                                                nameSymbol(sendAsset.text)) ??
                                             pros.securities.currentCrypto);
                                     FocusScope.of(context)
                                         .requestFocus(sendAddressFocusNode);
                                   },
                                 ),
+                                if (addressName != '') Text('To: $addressName'),
                                 TextFieldFormatted(
                                   focusNode: sendAddressFocusNode,
                                   controller: sendAddress,
@@ -311,12 +311,12 @@ class _SendState extends State<Send> {
                                   */
                                   onChanged: (value) {
                                     if (asDouble(value) >
-                                        (state.security.balance?.value ?? 0)) {
+                                        (state.security.balance?.amount ?? 0)) {
                                       value =
-                                          (state.security.balance?.value ?? 0)
+                                          (state.security.balance?.amount ?? 0)
                                               .toString();
                                       sendAmount.text =
-                                          (state.security.balance?.value ?? 0)
+                                          (state.security.balance?.amount ?? 0)
                                               .toString();
                                     }
                                     visibleAmount =
@@ -337,7 +337,7 @@ class _SendState extends State<Send> {
                                   },
                                 ),
                                 TextFieldFormatted(
-                                  onTap: _produceFeeModal,
+                                  onTap: () => _produceFeeModal(cubit),
                                   focusNode: sendFeeFocusNode,
                                   controller: sendFee,
                                   readOnly: true,
@@ -349,17 +349,18 @@ class _SendState extends State<Send> {
                                           padding: EdgeInsets.only(right: 14),
                                           child: Icon(Icons.expand_more_rounded,
                                               color: Color(0xDE000000))),
-                                      onPressed: _produceFeeModal),
+                                      onPressed: () => _produceFeeModal(cubit)),
                                   onChanged: (String newValue) {
                                     //sendFee.text = newValue; //necessary?
-                                    cubit.set(
-                                        fee: {
-                                              'Cheap': ravencoin.FeeRates.cheap,
-                                              'Standard':
-                                                  ravencoin.FeeRates.standard,
-                                              'Fast': ravencoin.FeeRates.fast,
-                                            }[newValue] ??
-                                            ravencoin.FeeRates.standard);
+                                    //cubit.set(
+                                    //    fee: {
+                                    //          'Cheap': ravencoin.FeeRates.cheap,
+                                    //          'Standard':
+                                    //              ravencoin.FeeRates.standard,
+                                    //          'Fast': ravencoin.FeeRates.fast,
+                                    //        }[newValue] ??
+                                    //        ravencoin.FeeRates.standard);
+                                    //cubit.set(fee: feeConcept.feeRate);
                                     FocusScope.of(context)
                                         .requestFocus(sendFeeFocusNode);
                                     setState(() {});
@@ -439,7 +440,25 @@ class _SendState extends State<Send> {
                               child: components.buttons.layeredButtons(
                             context,
                             buttons: [
-                              sendTransactionButton(disabled: !allValidation())
+                              components.buttons.actionButton(
+                                context,
+                                focusNode: previewFocusNode,
+                                enabled: allValidation(state) && !clicked,
+                                label: !clicked
+                                    ? 'Preview'
+                                    : 'Generating Transaction...',
+                                onPressed: () {
+                                  setState(() {
+                                    clicked = true;
+                                  });
+                                  startSend(state);
+                                },
+                                disabledOnPressed: () {
+                                  if (!coinValidation()) {
+                                    announceNoCoin();
+                                  }
+                                },
+                              )
                             ],
                             widthSpacer: SizedBox(width: 16),
                           ))
@@ -486,7 +505,7 @@ class _SendState extends State<Send> {
     } else {
       // todo: estimate fee
       if (amount != '' &&
-          double.parse(amount) <= (state.security.balance?.value ?? 0)) {
+          double.parse(amount) <= (state.security.balance?.amount ?? 0)) {
       } else {}
     }
     //setState(() => {});
@@ -495,6 +514,11 @@ class _SendState extends State<Send> {
 
   bool verifyMemo([String? memo]) =>
       (memo ?? sendMemo.text).isMemo || (memo ?? sendMemo.text).isIpfs;
+
+  bool coinValidation() =>
+      pros.balances.primaryIndex
+          .getOne(Current.walletId, pros.securities.currentCrypto) !=
+      null;
 
   bool fieldValidation() {
     return sendAddress.text != '' && _validateAddress() && verifyMemo();
@@ -505,31 +529,34 @@ class _SendState extends State<Send> {
     if (sendAmount.text == '') {
       return false;
     } else {
-      return state.security.balance.value >= double.parse(sendAmount.text);
+      return (state.security.balance?.amount ?? 0) >=
+          double.parse(sendAmount.text);
     }
   }
 
-  bool allValidation() {
-    return rvnValidation() && fieldValidation() && holdingValidation();
+  bool allValidation(SimpleSendFormState state) {
+    return coinValidation() && fieldValidation() && holdingValidation(state);
   }
 
-  void startSend() {
+  void startSend(SimpleSendFormState state) {
     sendAmount.text = cleanDecAmount(sendAmount.text, zeroToBlank: true);
     var vAddress = sendAddress.text != '' && _validateAddress();
     var vMemo = verifyMemo();
-    visibleAmount = verifyVisibleAmount(sendAmount.text);
+    visibleAmount = verifyVisibleAmount(sendAmount.text, state);
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       var sendAmountAsSats = utils.textAmountToSat(sendAmount.text);
-      if (state.security.balance.value >= double.parse(sendAmount.text)) {
+      if ((state.security.balance?.amount ?? 0) >=
+          double.parse(sendAmount.text)) {
         var sendRequest = SendRequest(
-          sendAll: state.security.balance.value == visibleAmount.toDouble(),
+          sendAll:
+              (state.security.balance?.amount ?? 0) == visibleAmount.toDouble(),
           wallet: Current.wallet,
           sendAddress: sendAddress.text,
-          holding: state.security.balance.value,
+          holding: (state.security.balance?.amount ?? 0.0),
           visibleAmount: visibleAmount,
           sendAmountAsSats: sendAmountAsSats,
-          feeRate: feeRate,
+          feeRate: state.fee,
           security: sendAsset.text == chainName(pros.settings.chain)
               ? null
               : pros.securities.primaryIndex.getOne(
@@ -561,24 +588,6 @@ class _SendState extends State<Send> {
   /// services.historyService.saveNote(hash, note {or history object})
   /// should notes be in a separate proclaim? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
-  Widget sendTransactionButton({bool disabled = false}) =>
-      components.buttons.actionButton(
-        context,
-        focusNode: previewFocusNode,
-        enabled: !disabled && !clicked,
-        label: !clicked ? 'Preview' : 'Generating Transaction...',
-        onPressed: () {
-          setState(() {
-            clicked = true;
-          });
-          startSend();
-        },
-        disabledOnPressed: () {
-          if (!rvnValidation()) {
-            tellUserNoRVN();
-          }
-        },
-      );
 
   void confirmSend(SendRequest sendRequest) {
     streams.spend.make.add(sendRequest);
@@ -636,7 +645,7 @@ class _SendState extends State<Send> {
             visualDensity: VisualDensity.compact,
             onTap: () {
               Navigator.pop(context);
-              sendAsset.text = name;
+              sendAsset.text = symbolName(name);
             },
             leading: components.icons.assetAvatar(
                 name == 'Ravencoin'
@@ -654,17 +663,18 @@ class _SendState extends State<Send> {
     //    .build(holdingNames: head + tail);
   }
 
-  void _produceFeeModal() {
+  void _produceFeeModal(SimpleSendFormCubit cubit) {
     SimpleSelectionItems(context, items: [
-      for (var feeOption in [concepts.fees.fast, concepts.fees.standard])
+      for (var feeConcept in [concepts.fees.fast, concepts.fees.standard])
         ListTile(
           visualDensity: VisualDensity.compact,
           onTap: () {
             Navigator.pop(context);
-            sendFee.text = feeOption.nameTitlecase;
+            sendFee.text = feeConcept.nameTitlecase;
+            cubit.set(fee: feeConcept.feeRate);
           },
-          leading: feeOption.icon,
-          title: Text(feeOption.nameTitlecase,
+          leading: feeConcept.icon,
+          title: Text(feeConcept.nameTitlecase,
               style: Theme.of(context).textTheme.bodyText1),
           trailing: null,
         )
@@ -673,23 +683,6 @@ class _SendState extends State<Send> {
   }
 }
 
-class ToName extends StatelessWidget {
-  final Cubit cubit;
-  final CubitState state;
-  final FocusNode focus;
-  final FocusNode nextFocus;
-  ToName({
-    Key? key,
-    required this.cubit,
-    required this.state,
-    required this.focus,
-    required this.nextFocus,
-  }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) =>
-      Visibility(visible: addressName != '', child: Text('To: $addressName'));
-}
-
-
+/*
 */
