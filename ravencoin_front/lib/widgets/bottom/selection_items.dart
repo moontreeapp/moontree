@@ -231,12 +231,7 @@ class SelectionItems {
           {
             SelectionOption.Restricted_Symbol:
                 Icons.attach_money_rounded, //, color: Colors.black),
-            SelectionOption.Fast:
-                MdiIcons.speedometer, //, color: Color(0x99000000)),
-            SelectionOption.Standard:
-                MdiIcons.speedometerMedium, //, color: Color(0x99000000)),
-            SelectionOption.Slow:
-                MdiIcons.speedometerSlow, //, color: Color(0x99000000)),
+
             SelectionOption.Main_Asset:
                 MdiIcons.plusCircle, //, color: Color(0xDE000000)),
             SelectionOption.Restricted_Asset:
@@ -291,30 +286,6 @@ class SelectionItems {
             SelectionOption.Bug: AppColors.primary,
           }[name] ??
           AppColors.primary);
-
-  Widget holdingItem(String name) => ListTile(
-      visualDensity: VisualDensity.compact,
-      onTap: () {
-        Navigator.pop(context);
-        streams.spend.form.add(SpendForm.merge(
-          form: streams.spend.form.value,
-          symbol: name,
-        ));
-      },
-      leading: components.icons.assetAvatar(
-          name == 'Ravencoin'
-              ? pros.securities.RVN.symbol
-              : name == 'Evrmore'
-                  ? pros.securities.EVR.symbol
-                  : name,
-          height: 24,
-          width: 24,
-          net: pros.settings.net),
-      title: Text(
-          name == pros.securities.currentCrypto.symbol
-              ? symbolName(name)
-              : name,
-          style: Theme.of(context).textTheme.bodyText1));
 
   Widget walletItem(Wallet wallet, TextEditingController controller) =>
       ListTile(
@@ -562,9 +533,6 @@ class SelectionItems {
           [
             for (Wallet wallet in pros.wallets) walletItem(wallet, controller!)
           ]);
-    } else if (modalSet == SelectionSet.Holdings) {
-      produceModal(
-          [for (String holding in holdingNames ?? []) holdingItem(holding)]);
     } else if (modalSet == SelectionSet.Admins) {
       produceModal(
         [for (String name in holdingNames ?? []) restrictedItem(name)],

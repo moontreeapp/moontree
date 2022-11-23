@@ -82,4 +82,16 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
       return USD;
     }
   }
+
+  SecurityType symbolSecurityType(String symbol) {
+    if (symbol == 'USD') {
+      return SecurityType.fiat;
+    } else if (symbol == chainSymbol(pros.settings.chain)) {
+      return SecurityType.crypto;
+    }
+    return SecurityType.asset;
+  }
+
+  Security? ofCurrent(String symbol) => primaryIndex.getOne(symbol,
+      symbolSecurityType(symbol), pros.settings.chain, pros.settings.net);
 }

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
+import 'package:ravencoin_front/concepts/fee.dart';
 import 'package:ravencoin_front/cubits/send/cubit.dart';
-import 'package:ravencoin_front/cubits/state.dart';
+import 'package:ravencoin_front/cubits/parents.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/qrcode.dart';
@@ -35,18 +36,12 @@ class Send extends StatefulWidget {
 class _SendState extends State<Send> {
   Map<String, dynamic> data = {};
   List<StreamSubscription> listeners = [];
-  SpendForm? spendForm;
-  double? minHeight;
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
   final sendAmount = TextEditingController();
   final sendFee = TextEditingController();
   final sendMemo = TextEditingController();
   final sendNote = TextEditingController();
-  String visibleAmount = '0';
-  bool validatedAddress = true;
-  String validatedAmount = '-1';
-  bool useWallet = false;
   FocusNode sendAssetFocusNode = FocusNode();
   FocusNode sendAddressFocusNode = FocusNode();
   FocusNode sendAmountFocusNode = FocusNode();
@@ -54,109 +49,14 @@ class _SendState extends State<Send> {
   FocusNode sendMemoFocusNode = FocusNode();
   FocusNode sendNoteFocusNode = FocusNode();
   FocusNode previewFocusNode = FocusNode();
-  ravencoin.FeeRate feeRate = ravencoin.FeeRates.standard;
-  String addressName = '';
-  bool showPaste = false;
-  String clipboard = '';
   final ScrollController scrollController = ScrollController();
-  bool clicked = false;
-  bool loaded = false;
-
-  bool rvnValidation() =>
-      pros.balances.primaryIndex
-          .getOne(Current.walletId, pros.securities.currentCrypto) !=
-      null;
-
-  void tellUserNoRVN() => streams.app.snack.add(Snack(
-        message: 'No coin in wallet - unable to pay fees',
-        positive: false,
-      ));
+  String addressName = '';
+  double? minHeight;
+  String visibleAmount = '0';
 
   @override
   void initState() {
     super.initState();
-    if (!rvnValidation()) {
-      tellUserNoRVN();
-      if (streams.spend.form.value?.symbol == null ||
-          streams.spend.form.value?.symbol == 'RVN' ||
-          streams.spend.form.value?.symbol == 'Ravencoin' ||
-          streams.spend.form.value?.symbol == 'Evrmore') {
-        streams.spend.form.add(SpendForm.merge(
-          form: streams.spend.form.value,
-          symbol: pros.balances.first.security.symbol,
-        ));
-      }
-    }
-    loaded = false;
-    sendAsset.text =
-        sendAsset.text == '' ? chainName(pros.settings.chain) : sendAsset.text;
-    sendFee.text = sendFee.text == '' ? 'Standard' : sendFee.text;
-    listeners.add(streams.spend.form.listen((SpendForm? value) {
-      if (value != null) {
-        if (spendForm != value) {
-          spendForm = value;
-          var asset = (value.symbol ?? pros.securities.currentCrypto.symbol);
-          asset = (asset == pros.securities.currentCrypto.symbol ||
-                  asset == chainName(pros.settings.chain))
-              ? chainName(pros.settings.chain)
-              : Current.holdingNames.contains(asset)
-                  ? asset
-                  : asset == ''
-                      ? chainName(pros.settings.chain)
-                      : asset;
-          var sendFeeText = value.fee ?? 'Standard';
-          var sendNoteText = value.note ?? sendNote.text;
-          var sendAddressText = value.address ?? sendAddress.text;
-          var addressNameText = value.addressName ?? addressName;
-          if (sendAsset.text != asset ||
-              sendFee.text != sendFeeText ||
-              sendNote.text != sendNoteText ||
-              sendAddress.text != sendAddressText ||
-              addressName != addressNameText ||
-              (asDouble(sendAmount.text) != value.amount)) {
-            setState(() {
-              sendAsset.text = asset;
-              sendFee.text = sendFeeText;
-              sendNote.text = sendNoteText;
-              sendAddress.text = sendAddressText;
-              addressName = addressNameText;
-              var x = asDouble(sendAmount.text);
-              if (value.amount == null && x > 0) {
-                sendAmount.text = '';
-                streams.spend.form.add(SpendForm.merge(
-                    form: streams.spend.form.value,
-                    amount: 0.0,
-                    symbol: sendAsset.text,
-                    fee: sendFee.text,
-                    note: sendNote.text,
-                    address: sendAddress.text,
-                    addressName: addressName));
-              } else if (value.amount != null && x != value.amount) {
-                sendAmount.text =
-                    value.amount == 0.0 ? '' : value.amount.toString();
-                streams.spend.form.add(SpendForm.merge(
-                    form: streams.spend.form.value,
-                    amount: value.amount ?? 0,
-                    symbol: sendAsset.text,
-                    fee: sendFee.text,
-                    note: sendNote.text,
-                    address: sendAddress.text,
-                    addressName: addressName));
-              } else {
-                streams.spend.form.add(SpendForm.merge(
-                    form: streams.spend.form.value,
-                    amount: value.amount ?? 0,
-                    symbol: sendAsset.text,
-                    fee: sendFee.text,
-                    note: sendNote.text,
-                    address: sendAddress.text,
-                    addressName: addressName));
-              }
-            });
-          }
-        }
-      }
-    }));
   }
 
   @override
@@ -215,14 +115,9 @@ class _SendState extends State<Send> {
     minHeight =
         minHeight ?? 1 - (201 + 16) / MediaQuery.of(context).size.height;
     data = populateData(context, data);
-    useWallet = data.containsKey('walletId') && data['walletId'] != null;
     if (data.containsKey('qrCode')) {
       handlePopulateFromQR(data['qrCode']);
       data.remove('qrCode');
-    }
-    if (!loaded) {
-      FocusScope.of(context).unfocus();
-      loaded = true;
     }
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -304,15 +199,12 @@ class _SendState extends State<Send> {
                                     setState(() {});
                                   },
                                   onEditingComplete: () async {
+                                    cubit.set(security: )
                                     FocusScope.of(context)
                                         .requestFocus(sendAddressFocusNode);
                                   },
                                 ),
                                 TextFieldFormatted(
-                                  //onTap: () async {
-                                  //  clipboard = (await Clipboard.getData('text/plain'))?.text ?? '';
-                                  //  setState(() {});
-                                  //},
                                   focusNode: sendAddressFocusNode,
                                   controller: sendAddress,
                                   textInputAction: TextInputAction.next,
@@ -333,48 +225,24 @@ class _SendState extends State<Send> {
                                           !_validateAddress(sendAddress.text)
                                       ? 'Unrecognized Address'
                                       : null,
-                                  suffixIcon: //clipboard != '' && _validateAddress(clipboard)
-                                      //?
-                                      IconButton(
-                                          icon: Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 14),
-                                              child: Icon(Icons.paste_rounded,
-                                                  color: Color(0xDE000000))),
-                                          onPressed: () async {
-                                            clipboard =
-                                                (await Clipboard.getData(
-                                                            'text/plain'))
-                                                        ?.text ??
-                                                    '';
-                                            setState(() =>
-                                                sendAddress.text = clipboard);
-                                          }),
-                                  //: null,
-                                  onChanged: (value) {
-                                    /// just always put it in
-                                    //if (_validateAddressColor(value)) {
-                                    streams.spend.form.add(SpendForm.merge(
-                                      form: streams.spend.form.value,
-                                      symbol: sendAsset.text,
-                                      fee: sendFee.text,
-                                      address: value,
-                                    ));
-                                    //}
-                                  },
+                                  suffixIcon: IconButton(
+                                      icon: Padding(
+                                          padding: EdgeInsets.only(right: 14),
+                                          child: Icon(Icons.paste_rounded,
+                                              color: Color(0xDE000000))),
+                                      onPressed: () async {
+                                        var clip = (await Clipboard.getData(
+                                                    'text/plain'))
+                                                ?.text ??
+                                            '';
+                                        setState(() => sendAddress.text = clip);
+                                      }),
+                                  onChanged: (value) =>
+                                      cubit.set(address: value),
                                   onEditingComplete: () {
-                                    /// just always put it in
-                                    //if (_validateAddressColor(sendAddress.text)) {
-                                    streams.spend.form.add(SpendForm.merge(
-                                      form: streams.spend.form.value,
-                                      symbol: sendAsset.text,
-                                      fee: sendFee.text,
-                                      address: sendAddress.text,
-                                    ));
-                                    //}
+                                    cubit.set(address: sendAddress.text);
                                     FocusScope.of(context)
                                         .requestFocus(sendAmountFocusNode);
-                                    setState(() {});
                                   },
                                 ),
                                 TextFieldFormatted(
@@ -393,12 +261,12 @@ class _SendState extends State<Send> {
                                   hintText: 'Quantity',
                                   errorText: sendAmount.text == ''
                                       ? null
-                                      //: sendAmount.text.split('.').length > 1
-                                      //    ? 'invalid number'
                                       : sendAmount.text == '0.0'
                                           ? 'must be greater than 0'
                                           : asDouble(sendAmount.text) >
-                                                  state.security.balance.value
+                                                  (state.security.balance
+                                                          ?.value ??
+                                                      0)
                                               ? 'too large'
                                               : (String x) {
                                                   if (x.isNumeric) {
@@ -434,42 +302,28 @@ class _SendState extends State<Send> {
                                   */
                                   onChanged: (value) {
                                     if (asDouble(value) >
-                                        state.security.balance.value) {
-                                      value = state.security.balance.value
-                                          .toString();
-                                      sendAmount.text = state
-                                          .security.balance.value
-                                          .toString();
+                                        (state.security.balance?.value ?? 0)) {
+                                      value =
+                                          (state.security.balance?.value ?? 0)
+                                              .toString();
+                                      sendAmount.text =
+                                          (state.security.balance?.value ?? 0)
+                                              .toString();
                                     }
                                     visibleAmount = verifyVisibleAmount(value);
-                                    streams.spend.form.add(SpendForm.merge(
-                                      form: streams.spend.form.value,
-                                      symbol: sendAsset.text,
-                                      fee: sendFee.text,
-                                      amount: asDouble(visibleAmount),
-                                    ));
+                                    cubit.set(amount: asDouble(visibleAmount));
                                   },
                                   onEditingComplete: () {
-                                    //sendAmount.text = cleanDecAmount(
-                                    //  sendAmount.text,
-                                    //  zeroToBlank: true,
-                                    //);
                                     sendAmount.text = enforceDivisibility(
                                         sendAmount.text,
                                         divisibility:
                                             state.security.divisibility);
                                     visibleAmount =
                                         verifyVisibleAmount(sendAmount.text);
-                                    streams.spend.form.add(SpendForm.merge(
-                                      form: streams.spend.form.value,
-                                      symbol: sendAsset.text,
-                                      fee: sendFee.text,
-                                      amount: asDouble(visibleAmount),
-                                    ));
+                                    cubit.set(amount: asDouble(visibleAmount));
                                     //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
                                     //FocusScope.of(context).requestFocus(sendFeeFocusNode);
                                     FocusScope.of(context).unfocus();
-                                    setState(() {});
                                   },
                                 ),
                                 TextFieldFormatted(
@@ -492,27 +346,22 @@ class _SendState extends State<Send> {
                                         _produceFeeModal();
                                         setState(() {});
                                       }),
-                                  onChanged: (String? newValue) {
-                                    feeRate = {
-                                          'Cheap': ravencoin.FeeRates.cheap,
-                                          'Standard':
-                                              ravencoin.FeeRates.standard,
-                                          'Fast': ravencoin.FeeRates.fast,
-                                        }[newValue] ??
-                                        ravencoin.FeeRates.standard;
+                                  onChanged: (String newValue) {
+                                    //sendFee.text = newValue; //necessary?
+                                    cubit.set(
+                                        fee: {
+                                              'Cheap': ravencoin.FeeRates.cheap,
+                                              'Standard':
+                                                  ravencoin.FeeRates.standard,
+                                              'Fast': ravencoin.FeeRates.fast,
+                                            }[newValue] ??
+                                            ravencoin.FeeRates.standard);
                                     FocusScope.of(context)
                                         .requestFocus(sendFeeFocusNode);
                                     setState(() {});
                                   },
                                 ),
                                 TextFieldFormatted(
-                                    onTap: () async {
-                                      clipboard = (await Clipboard.getData(
-                                                  'text/plain'))
-                                              ?.text ??
-                                          '';
-                                      setState(() {});
-                                    },
                                     focusNode: sendMemoFocusNode,
                                     controller: sendMemo,
                                     textInputAction: TextInputAction.next,
@@ -528,35 +377,24 @@ class _SendState extends State<Send> {
                                             height: .7,
                                             color: AppColors.primary),
                                     errorText: verifyMemo() ? null : 'too long',
-                                    suffixIcon: clipboard.isAssetData ||
-                                            clipboard.isIpfs
-                                        ? IconButton(
-                                            icon: Icon(Icons.paste_rounded,
-                                                color: AppColors.black60),
-                                            onPressed: () async {
-                                              sendMemo.text =
-                                                  (await Clipboard.getData(
-                                                              'text/plain'))
-                                                          ?.text ??
-                                                      '';
-                                            })
-                                        : null,
-                                    onChanged: (value) {
-                                      setState(() {});
-                                    },
+                                    suffixIcon: IconButton(
+                                        icon: Icon(Icons.paste_rounded,
+                                            color: AppColors.black60),
+                                        onPressed: () async {
+                                          sendMemo.text =
+                                              (await Clipboard.getData(
+                                                          'text/plain'))
+                                                      ?.text ??
+                                                  '';
+                                        }),
+                                    onChanged: (value) =>
+                                        cubit.set(memo: value),
                                     onEditingComplete: () {
+                                      cubit.set(memo: sendMemo.text);
                                       FocusScope.of(context)
                                           .requestFocus(sendNoteFocusNode);
-                                      setState(() {});
                                     }),
                                 TextFieldFormatted(
-                                    onTap: () async {
-                                      clipboard = (await Clipboard.getData(
-                                                  'text/plain'))
-                                              ?.text ??
-                                          '';
-                                      setState(() {});
-                                    },
                                     focusNode: sendNoteFocusNode,
                                     controller: sendNote,
                                     textInputAction: TextInputAction.next,
@@ -571,29 +409,23 @@ class _SendState extends State<Send> {
                                         .copyWith(
                                             height: .7,
                                             color: AppColors.primary),
-                                    suffixIcon: clipboard == '' ||
-                                            clipboard.isIpfs ||
-                                            clipboard.isAddressRVN ||
-                                            clipboard.isAddressRVNt
-                                        ? null
-                                        : IconButton(
-                                            icon: Icon(Icons.paste_rounded,
-                                                color: AppColors.black60),
-                                            onPressed: () async {
-                                              sendNote.text =
-                                                  (await Clipboard.getData(
-                                                              'text/plain'))
-                                                          ?.text ??
-                                                      '';
-                                            },
-                                          ),
-                                    onChanged: (value) {
-                                      setState(() {});
-                                    },
+                                    suffixIcon: IconButton(
+                                      icon: Icon(Icons.paste_rounded,
+                                          color: AppColors.black60),
+                                      onPressed: () async {
+                                        sendNote.text =
+                                            (await Clipboard.getData(
+                                                        'text/plain'))
+                                                    ?.text ??
+                                                '';
+                                      },
+                                    ),
+                                    onChanged: (value) =>
+                                        cubit.set(note: value),
                                     onEditingComplete: () {
+                                      cubit.set(note: sendNote.text);
                                       FocusScope.of(context)
                                           .requestFocus(previewFocusNode);
-                                      setState(() {});
                                     }),
                               ].intersperse(SizedBox(height: 16)),
                               SizedBox(height: 64),
@@ -787,18 +619,65 @@ class _SendState extends State<Send> {
     });
   }
 
-  void _produceAssetModal() {
+  void _produceAssetModal(SimpleSendFormCubit cubit) {
     final tail = Current.holdingNames
         .where((item) => item != pros.securities.currentCrypto.symbol)
         .toList();
     final head = Current.holdingNames
         .where((item) => item == pros.securities.currentCrypto.symbol)
         .toList();
-    SelectionItems(context, modalSet: SelectionSet.Holdings)
-        .build(holdingNames: head + tail);
+    SimpleSelectionItems(context, items: [
+      for (var name in  head + tail)
+      ListTile(
+      visualDensity: VisualDensity.compact,
+      onTap: () {
+        Navigator.pop(context);
+        cubit.set(
+            security: pros.securities.ofCurrent(symbolName(name)) ??
+                pros.securities.currentCrypto);
+      },
+      leading: components.icons.assetAvatar(
+          name == 'Ravencoin'
+              ? pros.securities.RVN.symbol
+              : name == 'Evrmore'
+                  ? pros.securities.EVR.symbol
+                  : name,
+          height: 24,
+          width: 24,
+          net: pros.settings.net),
+      title: Text(
+          name == pros.securities.currentCrypto.symbol
+              ? symbolName(name)
+              : name,
+          style: Theme.of(context).textTheme.bodyText1))
+      
+    ]).build();
+    //SelectionItems(context, modalSet: SelectionSet.Holdings)
+    //    .build(holdingNames: head + tail);
   }
 
-  void _produceFeeModal() {
+  void _produceFeeModal(SimpleSendFormCubit cubit) {
+    SimpleSelectionItems(context, items: [
+
+      for (var feeOption in  [StandardFeeRate(), FastFeeRate()])
+      ListTile(
+        visualDensity: VisualDensity.compact,
+        onTap: () {
+          Navigator.pop(context);
+          sendFee.text = feeOption.name;
+        },
+        leading: () {
+          feeOption == SelectionOption.Fast ? MdiIcons.speedometer: ,
+        title: title ??
+            Text(asString(name), style: Theme.of(context).textTheme.bodyText1),
+        trailing: value != null
+            ? Text(value,
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                    fontWeight: FontWeights.bold,
+                    letterSpacing: 0.1,
+                    color: AppColors.black60))
+            : null,
+      )]).build();
     SelectionItems(context, modalSet: SelectionSet.Fee).build();
   }
 }
