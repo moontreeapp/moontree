@@ -147,13 +147,13 @@ class RavenClientWaiter extends Waiter {
           //print(
           //    'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
           //print('PINGING ELECTRUM SERVER');
-          print('pinging...');
           //wait services.client.api.ping();
           //await (await services.client.client).ping();
-          final result = await (await services.client.client).ping();
-          print('ping result: $result');
+          //final result =
+          await (await services.client.client).ping();
+          //print('ping result: $result');
           pinged++;
-          print('pinged $pinged');
+          //print('pinged $pinged');
           //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
           //} on StateError catch (e) {
         } catch (e) {
