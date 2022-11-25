@@ -84,7 +84,10 @@ class ClientService {
 
   /// we want exclusive access to the creation of the client so that we
   /// don't create many connections to the electrum server all at once.
-  Future<void> createClient() async {
+  /// here we return a client, even though we also save it to the singleton
+  /// because if we return void this function will not be awaited and therefore
+  /// succeeding calls may try to use the client that is not yet created.
+  Future<RavenElectrumClient?> createClient() async {
     lastActiveTime = DateTime.now();
     await periodicTimer?.cancel();
     periodicTimer = Stream.periodic(inactiveGracePeriod).listen((_) async {
@@ -94,13 +97,15 @@ class ClientService {
         streams.client.busy.add(false);
       }
     });
-    await _clientLock.writeFuture(() async {
+    return await _clientLock.writeFuture(() async {
       streams.client.connected.add(ConnectionStatus.connecting);
-      Future<void> genClient() async {
+
+      Future<RavenElectrumClient?> genClient() async {
         var newRavenClient = await _generateClient();
         if (newRavenClient != null) {
           ravenElectrumClient = newRavenClient;
           streams.client.connected.add(ConnectionStatus.connected);
+          return newRavenClient;
         } else {
           if (pros.settings.domainPort != pros.settings.defaultDomainPort) {
             streams.app.snack.add(Snack(
@@ -110,9 +115,10 @@ class ClientService {
             await genClient();
           }
         }
+        return null;
       }
 
-      await genClient();
+      return await genClient();
     });
   }
 
@@ -174,6 +180,9 @@ class ClientService {
 
     /// make a new client to connect to the new network
     await services.client.createClient();
+
+    /// no longer needed since the await waits for the client to be created
+    await Future.delayed(Duration(seconds: 3));
 
     /// start derivation process
     if (!keepAddresses) {
@@ -522,8 +531,11 @@ class ApiService {
               .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
           .owner);
 
-  Future<dynamic> ping() async => await services.client
-      .scope(() async => await (await services.client.client).ping());
+  Future<dynamic> ping() async => await services.client.scope(() async {
+        final result = await (await services.client.client).ping();
+        print('ping result: $result');
+        return result;
+      });
 
   /// we should instead just be able to send an empty string and make one call
   /// this returns too much data to be useful. we don't use this anymore.

@@ -12,6 +12,8 @@ class RavenClientWaiter extends Waiter {
 
   StreamSubscription? periodicTimer;
 
+  int pinged = 0;
+
   //late clientDoneListener =
 
   void init({Object? reconnect}) {
@@ -140,7 +142,10 @@ class RavenClientWaiter extends Waiter {
           //print(
           //    'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
           //print('PINGING ELECTRUM SERVER');
+          print('pinging...');
           await services.client.api.ping();
+          pinged++;
+          print('pinged $pinged');
           //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
         } catch (e) {
           print('unable to ping...');
