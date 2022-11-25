@@ -15,6 +15,7 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:electrum_adapter/methods/server/ping.dart';
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
@@ -118,8 +119,15 @@ class BackdropAppBarContents extends StatelessWidget
               //  print(x);
               //}
               //
-              print(pros.vins.byTransaction.getAll(
-                  '3ca73950940eb32ac0ed119cde0db517cd4393438bc62151fb63c885eabe65bb'));
+              //print(pros.vins.byTransaction.getAll(
+              //    '3ca73950940eb32ac0ed119cde0db517cd4393438bc62151fb63c885eabe65bb'));
+              //
+              try {
+                print(await (await services.client.client).ping());
+              } on StateError catch (e) {
+                print(e);
+                print('retry');
+              }
             }
           },
           child: appBar,

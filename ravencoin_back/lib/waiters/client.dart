@@ -4,6 +4,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'waiter.dart';
+import 'package:electrum_adapter/methods/server/ping.dart';
 
 class RavenClientWaiter extends Waiter {
   static const Duration connectionTimeout = Duration(seconds: 6);
@@ -114,11 +115,15 @@ class RavenClientWaiter extends Waiter {
             //print(
             //    'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE $active');
             //print('PINGING ELECTRUM SERVER');
-            await services.client.api.ping();
+            //await services.client.api.ping();
+            await (await services.client.client).ping();
+            pinged++;
             //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
           } catch (e) {
             print(e);
+            print('recreating connection');
             await services.client.createClient();
+            pinged = 0;
           }
         }
       },
@@ -143,13 +148,16 @@ class RavenClientWaiter extends Waiter {
           //    'CONNECTION STATUS: ${streams.client.connected.value.name} ACTIVE ${tuple.item1}, ping ${tuple.item2}');
           //print('PINGING ELECTRUM SERVER');
           print('pinging...');
-          await services.client.api.ping();
+          //wait services.client.api.ping();
+          await (await services.client.client).ping();
           pinged++;
           print('pinged $pinged');
           //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
+          //} on StateError catch (e) {
         } catch (e) {
           print('unable to ping...');
           await services.client.createClient();
+          pinged = 0;
         }
         //try {
         //  client!.ping();
