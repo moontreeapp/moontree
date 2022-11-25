@@ -196,7 +196,7 @@ class _BackupSeedState extends State<BackupSeed>
   Widget get submitButton => components.buttons.actionButton(
         context,
         enabled: true,
-        label: 'Verify',
+        label: 'Verify Backup',
         link: '/security/backupConfirm',
         arguments: () {
           //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');

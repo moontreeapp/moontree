@@ -200,7 +200,7 @@ class _HoldingList extends State<HoldingList> {
           scrollController: widget.scrollController,
           header: 'Get Started',
           message:
-              'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
+              'Use the Import or Receive button to add ${chainName(pros.settings.chain)} & assets to your wallet.',
           placeholderType: PlaceholderType.wallet);
     } else if (balances.isEmpty && transactions.isEmpty && busy) {
       return GestureDetector(

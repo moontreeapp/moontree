@@ -184,7 +184,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
       'unrecognized';
 
   Widget get bioText => Center(
-      child: Text('Please authenticate before proceeding...',
+      child: Text('Please Authenticate',
           textAlign: TextAlign.center,
           style: Theme.of(context)
               .textTheme
@@ -193,13 +193,12 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
 
   Widget get bioButton => components.buttons.actionButton(
         context,
-        enabled: enabled && services.password.lockout.timePast(),
+        enabled: pros.settings.authMethodIsNativeSecurity ||
+            (enabled && services.password.lockout.timePast()),
         label: widget.buttonLabel == 'Submit'
             ? 'Unlock'
             : (data['buttonLable'] ?? widget.buttonLabel),
-        onPressed: () async {
-          await submit();
-        },
+        onPressed: () async => await submit(),
       );
 
   Future submit() async {
