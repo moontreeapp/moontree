@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:hive/hive.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
@@ -123,6 +124,20 @@ class BackdropAppBarContents extends StatelessWidget
               //    '3ca73950940eb32ac0ed119cde0db517cd4393438bc62151fb63c885eabe65bb'));
               //
               try {
+                //print((await services.client.client)
+                //    .peer
+                //    .done
+                //    .whenComplete(() => print('completed!')));
+                //print((await services.client.client).peer.done.then(
+                //    (v) => print('then $v'),
+                //    onError: (ob, st) => print('err! $ob $st')));
+                ////print((await services.client.client).peer.close());
+                /// does not kill connection
+                //print(await (await services.client.client)
+                //    .request('bad method errors?', ['params']));
+
+                //print((await services.client.client).errorClose());//
+                print((await services.client.client).peer.isClosed);
                 print(await (await services.client.client).ping());
               } on StateError catch (e) {
                 print(e);

@@ -101,9 +101,48 @@ class ClientService {
       streams.client.connected.add(ConnectionStatus.connecting);
 
       Future<RavenElectrumClient?> genClient() async {
+        void registerCallbacks(RavenElectrumClient conn) {
+          conn.peer.done.whenComplete(() async {
+            print('Client whenComplete');
+            await Future.delayed(Duration(seconds: 1)).then((_) async {
+              print('Client whenComplete delay');
+              if (ravenElectrumClient == null ||
+                  ravenElectrumClient?.peer.isClosed == true) {
+                print('Client whenComplete delay creating client');
+                await createClient();
+                return;
+              }
+              print('Client whenComplete delay client already exists');
+            });
+          });
+          conn.peer.done.then((v) async {
+            print('Client done.then $v');
+            await Future.delayed(Duration(seconds: 2)).then((_) async {
+              print('Client done.then delay');
+              if (ravenElectrumClient == null ||
+                  ravenElectrumClient?.peer.isClosed == true) {
+                print('Client done.then delay creating client');
+                await createClient();
+                return;
+              }
+              print('Client done.then delay client already exists');
+            });
+          }, onError: (ob, st) async {
+            print('Client done.onError $ob | $st');
+            if (ravenElectrumClient == null ||
+                ravenElectrumClient?.peer.isClosed == true) {
+              print('Client done.onError creating client');
+              await createClient();
+              return;
+            }
+            print('Client done.onError client already exists');
+          });
+        }
+
         var newRavenClient = await _generateClient();
         if (newRavenClient != null) {
           ravenElectrumClient = newRavenClient;
+          registerCallbacks(ravenElectrumClient!);
           streams.client.connected.add(ConnectionStatus.connected);
           return newRavenClient;
         } else {
@@ -531,9 +570,10 @@ class ApiService {
               .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
           .owner);
 
+  /// avoid this and ping directly to catch errors
   Future<dynamic> ping() async => await services.client.scope(() async {
         final result = await (await services.client.client).ping();
-        print('ping result: $result');
+        print('ping result: $result'); // null
         return result;
       });
 

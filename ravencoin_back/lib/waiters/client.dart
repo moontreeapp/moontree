@@ -149,7 +149,9 @@ class RavenClientWaiter extends Waiter {
           //print('PINGING ELECTRUM SERVER');
           print('pinging...');
           //wait services.client.api.ping();
-          await (await services.client.client).ping();
+          //await (await services.client.client).ping();
+          final result = await (await services.client.client).ping();
+          print('ping result: $result');
           pinged++;
           print('pinged $pinged');
           //print('CONNECTION STATUS: ${streams.client.connected.value.name}');
