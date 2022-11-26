@@ -312,6 +312,7 @@ class SendEstimate with ToStringMixin {
   String? memo;
   int extraFees = 0;
   bool creation;
+  int coinReturn = 0;
 
   SendEstimate(
     this.amount, {
@@ -358,12 +359,12 @@ class SendEstimate with ToStringMixin {
   // expects the security to be null if crypto
   int get inferredTransactionFee => security == null
       ? utxoTotal - (amount + changeDue + extraFees)
-      : utxos.fold(
+      : utxos.where((e) => e.security == pros.securities.currentCrypto).fold(
               0,
               (int total, vout) =>
                   total +
                   vout.securityValue(security: pros.securities.currentCrypto)) -
-          extraFees;
+          (coinReturn);
 
   factory SendEstimate.copy(SendEstimate detail) {
     return SendEstimate(detail.amount,
@@ -371,6 +372,7 @@ class SendEstimate with ToStringMixin {
   }
 
   void setFees(int fees_) => fees = fees_;
+  void setCoinReturn(int coinReturn_) => coinReturn = coinReturn_;
   void setExtraFees(int fees_) => extraFees = fees_;
   void setCreation(bool creation_) => creation = creation_;
   void setUTXOs(List<Vout> utxos_) => utxos = utxos_;
@@ -542,6 +544,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueQualifier);
     await txb!.signEachInput(utxosRaven);
     tx = txb.build();
@@ -629,6 +632,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueSubQualifier);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -706,6 +710,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueRestricted);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -790,6 +795,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.reissue);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -874,6 +880,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.addTag);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -950,6 +957,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.reissue);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1009,6 +1017,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueMain);
     await txb!.signEachInput(utxosRaven);
     tx = txb.build();
@@ -1082,6 +1091,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueSub);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1152,6 +1162,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(extraFee);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1212,6 +1223,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
@@ -1288,6 +1300,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setUTXOs(utxosRaven + utxosSecurity);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1467,6 +1480,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     estimate.setUTXOs(utxosRaven + utxosSecurity);
