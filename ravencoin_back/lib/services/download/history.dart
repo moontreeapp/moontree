@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 import 'package:tuple/tuple.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -143,7 +144,7 @@ class HistoryService {
       transactionIds
           .where((transactionId) =>
               transactionId !=
-                  'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262' && // don't download genesis block of Evrmore, it's too big.
+                  evrAirdropTx && // don't download genesis block of Evrmore, it's too big.
               !pros.transactions.confirmed
                   .map((e) => e.id)
                   .contains(transactionId))
