@@ -159,11 +159,15 @@ class BackdropAppBarContents extends StatelessWidget
               //for (var item in tx.vout) {
               //  print(item);
               //}
-              var utxos =
-                  pros.unspents.records.where((e) => e.symbol == 'SATORI');
-              for (var u in utxos) {
-                print(u);
-              }
+              //var utxos =
+              //    pros.unspents.records.where((e) => e.symbol == 'SATORI');
+              //for (var u in utxos) {
+              //  print(u);
+              //}
+              print(await services.client.client);
+              print((await services.client.client).peer.isClosed);
+              print(pros.balances.bySecurity.getAll(
+                  pros.securities.bySymbol.getAll('KINKAJOU/GROOMER1').first));
               //var r = pros.transactions.primaryIndex.getOne(evrAirdropTx);
               //print(r);
               //var v =

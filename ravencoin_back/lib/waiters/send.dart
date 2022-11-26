@@ -26,8 +26,6 @@ class SendWaiter extends Waiter {
             throw Exception(
                 'FEE IS TOO LARGE! NO FEE SHOULD EVER BE THIS BIG!');
           }
-          //var x = tx.toHex();
-          //print(x);
           streams.spend.made.add(TransactionNote(
             txHex: tx.toHex(),
             note: sendRequest.note,

@@ -518,7 +518,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
           walletId: wallet.id,
@@ -596,7 +599,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -676,7 +682,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -755,7 +764,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -842,7 +854,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -918,7 +933,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -985,7 +1003,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
           walletId: wallet.id,
@@ -1058,7 +1079,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -1134,7 +1158,10 @@ class TransactionMaker {
         : pros.settings.network.burnAmounts.issueUnique);
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee plus burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -1192,7 +1219,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee plus burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -1260,7 +1290,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee (plus amount, maybe)
       utxosRaven = await services.balance.collectUTXOs(
           walletId: wallet.id,
@@ -1324,7 +1357,10 @@ class TransactionMaker {
       SendEstimate estimate,
     ) {
       var total = 0;
-      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      var txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
         total = total + utxo.rvnValue;
@@ -1376,7 +1412,10 @@ class TransactionMaker {
       Map<Security, List<Vout>> utxosBySecurity,
       SendEstimate estimate,
     ) {
-      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      var txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       for (var utxo in utxosCurrency) {
         txb.addInput(utxo.transactionId, utxo.position);
       }
@@ -1448,7 +1487,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee (plus amount, maybe)
       utxosRaven = await services.balance
           .collectUTXOs(walletId: wallet.id, amount: feeSats, security: null);
@@ -1500,7 +1542,10 @@ class TransactionMaker {
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
-      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      var txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
       }
@@ -1542,7 +1587,10 @@ class TransactionMaker {
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
-      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      var txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
       }

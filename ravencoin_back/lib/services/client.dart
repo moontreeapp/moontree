@@ -88,6 +88,7 @@ class ClientService {
   /// because if we return void this function will not be awaited and therefore
   /// succeeding calls may try to use the client that is not yet created.
   Future<RavenElectrumClient?> createClient() async {
+    print('creating Client');
     lastActiveTime = DateTime.now();
     await periodicTimer?.cancel();
     periodicTimer = Stream.periodic(inactiveGracePeriod).listen((_) async {
