@@ -498,6 +498,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                 //getWif: await wallet.getWif,
                                               ));
                                             }
+                                            initializeWalletSecurities();
+                                            setWalletsSecurities();
                                           }
                                           Navigator.pop(components
                                               .navigator.routeContext!);
