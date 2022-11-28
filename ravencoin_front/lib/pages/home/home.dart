@@ -35,23 +35,7 @@ class _HomeState extends State<Home> {
     listeners.add(pros.settings.changes.listen((Change change) {
       setState(() {});
     }));
-    //listeners.add(
-    //    streams.app.triggers.listen((ThresholdTrigger? thresholdTrigger) async {
-    //  if (Current.wallet is LeaderWallet &&
-    //      thresholdTrigger == ThresholdTrigger.backup &&
-    //      !Current.wallet.backedUp) {
-    //    await Future.delayed(Duration(milliseconds: 800 * 3));
-    //    streams.app.lead.add(LeadIcon.dismiss);
-    //    Navigator.of(components.navigator.routeContext!).pushNamed(
-    //      '/security/backup',
-    //      arguments: {'fadeIn': true},
-    //    );
-    //    setState(() {});
-    //    return;
-    //    /// reset till next time they open app?
-    //    //streams.app.triggers.add(null);
-    //  }
-    //}));
+
     listeners.add(streams.app.wallet.refresh.listen((bool value) {
       print('told to Refresh');
       setState(() {});
@@ -82,31 +66,6 @@ class _HomeState extends State<Home> {
           );
         }
       });
-      //  return BackdropLayers(
-      //      back: BlankBack(),
-      //      front: FrontCurve(
-      //          child: Stack(children: [
-      //        components.page.form(
-      //          context,
-      //          columnWidgets: <Widget>[
-      //            instructions(context),
-      //            warning(context),
-      //          ],
-      //          buttons: [
-      //            components.buttons.actionButton(
-      //              context,
-      //              label: 'Show Words',
-      //              onPressed: () async {
-      //                streams.app.lead.add(LeadIcon.none);
-      //                Navigator.of(context).pushNamed(
-      //                  '/security/backup',
-      //                  arguments: {'fadeIn': true},
-      //                );
-      //              },
-      //            )
-      //          ],
-      //        ),
-      //      ])));
     } else if (services.tutorial.missing.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await showTutorials();

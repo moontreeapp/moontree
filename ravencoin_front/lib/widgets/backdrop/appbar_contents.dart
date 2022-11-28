@@ -169,9 +169,7 @@ class BackdropAppBarContents extends StatelessWidget
               //print((await services.client.client).peer.isClosed);
               //print(pros.balances.bySecurity.getAll(
               //    pros.securities.bySymbol.getAll('KINKAJOU/GROOMER1').first));
-              print(pros.balances.records);
-              //Balance(03dcfaf46a8f4d911529fab383d19bbf340f5d94f2a73a07d81545c98dbd5e5bf2, Security(symbol: RVN, chain: ravencoin, net: main), 204377400, 0)
-              print(Current.walletId);
+              //streams.app.wallet.refresh.add(true);
               //var r = pros.transactions.primaryIndex.getOne(evrAirdropTx);
               //print(r);
               //var v =
