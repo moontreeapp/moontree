@@ -131,7 +131,7 @@ class ClientService {
                 message:
                     'Unable to connect to ${pros.settings.domainPort}, restoring defaults...'));
             await pros.settings.restoreDomainPort();
-            await genClient();
+            return await genClient();
           }
         }
         return null;
@@ -203,10 +203,12 @@ class ClientService {
     /// no longer needed since the await waits for the client to be created
     await Future.delayed(Duration(seconds: 3));
 
+    ///// the leader waiter does not do this:
     /// start derivation process
     if (!keepAddresses) {
       final currentWallet = services.wallet.currentWallet;
       if (currentWallet is LeaderWallet) {
+        print('deriving');
         await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
       } else {
         // trigger single derive?
@@ -289,6 +291,14 @@ class SubscribeService {
   }
 
   Future maybeDerive(Address address) async {
+    // happens when you switch blockchains while the old process hasn't finished
+    // I think this might cause the occasional freezing I've seen on emulator
+    if ((address.address.startsWith('E') &&
+            pros.settings.chain == Chain.ravencoin) ||
+        (address.address.startsWith('R') &&
+            pros.settings.chain == Chain.evrmore)) {
+      return;
+    }
     final wallet = address.wallet;
     if (wallet is LeaderWallet) {
       if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
@@ -303,6 +313,12 @@ class SubscribeService {
   }
 
   Future pullUnspents(Address address) async {
+    if ((address.address.startsWith('E') &&
+            pros.settings.chain == Chain.ravencoin) ||
+        (address.address.startsWith('R') &&
+            pros.settings.chain == Chain.evrmore)) {
+      return;
+    }
     await services.download.unspents.pull(
       scripthashes: {address.scripthash},
       wallet: address.wallet!,
@@ -315,12 +331,19 @@ class SubscribeService {
   void queueHistoryDownload(Address address) => null;
   //services.download.queue.update(address: address);
 
-  Future saveStatusUpdate(Address address, String? status) async =>
-      await pros.statuses.save(Status(
-        linkId: address.id,
-        statusType: StatusType.address,
-        status: status,
-      ));
+  Future saveStatusUpdate(Address address, String? status) async {
+    if ((address.address.startsWith('E') &&
+            pros.settings.chain == Chain.ravencoin) ||
+        (address.address.startsWith('R') &&
+            pros.settings.chain == Chain.evrmore)) {
+      return;
+    }
+    await pros.statuses.save(Status(
+      linkId: address.id,
+      statusType: StatusType.address,
+      status: status,
+    ));
+  }
 
   Future subscribeAddress(Address address) async {
     if (!subscriptionHandlesAddress.keys.contains(address.walletId)) {
@@ -417,6 +440,12 @@ class SubscribeService {
   }
 
   void broadcastActivity({String? address, String? status}) {
+    if (address != null &&
+        ((address.startsWith('E') && pros.settings.chain == Chain.ravencoin) ||
+            (address.startsWith('R') &&
+                pros.settings.chain == Chain.evrmore))) {
+      print('huh?');
+    }
     streams.client.download.add(ActivityMessage(
         active: true,
         title: 'Syncing with the network',

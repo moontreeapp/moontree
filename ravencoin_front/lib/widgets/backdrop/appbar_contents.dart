@@ -179,6 +179,15 @@ class BackdropAppBarContents extends StatelessWidget
               //    e.transactionId ==
               //    '73e4d2ffd3ef998a093c6c6256d362660f50bfb47dc32fa0930e0b6e3f66f527');
               //print(vo);
+              for (var b in pros.balances.records) {
+                print(b);
+              }
+              print(Current.walletId);
+              print(Current.wallet.balances);
+              print(Current.wallet.addresses.length);
+              print(services.wallet.currentWallet is SingleWallet);
+              print(pros.ciphers.records.contains(CipherType.none));
+              //print(Current.wallet.unspents);
             }
           },
           child: appBar,
