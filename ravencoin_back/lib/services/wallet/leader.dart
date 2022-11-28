@@ -81,7 +81,8 @@ class LeaderWalletService {
         walletId: wallet.id,
         hdIndex: hdIndex,
         exposure: exposure,
-        net: pros.settings.net);
+        net: pros.settings.net,
+        chain: pros.settings.chain);
   }
 
   Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async {

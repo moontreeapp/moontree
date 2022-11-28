@@ -16,6 +16,7 @@ class AddressLocation {
 class AddressProclaim extends Proclaim<_IdKey, Address> {
   late IndexMultiple<_AddressKey, Address> byAddress;
   late IndexMultiple<_WalletKey, Address> byWallet;
+  late IndexMultiple<_WalletChainNetKey, Address> byWalletChainNet;
   late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
   late IndexMultiple<_WalletExposureHDKey, Address> byWalletExposureIndex;
   late IndexMultiple<_IdKey, Address> byScripthash;
@@ -23,6 +24,7 @@ class AddressProclaim extends Proclaim<_IdKey, Address> {
   AddressProclaim() : super(_IdKey()) {
     byAddress = addIndexMultiple('address', _AddressKey());
     byWallet = addIndexMultiple('wallet', _WalletKey());
+    byWalletChainNet = addIndexMultiple('walletChainNet', _WalletChainNetKey());
     byWalletExposure =
         addIndexMultiple('wallet-exposure', _WalletExposureKey());
     byWalletExposureIndex =
@@ -31,18 +33,19 @@ class AddressProclaim extends Proclaim<_IdKey, Address> {
   }
 
   /// returns addresses in order
-  AddressLocation? getAddressLocationOf(String addressId, String walletId) {
+  AddressLocation? getAddressLocationOf(
+      String addressId, String walletId, Chain chain, Net net) {
     var i = 0;
-    for (var address
-        in byWalletExposure.getAll(walletId, NodeExposure.internal)) {
+    for (var address in byWalletExposure.getAll(
+        walletId, NodeExposure.internal, chain, net)) {
       if (address.id == addressId) {
         return AddressLocation(i, NodeExposure.internal);
       }
       i = i + 1;
     }
     i = 0;
-    for (var address
-        in byWalletExposure.getAll(walletId, NodeExposure.external)) {
+    for (var address in byWalletExposure.getAll(
+        walletId, NodeExposure.external, chain, net)) {
       if (address.id == addressId) {
         return AddressLocation(i, NodeExposure.external);
       }
