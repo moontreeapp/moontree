@@ -92,20 +92,14 @@ class FixtureSet1 extends FixtureSet {
             walletId: '0',
             confirmed: 15000000,
             unconfirmed: 10000000,
-            security: Security(
-                symbol: 'RVN',
-                securityType: SecurityType.coin,
-                chain: Chain.ravencoin,
-                net: Net.test)),
+            security:
+                Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test)),
         '1': Balance(
             walletId: '0',
             confirmed: 100,
             unconfirmed: 0,
-            security: Security(
-                symbol: 'USD',
-                securityType: SecurityType.fiat,
-                chain: Chain.none,
-                net: Net.test)),
+            security:
+                Security(symbol: 'USD', chain: Chain.none, net: Net.test)),
       };
 
   @override
@@ -140,48 +134,25 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Rate> get rates => {
         'RVN:Crypto:USD:Fiat': Rate(
-            base: Security(
-                symbol: 'RVN',
-                securityType: SecurityType.coin,
-                chain: Chain.ravencoin,
-                net: Net.test),
-            quote: Security(
-                symbol: 'USD',
-                securityType: SecurityType.fiat,
-                chain: Chain.none,
-                net: Net.test),
+            base:
+                Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test),
+            quote: Security(symbol: 'USD', chain: Chain.none, net: Net.test),
             rate: .1),
         'MOONTREE:RavenAsset:RVN:Crypto': Rate(
             base: Security(
-                symbol: 'MOONTREE',
-                securityType: SecurityType.asset,
-                chain: Chain.ravencoin,
-                net: Net.test),
-            quote: Security(
-                symbol: 'RVN',
-                securityType: SecurityType.coin,
-                chain: Chain.ravencoin,
-                net: Net.test),
+                symbol: 'MOONTREE', chain: Chain.ravencoin, net: Net.test),
+            quote:
+                Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test),
             rate: 100),
       };
 
   @override
   Map<String, Security> get securities => {
-        'RVN:Crypto': Security(
-            symbol: 'RVN',
-            securityType: SecurityType.coin,
-            chain: Chain.ravencoin,
-            net: Net.test),
-        'USD:Fiat': Security(
-            symbol: 'USD',
-            securityType: SecurityType.fiat,
-            chain: Chain.none,
-            net: Net.test),
-        'MOONTREE:RavenAsset': Security(
-            symbol: 'MOONTREE',
-            securityType: SecurityType.asset,
-            chain: Chain.ravencoin,
-            net: Net.test),
+        'RVN:Crypto':
+            Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test),
+        'USD:Fiat': Security(symbol: 'USD', chain: Chain.none, net: Net.test),
+        'MOONTREE:RavenAsset':
+            Security(symbol: 'MOONTREE', chain: Chain.ravencoin, net: Net.test),
       };
 
   @override

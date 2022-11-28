@@ -120,7 +120,6 @@ class _ReceiveState extends State<Receive> {
             .toList()
             .map((e) => Security(
                   symbol: e,
-                  securityType: SecurityType.asset,
                   chain: pros.settings.chain,
                   net: pros.settings.net,
                 ))
@@ -323,17 +322,14 @@ class _ReceiveState extends State<Receive> {
                               //          }
                               //          if (requestMessage.text == 't') {
                               //            return [
-                              //              Security(
-                              //                  symbol: 'testing',
-                              //                  securityType: SecurityType.fiat)
+                              //              Security(symbol: 'testing')
                               //            ];
                               //          }
                               //          if (requestMessage.text.length >= 3) {
                               //            return fetchedNames;
                               //          }
                               //          //(await services.client.api.getAllAssetNames(textEditingValue.text)).map((String s) => Security(
-                              //          //        symbol: s,
-                              //          //        securityType: SecurityType.asset));
+                              //          //        symbol: s));
                               //          return securities.data
                               //              .where((Security option) => option.symbol
                               //                  .contains(requestMessage.text.toUpperCase()))

@@ -193,7 +193,6 @@ class HistoryService {
         );
         security = Security(
           symbol: symbol,
-          securityType: SecurityType.asset,
           chain: chain,
           net: net,
         );

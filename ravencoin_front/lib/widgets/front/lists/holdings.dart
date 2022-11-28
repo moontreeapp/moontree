@@ -155,7 +155,6 @@ class _HoldingList extends State<HoldingList> {
             security: pros.securities.bySymbol.getAll(symbol).firstOrNull ??
                 Security(
                   symbol: symbol,
-                  securityType: SecurityType.asset,
                   chain: pros.settings.chain,
                   net: pros.settings.net,
                 ),
@@ -626,7 +625,6 @@ class _HoldingList extends State<HoldingList> {
                       security: holding.balance?.security ??
                           Security(
                             symbol: 'unknown',
-                            securityType: SecurityType.fiat,
                             chain: Chain.none,
                             net: Net.test,
                           ),

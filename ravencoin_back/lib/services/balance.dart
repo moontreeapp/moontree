@@ -39,7 +39,6 @@ class BalanceService {
                 .getOne(symbol, pros.settings.chain, pros.settings.net) ??
             Security(
               symbol: symbol,
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             );

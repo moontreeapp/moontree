@@ -53,10 +53,7 @@ class ConversionService {
         pros.securities.primaryIndex
             .getOne(symbol, pros.settings.chain, pros.settings.net) ??
         Security(
-            symbol: symbol,
-            securityType: SecurityType.asset,
-            chain: pros.settings.chain,
-            net: pros.settings.net);
+            symbol: symbol, chain: pros.settings.chain, net: pros.settings.net);
   }
 
   Asset? getAssetOf({
@@ -71,10 +68,7 @@ class ConversionService {
         pros.securities.primaryIndex
             .getOne(symbol, pros.settings.chain, pros.settings.net) ??
         Security(
-            symbol: symbol,
-            securityType: SecurityType.asset,
-            chain: pros.settings.chain,
-            net: pros.settings.net);
+            symbol: symbol, chain: pros.settings.chain, net: pros.settings.net);
     return pros.assets.primaryIndex
         .getOne(symbol, security.chain, security.net);
   }

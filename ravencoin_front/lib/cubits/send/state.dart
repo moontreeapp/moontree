@@ -99,12 +99,3 @@ class SimpleSendFormState extends CubitState {
     }
   }
 }
-
-    //security = pros.securities.primaryIndex.getOne(
-    //    symbol,
-    //    symbol == 'RVN' && pros.settings.chain == Chain.ravencoin ||
-    //            symbol == 'EVR' && pros.settings.chain == Chain.evrmore
-    //        ? SecurityType.crypto
-    //        : SecurityType.asset,
-    //    pros.settings.chain,
-    //    pros.settings.net)!;

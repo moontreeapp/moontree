@@ -159,7 +159,6 @@ class GenericCreateRequest with ToStringMixin {
 
   Security get security => Security(
         symbol: fullName,
-        securityType: SecurityType.asset,
         chain: pros.settings.chain,
         net: pros.settings.net,
       );
@@ -240,7 +239,6 @@ class GenericReissueRequest with ToStringMixin {
 
   Security get security => Security(
         symbol: fullName,
-        securityType: SecurityType.asset,
         chain: pros.settings.chain,
         net: pros.settings.net,
       );
@@ -583,7 +581,6 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
               symbol: parentAsset,
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             ))
@@ -672,7 +669,6 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
               symbol: estimate.security!.symbol.substring(1) + '!',
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             ))
@@ -755,7 +751,6 @@ class TransactionMaker {
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
           symbol: estimate.security!.symbol.substring(1) + '!',
-          securityType: SecurityType.asset,
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
@@ -839,7 +834,6 @@ class TransactionMaker {
           symbol: estimate.security!.symbol[0] == '\$'
               ? estimate.security!.symbol.substring(1) + '!'
               : estimate.security!.symbol,
-          securityType: SecurityType.asset,
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
@@ -924,7 +918,6 @@ class TransactionMaker {
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
           symbol: estimate.security!.symbol + '!',
-          securityType: SecurityType.asset,
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
@@ -1069,7 +1062,6 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
               symbol: parentAsset + '!',
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             ))
@@ -1145,7 +1137,6 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
               symbol: parentAsset + '!',
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             ))
