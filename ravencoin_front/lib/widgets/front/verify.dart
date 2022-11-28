@@ -7,6 +7,7 @@ import 'package:ravencoin_front/services/password.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/data.dart';
+import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class VerifyAuthentication extends StatefulWidget {
@@ -82,12 +83,15 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
             context,
             columnWidgets: <Widget>[
               if (widget.intro != null) widget.intro!,
-              //if (widget.safe != null) widget.safe!,
               Container(
-                  height: (MediaQuery.of(context).size.height) *
-                      (.3 -
-                          (widget.intro != null ? .07 : 0) -
-                          (widget.safe != null ? .07 : 0))),
+                  height: ((MediaQuery.of(context).size.height) -
+                          (56 +
+                              40 +
+                              16 +
+                              16 +
+                              72.figma(context) +
+                              (widget.intro != null ? 40.figma(context) : 0))) /
+                      3),
               //Center(
               //    child: Text(
               //        'Please verify your password\nto proceed' +
@@ -95,6 +99,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
               //        textAlign: TextAlign.center,
               //        style: Theme.of(context).textTheme.bodyText1)),
               //SizedBox(height: 8),
+
               LockedOutTime(),
               pros.settings.authMethodIsNativeSecurity
                   ? bioText
@@ -183,7 +188,8 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
       //'has been used before';
       'unrecognized';
 
-  Widget get bioText => Center(
+  Widget get bioText => Container(
+      alignment: Alignment.center,
       child: Text('Please Authenticate',
           textAlign: TextAlign.center,
           style: Theme.of(context)

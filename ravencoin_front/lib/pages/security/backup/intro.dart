@@ -39,7 +39,7 @@ class _BackupIntroState extends State<BackupIntro> {
                   Container(
                       alignment: Alignment.topCenter,
                       child: Text(
-                        'Your wallet is valuable.\nPlease create a backup!',
+                        'Please create a backup!',
                         textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme
