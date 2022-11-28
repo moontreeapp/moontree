@@ -52,7 +52,7 @@ class TransactionsBloc {
   }
 
   Security get security =>
-      data['holding']?.security ?? pros.securities.currentCrypto;
+      data['holding']?.security ?? pros.securities.currentCoin;
   List<Balance> get currentHolds => Current.holdings;
   List<TransactionRecord> get currentTxs {
     if (Current.wallet.minerMode) return [];

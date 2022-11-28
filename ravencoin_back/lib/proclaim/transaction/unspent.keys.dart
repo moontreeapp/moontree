@@ -48,18 +48,6 @@ extension BySecurityMethodsForUnspent on Index<_SecurityKey, Unspent> {
   List<Unspent> getAll(Security security) => getByKeyStr(security.id);
 }
 
-// bySecurityType
-
-class _SecurityTypeKey extends Key<Unspent> {
-  @override
-  String getKey(Unspent unspent) => unspent.security?.securityType.name ?? '';
-}
-
-extension BySecurityTypeMethodsForUnspent on Index<_SecurityTypeKey, Unspent> {
-  List<Unspent> getAll(SecurityType securityType) =>
-      getByKeyStr(securityType.name);
-}
-
 // byAddress - (toAddress)
 
 class _AddressKey extends Key<Unspent> {

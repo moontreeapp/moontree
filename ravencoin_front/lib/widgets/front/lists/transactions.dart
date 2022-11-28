@@ -84,7 +84,7 @@ class _TransactionListState extends State<TransactionList> {
         services.transaction.getTransactionRecords(wallet: Current.wallet);
     if (transactions.isEmpty) {
       transactionCount = pros.unspents.bySymbol
-          .getAll(widget.symbol ?? pros.securities.currentCrypto.symbol)
+          .getAll(widget.symbol ?? pros.securities.currentCoin.symbol)
           .length;
     } else {
       transactionCount = transactions.length;

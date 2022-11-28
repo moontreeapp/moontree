@@ -8,7 +8,7 @@ void useFixtureSources() {
   pros.securities.setSource(MapSource({
     'RVN:Crypto': Security(
         symbol: 'RVN',
-        securityType: SecurityType.crypto,
+        securityType: SecurityType.coin,
         chain: Chain.ravencoin,
         net: Net.test),
     'USD:Fiat': Security(

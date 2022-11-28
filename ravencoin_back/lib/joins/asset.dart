@@ -9,8 +9,8 @@ extension AssetCanHaveOneParent on Asset {
 }
 
 extension AssetHasOneSecurity on Asset {
-  Security? get security => pros.securities.primaryIndex
-      .getOne(symbol, SecurityType.asset, chain, net);
+  Security? get security =>
+      pros.securities.primaryIndex.getOne(symbol, chain, net);
 }
 
 extension AssetHasOneMetadata on Asset {

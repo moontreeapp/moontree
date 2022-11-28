@@ -57,7 +57,7 @@ void main() {
         Rate(
             base: Security(
                 symbol: 'RVN',
-                securityType: SecurityType.crypto,
+                securityType: SecurityType.coin,
                 chain: Chain.ravencoin,
                 net: Net.test),
             quote: Security(
@@ -74,7 +74,7 @@ void main() {
                 net: Net.test),
             quote: Security(
                 symbol: 'RVN',
-                securityType: SecurityType.crypto,
+                securityType: SecurityType.coin,
                 chain: Chain.ravencoin,
                 net: Net.test),
             rate: 2.0),
@@ -98,7 +98,7 @@ void main() {
       await pros.rates.save(Rate(
           base: Security(
               symbol: 'RVN',
-              securityType: SecurityType.crypto,
+              securityType: SecurityType.coin,
               chain: Chain.ravencoin,
               net: Net.test),
           quote: Security(

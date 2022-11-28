@@ -116,7 +116,7 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
-    currentCrypto = pros.securities.currentCrypto;
+    currentCrypto = pros.securities.currentCoin;
 
     balances = Current.wallet.balances.toSet();
     addresses = Current.wallet.addresses.toSet();

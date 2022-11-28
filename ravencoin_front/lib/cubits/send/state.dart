@@ -41,7 +41,7 @@ class SimpleSendFormState extends CubitState {
       ];
 
   factory SimpleSendFormState.initial() =>
-      SimpleSendFormState(security: pros.securities.currentCrypto);
+      SimpleSendFormState(security: pros.securities.currentCoin);
 
   SimpleSendFormState load({
     Security? security,

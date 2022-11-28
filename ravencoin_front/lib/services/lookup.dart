@@ -10,7 +10,7 @@ class Current {
       services.balance.walletBalance(wallet, pros.securities.RVN);
 
   static Balance get balanceCurrency =>
-      services.balance.walletBalance(wallet, pros.securities.currentCrypto);
+      services.balance.walletBalance(wallet, pros.securities.currentCoin);
 
   static Set<Transaction> get transactions => wallet.transactions;
 

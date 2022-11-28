@@ -35,18 +35,6 @@ extension BySecurityMethodsForVout on Index<_SecurityKey, Vout> {
   List<Vout> getAll(Security security) => getByKeyStr(security.id);
 }
 
-// bySecurityType
-
-class _SecurityTypeKey extends Key<Vout> {
-  @override
-  String getKey(Vout vout) => vout.securityId.split(':').last;
-}
-
-extension BySecurityTypeMethodsForVout on Index<_SecurityTypeKey, Vout> {
-  List<Vout> getAll(SecurityType securityType) =>
-      getByKeyStr(securityType.name);
-}
-
 // byAddress - not every vout has an address
 
 class _AddressKey extends Key<Vout> {

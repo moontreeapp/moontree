@@ -20,7 +20,7 @@ void main() async {
         wallet: wallet,
         security: Security(
             symbol: 'RVN',
-            securityType: SecurityType.crypto,
+            securityType: SecurityType.coin,
             chain: Chain.ravencoin,
             net: Net.test));
     s.add(pair);

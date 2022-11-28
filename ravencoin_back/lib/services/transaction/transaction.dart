@@ -13,7 +13,7 @@ class TransactionService {
   List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: security ?? pros.securities.currentCrypto,
+              security: security ?? pros.securities.currentCoin,
               includeMempool: false)
           .toList();
 
@@ -41,7 +41,7 @@ class TransactionService {
     var givenAddresses =
         wallet.addresses.map((address) => address.address).toSet();
     var transactionRecords = <TransactionRecord>[];
-    final currentCrypto = pros.securities.currentCrypto;
+    final currentCrypto = pros.securities.currentCoin;
 
     final net = networkOf(pros.settings.chain, pros.settings.net);
     final specialTag = {net.burnAddresses.addTag: net.burnAmounts.addTag};
@@ -507,7 +507,7 @@ class TransactionService {
       NodeExposure.external,
     );
     final assetBalances = from.balances
-        .where((b) => !pros.securities.cryptos.contains(b.security))
+        .where((b) => !pros.securities.coins.contains(b.security))
         .toList();
 
     if (from.unspents.isEmpty || from.RVNValue == 0) {

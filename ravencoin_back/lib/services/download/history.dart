@@ -161,13 +161,7 @@ class HistoryService {
   ) async {
     var symbol = vout.scriptPubKey.asset ?? 'RVN';
     var value = vout.valueSat;
-    var security = pros.securities.primaryIndex.getOne(
-        symbol,
-        ['RVN', 'EVR'].contains(symbol)
-            ? SecurityType.crypto
-            : SecurityType.asset,
-        chain,
-        net);
+    var security = pros.securities.primaryIndex.getOne(symbol, chain, net);
     var asset = pros.assets.primaryIndex.getOne(symbol, chain, net);
     if (security == null ||
         asset == null ||
@@ -208,7 +202,7 @@ class HistoryService {
         streams.asset.added.add(asset);
       }
     }
-    return Tuple3(value, security ?? pros.securities.currentCrypto, asset);
+    return Tuple3(value, security ?? pros.securities.currentCoin, asset);
   }
 
   Future<List<Tx>> grabTransactions(Iterable<String> transactionIds) async {

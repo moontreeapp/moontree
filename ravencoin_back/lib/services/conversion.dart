@@ -20,7 +20,7 @@ class ConversionService {
     bool asUSD = false,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.currentCrypto.symbol) {
+    if (symbol == pros.securities.currentCoin.symbol) {
       var asAmount = utils.satToAmount(sats);
       return asUSD
           ? rvnUSD(asAmount)
@@ -43,15 +43,15 @@ class ConversionService {
     String? symbol,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.currentCrypto.symbol) {
-      return pros.securities.currentCrypto;
+    if (symbol == pros.securities.currentCoin.symbol) {
+      return pros.securities.currentCoin;
     }
     if (symbol == 'USD') {
       return pros.securities.USD;
     }
     return security ??
-        pros.securities.primaryIndex.getOne(symbol, SecurityType.asset,
-            pros.settings.chain, pros.settings.net) ??
+        pros.securities.primaryIndex
+            .getOne(symbol, pros.settings.chain, pros.settings.net) ??
         Security(
             symbol: symbol,
             securityType: SecurityType.asset,
@@ -64,12 +64,12 @@ class ConversionService {
     String? symbol,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.currentCrypto.symbol) {
+    if (symbol == pros.securities.currentCoin.symbol) {
       return null;
     }
     security = security ??
-        pros.securities.primaryIndex.getOne(symbol, SecurityType.asset,
-            pros.settings.chain, pros.settings.net) ??
+        pros.securities.primaryIndex
+            .getOne(symbol, pros.settings.chain, pros.settings.net) ??
         Security(
             symbol: symbol,
             securityType: SecurityType.asset,
@@ -87,6 +87,6 @@ class ConversionService {
         symbol ??
         (() => throw OneOfMultipleMissing(
             'security or symbol required to identify record.'))();
-    return security?.symbol ?? symbol ?? pros.securities.currentCrypto.symbol;
+    return security?.symbol ?? symbol ?? pros.securities.currentCoin.symbol;
   }
 }

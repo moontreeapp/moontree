@@ -13,14 +13,8 @@ extension UnspentIsAVout on Unspent {
 }
 
 extension UnspentHasOneSecurity on Unspent {
-  Security? get security => pros.securities.primaryIndex.getOne(
-      symbol,
-      (symbol == 'RVN' && pros.settings.chain == Chain.ravencoin) ||
-              (symbol == 'EVR' && pros.settings.chain == Chain.evrmore)
-          ? SecurityType.crypto
-          : SecurityType.asset,
-      chain,
-      net);
+  Security? get security =>
+      pros.securities.primaryIndex.getOne(symbol, chain, net);
 }
 
 extension UnspentBelongsToAddress on Unspent {

@@ -162,7 +162,7 @@ class Unspent with EquatableMixin, ToStringMixin {
   String get voutId => Vout.key(transactionId, position);
 
   //Security get security => symbol == 'RVN'
-  //    ? pros.securities.currentCrypto
+  //    ? pros.securities.currentCoin
   //    : Security(
   //        symbol: symbol,
   //        securityType: SecurityType.asset,

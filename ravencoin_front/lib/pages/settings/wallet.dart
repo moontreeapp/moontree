@@ -315,7 +315,7 @@ class _WalletViewState extends State<WalletView> {
             ? () {}
             : () => Navigator.pushNamed(context, '/transaction/send',
                     arguments: {
-                      'symbol': pros.securities.currentCrypto.symbol,
+                      'symbol': pros.securities.currentCoin.symbol,
                       'walletId': wallet.id
                     }),
       );

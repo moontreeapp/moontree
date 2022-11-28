@@ -348,7 +348,7 @@ class SendEstimate with ToStringMixin {
         'creation',
       ];
 
-  int get total => security == null || security == pros.securities.currentCrypto
+  int get total => security == null || security == pros.securities.currentCoin
       ? (creation ? 0 : amount) + fees + extraFees
       : fees + extraFees;
   int get utxoTotal => utxos.fold(
@@ -359,11 +359,11 @@ class SendEstimate with ToStringMixin {
   // expects the security to be null if crypto
   int get inferredTransactionFee => security == null
       ? utxoTotal - (amount + changeDue + extraFees)
-      : utxos.where((e) => e.security == pros.securities.currentCrypto).fold(
+      : utxos.where((e) => e.security == pros.securities.currentCoin).fold(
               0,
               (int total, vout) =>
                   total +
-                  vout.securityValue(security: pros.securities.currentCrypto)) -
+                  vout.securityValue(security: pros.securities.currentCoin)) -
           (coinReturn);
 
   factory SendEstimate.copy(SendEstimate detail) {
@@ -395,7 +395,7 @@ class TransactionMaker {
                 double.parse(sendRequest.visibleAmount) ==
                     sendRequest.holding) &&
             (sendRequest.security == null ||
-                sendRequest.security == pros.securities.currentCrypto)
+                sendRequest.security == pros.securities.currentCoin)
         ? await transactionSendAllRVN(
             sendRequest.sendAddress,
             estimate,

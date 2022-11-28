@@ -65,8 +65,8 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Asset> get assets => {
         '0': Asset(
-          chain: Chain.ravencoin,
-            net: Net.test, 
+            chain: Chain.ravencoin,
+            net: Net.test,
             symbol: 'MOONTREE',
             satsInCirculation: 1000,
             divisibility: 0,
@@ -75,7 +75,7 @@ class FixtureSet1 extends FixtureSet {
             transactionId: '10',
             position: 2),
         '1': Asset(
-          chain: Chain.ravencoin,
+            chain: Chain.ravencoin,
             net: Net.test,
             symbol: 'MOONTREE1',
             satsInCirculation: 1000,
@@ -94,7 +94,7 @@ class FixtureSet1 extends FixtureSet {
             unconfirmed: 10000000,
             security: Security(
                 symbol: 'RVN',
-                securityType: SecurityType.crypto,
+                securityType: SecurityType.coin,
                 chain: Chain.ravencoin,
                 net: Net.test)),
         '1': Balance(
@@ -122,15 +122,16 @@ class FixtureSet1 extends FixtureSet {
 
   @override
   Map<String, Metadata> get metadatas => {
-        Metadata.key('MOONTREE', 'metadata', Chain.ravencoin, Net.test): Metadata(
-            chain: Chain.ravencoin,
-            net: Net.test,
-            symbol: 'MOONTREE',
-            metadata: 'metadata',
-            data: null,
-            kind: MetadataType.unknown,
-            parent: null,
-            logo: false)
+        Metadata.key('MOONTREE', 'metadata', Chain.ravencoin, Net.test):
+            Metadata(
+                chain: Chain.ravencoin,
+                net: Net.test,
+                symbol: 'MOONTREE',
+                metadata: 'metadata',
+                data: null,
+                kind: MetadataType.unknown,
+                parent: null,
+                logo: false)
       };
 
   @override
@@ -141,7 +142,7 @@ class FixtureSet1 extends FixtureSet {
         'RVN:Crypto:USD:Fiat': Rate(
             base: Security(
                 symbol: 'RVN',
-                securityType: SecurityType.crypto,
+                securityType: SecurityType.coin,
                 chain: Chain.ravencoin,
                 net: Net.test),
             quote: Security(
@@ -158,7 +159,7 @@ class FixtureSet1 extends FixtureSet {
                 net: Net.test),
             quote: Security(
                 symbol: 'RVN',
-                securityType: SecurityType.crypto,
+                securityType: SecurityType.coin,
                 chain: Chain.ravencoin,
                 net: Net.test),
             rate: 100),
@@ -168,7 +169,7 @@ class FixtureSet1 extends FixtureSet {
   Map<String, Security> get securities => {
         'RVN:Crypto': Security(
             symbol: 'RVN',
-            securityType: SecurityType.crypto,
+            securityType: SecurityType.coin,
             chain: Chain.ravencoin,
             net: Net.test),
         'USD:Fiat': Security(
