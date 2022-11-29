@@ -39,6 +39,17 @@ class _BackupIntroState extends State<BackupIntro> {
                   Container(
                       alignment: Alignment.topCenter,
                       child: Text(
+                        'Please create a backup!',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1!
+                            .copyWith(color: AppColors.black),
+                      )),
+                  SizedBox(height: 16),
+                  Container(
+                      alignment: Alignment.topCenter,
+                      child: Text(
                         'You are about to backup your seed words.\nKeep it secret, keep it safe.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context)

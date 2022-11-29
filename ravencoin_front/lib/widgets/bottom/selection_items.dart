@@ -310,9 +310,7 @@ class SelectionItems {
           width: 24,
           net: pros.settings.net),
       title: Text(
-          name == pros.securities.currentCrypto.symbol
-              ? symbolName(name)
-              : name,
+          name == pros.securities.currentCoin.symbol ? symbolName(name) : name,
           style: Theme.of(context).textTheme.bodyText1));
 
   Widget walletItem(Wallet wallet, TextEditingController controller) =>

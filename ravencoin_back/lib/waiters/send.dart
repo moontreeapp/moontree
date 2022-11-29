@@ -26,7 +26,6 @@ class SendWaiter extends Waiter {
             throw Exception(
                 'FEE IS TOO LARGE! NO FEE SHOULD EVER BE THIS BIG!');
           }
-
           streams.spend.made.add(TransactionNote(
             txHex: tx.toHex(),
             note: sendRequest.note,

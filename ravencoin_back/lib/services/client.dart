@@ -84,7 +84,11 @@ class ClientService {
 
   /// we want exclusive access to the creation of the client so that we
   /// don't create many connections to the electrum server all at once.
-  Future<void> createClient() async {
+  /// here we return a client, even though we also save it to the singleton
+  /// because if we return void this function will not be awaited and therefore
+  /// succeeding calls may try to use the client that is not yet created.
+  Future<RavenElectrumClient?> createClient() async {
+    print('creating Client');
     lastActiveTime = DateTime.now();
     await periodicTimer?.cancel();
     periodicTimer = Stream.periodic(inactiveGracePeriod).listen((_) async {
@@ -94,25 +98,46 @@ class ClientService {
         streams.client.busy.add(false);
       }
     });
-    await _clientLock.writeFuture(() async {
+    return await _clientLock.writeFuture(() async {
       streams.client.connected.add(ConnectionStatus.connecting);
-      Future<void> genClient() async {
+
+      Future<RavenElectrumClient?> genClient() async {
+        void registerCallbacks(RavenElectrumClient conn) {
+          Future<void> reconnect(_) async {
+            if (ravenElectrumClient == null ||
+                ravenElectrumClient?.peer.isClosed == true) {
+              await createClient();
+              return;
+            }
+          }
+
+          conn.peer.done.then(
+              (value) async =>
+                  await Future.delayed(Duration(seconds: 1)).then(reconnect),
+              onError: (ob, st) async => await reconnect(ob));
+          conn.peer.done.whenComplete(() async =>
+              await Future.delayed(Duration(seconds: 2)).then(reconnect));
+        }
+
         var newRavenClient = await _generateClient();
         if (newRavenClient != null) {
           ravenElectrumClient = newRavenClient;
+          registerCallbacks(ravenElectrumClient!);
           streams.client.connected.add(ConnectionStatus.connected);
+          return newRavenClient;
         } else {
           if (pros.settings.domainPort != pros.settings.defaultDomainPort) {
             streams.app.snack.add(Snack(
                 message:
                     'Unable to connect to ${pros.settings.domainPort}, restoring defaults...'));
-            await pros.settings.restoreDomainPort();
-            await genClient();
+            await pros.settings.setDomainPortForChainNet();
+            return await genClient();
           }
         }
+        return null;
       }
 
-      await genClient();
+      return await genClient();
     });
   }
 
@@ -120,6 +145,9 @@ class ClientService {
     String projectName = 'moontree',
     String? projectVersion,
   }) async {
+    if (pros.settings.domainPort != pros.settings.domainPortOfChainNet) {
+      await pros.settings.setDomainPortForChainNet();
+    }
     try {
       return await RavenElectrumClient.connect(
         electrumDomain,
@@ -145,7 +173,11 @@ class ClientService {
 
   Future switchNetworks({required Chain chain, required Net net}) async {
     await pros.settings.setBlockchain(chain: chain, net: net);
-    await resetMemoryAndConnection();
+    await resetMemoryAndConnection(
+      keepTx: false,
+      keepBalances: false,
+      keepAddresses: false,
+    );
   }
 
   Future<void> resetMemoryAndConnection({
@@ -175,10 +207,15 @@ class ClientService {
     /// make a new client to connect to the new network
     await services.client.createClient();
 
+    /// no longer needed since the await waits for the client to be created
+    //await Future.delayed(Duration(seconds: 3));
+
+    ///// the leader waiter does not do this:
     /// start derivation process
     if (!keepAddresses) {
       final currentWallet = services.wallet.currentWallet;
       if (currentWallet is LeaderWallet) {
+        print('deriving');
         await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
       } else {
         // trigger single derive?
@@ -261,6 +298,14 @@ class SubscribeService {
   }
 
   Future maybeDerive(Address address) async {
+    // happens when you switch blockchains while the old process hasn't finished
+    // I think this might cause the occasional freezing I've seen on emulator
+    if ((address.address.startsWith('E') &&
+            pros.settings.chain == Chain.ravencoin) ||
+        (address.address.startsWith('R') &&
+            pros.settings.chain == Chain.evrmore)) {
+      return;
+    }
     final wallet = address.wallet;
     if (wallet is LeaderWallet) {
       if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
@@ -275,6 +320,12 @@ class SubscribeService {
   }
 
   Future pullUnspents(Address address) async {
+    if ((address.address.startsWith('E') &&
+            pros.settings.chain == Chain.ravencoin) ||
+        (address.address.startsWith('R') &&
+            pros.settings.chain == Chain.evrmore)) {
+      return;
+    }
     await services.download.unspents.pull(
       scripthashes: {address.scripthash},
       wallet: address.wallet!,
@@ -287,12 +338,19 @@ class SubscribeService {
   void queueHistoryDownload(Address address) => null;
   //services.download.queue.update(address: address);
 
-  Future saveStatusUpdate(Address address, String? status) async =>
-      await pros.statuses.save(Status(
-        linkId: address.id,
-        statusType: StatusType.address,
-        status: status,
-      ));
+  Future saveStatusUpdate(Address address, String? status) async {
+    if ((address.address.startsWith('E') &&
+            pros.settings.chain == Chain.ravencoin) ||
+        (address.address.startsWith('R') &&
+            pros.settings.chain == Chain.evrmore)) {
+      return;
+    }
+    await pros.statuses.save(Status(
+      linkId: address.id,
+      statusType: StatusType.address,
+      status: status,
+    ));
+  }
 
   Future subscribeAddress(Address address) async {
     if (!subscriptionHandlesAddress.keys.contains(address.walletId)) {
@@ -389,6 +447,12 @@ class SubscribeService {
   }
 
   void broadcastActivity({String? address, String? status}) {
+    if (address != null &&
+        ((address.startsWith('E') && pros.settings.chain == Chain.ravencoin) ||
+            (address.startsWith('R') &&
+                pros.settings.chain == Chain.evrmore))) {
+      print('huh?');
+    }
     streams.client.download.add(ActivityMessage(
         active: true,
         title: 'Syncing with the network',
@@ -522,8 +586,12 @@ class ApiService {
               .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
           .owner);
 
-  Future<dynamic> ping() async => await services.client
-      .scope(() async => await (await services.client.client).ping());
+  /// avoid this and ping directly to catch errors
+  Future<dynamic> ping() async => await services.client.scope(() async {
+        final result = await (await services.client.client).ping();
+        print('ping result: $result'); // null
+        return result;
+      });
 
   /// we should instead just be able to send an empty string and make one call
   /// this returns too much data to be useful. we don't use this anymore.

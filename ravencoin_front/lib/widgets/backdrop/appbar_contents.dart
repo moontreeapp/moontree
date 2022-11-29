@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:hive/hive.dart';
+import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:electrum_adapter/methods/server/ping.dart';
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
@@ -86,50 +89,19 @@ class BackdropAppBarContents extends StatelessWidget
     );
   }
 
+/*
+Address(id: 3a9261a1367e718ab6f689b12713fe6378373fc5b2b7958134718867b257abd8, address: EarvV1y361BVqpRcyHzi1mabVcGWL7LzpT, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 0, exposure: NodeExposure.external, net: Net.main)
+Address(id: 6ba90b238db0181a806affc5c5a787666822376df601d9140d97b96f9dcf6439, address: ESNa5yYTwN2DEhALLW3z6DdbSg9psBoJDK, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 1, exposure: NodeExposure.external, net: Net.main)
+Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, address: EcV164xVxYQL2XJS63JSzAvuHvSuuBT59E, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 2, exposure: NodeExposure.external, net: Net.main)
+
+Address(id: 3a9261a1367e718ab6f689b12713fe6378373fc5b2b7958134718867b257abd8, address: RSzD4x1pFsh9vXBxdczK79vqVEDyb469Uv, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 0, exposure: NodeExposure.external, net: Net.main)
+Address(id: 6ba90b238db0181a806affc5c5a787666822376df601d9140d97b96f9dcf6439, address: RJVrfubF7EXsKPvfzq3bBbyqSJ7J8K1uxW, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 1, exposure: NodeExposure.external, net: Net.main)
+Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, address: RUcHg11H8Quz7E4mkNJ45ZH9HYQP6vtEe5, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 2, exposure: NodeExposure.external, net: Net.main)
+*/
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            if (services.developer.advancedDeveloperMode) {
-              //streams.app.snack.add(Snack(
-              //    message:
-              //        '${streams.app.page.value} | ${streams.app.setting.value}',
-              //    showOnLogin: true));
-              //
-              //print(pros.addresses.byAddress
-              //    .getOne('Eagq7rNFUEnR7kciQafV38kzpocef74J44'));
-              //4779042ef9d30eb2b1f5a1afbf286f30a4c5d0634d3030b9e00ccda76084985f
-              //
-              //await services.balance.recalculateAllBalances();
-              //print([for (var x in Current.wallet.unspents) x.value].sum());
-              //print([for (var x in Current.wallet.balances) x.value].sum());
-              //
-              //for (var x in Current.wallet.balances) {
-              //  print(x);
-              //}
-              //for (var x in Current.wallet.unspents) {
-              //  print(x);
-              //}
-              //print(pros.addresses.byAddress
-              //    .getOne('EZxVbSaaJpRBoNE3q9hTuqWxhL7vbJMkvV'));
-              //for (var x in pros.assets) {
-              //  print(x);
-              //}
-              //for (var x in pros.securities) {
-              //  print(x);
-              //}
-              //
-              //print(await services.client.api.getAssetUnspents([
-              //  'c38edbf38b247807f581f8d2ef4094e62f1d71179fcd799a959136898caf83da'
-              //]));
-              //print(pros.addresses.byScripthash.getOne(
-              //    'c38edbf38b247807f581f8d2ef4094e62f1d71179fcd799a959136898caf83da'));
-              ////print(await services.client.api.getAssetUnspents([
-              ////  '577d2e12c4e221a0ba98a8225d58d54b7353a3615a59d4bf5fae2898f623a261'
-              ////]));
-              //print(pros.unspents.getSymbolsByWallet(Current.walletId));
-              //
-              print(components.navigator.routeStack.first.settings.name);
-            }
+            if (services.developer.advancedDeveloperMode) {}
           },
           child: appBar,
         )

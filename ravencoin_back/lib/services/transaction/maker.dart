@@ -159,7 +159,6 @@ class GenericCreateRequest with ToStringMixin {
 
   Security get security => Security(
         symbol: fullName,
-        securityType: SecurityType.asset,
         chain: pros.settings.chain,
         net: pros.settings.net,
       );
@@ -240,7 +239,6 @@ class GenericReissueRequest with ToStringMixin {
 
   Security get security => Security(
         symbol: fullName,
-        securityType: SecurityType.asset,
         chain: pros.settings.chain,
         net: pros.settings.net,
       );
@@ -312,6 +310,7 @@ class SendEstimate with ToStringMixin {
   String? memo;
   int extraFees = 0;
   bool creation;
+  int coinReturn = 0;
 
   SendEstimate(
     this.amount, {
@@ -347,7 +346,7 @@ class SendEstimate with ToStringMixin {
         'creation',
       ];
 
-  int get total => security == null || security == pros.securities.currentCrypto
+  int get total => security == null || security == pros.securities.currentCoin
       ? (creation ? 0 : amount) + fees + extraFees
       : fees + extraFees;
   int get utxoTotal => utxos.fold(
@@ -358,12 +357,12 @@ class SendEstimate with ToStringMixin {
   // expects the security to be null if crypto
   int get inferredTransactionFee => security == null
       ? utxoTotal - (amount + changeDue + extraFees)
-      : utxos.fold(
+      : utxos.where((e) => e.security == pros.securities.currentCoin).fold(
               0,
               (int total, vout) =>
                   total +
-                  vout.securityValue(security: pros.securities.currentCrypto)) -
-          extraFees;
+                  vout.securityValue(security: pros.securities.currentCoin)) -
+          (coinReturn);
 
   factory SendEstimate.copy(SendEstimate detail) {
     return SendEstimate(detail.amount,
@@ -371,6 +370,7 @@ class SendEstimate with ToStringMixin {
   }
 
   void setFees(int fees_) => fees = fees_;
+  void setCoinReturn(int coinReturn_) => coinReturn = coinReturn_;
   void setExtraFees(int fees_) => extraFees = fees_;
   void setCreation(bool creation_) => creation = creation_;
   void setUTXOs(List<Vout> utxos_) => utxos = utxos_;
@@ -393,7 +393,7 @@ class TransactionMaker {
                 double.parse(sendRequest.visibleAmount) ==
                     sendRequest.holding) &&
             (sendRequest.security == null ||
-                sendRequest.security == pros.securities.currentCrypto)
+                sendRequest.security == pros.securities.currentCoin)
         ? await transactionSendAllRVN(
             sendRequest.sendAddress,
             estimate,
@@ -516,7 +516,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
           walletId: wallet.id,
@@ -542,6 +545,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueQualifier);
     await txb!.signEachInput(utxosRaven);
     tx = txb.build();
@@ -577,7 +581,6 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
               symbol: parentAsset,
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             ))
@@ -593,7 +596,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -629,6 +635,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueSubQualifier);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -662,7 +669,6 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
               symbol: estimate.security!.symbol.substring(1) + '!',
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             ))
@@ -672,7 +678,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -706,6 +715,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueRestricted);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -741,7 +751,6 @@ class TransactionMaker {
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
           symbol: estimate.security!.symbol.substring(1) + '!',
-          securityType: SecurityType.asset,
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
@@ -750,7 +759,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -790,6 +802,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.reissue);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -821,7 +834,6 @@ class TransactionMaker {
           symbol: estimate.security!.symbol[0] == '\$'
               ? estimate.security!.symbol.substring(1) + '!'
               : estimate.security!.symbol,
-          securityType: SecurityType.asset,
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
@@ -836,7 +848,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -874,6 +889,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.addTag);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -902,7 +918,6 @@ class TransactionMaker {
         amount: 100000000, // 1 virtual sat for ownership asset
         security: Security(
           symbol: estimate.security!.symbol + '!',
-          securityType: SecurityType.asset,
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
@@ -911,7 +926,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn amount
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -950,6 +968,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.reissue);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -977,7 +996,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
           walletId: wallet.id,
@@ -1009,6 +1031,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueMain);
     await txb!.signEachInput(utxosRaven);
     tx = txb.build();
@@ -1039,7 +1062,6 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
               symbol: parentAsset + '!',
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             ))
@@ -1049,7 +1071,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee + burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -1082,6 +1107,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueSub);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1111,7 +1137,6 @@ class TransactionMaker {
             amount: 100000000,
             security: Security(
               symbol: parentAsset + '!',
-              securityType: SecurityType.asset,
               chain: pros.settings.chain,
               net: pros.settings.net,
             ))
@@ -1124,7 +1149,10 @@ class TransactionMaker {
         : pros.settings.network.burnAmounts.issueUnique);
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee plus burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -1152,6 +1180,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setExtraFees(extraFee);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1181,7 +1210,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee plus burn
       utxosRaven = await services.balance.collectUTXOs(
         walletId: wallet.id,
@@ -1212,6 +1244,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     return Tuple2(tx, estimate);
@@ -1248,7 +1281,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee (plus amount, maybe)
       utxosRaven = await services.balance.collectUTXOs(
           walletId: wallet.id,
@@ -1288,6 +1324,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     estimate.setUTXOs(utxosRaven + utxosSecurity);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
@@ -1311,7 +1348,10 @@ class TransactionMaker {
       SendEstimate estimate,
     ) {
       var total = 0;
-      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      var txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
         total = total + utxo.rvnValue;
@@ -1363,7 +1403,10 @@ class TransactionMaker {
       Map<Security, List<Vout>> utxosBySecurity,
       SendEstimate estimate,
     ) {
-      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      var txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       for (var utxo in utxosCurrency) {
         txb.addInput(utxo.transactionId, utxo.position);
       }
@@ -1435,7 +1478,10 @@ class TransactionMaker {
     var returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       // Grab required RVN for fee (plus amount, maybe)
       utxosRaven = await services.balance
           .collectUTXOs(walletId: wallet.id, amount: feeSats, security: null);
@@ -1467,6 +1513,7 @@ class TransactionMaker {
       tx = txb.buildSpoofedSigs();
       estimate.setFees(tx.fee(goal: feeRate));
     }
+    estimate.setCoinReturn(returnRaven);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     estimate.setUTXOs(utxosRaven + utxosSecurity);
@@ -1486,7 +1533,10 @@ class TransactionMaker {
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
-      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      var txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
       }
@@ -1528,7 +1578,10 @@ class TransactionMaker {
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
-      var txb = ravencoin.TransactionBuilder(network: pros.settings.network);
+      var txb = ravencoin.TransactionBuilder(
+        network: pros.settings.network,
+        chainName: pros.settings.chain.name,
+      );
       for (var utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
       }

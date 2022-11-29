@@ -19,7 +19,7 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
   //    Balance(
   //        confirmed: 0,
   //        unconfirmed: 0,
-  //        security: pros.securities.currentCrypto,
+  //        security: pros.securities.currentCoin,
   //        walletId: pros.settings.currentWalletId)
   //  ];
   //}
@@ -27,7 +27,7 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
     var baseSymbol =
         balance.security.asset?.baseSymbol ?? balance.security.symbol;
     var assetType =
-        balance.security.asset?.assetType ?? balance.security.securityType;
+        balance.security.asset?.assetType ?? balance.security.getSecurityType;
     if ([AssetType.main, AssetType.admin].contains(assetType)) {
       if (!balancesMain.containsKey(baseSymbol)) {
         balancesMain[baseSymbol] = AssetHolding(
@@ -65,7 +65,7 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           restricted: assetType == AssetType.restricted ? balance : null,
           qualifier: assetType == AssetType.qualifier ? balance : null,
           qualifierSub: assetType == AssetType.qualifierSub ? balance : null,
-          crypto: assetType == SecurityType.crypto ? balance : null,
+          coin: assetType == SecurityType.coin ? balance : null,
           fiat: assetType == SecurityType.fiat ? balance : null,
         );
       } else {
@@ -76,7 +76,7 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           restricted: assetType == AssetType.restricted ? balance : null,
           qualifier: assetType == AssetType.qualifier ? balance : null,
           qualifierSub: assetType == AssetType.qualifierSub ? balance : null,
-          crypto: assetType == SecurityType.crypto ? balance : null,
+          coin: assetType == SecurityType.coin ? balance : null,
           fiat: assetType == SecurityType.fiat ? balance : null,
         );
       }
@@ -92,11 +92,7 @@ Balance blank(Asset asset) => Balance(
     confirmed: 0,
     unconfirmed: 0,
     security: asset.security ??
-        Security(
-            securityType: SecurityType.asset,
-            symbol: asset.symbol,
-            chain: Chain.none,
-            net: Net.test));
+        Security(symbol: asset.symbol, chain: Chain.none, net: Net.test));
 
 Map<String, AssetHolding> assetHoldingsFromAssets(String parent) {
   Map<String, AssetHolding> assets = {};

@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:moontree_utils/extensions/map.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
+import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 import 'package:wallet_utils/wallet_utils.dart' show FeeRates;
 
 import 'maker.dart';
@@ -12,7 +13,7 @@ class TransactionService {
   List<Vout> walletUnspents(Wallet wallet, {Security? security}) =>
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: security ?? pros.securities.currentCrypto,
+              security: security ?? pros.securities.currentCoin,
               includeMempool: false)
           .toList();
 
@@ -38,9 +39,9 @@ class TransactionService {
     //  return <TransactionRecord>[];
     //}
     var givenAddresses =
-        wallet.addresses.map((address) => address.address).toSet();
+        wallet.addressesFor().map((address) => address.address).toSet();
     var transactionRecords = <TransactionRecord>[];
-    final currentCrypto = pros.securities.currentCrypto;
+    final currentCrypto = pros.securities.currentCoin;
 
     final net = networkOf(pros.settings.chain, pros.settings.net);
     final specialTag = {net.burnAddresses.addTag: net.burnAmounts.addTag};
@@ -126,8 +127,7 @@ class TransactionService {
               /// not have the vout that those claim transactions point to. so
               /// we have a special case for that here.
 
-              if (vin.voutTransactionId ==
-                  'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262') {
+              if (vin.voutTransactionId == evrAirdropTx) {
                 //print(pros.unspents.records);
                 //print(vin.transactionId);
                 //var value = pros.unspents.records
@@ -137,19 +137,28 @@ class TransactionService {
                 //selfIn += value;
                 //totalInRVN += value;
                 //feeFlag = true;
-                var utxos = pros.unspents.records
-                    .where((u) => u.transactionId == vin.transactionId);
-                Unspent utxo;
-                if (utxos.isNotEmpty) {
-                  utxo = utxos.first;
-                  vinVout = Vout.fromUnspent(utxo,
-                      //simulate fee since it's hard to determin for claims
-                      rvnValue: utxo.value - 211200,
-                      toAddress: //utxo.address?.address ??
-                          pros.addresses.byScripthash
-                              .getOne(utxo.scripthash)
-                              ?.address);
-                }
+                //
+                /// getting the utxos is a special case, instead we should use vouts:
+                //var utxos = pros.unspents.records
+                //    .where((u) => u.transactionId == vin.transactionId);
+                //Unspent utxo;
+                //if (utxos.isNotEmpty) {
+                //  utxo = utxos.first;
+                //  vinVout = Vout.fromUnspent(utxo,
+                //      //simulate fee since it's hard to determin for claims
+                //      rvnValue: utxo.value - 211200,
+                //      toAddress: //utxo.address?.address ??
+                //          pros.addresses.byScripthash
+                //              .getOne(utxo.scripthash)
+                //              ?.address);
+                //}
+                /// this isn't the right Vout, we don't capture it, bigger issue
+                //final txVouts =
+                //    pros.vouts.byTransaction.getAll(vin.transactionId);
+                //if (txVouts.length == 1) {
+                //  vinVout = txVouts.first;
+                //} else if (txVouts.isNotEmpty) {}
+                /// for now just not doing anyting, this only to deduce fee anyway.
                 ioType ??= TransactionRecordType.claim;
               }
               if (vinVout == null) {
@@ -281,7 +290,11 @@ class TransactionService {
                   : null,
               height: transaction.height,
               type: ioType,
-              fee: feeFlag ? 0 : fee,
+              fee: feeFlag ||
+                      fee < (-1) * 1502 * 100000000 ||
+                      fee > 1502 * 100000000
+                  ? 0
+                  : fee,
               formattedDatetime: transaction.formattedDatetime,
             ));
           } else {
@@ -498,7 +511,7 @@ class TransactionService {
       NodeExposure.external,
     );
     final assetBalances = from.balances
-        .where((b) => !pros.securities.cryptos.contains(b.security))
+        .where((b) => !pros.securities.coins.contains(b.security))
         .toList();
 
     if (from.unspents.isEmpty || from.RVNValue == 0) {

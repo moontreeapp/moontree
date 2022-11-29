@@ -116,10 +116,10 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   Widget build(BuildContext context) {
-    currentCrypto = pros.securities.currentCrypto;
+    currentCrypto = pros.securities.currentCoin;
 
     balances = Current.wallet.balances.toSet();
-    addresses = Current.wallet.addresses.toSet();
+    addresses = Current.wallet.addressesFor().toSet();
     final transactions = Current.wallet.transactions.toSet();
     holdings = (
         //holdings != null && holdings!.isNotEmpty
@@ -145,7 +145,7 @@ class _HoldingList extends State<HoldingList> {
       balances = {};
       for (final symbol in pros.wallets.primaryIndex
           .getOne(walletId)!
-          .addresses
+          .addressesFor()
           .map((a) => a.vouts)
           .expand((i) => i)
           .map((v) => v.assetSecurityId?.split(':').first ?? 'RVN')
@@ -155,7 +155,6 @@ class _HoldingList extends State<HoldingList> {
             security: pros.securities.bySymbol.getAll(symbol).firstOrNull ??
                 Security(
                   symbol: symbol,
-                  securityType: SecurityType.asset,
                   chain: pros.settings.chain,
                   net: pros.settings.net,
                 ),
@@ -200,7 +199,7 @@ class _HoldingList extends State<HoldingList> {
           scrollController: widget.scrollController,
           header: 'Get Started',
           message:
-              'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
+              'Use the Import or Receive button to add ${chainName(pros.settings.chain)} & assets to your wallet.',
           placeholderType: PlaceholderType.wallet);
     } else if (balances.isEmpty && transactions.isEmpty && busy) {
       return GestureDetector(
@@ -214,6 +213,13 @@ class _HoldingList extends State<HoldingList> {
               count: max(holdingCount, 1),
               holding: true));
     } else if (balances.isEmpty && transactions.isEmpty && !busy) {
+      if (Current.wallet.unspents.length > 0) {
+        refresh();
+        return components.empty.getAssetsPlaceholder(context,
+            scrollController: widget.scrollController,
+            count: max(holdingCount, 1),
+            holding: true);
+      }
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Empty Wallet',
@@ -242,6 +248,13 @@ class _HoldingList extends State<HoldingList> {
       //      confirmed: 0,
       //      unconfirmed: 0));
       //} my8ZWfDD8LitTMTQj3Pd7NofVh764HfYoZ
+      if (Current.wallet.unspents.length > 0) {
+        refresh();
+        return components.empty.getAssetsPlaceholder(context,
+            scrollController: widget.scrollController,
+            count: max(holdingCount, 1),
+            holding: true);
+      }
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Empty Wallet',
@@ -626,7 +639,6 @@ class _HoldingList extends State<HoldingList> {
                       security: holding.balance?.security ??
                           Security(
                             symbol: 'unknown',
-                            securityType: SecurityType.fiat,
                             chain: Chain.none,
                             net: Net.test,
                           ),

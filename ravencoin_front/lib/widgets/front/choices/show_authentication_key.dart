@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart';
 
 class ShowAuthenticationChoice extends StatefulWidget {
-  final dynamic data;
-  const ShowAuthenticationChoice({this.data}) : super();
+  final String? title;
+  final String? desc;
+  const ShowAuthenticationChoice({
+    this.title = 'Show Authentication Key',
+    this.desc = 'Default and password if you use native authentication.',
+  }) : super();
 
   @override
   _ShowAuthenticationChoice createState() => _ShowAuthenticationChoice();
@@ -20,12 +25,13 @@ class _ShowAuthenticationChoice extends State<ShowAuthenticationChoice> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Show Authentication Key',
-            style: Theme.of(context).textTheme.bodyText1),
-        Text(
-          'Default and password if you use native authentication.',
-          style: Theme.of(context).textTheme.bodyText2,
-        ),
+        if (widget.title != null)
+          Text(widget.title!, style: Theme.of(context).textTheme.bodyText1),
+        if (widget.desc != null)
+          Text(
+            widget.desc!,
+            style: Theme.of(context).textTheme.bodyText2,
+          ),
         SizedBox(height: 16),
         Row(
           children: [
@@ -46,7 +52,7 @@ class _ShowAuthenticationChoice extends State<ShowAuthenticationChoice> {
               future: SecureStorage.authenticationKey,
               builder: (context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
-                  return Text(snapshot.data!);
+                  return SelectableText(snapshot.data!);
                 }
                 return Container();
               })

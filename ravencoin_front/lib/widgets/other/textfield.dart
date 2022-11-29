@@ -74,6 +74,7 @@ class TextFieldFormatted extends StatefulWidget {
   final TextStyle? helperStyle;
   final TextStyle? suffixStyle;
   final bool alwaysShowHelper;
+  final int? helperMaxLines;
 
   const TextFieldFormatted({
     Key? key,
@@ -85,6 +86,7 @@ class TextFieldFormatted extends StatefulWidget {
     this.suffixText,
     this.helperStyle,
     this.suffixStyle,
+    this.helperMaxLines,
     this.alwaysShowHelper = false,
     this.controller,
     this.focusNode,
@@ -199,6 +201,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
                 : widget.focusNode?.hasFocus ?? true
                     ? widget.helperText
                     : null,
+            helperMaxLines: widget.helperMaxLines,
             // takes precedence -- only fill on field valdiation failure:
             errorText: widget.errorText,
             suffixIcon: widget.suffixIcon,

@@ -7,8 +7,8 @@ part 'unspent.keys.dart';
 class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
   late IndexMultiple<_VoutIdKey, Unspent> byVoutId;
   //late IndexMultiple<_SecurityKey, Unspent> bySecurity;
-  //late IndexMultiple<_SecurityTypeKey, Unspent> bySecurityType;
   late IndexMultiple<_AddressKey, Unspent> byAddress;
+  late IndexMultiple<_ChainNetKey, Unspent> byChainNet;
   late IndexMultiple<_SymbolKey, Unspent> bySymbol;
   late IndexMultiple<_WalletKey, Unspent> byWallet;
   late IndexMultiple<_WalletSymbolKey, Unspent> byWalletSymbol;
@@ -24,34 +24,37 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
       byWalletChainSymbolConfirmation;
 
   UnspentProclaim() : super(_IdKey()) {
-    byVoutId = addIndexMultiple('transaction', _VoutIdKey());
-    //bySecurity = addIndexMultiple('security', _SecurityKey());
-    //bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
-    byAddress = addIndexMultiple('address', _AddressKey());
-    bySymbol = addIndexMultiple('symbol', _SymbolKey());
-    byWallet = addIndexMultiple('wallet', _WalletKey());
-    byWalletSymbol = addIndexMultiple('walletSymbol', _WalletSymbolKey());
-    //byWalletConfirmation =
-    //    addIndexMultiple('walletConfirmation', _WalletConfirmationKey());
-    //byWalletSymbolConfirmation = addIndexMultiple(
-    //    'walletSymbolConfirmation', _WalletSymbolConfirmationKey());
-    bySymbolChain = addIndexMultiple('symbolChain', _SymbolChainKey());
-    byWalletChain = addIndexMultiple('walletChain', _WalletChainKey());
+    byVoutId = addIndexMultiple('byVoutId', _VoutIdKey());
+    byAddress = addIndexMultiple('byAddress', _AddressKey());
+    byChainNet = addIndexMultiple('byChainNet', _ChainNetKey());
+    bySymbol = addIndexMultiple('bySymbol', _SymbolKey());
+    byWallet = addIndexMultiple('byWallet', _WalletKey());
+    byWalletSymbol = addIndexMultiple('byWalletSymbol', _WalletSymbolKey());
+    bySymbolChain = addIndexMultiple('bySymbolChain', _SymbolChainKey());
+    byWalletChain = addIndexMultiple('byWalletChain', _WalletChainKey());
     byWalletChainSymbol =
-        addIndexMultiple('walletChainSymbol', _WalletChainSymbolKey());
-    //byWalletChainConfirmation = addIndexMultiple(
-    //    'walletChainConfirmation', _WalletChainConfirmationKey());
+        addIndexMultiple('byWalletChainSymbol', _WalletChainSymbolKey());
     byWalletChainSymbolConfirmation = addIndexMultiple(
-        'walletChainSymbolConfirmation', _WalletChainSymbolConfirmationKey());
+        'byWalletChainSymbolConfirmation', _WalletChainSymbolConfirmationKey());
   }
 
   // on startup it's blank
   static Map<String, Unspent> get defaults => {};
 
-  Iterable<Unspent> byScripthashes(Set<String> scripthashes) =>
-      pros.unspents.records.where((e) => scripthashes.contains(e.scripthash));
-  Future<void> clearByScripthashes(Set<String> scripthashes) async =>
-      await pros.unspents.removeAll(byScripthashes(scripthashes));
+  Iterable<Unspent> byScripthashes(
+    Set<String> scripthashes, [
+    Chain? chain,
+    Net? net,
+  ]) =>
+      pros.unspents.byChainNet
+          .getAll(chain ?? pros.settings.chain, net ?? pros.settings.net)
+          .where((e) => scripthashes.contains(e.scripthash));
+  Future<void> clearByScripthashes(
+    Set<String> scripthashes, [
+    Chain? chain,
+    Net? net,
+  ]) async =>
+      await pros.unspents.removeAll(byScripthashes(scripthashes, chain, net));
 
   int totalConfirmed(
     String walletId, {

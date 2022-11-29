@@ -129,11 +129,14 @@ class Unspent with EquatableMixin, ToStringMixin {
   bool get isConfirmed => height > 0;
   bool get isUnconfirmed => height <= 0;
 
+  String get chainNetId => getChainNetId(chain, net);
   String get walletSymbolId => getWalletSymbolId(walletId, symbol);
   String get walletConfirmationId =>
       getWalletConfirmationId(walletId, isConfirmed);
   String get walletSymbolConfirmationId =>
       getWalletSymbolConfirmationId(walletId, symbol, isConfirmed);
+
+  static String getChainNetId(Chain chain, Net net) => chainNetKey(chain, net);
 
   static String getWalletSymbolId(String walletId, String symbol) =>
       '$walletId:$symbol';
@@ -160,12 +163,4 @@ class Unspent with EquatableMixin, ToStringMixin {
       '$transactionId:$position:${chainNetKey(chain, net)}';
 
   String get voutId => Vout.key(transactionId, position);
-
-  //Security get security => symbol == 'RVN'
-  //    ? pros.securities.currentCrypto
-  //    : Security(
-  //        symbol: symbol,
-  //        securityType: SecurityType.asset,
-  //        chain: chain,
-  //        net: net);
 }

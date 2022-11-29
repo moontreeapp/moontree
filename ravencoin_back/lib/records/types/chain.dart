@@ -96,6 +96,9 @@ NetworkType networkOf(Chain chain, Net net) {
   return mainnet;
 }
 
+/// moontree.com
+String domainOf(Chain chain, Net net) => 'moontree.com';
+
 /// port map
 ///50001 - mainnet tcp rvn
 ///50002 - mainnet ssl rvn
@@ -120,3 +123,6 @@ int portOf(Chain chain, Net net) {
   }
   return 50002;
 }
+
+String domainPortOf(Chain chain, Net net) =>
+    '${domainOf(chain, net)}:${portOf(chain, net)}';

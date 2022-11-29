@@ -109,7 +109,7 @@ class _NavMenuState extends State<NavMenu> {
               icon: MdiIcons.keyMinus,
               name: 'Export',
               link: '/settings/export',
-              disabled: true),
+              disabled: !services.developer.advancedDeveloperMode),
           if (services.developer.developerMode && Current.balanceRVN.value > 0)
             destination(
               icon: MdiIcons.broom,

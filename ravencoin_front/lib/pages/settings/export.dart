@@ -140,6 +140,18 @@ class _ExportState extends State<Export> {
           enabled: true,
           label: 'Share',
           onPressed: () async {
+            await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  streams.app.scrim.add(true);
+                  return AlertDialog(
+                      title: Text('Encryption Key'),
+                      content: Column(children: [
+                        Text(
+                            'You will need the following key in order to decrypt your export:'),
+                        ShowAuthenticationChoice(title: null, desc: null)
+                      ]));
+                }).then((value) => streams.app.scrim.add(false));
             await Share.share(await rawExport ?? 'Invalid wallet data');
           },
         ),

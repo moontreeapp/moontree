@@ -139,7 +139,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   void setWallets() async {
     final unspents = pros.unspents.records
-        .where((e) => e.security == pros.securities.currentCrypto);
+        .where((e) => e.security == pros.securities.currentCoin);
     wallets = pros.wallets.records
         .where((w) => unspents.where((u) => u.walletId == w.id).isNotEmpty)
         .toList();
@@ -159,23 +159,36 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       return;
     }
     final unspents = pros.unspents.records
-        .where((e) => pros.securities.cryptos.contains(e.security))
+        .where((e) => pros.securities.coins.contains(e.security))
         .toList();
     for (var w in pros.wallets.records) {
-      walletsSecurities[w] = pros.securities.cryptos
-          .where((s) => unspents
-              .where((u) => u.walletId == w.id && u.security == s)
-              .isNotEmpty)
-          .toList();
+      if ((walletsSecurities[w] ?? []).isEmpty) {
+        walletsSecurities[w] = pros.securities.coins
+            .where((s) => unspents
+                .where((u) => u.walletId == w.id && u.security == s)
+                .isNotEmpty)
+            .toList();
+      } else {
+        // to remember while app is open
+        walletsSecurities[w] = (walletsSecurities[w]! +
+                pros.securities.coins
+                    .where((s) => unspents
+                        .where((u) => u.walletId == w.id && u.security == s)
+                        .isNotEmpty)
+                    .toList())
+            .toSet()
+            .toList();
+      }
 
       /// for testing
+      //walletsSecurities[w] = [];
       //walletsSecurities[w]!.add(pros.securities.RVNt);
       //walletsSecurities[w]!.add(pros.securities.EVR);
       //walletsSecurities[w]!.add(pros.securities.RVN);
       //walletsSecurities[w]!.add(pros.securities.EVRt);
     }
     wallets = [];
-    final currentCrypto = pros.securities.currentCrypto;
+    final currentCrypto = pros.securities.currentCoin;
     for (var ws in walletsSecurities.entries) {
       if (ws.value.contains(currentCrypto)) {
         wallets.add(ws.key);
@@ -188,7 +201,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   List<Widget> holdingsIndicators(Wallet wallet) {
     var ret = <Widget>[];
     if (services.developer.developerMode) {
-      for (var s in pros.securities.cryptos) {
+      for (var s in pros.securities.coins) {
         if (walletsSecurities[wallet]!.contains(s)) {
           ret.add(Container(
               padding: EdgeInsets.only(left: ret.length * 12),
@@ -196,19 +209,14 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
         }
       }
     }
-    return ret;
+    return ret.reversed.toList();
   }
 
   void setHoldingsIndicatorsSize() {
     indicatorWidth = 24;
     if (services.developer.developerMode) {
-      for (var wallet in wallets) {
-        for (var s in pros.securities.cryptos) {
-          if (walletsSecurities[wallet]!.contains(s)) {
-            indicatorWidth + 12;
-          }
-        }
-      }
+      indicatorWidth =
+          24 + (walletsSecurities.values.map((e) => e.length).max * 12);
     }
   }
 
@@ -498,6 +506,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                 //getWif: await wallet.getWif,
                                               ));
                                             }
+                                            initializeWalletSecurities();
+                                            setWalletsSecurities();
                                           }
                                           Navigator.pop(components
                                               .navigator.routeContext!);

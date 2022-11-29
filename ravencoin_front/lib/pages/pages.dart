@@ -42,7 +42,7 @@ import 'package:ravencoin_front/pages/settings/preferences.dart';
 import 'package:ravencoin_front/pages/settings/support.dart';
 import 'package:ravencoin_front/pages/settings/sweep.dart';
 import 'package:ravencoin_front/pages/settings/technical.dart';
-import 'package:ravencoin_front/pages/settings/wallet.dart';
+import 'package:ravencoin_front/pages/settings/addresses.dart';
 //import 'package:ravencoin_front/pages/settings/currency.dart';
 //import 'package:ravencoin_front/pages/settings/wallet.dart';
 import 'package:ravencoin_front/pages/wallet/receive.dart';

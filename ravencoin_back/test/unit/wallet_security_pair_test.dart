@@ -18,11 +18,8 @@ void main() async {
     var s = <WalletSecurityPair>{};
     var pair = WalletSecurityPair(
         wallet: wallet,
-        security: Security(
-            symbol: 'RVN',
-            securityType: SecurityType.crypto,
-            chain: Chain.ravencoin,
-            net: Net.test));
+        security:
+            Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test));
     s.add(pair);
     s.add(pair);
     expect(s.length, 1);
@@ -40,10 +37,7 @@ void main() async {
       WalletSecurityPair(
           wallet: wallet,
           security: Security(
-              symbol: 'MOONTREE',
-              securityType: SecurityType.asset,
-              chain: Chain.ravencoin,
-              net: Net.test)),
+              symbol: 'MOONTREE', chain: Chain.ravencoin, net: Net.test)),
     });
   });
 }

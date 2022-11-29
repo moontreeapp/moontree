@@ -28,11 +28,13 @@ class Vin with EquatableMixin {
   /// other possible elements
   // final TxScriptSig? scriptSig;
 
-  Vin(
-      {required this.transactionId,
-      required this.voutTransactionId,
-      required this.voutPosition,
-      this.isCoinbase = false});
+  Vin({
+    required this.transactionId,
+    required this.voutTransactionId,
+    required this.voutPosition,
+    this.isCoinbase = false,
+  });
+
   @override
   List<Object> get props =>
       [transactionId, voutTransactionId, voutPosition, isCoinbase];

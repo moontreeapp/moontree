@@ -522,7 +522,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           symbol: fullName(true),
           displaySymbol: nameController.text,
           subSymbol: '',
-          paymentSymbol: pros.securities.currentCrypto.symbol,
+          paymentSymbol: pros.securities.currentCoin.symbol,
           items: [
             /// send the correct items
             if (isSub) ['Name', fullName(true), '2'],

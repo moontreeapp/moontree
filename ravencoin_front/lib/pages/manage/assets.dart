@@ -26,7 +26,6 @@ class _AssetState extends State<Asset> {
           pageTitle: 'Asset',
           security: pros.securities.primaryIndex.getOne(
             symbol,
-            SecurityType.asset,
             pros.settings.chain,
             pros.settings.net,
           )!),
