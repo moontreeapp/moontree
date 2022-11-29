@@ -213,6 +213,13 @@ class _HoldingList extends State<HoldingList> {
               count: max(holdingCount, 1),
               holding: true));
     } else if (balances.isEmpty && transactions.isEmpty && !busy) {
+      if (Current.wallet.unspents.length > 0) {
+        refresh();
+        return components.empty.getAssetsPlaceholder(context,
+            scrollController: widget.scrollController,
+            count: max(holdingCount, 1),
+            holding: true);
+      }
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Empty Wallet',
@@ -241,6 +248,13 @@ class _HoldingList extends State<HoldingList> {
       //      confirmed: 0,
       //      unconfirmed: 0));
       //} my8ZWfDD8LitTMTQj3Pd7NofVh764HfYoZ
+      if (Current.wallet.unspents.length > 0) {
+        refresh();
+        return components.empty.getAssetsPlaceholder(context,
+            scrollController: widget.scrollController,
+            count: max(holdingCount, 1),
+            holding: true);
+      }
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Empty Wallet',

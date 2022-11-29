@@ -82,7 +82,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         AppBarScrim(),
       ],
@@ -101,15 +101,7 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            if (services.developer.advancedDeveloperMode) {
-              var y = Current.wallet.addresses
-                  .where((e) => e.exposure == NodeExposure.external)
-                  .toList();
-              y.sort(((a, b) => a.hdIndex.compareTo(b.hdIndex)));
-              for (var x in y.toList().sublist(0, 3)) {
-                print(x);
-              }
-            }
+            if (services.developer.advancedDeveloperMode) {}
           },
           child: appBar,
         )

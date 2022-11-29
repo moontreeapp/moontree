@@ -201,7 +201,7 @@ class ClientService {
     await services.client.createClient();
 
     /// no longer needed since the await waits for the client to be created
-    await Future.delayed(Duration(seconds: 3));
+    //await Future.delayed(Duration(seconds: 3));
 
     ///// the leader waiter does not do this:
     /// start derivation process
