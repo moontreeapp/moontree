@@ -130,7 +130,6 @@ class ClientService {
             streams.app.snack.add(Snack(
                 message:
                     'Unable to connect to ${pros.settings.domainPort}, restoring defaults...'));
-            //await pros.settings.restoreDomainPort();
             await pros.settings.setDomainPortForChainNet();
             return await genClient();
           }
