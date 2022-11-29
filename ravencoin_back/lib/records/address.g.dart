@@ -17,7 +17,7 @@ class AddressAdapter extends TypeAdapter<Address> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Address(
-      id: fields[0] as String,
+      scripthash: fields[0] as String,
       address: fields[1] as String,
       walletId: fields[2] as String,
       hdIndex: fields[3] as int,
@@ -31,7 +31,7 @@ class AddressAdapter extends TypeAdapter<Address> {
     writer
       ..writeByte(6)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.scripthash)
       ..writeByte(1)
       ..write(obj.address)
       ..writeByte(2)

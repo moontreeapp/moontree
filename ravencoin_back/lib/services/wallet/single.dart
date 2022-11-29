@@ -9,7 +9,7 @@ class SingleWalletService {
     var net = pros.settings.net;
     var kpWallet = await wallet.kpWallet; //getKPWallet(wallet);
     return Address(
-        id: kpWallet.scripthash,
+        scripthash: kpWallet.scripthash,
         address: kpWallet.address!,
         walletId: wallet.id,
         hdIndex: 0,

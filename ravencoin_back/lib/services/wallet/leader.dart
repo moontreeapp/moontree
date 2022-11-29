@@ -76,7 +76,7 @@ class LeaderWalletService {
   ) async {
     final subwallet = await getSubWallet(wallet, hdIndex, exposure);
     return Address(
-        id: subwallet.scripthash,
+        scripthash: subwallet.scripthash,
         address: subwallet.address!,
         walletId: wallet.id,
         hdIndex: hdIndex,
