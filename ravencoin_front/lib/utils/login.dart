@@ -10,7 +10,10 @@ Future<void> login(
   String? key,
 }) async {
   key ??= await SecureStorage.authenticationKey;
-  services.cipher.initCiphers(altPassword: password ?? key, altSalt: key);
+  services.cipher.initCiphers(
+    altPassword: password ?? key,
+    altSalt: key, // should salt with password, see create_password.dart
+  );
   await services.cipher.updateWallets();
   services.cipher.cleanupCiphers();
   services.cipher.loginTime();

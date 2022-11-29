@@ -320,6 +320,11 @@ class _CreatePasswordState extends State<CreatePassword> {
       await populateWalletsWithSensitives();
       await services.authentication.setPassword(
         password: password.text,
+        //salt: password.text, // we should salt it with the password itself...
+        /// if we salt with this we must provide it to them for decrypting
+        /// exports, which means since this is the way it already is, this will
+        /// require a migration or a password reset before the export feature is
+        /// made available... unless we don't encrypt exports...
         salt: await SecureStorage.authenticationKey,
         message: '',
         saveSecret: saveSecret,

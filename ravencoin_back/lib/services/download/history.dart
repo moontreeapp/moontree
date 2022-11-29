@@ -350,6 +350,7 @@ class HistoryService {
           justReturn: true,
         )
     ];
+    print('saving Futures ${futures.length}');
     await saveThese(
       await Future.wait<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>>(futures),
     );

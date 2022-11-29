@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/services/import.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/import.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -33,11 +35,13 @@ class _ImportState extends State<Import> {
   String importFormatDetected = '';
   final Backup storage = Backup();
   final TextEditingController password = TextEditingController();
+  final TextEditingController salt = TextEditingController();
   FileDetails? file;
   String? finalText;
   String? finalAccountId;
   bool importVisible = true;
   bool submittedAttempt = false;
+  ImportFormat detection = ImportFormat.invalid;
 
   @override
   void initState() {
@@ -104,10 +108,12 @@ class _ImportState extends State<Import> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: file == null
                     ? [
-                        // hide file button
-                        //if (!Platform.isIOS && words.text == '') fileButton,
-                        //if (!Platform.isIOS && words.text == '')
-                        //  SizedBox(width: 16),
+                        if (services.developer.advancedDeveloperMode &&
+                            !Platform.isIOS &&
+                            words.text == '') ...[
+                          fileButton,
+                          SizedBox(width: 16)
+                        ],
                         submitButton(),
                       ]
                     : [submitButton('Import File')]),
@@ -249,7 +255,7 @@ class _ImportState extends State<Import> {
 
   void enableImport({String? given}) {
     var oldImportFormatDetected = importFormatDetected;
-    var detection =
+    detection =
         services.wallet.import.detectImportType((given ?? words.text).trim());
     importEnabled = detection != ImportFormat.invalid;
     if (detection == ImportFormat.mnemonic) {
@@ -276,15 +282,45 @@ class _ImportState extends State<Import> {
         return AlertDialog(
           title: Column(
             children: <Widget>[
-              TextField(
+              TextFieldFormatted(
                   autocorrect: false,
                   controller: password,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    hintText: 'password',
-                  ),
+                  labelText: 'Password',
+                  hintText: 'Password123!',
+                  helperText:
+                      'leave blank if you used biometric or native authentication when creating the export.',
+                  helperMaxLines: 10,
+                  onEditingComplete: () {
+                    Navigator.of(context).pop();
+                  }),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Next'))
+            ],
+          ),
+        );
+      }).then((value) => streams.app.scrim.add(false));
+
+  Future requestSalt() async => showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        streams.app.scrim.add(true);
+        return AlertDialog(
+          title: Column(
+            children: <Widget>[
+              TextFieldFormatted(
+                  autocorrect: false,
+                  controller: salt,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  hintText: 'Encryption Key',
+                  helperText:
+                      'This key was provided when the export was created.',
+                  helperMaxLines: 10,
                   onEditingComplete: () {
                     Navigator.of(context).pop();
                   }),
@@ -301,33 +337,51 @@ class _ImportState extends State<Import> {
   Future attemptImport([String? importData]) async {
     FocusScope.of(context).unfocus();
     var text = (importData ?? words.text).trim();
+    var resp = text;
+    var encrypted = true;
 
-    /* will fix decryption later
     /// decrypt if you must...
     if (importData != null) {
-      var resp;
+      final textJson = json.decode(text);
       try {
-        resp = ImportFrom.maybeDecrypt(
-          text: importData,
-          cipher: services.cipher.currentCipher!,
-        );
+        throw Exception('testing');
+        for (final walletJson in textJson['wallets']!.values) {
+          final decrypted = ImportFrom.maybeDecrypt(
+            text: walletJson['secret'],
+            cipher: services.cipher.currentCipher!,
+          );
+          resp = resp.replaceFirst(walletJson['secret'], decrypted);
+        }
       } catch (e) {}
-      if (resp == null) {
+      if (resp == text) {
         // ask for password, make cipher, pass that cipher in.
         // what if it's not the latest cipher type? just try all cipher types...
         for (var cipherType in services.cipher.allCipherTypes) {
           await requestPassword();
+          await requestSalt();
           // cancelled
-          if (password.text == '') break;
+          if (password.text == '' && salt.text == '') break;
           try {
-            resp = ImportFrom.maybeDecrypt(
-                text: importData,
-                cipher: CipherReservoir.cipherInitializers[cipherType]!(
-                    services.cipher.getPassword(altPassword: password.text)));
+            for (final walletJson in textJson['wallets']!.values) {
+              if (walletJson['secret'].split(' ').length == 12) {
+                encrypted = false;
+                break;
+              }
+              final decrypted = ImportFrom.maybeDecrypt(
+                text: walletJson['secret'],
+                cipher: CipherProclaim.cipherInitializers[cipherType]!(
+                    services.cipher.getPassword(
+                        altPassword:
+                            password.text == '' ? salt.text : password.text),
+                    services.cipher.getSalt(
+                        altSalt: salt.text == '' ? password.text : salt.text)),
+              );
+              resp = resp.replaceFirst(walletJson['secret'], decrypted);
+            }
           } catch (e) {}
-          if (resp != null) break;
+          if (resp != text) break;
         }
-        if (resp == null) {
+        if (resp == text && encrypted) {
           showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -342,6 +396,7 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
+    /* will fix decryption later
     */
 
     /// save the key

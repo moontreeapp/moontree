@@ -28,6 +28,7 @@ class _VerifySeedState extends State<VerifySeed> {
   late Map<int, SecretWord> shuffled;
   int click = 0;
   Map<int, SecretWord> clicks = {};
+  bool clicked = false;
 
   @override
   void initState() {
@@ -74,17 +75,19 @@ class _VerifySeedState extends State<VerifySeed> {
         if (!smallScreen) wordsInStack
       ]);
 
-  Widget get instructions => Container(
-      height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'Please tap your words in the correct order.',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.black),
-      ));
+  Widget get instructions => GestureDetector(
+      onDoubleTap: () async => clicked ? await proceed() : clicked = true,
+      child: Container(
+          height: 48,
+          alignment: Alignment.topCenter,
+          child: Text(
+            'Please tap your words in the correct order.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context)
+                .textTheme
+                .subtitle1!
+                .copyWith(color: AppColors.black),
+          )));
 
   Widget get warning => Container(
         height: 48,
@@ -136,26 +139,25 @@ class _VerifySeedState extends State<VerifySeed> {
         context,
         enabled: checkOrder(),
         label: 'Verify',
-        onPressed: () async {
-          if (Current.wallet is LeaderWallet) {
-            await services.wallet.leader
-                .backedUp(Current.wallet as LeaderWallet);
-            await populateWalletsWithSensitives();
-          }
-          streams.app.setting.add(null);
-          streams.app.fling.add(false);
-          streams.app.lead.add(LeadIcon.pass);
-          try {
-            Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-          } catch (e) {
-            print('home not found');
-            Navigator.of(context).pushReplacementNamed('/home');
-          }
-          if (services.tutorial.missing.isEmpty) {
-            streams.app.snack
-                .add(Snack(message: 'Successfully Verified Backup'));
-          }
-          streams.app.wallet.refresh.add(true);
-        },
+        onPressed: proceed,
       );
+  Future<void> proceed() async {
+    if (Current.wallet is LeaderWallet) {
+      await services.wallet.leader.backedUp(Current.wallet as LeaderWallet);
+      await populateWalletsWithSensitives();
+    }
+    streams.app.setting.add(null);
+    streams.app.fling.add(false);
+    streams.app.lead.add(LeadIcon.pass);
+    try {
+      Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+    } catch (e) {
+      print('home not found');
+      Navigator.of(context).pushReplacementNamed('/home');
+    }
+    if (services.tutorial.missing.isEmpty) {
+      streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
+    }
+    streams.app.wallet.refresh.add(true);
+  }
 }

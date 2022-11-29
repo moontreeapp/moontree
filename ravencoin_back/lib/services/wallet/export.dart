@@ -48,7 +48,7 @@ class ExportWalletService {
                     convert.hex.encode(
                         (await wallet.secret(wallet.cipher!)).codeUnits),
                     services.cipher.currentCipher!)
-                : wallet.secret(wallet.cipher!), //encrypted,
+                : await wallet.secret(wallet.cipher!), //encrypted,
             // For now:
             // Leaderwallets are always mnemonics
             // Singlewallets are always WIFs
