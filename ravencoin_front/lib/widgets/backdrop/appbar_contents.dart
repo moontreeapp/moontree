@@ -89,105 +89,26 @@ class BackdropAppBarContents extends StatelessWidget
     );
   }
 
+/*
+Address(id: 3a9261a1367e718ab6f689b12713fe6378373fc5b2b7958134718867b257abd8, address: EarvV1y361BVqpRcyHzi1mabVcGWL7LzpT, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 0, exposure: NodeExposure.external, net: Net.main)
+Address(id: 6ba90b238db0181a806affc5c5a787666822376df601d9140d97b96f9dcf6439, address: ESNa5yYTwN2DEhALLW3z6DdbSg9psBoJDK, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 1, exposure: NodeExposure.external, net: Net.main)
+Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, address: EcV164xVxYQL2XJS63JSzAvuHvSuuBT59E, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 2, exposure: NodeExposure.external, net: Net.main)
+
+Address(id: 3a9261a1367e718ab6f689b12713fe6378373fc5b2b7958134718867b257abd8, address: RSzD4x1pFsh9vXBxdczK79vqVEDyb469Uv, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 0, exposure: NodeExposure.external, net: Net.main)
+Address(id: 6ba90b238db0181a806affc5c5a787666822376df601d9140d97b96f9dcf6439, address: RJVrfubF7EXsKPvfzq3bBbyqSJ7J8K1uxW, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 1, exposure: NodeExposure.external, net: Net.main)
+Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, address: RUcHg11H8Quz7E4mkNJ45ZH9HYQP6vtEe5, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 2, exposure: NodeExposure.external, net: Net.main)
+*/
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
             if (services.developer.advancedDeveloperMode) {
-              //streams.app.snack.add(Snack(
-              //    message:
-              //        '${streams.app.page.value} | ${streams.app.setting.value}',
-              //    showOnLogin: true));
-              //
-              //print(pros.addresses.byAddress
-              //    .getOne('Eagq7rNFUEnR7kciQafV38kzpocef74J44'));
-              //4779042ef9d30eb2b1f5a1afbf286f30a4c5d0634d3030b9e00ccda76084985f
-              //
-              //await services.balance.recalculateAllBalances();
-              //print([for (var x in Current.wallet.unspents) x.value].sum());
-              //print([for (var x in Current.wallet.balances) x.value].sum());
-              //
-              //for (var x in Current.wallet.balances) {
-              //  print(x);
-              //}
-              //for (var x in Current.wallet.unspents) {
-              //  print(x);
-              //}
-              //print(pros.addresses.byAddress
-              //    .getOne('EZxVbSaaJpRBoNE3q9hTuqWxhL7vbJMkvV'));
-              //for (var x in pros.assets) {
-              //  print(x);
-              //}
-              //for (var x in pros.securities) {
-              //  print(x);
-              //}
-              //
-              //print(pros.vins.byTransaction.getAll(
-              //    '3ca73950940eb32ac0ed119cde0db517cd4393438bc62151fb63c885eabe65bb'));
-              //
-              //try {
-              //  //print((await services.client.client)
-              //  //    .peer
-              //  //    .done
-              //  //    .whenComplete(() => print('completed!')));
-              //  //print((await services.client.client).peer.done.then(
-              //  //    (v) => print('then $v'),
-              //  //    onError: (ob, st) => print('err! $ob $st')));
-              //  ////print((await services.client.client).peer.close());
-              //  /// does not kill connection
-              //  //print(await (await services.client.client)
-              //  //    .request('bad method errors?', ['params']));
-              //  //print((await services.client.client).errorClose());//
-              //  //print((await services.client.client).peer.isClosed);
-              //  //print(await (await services.client.client).ping());
-              //} on StateError catch (e) {
-              //  print(e);
-              //  print('retry');
-              //}
-              //print(await services.client.api.getTransaction(
-              //    '11789c375ef151b638a777512c6f7adffb86d70136a0c167933c399cfb4cc507'));
-              //print(await services.client.api.getTransaction(
-              //    '7b994b8685811208f931e54a3ba4c511ff6302f35ceaeb487f167173430c5e6f'));
-              //print(await services.client.api.getTransaction(
-              //    '7854368c1f4caa3d40f324578ff8dbea54e2b2fc8e72e13b6c741329c2e7c7a2'));
-              //print(await services.client.api.getTransaction(
-              //    '652a9e116af416844e4b121d85504a12a5c3455e8e37c4828d60ed520e937700'));
-              //final tx = await services.client.api.getTransaction(
-              //    '11789c375ef151b638a777512c6f7adffb86d70136a0c167933c399cfb4cc507');
-              //for (var item in tx.vin) {
-              //  print(item);
-              //}
-              //for (var item in tx.vout) {
-              //  print(item);
-              //}
-              //var utxos =
-              //    pros.unspents.records.where((e) => e.symbol == 'SATORI');
-              //for (var u in utxos) {
-              //  print(u);
-              //}
-              //
-              //print(await services.client.client);
-              //print((await services.client.client).peer.isClosed);
-              //print(pros.balances.bySecurity.getAll(
-              //    pros.securities.bySymbol.getAll('KINKAJOU/GROOMER1').first));
-              //streams.app.wallet.refresh.add(true);
-              //var r = pros.transactions.primaryIndex.getOne(evrAirdropTx);
-              //print(r);
-              //var v =
-              //    pros.vins.where((e) => e.voutTransactionId == evrAirdropTx);
-              //print(v);
-              //var vo = pros.vouts.where((e) =>
-              //    e.transactionId ==
-              //    '73e4d2ffd3ef998a093c6c6256d362660f50bfb47dc32fa0930e0b6e3f66f527');
-              //print(vo);
-              for (var b in pros.balances.records) {
-                print(b);
+              var y = Current.wallet.addresses
+                  .where((e) => e.exposure == NodeExposure.external)
+                  .toList();
+              y.sort(((a, b) => a.hdIndex.compareTo(b.hdIndex)));
+              for (var x in y.toList().sublist(0, 3)) {
+                print(x);
               }
-              print(Current.walletId);
-              print(Current.wallet.balances);
-              print(Current.wallet.addresses.length);
-              print(services.wallet.currentWallet is SingleWallet);
-              print(pros.ciphers.records.contains(CipherType.none));
-              //print(Current.wallet.unspents);
             }
           },
           child: appBar,

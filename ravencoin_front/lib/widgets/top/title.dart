@@ -162,13 +162,26 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
         .where((e) => pros.securities.coins.contains(e.security))
         .toList();
     for (var w in pros.wallets.records) {
-      walletsSecurities[w] = pros.securities.coins
-          .where((s) => unspents
-              .where((u) => u.walletId == w.id && u.security == s)
-              .isNotEmpty)
-          .toList();
+      if ((walletsSecurities[w] ?? []).isEmpty) {
+        walletsSecurities[w] = pros.securities.coins
+            .where((s) => unspents
+                .where((u) => u.walletId == w.id && u.security == s)
+                .isNotEmpty)
+            .toList();
+      } else {
+        // to remember while app is open
+        walletsSecurities[w] = (walletsSecurities[w]! +
+                pros.securities.coins
+                    .where((s) => unspents
+                        .where((u) => u.walletId == w.id && u.security == s)
+                        .isNotEmpty)
+                    .toList())
+            .toSet()
+            .toList();
+      }
 
       /// for testing
+      //walletsSecurities[w] = [];
       //walletsSecurities[w]!.add(pros.securities.RVNt);
       //walletsSecurities[w]!.add(pros.securities.EVR);
       //walletsSecurities[w]!.add(pros.securities.RVN);
@@ -202,13 +215,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   void setHoldingsIndicatorsSize() {
     indicatorWidth = 24;
     if (services.developer.developerMode) {
-      for (var wallet in wallets) {
-        for (var s in pros.securities.coins) {
-          if (walletsSecurities[wallet]!.contains(s)) {
-            indicatorWidth + 12;
-          }
-        }
-      }
+      indicatorWidth =
+          24 + (walletsSecurities.values.map((e) => e.length).max * 12);
     }
   }
 
