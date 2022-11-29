@@ -39,7 +39,7 @@ class TransactionService {
     //  return <TransactionRecord>[];
     //}
     var givenAddresses =
-        wallet.addresses.map((address) => address.address).toSet();
+        wallet.addressesFor().map((address) => address.address).toSet();
     var transactionRecords = <TransactionRecord>[];
     final currentCrypto = pros.securities.currentCoin;
 

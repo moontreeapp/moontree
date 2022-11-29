@@ -86,7 +86,9 @@ class Vout with EquatableMixin, ToStringMixin {
       rvnValue: rvnValue ?? unspent.value,
       toAddress: toAddress ??
           unspent.address?.address ??
-          pros.addresses.byScripthash.getOne(unspent.scripthash)?.address,
+          pros.addresses.primaryIndex
+              .getOne(unspent.scripthash, unspent.chain, unspent.net)
+              ?.address,
       assetValue: assetValue,
       lockingScript: lockingScript,
       memo: memo,

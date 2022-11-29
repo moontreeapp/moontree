@@ -119,7 +119,7 @@ class _HoldingList extends State<HoldingList> {
     currentCrypto = pros.securities.currentCoin;
 
     balances = Current.wallet.balances.toSet();
-    addresses = Current.wallet.addresses.toSet();
+    addresses = Current.wallet.addressesFor().toSet();
     final transactions = Current.wallet.transactions.toSet();
     holdings = (
         //holdings != null && holdings!.isNotEmpty
@@ -145,7 +145,7 @@ class _HoldingList extends State<HoldingList> {
       balances = {};
       for (final symbol in pros.wallets.primaryIndex
           .getOne(walletId)!
-          .addresses
+          .addressesFor()
           .map((a) => a.vouts)
           .expand((i) => i)
           .map((v) => v.assetSecurityId?.split(':').first ?? 'RVN')

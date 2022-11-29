@@ -78,7 +78,7 @@ class _ReceiveState extends State<Receive> {
     //print('init: ${s.elapsed}');
     /// when the client isn't busy anymore, refresh
     listeners.add(streams.client.busy.listen((bool busy) async {
-      if (!busy && Current.wallet.addresses.isNotEmpty) {
+      if (!busy && Current.wallet.addressesFor().isNotEmpty) {
         print('receive triggered by client not busy');
         address = null;
         setState(() {});
@@ -90,7 +90,7 @@ class _ReceiveState extends State<Receive> {
           loaded: (_) {},
           added: (_) {
             if (Current.wallet.externalAddresses.length == 1 ||
-                Current.wallet.addresses.length > 39) {
+                Current.wallet.addressesFor().length > 39) {
               print('receive triggered by new address');
               address = null;
               setState(() {});

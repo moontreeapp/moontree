@@ -26,39 +26,44 @@ class FixtureSet1 extends FixtureSet {
   @override
   Map<String, Address> get addresses => {
         '0': Address(
-            id: '0',
+            scripthash: '0',
             address: 'address 0 address',
             walletId: '0',
             hdIndex: 0,
             exposure: NodeExposure.internal,
+            chain: Chain.ravencoin,
             net: Net.test),
         '1': Address(
-            id: '1',
+            scripthash: '1',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 1,
             exposure: NodeExposure.external,
+            chain: Chain.ravencoin,
             net: Net.test),
         '2': Address(
-            id: '2',
+            scripthash: '2',
             address: 'address 2 address',
             walletId: '0',
             hdIndex: 2,
             exposure: NodeExposure.external,
+            chain: Chain.ravencoin,
             net: Net.test),
         '3': Address(
-            id: '3',
+            scripthash: '3',
             address: 'address 3 address',
             walletId: '0',
             hdIndex: 3,
             exposure: NodeExposure.external,
+            chain: Chain.ravencoin,
             net: Net.test),
         '100': Address(
-            id: '100',
+            scripthash: '100',
             address: 'address 1 address',
             walletId: '0',
             hdIndex: 3,
             exposure: NodeExposure.external,
+            chain: Chain.ravencoin,
             net: Net.test),
       };
 

@@ -23,13 +23,14 @@ class AddressAdapter extends TypeAdapter<Address> {
       hdIndex: fields[3] as int,
       exposure: fields[4] as NodeExposure,
       net: fields[5] as Net,
+      chain: fields[6] == null ? Chain.ravencoin : fields[6] as Chain,
     );
   }
 
   @override
   void write(BinaryWriter writer, Address obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.scripthash)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class AddressAdapter extends TypeAdapter<Address> {
       ..writeByte(4)
       ..write(obj.exposure)
       ..writeByte(5)
-      ..write(obj.net);
+      ..write(obj.net)
+      ..writeByte(6)
+      ..write(obj.chain);
   }
 
   @override

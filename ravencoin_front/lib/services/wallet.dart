@@ -65,7 +65,7 @@ Future<void> switchWallet(String walletId) async {
   streams.app.fling.add(false);
   streams.app.setting.add(null);
   final currentWallet = pros.wallets.primaryIndex.getOne(walletId);
-  if (currentWallet is LeaderWallet && currentWallet.addresses.isEmpty) {
+  if (currentWallet is LeaderWallet && currentWallet.addressesFor().isEmpty) {
     await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
   }
 }

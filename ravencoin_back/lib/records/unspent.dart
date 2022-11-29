@@ -129,11 +129,14 @@ class Unspent with EquatableMixin, ToStringMixin {
   bool get isConfirmed => height > 0;
   bool get isUnconfirmed => height <= 0;
 
+  String get chainNetId => getChainNetId(chain, net);
   String get walletSymbolId => getWalletSymbolId(walletId, symbol);
   String get walletConfirmationId =>
       getWalletConfirmationId(walletId, isConfirmed);
   String get walletSymbolConfirmationId =>
       getWalletSymbolConfirmationId(walletId, symbol, isConfirmed);
+
+  static String getChainNetId(Chain chain, Net net) => chainNetKey(chain, net);
 
   static String getWalletSymbolId(String walletId, String symbol) =>
       '$walletId:$symbol';

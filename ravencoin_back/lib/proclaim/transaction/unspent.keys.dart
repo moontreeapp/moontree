@@ -59,6 +59,18 @@ extension ByAddressMethodsForUnspent on Index<_AddressKey, Unspent> {
   List<Unspent> getAll(String address) => getByKeyStr(address);
 }
 
+// byChainNet - (toChainNet)
+
+class _ChainNetKey extends Key<Unspent> {
+  @override
+  String getKey(Unspent unspent) => unspent.chainNetId;
+}
+
+extension ByChainNetMethodsForUnspent on Index<_ChainNetKey, Unspent> {
+  List<Unspent> getAll(Chain chain, Net net) =>
+      getByKeyStr(Unspent.getChainNetId(chain, net));
+}
+
 // bySymbol
 
 class _SymbolKey extends Key<Unspent> {

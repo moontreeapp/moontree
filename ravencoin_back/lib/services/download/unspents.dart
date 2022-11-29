@@ -111,8 +111,8 @@ class UnspentService {
             }
             x[wallet.id]!.add(Vout.fromUnspent(utxo,
                 toAddress: utxo.address?.address ??
-                    pros.addresses.byScripthash
-                        .getOne(utxo.scripthash)
+                    pros.addresses.primaryIndex
+                        .getOne(utxo.scripthash, utxo.chain, utxo.net)
                         ?.address));
             streams.claim.unclaimed.add(x);
           }

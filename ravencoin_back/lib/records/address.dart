@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:ravencoin_back/records/types/chain.dart';
 
 import '_type_id.dart';
 import 'types/node_exposure.dart';
@@ -27,13 +28,17 @@ class Address with EquatableMixin {
   @HiveField(5)
   Net net;
 
+  @HiveField(6, defaultValue: Chain.ravencoin)
+  Chain chain;
+
   Address({
     required this.scripthash,
     required this.address,
     required this.walletId,
     required this.hdIndex,
-    this.exposure = NodeExposure.external,
-    this.net = Net.test,
+    required this.exposure,
+    required this.net,
+    required this.chain,
   });
 
   @override
@@ -44,12 +49,13 @@ class Address with EquatableMixin {
         hdIndex,
         exposure,
         net,
+        chain,
       ];
 
   @override
   String toString() =>
       'Address(scripthash: $scripthash, address: $address, walletId: $walletId, '
-      'hdIndex: $hdIndex, exposure: $exposure, net: $net)';
+      'hdIndex: $hdIndex, exposure: $exposure, chain: $chain, net: $net)';
 
   int compareTo(Address other) {
     if (exposure != other.exposure) {
@@ -58,5 +64,8 @@ class Address with EquatableMixin {
     return hdIndex < other.hdIndex ? -1 : 1;
   }
 
-  String get id => scripthash;
+  String get id => key(scripthash, chain, net);
+
+  static String key(String scripthash, Chain chain, Net net) =>
+      '$scripthash:${chainNetKey(chain, net)}';
 }
