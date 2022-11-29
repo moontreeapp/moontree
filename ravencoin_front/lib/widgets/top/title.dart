@@ -209,7 +209,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
         }
       }
     }
-    return ret;
+    return ret.reversed.toList();
   }
 
   void setHoldingsIndicatorsSize() {

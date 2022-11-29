@@ -39,11 +39,11 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
   final Security EVRt = SecurityProclaim.staticEVRt;
 
   final List<Security> coins = [
-    SecurityProclaim.staticUSD,
-    SecurityProclaim.staticRVN,
     SecurityProclaim.staticEVR,
-    SecurityProclaim.staticRVNt,
+    SecurityProclaim.staticRVN,
     SecurityProclaim.staticEVRt,
+    SecurityProclaim.staticRVNt,
+    SecurityProclaim.staticUSD,
   ];
 
   Security get currentCoin {
