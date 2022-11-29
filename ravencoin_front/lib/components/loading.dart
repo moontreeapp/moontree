@@ -54,7 +54,7 @@ class LoadingComponents {
               then: then,
               staticImage: staticImage,
             ));
-    return compute((_) async => await during(), null);
+    return await compute((_) async => await during(), null);
   }
   */
 }
