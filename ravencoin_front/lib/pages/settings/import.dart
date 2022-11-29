@@ -344,7 +344,6 @@ class _ImportState extends State<Import> {
     if (importData != null) {
       final textJson = json.decode(text);
       try {
-        throw Exception('testing');
         for (final walletJson in textJson['wallets']!.values) {
           final decrypted = ImportFrom.maybeDecrypt(
             text: walletJson['secret'],
@@ -361,6 +360,11 @@ class _ImportState extends State<Import> {
           await requestSalt();
           // cancelled
           if (password.text == '' && salt.text == '') break;
+          await components.loading.screen(
+            message: 'Decrypting',
+            staticImage: true,
+            playCount: 2,
+          );
           try {
             for (final walletJson in textJson['wallets']!.values) {
               if (walletJson['secret'].split(' ').length == 12) {
