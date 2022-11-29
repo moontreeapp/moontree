@@ -4,15 +4,6 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 
 part 'address.keys.dart';
 
-class AddressLocation {
-  int index;
-  NodeExposure exposure;
-
-  AddressLocation(int locationIndex, NodeExposure locationExposure)
-      : index = locationIndex,
-        exposure = locationExposure;
-}
-
 class AddressProclaim extends Proclaim<_IdKey, Address> {
   late IndexMultiple<_AddressKey, Address> byAddress;
   late IndexMultiple<_WalletKey, Address> byWallet;
@@ -28,27 +19,6 @@ class AddressProclaim extends Proclaim<_IdKey, Address> {
     byWalletExposureIndex =
         addIndexMultiple('wallet-exposure-hdindex', _WalletExposureHDKey());
     byScripthash = addIndexMultiple('scripthash', _IdKey());
-  }
-
-  /// returns addresses in order
-  AddressLocation? getAddressLocationOf(String addressId, String walletId) {
-    var i = 0;
-    for (var address
-        in byWalletExposure.getAll(walletId, NodeExposure.internal)) {
-      if (address.id == addressId) {
-        return AddressLocation(i, NodeExposure.internal);
-      }
-      i = i + 1;
-    }
-    i = 0;
-    for (var address
-        in byWalletExposure.getAll(walletId, NodeExposure.external)) {
-      if (address.id == addressId) {
-        return AddressLocation(i, NodeExposure.external);
-      }
-      i = i + 1;
-    }
-    return null;
   }
 
   void removeAddresses(Wallet wallet) {
