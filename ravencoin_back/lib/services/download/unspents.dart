@@ -78,7 +78,9 @@ class UnspentService {
         // raise to notify in here?
       }
     }
-
+    if (utxos.isEmpty) {
+      return;
+    }
     //_maybeTriggerBackup(currencyUtxos);
     //_maybeTriggerBackup(assetUtxos);
 

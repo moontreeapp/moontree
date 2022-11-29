@@ -82,7 +82,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const [],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         // alphaBar,
         AppBarScrim(),
       ],

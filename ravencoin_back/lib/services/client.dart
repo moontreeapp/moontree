@@ -130,7 +130,8 @@ class ClientService {
             streams.app.snack.add(Snack(
                 message:
                     'Unable to connect to ${pros.settings.domainPort}, restoring defaults...'));
-            await pros.settings.restoreDomainPort();
+            //await pros.settings.restoreDomainPort();
+            await pros.settings.setDomainPortForChainNet();
             return await genClient();
           }
         }
@@ -145,6 +146,9 @@ class ClientService {
     String projectName = 'moontree',
     String? projectVersion,
   }) async {
+    if (pros.settings.domainPort != pros.settings.domainPortOfChainNet) {
+      await pros.settings.setDomainPortForChainNet();
+    }
     try {
       return await RavenElectrumClient.connect(
         electrumDomain,
@@ -170,7 +174,11 @@ class ClientService {
 
   Future switchNetworks({required Chain chain, required Net net}) async {
     await pros.settings.setBlockchain(chain: chain, net: net);
-    await resetMemoryAndConnection();
+    await resetMemoryAndConnection(
+      keepTx: false,
+      keepBalances: false,
+      keepAddresses: false,
+    );
   }
 
   Future<void> resetMemoryAndConnection({

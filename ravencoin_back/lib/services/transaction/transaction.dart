@@ -290,7 +290,11 @@ class TransactionService {
                   : null,
               height: transaction.height,
               type: ioType,
-              fee: feeFlag ? 0 : fee,
+              fee: feeFlag ||
+                      fee < (-1) * 1502 * 100000000 ||
+                      fee > 1502 * 100000000
+                  ? 0
+                  : fee,
               formattedDatetime: transaction.formattedDatetime,
             ));
           } else {
