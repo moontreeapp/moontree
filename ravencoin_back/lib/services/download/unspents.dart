@@ -78,9 +78,7 @@ class UnspentService {
         // raise to notify in here?
       }
     }
-    if (utxos.isEmpty) {
-      return;
-    }
+
     //_maybeTriggerBackup(currencyUtxos);
     //_maybeTriggerBackup(assetUtxos);
 
@@ -88,6 +86,10 @@ class UnspentService {
     var existing = pros.unspents.byScripthashes(scripthashes).toSet();
     await pros.unspents.removeAll(existing.difference(utxos));
     await pros.unspents.saveAll(utxos.difference(existing));
+
+    if (utxos.isEmpty) {
+      return;
+    }
 
     /// CLAIM FEATURE
     /// edge case: Evrmore genesis block is too large to download, so if we

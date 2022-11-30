@@ -369,7 +369,6 @@ class _CheckoutState extends State<Checkout> {
                   message: struct.loadingMessage,
                   playCount: struct.playcount ?? 2,
                   then: struct.buttonAction);
-              streams.spend.form.add(null);
             }
           },
         )

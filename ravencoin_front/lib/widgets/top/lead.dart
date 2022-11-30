@@ -125,7 +125,6 @@ class _PageLead extends State<PageLead> {
             if (streams.app.scrim.value == true) return;
             streams.app.lead.add(LeadIcon.pass);
             streams.app.fling.add(false);
-            if (pageTitle == 'Send') streams.spend.form.add(null);
             if (xlead == LeadIcon.dismiss) streams.app.lead.add(LeadIcon.pass);
             Navigator.pop(components.navigator.routeContext ?? context);
           });
@@ -147,7 +146,6 @@ class _PageLead extends State<PageLead> {
           onPressed: () {
             if (streams.app.scrim.value == true) return;
             streams.app.fling.add(false);
-            if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.pop(components.navigator.routeContext ?? context);
           });
     }
@@ -181,7 +179,6 @@ class _PageLead extends State<PageLead> {
           icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
             if (streams.app.scrim.value == true) return;
-            if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.popUntil(
                 components.navigator.routeContext ?? context,
                 //ModalRoute.withName('/home') ||
@@ -199,7 +196,6 @@ class _PageLead extends State<PageLead> {
         icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
         onPressed: () {
           if (streams.app.scrim.value == true) return;
-          if (pageTitle == 'Transaction') streams.spend.form.add(null);
           Navigator.pop(components.navigator.routeContext ?? context);
         });
   }

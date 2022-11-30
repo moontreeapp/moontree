@@ -93,12 +93,16 @@ String cleanDecAmount(
 
 String enforceDivisibility(String amount, {int divisibility = 8}) {
   if (amount.contains('.')) {
-    var head = amount.split('.')[0];
-    var tail = amount.split('.').sublist(1).join('');
-    return head +
+    final head = amount.split('.')[0];
+    final tail = amount.split('.').sublist(1).join('');
+    var ret = head +
         '.' +
         tail.substring(
             0, tail.length > divisibility ? divisibility : tail.length);
+    if (ret.endsWith('.')) {
+      return ret.substring(0, ret.length - 1);
+    }
+    return ret;
   }
   return amount;
 }

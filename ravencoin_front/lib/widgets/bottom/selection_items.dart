@@ -19,7 +19,6 @@ import 'package:ravencoin_front/widgets/backdrop/backdrop.dart';
 enum SelectionSet {
   Fee,
   Decimal,
-  Holdings,
   Admins,
   Parents,
   Create,
@@ -34,16 +33,10 @@ enum SelectionSet {
 
 enum SelectionOption {
   // list of my assets
-  Holdings,
   Admins,
 
   // for admins
   Restricted_Symbol,
-
-  // fee
-  Fast,
-  Standard,
-  Slow,
 
   // what to access or create
   Main_Asset,
@@ -118,12 +111,7 @@ class SelectionItems {
     this.modalSet = modalSet;
     this.names = (names ??
             {
-              SelectionSet.Holdings: [SelectionOption.Holdings],
               SelectionSet.Admins: [SelectionOption.Admins],
-              SelectionSet.Fee: [
-                SelectionOption.Standard,
-                SelectionOption.Fast,
-              ],
               SelectionSet.Decimal: [
                 SelectionOption.Dec8,
                 SelectionOption.Dec7,
@@ -230,12 +218,6 @@ class SelectionItems {
           {
             SelectionOption.Restricted_Symbol:
                 Icons.attach_money_rounded, //, color: Colors.black),
-            SelectionOption.Fast:
-                MdiIcons.speedometer, //, color: Color(0x99000000)),
-            SelectionOption.Standard:
-                MdiIcons.speedometerMedium, //, color: Color(0x99000000)),
-            SelectionOption.Slow:
-                MdiIcons.speedometerSlow, //, color: Color(0x99000000)),
             SelectionOption.Main_Asset:
                 MdiIcons.plusCircle, //, color: Color(0xDE000000)),
             SelectionOption.Restricted_Asset:
@@ -290,28 +272,6 @@ class SelectionItems {
             SelectionOption.Bug: AppColors.primary,
           }[name] ??
           AppColors.primary);
-
-  Widget holdingItem(String name) => ListTile(
-      visualDensity: VisualDensity.compact,
-      onTap: () {
-        Navigator.pop(context);
-        streams.spend.form.add(SpendForm.merge(
-          form: streams.spend.form.value,
-          symbol: name,
-        ));
-      },
-      leading: components.icons.assetAvatar(
-          name == 'Ravencoin'
-              ? pros.securities.RVN.symbol
-              : name == 'Evrmore'
-                  ? pros.securities.EVR.symbol
-                  : name,
-          height: 24,
-          width: 24,
-          net: pros.settings.net),
-      title: Text(
-          name == pros.securities.currentCoin.symbol ? symbolName(name) : name,
-          style: Theme.of(context).textTheme.bodyText1));
 
   Widget walletItem(Wallet wallet, TextEditingController controller) =>
       ListTile(
@@ -405,14 +365,6 @@ class SelectionItems {
         behavior: () => streams.create.form.add(GenericCreateForm.merge(
           form: streams.create.form.value,
           name: name,
-        )),
-      );
-
-  Widget feeItem(SelectionOption name) => item(
-        name,
-        behavior: () => streams.spend.form.add(SpendForm.merge(
-          form: streams.spend.form.value,
-          fee: asString(name),
         )),
       );
 
@@ -559,9 +511,6 @@ class SelectionItems {
           [
             for (Wallet wallet in pros.wallets) walletItem(wallet, controller!)
           ]);
-    } else if (modalSet == SelectionSet.Holdings) {
-      produceModal(
-          [for (String holding in holdingNames ?? []) holdingItem(holding)]);
     } else if (modalSet == SelectionSet.Admins) {
       produceModal(
         [for (String name in holdingNames ?? []) restrictedItem(name)],
@@ -569,10 +518,6 @@ class SelectionItems {
     } else if (modalSet == SelectionSet.Parents) {
       produceModal(
           [for (String holding in holdingNames ?? []) parentItem(holding)]);
-    } else if (modalSet == SelectionSet.Fee) {
-      produceModal(
-        [for (SelectionOption name in names) feeItem(name)],
-      );
     } else if (modalSet == SelectionSet.Decimal) {
       produceModal(
         [

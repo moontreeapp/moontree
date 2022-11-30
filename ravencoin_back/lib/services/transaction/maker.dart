@@ -384,7 +384,9 @@ class TransactionMaker {
     var tuple;
     var estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
-      security: sendRequest.security,
+      security: sendRequest.security == pros.securities.currentCoin
+          ? null
+          : sendRequest.security,
       assetMemo: sendRequest.assetMemo?.base58Decode,
       memo: sendRequest.memo,
     );
@@ -575,16 +577,17 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     // 1 parent qualifier asset, may have leftover
-    var utxosSecurity = estimate.security != null
-        ? await services.balance.collectUTXOs(
-            walletId: wallet.id,
-            amount: 100000000,
-            security: Security(
-              symbol: parentAsset,
-              chain: pros.settings.chain,
-              net: pros.settings.net,
-            ))
-        : <Vout>[];
+    var utxosSecurity =
+        ![null, pros.securities.currentCoin].contains(estimate.security)
+            ? await services.balance.collectUTXOs(
+                walletId: wallet.id,
+                amount: 100000000,
+                security: Security(
+                  symbol: parentAsset,
+                  chain: pros.settings.chain,
+                  net: pros.settings.net,
+                ))
+            : <Vout>[];
     var securityIn = 0;
     for (var utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
@@ -663,16 +666,17 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     // 1 virtual ownership asset for the parent
-    var utxosSecurity = estimate.security != null
-        ? await services.balance.collectUTXOs(
-            walletId: wallet.id,
-            amount: 100000000,
-            security: Security(
-              symbol: estimate.security!.symbol.substring(1) + '!',
-              chain: pros.settings.chain,
-              net: pros.settings.net,
-            ))
-        : <Vout>[];
+    var utxosSecurity =
+        ![null, pros.securities.currentCoin].contains(estimate.security)
+            ? await services.balance.collectUTXOs(
+                walletId: wallet.id,
+                amount: 100000000,
+                security: Security(
+                  symbol: estimate.security!.symbol.substring(1) + '!',
+                  chain: pros.settings.chain,
+                  net: pros.settings.net,
+                ))
+            : <Vout>[];
     var returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
@@ -1056,16 +1060,17 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     // 1 virtual ownership asset for the parent
-    var utxosSecurity = estimate.security != null
-        ? await services.balance.collectUTXOs(
-            walletId: wallet.id,
-            amount: 100000000,
-            security: Security(
-              symbol: parentAsset + '!',
-              chain: pros.settings.chain,
-              net: pros.settings.net,
-            ))
-        : <Vout>[];
+    var utxosSecurity =
+        ![null, pros.securities.currentCoin].contains(estimate.security)
+            ? await services.balance.collectUTXOs(
+                walletId: wallet.id,
+                amount: 100000000,
+                security: Security(
+                  symbol: parentAsset + '!',
+                  chain: pros.settings.chain,
+                  net: pros.settings.net,
+                ))
+            : <Vout>[];
     var returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
@@ -1131,16 +1136,17 @@ class TransactionMaker {
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
     // 1 virtual ownership asset for the parent
-    var utxosSecurity = estimate.security != null
-        ? await services.balance.collectUTXOs(
-            walletId: wallet.id,
-            amount: 100000000,
-            security: Security(
-              symbol: parentAsset + '!',
-              chain: pros.settings.chain,
-              net: pros.settings.net,
-            ))
-        : <Vout>[];
+    var utxosSecurity =
+        ![null, pros.securities.currentCoin].contains(estimate.security)
+            ? await services.balance.collectUTXOs(
+                walletId: wallet.id,
+                amount: 100000000,
+                security: Security(
+                  symbol: parentAsset + '!',
+                  chain: pros.settings.chain,
+                  net: pros.settings.net,
+                ))
+            : <Vout>[];
     var returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     var returnRaven = -1; // Init to bad val
@@ -1262,13 +1268,14 @@ class TransactionMaker {
     var feeSats = 0;
     // Grab required assets for transfer amount
     var utxosRaven = <Vout>[];
-    var utxosSecurity = estimate.security != null
-        ? await services.balance.collectUTXOs(
-            walletId: wallet.id,
-            amount: estimate.amount,
-            security: estimate.security,
-          )
-        : <Vout>[];
+    var utxosSecurity =
+        ![null, pros.securities.currentCoin].contains(estimate.security)
+            ? await services.balance.collectUTXOs(
+                walletId: wallet.id,
+                amount: estimate.amount,
+                security: estimate.security,
+              )
+            : <Vout>[];
     var securityIn = 0;
     for (var utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
@@ -1433,7 +1440,8 @@ class TransactionMaker {
       security: null,
     );
     var utxosBySecurity = <Security, List<Vout>>{};
-    for (var security in securities) {
+    for (var security
+        in securities.where((e) => e != pros.securities.currentCoin)) {
       utxosBySecurity[security] = await services.balance.collectUTXOs(
         walletId: wallet.id,
         amount: pros.balances.primaryIndex.getOne(wallet.id, security)!.value,

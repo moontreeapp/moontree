@@ -13,7 +13,6 @@ class Spend {
   //final address = BehaviorSubject<String>.seeded('');
   //final addressName = BehaviorSubject<String>.seeded('');
 
-  final form = BehaviorSubject<SpendForm?>.seeded(null);
   final make = BehaviorSubject<SendRequest?>.seeded(null);
   final made = BehaviorSubject<TransactionNote?>.seeded(null);
   final estimate = BehaviorSubject<SendEstimate?>.seeded(null);

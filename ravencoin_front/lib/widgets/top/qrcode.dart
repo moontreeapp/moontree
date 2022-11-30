@@ -60,12 +60,11 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
   Widget build(BuildContext context) =>
       loading //|| streams.app.context.value == AppContext.login
           ? Container(width: 0)
-          : {
-                'Send': Padding(
-                    padding: EdgeInsets.only(left: 0),
-                    child: QRCodeButton(pageTitle: 'Send-to')),
-              }[pageTitle] ??
-              (blanks.contains(pageTitle)
+          : pageTitle == 'Send'
+              ? Padding(
+                  padding: EdgeInsets.only(left: 0),
+                  child: QRCodeButton(pageTitle: 'Send-to'))
+              : (blanks.contains(pageTitle)
                   ? Container(width: 0)
                   : Padding(
                       padding: EdgeInsets.only(left: 0),

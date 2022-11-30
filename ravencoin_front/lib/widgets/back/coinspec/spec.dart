@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/spend.dart';
-import 'package:ravencoin_front/services/lookup.dart';
-import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -14,6 +12,7 @@ class CoinSpec extends StatefulWidget {
   final Security security;
   final Widget? bottom;
   final Color? color;
+  final SimpleSendFormCubit? cubit;
 
   CoinSpec({
     Key? key,
@@ -21,6 +20,7 @@ class CoinSpec extends StatefulWidget {
     required this.security,
     this.bottom,
     this.color,
+    this.cubit,
   }) : super(key: key);
 
   @override
@@ -28,7 +28,6 @@ class CoinSpec extends StatefulWidget {
 }
 
 class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
-  List<StreamSubscription> listeners = [];
   double amount = 0.0;
   double holding = 0.0;
   String visibleAmount = '0';
@@ -37,15 +36,6 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.spend.form.listen((SpendForm? value) {
-      if (value != null && value.amount != null && value.amount != amount) {
-        if (mounted) {
-          setState(() {
-            amount = value.amount!;
-          });
-        }
-      }
-    }));
   }
 
   @override
@@ -57,8 +47,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final holdingBalance =
-        pros.balances.primaryIndex.getOne(Current.walletId, widget.security);
+    final holdingBalance = widget.security.balance;
     var holdingSat = 0;
     if (holdingBalance != null) {
       holding = holdingBalance.amount;
@@ -89,6 +78,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Coin(
+              cubit: widget.cubit,
               pageTitle: widget.pageTitle,
               symbol: symbol,
               holdingSat: holdingSat,
@@ -108,7 +98,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     if (widget.pageTitle == 'Asset') {
       return AssetSpecBottom(symbol: symbol);
     }
-    if (widget.pageTitle == 'Send') {
+    if (widget.cubit != null && widget.pageTitle == 'Send') {
       return Padding(
           padding: EdgeInsets.only(
               left: 16, right: 16, bottom: widget.pageTitle == 'Send' ? 9 : 1),
@@ -120,8 +110,10 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                     .bodyText2!
                     .copyWith(color: AppColors.offWhite)),
             Text(
-                services.conversion.securityAsReadable(holdingSat - amountSat,
-                    symbol: symbol, asUSD: false),
+                services.conversion.securityAsReadable(
+                    holdingSat - widget.cubit!.state.sats,
+                    symbol: symbol,
+                    asUSD: false),
                 style: (holding - amount) >= 0
                     ? Theme.of(context)
                         .textTheme

@@ -283,8 +283,6 @@ class _HoldingList extends State<HoldingList> {
 
   void navigate(Balance balance, {Wallet? wallet}) {
     streams.app.wallet.asset.add(balance.security.symbol);
-    streams.spend.form.add(SpendForm.merge(
-        form: streams.spend.form.value, symbol: balance.security.symbol));
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transactions',
       arguments: {'holding': balance, 'walletId': wallet?.id ?? null},

@@ -24,8 +24,8 @@ class SimpleSendFormState extends CubitState {
 
   @override
   String toString() =>
-      'SpendForm(security=$security, address=$address, amount=$amount, fee=$fee,'
-      'note=$note,  addressName=$addressName, '
+      'SpendForm(security=$security, address=$address, amount=$amount, '
+      'fee=$fee, note=$note, addressName=$addressName, '
       'isSubmitting=$isSubmitting)';
 
   @override
@@ -90,7 +90,7 @@ class SimpleSendFormState extends CubitState {
   String get fiatRepresentation {
     try {
       return services.conversion.securityAsReadable(
-        utils.amountToSat(amount),
+        sats,
         symbol: security.symbol,
         asUSD: true,
       );
@@ -98,4 +98,6 @@ class SimpleSendFormState extends CubitState {
       return '';
     }
   }
+
+  int get sats => utils.amountToSat(amount);
 }

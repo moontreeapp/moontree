@@ -101,7 +101,12 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            if (services.developer.advancedDeveloperMode) {}
+            if (services.developer.developerMode) {
+              print(services.wallet
+                  .getEmptyAddress(Current.wallet, NodeExposure.internal));
+              print(services.wallet
+                  .getEmptyAddress(Current.wallet, NodeExposure.external));
+            }
           },
           child: appBar,
         )

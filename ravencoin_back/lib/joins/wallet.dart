@@ -100,7 +100,7 @@ extension WalletHasManyGapAddresses on Wallet {
     Chain? chain,
     Net? net,
   ]) =>
-      addressesBy(NodeExposure.external, chain, net)
+      addressesBy(exposure, chain, net)
           .where((address) => address.status?.status != null);
 
   Iterable<Address> emptyAddresses(
@@ -108,7 +108,7 @@ extension WalletHasManyGapAddresses on Wallet {
     Chain? chain,
     Net? net,
   ]) =>
-      addressesBy(NodeExposure.external, chain, net).where((address) =>
+      addressesBy(exposure, chain, net).where((address) =>
           address.status != null && address.status!.status == null);
 
   Address minimumEmptyAddress(

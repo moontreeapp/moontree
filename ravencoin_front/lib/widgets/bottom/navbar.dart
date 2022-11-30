@@ -157,7 +157,7 @@ class _NavBarState extends State<NavBar> {
                       },
                       onPressed: () =>
                           Navigator.of(components.navigator.routeContext!)
-                              .pushNamed('/transaction/send2'),
+                              .pushNamed('/transaction/send'),
                     ),
               components.buttons.actionButton(
                 context,

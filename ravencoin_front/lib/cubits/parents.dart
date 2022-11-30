@@ -1,7 +1,13 @@
 import 'package:equatable/equatable.dart';
 
 mixin SetCubitMixin {
-  Future<CubitState> set();
+  CubitState submitting();
+
+  void enter();
+
+  void reset();
+
+  void set();
 }
 
 class CubitState with EquatableMixin {

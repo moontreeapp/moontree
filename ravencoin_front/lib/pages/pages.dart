@@ -47,7 +47,6 @@ import 'package:ravencoin_front/pages/settings/addresses.dart';
 //import 'package:ravencoin_front/pages/settings/wallet.dart';
 import 'package:ravencoin_front/pages/wallet/receive.dart';
 import 'package:ravencoin_front/pages/wallet/send.dart';
-import 'package:ravencoin_front/pages/wallet/sendCubits2.dart';
 import 'package:ravencoin_front/pages/wallet/transaction.dart';
 //import 'package:ravencoin_front/pages/wallet/transactions.dart';
 import 'package:ravencoin_front/pages/wallet/transactions/widget.dart';
@@ -137,7 +136,6 @@ class pages {
         '/transaction/transaction': (context) => TransactionPage(),
         '/transaction/receive': (context) => Receive(),
         '/transaction/send': (context) => Send(),
-        '/transaction/send2': (context) => Send2(),
         '/transaction/checkout': (context) => Checkout(
               transactionType: TransactionType.spend,
             ),

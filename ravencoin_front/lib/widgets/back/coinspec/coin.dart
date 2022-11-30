@@ -1,3 +1,4 @@
+import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -10,6 +11,7 @@ class Coin extends StatefulWidget {
   final String pageTitle;
   final int holdingSat;
   final String? totalSupply;
+  final SimpleSendFormCubit? cubit;
 
   Coin({
     Key? key,
@@ -17,6 +19,7 @@ class Coin extends StatefulWidget {
     required this.symbol,
     required this.holdingSat,
     this.totalSupply,
+    this.cubit,
   }) : super(key: key);
 
   @override
@@ -144,8 +147,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
     return widget.pageTitle == 'Send'
         ? GestureDetector(
             child: text,
-            onTap: () => streams.spend.form.add(SpendForm.merge(
-                form: streams.spend.form.value, amount: holding.toDouble())))
+            onTap: () => widget.cubit?.set(amount: holding.toDouble()))
         : text;
   }
 

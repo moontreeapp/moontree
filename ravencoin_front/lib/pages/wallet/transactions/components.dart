@@ -50,6 +50,7 @@ class AssetNavbar extends StatelessWidget {
               message: 'Unable to send, please try again later',
             ));
           },
+          arguments: {'security': transactionsBloc.security},
         ),
         components.buttons.actionButton(
           context,
