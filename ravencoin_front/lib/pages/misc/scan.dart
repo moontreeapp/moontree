@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/utils/qrcode.dart';
@@ -120,40 +118,24 @@ class _ScanQRState extends State<ScanQR> {
 
   void _onQRViewCreated(QRViewController controller) {
     if (this.controller != controller) {
-      setState(() {
-        this.controller = controller;
-      });
+      setState(() => this.controller = controller);
     }
     controller.scannedDataStream.listen((scanData) {
-      var qrData = populateFromQR(code: scanData.code ?? '');
-
-      ///instead of setting cubit here, which gets erased when we init send...
-      ///just pass the values to the send screen and it'll inform the cubit
-      //final cubit = BlocProvider.of<SimpleSendFormCubit>(context);
-      //cubit.set(
-      //    address: qrData.address,
-      //    addressName: qrData.addressName,
-      //    // should we assume current network?
-      //    security: pros.securities.primaryIndex
-      //        .getOne(qrData.symbol, pros.settings.chain, pros.settings.net),
-      //    note: qrData.note,
-      //    amount: double.parse(qrData.amount ?? '0.0'));
+      final qrData = populateFromQR(code: scanData.code ?? '');
       controller.pauseCamera();
       Navigator.of(components.navigator.routeContext!)
-          .pushReplacementNamed('/transaction/send',
-              //arguments: {'qrCode': scanData.code}
-              arguments: {
-            'address': qrData.address,
-            'addressName': qrData.addressName,
-            // should we assume current network?
-            if (!(data.containsKey('addressOnly') && data['addressOnly'])) ...{
-              'security': pros.securities.primaryIndex.getOne(
-                  qrData.symbol, pros.settings.chain, pros.settings.net),
-              'note': qrData.note,
-              'amount': double.parse(qrData.amount ?? '0.0')
-              // add fee, memo, chain, net
-            }
-          });
+          .pushReplacementNamed('/transaction/send', arguments: {
+        'address': qrData.address,
+        'addressName': qrData.addressName,
+        // should we assume current network?
+        if (!(data.containsKey('addressOnly') && data['addressOnly'])) ...{
+          'security': pros.securities.primaryIndex
+              .getOne(qrData.symbol, pros.settings.chain, pros.settings.net),
+          'note': qrData.note,
+          'amount': double.parse(qrData.amount ?? '0.0')
+          // add fee, memo, chain, net
+        }
+      });
     });
   }
 }
