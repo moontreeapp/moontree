@@ -59,6 +59,13 @@ class _ReceiveState extends State<Receive> {
           //: 'message=${Uri.encodeComponent(requestMessage.text)}';
           : 'message=asset:${Uri.encodeComponent(requestMessage.text)}';
       var to = username == '' ? '' : 'to=${Uri.encodeComponent(username)}';
+
+      /// should we add the rest of the fields?
+      //var net = x == '' ? '' : 'net=${Uri.encodeComponent(x)}';
+      //var fee = x == '' ? '' : 'fee=${Uri.encodeComponent(x)}';
+      //var note = x == '' ? '' : 'note=${Uri.encodeComponent(x)}';
+      //var memo = x == '' ? '' : 'memo=${Uri.encodeComponent(x)}';
+
       var tail = [amount, label, message, to].join('&').replaceAll('&&', '&');
       tail = '?' +
           (tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail);
