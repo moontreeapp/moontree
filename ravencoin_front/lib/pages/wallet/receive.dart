@@ -63,7 +63,7 @@ class _ReceiveState extends State<Receive> {
       tail = '?' +
           (tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail);
       tail = tail.length == 1 ? '' : tail;
-      uri = 'raven:$address$tail';
+      uri = '${pros.settings.chain.name.replaceAll('coin', '')}:$address$tail';
     }
     if (refresh) {
       setState(() => {});
