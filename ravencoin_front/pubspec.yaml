@@ -120,7 +120,6 @@ flutter:
     - assets/spinner/
     - assets/splash/
     - assets/status/
-    - .env
 
   fonts:
     - family: Nunito
