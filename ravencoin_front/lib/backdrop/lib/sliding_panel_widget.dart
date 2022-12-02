@@ -244,7 +244,7 @@ class _SlidingUpPanelState extends State<SlidingPanel>
                   child: Stack(
                     children: <Widget>[
                       Column(
-                        children: [
+                        children: <Widget>[
                           // header
                           widget.header != null
                               ? GestureDetector(

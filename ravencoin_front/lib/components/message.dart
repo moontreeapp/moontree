@@ -27,7 +27,7 @@ class MessageComponents {
               content: child != null && content != null
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
+                      children: <Widget>[
                         Container(
                             width: MediaQuery.of(context).size.width -
                                 (24 - 24 - 40 - 40),

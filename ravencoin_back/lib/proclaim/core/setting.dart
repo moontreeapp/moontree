@@ -71,7 +71,7 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
 
   String get defaultDomainPort => '$defaultDomain:$defaultPort';
 
-  Future restoreDomainPort() async => await saveAll([
+  Future restoreDomainPort() async => saveAll([
         Setting(name: SettingName.electrum_domain, value: defaultDomain),
         Setting(name: SettingName.electrum_port, value: defaultPort),
       ]);
@@ -79,7 +79,7 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   Future savePreferredWalletId(String walletId) async =>
       await save(Setting(name: SettingName.wallet_preferred, value: walletId));
 
-  Future setCurrentWalletId([String? walletId]) async => await save(Setting(
+  Future setCurrentWalletId([String? walletId]) async => save(Setting(
       name: SettingName.wallet_current, value: walletId ?? preferredWalletId));
 
   Net get net => primaryIndex.getOne(SettingName.electrum_net)!.value;
@@ -100,7 +100,7 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   Future incrementLoginAttempts() async =>
       await saveLoginAttempts(loginAttempts + <DateTime>[DateTime.now()]);
 
-  Future resetLoginAttempts() async => await saveLoginAttempts([]);
+  Future resetLoginAttempts() async => saveLoginAttempts([]);
 
   Chain get chain => primaryIndex.getOne(SettingName.blockchain)!.value;
 

@@ -13,7 +13,7 @@ class ImportWaiter extends Waiter {
         /// if import is currently occuring, wait til its finished.
         var x = 0;
         while (services.wallet.leader.newLeaderProcessRunning && x < 10) {
-          await Future.delayed(Duration(seconds: 1));
+          await Future<void>.delayed(Duration(seconds: 1));
           x += 1;
         }
         var firstWallet = false;

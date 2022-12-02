@@ -117,7 +117,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
     decimalFocus.dispose();
     verifierController.dispose();
     verifierFocus.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -199,8 +199,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
                     padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(children: [submitButton])
+                      children: <Widget>[
+                        Row(children: <Widget>[submitButton])
                       ],
                     )))
           ]);
@@ -334,8 +334,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   Widget get reissueRow => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(children: [
+        children: <Widget>[
+          Row(children: <Widget>[
             IconButton(
               onPressed: () => showDialog(
                 context: context,

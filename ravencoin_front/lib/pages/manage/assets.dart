@@ -13,7 +13,7 @@ class Asset extends StatefulWidget {
 }
 
 class _AssetState extends State<Asset> {
-  Map<String, dynamic> data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class _AssetState extends State<Asset> {
           )!),
       front: FrontCurve(
           height: MediaQuery.of(context).size.height * .64,
-          child: Column(children: [
+          child: Column(children: <Widget>[
             Expanded(child: AssetDetails(symbol: symbol)),
             NavBar(
               placeholderManage: !services.developer.developerMode,

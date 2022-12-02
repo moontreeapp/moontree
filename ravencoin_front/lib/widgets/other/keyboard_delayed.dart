@@ -20,7 +20,8 @@ class KeyboardHidesWidgetWithDelay extends StatefulWidget {
 
 class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
     with SingleTickerProviderStateMixin {
-  late List<StreamSubscription> listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   KeyboardStatus? keyboardStatus = KeyboardStatus.down;
   final Duration animationDuration = Duration(milliseconds: 150);
   late AnimationController controller;
@@ -42,7 +43,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
     listeners.add(streams.app.keyboard.listen((KeyboardStatus? value) async {
       if (value != keyboardStatus) {
         if (value == KeyboardStatus.down) {
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future<void>.delayed(Duration(milliseconds: 100));
         }
         if (mounted) {
           setState(() {
@@ -56,7 +57,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
   @override
   void dispose() {
     controller.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();

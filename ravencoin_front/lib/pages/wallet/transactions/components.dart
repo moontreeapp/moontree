@@ -165,7 +165,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.topCenter,
-      children: [
+      children: <Widget>[
         if (widget.cachedMetadataView != null) CoinSpecTabs(),
         Padding(
             padding: EdgeInsets.only(

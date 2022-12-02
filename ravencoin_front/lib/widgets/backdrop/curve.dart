@@ -56,7 +56,7 @@ class _FrontCurveState extends State<FrontCurve> {
         child: widget.fuzzyTop ? fuzzy() : widget.child);
   }
 
-  Widget fuzzy() => Stack(alignment: Alignment.topCenter, children: [
+  Widget fuzzy() => Stack(alignment: Alignment.topCenter, children: <Widget>[
         widget.child ?? Container(),
         IgnorePointer(
             child: Container(

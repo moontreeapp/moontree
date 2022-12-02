@@ -13,9 +13,9 @@ class ChangeLoginPassword extends StatefulWidget {
 }
 
 class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
-  Map<String, dynamic> data = {};
-  var newPassword = TextEditingController();
-  var confirmPassword = TextEditingController();
+  Map<String, dynamic> data = <String, dynamic>{};
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   FocusNode newPasswordFocus = FocusNode();
   FocusNode confirmPasswordFocus = FocusNode();
   FocusNode buttonFocus = FocusNode();
@@ -56,7 +56,8 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
                   ? VerifyAuthentication(
                       parentState: this,
                       buttonLabel:
-                          data['verification.ButtonLabel'] ?? 'Change Password')
+                          data['verification.ButtonLabel'] as String? ??
+                              'Change Password')
                   : body(),
             )));
   }
@@ -68,7 +69,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              for (var x in [
+              for (Widget x in [
                 newPasswordField,
                 confirmPasswordField,
               ])
@@ -83,8 +84,8 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
                   children: <Widget>[
                 Center(child: components.text.passwordWarning),
                 SizedBox(height: 16),
-                components.containers
-                    .navBar(context, child: Row(children: [submitButton]))
+                components.containers.navBar(context,
+                    child: Row(children: <Widget>[submitButton]))
               ]))
         ],
       );
@@ -138,7 +139,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
           }),
         ),
         onChanged: (String value) => validateComplexity(),
-        //onEditingComplete: () async => await submit(),
+        //onEditingComplete: () async =>  submit(),
         onEditingComplete: () =>
             FocusScope.of(context).requestFocus(buttonFocus),
 
@@ -152,7 +153,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         label: 'Set',
         focusNode: buttonFocus,
         disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
-        onPressed: () async => await submit(),
+        onPressed: () async => submit(),
       );
 
   bool enabledCheck() =>
@@ -160,8 +161,8 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
 
   void validateComplexity({String? password}) {
     password = password ?? newPassword.text;
-    var oldValidation = validatedComplexity;
-    var oldNotification = newNotification;
+    bool oldValidation = validatedComplexity;
+    String? oldNotification = newNotification;
     if (services.password.validate.complexity(password)) {
       if (confirmPassword.text == newPassword.text) {
         validatedComplexity = true;
@@ -190,8 +191,9 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
   //  return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   //}
 
-  Future submit() async {
-    await Future.delayed(Duration(milliseconds: 200)); // in release mode?
+  Future<void> submit() async {
+    await Future<void>.delayed(
+        const Duration(milliseconds: 200)); // in release mode?
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       // unawait, but do these in order:
@@ -203,16 +205,16 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
           saveSecret: saveSecret,
         );
         if (data.containsKey('then')) {
-          await data['then']();
+          await (data['then'] as Function())();
         }
         if (data.containsKey('then.then')) {
-          await data['then.then']();
+          await (data['then.then'] as Function())();
         }
       }();
       components.loading.screen(
           message: 'Setting Password',
           staticImage: true,
-          returnHome: data['onSuccess.returnHome'] ?? true);
+          returnHome: data['onSuccess.returnHome'] as bool? ?? true);
     }
   }
 }

@@ -13,9 +13,9 @@ class UnspentWaiter extends Waiter {
   void handleUnspentChange(Change<Unspent> change) {
     change.when(
         loaded: (loaded) {},
-        added: (added) async => await recalculateBalancesIfNecessary(),
-        updated: (updated) async => await recalculateBalancesIfNecessary(),
-        removed: (removed) async => await recalculateBalancesIfNecessary());
+        added: (added) async => recalculateBalancesIfNecessary(),
+        updated: (updated) async => recalculateBalancesIfNecessary(),
+        removed: (removed) async => recalculateBalancesIfNecessary());
   }
 
   Future<void> recalculateBalancesIfNecessary() async {

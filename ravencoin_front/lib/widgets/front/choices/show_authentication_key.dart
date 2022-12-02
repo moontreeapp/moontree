@@ -34,7 +34,7 @@ class _ShowAuthenticationChoice extends State<ShowAuthenticationChoice> {
           ),
         SizedBox(height: 16),
         Row(
-          children: [
+          children: <Widget>[
             components.buttons.actionButtonSoft(
               context,
               enabled: true,

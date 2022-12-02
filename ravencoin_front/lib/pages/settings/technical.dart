@@ -44,7 +44,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   @override
   void dispose() {
     accountName.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -87,7 +87,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   //}
 
   /// export all acounts ability
-  void _exportAll(context) {
+  void _exportAll(BuildContext context) {
     Navigator.pushNamed(context, '/settings/export',
         arguments: {'accountId': 'all'});
   }
@@ -188,7 +188,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                       ? ListTile(
                           title: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
+                              children: <Widget>[
                                 Text(account.name),
                                 Text('  ${account.netName}net',
                                     style: Theme.of(context).textTheme.caption),

@@ -17,6 +17,8 @@ import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/other/selection_control.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
+import '../../utils/log.dart';
+
 class Import extends StatefulWidget {
   final dynamic data;
   const Import({this.data}) : super();
@@ -26,7 +28,7 @@ class Import extends StatefulWidget {
 }
 
 class _ImportState extends State<Import> {
-  dynamic data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   FocusNode wordsFocus = FocusNode();
   FocusNode submitFocus = FocusNode();
   TextEditingController words = TextEditingController();
@@ -76,8 +78,8 @@ class _ImportState extends State<Import> {
     if (data['walletId'] == 'current' || data['walletId'] == null) {
       wallet = Current.wallet;
     } else {
-      wallet =
-          pros.wallets.primaryIndex.getOne(data['walletId']) ?? Current.wallet;
+      wallet = pros.wallets.primaryIndex.getOne(data['walletId'] as String?) ??
+          Current.wallet;
     }
     return BackdropLayers(
         back: BlankBack(),
@@ -93,7 +95,8 @@ class _ImportState extends State<Import> {
                   : FutureBuilder(
                       initialData: null,
                       future: getClip(),
-                      builder: (context, snapshot) =>
+                      builder: (BuildContext context,
+                              AsyncSnapshot<Object?> snapshot) =>
                           body(snapshot.data as String?)),
             )));
   }
@@ -151,44 +154,45 @@ class _ImportState extends State<Import> {
                   ? importFormatDetected
                   : null
               : null,
-          suffixIcon:
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            IconButton(
-              icon: Icon(
-                  importVisible ? Icons.visibility : Icons.visibility_off,
-                  color: AppColors.black60),
-              onPressed: () => setState(() {
-                importVisible = !importVisible;
-              }),
-            ),
-            if (clip != null && validateValue(clip))
-              IconButton(
-                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+          suffixIcon: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                      importVisible ? Icons.visibility : Icons.visibility_off,
+                      color: AppColors.black60),
                   onPressed: () => setState(() {
-                        words.text = clip;
-                        enableImport();
-                      })),
-            if (clip == null)
-              IconButton(
-                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-                  onPressed: () async {
-                    final clip = await getClip();
-                    setState(() {
-                      words.text = clip;
-                      enableImport();
-                    });
+                    importVisible = !importVisible;
                   }),
-            IconButton(
-                icon: Icon(Icons.clear_rounded,
-                    color: words.text != ''
-                        ? AppColors.black60
-                        : AppColors.black12),
-                onPressed: () => setState(() {
-                      importFormatDetected = '';
-                      words.text = '';
-                    })),
-          ]),
-          onChanged: (value) {
+                ),
+                if (clip != null && validateValue(clip))
+                  IconButton(
+                      icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                      onPressed: () => setState(() {
+                            words.text = clip;
+                            enableImport();
+                          })),
+                if (clip == null)
+                  IconButton(
+                      icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                      onPressed: () async {
+                        final String clip = await getClip();
+                        setState(() {
+                          words.text = clip;
+                          enableImport();
+                        });
+                      }),
+                IconButton(
+                    icon: Icon(Icons.clear_rounded,
+                        color: words.text != ''
+                            ? AppColors.black60
+                            : AppColors.black12),
+                    onPressed: () => setState(() {
+                          importFormatDetected = '';
+                          words.text = '';
+                        })),
+              ]),
+          onChanged: (String value) {
             submittedAttempt = false;
             enableImport();
           },
@@ -197,13 +201,13 @@ class _ImportState extends State<Import> {
             FocusScope.of(context).requestFocus(submitFocus);
           }));
 
-  Widget get filePicked => Column(children: [
+  Widget get filePicked => Column(children: <Widget>[
         Padding(
             //padding: EdgeInsets.only(left: 8, top: 16.0),
             padding: EdgeInsets.only(left: 16, right: 0, top: 16, bottom: 0),
             child: ListTile(
               dense: true,
-              contentPadding: EdgeInsets.all(0),
+              contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.attachment_rounded, color: Colors.black),
               title: Text(file!.filename,
                   style: Theme.of(context).textTheme.bodyText1),
@@ -254,7 +258,7 @@ class _ImportState extends State<Import> {
       ImportFormat.invalid;
 
   void enableImport({String? given}) {
-    var oldImportFormatDetected = importFormatDetected;
+    String oldImportFormatDetected = importFormatDetected;
     detection =
         services.wallet.import.detectImportType((given ?? words.text).trim());
     importEnabled = detection != ImportFormat.invalid;
@@ -334,56 +338,70 @@ class _ImportState extends State<Import> {
         );
       }).then((value) => streams.app.scrim.add(false));
 
-  Future attemptImport([String? importData]) async {
+  Future<void> attemptImport([String? importData]) async {
     FocusScope.of(context).unfocus();
-    var text = (importData ?? words.text).trim();
-    var resp = text;
-    var encrypted = true;
+    String text = (importData ?? words.text).trim();
+    String resp = text;
+    bool encrypted = true;
 
     /// decrypt if you must...
     if (importData != null) {
-      final textJson = json.decode(text);
+      final Map<String, Map<String, dynamic>> textJson =
+          json.decode(text) as Map<String, Map<String, dynamic>>;
       try {
-        for (final walletJson in textJson['wallets']!.values) {
-          final decrypted = ImportFrom.maybeDecrypt(
-            text: walletJson['secret'],
+        for (final Map<String, dynamic> walletJson
+            in textJson['wallets']!.values as Iterable<Map<String, dynamic>>) {
+          final String decrypted = ImportFrom.maybeDecrypt(
+            text: walletJson['secret'] as String,
             cipher: services.cipher.currentCipher!,
           );
-          resp = resp.replaceFirst(walletJson['secret'], decrypted);
+          resp = resp.replaceFirst(walletJson['secret'] as String, decrypted);
         }
-      } catch (e) {}
+      } catch (e) {
+        log(e);
+      }
       if (resp == text) {
         // ask for password, make cipher, pass that cipher in.
         // what if it's not the latest cipher type? just try all cipher types...
-        for (var cipherType in services.cipher.allCipherTypes) {
+        for (final CipherType cipherType in services.cipher.allCipherTypes) {
           await requestPassword();
           await requestSalt();
           // cancelled
-          if (password.text == '' && salt.text == '') break;
+          if (password.text == '' && salt.text == '') {
+            break;
+          }
           await components.loading.screen(
             message: 'Decrypting',
             staticImage: true,
             playCount: 2,
           );
           try {
-            for (final walletJson in textJson['wallets']!.values) {
-              if (walletJson['secret'].split(' ').length == 12) {
+            for (final Map<String, dynamic> walletJson in textJson['wallets']!
+                .values as Iterable<Map<String, dynamic>>) {
+              if ((walletJson['secret'] as String).split(' ').length == 12) {
                 encrypted = false;
                 break;
               }
-              final decrypted = ImportFrom.maybeDecrypt(
-                text: walletJson['secret'],
+              final String decrypted = ImportFrom.maybeDecrypt(
+                text: walletJson['secret'] as String,
                 cipher: CipherProclaim.cipherInitializers[cipherType]!(
                     services.cipher.getPassword(
                         altPassword:
                             password.text == '' ? salt.text : password.text),
                     services.cipher.getSalt(
-                        altSalt: salt.text == '' ? password.text : salt.text)),
+                        altSalt: salt.text == ''
+                            ? password.text
+                            : salt.text)) as CipherBase,
               );
-              resp = resp.replaceFirst(walletJson['secret'], decrypted);
+              resp =
+                  resp.replaceFirst(walletJson['secret'] as String, decrypted);
             }
-          } catch (e) {}
-          if (resp != text) break;
+          } catch (e) {
+            log(e);
+          }
+          if (resp != text) {
+            break;
+          }
         }
         if (resp == text && encrypted) {
           showDialog(

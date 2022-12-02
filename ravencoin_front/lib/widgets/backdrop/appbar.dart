@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -15,7 +17,8 @@ class BackdropAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _BackdropAppBarState extends State<BackdropAppBar> {
-  late List listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   LeadIcon lead = LeadIcon.pass;
 
   @override
@@ -38,7 +41,7 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();

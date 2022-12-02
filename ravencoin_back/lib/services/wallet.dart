@@ -75,7 +75,7 @@ class WalletService {
     }
   }
 
-  Future generate() async => await services.wallet.createSave(
+  Future generate() async => services.wallet.createSave(
       walletType: WalletType.leader,
       cipherUpdate: services.cipher.currentCipherUpdate,
       mnemonic: null);

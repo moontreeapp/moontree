@@ -12,30 +12,30 @@ import 'package:ravencoin_front/components/components.dart';
 
 class TransactionPage extends StatefulWidget {
   final dynamic data;
-  const TransactionPage({this.data}) : super();
+  const TransactionPage({Key? key, this.data}) : super(key: key);
 
   @override
   _TransactionPageState createState() => _TransactionPageState();
 }
 
 class _TransactionPageState extends State<TransactionPage> {
-  dynamic data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   Address? address;
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   TransactionRecord? transactionRecord;
   Transaction? transaction;
 
   @override
   void initState() {
     super.initState();
-    listeners.add(pros.blocks.changes.listen((changes) {
+    listeners.add(pros.blocks.changes.listen((Change<Block> changes) {
       setState(() {});
     }));
   }
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -44,7 +44,7 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    transactionRecord = data['transactionRecord'];
+    transactionRecord = data['transactionRecord'] as TransactionRecord?;
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     return BackdropLayers(
@@ -86,7 +86,7 @@ class _TransactionPageState extends State<TransactionPage> {
         return transaction!.id.cutOutMiddle();
       case 'Memo/IPFS':
         return (String humanName) {
-          var txMemo = (transactionMemo ?? '');
+          final String txMemo = transactionMemo ?? '';
           if (txMemo.isIpfs) {
             return txMemo.cutOutMiddle();
           }
@@ -103,8 +103,7 @@ class _TransactionPageState extends State<TransactionPage> {
             transactionRecord!.getVouts();
             return 'calculating...';
           } else {
-            return transactionRecord!.fee.toAmount().toCommaString() +
-                ' ${chainSymbol(pros.settings.chain)}';
+            return '${transactionRecord!.fee.toAmount().toCommaString()} ${chainSymbol(pros.settings.chain)}';
           }
         }();
 
@@ -163,8 +162,8 @@ class _TransactionPageState extends State<TransactionPage> {
         onTap: () => components.message.giveChoices(
           context,
           title: title,
-          content: 'View ${description} in external browser?',
-          behaviors: {
+          content: 'View $description in external browser?',
+          behaviors: <String, void Function()>{
             'Cancel'.toUpperCase(): Navigator.of(context).pop,
             'Browser'.toUpperCase(): () {
               Navigator.of(context).pop();
@@ -182,13 +181,18 @@ class _TransactionPageState extends State<TransactionPage> {
       );
 
   Widget detailsBody() => ListView(
-        padding: EdgeInsets.only(top: 8, bottom: 112),
+        padding: const EdgeInsets.only(top: 8, bottom: 112),
         children: <Widget>[
-              for (var text in ['Date', 'Confirmations', 'Type', 'Fee'])
+              for (String text in <String>[
+                'Date',
+                'Confirmations',
+                'Type',
+                'Fee'
+              ])
                 if (element(text) != 'calculating...')
                   plain(text, element(text))
             ] +
-            [
+            <Widget>[
               link(
                 title: 'Transaction Info',
                 text: 'ID',
@@ -207,8 +211,8 @@ class _TransactionPageState extends State<TransactionPage> {
                     : plain('Memo/IPFS', element('Memo/IPFS')),
             ] +
             (transaction!.note == null || transaction!.note == ''
-                ? []
-                : [plain('Note', element('Note'))]),
+                ? <Widget>[]
+                : <Widget>[plain('Note', element('Note'))]),
       );
 
   int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
@@ -219,7 +223,7 @@ class _TransactionPageState extends State<TransactionPage> {
         : null;
   }
 
-  String getDateBetweenHelper() => 'Date: ' + transaction!.formattedDatetime;
+  String getDateBetweenHelper() => 'Date: ${transaction!.formattedDatetime}';
   //(getBlocksBetweenHelper() != null
   //    ? formatDate(
   //        DateTime.now().subtract(Duration(
@@ -230,7 +234,7 @@ class _TransactionPageState extends State<TransactionPage> {
   //        [MM, ' ', d, ', ', yyyy])
   //    : 'unknown');
 
-  String getConfirmationsBetweenHelper() => (getBlocksBetweenHelper() != null
+  String getConfirmationsBetweenHelper() => getBlocksBetweenHelper() != null
       ? getBlocksBetweenHelper().toString()
-      : 'unknown');
+      : 'unknown';
 }

@@ -1,33 +1,30 @@
 library alphacon;
 
+import 'package:flutter/material.dart' as material show Color;
 import 'package:ravencoin_front/theme/colors.dart';
 
-var colorCache = Map<String, List<List<int>>>();
+Map<String, List<List<int>>> colorCache = <String, List<List<int>>>{};
 
 class Alphacon {
+  Alphacon({
+    material.Color? foreground,
+    material.Color? background,
+  })  : foregroundColor = foreground != null ? AppColors.rgb(foreground) : null,
+        backgroundColor = background != null ? AppColors.rgb(background) : null;
   late List<int>? foregroundColor;
   late List<int>? backgroundColor;
 
   late String name;
   late String hashedName;
 
-  Alphacon({
-    foreground,
-    background,
-  })  : this.foregroundColor =
-            foreground != null ? AppColors.RGB(foreground) : null,
-        this.backgroundColor =
-            background != null ? AppColors.RGB(background) : null;
-
   void _generateColors() {
-    var appColors = AppColors();
     backgroundColor =
-        backgroundColor ?? AppColors.RGB(appColors.backgroundColor(name));
+        backgroundColor ?? AppColors.rgb(AppColors.backgroundColor(name));
     foregroundColor =
-        foregroundColor ?? AppColors.RGB(appColors.foregroundColor(name));
+        foregroundColor ?? AppColors.rgb(AppColors.foregroundColor(name));
   }
 
-  String baseName() => name.startsWith('#') || name.startsWith('\$')
+  String baseName() => name.startsWith('#') || name.startsWith(r'$')
       ? name.substring(1, name.length)
       : name.endsWith('!')
           ? name.substring(0, name.length - 1)
@@ -50,11 +47,10 @@ class Alphacon {
 }
 
 class ImageDetails {
-  List<int> foreground;
-  List<int> background;
-
   ImageDetails({
     required this.foreground,
     required this.background,
   });
+  List<int> foreground;
+  List<int> background;
 }

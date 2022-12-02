@@ -43,7 +43,7 @@ class _AssetDetails extends State<AssetDetails> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children: <Widget>[
                       Text('Verifier',
                           style: Theme.of(context).textTheme.bodyText1),
                       Container(

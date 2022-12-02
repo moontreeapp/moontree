@@ -68,7 +68,7 @@ class PopCircle extends StatelessWidget {
 
   PopCircle({
     this.colorPair = PopCircle.defaultColorPair,
-    this.padding = const EdgeInsets.all(0),
+    this.padding = EdgeInsets.zero,
   });
 
   @override

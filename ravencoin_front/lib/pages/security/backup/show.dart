@@ -1,23 +1,21 @@
 import 'dart:io' show Platform;
+import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 //import 'package:screenshot_callback/screenshot_callback.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/security/backup/types.dart';
-import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/lookup.dart';
-import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-import 'package:flutter/rendering.dart';
-
 class BackupSeed extends StatefulWidget {
   final dynamic data;
-  const BackupSeed({this.data}) : super();
+  const BackupSeed({Key? key, this.data}) : super(key: key);
 
   @override
   _BackupSeedState createState() => _BackupSeedState();
@@ -81,7 +79,7 @@ class _BackupSeedState extends State<BackupSeed>
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
   Future<List<String>> get getSecret async {
-    final wallet = Current.wallet;
+    final Wallet wallet = Current.wallet;
     if (wallet is LeaderWallet) {
       return (await wallet.mnemonic).split(' ');
     }
@@ -99,7 +97,8 @@ class _BackupSeedState extends State<BackupSeed>
         onWillPop: () async => false,
         child: FutureBuilder<List<String>>(
             future: getSecret,
-            builder: (context, AsyncSnapshot<List<String>> snapshot) {
+            builder:
+                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
               if (snapshot.hasData) {
                 secret = snapshot.data!;
                 return services.password.askCondition
@@ -113,7 +112,7 @@ class _BackupSeedState extends State<BackupSeed>
                       )
                     : body();
               } else {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
             }));
   }
@@ -121,7 +120,7 @@ class _BackupSeedState extends State<BackupSeed>
   Widget body() => BackdropLayers(
       back: BlankBack(),
       front: FrontCurve(
-          child: Stack(children: [
+          child: Stack(children: <Widget>[
         components.page.form(
           context,
           columnWidgets: <Widget>[
@@ -178,37 +177,40 @@ class _BackupSeedState extends State<BackupSeed>
 
   Widget get words => Container(
       height: 272 * (smallScreen ? .8 : 1),
-      padding: (smallScreen ? null : EdgeInsets.only(left: 16, right: 16)),
-      child:
-          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        for (var x in [0, 3, 6, 9])
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            for (var i in [1, 2, 3])
-              components.buttons.wordButton(context,
-                  width: buttonWidth,
-                  chosen: false,
-                  label: secret[(i + x) - 1],
-                  onPressed: () {},
-                  number: i + x)
-          ]),
-      ]));
+      padding: smallScreen ? null : const EdgeInsets.only(left: 16, right: 16),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            for (int x in <int>[0, 3, 6, 9])
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    for (int i in <int>[1, 2, 3])
+                      components.buttons.wordButton(context,
+                          width: buttonWidth,
+                          label: secret[(i + x) - 1],
+                          onPressed: () {},
+                          number: i + x)
+                  ]),
+          ]));
 
   Widget get submitButton => components.buttons.actionButton(
         context,
-        enabled: true,
         label: 'Verify Backup',
         link: '/security/backupConfirm',
         arguments: () {
           //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
-          var shuffledList = [
-            for (var s in secret.enumerated()) SecretWord(s[1], s[0])
+          final List<SecretWord> shuffledList = <SecretWord>[
+            for (Tuple2<int, String> s in secret.enumeratedTuple())
+              SecretWord(word: s.item2, order: s.item1)
           ];
           shuffledList.shuffle();
-          Map<int, SecretWord> shuffled = {
-            for (var s in shuffledList.enumerated()) s[0]: s[1]
+          final Map<int, SecretWord> shuffled = <int, SecretWord>{
+            for (Tuple2<int, SecretWord> s in shuffledList.enumeratedTuple())
+              s.item1: s.item2
           };
           streams.app.lead.add(LeadIcon.back);
-          return {
+          return <String, dynamic>{
             'secret': secret,
             'shuffled': shuffled,
           };
@@ -223,7 +225,7 @@ class _BackupSeedState extends State<BackupSeed>
         //  controller.reset();
         //  controller.forward();
         //  // wait the approapriate amount of time for the animation to play
-        //  await Future.delayed(Duration(milliseconds: 2400));
+        //  await Future<void>.delayed(Duration(milliseconds: 2400));
         //},
       );
 }

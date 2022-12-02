@@ -17,17 +17,18 @@ import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/utils/params.dart';
 import 'package:ravencoin_front/utils/data.dart';
+import 'package:wallet_utils/wallet_utils.dart' show FeeRate;
 
 class Send extends StatefulWidget {
   final dynamic data;
-  const Send({this.data}) : super();
+  const Send({Key? key, this.data}) : super(key: key);
 
   @override
   _SendState createState() => _SendState();
 }
 
 class _SendState extends State<Send> {
-  Map<String, dynamic> data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   List<StreamSubscription> listeners = [];
   final sendAsset = TextEditingController();
   final sendAddress = TextEditingController();
@@ -69,7 +70,7 @@ class _SendState extends State<Send> {
     sendFee.dispose();
     sendMemo.dispose();
     sendNote.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -85,13 +86,14 @@ class _SendState extends State<Send> {
       if ([null, pros.settings.chain.name].contains(data['chain'])) {
         if ([null, pros.settings.net.name].contains(data['net'])) {
           cubit.set(
-            security: data['security'] ?? cubit.state.security,
-            address: data['address'] ?? cubit.state.address,
-            addressName: data['addressName'] ?? cubit.state.addressName,
-            amount: data['amount'] ?? cubit.state.amount,
-            fee: data['fee'] ?? cubit.state.fee,
-            memo: data['memo'] ?? cubit.state.memo,
-            note: data['note'] ?? cubit.state.note,
+            security: data['security'] as Security? ?? cubit.state.security,
+            address: data['address'] as String? ?? cubit.state.address,
+            addressName:
+                data['addressName'] as String? ?? cubit.state.addressName,
+            amount: data['amount'] as double? ?? cubit.state.amount,
+            fee: data['fee'] as FeeRate? ?? cubit.state.fee,
+            memo: data['memo'] as String? ?? cubit.state.memo,
+            note: data['note'] as String? ?? cubit.state.note,
           );
         } else {
           streams.app.snack.add(Snack(
@@ -140,30 +142,30 @@ class _SendState extends State<Send> {
                 frontAlignment: Alignment.topCenter,
                 front: Stack(
                   alignment: Alignment.bottomCenter,
-                  children: [
+                  children: <Widget>[
                     CoinSpec(
                         cubit: cubit,
                         pageTitle: 'Send',
                         security: state.security,
                         color: Theme.of(context).backgroundColor),
-                    FrontCurve(
+                    const FrontCurve(
                         fuzzyTop: false,
                         height: 8,
                         frontLayerBoxShadow: [
                           BoxShadow(
-                              color: const Color(0x33000000),
+                              color: Color(0x33000000),
                               offset: Offset(0, -2),
                               blurRadius: 3),
                           BoxShadow(
-                              color: const Color(0xFFFFFFFF),
+                              color: Color(0xFFFFFFFF),
                               offset: Offset(0, 2),
                               blurRadius: 1),
                           BoxShadow(
-                              color: const Color(0x1FFFFFFF),
+                              color: Color(0x1FFFFFFF),
                               offset: Offset(0, 3),
                               blurRadius: 2),
                           BoxShadow(
-                              color: const Color(0x3DFFFFFF),
+                              color: Color(0x3DFFFFFF),
                               offset: Offset(0, 4),
                               blurRadius: 4),
                         ]),
@@ -172,16 +174,16 @@ class _SendState extends State<Send> {
                 back: Container(
                     color: AppColors.white,
                     child: Stack(
-                      children: [
+                      children: <Widget>[
                         ListView(
-                          physics: ClampingScrollPhysics(),
-                          padding: EdgeInsets.only(
+                          physics: const ClampingScrollPhysics(),
+                          padding: const EdgeInsets.only(
                               left: 16, right: 16, top: 16, bottom: 0),
                           children: <Widget>[
-                            SizedBox(height: 8),
-                            if (Platform.isIOS) SizedBox(height: 8),
+                            const SizedBox(height: 8),
+                            if (Platform.isIOS) const SizedBox(height: 8),
                             Container(height: 201),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             ...<Widget>[
                               TextFieldFormatted(
                                 focusNode: sendAssetFocusNode,
@@ -195,7 +197,7 @@ class _SendState extends State<Send> {
                                         hintText:
                                             chainName(pros.settings.chain),
                                         suffixIcon: IconButton(
-                                          icon: Padding(
+                                          icon: const Padding(
                                               padding:
                                                   EdgeInsets.only(right: 14),
                                               child: Icon(
@@ -205,7 +207,7 @@ class _SendState extends State<Send> {
                                               _produceAssetModal(cubit),
                                         )),
                                 onTap: () => _produceAssetModal(cubit),
-                                onChanged: (value) {},
+                                onChanged: (String value) {},
                                 onEditingComplete: () async {
                                   FocusScope.of(context)
                                       .requestFocus(sendAddressFocusNode);
@@ -220,7 +222,7 @@ class _SendState extends State<Send> {
                                     CustomMaterialTextSelectionControls(
                                         context: components
                                             .navigator.scaffoldContext,
-                                        offset: Offset(0, 0)),
+                                        offset: const Offset(0, 0)),
                                 autocorrect: false,
                                 inputFormatters: [
                                   FilteringTextInputFormatter(
@@ -234,7 +236,7 @@ class _SendState extends State<Send> {
                                     ? 'Unrecognized Address'
                                     : null,
                                 suffixIcon: IconButton(
-                                    icon: Padding(
+                                    icon: const Padding(
                                         padding: EdgeInsets.only(right: 14),
                                         child: Icon(Icons.paste_rounded,
                                             color: AppColors.black60)),
@@ -254,8 +256,9 @@ class _SendState extends State<Send> {
                                 focusNode: sendAmountFocusNode,
                                 controller: sendAmount,
                                 textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true, signed: false),
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: true, signed: false),
                                 inputFormatters: <TextInputFormatter>[
                                   //DecimalTextInputFormatter(decimalRange: divisibility)
                                   FilteringTextInputFormatter(RegExp(r'[.0-9]'),
@@ -301,7 +304,7 @@ class _SendState extends State<Send> {
                                     },
                                   ),
                                   */
-                                onChanged: (value) {
+                                onChanged: (String value) {
                                   value = enforceDivisibility(value,
                                       divisibility:
                                           state.security.divisibility);
@@ -336,7 +339,7 @@ class _SendState extends State<Send> {
                                 labelText: 'Transaction Speed',
                                 hintText: 'Standard',
                                 suffixIcon: IconButton(
-                                    icon: Padding(
+                                    icon: const Padding(
                                         padding: EdgeInsets.only(right: 14),
                                         child: Icon(Icons.expand_more_rounded,
                                             color: Color(0xDE000000))),
@@ -373,7 +376,7 @@ class _SendState extends State<Send> {
                                           height: .7, color: AppColors.primary),
                                   errorText: _verifyMemo() ? null : 'too long',
                                   suffixIcon: IconButton(
-                                      icon: Icon(Icons.paste_rounded,
+                                      icon: const Icon(Icons.paste_rounded,
                                           color: AppColors.black60),
                                       onPressed: () async => cubit.set(
                                           memo: (await Clipboard.getData(
@@ -401,7 +404,7 @@ class _SendState extends State<Send> {
                                       .copyWith(
                                           height: .7, color: AppColors.primary),
                                   suffixIcon: IconButton(
-                                      icon: Icon(Icons.paste_rounded,
+                                      icon: const Icon(Icons.paste_rounded,
                                           color: AppColors.black60),
                                       onPressed: () async => cubit.set(
                                           note: (await Clipboard.getData(
@@ -414,8 +417,8 @@ class _SendState extends State<Send> {
                                     FocusScope.of(context)
                                         .requestFocus(previewFocusNode);
                                   }),
-                            ].intersperse(SizedBox(height: 16)),
-                            SizedBox(height: 64),
+                            ].intersperse(const SizedBox(height: 16)),
+                            const SizedBox(height: 64),
                           ],
                         ),
                         KeyboardHidesWidgetWithDelay(
@@ -442,7 +445,7 @@ class _SendState extends State<Send> {
                               },
                             )
                           ],
-                          widthSpacer: SizedBox(width: 16),
+                          widthSpacer: const SizedBox(width: 16),
                         ))
                       ],
                     )),

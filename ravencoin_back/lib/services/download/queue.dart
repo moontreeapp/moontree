@@ -16,8 +16,7 @@ class QueueService {
   StreamSubscription? periodic;
 
   void retry() => periodic == null
-      ? periodic =
-          Stream.periodic(queueTimer).listen((_) async => await process())
+      ? periodic = Stream.periodic(queueTimer).listen((_) async => process())
       : () {};
 
   Future reset() async {

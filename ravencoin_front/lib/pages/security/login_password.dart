@@ -35,8 +35,9 @@ class LoginPassword extends StatefulWidget {
 }
 
 class _LoginPasswordState extends State<LoginPassword> {
-  Map<String, dynamic> data = {};
-  late List listeners = [];
+  Map<String, dynamic> data = <String, dynamic>{};
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
   FocusNode loginFocus = FocusNode();
@@ -59,7 +60,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
   }
 
-  Future<bool> get finishedLoading async => await HIVE_INIT.isLoaded();
+  Future<bool> get finishedLoading async => HIVE_INIT.isLoaded();
 
   @override
   void initState() {
@@ -74,7 +75,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     password.dispose();
@@ -102,7 +103,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     } catch (e) {
       data = {};
     }
-    needsConsent = data['needsConsent'] ?? false;
+    needsConsent = data['needsConsent'] as bool? ?? false;
     bypass();
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
@@ -144,7 +145,7 @@ class _LoginPasswordState extends State<LoginPassword> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
+                        children: <Widget>[
                           ...(needsConsent
                               ? [
                                   SizedBox(
@@ -156,7 +157,7 @@ class _LoginPasswordState extends State<LoginPassword> {
                                   ),
                                 ]
                               : [SizedBox(height: 100)]),
-                          Row(children: [unlockButton]),
+                          Row(children: <Widget>[unlockButton]),
                           SizedBox(height: 40),
                         ]))),
           ])));
@@ -204,7 +205,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+        children: <Widget>[
           Container(
               alignment: Alignment.center, width: 18, child: aggrementCheckbox),
           Container(
@@ -286,7 +287,7 @@ class _LoginPasswordState extends State<LoginPassword> {
               ));
             }
           }),
-      onPressed: () async => await submit());
+      onPressed: () async => submit());
 
   Future<bool> validate() async => services.password.validate.password(
       password: password.text,
@@ -308,7 +309,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     if (await HIVE_INIT.isPartiallyLoaded()) {
       finishLoadingWaiters();
       while (!(await HIVE_INIT.isLoaded())) {
-        await Future.delayed(Duration(milliseconds: 50));
+        await Future<void>.delayed(Duration(milliseconds: 50));
       }
     }
 
@@ -318,7 +319,7 @@ class _LoginPasswordState extends State<LoginPassword> {
           message: 'Migrating to latest version. Just a sec...',
           showOnLogin: true));
       setState(() => passwordText = password.text);
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future<void>.delayed(Duration(milliseconds: 300));
       await populateWalletsWithSensitives();
       // first of all make a cipher for this
       services.cipher.initCiphers(

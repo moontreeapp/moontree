@@ -68,7 +68,8 @@ class _SweepPageState extends State<SweepPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                 Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +84,7 @@ class _SweepPageState extends State<SweepPage> {
                               FocusScope.of(context).requestFocus(toFocus);
                             },
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           /// to
                           TextFieldFormatted(
@@ -92,7 +93,7 @@ class _SweepPageState extends State<SweepPage> {
                             readOnly: true,
                             labelText: 'To',
                             suffixIcon: IconButton(
-                              icon: Padding(
+                              icon: const Padding(
                                   padding: EdgeInsets.only(right: 14),
                                   child: Icon(Icons.expand_more_rounded,
                                       color: Color(0xDE000000))),
@@ -103,7 +104,7 @@ class _SweepPageState extends State<SweepPage> {
                               FocusScope.of(context).requestFocus(feeFocus);
                             },
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           /// fee
                           TextFieldFormatted(
@@ -114,7 +115,7 @@ class _SweepPageState extends State<SweepPage> {
                             labelText: 'Transaction Speed',
                             hintText: 'Standard',
                             suffixIcon: IconButton(
-                              icon: Padding(
+                              icon: const Padding(
                                   padding: EdgeInsets.only(right: 14),
                                   child: Icon(Icons.expand_more_rounded,
                                       color: Color(0xDE000000))),
@@ -129,7 +130,7 @@ class _SweepPageState extends State<SweepPage> {
                               setState(() {});
                             },
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           /// memo
                           TextFieldFormatted(
@@ -157,7 +158,7 @@ class _SweepPageState extends State<SweepPage> {
                               suffixIcon:
                                   clipboard.isAssetData || clipboard.isIpfs
                                       ? IconButton(
-                                          icon: Icon(Icons.paste_rounded,
+                                          icon: const Icon(Icons.paste_rounded,
                                               color: AppColors.black60),
                                           onPressed: () async {
                                             memoController.text =
@@ -167,14 +168,14 @@ class _SweepPageState extends State<SweepPage> {
                                                     '';
                                           })
                                       : null,
-                              onChanged: (value) {
+                              onChanged: (String value) {
                                 setState(() {});
                               },
                               onEditingComplete: () {
                                 FocusScope.of(context).requestFocus(noteFocus);
                                 setState(() {});
                               }),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           /// note
                           TextFieldFormatted(
@@ -204,7 +205,7 @@ class _SweepPageState extends State<SweepPage> {
                                       clipboard.isAddressRVNt
                                   ? null
                                   : IconButton(
-                                      icon: Icon(Icons.paste_rounded,
+                                      icon: const Icon(Icons.paste_rounded,
                                           color: AppColors.black60),
                                       onPressed: () async {
                                         noteController.text =
@@ -214,7 +215,7 @@ class _SweepPageState extends State<SweepPage> {
                                                 '';
                                       },
                                     ),
-                              onChanged: (value) {
+                              onChanged: (String value) {
                                 setState(() {});
                               },
                               onEditingComplete: () {
@@ -224,8 +225,8 @@ class _SweepPageState extends State<SweepPage> {
                               })
                         ])),
                 KeyboardHidesWidgetWithDelay(
-                  child: components.containers
-                      .navBar(context, child: Row(children: [submitButton])),
+                  child: components.containers.navBar(context,
+                      child: Row(children: <Widget>[submitButton])),
                 )
               ]))));
 
@@ -244,7 +245,7 @@ class _SweepPageState extends State<SweepPage> {
                   toController.text =
                       pros.wallets.primaryIndex.getOne(walletId)!.name;
                 },
-                leading: Icon(Icons.add, color: AppColors.primary),
+                leading: const Icon(Icons.add, color: AppColors.primary),
                 title: Text('New Wallet',
                     style: Theme.of(context).textTheme.bodyText1),
               ),
@@ -259,7 +260,7 @@ class _SweepPageState extends State<SweepPage> {
                       toController.text = wallet.name;
                       Navigator.pop(components.navigator.routeContext!);
                     },
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.account_balance_wallet_rounded,
                       color: AppColors.primary,
                     ),
@@ -287,7 +288,8 @@ class _SweepPageState extends State<SweepPage> {
               fee = FeeRates.standard;
               feeController.text = 'Standard';
             },
-            leading: Icon(MdiIcons.speedometerMedium, color: AppColors.primary),
+            leading: const Icon(MdiIcons.speedometerMedium,
+                color: AppColors.primary),
             title:
                 Text('Standard', style: Theme.of(context).textTheme.bodyText1),
           ),
@@ -298,7 +300,7 @@ class _SweepPageState extends State<SweepPage> {
               fee = FeeRates.fast;
               feeController.text = 'Fast';
             },
-            leading: Icon(MdiIcons.speedometer, color: AppColors.primary),
+            leading: const Icon(MdiIcons.speedometer, color: AppColors.primary),
             title: Text('Fast', style: Theme.of(context).textTheme.bodyText1),
           ),
         ],
@@ -330,7 +332,7 @@ class _SweepPageState extends State<SweepPage> {
       '/transaction/checkout',
       arguments: {
         'struct': CheckoutStruct(
-          icon: Icon(Icons.account_balance_wallet_rounded,
+          icon: const Icon(Icons.account_balance_wallet_rounded,
               color: AppColors.primary),
           symbol: null,
           displaySymbol: fromController.text,

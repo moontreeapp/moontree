@@ -58,7 +58,7 @@ class RVNtoFiat implements RVNRateInterface {
     }[serviceName]!;
   }
 
-  Future<http.Response> _call() async => await http.get(
+  Future<http.Response> _call() async => http.get(
         Uri.parse(() {
           switch (serviceName) {
             case 'Moontree':

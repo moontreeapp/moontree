@@ -84,7 +84,7 @@ class LeaderWallet extends Wallet {
       : encryptedEntropy;
 
   @override
-  Future<String> secret([CipherBase? cipher]) async => await mnemonic;
+  Future<String> secret([CipherBase? cipher]) async => mnemonic;
 
   @override
   Future<ravenwallet.HDWallet> seedWallet(

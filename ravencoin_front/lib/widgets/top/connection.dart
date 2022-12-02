@@ -107,7 +107,7 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -115,7 +115,7 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   /* blinking animations */
   //Future<void> rebuildMe() async {
-  //  await Future.delayed(Duration(milliseconds: 600));
+  //  await Future<void>.delayed(Duration(milliseconds: 600));
   //  if (connectionBusy) {
   //    // don't blink when spinner runs... separate into different streams?
   //    if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
@@ -154,7 +154,7 @@ class _ConnectionLightState extends State<ConnectionLight>
                 icon: circleIcon,
                 onPressed: navToBlockchain,
               )
-            : Stack(alignment: Alignment.center, children: [
+            : Stack(alignment: Alignment.center, children: <Widget>[
                 ColorFiltered(
                     colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
                     child: components.icons.assetAvatar(

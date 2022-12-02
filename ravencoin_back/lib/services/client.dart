@@ -113,10 +113,12 @@ class ClientService {
 
           conn.peer.done.then(
               (value) async =>
-                  await Future.delayed(Duration(seconds: 1)).then(reconnect),
-              onError: (ob, st) async => await reconnect(ob));
+                  await Future<dynamic>.delayed(Duration(seconds: 1))
+                      .then(reconnect),
+              onError: (ob, st) async => reconnect(ob));
           conn.peer.done.whenComplete(() async =>
-              await Future.delayed(Duration(seconds: 2)).then(reconnect));
+              await Future<dynamic>.delayed(Duration(seconds: 2))
+                  .then(reconnect));
         }
 
         var newRavenClient = await _generateClient();
@@ -208,7 +210,7 @@ class ClientService {
     await services.client.createClient();
 
     /// no longer needed since the await waits for the client to be created
-    //await Future.delayed(Duration(seconds: 3));
+    //await Future<void>.delayed(Duration(seconds: 3));
 
     ///// the leader waiter does not do this:
     /// start derivation process
@@ -514,7 +516,7 @@ class SubscribeService {
 
 /// calls to the electrum server
 class ApiService {
-  Future<Stream<BlockHeader>> subscribeHeaders() async => await services.client
+  Future<Stream<BlockHeader>> subscribeHeaders() async => services.client
       .scope(() async => (await services.client.client).subscribeHeaders());
 
   Future<Stream<String?>> subscribeAsset(Asset asset) async =>
@@ -578,16 +580,16 @@ class ApiService {
       await services.client.scope(() async =>
           await (await services.client.client).broadcastTransaction(rawTx));
 
-  Future<AssetMeta?> getMeta(String symbol) async => await services.client
-      .scope(() async => await (await services.client.client).getMeta(symbol));
+  Future<AssetMeta?> getMeta(String symbol) async => services.client
+      .scope(() async => (await services.client.client).getMeta(symbol));
 
-  Future<String> getOwner(String symbol) async => await services.client.scope(
-      () async => (await (await services.client.client)
+  Future<String> getOwner(String symbol) async =>
+      services.client.scope(() async => (await (await services.client.client)
               .getAddresses(symbol.endsWith('!') ? symbol : symbol + '!'))!
           .owner);
 
   /// avoid this and ping directly to catch errors
-  Future<dynamic> ping() async => await services.client.scope(() async {
+  Future<dynamic> ping() async => services.client.scope(() async {
         final result = await (await services.client.client).ping();
         print('ping result: $result'); // null
         return result;
@@ -601,10 +603,10 @@ class ApiService {
               await (await services.client.client).getAssetsByPrefix(char))
       ].expand((i) => i);
 
-  Future<Iterable<dynamic>> getAssetNames(
-          String prefix) async =>
+  Future<Iterable<String>> getAssetNames(String prefix) async =>
       prefix.length >= 3
           ? await services.client.scope(() async =>
-              await (await services.client.client).getAssetsByPrefix(prefix))
+              await (await services.client.client).getAssetsByPrefix(prefix)
+                  as Iterable<String>)
           : [];
 }

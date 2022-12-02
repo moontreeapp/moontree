@@ -92,10 +92,11 @@ class _BlockchainChoice extends State<BlockchainChoice> {
       );
 }
 
-isSelected(Chain chain, Net net) =>
+bool isSelected(Chain chain, Net net) =>
     pros.settings.chain == chain && pros.settings.net == net;
 
-isConnected() => streams.client.connected.value == ConnectionStatus.connected;
+bool isConnected() =>
+    streams.client.connected.value == ConnectionStatus.connected;
 
 void produceBlockchainModal(
   BuildContext context, {

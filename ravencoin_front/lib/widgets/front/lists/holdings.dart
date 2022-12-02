@@ -86,7 +86,7 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -262,7 +262,7 @@ class _HoldingList extends State<HoldingList> {
           placeholderType: PlaceholderType.wallet,
           behavior: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               components.buttons.actionButtonSoft(
                 context,
                 label: 'Show Empty Balances',
@@ -324,7 +324,7 @@ class _HoldingList extends State<HoldingList> {
       var thisHolding = ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () async => await onTap(wallet, holding),
+          onTap: () async => onTap(wallet, holding),
           onLongPress: _togglePath,
           leading: leadingIcon(holding),
           title: title(holding),
@@ -354,7 +354,7 @@ class _HoldingList extends State<HoldingList> {
         rvnHolding.add(Container(
             //duration: Duration(milliseconds: 500),
             child: Column(
-          children: [
+          children: <Widget>[
             thisHolding,
             if (showSearchBar && !isEmpty) searchBar,
           ],
@@ -391,7 +391,7 @@ class _HoldingList extends State<HoldingList> {
       claimInvite.add(ListTile(
           //dense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () async => await components.message.giveChoices(
+          onTap: () async => components.message.giveChoices(
                 context,
                 title: 'Claim Your EVR',
                 content: ('All EVR in the Evrmore fairdrop must be claimed '
@@ -606,8 +606,8 @@ class _HoldingList extends State<HoldingList> {
       ;
 
   Widget title(AssetHolding holding) =>
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Container(
               width: holding.symbol == currentCrypto.symbol
                   ? MediaQuery.of(context).size.width / 2

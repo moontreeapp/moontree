@@ -43,7 +43,7 @@ class _ClaimEvr extends State<ClaimEvr> {
   Widget build(BuildContext context) => Row(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
-      children: [submitButton]);
+      children: <Widget>[submitButton]);
 
   Widget get submitButton => TextButton(
       onPressed: () async {

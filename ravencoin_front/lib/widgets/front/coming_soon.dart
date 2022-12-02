@@ -28,9 +28,9 @@ class ComingSoonPlaceholder extends StatelessWidget {
       controller: scrollController,
       child: Stack(
         alignment: Alignment.topCenter,
-        children: [
+        children: <Widget>[
           Column(
-            children: [
+            children: <Widget>[
               for (var _ in range(19))
                 placeholderType == PlaceholderType.wallet
                     ? components.empty.holdingPlaceholder(context)

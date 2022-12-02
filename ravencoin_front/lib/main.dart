@@ -87,7 +87,8 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: [components.navigator],
       builder: (context, child) {
         components.navigator.scaffoldContext = context;
-        final scaffold = Stack(alignment: Alignment.bottomCenter, children: [
+        final scaffold =
+            Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Scaffold(
             backgroundColor:
                 Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,

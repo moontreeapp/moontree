@@ -76,7 +76,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: <Widget>[
           Coin(
               cubit: widget.cubit,
               pageTitle: widget.pageTitle,
@@ -102,28 +102,29 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
       return Padding(
           padding: EdgeInsets.only(
               left: 16, right: 16, bottom: widget.pageTitle == 'Send' ? 9 : 1),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('Remaining:',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText2!
-                    .copyWith(color: AppColors.offWhite)),
-            Text(
-                services.conversion.securityAsReadable(
-                    holdingSat - widget.cubit!.state.sats,
-                    symbol: symbol,
-                    asUSD: false),
-                style: (holding - amount) >= 0
-                    ? Theme.of(context)
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Remaining:',
+                    style: Theme.of(context)
                         .textTheme
                         .bodyText2!
-                        .copyWith(color: AppColors.offWhite)
-                    : Theme.of(context)
-                        .textTheme
-                        .bodyText2!
-                        .copyWith(color: AppColors.error))
-          ]));
+                        .copyWith(color: AppColors.offWhite)),
+                Text(
+                    services.conversion.securityAsReadable(
+                        holdingSat - widget.cubit!.state.sats,
+                        symbol: symbol,
+                        asUSD: false),
+                    style: (holding - amount) >= 0
+                        ? Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(color: AppColors.offWhite)
+                        : Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(color: AppColors.error))
+              ]));
     }
     //return CoinSpecTabs();
     return Container();

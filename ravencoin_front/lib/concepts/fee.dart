@@ -15,7 +15,7 @@ class _FeeConcept extends Concept<FeeOption> {
   final IconData iconData;
   final FeeRate feeRate;
   const _FeeConcept({
-    required option,
+    required FeeOption option,
     required this.iconData,
     required this.feeRate,
   }) : super(option);

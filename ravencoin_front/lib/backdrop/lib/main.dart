@@ -31,7 +31,7 @@ class _SlidingPanelState extends State<SlidingPanel> {
     return Scaffold(
       appBar: AppBar(title: const Text('Wallet')),
       body: Stack(
-        children: [
+        children: <Widget>[
           const BackLayerContent(),
           slide.DraggableScrollableActuator(
             child: slide.DraggableScrollableSheet(

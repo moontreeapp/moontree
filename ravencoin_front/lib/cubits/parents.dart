@@ -11,24 +11,22 @@ mixin SetCubitMixin {
 }
 
 class CubitState with EquatableMixin {
-  final myType = CubitState;
-  final bool isSubmitting;
-
   const CubitState({this.isSubmitting = false});
+
+  factory CubitState.load({required CubitState form, bool? isSubmitting}) =>
+      CubitState(isSubmitting: isSubmitting ?? form.isSubmitting);
+
+  factory CubitState.initial() => const CubitState();
+  final bool isSubmitting;
 
   @override
   String toString() => 'CubitState(isSubmitting=$isSubmitting)';
 
   @override
-  List<Object> get props => [isSubmitting];
-
-  factory CubitState.initial() => CubitState(isSubmitting: false);
+  List<Object> get props => <Object>[isSubmitting];
 
   CubitState load({bool? isSubmitting}) =>
       CubitState.load(form: this, isSubmitting: isSubmitting);
-
-  factory CubitState.load({required CubitState form, bool? isSubmitting}) =>
-      CubitState(isSubmitting: isSubmitting ?? form.isSubmitting);
 
   //import 'package:moontree_utils/zips.dart' show zipLists;
   //@override

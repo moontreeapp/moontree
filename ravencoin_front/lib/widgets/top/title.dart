@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
@@ -13,12 +15,12 @@ import 'package:ravencoin_front/widgets/assets/icons.dart';
 
 class PageTitle extends StatefulWidget {
   final bool animate;
-  PageTitle({Key? key, this.animate = true}) : super(key: key);
+  const PageTitle({Key? key, this.animate = true}) : super(key: key);
 
   @override
   PageTitleState createState() => PageTitleState();
 
-  static Map<String, String> pageMap = const {
+  static Map<String, String> pageMap = const <String, String>{
     'Level': 'User Level',
     'Import_export': 'Import & Export',
     'Change': 'Security',
@@ -37,7 +39,7 @@ class PageTitle extends StatefulWidget {
     'Login': 'Locked',
     'Backupintro': 'Backup',
   };
-  static Map<String, String> pageMapReissue = const {
+  static Map<String, String> pageMapReissue = const <String, String>{
     'Main': 'Reissue',
     'Sub': 'Reissue',
     'Restricted': 'Reissue',
@@ -45,21 +47,22 @@ class PageTitle extends StatefulWidget {
 }
 
 class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
-  List listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   bool loading = false;
   bool fullname = false;
   String pageTitle = 'Home';
   String assetTitle = 'Manage';
-  String? settingTitle = null;
+  String? settingTitle;
   AppContext appContext = AppContext.login;
   final TextEditingController changeName = TextEditingController();
   late AnimationController controller;
   late Animation<double> animation;
   late AnimationController slowController;
   late Animation<double> slowAnimation;
-  final Duration animationDuration = Duration(milliseconds: 160);
+  final Duration animationDuration = const Duration(milliseconds: 160);
   bool dropDownActive = false;
-  List<Wallet> wallets = [];
+  List<Wallet> wallets = <Wallet>[];
   late Map<Wallet, List<Security>> walletsSecurities;
   double indicatorWidth = 24;
 
@@ -70,9 +73,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     setWalletsSecurities();
     controller = AnimationController(vsync: this, duration: animationDuration);
     slowController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1000));
-    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
-    slowAnimation = Tween(begin: 0.0, end: 1.0).animate(slowController);
+        vsync: this, duration: const Duration(milliseconds: 1000));
+    animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
+    slowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(slowController);
     listeners.add(streams.app.loading.listen((bool value) {
       if (value != loading) {
         setState(() {
@@ -119,7 +122,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
         });
       }
     }));
-    listeners.add(pros.settings.changes.listen((Change change) {
+    listeners.add(pros.settings.changes.listen((Change<Setting> change) {
       setState(() {});
     }));
   }
@@ -128,20 +131,23 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   void dispose() {
     controller.dispose();
     slowController.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
   }
 
-  initializeWalletSecurities() =>
-      walletsSecurities = {for (var w in pros.wallets.records) w: []};
+  Map<Wallet, List<Security>> initializeWalletSecurities() =>
+      walletsSecurities = <Wallet, List<Security>>{
+        for (Wallet w in pros.wallets.records) w: <Security>[]
+      };
 
-  void setWallets() async {
-    final unspents = pros.unspents.records
-        .where((e) => e.security == pros.securities.currentCoin);
+  Future<void> setWallets() async {
+    final Iterable<Unspent> unspents = pros.unspents.records
+        .where((Unspent e) => e.security == pros.securities.currentCoin);
     wallets = pros.wallets.records
-        .where((w) => unspents.where((u) => u.walletId == w.id).isNotEmpty)
+        .where((Wallet w) =>
+            unspents.where((Unspent u) => u.walletId == w.id).isNotEmpty)
         .toList();
     if (wallets.isEmpty) {
       wallets = pros.wallets.ordered;
@@ -153,27 +159,28 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       ? pros.wallets.ordered
       : wallets;
 
-  void setWalletsSecurities() async {
+  Future<void> setWalletsSecurities() async {
     if (!services.developer.developerMode) {
       wallets = pros.wallets.ordered;
       return;
     }
-    final unspents = pros.unspents.records
-        .where((e) => pros.securities.coins.contains(e.security))
+    final List<Unspent> unspents = pros.unspents.records
+        .where((Unspent e) => pros.securities.coins.contains(e.security))
         .toList();
-    for (var w in pros.wallets.records) {
-      if ((walletsSecurities[w] ?? []).isEmpty) {
+    for (final Wallet w in pros.wallets.records) {
+      if ((walletsSecurities[w] ?? <Security>[]).isEmpty) {
         walletsSecurities[w] = pros.securities.coins
-            .where((s) => unspents
-                .where((u) => u.walletId == w.id && u.security == s)
+            .where((Security s) => unspents
+                .where((Unspent u) => u.walletId == w.id && u.security == s)
                 .isNotEmpty)
             .toList();
       } else {
         // to remember while app is open
         walletsSecurities[w] = (walletsSecurities[w]! +
                 pros.securities.coins
-                    .where((s) => unspents
-                        .where((u) => u.walletId == w.id && u.security == s)
+                    .where((Security s) => unspents
+                        .where((Unspent u) =>
+                            u.walletId == w.id && u.security == s)
                         .isNotEmpty)
                     .toList())
             .toSet()
@@ -187,9 +194,10 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       //walletsSecurities[w]!.add(pros.securities.RVN);
       //walletsSecurities[w]!.add(pros.securities.EVRt);
     }
-    wallets = [];
-    final currentCrypto = pros.securities.currentCoin;
-    for (var ws in walletsSecurities.entries) {
+    wallets = <Wallet>[];
+    final Security currentCrypto = pros.securities.currentCoin;
+    for (final MapEntry<Wallet, List<Security>> ws
+        in walletsSecurities.entries) {
       if (ws.value.contains(currentCrypto)) {
         wallets.add(ws.key);
       }
@@ -199,9 +207,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   }
 
   List<Widget> holdingsIndicators(Wallet wallet) {
-    var ret = <Widget>[];
+    final List<Widget> ret = <Widget>[];
     if (services.developer.developerMode) {
-      for (var s in pros.securities.coins) {
+      for (final Security s in pros.securities.coins) {
         if (walletsSecurities[wallet]!.contains(s)) {
           ret.add(Container(
               padding: EdgeInsets.only(left: ret.length * 12),
@@ -215,8 +223,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   void setHoldingsIndicatorsSize() {
     indicatorWidth = 24;
     if (services.developer.developerMode) {
-      indicatorWidth =
-          24 + (walletsSecurities.values.map((e) => e.length).max * 12);
+      indicatorWidth = 24 +
+          (walletsSecurities.values.map((List<Security> e) => e.length).max *
+              12);
     }
   }
 
@@ -225,14 +234,15 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     if (pageTitle == 'Splash') {
       if (widget.animate) {
         slowController.forward(from: 0.0);
-        return FadeTransition(opacity: slowAnimation, child: Text('Welcome'));
+        return FadeTransition(
+            opacity: slowAnimation, child: const Text('Welcome'));
       }
-      return Text('Welcome');
+      return const Text('Welcome');
     }
-    if (loading || ['main', ''].contains(pageTitle)) {
-      return Text('');
+    if (loading || <String>['main', ''].contains(pageTitle)) {
+      return const Text('');
     }
-    var wrap = (String x) => FittedBox(
+    FittedBox wrap(String x) => FittedBox(
         fit: BoxFit.fitWidth,
         child: Text(x,
             style: Theme.of(context).textTheme.headline2!.copyWith(
@@ -241,12 +251,12 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                       x.length >= 25 ? FontWeights.bold : FontWeights.semiBold,
                 )));
     controller.forward();
-    var assetWrap = (String x) => FittedBox(
+    FittedBox assetWrap(String x) => FittedBox(
         fit: BoxFit.fitWidth,
         child: GestureDetector(
             onTap: () async {
               controller.reverse();
-              await Future.delayed(animationDuration);
+              await Future<void>.delayed(animationDuration);
               setState(() => fullname = !fullname);
             },
             child: FadeTransition(
@@ -258,7 +268,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                               ? FontWeights.bold
                               : FontWeights.semiBold,
                         )))));
-    if (['Asset', 'Transactions'].contains(pageTitle)) {
+    if (<String>['Asset', 'Transactions'].contains(pageTitle)) {
       return assetWrap(fullname ? assetTitle : assetName(assetTitle));
     }
     fullname = false;
@@ -300,35 +310,32 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     if (pageTitle != 'Home') {
       return null;
     }
-    if (pros.wallets.length > 0) {
+    if (pros.wallets.isNotEmpty) {
       if (settingTitle != null && settingTitle == '/settings/import_export') {
-        return Text('Import & Export');
+        return const Text('Import & Export');
       } else if (settingTitle != null && settingTitle == '/settings/settings') {
-        return Text('Settings');
+        return const Text('Settings');
       } else if (settingTitle != null &&
           (pros.wallets.length > 1 ||
-              [FeatureLevel.normal, FeatureLevel.expert].contains(pros
-                  .settings.primaryIndex
-                  .getOne(SettingName.mode_dev)
-                  ?.value))) {
+              <FeatureLevel>[FeatureLevel.normal, FeatureLevel.expert].contains(
+                  pros.settings.primaryIndex
+                      .getOne(SettingName.mode_dev)
+                      ?.value))) {
         return walletDropDown();
       } else if (appContext == AppContext.wallet) {
         return GestureDetector(
             onDoubleTap: () async {
-              var next = false;
-              var walletId;
-              for (Wallet wallet
+              bool next = false;
+              for (final Wallet wallet
                   in pros.wallets.ordered + pros.wallets.ordered) {
                 // why twice?
                 if (next) {
-                  walletId = wallet.id;
-                  break;
+                  return switchWallet(wallet.id);
                 }
                 if (Current.walletId == wallet.id) {
                   next = true;
                 }
               }
-              await switchWallet(walletId);
             },
             child: Text(pros.wallets.currentWalletName,
                 style: Theme.of(context)
@@ -365,37 +372,34 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
         }
       },
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Text(pros.wallets.currentWalletName,
               style: Theme.of(context)
                   .textTheme
                   .headline2!
                   .copyWith(color: AppColors.white)),
-          Icon(Icons.expand_more_rounded, color: Colors.white),
+          const Icon(Icons.expand_more_rounded, color: Colors.white),
         ],
       ));
 
-  Future<void> walletSelection() async => await SimpleSelectionItems(
+  Future<void> walletSelection() async => SimpleSelectionItems(
         components.navigator.routeContext!,
         then: () => dropDownActive = false,
-        items: [
+        items: <Widget>[
               if (services.developer.developerMode == true)
                 ListTile(
                   visualDensity: VisualDensity.compact,
                   onTap: () async {
                     Navigator.pop(components.navigator.routeContext!);
-                    await components.loading.screen(
-                        message: 'Creating Wallet',
-                        returnHome: true,
-                        playCount: 3);
-                    final walletId = await generateWallet();
+                    await components.loading
+                        .screen(message: 'Creating Wallet', playCount: 3);
+                    final String walletId = await generateWallet();
                     await switchWallet(walletId);
                   },
                   leading: Container(
                       width: indicatorWidth,
                       alignment: Alignment.centerLeft,
-                      child: Icon(Icons.add, color: AppColors.primary)),
+                      child: const Icon(Icons.add, color: AppColors.primary)),
                   title: Text('New Wallet',
                       style: Theme.of(context).textTheme.bodyText1),
                   trailing: getWallets().equals(pros.wallets.ordered)
@@ -408,7 +412,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                               wallets = pros.wallets.ordered;
                             });
                             await walletSelection();
-                            await Future.delayed(Duration(milliseconds: 100));
+                            await Future<void>.delayed(
+                                const Duration(milliseconds: 100));
                             streams.app.scrim.add(false);
                           },
                           child: Text(
@@ -424,19 +429,19 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   visualDensity: VisualDensity.compact,
                   onTap: () async {
                     Navigator.pop(components.navigator.routeContext!);
-                    final walletId =
+                    final String walletId =
                         await generateWallet(walletType: WalletType.single);
                     await switchWallet(walletId);
                   },
                   leading: Container(
                       width: indicatorWidth,
                       alignment: Alignment.centerLeft,
-                      child: Icon(Icons.add, color: AppColors.primary)),
+                      child: const Icon(Icons.add, color: AppColors.primary)),
                   title: Text('New Single Wallet',
                       style: Theme.of(context).textTheme.bodyText1),
                 )
             ] +
-            [
+            <Widget>[
               for (Wallet wallet in getWallets())
                 ListTile(
                     visualDensity: VisualDensity.compact,
@@ -449,11 +454,11 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     leading: walletsSecurities[wallet] == null ||
                             walletsSecurities[wallet]!.isEmpty ||
                             !services.developer.developerMode
-                        ? Icon(
+                        ? const Icon(
                             Icons.account_balance_wallet_rounded,
                             color: AppColors.primary,
                           )
-                        : Container(
+                        : SizedBox(
                             width: indicatorWidth,
                             child: Stack(children: holdingsIndicators(wallet))),
                     title: Text(wallet.name,
@@ -465,9 +470,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
+                            children: <Widget>[
                               IconButton(
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.edit_rounded,
                                   color: AppColors.primary,
                                 ),
@@ -479,14 +484,13 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                       content:
                                           'What should this wallet be called?',
                                       child: Container(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               top: 16, bottom: 16),
                                           child: TextFieldFormatted(
-                                            maxLengthEnforced: true,
                                             maxLength: 10,
                                             controller: changeName,
                                           )),
-                                      behaviors: {
+                                      behaviors: <String, void Function()>{
                                         'cancel': () => Navigator.pop(
                                             components.navigator.routeContext!),
                                         'submit': () async {
@@ -520,7 +524,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                               ),
                               if (pros.wallets.records.length > 1)
                                 IconButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.delete_forever_rounded,
                                     color: AppColors.primary,
                                   ),
@@ -530,20 +534,20 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                         title: 'DANGER!',
                                         content:
                                             'WARNING: You are about to delete a wallet. This action cannot be undone! Are you sure you want to delete it?',
-                                        behaviors: {
+                                        behaviors: <String, void Function()>{
                                           'CANCEL': () => Navigator.pop(
                                               components
                                                   .navigator.routeContext!),
                                           'DELETE FOREVER': () async =>
-                                              await components.message
-                                                  .giveChoices(
+                                              components.message.giveChoices(
                                                 components
                                                     .navigator.routeContext!,
                                                 title: 'CONFIRM DELETE',
                                                 content:
-                                                    "To delete ${wallet.name} you will need to authenticate.",
+                                                    'To delete ${wallet.name} you will need to authenticate.',
                                                 //child:
-                                                behaviors: {
+                                                behaviors: <String,
+                                                    void Function()>{
                                                   'CANCEL': () {
                                                     Navigator.pop(components
                                                         .navigator
@@ -566,7 +570,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                         components.navigator
                                                             .routeContext!,
                                                         '/security/security',
-                                                        arguments: {
+                                                        arguments: <String,
+                                                            Object>{
                                                           'buttonLabel':
                                                               'Delete ${wallet.name} Forever',
                                                           'onSuccess':
@@ -580,7 +585,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                               await switchWallet(pros
                                                                   .wallets
                                                                   .records
-                                                                  .where((w) =>
+                                                                  .where((Wallet
+                                                                          w) =>
                                                                       w.id !=
                                                                       wallet.id)
                                                                   .first

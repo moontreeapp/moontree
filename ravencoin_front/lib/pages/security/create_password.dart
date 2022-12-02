@@ -22,12 +22,14 @@ import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CreatePassword extends StatefulWidget {
+  const CreatePassword({Key? key}) : super(key: key);
+
   @override
   _CreatePasswordState createState() => _CreatePasswordState();
 }
 
 class _CreatePasswordState extends State<CreatePassword> {
-  //late List listeners = [];
+  //late List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   var password = TextEditingController();
   var confirm = TextEditingController();
   var passwordVisible = false;
@@ -54,7 +56,7 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   @override
   void dispose() {
-    //for (var listener in listeners) {
+    //for (final StreamSubscription<dynamic>> listener in listeners) {
     //  listener.cancel();
     //}
     password.dispose();
@@ -124,7 +126,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
+                        children: <Widget>[
                           SizedBox(
                             height: .063.ofMediaHeight(context),
                           ),
@@ -132,7 +134,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                           SizedBox(
                             height: .021.ofMediaHeight(context),
                           ),
-                          Row(children: [unlockButton]),
+                          Row(children: <Widget>[unlockButton]),
                           SizedBox(
                             height: .052.ofMediaHeight(context),
                           ),
@@ -153,7 +155,7 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+        children: <Widget>[
           Container(
               alignment: Alignment.center, width: 18, child: aggrementCheckbox),
           Container(
@@ -278,7 +280,7 @@ class _CreatePasswordState extends State<CreatePassword> {
               ));
             }
           }),
-      onPressed: () async => await submit());
+      onPressed: () async => submit());
 
   Widget get aggrementCheckbox => Checkbox(
         //checkColor: Colors.white,
@@ -316,7 +318,7 @@ class _CreatePasswordState extends State<CreatePassword> {
       await services.authentication
           .setMethod(method: AuthMethod.moontreePassword);
       await consentToAgreements();
-      //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
+      //await Future<void>.delayed(Duration(milliseconds: 200)); // in release mode?
       await populateWalletsWithSensitives();
       await services.authentication.setPassword(
         password: password.text,

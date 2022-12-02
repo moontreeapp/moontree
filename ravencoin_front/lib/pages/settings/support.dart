@@ -69,7 +69,7 @@ class Support extends StatelessWidget {
                       tall: true,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                        children: <Widget>[
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,7 +112,7 @@ class Support extends StatelessWidget {
       components.buttons.actionButton(
         context,
         label: name.toUpperCase(),
-        onPressed: () async => await components.message.giveChoices(
+        onPressed: () async => components.message.giveChoices(
           context,
           title: 'Open in External App',
           content: 'Open discord app or browser?',

@@ -25,7 +25,8 @@ class _AssetSpecBottomState extends State<AssetSpecBottom> {
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(left: 16, right: 16, bottom: 1),
-        child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           widget.symbol.contains('/')
               ? Text('${widget.symbol}/',
                   style: Theme.of(context)

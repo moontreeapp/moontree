@@ -35,7 +35,7 @@ class VerifyAuthentication extends StatefulWidget {
 }
 
 class _VerifyAuthenticationState extends State<VerifyAuthentication> {
-  Map<String, dynamic> data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
   FocusNode existingFocus = FocusNode();
@@ -66,7 +66,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
 
     if (widget.auto &&
         pros.settings.authMethodIsNativeSecurity &&
-        (data['autoInitiateUnlock'] ?? true)) {
+        (data['autoInitiateUnlock'] as bool? ?? true)) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await submit();
       });
@@ -153,7 +153,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
         context,
         focusNode: submitFocus,
         enabled: password.text != '' && services.password.lockout.timePast(),
-        label: data['buttonLabel'] ?? widget.buttonLabel,
+        label: data['buttonLabel'] as String? ?? widget.buttonLabel,
         onPressed: submitProceedure,
       );
 
@@ -203,8 +203,8 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
             (enabled && services.password.lockout.timePast()),
         label: widget.buttonLabel == 'Submit'
             ? 'Unlock'
-            : (data['buttonLable'] ?? widget.buttonLabel),
-        onPressed: () async => await submit(),
+            : (data['buttonLable'] as String? ?? widget.buttonLabel),
+        onPressed: () async => submit(),
       );
 
   Future submit() async {

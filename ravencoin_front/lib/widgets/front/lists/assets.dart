@@ -47,7 +47,7 @@ class _AssetList extends State<AssetList> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -216,7 +216,7 @@ class _AssetList extends State<AssetList> {
               : asset.symbol));
 
   Widget title(AssetHolding asset) =>
-      Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+      Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Container(
             width: MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
             child: FittedBox(

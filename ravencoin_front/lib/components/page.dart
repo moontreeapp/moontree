@@ -36,7 +36,7 @@ class PageComponents {
     return floatingButtons == null
         ? fields
         : Stack(
-            children: [
+            children: <Widget>[
               fields,
               KeyboardHidesWidgetWithDelay(
                   child: components.buttons.floatingButtons(

@@ -51,7 +51,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [icon, subHeader],
+      children: <Widget>[icon, subHeader],
     );
   }
 
@@ -59,7 +59,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
         onTap: () async {
           if (services.developer.developerMode) {
             controller.reverse();
-            await Future.delayed(Duration(milliseconds: 240));
+            await Future<void>.delayed(Duration(milliseconds: 240));
             setState(() => front = !front);
           }
         },
@@ -67,7 +67,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
             /// used to push it down because we hid stuff and want to cetner:
             Column(
-          children: [
+          children: <Widget>[
             SizedBox(height: .015.ofMediaHeight(context)),
             Hero(
               tag: widget.symbol.toLowerCase(),

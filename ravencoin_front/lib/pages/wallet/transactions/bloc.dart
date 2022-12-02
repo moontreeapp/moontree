@@ -12,7 +12,7 @@ class TransactionsBloc {
     return _instance ??= TransactionsBloc._();
   }
 
-  reset() {
+  TransactionsBloc reset() {
     scrollObserver.close();
     currentTab.close();
     _instance = null;
@@ -20,9 +20,10 @@ class TransactionsBloc {
   }
 
   static TransactionsBloc? _instance;
-  Map<String, dynamic> data = {};
-  BehaviorSubject<double> scrollObserver = BehaviorSubject.seeded(.7);
-  BehaviorSubject<String> currentTab = BehaviorSubject.seeded('HISTORY');
+  Map<String, dynamic> data = <String, dynamic>{};
+  BehaviorSubject<double> scrollObserver = BehaviorSubject<double>.seeded(.7);
+  BehaviorSubject<String> currentTab =
+      BehaviorSubject<String>.seeded('HISTORY');
   List<TransactionRecord>? currentTxsCache;
 
   double getOpacityFromController(
@@ -47,19 +48,19 @@ class TransactionsBloc {
   }
 
   bool get nullCacheView {
-    var securityAsset = security.asset;
+    final Asset? securityAsset = security.asset;
     return securityAsset == null || securityAsset.hasMetadata == false;
   }
 
   Security get security =>
-      data['holding']?.security ?? pros.securities.currentCoin;
+      (data['holding'] as Balance?)?.security ?? pros.securities.currentCoin;
   List<Balance> get currentHolds => Current.holdings;
   List<TransactionRecord> get currentTxs {
-    if (Current.wallet.minerMode) return [];
-    if (currentTxsCache == null) {
-      currentTxsCache = services.transaction.getTransactionRecords(
-          wallet: Current.wallet, securities: {security});
+    if (Current.wallet.minerMode) {
+      return <TransactionRecord>[];
     }
+    currentTxsCache ??= services.transaction.getTransactionRecords(
+        wallet: Current.wallet, securities: <Security>{security});
     return currentTxsCache!;
   }
 

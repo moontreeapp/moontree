@@ -75,7 +75,7 @@ class _ExportState extends State<Export> {
           walletChoices,
           components.containers.navBar(
             context,
-            child: Row(children: [previewButton]),
+            child: Row(children: <Widget>[previewButton]),
           )
         ],
       );
@@ -134,7 +134,7 @@ class _ExportState extends State<Export> {
         },
       );
 
-  Widget get finalSubmitButtons => Row(children: [
+  Widget get finalSubmitButtons => Row(children: <Widget>[
         components.buttons.actionButton(
           context,
           enabled: true,
@@ -146,7 +146,7 @@ class _ExportState extends State<Export> {
                   streams.app.scrim.add(true);
                   return AlertDialog(
                       title: Text('Encryption Key'),
-                      content: Column(children: [
+                      content: Column(children: <Widget>[
                         Text(
                             'You will need the following key in order to decrypt your export:'),
                         ShowAuthenticationChoice(title: null, desc: null)
@@ -164,7 +164,7 @@ class _ExportState extends State<Export> {
             onPressed: () async {
               components.loading.screen(message: 'Exporting');
               file = await export();
-              await Future.delayed(Duration(seconds: 1));
+              await Future<void>.delayed(Duration(seconds: 1));
               if (file != null) {
                 streams.app.snack.add(Snack(
                   message: 'Successfully Exported ${walletController.text}',
@@ -177,7 +177,7 @@ class _ExportState extends State<Export> {
           )
       ]);
 
-  Future<File?> export() async => await storage.writeExport(
+  Future<File?> export() async => storage.writeExport(
         filename: filePrefix + today,
         rawExport: await rawExport,
       );

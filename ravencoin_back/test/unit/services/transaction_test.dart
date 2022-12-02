@@ -133,7 +133,7 @@ void main() async {
   // ignore: omit_local_variable_types
   // tests.Generated gen = tests.Generated.asEmpty();
   // setUpAll(() async => gen = await tests.generate());
-  // tearDownAll(() async => await tests.closeHive());
+  // tearDownAll(() async =>  tests.closeHive());
 
   /// make amount nearly an entire utxo check to see if by addInputs
   /// we include more utxos to cover the fees

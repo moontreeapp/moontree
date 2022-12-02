@@ -66,7 +66,7 @@ class _NavBarState extends State<NavBar> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -83,7 +83,7 @@ class _NavBarState extends State<NavBar> {
         child: SingleChildScrollView(
           child: Column(
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: <Widget>[
               // we will need to make these buttons dependant upon the navigation
               // of the front page through streams but for now, we'll show they
               // can changed based upon whats selected:
@@ -98,7 +98,7 @@ class _NavBarState extends State<NavBar> {
                     padding: EdgeInsets.only(left: 0, right: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: <Widget>[
                         sectorIcon(appContext: AppContext.wallet),
                         sectorIcon(appContext: AppContext.manage),
                         sectorIcon(appContext: AppContext.swap),

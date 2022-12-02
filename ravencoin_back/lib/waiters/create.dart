@@ -13,7 +13,7 @@ class CreateWaiter extends Waiter {
   void init() {
     streams.create.request.listen((GenericCreateRequest? createRequest) async {
       if (createRequest != null) {
-        await Future.delayed(
+        await Future<void>.delayed(
             const Duration(milliseconds: 500)); // wait for please wait
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         try {

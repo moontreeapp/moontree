@@ -68,7 +68,7 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -90,24 +90,26 @@ class _TransactionListState extends State<TransactionList> {
       transactionCount = transactions.length;
     }
     return transactions.isEmpty && services.wallet.currentWallet.minerMode
-        ? Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Container(
-                alignment: Alignment.topCenter,
-                padding:
-                    EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 0),
-                child: Text(
-                  '"Mine to Wallet" is enabled, so transaction history is not available. \n\nTo download your transaction history please disable "Mine to Wallet" in Settings.',
-                  softWrap: true,
-                  maxLines: 10,
-                )),
-            if (services.developer.developerMode)
-              components.buttons.actionButtonSoft(
-                context,
-                label: 'Go to Settings',
-                link: '/settings/network/mining',
-              ),
-            SizedBox(height: 80),
-          ])
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+                Container(
+                    alignment: Alignment.topCenter,
+                    padding: EdgeInsets.only(
+                        top: 32, left: 16, right: 16, bottom: 0),
+                    child: Text(
+                      '"Mine to Wallet" is enabled, so transaction history is not available. \n\nTo download your transaction history please disable "Mine to Wallet" in Settings.',
+                      softWrap: true,
+                      maxLines: 10,
+                    )),
+                if (services.developer.developerMode)
+                  components.buttons.actionButtonSoft(
+                    context,
+                    label: 'Go to Settings',
+                    link: '/settings/network/mining',
+                  ),
+                SizedBox(height: 80),
+              ])
         : transactions.isEmpty
             //? components.empty.transactions(context, msg: widget.msg)
             ? components.empty.getTransactionsPlaceholder(context,
@@ -150,7 +152,7 @@ class _TransactionListState extends State<TransactionList> {
                         //        .assetAvatar(transactionRecord.security.symbol)),
                         title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: <Widget>[
                               Text(
                                   services.conversion.securityAsReadable(
                                       transactionRecord.value,

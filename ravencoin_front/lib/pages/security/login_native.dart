@@ -29,8 +29,9 @@ class LoginNative extends StatefulWidget {
 }
 
 class _LoginNativeState extends State<LoginNative> {
-  Map<String, dynamic> data = {};
-  late List listeners = [];
+  Map<String, dynamic> data = <String, dynamic>{};
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   FocusNode unlockFocus = FocusNode();
   bool? autoInitiateUnlock;
   bool enabled = true;
@@ -53,7 +54,7 @@ class _LoginNativeState extends State<LoginNative> {
     }
   }
 
-  Future<bool> get finishedLoading async => await HIVE_INIT.isLoaded();
+  Future<bool> get finishedLoading async => HIVE_INIT.isLoaded();
 
   @override
   void initState() {
@@ -68,7 +69,7 @@ class _LoginNativeState extends State<LoginNative> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     unlockFocus.dispose();
@@ -82,9 +83,9 @@ class _LoginNativeState extends State<LoginNative> {
     } catch (e) {
       data = {};
     }
-    needsConsent = data['needsConsent'] ?? false;
+    needsConsent = data['needsConsent'] as bool? ?? false;
     autoInitiateUnlock =
-        autoInitiateUnlock ?? data['autoInitiateUnlock'] ?? true;
+        autoInitiateUnlock ?? data['autoInitiateUnlock'] as bool? ?? true;
     if (readyToUnlock() && autoInitiateUnlock!) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await submit();
@@ -121,10 +122,10 @@ class _LoginNativeState extends State<LoginNative> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
+                        children: <Widget>[
                           (needsConsent ? ulaMessage : SizedBox(height: 100)),
                           SizedBox(height: 40),
-                          Row(children: [bioButton]),
+                          Row(children: <Widget>[bioButton]),
                           SizedBox(height: 40),
                         ]))),
           ])));
@@ -144,7 +145,7 @@ class _LoginNativeState extends State<LoginNative> {
 
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+        children: <Widget>[
           Container(
               alignment: Alignment.center, width: 18, child: aggrementCheckbox),
           Container(
@@ -226,7 +227,7 @@ class _LoginNativeState extends State<LoginNative> {
 
       /// doesn't await work?
       //while (!(await HIVE_INIT.isLoaded())) {
-      //  await Future.delayed(Duration(milliseconds: 50));
+      //  await Future<void>.delayed(Duration(milliseconds: 50));
       //}
     }
 

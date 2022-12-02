@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/theme/theme.dart';
@@ -13,7 +15,8 @@ class TutorialLayer extends StatefulWidget {
 }
 
 class _TutorialLayerState extends State<TutorialLayer> {
-  late List listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   Color scrimColor = Colors.transparent;
   HitTestBehavior? behavior = null;
   double? height = 0;
@@ -33,7 +36,7 @@ class _TutorialLayerState extends State<TutorialLayer> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();

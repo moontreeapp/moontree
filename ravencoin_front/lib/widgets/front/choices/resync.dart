@@ -33,7 +33,7 @@ class _ResyncChoice extends State<ResyncChoice> {
           style: Theme.of(context).textTheme.bodyText2,
         ),
         SizedBox(height: 16),
-        Row(children: [
+        Row(children: <Widget>[
           components.buttons.actionButtonSoft(
             context,
             enabled: true,

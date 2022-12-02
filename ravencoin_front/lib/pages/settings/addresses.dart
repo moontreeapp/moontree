@@ -17,7 +17,7 @@ class WalletView extends StatefulWidget {
 }
 
 class _WalletViewState extends State<WalletView> {
-  dynamic data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   bool disabled = false;
   bool showSecret = false;
   ToolbarOptions toolbarOptions =
@@ -59,7 +59,7 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    secret = data['secret'] ?? '';
+    secret = data['secret'] as String? ?? '';
     data['secretName'] = SecretType.mnemonic;
     secretName = (data['secretName'] as SecretType)
         .name
@@ -114,7 +114,7 @@ class _WalletViewState extends State<WalletView> {
                 Tab(text: 'Transactions')
               ]))));
 
-  TabBarView body() => TabBarView(children: [
+  TabBarView body() => TabBarView(children: <Widget>[
         detailsView(),
         NotificationListener<UserScrollNotification>(
             onNotification: visibilityOfSendReceive,
@@ -200,7 +200,7 @@ class _WalletViewState extends State<WalletView> {
               contentPadding: EdgeInsets.only(left: 0, right: 0),
               onTap: () => setState(() {
                 // Delay to make sure the frames are rendered properly
-                //await Future.delayed(const Duration(milliseconds: 300));
+                //await Future<void>.delayed(const Duration(milliseconds: 300));
 
                 _scrollController.animateTo(
                     _scrollController.position.minScrollExtent,
@@ -220,10 +220,10 @@ class _WalletViewState extends State<WalletView> {
                 //    .wif; // .wif is the format that raven-Qt-testnet expects
                 //.base58Priv;
                 //.privKey;
-                exposureAndIndex = Column(children: [
+                exposureAndIndex = Column(children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
+                    children: <Widget>[
                       Text(
                         'Index: ' + walletAddress.hdIndex.toString(),
                       ),
@@ -298,7 +298,7 @@ class _WalletViewState extends State<WalletView> {
               onLongPress: () {},
               title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     Text(address ?? '',
                         style: Theme.of(context).textTheme.caption),
                     components.icons.income(context),

@@ -628,7 +628,7 @@ class TransactionService {
                   note: note,
                 ));
                 usedUTXOs.addAll(txEstimate.item2.utxos);
-                await Future.delayed(Duration(seconds: 10));
+                await Future<void>.delayed(Duration(seconds: 10));
                 utxosBySecurity = <Security, List<Vout>>{};
                 utxosBySecurity[key] = [];
                 i = 0;
@@ -651,7 +651,7 @@ class TransactionService {
               note: note,
             ));
             usedUTXOs.addAll(txEstimate.item2.utxos);
-            await Future.delayed(Duration(seconds: 10));
+            await Future<void>.delayed(Duration(seconds: 10));
           }
           return usedUTXOs;
         }
@@ -675,7 +675,7 @@ class TransactionService {
           successMsg: msg ?? 'Successfully Swept',
           note: note,
         ));
-        await Future.delayed(Duration(seconds: 10));
+        await Future<void>.delayed(Duration(seconds: 10));
         usedUTXOs.addAll(txEstimate.item2.utxos);
         return usedUTXOs;
       } else {
@@ -706,7 +706,7 @@ class TransactionService {
               successMsg: '',
               note: note,
             ));
-            await Future.delayed(Duration(seconds: 10));
+            await Future<void>.delayed(Duration(seconds: 10));
             usedUTXOs.addAll(txEstimate.item2.utxos);
             utxos = <Vout>[];
             i = 0;
