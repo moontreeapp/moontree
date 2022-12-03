@@ -46,6 +46,10 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
     SecurityProclaim.staticUSD,
   ];
 
+  Set<String>? _coinSymbols;
+  Set<String> get coinSymbols =>
+      _coinSymbols ??= coins.map((e) => e.symbol).toSet();
+
   Security get currentCoin {
     if (pros.settings.chain == Chain.ravencoin &&
         pros.settings.net == Net.main) {

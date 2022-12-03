@@ -297,7 +297,7 @@ class _HoldingList extends State<HoldingList> {
     var rvnHolding = <Widget>[];
     var assetHoldings = <Widget>[];
     final searchBar = Padding(
-        padding: EdgeInsets.only(top: 1, bottom: 16, left: 16, right: 16),
+        padding: const EdgeInsets.only(top: 1, bottom: 16, left: 16, right: 16),
         child: TextFieldFormatted(
             controller: searchController,
             //focusedErrorBorder: InputBorder.none,
@@ -305,12 +305,13 @@ class _HoldingList extends State<HoldingList> {
             //focusedBorder: InputBorder.none,
             //enabledBorder: InputBorder.none,
             //disabledBorder: InputBorder.none,
-            contentPadding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+            contentPadding:
+                const EdgeInsets.only(left: 16, top: 16, bottom: 16),
             autocorrect: false,
             textInputAction: TextInputAction.done,
             labelText: 'Search',
             suffixIcon: IconButton(
-              icon: Padding(
+              icon: const Padding(
                   padding: EdgeInsets.only(top: 0, right: 14),
                   child: Icon(Icons.clear_rounded, color: AppColors.black38)),
               onPressed: () => setState(() {
@@ -323,7 +324,8 @@ class _HoldingList extends State<HoldingList> {
     for (AssetHolding holding in holdings ?? []) {
       var thisHolding = ListTile(
           //dense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
           onTap: () async => onTap(wallet, holding),
           onLongPress: _togglePath,
           leading: leadingIcon(holding),
@@ -334,8 +336,8 @@ class _HoldingList extends State<HoldingList> {
                       onTap: () =>
                           setState(() => showSearchBar = !showSearchBar),
                       child: searchController.text == ''
-                          ? Icon(Icons.search)
-                          : Icon(
+                          ? const Icon(Icons.search)
+                          : const Icon(
                               Icons.search,
                               shadows: [
                                 Shadow(
@@ -351,15 +353,14 @@ class _HoldingList extends State<HoldingList> {
                   : null)
               : null);
       if (holding.symbol == currentCrypto.symbol) {
-        rvnHolding.add(Container(
-            //duration: Duration(milliseconds: 500),
-            child: Column(
+        //if (pros.securities.coinSymbols.contains(holding.symbol)) {
+        rvnHolding.add(Column(
           children: <Widget>[
             thisHolding,
             if (showSearchBar && !isEmpty) searchBar,
           ],
-        )));
-        rvnHolding.add(Divider(
+        ));
+        rvnHolding.add(const Divider(
           height: 1,
           indent: 70,
           endIndent: 0,
@@ -368,7 +369,7 @@ class _HoldingList extends State<HoldingList> {
         if (searchController.text == '' ||
             holding.symbol.contains(searchController.text.toUpperCase())) {
           assetHoldings.add(thisHolding);
-          assetHoldings.add(Divider(height: 1));
+          assetHoldings.add(const Divider(height: 1));
         }
       }
     }
@@ -390,7 +391,8 @@ class _HoldingList extends State<HoldingList> {
             pros.unspents.records.where((u) => u.height == 0).length > 0)) {
       claimInvite.add(ListTile(
           //dense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
           onTap: () async => components.message.giveChoices(
                 context,
                 title: 'Claim Your EVR',
@@ -407,14 +409,14 @@ class _HoldingList extends State<HoldingList> {
               width: 40,
               child: components.icons.assetAvatar('EVR')),
           title: Text('Evrmore', style: Theme.of(context).textTheme.bodyText1),
-          trailing: ClaimEvr()));
-      claimInvite.add(Divider(height: 1));
+          trailing: const ClaimEvr()));
+      claimInvite.add(const Divider(height: 1));
     }
 
     final listView = ListView(
         controller: widget.scrollController,
         dragStartBehavior: DragStartBehavior.start,
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         children: claimInvite.length > 0
             ? claimInvite
             : <Widget>[
@@ -635,7 +637,7 @@ class _HoldingList extends State<HoldingList> {
               : services.conversion
                   .securityAsReadable(holding.balance?.value ?? 0,
                       security: holding.balance?.security ??
-                          Security(
+                          const Security(
                             symbol: 'unknown',
                             chain: Chain.none,
                             net: Net.test,

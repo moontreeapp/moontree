@@ -21,7 +21,7 @@ dependencies:
   ulid: ^2.0.0
   tuple: ^2.0.0
   intl: ^0.17.0
-  serverpod_client: ^0.9.8
+  serverpod_client: ^0.9.20
   electrum_adapter: ^2.0.2
   proclaim: ^4.0.2
   wallet_utils: ^3.0.2

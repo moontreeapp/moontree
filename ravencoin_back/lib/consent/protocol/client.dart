@@ -1,92 +1,106 @@
 /* AUTOMATICALLY GENERATED CODE DO NOT MODIFY */
 /*   To generate run: "serverpod generate"    */
 
+// ignore_for_file: library_private_types_in_public_api
 // ignore_for_file: public_member_api_docs
-// ignore_for_file: unused_import
+// ignore_for_file: implementation_imports
 
-import 'dart:io';
-import 'dart:typed_data' as typed_data;
-import 'package:serverpod_client/serverpod_client.dart';
-import 'protocol.dart';
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'dart:async' as _i2;
+import 'dart:io' as _i3;
+import 'protocol.dart' as _i4;
 
-class _EndpointConsent extends EndpointRef {
+class _EndpointConsent extends _i1.EndpointRef {
+  _EndpointConsent(_i1.EndpointCaller caller) : super(caller);
+
   @override
   String get name => 'consent';
 
-  _EndpointConsent(EndpointCaller caller) : super(caller);
-
-  Future<String> given(
+  _i2.Future<String> given(
     String deviceId,
     String documentName,
-  ) async {
-    return await caller.callServerEndpoint('consent', 'given', 'String', {
-      'deviceId': deviceId,
-      'documentName': documentName,
-    });
-  }
+  ) =>
+      caller.callServerEndpoint<String>(
+        'consent',
+        'given',
+        {
+          'deviceId': deviceId,
+          'documentName': documentName,
+        },
+      );
 }
 
-class _EndpointHasGiven extends EndpointRef {
+class _EndpointHasGiven extends _i1.EndpointRef {
+  _EndpointHasGiven(_i1.EndpointCaller caller) : super(caller);
+
   @override
   String get name => 'hasGiven';
 
-  _EndpointHasGiven(EndpointCaller caller) : super(caller);
-
-  Future<bool> consent(
+  _i2.Future<bool> consent(
     String deviceId,
     String documentName,
-  ) async {
-    return await caller.callServerEndpoint('hasGiven', 'consent', 'bool', {
-      'deviceId': deviceId,
-      'documentName': documentName,
-    });
-  }
+  ) =>
+      caller.callServerEndpoint<bool>(
+        'hasGiven',
+        'consent',
+        {
+          'deviceId': deviceId,
+          'documentName': documentName,
+        },
+      );
 }
 
-class _EndpointDocument extends EndpointRef {
+class _EndpointDocument extends _i1.EndpointRef {
+  _EndpointDocument(_i1.EndpointCaller caller) : super(caller);
+
   @override
   String get name => 'document';
 
-  _EndpointDocument(EndpointCaller caller) : super(caller);
-
-  Future<String> upload(
+  _i2.Future<String> upload(
     String document,
     String documentName,
     String? documentVersion,
-  ) async {
-    return await caller.callServerEndpoint('document', 'upload', 'String', {
-      'document': document,
-      'documentName': documentName,
-      'documentVersion': documentVersion,
-    });
-  }
+  ) =>
+      caller.callServerEndpoint<String>(
+        'document',
+        'upload',
+        {
+          'document': document,
+          'documentName': documentName,
+          'documentVersion': documentVersion,
+        },
+      );
 }
 
-class Client extends ServerpodClient {
-  late final _EndpointConsent consent;
-  late final _EndpointHasGiven hasGiven;
-  late final _EndpointDocument document;
-
-  Client(String host,
-      {SecurityContext? context,
-      ServerpodClientErrorCallback? errorHandler,
-      AuthenticationKeyManager? authenticationKeyManager})
-      : super(host, Protocol.instance,
-            context: context,
-            errorHandler: errorHandler,
-            authenticationKeyManager: authenticationKeyManager) {
+class Client extends _i1.ServerpodClient {
+  Client(
+    String host, {
+    _i3.SecurityContext? context,
+    _i1.AuthenticationKeyManager? authenticationKeyManager,
+  }) : super(
+          host,
+          _i4.Protocol(),
+          context: context,
+          authenticationKeyManager: authenticationKeyManager,
+        ) {
     consent = _EndpointConsent(this);
     hasGiven = _EndpointHasGiven(this);
     document = _EndpointDocument(this);
   }
 
+  late final _EndpointConsent consent;
+
+  late final _EndpointHasGiven hasGiven;
+
+  late final _EndpointDocument document;
+
   @override
-  Map<String, EndpointRef> get endpointRefLookup => {
+  Map<String, _i1.EndpointRef> get endpointRefLookup => {
         'consent': consent,
         'hasGiven': hasGiven,
         'document': document,
       };
-
   @override
-  Map<String, ModuleEndpointCaller> get moduleLookup => {};
+  Map<String, _i1.ModuleEndpointCaller> get moduleLookup => {};
 }

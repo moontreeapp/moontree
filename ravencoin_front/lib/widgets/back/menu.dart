@@ -111,7 +111,8 @@ class _NavMenuState extends State<NavMenu> {
               name: 'Export',
               link: '/settings/export',
               disabled: !services.developer.advancedDeveloperMode),
-          if (services.developer.developerMode && Current.balanceRVN.value > 0)
+          if (services.developer.developerMode &&
+              (pros.securities.currentCoin.balance?.value ?? 0) > 0)
             destination(
               icon: MdiIcons.broom,
               name: 'Sweep',

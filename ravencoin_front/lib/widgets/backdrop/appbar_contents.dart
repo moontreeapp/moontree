@@ -35,10 +35,10 @@ class BackdropAppBarContents extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final appBar = Platform.isIOS
+    final Widget appBar = Platform.isIOS
         ? buildAppBar(
             context,
-            systemOverlayStyle: SystemUiOverlayStyle(
+            systemOverlayStyle: const SystemUiOverlayStyle(
               statusBarBrightness: Brightness.dark, // For iOS
             ),
             backgroundColor: Colors.transparent,
@@ -49,7 +49,7 @@ class BackdropAppBarContents extends StatelessWidget
             backgroundColor: AppColors.primary,
             shape: components.shape.topRounded8,
           );
-    /*final alphaBar = Platform.isIOS
+    /*final Widget  alphaBar = Platform.isIOS
         ? Container(
             height: 56,
             child: ClipRect(
@@ -80,11 +80,11 @@ class BackdropAppBarContents extends StatelessWidget
             height: 56,
             color: Theme.of(context).backgroundColor,
             fuzzyTop: false,
-            frontLayerBoxShadow: const [],
+            frontLayerBoxShadow: const <BoxShadow>[],
           ),
         testAppBar(appBar, test: true),
         // alphaBar,
-        AppBarScrim(),
+        const AppBarScrim(),
       ],
     );
   }
@@ -145,11 +145,11 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
           /// the connection light in the event that we have network activity.
           //if (!spoof) ActivityLight(),
           if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),
-          if (!spoof) QRCodeContainer(),
-          if (!spoof) SnackBarViewer(),
-          if (!spoof) SizedBox(width: 6),
+          if (!spoof) const QRCodeContainer(),
+          if (!spoof) const SnackBarViewer(),
+          if (!spoof) const SizedBox(width: 6),
           if (!spoof) components.status,
-          if (!spoof) PeristentKeyboardWatcher(),
+          if (!spoof) const PeristentKeyboardWatcher(),
         ],
       );
 }

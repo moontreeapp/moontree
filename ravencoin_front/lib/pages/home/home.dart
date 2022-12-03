@@ -7,6 +7,8 @@ import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -33,9 +35,9 @@ class _HomeState extends State<Home> {
         });
       }
     }));
-    listeners.add(pros.settings.changes.listen((Change change) {
-      setState(() {});
-    }));
+    //listeners.add(pros.settings.changes.listen((Change<Setting> change) {
+    //  setState(() {});
+    //}));
 
     listeners.add(streams.app.wallet.refresh.listen((bool value) {
       print('told to Refresh');
@@ -53,17 +55,17 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final backupCondition =
-        (streams.app.triggers.value == ThresholdTrigger.backup &&
-            !Current.wallet.backedUp);
+    final bool backupCondition =
+        streams.app.triggers.value == ThresholdTrigger.backup &&
+            !Current.wallet.backedUp;
     if (backupCondition) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!['Backupintro', 'Backup', 'BackupConfirm']
+        if (!<String>['Backupintro', 'Backup', 'BackupConfirm']
             .contains(streams.app.page.value)) {
           streams.app.lead.add(LeadIcon.none);
           Navigator.of(context).pushNamed(
             '/security/backup/backupintro',
-            arguments: {'fadeIn': true},
+            arguments: <String, bool>{'fadeIn': true},
           );
         }
       });
@@ -75,10 +77,10 @@ class _HomeState extends State<Home> {
     return HomePage(appContext: appContext);
   }
 
-  Future showTutorials() async {
-    for (var tutorial in services.tutorial.missing) {
+  Future<void> showTutorials() async {
+    for (final TutorialStatus tutorial in services.tutorial.missing) {
       streams.app.tutorial.add(tutorial);
-      services.tutorial.complete(tutorial);
+      await services.tutorial.complete(tutorial);
     }
   }
 }

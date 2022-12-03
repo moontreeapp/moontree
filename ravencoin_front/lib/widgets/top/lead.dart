@@ -18,7 +18,7 @@ class PageLead extends StatefulWidget {
 
 class _PageLead extends State<PageLead> {
   late String pageTitle = '';
-  late String? settingTitle;
+  String? settingTitle;
   late LeadIcon xlead = LeadIcon.pass;
   late bool loading = false;
   late List<StreamSubscription<dynamic>> listeners =
