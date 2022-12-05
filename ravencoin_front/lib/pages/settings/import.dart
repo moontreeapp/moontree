@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/services/import.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/import.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -15,6 +17,8 @@ import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/other/selection_control.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
+import '../../utils/log.dart';
+
 class Import extends StatefulWidget {
   final dynamic data;
   const Import({this.data}) : super();
@@ -24,7 +28,7 @@ class Import extends StatefulWidget {
 }
 
 class _ImportState extends State<Import> {
-  dynamic data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   FocusNode wordsFocus = FocusNode();
   FocusNode submitFocus = FocusNode();
   TextEditingController words = TextEditingController();
@@ -33,10 +37,13 @@ class _ImportState extends State<Import> {
   String importFormatDetected = '';
   final Backup storage = Backup();
   final TextEditingController password = TextEditingController();
+  final TextEditingController salt = TextEditingController();
   FileDetails? file;
   String? finalText;
   String? finalAccountId;
   bool importVisible = true;
+  bool submittedAttempt = false;
+  ImportFormat detection = ImportFormat.invalid;
 
   @override
   void initState() {
@@ -71,8 +78,8 @@ class _ImportState extends State<Import> {
     if (data['walletId'] == 'current' || data['walletId'] == null) {
       wallet = Current.wallet;
     } else {
-      wallet =
-          pros.wallets.primaryIndex.getOne(data['walletId']) ?? Current.wallet;
+      wallet = pros.wallets.primaryIndex.getOne(data['walletId'] as String?) ??
+          Current.wallet;
     }
     return BackdropLayers(
         back: BlankBack(),
@@ -88,7 +95,8 @@ class _ImportState extends State<Import> {
                   : FutureBuilder(
                       initialData: null,
                       future: getClip(),
-                      builder: (context, snapshot) =>
+                      builder: (BuildContext context,
+                              AsyncSnapshot<Object?> snapshot) =>
                           body(snapshot.data as String?)),
             )));
   }
@@ -103,10 +111,12 @@ class _ImportState extends State<Import> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: file == null
                     ? [
-                        // hide file button
-                        //if (!Platform.isIOS && words.text == '') fileButton,
-                        //if (!Platform.isIOS && words.text == '')
-                        //  SizedBox(width: 16),
+                        if (services.developer.advancedDeveloperMode &&
+                            !Platform.isIOS &&
+                            words.text == '') ...[
+                          fileButton,
+                          SizedBox(width: 16)
+                        ],
                         submitButton(),
                       ]
                     : [submitButton('Import File')]),
@@ -139,58 +149,65 @@ class _ImportState extends State<Import> {
           hintText: 'Please enter seed words, a WIF, or a private key.',
           helperText:
               importFormatDetected == 'Unknown' ? null : importFormatDetected,
-          errorText:
-              importFormatDetected == 'Unknown' ? importFormatDetected : null,
-          suffixIcon:
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            IconButton(
-              icon: Icon(
-                  importVisible ? Icons.visibility : Icons.visibility_off,
-                  color: AppColors.black60),
-              onPressed: () => setState(() {
-                importVisible = !importVisible;
-              }),
-            ),
-            if (clip != null && validateValue(clip))
-              IconButton(
-                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+          errorText: submittedAttempt
+              ? importFormatDetected == 'Unknown'
+                  ? importFormatDetected
+                  : null
+              : null,
+          suffixIcon: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                      importVisible ? Icons.visibility : Icons.visibility_off,
+                      color: AppColors.black60),
                   onPressed: () => setState(() {
-                        words.text = clip;
-                        enableImport();
-                      })),
-            if (clip == null)
-              IconButton(
-                  icon: Icon(Icons.paste_rounded, color: AppColors.black60),
-                  onPressed: () async {
-                    final clip = await getClip();
-                    setState(() {
-                      words.text = clip;
-                      enableImport();
-                    });
+                    importVisible = !importVisible;
                   }),
-            IconButton(
-                icon: Icon(Icons.clear_rounded,
-                    color: words.text != ''
-                        ? AppColors.black60
-                        : AppColors.black12),
-                onPressed: () => setState(() {
-                      importFormatDetected = '';
-                      words.text = '';
-                    })),
-          ]),
-          onChanged: (value) => enableImport(),
+                ),
+                if (clip != null && validateValue(clip))
+                  IconButton(
+                      icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                      onPressed: () => setState(() {
+                            words.text = clip;
+                            enableImport();
+                          })),
+                if (clip == null)
+                  IconButton(
+                      icon: Icon(Icons.paste_rounded, color: AppColors.black60),
+                      onPressed: () async {
+                        final String clip = await getClip();
+                        setState(() {
+                          words.text = clip;
+                          enableImport();
+                        });
+                      }),
+                IconButton(
+                    icon: Icon(Icons.clear_rounded,
+                        color: words.text != ''
+                            ? AppColors.black60
+                            : AppColors.black12),
+                    onPressed: () => setState(() {
+                          importFormatDetected = '';
+                          words.text = '';
+                        })),
+              ]),
+          onChanged: (String value) {
+            submittedAttempt = false;
+            enableImport();
+          },
           onEditingComplete: () {
             enableImport();
             FocusScope.of(context).requestFocus(submitFocus);
           }));
 
-  Widget get filePicked => Column(children: [
+  Widget get filePicked => Column(children: <Widget>[
         Padding(
             //padding: EdgeInsets.only(left: 8, top: 16.0),
             padding: EdgeInsets.only(left: 16, right: 0, top: 16, bottom: 0),
             child: ListTile(
               dense: true,
-              contentPadding: EdgeInsets.all(0),
+              contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.attachment_rounded, color: Colors.black),
               title: Text(file!.filename,
                   style: Theme.of(context).textTheme.bodyText1),
@@ -206,13 +223,25 @@ class _ImportState extends State<Import> {
         Divider(),
       ]);
 
-  Widget submitButton([String? label]) => components.buttons.actionButton(
-      context,
-      enabled: importEnabled,
-      focusNode: submitFocus,
-      label: (label ?? 'Import').toUpperCase(),
-      disabledIcon: components.icons.importDisabled(context),
-      onPressed: () async => await attemptImport(file?.content ?? words.text));
+  Widget submitButton([String? label]) =>
+      components.buttons.actionButton(context,
+          enabled: true, // importEnabled,
+          focusNode: submitFocus,
+          label: (label ?? 'Import').toUpperCase(),
+          disabledIcon: components.icons.importDisabled(context),
+          onPressed: () async {
+        setState(() {
+          submittedAttempt = true;
+        });
+        if (importEnabled) {
+          await attemptImport(file?.content ?? words.text);
+        } else {
+          enableImport();
+          if (importEnabled) {
+            await attemptImport(file?.content ?? words.text);
+          }
+        }
+      });
 
   Widget get fileButton => components.buttons.actionButton(
         context,
@@ -229,8 +258,8 @@ class _ImportState extends State<Import> {
       ImportFormat.invalid;
 
   void enableImport({String? given}) {
-    var oldImportFormatDetected = importFormatDetected;
-    var detection =
+    String oldImportFormatDetected = importFormatDetected;
+    detection =
         services.wallet.import.detectImportType((given ?? words.text).trim());
     importEnabled = detection != ImportFormat.invalid;
     if (detection == ImportFormat.mnemonic) {
@@ -257,15 +286,45 @@ class _ImportState extends State<Import> {
         return AlertDialog(
           title: Column(
             children: <Widget>[
-              TextField(
+              TextFieldFormatted(
                   autocorrect: false,
                   controller: password,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
-                    hintText: 'password',
-                  ),
+                  labelText: 'Password',
+                  hintText: 'Password123!',
+                  helperText:
+                      'leave blank if you used biometric or native authentication when creating the export.',
+                  helperMaxLines: 10,
+                  onEditingComplete: () {
+                    Navigator.of(context).pop();
+                  }),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Next'))
+            ],
+          ),
+        );
+      }).then((value) => streams.app.scrim.add(false));
+
+  Future requestSalt() async => showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        streams.app.scrim.add(true);
+        return AlertDialog(
+          title: Column(
+            children: <Widget>[
+              TextFieldFormatted(
+                  autocorrect: false,
+                  controller: salt,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                  hintText: 'Encryption Key',
+                  helperText:
+                      'This key was provided when the export was created.',
+                  helperMaxLines: 10,
                   onEditingComplete: () {
                     Navigator.of(context).pop();
                   }),
@@ -279,36 +338,72 @@ class _ImportState extends State<Import> {
         );
       }).then((value) => streams.app.scrim.add(false));
 
-  Future attemptImport([String? importData]) async {
+  Future<void> attemptImport([String? importData]) async {
     FocusScope.of(context).unfocus();
-    var text = (importData ?? words.text).trim();
+    String text = (importData ?? words.text).trim();
+    String resp = text;
+    bool encrypted = true;
 
-    /* will fix decryption later
     /// decrypt if you must...
     if (importData != null) {
-      var resp;
+      final Map<String, Map<String, dynamic>> textJson =
+          json.decode(text) as Map<String, Map<String, dynamic>>;
       try {
-        resp = ImportFrom.maybeDecrypt(
-          text: importData,
-          cipher: services.cipher.currentCipher!,
-        );
-      } catch (e) {}
-      if (resp == null) {
+        for (final Map<String, dynamic> walletJson
+            in textJson['wallets']!.values as Iterable<Map<String, dynamic>>) {
+          final String decrypted = ImportFrom.maybeDecrypt(
+            text: walletJson['secret'] as String,
+            cipher: services.cipher.currentCipher!,
+          );
+          resp = resp.replaceFirst(walletJson['secret'] as String, decrypted);
+        }
+      } catch (e) {
+        log(e);
+      }
+      if (resp == text) {
         // ask for password, make cipher, pass that cipher in.
         // what if it's not the latest cipher type? just try all cipher types...
-        for (var cipherType in services.cipher.allCipherTypes) {
+        for (final CipherType cipherType in services.cipher.allCipherTypes) {
           await requestPassword();
+          await requestSalt();
           // cancelled
-          if (password.text == '') break;
+          if (password.text == '' && salt.text == '') {
+            break;
+          }
+          await components.loading.screen(
+            message: 'Decrypting',
+            staticImage: true,
+            playCount: 2,
+          );
           try {
-            resp = ImportFrom.maybeDecrypt(
-                text: importData,
-                cipher: CipherReservoir.cipherInitializers[cipherType]!(
-                    services.cipher.getPassword(altPassword: password.text)));
-          } catch (e) {}
-          if (resp != null) break;
+            for (final Map<String, dynamic> walletJson in textJson['wallets']!
+                .values as Iterable<Map<String, dynamic>>) {
+              if ((walletJson['secret'] as String).split(' ').length == 12) {
+                encrypted = false;
+                break;
+              }
+              final String decrypted = ImportFrom.maybeDecrypt(
+                text: walletJson['secret'] as String,
+                cipher: CipherProclaim.cipherInitializers[cipherType]!(
+                    services.cipher.getPassword(
+                        altPassword:
+                            password.text == '' ? salt.text : password.text),
+                    services.cipher.getSalt(
+                        altSalt: salt.text == ''
+                            ? password.text
+                            : salt.text)) as CipherBase,
+              );
+              resp =
+                  resp.replaceFirst(walletJson['secret'] as String, decrypted);
+            }
+          } catch (e) {
+            log(e);
+          }
+          if (resp != text) {
+            break;
+          }
         }
-        if (resp == null) {
+        if (resp == text && encrypted) {
           showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -323,6 +418,7 @@ class _ImportState extends State<Import> {
       }
       text = resp;
     }
+    /* will fix decryption later
     */
 
     /// save the key

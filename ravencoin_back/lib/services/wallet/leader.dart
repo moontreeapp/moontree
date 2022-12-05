@@ -64,33 +64,33 @@ class LeaderWalletService {
   Future<Address> deriveNextAddress(
     LeaderWallet wallet,
     NodeExposure exposure,
-  ) async {
-    final hdIndex = wallet.highestIndexOf(exposure) + 1;
-    return await deriveAddressByIndex(wallet, exposure, hdIndex);
-  }
+  ) async =>
+      await deriveAddressByIndex(
+          wallet: wallet,
+          exposure: exposure,
+          hdIndex: wallet.highestIndexOf(exposure) + 1);
 
-  Future<Address> deriveAddressByIndex(
-    LeaderWallet wallet,
-    NodeExposure exposure,
-    int hdIndex,
-  ) async {
+  Future<Address> deriveAddressByIndex({
+    required LeaderWallet wallet,
+    required NodeExposure exposure,
+    required int hdIndex,
+  }) async {
     final subwallet = await getSubWallet(wallet, hdIndex, exposure);
     return Address(
-        id: subwallet.scripthash,
+        scripthash: subwallet.scripthash,
         address: subwallet.address!,
         walletId: wallet.id,
         hdIndex: hdIndex,
         exposure: exposure,
+        chain: pros.settings.chain,
         net: pros.settings.net);
   }
 
-  Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async {
-    return SeedWallet(
-      await wallet.seed,
-      pros.settings.chain,
-      pros.settings.net,
-    );
-  }
+  Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async => SeedWallet(
+        await wallet.seed,
+        pros.settings.chain,
+        pros.settings.net,
+      );
 
   Future<HDWallet> getSubWallet(
     LeaderWallet wallet,
@@ -217,9 +217,9 @@ class LeaderWalletService {
       for (var exposure in exposures) {
         for (var hdIndex in range(highestIndex)) {
           newAddresses.add(await deriveAddressByIndex(
-            wallet,
-            exposure,
-            hdIndex as int,
+            wallet: wallet,
+            exposure: exposure,
+            hdIndex: hdIndex as int,
           ));
         }
       }

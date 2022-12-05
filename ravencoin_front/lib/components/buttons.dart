@@ -116,7 +116,7 @@ class ButtonComponents {
     double width = 98,
     int? number,
   }) =>
-      Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
         Container(
             height: 24,
             child: Text(
@@ -149,83 +149,87 @@ class ButtonComponents {
     required List<Widget> buttons,
     Widget? widthSpacer,
   }) =>
-      Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Container(
-            /*height: MediaQuery.of(context).size.height - 100, // example
+      Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+                /*height: MediaQuery.of(context).size.height - 100, // example
           instead of this which causes bottom overflow issues we implemented
           a listener on the keyboard to hide the button if the keyboard is
           visible. Not ideal because you must dismiss the keyboard in order
           to see the button, but I think its nearer to the Truth. see
           KeyboardHidesWidget
           */
-            ),
-        Container(
-          height: 120,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              IgnorePointer(
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withOpacity(0.0),
-                        Colors.white,
-                      ],
+                ),
+            Container(
+              height: 120,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  IgnorePointer(
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.white.withOpacity(0.0),
+                            Colors.white,
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Container(
+                    height: 80,
+                    alignment: Alignment.topCenter,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        SizedBox(width: 16),
+                        ...<Widget>[
+                          for (var button in buttons) button,
+                        ].intersperse(widthSpacer ?? SizedBox(width: 16)),
+                        SizedBox(width: 16),
+                      ],
+                    ),
+                    decoration: BoxDecoration(color: Colors.white),
+                  ),
+                ],
               ),
-              Container(
-                height: 80,
-                alignment: Alignment.topCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(width: 16),
-                    ...<Widget>[
-                      for (var button in buttons) button,
-                    ].intersperse(widthSpacer ?? SizedBox(width: 16)),
-                    SizedBox(width: 16),
-                  ],
-                ),
-                decoration: BoxDecoration(color: Colors.white),
-              ),
-            ],
-          ),
-        ),
-      ]);
+            ),
+          ]);
 
   Widget layeredButtons(
     BuildContext context, {
     required List<Widget> buttons,
     Widget? widthSpacer,
   }) =>
-      Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Container(
-            /*height: MediaQuery.of(context).size.height - 100, // example
+      Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+                /*height: MediaQuery.of(context).size.height - 100, // example
           instead of this which causes bottom overflow issues we implemented
           a listener on the keyboard to hide the button if the keyboard is
           visible. Not ideal because you must dismiss the keyboard in order
           to see the button, but I think its nearer to the Truth. see
           KeyboardHidesWidget
           */
-            ),
-        components.containers.navBar(
-          context,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(width: 16),
-              ...<Widget>[
-                for (var button in buttons) button,
-              ].intersperse(widthSpacer ?? SizedBox(width: 16)),
-              SizedBox(width: 16),
-            ],
-          ),
-        )
-      ]);
+                ),
+            components.containers.navBar(
+              context,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  SizedBox(width: 16),
+                  ...<Widget>[
+                    for (var button in buttons) button,
+                  ].intersperse(widthSpacer ?? SizedBox(width: 16)),
+                  SizedBox(width: 16),
+                ],
+              ),
+            )
+          ]);
 }

@@ -17,16 +17,19 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/device.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
+import 'package:ravencoin_front/utils/login.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CreatePassword extends StatefulWidget {
+  const CreatePassword({Key? key}) : super(key: key);
+
   @override
   _CreatePasswordState createState() => _CreatePasswordState();
 }
 
 class _CreatePasswordState extends State<CreatePassword> {
-  //late List listeners = [];
+  //late List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   var password = TextEditingController();
   var confirm = TextEditingController();
   var passwordVisible = false;
@@ -53,7 +56,7 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   @override
   void dispose() {
-    //for (var listener in listeners) {
+    //for (final StreamSubscription<dynamic>> listener in listeners) {
     //  listener.cancel();
     //}
     password.dispose();
@@ -123,7 +126,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
+                        children: <Widget>[
                           SizedBox(
                             height: .063.ofMediaHeight(context),
                           ),
@@ -131,7 +134,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                           SizedBox(
                             height: .021.ofMediaHeight(context),
                           ),
-                          Row(children: [unlockButton]),
+                          Row(children: <Widget>[unlockButton]),
                           SizedBox(
                             height: .052.ofMediaHeight(context),
                           ),
@@ -152,7 +155,7 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+        children: <Widget>[
           Container(
               alignment: Alignment.center, width: 18, child: aggrementCheckbox),
           Container(
@@ -277,7 +280,7 @@ class _CreatePasswordState extends State<CreatePassword> {
               ));
             }
           }),
-      onPressed: () async => await submit());
+      onPressed: () async => submit());
 
   Widget get aggrementCheckbox => Checkbox(
         //checkColor: Colors.white,
@@ -315,17 +318,20 @@ class _CreatePasswordState extends State<CreatePassword> {
       await services.authentication
           .setMethod(method: AuthMethod.moontreePassword);
       await consentToAgreements();
-      //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
+      //await Future<void>.delayed(Duration(milliseconds: 200)); // in release mode?
       await populateWalletsWithSensitives();
       await services.authentication.setPassword(
         password: password.text,
+        //salt: password.text, // we should salt it with the password itself...
+        /// if we salt with this we must provide it to them for decrypting
+        /// exports, which means since this is the way it already is, this will
+        /// require a migration or a password reset before the export feature is
+        /// made available... unless we don't encrypt exports...
         salt: await SecureStorage.authenticationKey,
         message: '',
         saveSecret: saveSecret,
       );
       await exitProcess();
-      streams.app.context.add(AppContext.wallet);
-      streams.app.verify.add(true);
     } else {
       setState(() {
         password.text = '';
@@ -334,16 +340,12 @@ class _CreatePasswordState extends State<CreatePassword> {
   }
 
   Future<void> exitProcess() async {
-    await setupWallets();
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
-    services.cipher.initCiphers(
-      altPassword: password.text,
-      altSalt: await SecureStorage.authenticationKey,
+    await components.loading.screen(
+      message: 'Creating Wallet',
+      returnHome: false,
+      playCount: 4,
     );
-    await services.cipher.updateWallets();
-    services.cipher.cleanupCiphers();
-    services.cipher.loginTime();
-    streams.app.splash.add(false); // trigger to refresh app bar again
-    streams.app.logout.add(false);
+    await setupWallets();
+    login(context, password: password.text);
   }
 }

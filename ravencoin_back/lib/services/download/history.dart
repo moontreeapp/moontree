@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 import 'package:tuple/tuple.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -143,7 +144,7 @@ class HistoryService {
       transactionIds
           .where((transactionId) =>
               transactionId !=
-                  'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262' && // don't download genesis block of Evrmore, it's too big.
+                  evrAirdropTx && // don't download genesis block of Evrmore, it's too big.
               !pros.transactions.confirmed
                   .map((e) => e.id)
                   .contains(transactionId))
@@ -160,13 +161,7 @@ class HistoryService {
   ) async {
     var symbol = vout.scriptPubKey.asset ?? 'RVN';
     var value = vout.valueSat;
-    var security = pros.securities.primaryIndex.getOne(
-        symbol,
-        ['RVN', 'EVR'].contains(symbol)
-            ? SecurityType.crypto
-            : SecurityType.asset,
-        chain,
-        net);
+    var security = pros.securities.primaryIndex.getOne(symbol, chain, net);
     var asset = pros.assets.primaryIndex.getOne(symbol, chain, net);
     if (security == null ||
         asset == null ||
@@ -198,7 +193,6 @@ class HistoryService {
         );
         security = Security(
           symbol: symbol,
-          securityType: SecurityType.asset,
           chain: chain,
           net: net,
         );
@@ -207,7 +201,7 @@ class HistoryService {
         streams.asset.added.add(asset);
       }
     }
-    return Tuple3(value, security ?? pros.securities.currentCrypto, asset);
+    return Tuple3(value, security ?? pros.securities.currentCoin, asset);
   }
 
   Future<List<Tx>> grabTransactions(Iterable<String> transactionIds) async {
@@ -356,6 +350,7 @@ class HistoryService {
           justReturn: true,
         )
     ];
+    print('saving Futures ${futures.length}');
     await saveThese(
       await Future.wait<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>>(futures),
     );

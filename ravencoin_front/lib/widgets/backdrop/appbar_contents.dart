@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:hive/hive.dart';
+import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:electrum_adapter/methods/server/ping.dart';
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
@@ -32,10 +35,10 @@ class BackdropAppBarContents extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final appBar = Platform.isIOS
+    final Widget appBar = Platform.isIOS
         ? buildAppBar(
             context,
-            systemOverlayStyle: SystemUiOverlayStyle(
+            systemOverlayStyle: const SystemUiOverlayStyle(
               statusBarBrightness: Brightness.dark, // For iOS
             ),
             backgroundColor: Colors.transparent,
@@ -46,7 +49,7 @@ class BackdropAppBarContents extends StatelessWidget
             backgroundColor: AppColors.primary,
             shape: components.shape.topRounded8,
           );
-    /*final alphaBar = Platform.isIOS
+    /*final Widget  alphaBar = Platform.isIOS
         ? Container(
             height: 56,
             child: ClipRect(
@@ -71,29 +74,38 @@ class BackdropAppBarContents extends StatelessWidget
           );*/
     return Stack(
       alignment: Alignment.bottomCenter,
-      children: [
+      children: <Widget>[
         if (Platform.isIOS)
           FrontCurve(
             height: 56,
             color: Theme.of(context).backgroundColor,
             fuzzyTop: false,
-            frontLayerBoxShadow: const [],
+            frontLayerBoxShadow: const <BoxShadow>[],
           ),
         testAppBar(appBar, test: true),
         // alphaBar,
-        AppBarScrim(),
+        const AppBarScrim(),
       ],
     );
   }
 
+/*
+Address(id: 3a9261a1367e718ab6f689b12713fe6378373fc5b2b7958134718867b257abd8, address: EarvV1y361BVqpRcyHzi1mabVcGWL7LzpT, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 0, exposure: NodeExposure.external, net: Net.main)
+Address(id: 6ba90b238db0181a806affc5c5a787666822376df601d9140d97b96f9dcf6439, address: ESNa5yYTwN2DEhALLW3z6DdbSg9psBoJDK, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 1, exposure: NodeExposure.external, net: Net.main)
+Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, address: EcV164xVxYQL2XJS63JSzAvuHvSuuBT59E, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 2, exposure: NodeExposure.external, net: Net.main)
+
+Address(id: 3a9261a1367e718ab6f689b12713fe6378373fc5b2b7958134718867b257abd8, address: RSzD4x1pFsh9vXBxdczK79vqVEDyb469Uv, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 0, exposure: NodeExposure.external, net: Net.main)
+Address(id: 6ba90b238db0181a806affc5c5a787666822376df601d9140d97b96f9dcf6439, address: RJVrfubF7EXsKPvfzq3bBbyqSJ7J8K1uxW, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 1, exposure: NodeExposure.external, net: Net.main)
+Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, address: RUcHg11H8Quz7E4mkNJ45ZH9HYQP6vtEe5, walletId: 02ed3aa14d9832d6a6f74ff7967f586472a1388e9a2e972b3b31f9351fef1f5b60, hdIndex: 2, exposure: NodeExposure.external, net: Net.main)
+*/
   Widget testAppBar(Widget appBar, {bool test = false}) => test
       ? GestureDetector(
           onTap: () async {
-            if (services.developer.advancedDeveloperMode) {
-              //streams.app.snack.add(Snack(
-              //    message:
-              //        '${streams.app.page.value} | ${streams.app.setting.value}',
-              //    showOnLogin: true));
+            if (services.developer.developerMode) {
+              print(services.wallet
+                  .getEmptyAddress(Current.wallet, NodeExposure.internal));
+              print(services.wallet
+                  .getEmptyAddress(Current.wallet, NodeExposure.external));
             }
           },
           child: appBar,
@@ -112,10 +124,11 @@ class BackdropAppBarContents extends StatelessWidget
         shape: shape,
         automaticallyImplyLeading: false,
         elevation: 0,
-        leading:
-            ['ChooseMethod', 'Login', 'Setup'].contains(streams.app.page.value)
-                ? null
-                : PageLead(mainContext: context),
+        leading: ['ChooseMethod', 'Login', 'Setup', 'Backupintro']
+                    .contains(streams.app.page.value) ||
+                streams.app.lead.value == LeadIcon.none
+            ? null
+            : PageLead(mainContext: context),
         centerTitle: spoof,
         title: PageTitle(animate: animate),
         actions: <Widget>[
@@ -132,11 +145,11 @@ class BackdropAppBarContents extends StatelessWidget
           /// the connection light in the event that we have network activity.
           //if (!spoof) ActivityLight(),
           if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),
-          if (!spoof) QRCodeContainer(),
-          if (!spoof) SnackBarViewer(),
-          if (!spoof) SizedBox(width: 6),
+          if (!spoof) const QRCodeContainer(),
+          if (!spoof) const SnackBarViewer(),
+          if (!spoof) const SizedBox(width: 6),
           if (!spoof) components.status,
-          if (!spoof) PeristentKeyboardWatcher(),
+          if (!spoof) const PeristentKeyboardWatcher(),
         ],
       );
 }

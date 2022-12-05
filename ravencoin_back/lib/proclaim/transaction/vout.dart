@@ -7,13 +7,11 @@ part 'vout.keys.dart';
 class VoutProclaim extends Proclaim<_IdKey, Vout> {
   late IndexMultiple<_TransactionKey, Vout> byTransaction;
   late IndexMultiple<_SecurityKey, Vout> bySecurity;
-  late IndexMultiple<_SecurityTypeKey, Vout> bySecurityType;
   late IndexMultiple<_AddressKey, Vout> byAddress;
 
   VoutProclaim() : super(_IdKey()) {
     byTransaction = addIndexMultiple('transaction', _TransactionKey());
     bySecurity = addIndexMultiple('security', _SecurityKey());
-    bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
     byAddress = addIndexMultiple('address', _AddressKey());
   }
 
@@ -34,7 +32,7 @@ class VoutProclaim extends Proclaim<_IdKey, Vout> {
       (given ?? pros.vouts.records).where((Vout vout) =>
           ((includeMempool ? true : (vout.transaction?.confirmed ?? false)) &&
               (security != null ? vout.security == security : true) &&
-              (security != null && security != pros.securities.currentCrypto
+              (security != null && security != pros.securities.currentCoin
                   ? vout.securityValue(security: security) > 0
                   : true) &&
               pros.vins

@@ -26,7 +26,7 @@ class RateWaiter extends Waiter {
           ?.rate ??
       0.0; // instead of hardcoding a default we might disable the feature to see anything in USD on the front end...
 
-  Future _save(double rate) async => await pros.rates.save(Rate(
+  Future _save(double rate) async => pros.rates.save(Rate(
         base: pros.securities.RVN,
         quote: pros.securities.USD,
         rate: rate,

@@ -65,7 +65,7 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
                     EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft,
-                    child: Row(children: [submitButton])))),
+                    child: Row(children: <Widget>[submitButton])))),
       ]);
 
   Widget get newPasswordField => TextFieldFormatted(
@@ -117,7 +117,7 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
           }),
         ),
         onChanged: (String value) => validateComplexity(),
-        //onEditingComplete: () async => await submit(),
+        //onEditingComplete: () async =>  submit(),
         onEditingComplete: () =>
             FocusScope.of(context).requestFocus(buttonFocus),
 
@@ -131,7 +131,7 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
         label: 'Set',
         focusNode: buttonFocus,
         disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
-        onPressed: () async => await submit(),
+        onPressed: () async => submit(),
       );
 
   bool enabledCheck() =>
@@ -170,7 +170,7 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
   //}
 
   Future submit() async {
-    await Future.delayed(Duration(milliseconds: 200)); // in release mode?
+    await Future<void>.delayed(Duration(milliseconds: 200)); // in release mode?
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       services.authentication.setPassword(

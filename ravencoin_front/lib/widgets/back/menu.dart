@@ -17,14 +17,15 @@ import 'package:url_launcher/url_launcher.dart';
 //import 'package:ravencoin_back/utilities/database.dart' as ravenDatabase;
 
 class NavMenu extends StatefulWidget {
-  NavMenu({Key? key}) : super(key: key);
+  const NavMenu({Key? key}) : super(key: key);
 
   @override
   _NavMenuState createState() => _NavMenuState();
 }
 
 class _NavMenuState extends State<NavMenu> {
-  List listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   String? chosen = '/settings';
 
   @override
@@ -41,7 +42,7 @@ class _NavMenuState extends State<NavMenu> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -98,31 +99,20 @@ class _NavMenuState extends State<NavMenu> {
 
   @override
   Widget build(BuildContext context) {
-    var options = {
+    final Map<String, ListView> options = {
       '/settings/import_export': ListView(
         shrinkWrap: true,
-        padding: EdgeInsets.all(0),
-        children: [
+        padding: EdgeInsets.zero,
+        children: <Widget>[
           destination(
               icon: MdiIcons.keyPlus, name: 'Import', link: '/settings/import'),
           destination(
               icon: MdiIcons.keyMinus,
               name: 'Export',
               link: '/settings/export',
-              disabled: true,
-              executeAfter: () async {
-                if (Current.wallet is LeaderWallet &&
-                    streams.app.triggers.value == ThresholdTrigger.backup &&
-                    !Current.wallet.backedUp) {
-                  await Future.delayed(Duration(milliseconds: 800));
-                  streams.app.xlead.add(true);
-                  Navigator.of(components.navigator.routeContext!).pushNamed(
-                    '/security/backup',
-                    arguments: {'fadeIn': true},
-                  );
-                }
-              }),
-          if (services.developer.developerMode && Current.balanceRVN.value > 0)
+              disabled: !services.developer.advancedDeveloperMode),
+          if (services.developer.developerMode &&
+              (pros.securities.currentCoin.balance?.value ?? 0) > 0)
             destination(
               icon: MdiIcons.broom,
               name: 'Sweep',
@@ -132,8 +122,8 @@ class _NavMenuState extends State<NavMenu> {
       ),
       '/settings/settings': ListView(
         shrinkWrap: true,
-        padding: EdgeInsets.all(0),
-        children: [
+        padding: EdgeInsets.zero,
+        children: <Widget>[
           destination(
             icon: Icons.lock_rounded,
             name: 'Security',
@@ -191,8 +181,8 @@ class _NavMenuState extends State<NavMenu> {
       ),
       '/settings': ListView(
         shrinkWrap: true,
-        padding: EdgeInsets.all(0),
-        children: [
+        padding: EdgeInsets.zero,
+        children: <Widget>[
           destination(
             icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant,
             name: 'Blockchain',
@@ -259,7 +249,7 @@ class _NavMenuState extends State<NavMenu> {
                 
               }),
           */
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
@@ -277,7 +267,7 @@ class _NavMenuState extends State<NavMenu> {
                         launchUrl(Uri.parse(
                             documentEndpoint(ConsentDocument.user_agreement)));
                       }),
-                TextSpan(text: '   '),
+                const TextSpan(text: '   '),
                 TextSpan(
                     text: 'Privacy Policy',
                     style: Theme.of(components.navigator.routeContext!)
@@ -288,7 +278,7 @@ class _NavMenuState extends State<NavMenu> {
                         launchUrl(Uri.parse(
                             documentEndpoint(ConsentDocument.privacy_policy)));
                       }),
-                TextSpan(text: '   '),
+                const TextSpan(text: '   '),
                 TextSpan(
                     text: 'Risk Disclosure',
                     style: Theme.of(components.navigator.routeContext!)
@@ -309,22 +299,26 @@ class _NavMenuState extends State<NavMenu> {
         color: Theme.of(context).backgroundColor,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(children: [
+            children: <Widget>[
+              Column(children: <Widget>[
                 if (pros.wallets.length > 1)
-                  Divider(indent: 0, color: AppColors.white12),
+                  const Divider(indent: 0, color: AppColors.white12),
                 (options[chosen] ?? options['/settings'])!
               ]),
-              services.password.required
-                  ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+              if (services.password.required)
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
                       Padding(
-                          padding: EdgeInsets.only(left: 16, right: 16, top: 0),
+                          padding: const EdgeInsets.only(
+                              left: 16, right: 16, top: 0),
                           child: Row(
-                            children: [logoutButton],
+                            children: <Widget>[logoutButton],
                           )),
                       SizedBox(height: (.065).ofMediaHeight(context) + 16)
                     ])
-                  : Container(),
+              else
+                Container(),
             ]));
   }
 

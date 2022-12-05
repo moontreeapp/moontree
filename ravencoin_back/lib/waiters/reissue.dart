@@ -14,7 +14,7 @@ class ReissueWaiter extends Waiter {
     streams.reissue.request
         .listen((GenericReissueRequest? reissueRequest) async {
       if (reissueRequest != null) {
-        await Future.delayed(
+        await Future<void>.delayed(
             const Duration(milliseconds: 500)); // wait for please wait
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         print(reissueRequest.isRestricted);

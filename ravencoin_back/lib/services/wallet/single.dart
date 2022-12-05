@@ -6,14 +6,15 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 
 class SingleWalletService {
   Future<Address> toAddress(SingleWallet wallet) async {
-    var net = pros.settings.net;
     var kpWallet = await wallet.kpWallet; //getKPWallet(wallet);
     return Address(
-        id: kpWallet.scripthash,
+        scripthash: kpWallet.scripthash,
         address: kpWallet.address!,
         walletId: wallet.id,
         hdIndex: 0,
-        net: net);
+        exposure: NodeExposure.external,
+        chain: pros.settings.chain,
+        net: pros.settings.net);
   }
 
   KPWallet getKPWallet(SingleWallet wallet) => KPWallet.fromWIF(

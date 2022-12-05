@@ -25,10 +25,35 @@ class WalletProclaim extends Proclaim<_IdKey, Wallet> {
   List<Wallet> order(Iterable<Wallet> wallets) =>
       wallets.sorted((a, b) => a.name.compareTo(b.name));
 
+  List<LeaderWallet> preferredFristLeaders(LeaderWallet preferred) =>
+      byWalletType
+          .getAll(WalletType.leader)
+          .where((wallet) => wallet as LeaderWallet == preferred)
+          .map((wallet) => wallet as LeaderWallet)
+          .toList() +
+      byWalletType
+          .getAll(WalletType.leader)
+          .where((wallet) => wallet as LeaderWallet != preferred)
+          .map((wallet) => wallet as LeaderWallet)
+          .toList();
+
+  List<SingleWallet> preferredFristSingles(SingleWallet preferred) =>
+      byWalletType
+          .getAll(WalletType.single)
+          .where((wallet) => wallet as SingleWallet == preferred)
+          .map((wallet) => wallet as SingleWallet)
+          .toList() +
+      byWalletType
+          .getAll(WalletType.single)
+          .where((wallet) => wallet as SingleWallet != preferred)
+          .map((wallet) => wallet as SingleWallet)
+          .toList();
+
   List<LeaderWallet> get leaders => byWalletType
       .getAll(WalletType.leader)
       .map((wallet) => wallet as LeaderWallet)
       .toList();
+
   List<SingleWallet> get singles => byWalletType
       .getAll(WalletType.single)
       .map((wallet) => wallet as SingleWallet)

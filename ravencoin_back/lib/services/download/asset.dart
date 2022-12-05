@@ -64,7 +64,6 @@ class AssetService {
       streams.asset.added.add(asset);
       var security = Security(
         symbol: meta.symbol,
-        securityType: SecurityType.asset,
         chain: asset.chain,
         net: asset.net,
       );

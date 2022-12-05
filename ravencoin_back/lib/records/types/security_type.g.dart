@@ -16,7 +16,7 @@ class SecurityTypeAdapter extends TypeAdapter<SecurityType> {
       case 0:
         return SecurityType.fiat;
       case 1:
-        return SecurityType.crypto;
+        return SecurityType.coin;
       case 2:
         return SecurityType.asset;
       default:
@@ -30,7 +30,7 @@ class SecurityTypeAdapter extends TypeAdapter<SecurityType> {
       case SecurityType.fiat:
         writer.writeByte(0);
         break;
-      case SecurityType.crypto:
+      case SecurityType.coin:
         writer.writeByte(1);
         break;
       case SecurityType.asset:

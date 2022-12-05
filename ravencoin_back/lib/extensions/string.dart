@@ -56,7 +56,7 @@ extension StringBytesExtension on String {
 }
 
 extension StringCharactersExtension on String {
-  List get characters => split('');
+  List<String> get characters => split('');
 }
 
 extension StringNumericExtension on String {

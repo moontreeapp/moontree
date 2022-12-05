@@ -28,13 +28,15 @@ class Loader extends StatefulWidget {
 
 class _LoaderState extends State<Loader> {
   //DateTime startTime = DateTime.now();
-  late List<StreamSubscription> listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   late DateTime startTime;
 
   Future<void> _init(int duration) async {
-    await Future.delayed(Duration(milliseconds: duration * widget.playCount!));
+    await Future<void>.delayed(
+        Duration(milliseconds: duration * widget.playCount!));
     _goSomewhere();
-    await Future.delayed(Duration(milliseconds: 170));
+    await Future<void>.delayed(Duration(milliseconds: 170));
     _doSomething();
   }
 
@@ -42,7 +44,7 @@ class _LoaderState extends State<Loader> {
     if (widget.returnHome) {
       streams.app.setting.add(null);
       streams.app.fling.add(false);
-      //await Future.delayed(Duration(milliseconds: 100)); // doesn't help
+      //await Future<void>.delayed(Duration(milliseconds: 100)); // doesn't help
       Navigator.popUntil(
         components.navigator.routeContext!,
         ModalRoute.withName('/home'),
@@ -73,7 +75,7 @@ class _LoaderState extends State<Loader> {
           if (!widget.staticImage) {
             var waited = DateTime.now().difference(startTime).inMilliseconds;
             var wait = (duration - (waited % duration)) % duration;
-            await Future.delayed(Duration(milliseconds: wait));
+            await Future<void>.delayed(Duration(milliseconds: wait));
           }
           _goSomewhere();
           _doSomething();
@@ -89,7 +91,7 @@ class _LoaderState extends State<Loader> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     streams.app.loading.add(false);

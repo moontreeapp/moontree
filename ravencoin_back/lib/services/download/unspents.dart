@@ -3,16 +3,19 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
+import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 
 enum ValueType { confirmed, unconfirmed }
 
 /// we use the electrum server directly for determining our UTXO set
 class UnspentService {
-  void _maybeTriggerBackup(Iterable<ScripthashUnspent> unspents) {
-    if (unspents.isNotEmpty && pros.unspents.isEmpty) {
-      streams.app.triggers.add(ThresholdTrigger.backup);
-    }
-  }
+  /// instead of setting trigger for backup when unspents are discovered...
+  /// set them when wallets is created.
+  //void _maybeTriggerBackup(Iterable<ScripthashUnspent> unspents) {
+  //  if (unspents.isNotEmpty && pros.unspents.isEmpty) {
+  //    streams.app.triggers.add(ThresholdTrigger.backup);
+  //  }
+  //}
 
   void _maybeSubscribeToAsset({
     required String symbol,
@@ -76,13 +79,17 @@ class UnspentService {
       }
     }
 
-    _maybeTriggerBackup(currencyUtxos);
-    _maybeTriggerBackup(assetUtxos);
+    //_maybeTriggerBackup(currencyUtxos);
+    //_maybeTriggerBackup(assetUtxos);
 
     // only save if there's something new, in that case erase all, save all.
     var existing = pros.unspents.byScripthashes(scripthashes).toSet();
     await pros.unspents.removeAll(existing.difference(utxos));
     await pros.unspents.saveAll(utxos.difference(existing));
+
+    if (utxos.isEmpty) {
+      return;
+    }
 
     /// CLAIM FEATURE
     /// edge case: Evrmore genesis block is too large to download, so if we
@@ -96,13 +103,11 @@ class UnspentService {
     /// this is to make the Vout from the unspent here, pass it to a stream
     /// then use that stream to avoid downloading any transactions later on, and
     /// to make and sign the claim transaction.
-    if (utxos.map((e) => e.txHash).contains(
-        'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262')) {
+    if (utxos.map((e) => e.txHash).contains(evrAirdropTx)) {
       if (pros.settings.currentWalletId == wallet.id) {
         // make vout
         for (var utxo in utxos) {
-          if (utxo.txHash ==
-              'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262') {
+          if (utxo.txHash == evrAirdropTx) {
             // pass to stream
             var x = streams.claim.unclaimed.value;
             if (!x.containsKey(wallet.id)) {
@@ -110,8 +115,8 @@ class UnspentService {
             }
             x[wallet.id]!.add(Vout.fromUnspent(utxo,
                 toAddress: utxo.address?.address ??
-                    pros.addresses.byScripthash
-                        .getOne(utxo.scripthash)
+                    pros.addresses.primaryIndex
+                        .getOne(utxo.scripthash, utxo.chain, utxo.net)
                         ?.address));
             streams.claim.unclaimed.add(x);
           }

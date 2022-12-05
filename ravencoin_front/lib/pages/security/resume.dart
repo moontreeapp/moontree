@@ -42,7 +42,7 @@ class _ChangeResumeState extends State<ChangeResume> {
   }
 
   Row submitButton() =>
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         TextButton.icon(
             onPressed: () => Navigator.pushReplacementNamed(
                 context, getMethodPathLogin(), arguments: {}),
@@ -50,7 +50,7 @@ class _ChangeResumeState extends State<ChangeResume> {
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
         TextButton.icon(
-            onPressed: () async => await submit(),
+            onPressed: () async => submit(),
             icon: Icon(Icons.login),
             label: Text('Login',
                 style: TextStyle(color: Theme.of(context).primaryColor))),

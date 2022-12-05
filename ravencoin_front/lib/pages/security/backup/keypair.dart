@@ -114,7 +114,7 @@ class _ShowKeypairState extends State<ShowKeypair>
   Widget body() => BackdropLayers(
       back: BlankBack(),
       front: FrontCurve(
-          child: Stack(children: [
+          child: Stack(children: <Widget>[
         components.page.form(
           context,
           columnWidgets: <Widget>[

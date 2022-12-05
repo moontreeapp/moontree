@@ -47,7 +47,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-            padding: EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.only(top: 16),
             child: TextFieldFormatted(
               focusNode: choiceFocus,
               controller: choiceController,
@@ -65,7 +65,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               alwaysShowHelper: showHelper,
               textInputAction: TextInputAction.next,
               suffixIcon: IconButton(
-                icon: Padding(
+                icon: const Padding(
                     padding: EdgeInsets.only(right: 14),
                     child: Icon(Icons.expand_more_rounded,
                         color: Color(0xDE000000))),
@@ -92,10 +92,11 @@ class _BlockchainChoice extends State<BlockchainChoice> {
       );
 }
 
-isSelected(Chain chain, Net net) =>
+bool isSelected(Chain chain, Net net) =>
     pros.settings.chain == chain && pros.settings.net == net;
 
-isConnected() => streams.client.connected.value == ConnectionStatus.connected;
+bool isConnected() =>
+    streams.client.connected.value == ConnectionStatus.connected;
 
 void produceBlockchainModal(
   BuildContext context, {
@@ -122,7 +123,7 @@ void produceBlockchainModal(
                       .bodyText1!
                       .copyWith(color: AppColors.black87)),
               trailing: isSelected(x.chain, x.net) && isConnected()
-                  ? Icon(Icons.check_rounded, color: AppColors.primary)
+                  ? const Icon(Icons.check_rounded, color: AppColors.primary)
                   : null,
               onTap: () => !(isSelected(x.chain, x.net) && isConnected())
                   ? changeChainNet(
@@ -141,13 +142,13 @@ void changeChainNet(
   Function? second,
 }) async {
   Navigator.of(context).pop();
-  streams.client.busy.add(true);
   (first ?? (_) {})(value);
   components.loading.screen(
     message:
         'Connecting to ${value.item1.name.toTitleCase()}${value.item2 == Net.test ? ' ' + value.item2.name.toTitleCase() : ''}',
     returnHome: false,
   );
+  streams.client.busy.add(true);
   await services.client.switchNetworks(chain: value.item1, net: value.item2);
   streams.app.snack.add(Snack(message: 'Successfully connected'));
   (second ?? () {})();

@@ -9,13 +9,13 @@ class TutorialService {
       .where((tutorial) => !completed.contains(tutorial))
       .toList();
 
-  Future complete(TutorialStatus tutorial) async => await pros.settings.save(
+  Future complete(TutorialStatus tutorial) async => pros.settings.save(
         Setting(
             name: SettingName.tutorial_status,
             value: completed + <TutorialStatus>[tutorial]),
       );
 
-  Future clear() async => await pros.settings.save(
+  Future clear() async => pros.settings.save(
         Setting(name: SettingName.tutorial_status, value: <TutorialStatus>[]),
       );
 }

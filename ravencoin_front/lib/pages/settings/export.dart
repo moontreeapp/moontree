@@ -12,7 +12,7 @@ import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class Export extends StatefulWidget {
-  const Export() : super();
+  const Export({Key? key}) : super(key: key);
 
   @override
   _ExportState createState() => _ExportState();
@@ -22,14 +22,14 @@ class _ExportState extends State<Export> {
   final Backup storage = Backup();
   Iterable<Wallet>? wallets;
   File? file;
-  List<Widget> getExisting = [];
+  List<Widget> getExisting = <Widget>[];
   FocusNode previewFocus = FocusNode();
   TextEditingController walletController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // streams.app.verify.add(false); // doesn't need a password because it's encrypted anyway
+    streams.app.verify.add(false);
   }
 
   @override
@@ -41,7 +41,6 @@ class _ExportState extends State<Export> {
 
   @override
   Widget build(BuildContext context) {
-    print('walletController.text : ${walletController.text}');
     if (pros.wallets.length == 1) {
       wallets = pros.wallets;
     } else {
@@ -49,14 +48,13 @@ class _ExportState extends State<Export> {
           ? null
           : (walletController.text != 'All Wallets'
               ? () {
-                  final maybeWallet = pros.wallets.byName
+                  final Wallet? maybeWallet = pros.wallets.byName
                       // ravencoin_front/lib/widgets/bottom/selection_items.dart
                       // L315
                       .getOne(
                           walletController.text.replaceFirst('Wallet ', ''));
-                  print('wallet by name is ${maybeWallet}');
                   if (maybeWallet != null) {
-                    return {maybeWallet};
+                    return <Wallet>{maybeWallet};
                   }
                   return null;
                 }()
@@ -65,7 +63,10 @@ class _ExportState extends State<Export> {
     if (wallets?.length == 1) {
       walletController.text = 'Wallet ${wallets?.first.name}';
     }
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return services.password.askCondition
+        ? VerifyAuthentication(
+            parentState: this, buttonLabel: 'Proceed to Export')
+        : BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => Column(
@@ -75,20 +76,21 @@ class _ExportState extends State<Export> {
           walletChoices,
           components.containers.navBar(
             context,
-            child: Row(children: [previewButton]),
+            child: Row(children: <Widget>[previewButton]),
           )
         ],
       );
 
   Widget get walletChoices => Padding(
-      padding: EdgeInsets.only(left: 16.0, top: 16, right: 16, bottom: 40),
+      padding:
+          const EdgeInsets.only(left: 16.0, top: 16, right: 16, bottom: 40),
       child: TextFieldFormatted(
         controller: walletController,
         readOnly: true,
         labelText: 'Wallet',
-        helperStyle: TextStyle(color: AppColors.error),
+        helperStyle: const TextStyle(color: AppColors.error),
         suffixIcon: IconButton(
-          icon: Padding(
+          icon: const Padding(
               padding: EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: AppColors.black87)),
           onPressed: () => _produceWalletModal(),
@@ -108,18 +110,18 @@ class _ExportState extends State<Export> {
         onPressed: () async {
           Navigator.of(components.navigator.routeContext!).pushNamed(
             '/settings/export/export',
-            arguments: {
+            arguments: <String, dynamic>{
               'struct': CheckoutStruct(
-                icon: Icon(Icons.account_balance_wallet_rounded,
+                icon: const Icon(Icons.account_balance_wallet_rounded,
                     size: 36, color: AppColors.primary),
                 symbol: null,
                 displaySymbol: walletController.text,
                 subSymbol: null,
                 paymentSymbol: null,
                 left: .25,
-                items: [
-                  ['Location', await storage.localPath, '3'],
-                  ['File', filePrefix + today + '.json', '2'],
+                items: <List<String>>[
+                  <String>['Location', await storage.localPath, '3'],
+                  <String>['File', '$filePrefix$today.json', '2'],
                 ],
                 fees: null,
                 total: null,
@@ -134,25 +136,33 @@ class _ExportState extends State<Export> {
         },
       );
 
-  Widget get finalSubmitButtons => Row(children: [
-        components.buttons.actionButton(
-          context,
-          enabled: true,
-          label: 'Share',
-          onPressed: () async {
-            await Share.share(await rawExport ?? 'Invalid wallet data');
-          },
-        ),
-        if (!Platform.isIOS) SizedBox(width: 16),
+  Widget get finalSubmitButtons => Row(children: <Widget>[
+        components.buttons.actionButton(context,
+            label: 'Share',
+            onPressed: () => components.message
+                .giveChoices(
+                  context,
+                  behaviors: <String, VoidCallback>{
+                    'I saved it':
+                        Navigator.of(components.navigator.routeContext!).pop
+                  },
+                  title: 'Encryption Key',
+                  content:
+                      'You will need the following key in order to decrypt your export:',
+                  child:
+                      const ShowAuthenticationChoice(title: null, desc: null),
+                )
+                .then((_) async =>
+                    Share.share(await rawExport ?? 'Invalid wallet data'))),
+        if (!Platform.isIOS) const SizedBox(width: 16),
         if (!Platform.isIOS)
           components.buttons.actionButton(
             context,
-            enabled: true,
             label: 'Export',
             onPressed: () async {
               components.loading.screen(message: 'Exporting');
               file = await export();
-              await Future.delayed(Duration(seconds: 1));
+              await Future<void>.delayed(const Duration(seconds: 1));
               if (file != null) {
                 streams.app.snack.add(Snack(
                   message: 'Successfully Exported ${walletController.text}',
@@ -165,7 +175,7 @@ class _ExportState extends State<Export> {
           )
       ]);
 
-  Future<File?> export() async => await storage.writeExport(
+  Future<File?> export() async => storage.writeExport(
         filename: filePrefix + today,
         rawExport: await rawExport,
       );
@@ -173,17 +183,13 @@ class _ExportState extends State<Export> {
   String get filePrefix => 'moontree_backup_';
 
   String get today =>
-      DateTime.now().month.toString() +
-      '_' +
-      DateTime.now().day.toString() +
-      '_' +
-      DateTime.now().year.toString().substring(2);
+      '${DateTime.now().month}_${DateTime.now().day}_${DateTime.now().year.toString().substring(2)}';
 
   Future<String?> get rawExport async => wallets == null
       ? null
       : jsonEncode(await services.wallet.export.structureForExport(wallets!));
 
-  void _produceWalletModal() async {
+  Future<void> _produceWalletModal() async {
     await SelectionItems(context, modalSet: SelectionSet.Wallets)
         .build(controller: walletController);
     setState(() {/* to refresh and enable the button */});

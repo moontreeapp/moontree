@@ -4,7 +4,6 @@
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_back/streams/wallet.dart';
 import 'package:ravencoin_back/utilities/lock.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
@@ -36,24 +35,20 @@ class LeaderWaiter extends Waiter {
     /// import and never saved the addresses, we want to restart
     /// the import process for this wallet to derive addresses
     listen(
-      'connected/cipher',
-      CombineLatestStream.combine2(
-        streams.client.connected,
-        pros.ciphers.changes,
-        (ConnectionStatus connectionStatus, Change<Cipher> change) =>
-            Tuple2(connectionStatus, change),
-      ),
-      (Tuple2<ConnectionStatus, Change<Cipher>> tuple) async {
-        //print('connected/CIPHER ${tuple.item1} ${tuple.item2}');
-        //await services.client.api.ping();
-        if (tuple.item2.record.cipherType != CipherType.none) {
-          pros.wallets.leaders.forEach((wallet) =>
-              !services.wallet.leader.gapSatisfied(wallet)
-                  ? services.wallet.leader.handleDeriveAddress(leader: wallet)
-                  : () {});
-        }
-      },
-    );
+        'connected/cipher',
+        CombineLatestStream.combine2(
+            streams.client.connected,
+            pros.ciphers.changes,
+            (ConnectionStatus connectionStatus, Change<Cipher> change) =>
+                Tuple2(connectionStatus, change)).where((t) =>
+            t.item2.record.cipherType != CipherType.none && // only on startup
+            t.item1 == ConnectionStatus.connected),
+        (Tuple2<ConnectionStatus, Change<Cipher>> tuple) async =>
+            pros.wallets.leaders.forEach((wallet) async =>
+                !services.wallet.leader.gapSatisfied(wallet)
+                    ? await services.wallet.leader
+                        .handleDeriveAddress(leader: wallet)
+                    : () {}));
 
     listen(
       'streams.wallet.leaderChanges',
@@ -67,28 +62,30 @@ class LeaderWaiter extends Waiter {
         final status = tuple.item2;
         await _backlogLock.write(() => backlog.add(change));
         if (status == ConnectionStatus.connected) {
+          print('derviving from leader2?');
           await _backlogLock.read(() {
             for (var walletChange in backlog) {
               handleLeaderChange(walletChange);
             }
           });
           await _backlogLock.write(() => backlog.clear());
-        } else {}
+        } else {
+          /// should I be adding this to backlog here?
+        }
       },
     );
 
-    listen(
-      'streams.wallet.deriveAddress',
-      streams.wallet.deriveAddress,
-      (DeriveLeaderAddress? deriveDetails) async {
-        deriveDetails == null
-            ? () {/* do nothing */}
-            : await services.wallet.leader.handleDeriveAddress(
-                leader: deriveDetails.leader,
-                exposure: deriveDetails.exposure,
-              );
-      },
-    );
+    /// not triggered except by it's own instantiation
+    //listen(
+    //  'streams.wallet.deriveAddress',
+    //  streams.wallet.deriveAddress,
+    //  (DeriveLeaderAddress? deriveDetails) async => deriveDetails == null
+    //      ? () {/* do nothing */}
+    //      : await services.wallet.leader.handleDeriveAddress(
+    //          leader: deriveDetails.leader,
+    //          exposure: deriveDetails.exposure,
+    //        ),
+    //);
   }
 
   void handleLeaderChange(Change<Wallet> change) {

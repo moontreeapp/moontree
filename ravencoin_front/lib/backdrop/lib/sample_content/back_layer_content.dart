@@ -13,7 +13,7 @@ class _BackLayerContentState extends State<BackLayerContent> {
     return Container(
       color: Colors.blue,
       child: Column(
-        children: [
+        children: <Widget>[
           const Padding(
             padding: EdgeInsets.all(10),
             child: Center(

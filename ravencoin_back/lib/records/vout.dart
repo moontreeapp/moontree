@@ -86,7 +86,9 @@ class Vout with EquatableMixin, ToStringMixin {
       rvnValue: rvnValue ?? unspent.value,
       toAddress: toAddress ??
           unspent.address?.address ??
-          pros.addresses.byScripthash.getOne(unspent.scripthash)?.address,
+          pros.addresses.primaryIndex
+              .getOne(unspent.scripthash, unspent.chain, unspent.net)
+              ?.address,
       assetValue: assetValue,
       lockingScript: lockingScript,
       memo: memo,
@@ -142,16 +144,15 @@ class Vout with EquatableMixin, ToStringMixin {
   List<String> get toAddresses =>
       [if (toAddress != null) toAddress!, ...additionalAddresses ?? []];
 
-  int securityValue({Security? security}) => security == null ||
-          (security.symbol == pros.securities.currentCrypto.symbol &&
-              security.securityType == SecurityType.crypto)
-      ? rvnValue
-      : (security.id == assetSecurityId)
-          ? assetValue ?? 0
-          : 0;
+  int securityValue({Security? security}) =>
+      security == null || security.symbol == pros.securities.currentCoin.symbol
+          ? rvnValue
+          : (security.id == assetSecurityId)
+              ? assetValue ?? 0
+              : 0;
 
-  String get securityId => assetSecurityId ?? pros.securities.currentCrypto.id;
+  String get securityId => assetSecurityId ?? pros.securities.currentCoin.id;
 
   bool get isAsset =>
-      !pros.securities.cryptos.map((e) => e.id).contains(securityId);
+      !pros.securities.coins.map((e) => e.id).contains(securityId);
 }

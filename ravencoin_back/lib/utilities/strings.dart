@@ -23,6 +23,8 @@ String assetBaseRegex = r'^[A-Z0-9]{1}[A-Z0-9_.]{2,29}[!]{0,1}$';
 String subAssetBaseRegex = r'^[A-Z0-9]{1}[a-zA-Z0-9_.#]{2,29}[!]{0,1}$';
 String mainAssetAllowed = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ._';
 String verifierStringAllowed = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ._ (#&|!)';
+String evrAirdropTx =
+    'c191c775b10d2af1fcccb4121095b2a018f1bee84fa5efb568fcddd383969262';
 
 /*
 /// requires 'dart:mirrors' which conflicts with something

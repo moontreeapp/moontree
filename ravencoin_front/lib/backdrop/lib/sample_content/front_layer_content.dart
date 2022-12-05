@@ -32,7 +32,7 @@ class _LayerContentState extends State<FrontLayerContent> {
               topLeft: Radius.circular(15), topRight: Radius.circular(15)),
           color: Colors.white),
       child: Column(
-        children: [
+        children: <Widget>[
           header,
           Expanded(
             child: Container(

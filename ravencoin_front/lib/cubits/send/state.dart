@@ -24,8 +24,8 @@ class SimpleSendFormState extends CubitState {
 
   @override
   String toString() =>
-      'SpendForm(security=$security, address=$address, amount=$amount, fee=$fee,'
-      'note=$note,  addressName=$addressName, '
+      'SpendForm(security=$security, address=$address, amount=$amount, '
+      'fee=$fee, note=$note, addressName=$addressName, '
       'isSubmitting=$isSubmitting)';
 
   @override
@@ -41,7 +41,7 @@ class SimpleSendFormState extends CubitState {
       ];
 
   factory SimpleSendFormState.initial() =>
-      SimpleSendFormState(security: pros.securities.currentCrypto);
+      SimpleSendFormState(security: pros.securities.currentCoin);
 
   SimpleSendFormState load({
     Security? security,
@@ -90,7 +90,7 @@ class SimpleSendFormState extends CubitState {
   String get fiatRepresentation {
     try {
       return services.conversion.securityAsReadable(
-        utils.amountToSat(amount),
+        sats,
         symbol: security.symbol,
         asUSD: true,
       );
@@ -98,13 +98,6 @@ class SimpleSendFormState extends CubitState {
       return '';
     }
   }
-}
 
-    //security = pros.securities.primaryIndex.getOne(
-    //    symbol,
-    //    symbol == 'RVN' && pros.settings.chain == Chain.ravencoin ||
-    //            symbol == 'EVR' && pros.settings.chain == Chain.evrmore
-    //        ? SecurityType.crypto
-    //        : SecurityType.asset,
-    //    pros.settings.chain,
-    //    pros.settings.net)!;
+  int get sats => utils.amountToSat(amount);
+}

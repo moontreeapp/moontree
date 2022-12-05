@@ -8,6 +8,9 @@ class RouteStack extends NavigatorObserver {
   BuildContext? mainContext;
   TabController? tabController;
 
+  bool nameIsInStack(String name) =>
+      routeStack.map((e) => e.settings.name).contains(name);
+
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     streams.app.tap.add(null); // track user is active
     routeStack.add(route);

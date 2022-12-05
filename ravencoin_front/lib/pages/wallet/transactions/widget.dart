@@ -20,7 +20,8 @@ class Transactions extends StatefulWidget {
 }
 
 class _TransactionsState extends State<Transactions> {
-  late List<StreamSubscription> listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   DraggableScrollableController dController = DraggableScrollableController();
   bool busy = false;
 
@@ -56,7 +57,7 @@ class _TransactionsState extends State<Transactions> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -74,7 +75,7 @@ class _TransactionsState extends State<Transactions> {
       back: CoinDetailsHeader(bloc.security, minHeight, bloc.nullCacheView),
       front: Stack(
         alignment: Alignment.bottomCenter,
-        children: [
+        children: <Widget>[
           DraggableScrollableSheet(
               initialChildSize: minHeight,
               minChildSize: minHeight,

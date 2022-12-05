@@ -52,6 +52,21 @@ String symbolName(String symbol) {
   }
 }
 
+String nameSymbol(String name) {
+  switch (name) {
+    case 'Ravencoin':
+      return 'RVN';
+    case 'Evrmore':
+      return 'EVR';
+    case 'Ravencoin (testnet)':
+      return 'RVN'; // the symbol on testnet is still the coin
+    case 'Evrmore (testnet)':
+      return 'EVR'; // the symbol on testnet is still the coin
+    default:
+      return name;
+  }
+}
+
 String chainName(Chain chain) => chain.name.toTitleCase();
 
 String chainNetSymbol(Chain chain, Net net) =>
@@ -81,13 +96,18 @@ NetworkType networkOf(Chain chain, Net net) {
   return mainnet;
 }
 
+/// moontree.com
+String domainOf(Chain chain, Net net) => 'moontree.com';
+
 /// port map
 ///50001 - mainnet tcp rvn
 ///50002 - mainnet ssl rvn
 ///50011 - testnet tcp rvnt
 ///50012 - testnet ssl rvnt
-///50021 - testnet tcp evr
-///50022 - testnet ssl evr
+///50021 - mainnet tcp evr
+///50022 - mainnet ssl evr
+///50031 - testnet tcp evr
+///50032 - testnet ssl evr
 int portOf(Chain chain, Net net) {
   if (chain == Chain.ravencoin && net == Net.main) {
     return 50002;
@@ -96,10 +116,13 @@ int portOf(Chain chain, Net net) {
     return 50012;
   }
   if (chain == Chain.evrmore && net == Net.main) {
-    return 50022; //return 8820;
+    return 50022;
   }
   if (chain == Chain.evrmore && net == Net.test) {
     return 50032;
   }
   return 50002;
 }
+
+String domainPortOf(Chain chain, Net net) =>
+    '${domainOf(chain, net)}:${portOf(chain, net)}';

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
@@ -25,13 +26,16 @@ import 'package:ravencoin_front/utils/device.dart' show getId;
 import 'package:ravencoin_front/utils/extensions.dart';
 
 class CreateNative extends StatefulWidget {
+  const CreateNative({Key? key}) : super(key: key);
+
   @override
   _CreateNativeState createState() => _CreateNativeState();
 }
 
 class _CreateNativeState extends State<CreateNative> {
-  Map<String, dynamic> data = {};
-  late List listeners = [];
+  Map<String, dynamic> data = <String, dynamic>{};
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   FocusNode unlockFocus = FocusNode();
   bool enabled = true;
   bool failedAttempt = false;
@@ -52,7 +56,7 @@ class _CreateNativeState extends State<CreateNative> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -61,24 +65,23 @@ class _CreateNativeState extends State<CreateNative> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    needsConsent = data['needsConsent'] ?? false;
+    needsConsent = data['needsConsent'] as bool? ?? false;
     return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => FutureBuilder<bool>(
       future: localAuthApi.entirelyReadyToAuthenticate,
-      builder: (context, AsyncSnapshot<bool> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         return GestureDetector(
             onTap: FocusScope.of(context).unfocus,
             child: Container(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+                padding: const EdgeInsets.only(left: 16, right: 16),
                 child: CustomScrollView(slivers: <Widget>[
                   SliverToBoxAdapter(
                     child: SizedBox(height: 76.figmaH),
                   ),
                   SliverToBoxAdapter(
-                    child: Container(
+                    child: SizedBox(
                       height: 128.figmaH,
                       child: moontree,
                     ),
@@ -109,26 +112,26 @@ class _CreateNativeState extends State<CreateNative> {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                (needsConsent
-                                    ? ulaMessage
-                                    : SizedBox(height: 100)),
-                                SizedBox(height: 40),
-                                Row(children: [
-                                  snapshot.hasData
-                                      ? snapshot.data!
-                                          ? nativeButton
-                                          : setupButton
-                                      : CircularProgressIndicator()
+                              children: <Widget>[
+                                if (needsConsent)
+                                  ulaMessage
+                                else
+                                  const SizedBox(height: 100),
+                                const SizedBox(height: 40),
+                                Row(children: <Widget>[
+                                  if (snapshot.hasData)
+                                    snapshot.data! ? nativeButton : setupButton
+                                  else
+                                    const CircularProgressIndicator()
                                 ]),
-                                SizedBox(height: 40),
+                                const SizedBox(height: 40),
                               ]))),
                 ])));
       });
 
-  Widget get moontree => Container(
-        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+  Widget get moontree => SizedBox(
         height: .1534.ofMediaHeight(context),
+        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
       );
 
   Widget get welcomeMessage => Text(
@@ -159,7 +162,7 @@ class _CreateNativeState extends State<CreateNative> {
 
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+        children: <Widget>[
           Container(
               alignment: Alignment.center, width: 18, child: aggrementCheckbox),
           Container(
@@ -172,7 +175,7 @@ class _CreateNativeState extends State<CreateNative> {
                       .textTheme
                       .bodyText2,
                   children: <TextSpan>[
-                    TextSpan(text: "I agree to Moontree's\n"),
+                    const TextSpan(text: "I agree to Moontree's\n"),
                     TextSpan(
                         text: 'User Agreement',
                         style: Theme.of(components.navigator.routeContext!)
@@ -183,7 +186,7 @@ class _CreateNativeState extends State<CreateNative> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.user_agreement)));
                           }),
-                    TextSpan(text: ', '),
+                    const TextSpan(text: ', '),
                     TextSpan(
                         text: 'Privacy Policy',
                         style: Theme.of(components.navigator.routeContext!)
@@ -194,7 +197,7 @@ class _CreateNativeState extends State<CreateNative> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.privacy_policy)));
                           }),
-                    TextSpan(text: ',\n and '),
+                    const TextSpan(text: ',\n and '),
                     TextSpan(
                         text: 'Risk Disclosure',
                         style: Theme.of(components.navigator.routeContext!)
@@ -208,7 +211,7 @@ class _CreateNativeState extends State<CreateNative> {
                   ],
                 ),
               )),
-          SizedBox(
+          const SizedBox(
             width: 18,
           ),
         ],
@@ -229,9 +232,7 @@ class _CreateNativeState extends State<CreateNative> {
         focusNode: unlockFocus,
         enabled: readyToUnlock(),
         label: 'Setup',
-        onPressed: () async {
-          await submitSetup();
-        },
+        onPressed: () async => submitSetup(),
       );
 
   Widget get nativeButton => components.buttons.actionButton(
@@ -239,12 +240,10 @@ class _CreateNativeState extends State<CreateNative> {
         focusNode: unlockFocus,
         enabled: readyToUnlock(),
         label: enabled ? 'Create Wallet' : 'Creating Wallet...',
-        onPressed: () async {
-          await submit();
-        },
+        onPressed: () async => submit(),
       );
 
-  Future submitSetup() async {
+  Future<void> submitSetup() async {
     if (Platform.isIOS) {
       await AppSettings.openSecuritySettings();
     } else {
@@ -255,13 +254,13 @@ class _CreateNativeState extends State<CreateNative> {
     }
   }
 
-  Future submit() async {
+  Future<void> submit() async {
     setState(() => enabled = false);
     streams.app.authenticating.add(true);
-    final validate = await localAuthApi.authenticate();
+    final bool validate = await localAuthApi.authenticate();
     streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
-      final key = await SecureStorage.authenticationKey;
+      final String key = await SecureStorage.authenticationKey;
 
       /// actually don't show this, not necessary
       //components.message.giveChoices(context,
@@ -274,6 +273,11 @@ class _CreateNativeState extends State<CreateNative> {
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
+      await components.loading.screen(
+        message: 'Creating Wallet',
+        returnHome: false,
+        playCount: 4,
+      );
       if (pros.passwords.records.isEmpty) {
         //services.cipher.initCiphers(altPassword: key, altSalt: key);
         await services.authentication.setPassword(
@@ -290,6 +294,7 @@ class _CreateNativeState extends State<CreateNative> {
       //    behaviors: {
       //      'ok': () => Navigator.of(context).pop(),
       //    });
+
       login(context);
     } else {
       if (localAuthApi.reason == AuthenticationResult.error) {
@@ -318,5 +323,5 @@ class _CreateNativeState extends State<CreateNative> {
   /// nativeSecurity has it's own timeout...
   bool readyToUnlock() =>
       //services.password.lockout.timePast() &&
-      enabled && ((isConsented) || !needsConsent);
+      enabled && (isConsented || !needsConsent);
 }

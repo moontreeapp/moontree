@@ -48,7 +48,7 @@ class _ActivityLightState extends State<ActivityLight>
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();

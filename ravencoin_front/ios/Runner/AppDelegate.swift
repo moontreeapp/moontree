@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
 
+// { [UIApplication.LaunchOptionsKey: Any]? [UIApplication.setStatusBarHidden: YES];}
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(

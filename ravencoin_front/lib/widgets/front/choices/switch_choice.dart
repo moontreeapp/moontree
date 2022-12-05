@@ -32,26 +32,25 @@ class _SwtichChoice extends State<SwtichChoice> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(widget.label, style: Theme.of(context).textTheme.bodyText1),
-            Switch(
-                value: choice,
-                onChanged: (value) async {
-                  if (widget.onChanged != null) {
-                    await widget.onChanged!(value);
-                  }
-                  setState(() => choice = value);
-                }),
-          ]),
-          if (widget.description != null) SizedBox(height: 8),
-          if (widget.description != null)
-            Text(
-              widget.description!,
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
-        ]);
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+        Widget>[
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+        Text(widget.label, style: Theme.of(context).textTheme.bodyText1),
+        Switch(
+            value: choice,
+            onChanged: (value) async {
+              if (widget.onChanged != null) {
+                await widget.onChanged!(value);
+              }
+              setState(() => choice = value);
+            }),
+      ]),
+      if (widget.description != null) SizedBox(height: 8),
+      if (widget.description != null)
+        Text(
+          widget.description!,
+          style: Theme.of(context).textTheme.bodyText2,
+        ),
+    ]);
   }
 }

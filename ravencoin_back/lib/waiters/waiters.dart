@@ -10,6 +10,7 @@ import 'leader.dart';
 import 'rate.dart';
 import 'reissue.dart';
 import 'send.dart';
+import 'unspent.dart';
 import 'setting.dart';
 import 'single.dart';
 
@@ -26,6 +27,7 @@ class waiters {
   static ReissueWaiter reissue = ReissueWaiter();
   static SendWaiter send = SendWaiter();
   static SettingWaiter setting = SettingWaiter();
+  static UnspentWaiter unspent = UnspentWaiter();
   // Wallets
   static LeaderWaiter leader = LeaderWaiter();
   static SingleWaiter single = SingleWaiter();

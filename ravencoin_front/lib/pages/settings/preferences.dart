@@ -13,21 +13,23 @@ class _PreferencesState extends State<Preferences> {
 
   @override
   Widget build(BuildContext context) {
-    var name = pros.settings.primaryIndex.getOne(SettingName.user_name)?.value;
+    final String? name = pros.settings.primaryIndex
+        .getOne(SettingName.user_name)
+        ?.value as String?;
     if (name != null) {
       yourName.text = name;
     }
     return Scaffold(
       //appBar: components.headers.back(context, 'Preferences'),
       body: ListView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         children: <Widget>[
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextField(
             autocorrect: false,
             controller: yourName,
             textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: UnderlineInputBorder(),
               labelText: 'your name',
               hintText: 'Satoshi Nakamoto',
@@ -38,26 +40,26 @@ class _PreferencesState extends State<Preferences> {
               alertSuccess();
             },
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           CheckboxListTile(
               controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.all(0),
-              title: Text('Send immediately (without confirmation)'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Send immediately (without confirmation)'),
               value: pros.settings.primaryIndex
                   .getOne(SettingName.send_immediate)!
-                  .value,
+                  .value as bool,
               onChanged: (bool? value) async {
                 await pros.settings.save(Setting(
                     name: SettingName.send_immediate,
-                    value: !pros.settings.primaryIndex
+                    value: !(pros.settings.primaryIndex
                         .getOne(SettingName.send_immediate)!
-                        .value));
+                        .value as bool)));
                 setState(() {});
               }),
           CheckboxListTile(
               controlAffinity: ListTileControlAffinity.leading,
-              contentPadding: EdgeInsets.all(0),
-              title: Text('I agree to the Terms and Conditions'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('I agree to the Terms and Conditions'),
               value: termsAndConditions,
               onChanged: (bool? value) => setState(() {
                     termsAndConditions = value ?? false;
@@ -71,11 +73,11 @@ class _PreferencesState extends State<Preferences> {
   Future alertSuccess() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-            title: Text('Success'),
-            content: Text('Preferences Saved!'),
+            title: const Text('Success'),
+            content: const Text('Preferences Saved!'),
             actions: [
               TextButton(
-                  child: Text('ok'),
+                  child: const Text('ok'),
                   onPressed: () => Navigator.of(context).pop())
             ],
           ));

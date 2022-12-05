@@ -4,12 +4,21 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart' as material show Color;
 import 'package:image/image.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 
-var colorCache = Map<String, List<List<int>>>();
+Map<String, List<List<int>>> colorCache = <String, List<List<int>>>{};
 
 class Identicon {
+  Identicon({
+    this.rows = 6,
+    this.cols = 6,
+    material.Color? foreground,
+    material.Color? background,
+  })  : digest = md5.convert,
+        foregroundColor = foreground != null ? AppColors.rgb(foreground) : null,
+        backgroundColor = background != null ? AppColors.rgb(background) : null;
   final int rows;
   final int cols;
 
@@ -21,27 +30,15 @@ class Identicon {
   late String name;
   late String hashedName;
 
-  Identicon({
-    this.rows = 6,
-    this.cols = 6,
-    foreground,
-    background,
-  })  : this.digest = md5.convert,
-        this.foregroundColor =
-            foreground != null ? AppColors.RGB(foreground) : null,
-        this.backgroundColor =
-            background != null ? AppColors.RGB(background) : null;
-
   void _generateColors() {
-    var appColors = AppColors();
     backgroundColor =
-        backgroundColor ?? AppColors.RGB(appColors.backgroundColor(name));
+        backgroundColor ?? AppColors.rgb(AppColors.backgroundColor(name));
     foregroundColor =
-        foregroundColor ?? AppColors.RGB(appColors.foregroundColor(name));
+        foregroundColor ?? AppColors.rgb(AppColors.foregroundColor(name));
   }
 
   bool _bitIsOne(int n, List<int> hashBytes) {
-    var scale = 16;
+    const int scale = 16;
     return hashBytes[n ~/ (scale / 2)] >>
                 ((scale / 2) - ((n % (scale / 2)) + 1)).toInt() &
             1 ==
@@ -50,15 +47,15 @@ class Identicon {
 
   List<int> _createImage(
       List<List<bool>> matrix, int width, int height, int pad) {
-    var image = Image.rgb(width + (pad * 2), height + (pad * 2));
+    final Image image = Image.rgb(width + (pad * 2), height + (pad * 2));
     image.fill(Color.fromRgb(
       backgroundColor![0],
       backgroundColor![1],
       backgroundColor![2],
     ));
 
-    var blockWidth = width ~/ cols;
-    var blockHeight = height ~/ rows;
+    final int blockWidth = width ~/ cols;
+    final int blockHeight = height ~/ rows;
 
     for (int r = 0; r < matrix.length; r++) {
       for (int c = 0; c < matrix[r].length; c++) {
@@ -82,13 +79,14 @@ class Identicon {
   }
 
   List<List<bool>> _createMatrix(List<int> byteList) {
-    var cells = (rows * cols / 2 + cols % 2).toInt();
-    var matrix = List.generate(rows, (_) => List.generate(cols, (_) => false));
+    final int cells = (rows * cols / 2 + cols % 2).toInt();
+    final List<List<bool>> matrix = List<List<bool>>.generate(
+        rows, (_) => List<bool>.generate(cols, (_) => false));
 
     for (int n = 0; n < cells; n++) {
       if (_bitIsOne(n, byteList.getRange(1, byteList.length).toList())) {
-        var r = n % rows;
-        var c = n ~/ cols;
+        final int r = n % rows;
+        final int c = n ~/ cols;
         matrix[r][cols - c - 1] = true;
         matrix[r][c] = true;
       }
@@ -111,13 +109,14 @@ class Identicon {
     name = commonName();
     hashedName = digest(utf8.encode(name)).toString();
     _generateColors();
-    var bytesLength = 16;
-    var hexDigestByteList = List<int>.generate(bytesLength, (int i) {
+    const int bytesLength = 16;
+    final List<int> hexDigestByteList =
+        List<int>.generate(bytesLength, (int i) {
       return int.parse(hashedName.substring(i * 2, i * 2 + 2),
           radix: bytesLength);
     });
-    var matrix = _createMatrix(hexDigestByteList);
-    var size = rows * cols;
+    final List<List<bool>> matrix = _createMatrix(hexDigestByteList);
+    final int size = rows * cols;
 
     return ImageDetails(
         image: Uint8List.fromList(
@@ -128,13 +127,12 @@ class Identicon {
 }
 
 class ImageDetails {
-  Uint8List image;
-  List<int> foreground;
-  List<int> background;
-
   ImageDetails({
     required this.image,
     required this.foreground,
     required this.background,
   });
+  Uint8List image;
+  List<int> foreground;
+  List<int> background;
 }

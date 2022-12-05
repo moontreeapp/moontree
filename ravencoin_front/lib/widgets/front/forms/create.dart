@@ -120,7 +120,7 @@ class _CreateAssetState extends State<CreateAsset> {
     decimalFocus.dispose();
     verifierController.dispose();
     verifierFocus.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -216,8 +216,8 @@ class _CreateAssetState extends State<CreateAsset> {
                     padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(children: [submitButton])
+                      children: <Widget>[
+                        Row(children: <Widget>[submitButton])
                       ],
                     )))
           ]);
@@ -359,8 +359,8 @@ class _CreateAssetState extends State<CreateAsset> {
 
   Widget get reissueRow => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(children: [
+        children: <Widget>[
+          Row(children: <Widget>[
             IconButton(
               onPressed: () => showDialog(
                 context: context,
@@ -612,7 +612,7 @@ class _CreateAssetState extends State<CreateAsset> {
           symbol: fullName(true),
           displaySymbol: nameController.text,
           subSymbol: '',
-          paymentSymbol: pros.securities.currentCrypto.symbol,
+          paymentSymbol: pros.securities.currentCoin.symbol,
           items: [
             /// send the correct items
             if (isSub) ['Name', fullName(true), '2'],

@@ -2,9 +2,9 @@ class SecretWord {
   String word;
   int order;
   int? chosenOrder;
-  SecretWord(this.word, this.order);
+  SecretWord({required this.word, required this.order});
 
-  void set chosen(int? value) => chosenOrder = value;
+  set chosen(int? value) => chosenOrder = value;
   int? get chosen => chosenOrder;
   bool get correct => order + 1 == chosenOrder;
 

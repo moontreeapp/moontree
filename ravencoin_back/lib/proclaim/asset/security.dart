@@ -6,38 +6,19 @@ part 'security.keys.dart';
 
 class SecurityProclaim extends Proclaim<_IdKey, Security> {
   late IndexMultiple<_SymbolKey, Security> bySymbol;
-  late IndexMultiple<_SymbolChainNetKey, Security> bySymbolChainNet;
-  late IndexMultiple<_SecurityTypeKey, Security> bySecurityType;
-  static final staticUSD = Security(
-      symbol: 'USD',
-      securityType: SecurityType.fiat,
-      chain: Chain.none,
-      net: Net.main);
-  static final staticRVN = Security(
-      symbol: 'RVN',
-      securityType: SecurityType.crypto,
-      chain: Chain.ravencoin,
-      net: Net.main);
-  static final staticEVR = Security(
-      symbol: 'EVR',
-      securityType: SecurityType.crypto,
-      chain: Chain.evrmore,
-      net: Net.main);
-  static final staticRVNt = Security(
-      symbol: 'RVN',
-      securityType: SecurityType.crypto,
-      chain: Chain.ravencoin,
-      net: Net.test);
-  static final staticEVRt = Security(
-      symbol: 'EVR',
-      securityType: SecurityType.crypto,
-      chain: Chain.evrmore,
-      net: Net.test);
+  static final staticUSD =
+      Security(symbol: 'USD', chain: Chain.none, net: Net.main);
+  static final staticRVN =
+      Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.main);
+  static final staticEVR =
+      Security(symbol: 'EVR', chain: Chain.evrmore, net: Net.main);
+  static final staticRVNt =
+      Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test);
+  static final staticEVRt =
+      Security(symbol: 'EVR', chain: Chain.evrmore, net: Net.test);
 
   SecurityProclaim() : super(_IdKey()) {
     bySymbol = addIndexMultiple('symbol', _SymbolKey());
-    bySymbolChainNet = addIndexMultiple('symbolchainnet', _SymbolChainNetKey());
-    bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
   }
 
   IndexUnique<_IdKey, Security> get byKey =>
@@ -57,15 +38,19 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
   final Security RVNt = SecurityProclaim.staticRVNt;
   final Security EVRt = SecurityProclaim.staticEVRt;
 
-  final List<Security> cryptos = [
-    SecurityProclaim.staticUSD,
-    SecurityProclaim.staticRVN,
+  final List<Security> coins = [
     SecurityProclaim.staticEVR,
-    SecurityProclaim.staticRVNt,
+    SecurityProclaim.staticRVN,
     SecurityProclaim.staticEVRt,
+    SecurityProclaim.staticRVNt,
+    SecurityProclaim.staticUSD,
   ];
 
-  Security get currentCrypto {
+  Set<String>? _coinSymbols;
+  Set<String> get coinSymbols =>
+      _coinSymbols ??= coins.map((e) => e.symbol).toSet();
+
+  Security get currentCoin {
     if (pros.settings.chain == Chain.ravencoin &&
         pros.settings.net == Net.main) {
       return RVN;
@@ -82,4 +67,7 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
       return USD;
     }
   }
+
+  Security? ofCurrent(String symbol) =>
+      primaryIndex.getOne(symbol, pros.settings.chain, pros.settings.net);
 }

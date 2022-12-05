@@ -2,7 +2,6 @@
 /// this should probably be a permanent fixture on the main scaffold,
 /// which changes based upon a page or messages from a stream... idk, but,
 /// for now we'll put it here because it'll be easy to move to main if we want.
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -17,10 +16,11 @@ import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/backdrop/backdrop.dart';
 
+import '../../utils/alphacon.dart';
+
 enum SelectionSet {
   Fee,
   Decimal,
-  Holdings,
   Admins,
   Parents,
   Create,
@@ -35,16 +35,10 @@ enum SelectionSet {
 
 enum SelectionOption {
   // list of my assets
-  Holdings,
   Admins,
 
   // for admins
   Restricted_Symbol,
-
-  // fee
-  Fast,
-  Standard,
-  Slow,
 
   // what to access or create
   Main_Asset,
@@ -113,19 +107,13 @@ class SelectionItems {
     List<VoidCallback>? behaviors,
     List<String>? values,
     this.symbol,
-    SelectionSet? modalSet,
+    this.modalSet,
   }) {
     // handle the error here if we have to error.
-    this.modalSet = modalSet;
     this.names = (names ??
             {
-              SelectionSet.Holdings: [SelectionOption.Holdings],
-              SelectionSet.Admins: [SelectionOption.Admins],
-              SelectionSet.Fee: [
-                SelectionOption.Standard,
-                SelectionOption.Fast,
-              ],
-              SelectionSet.Decimal: [
+              SelectionSet.Admins: <SelectionOption>[SelectionOption.Admins],
+              SelectionSet.Decimal: <SelectionOption>[
                 SelectionOption.Dec8,
                 SelectionOption.Dec7,
                 SelectionOption.Dec6,
@@ -136,7 +124,7 @@ class SelectionItems {
                 SelectionOption.Dec1,
                 SelectionOption.Dec0,
               ],
-              SelectionSet.Create: [
+              SelectionSet.Create: <SelectionOption>[
                 SelectionOption.Main,
                 SelectionOption.Sub,
                 SelectionOption.Restricted,
@@ -145,19 +133,19 @@ class SelectionItems {
                 SelectionOption.NFT,
                 SelectionOption.Channel,
               ],
-              SelectionSet.Sub_Asset: [
+              SelectionSet.Sub_Asset: <SelectionOption>[
                 SelectionOption.Sub,
                 SelectionOption.NFT,
                 SelectionOption.Channel,
               ],
-              SelectionSet.Sub_Qualifier: [
+              SelectionSet.Sub_Qualifier: <SelectionOption>[
                 SelectionOption.QualifierSub,
               ],
-              SelectionSet.Feedback: [
+              SelectionSet.Feedback: <SelectionOption>[
                 SelectionOption.Change,
                 SelectionOption.Bug,
               ],
-              SelectionSet.MainManage: [
+              SelectionSet.MainManage: <SelectionOption>[
                 SelectionOption.Reissue,
                 SelectionOption.Issue_Dividend,
               ],
@@ -172,7 +160,8 @@ class SelectionItems {
       name.name.toTitleCase(underscoresAsSpace: true);
 
   Widget createLeads(SelectionOption name) {
-    var imageDetails = components.icons.getImageDetailsAlphacon(symbolColors);
+    final ImageDetails imageDetails =
+        components.icons.getImageDetailsAlphacon(symbolColors);
     return components.icons.generateIndicator(
             name: symbolColors,
             imageDetails: imageDetails,
@@ -211,32 +200,24 @@ class SelectionItems {
               ? components.icons.assetTypeIcon(name: holding)
               : components.icons.assetTypeIcon(
                   assetType: {
-                        SelectionOption.Restricted_Symbol: AssetType.restricted,
-                        SelectionOption.Main_Asset: AssetType.main,
-                        SelectionOption.Restricted_Asset: AssetType.restricted,
-                        SelectionOption.Qualifier_Asset: AssetType.qualifier,
-                        SelectionOption.Admin_Asset: AssetType.admin,
-                        SelectionOption.Main: AssetType.main,
-                        SelectionOption.Restricted: AssetType.restricted,
-                        SelectionOption.NFT_Asset: AssetType.unique,
-                        SelectionOption.Qualifier: AssetType.qualifier,
-                        SelectionOption.Admin: AssetType.admin,
-                        SelectionOption.Sub_Asset: AssetType.sub,
-                        SelectionOption.NFT: AssetType.unique,
-                        SelectionOption.Messaging_Channel_Asset:
-                            AssetType.channel,
-                        SelectionOption.Channel: AssetType.channel,
-                      }[name] ??
-                      null)) ??
+                  SelectionOption.Restricted_Symbol: AssetType.restricted,
+                  SelectionOption.Main_Asset: AssetType.main,
+                  SelectionOption.Restricted_Asset: AssetType.restricted,
+                  SelectionOption.Qualifier_Asset: AssetType.qualifier,
+                  SelectionOption.Admin_Asset: AssetType.admin,
+                  SelectionOption.Main: AssetType.main,
+                  SelectionOption.Restricted: AssetType.restricted,
+                  SelectionOption.NFT_Asset: AssetType.unique,
+                  SelectionOption.Qualifier: AssetType.qualifier,
+                  SelectionOption.Admin: AssetType.admin,
+                  SelectionOption.Sub_Asset: AssetType.sub,
+                  SelectionOption.NFT: AssetType.unique,
+                  SelectionOption.Messaging_Channel_Asset: AssetType.channel,
+                  SelectionOption.Channel: AssetType.channel,
+                }[name])) ??
           {
             SelectionOption.Restricted_Symbol:
                 Icons.attach_money_rounded, //, color: Colors.black),
-            SelectionOption.Fast:
-                MdiIcons.speedometer, //, color: Color(0x99000000)),
-            SelectionOption.Standard:
-                MdiIcons.speedometerMedium, //, color: Color(0x99000000)),
-            SelectionOption.Slow:
-                MdiIcons.speedometerSlow, //, color: Color(0x99000000)),
             SelectionOption.Main_Asset:
                 MdiIcons.plusCircle, //, color: Color(0xDE000000)),
             SelectionOption.Restricted_Asset:
@@ -292,30 +273,6 @@ class SelectionItems {
           }[name] ??
           AppColors.primary);
 
-  Widget holdingItem(String name) => ListTile(
-      visualDensity: VisualDensity.compact,
-      onTap: () {
-        Navigator.pop(context);
-        streams.spend.form.add(SpendForm.merge(
-          form: streams.spend.form.value,
-          symbol: name,
-        ));
-      },
-      leading: components.icons.assetAvatar(
-          name == 'Ravencoin'
-              ? pros.securities.RVN.symbol
-              : name == 'Evrmore'
-                  ? pros.securities.EVR.symbol
-                  : name,
-          height: 24,
-          width: 24,
-          net: pros.settings.net),
-      title: Text(
-          name == pros.securities.currentCrypto.symbol
-              ? symbolName(name)
-              : name,
-          style: Theme.of(context).textTheme.bodyText1));
-
   Widget walletItem(Wallet wallet, TextEditingController controller) =>
       ListTile(
           visualDensity: VisualDensity.compact,
@@ -323,7 +280,7 @@ class SelectionItems {
             Navigator.pop(context);
             controller.text = wallet.name;
           },
-          leading: Icon(
+          leading: const Icon(
             Icons.account_balance_wallet_rounded,
             color: AppColors.primary,
             size: 20,
@@ -337,7 +294,7 @@ class SelectionItems {
         Navigator.pop(context);
         controller.text = 'All Wallets';
       },
-      leading: Icon(
+      leading: const Icon(
         Icons.account_balance_wallet_rounded,
         color: AppColors.primary,
         size: 24,
@@ -411,14 +368,6 @@ class SelectionItems {
         )),
       );
 
-  Widget feeItem(SelectionOption name) => item(
-        name,
-        behavior: () => streams.spend.form.add(SpendForm.merge(
-          form: streams.spend.form.value,
-          fee: asString(name),
-        )),
-      );
-
   Widget decimalItem(
     SelectionOption name, {
     String? prefix,
@@ -426,7 +375,7 @@ class SelectionItems {
   }) =>
       item(
         name,
-        title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        title: Row(children: <Widget>[
           Text(prefix ?? '0',
               style: Theme.of(context).textTheme.bodyText2!.copyWith(
                   fontWeight: FontWeights.bold,
@@ -469,7 +418,7 @@ class SelectionItems {
         name,
         behavior: () => Navigator.pushNamed(
           components.navigator.routeContext!,
-          '/create/' + asString(name).toLowerCase(),
+          '/create/${asString(name).toLowerCase()}',
           arguments: {'symbol': asString(name)},
         ),
         useCreateLeads: true, // modalSet == SelectionSet.Create
@@ -479,7 +428,7 @@ class SelectionItems {
         name,
         behavior: () => Navigator.pushNamed(
           components.navigator.routeContext!,
-          '/create/' + asString(name).toLowerCase(),
+          '/create/${asString(name).toLowerCase()}',
           //{
           //  SelectionOption.Main: 'main',
           //  SelectionOption.Restricted: 'restricted',
@@ -493,17 +442,16 @@ class SelectionItems {
         name,
         behavior: () => Navigator.pushNamed(
           components.navigator.routeContext!,
-          '/create/' +
-              {
-                SelectionOption.Sub_Asset: 'main',
-                SelectionOption.NFT: 'nft',
-                SelectionOption.Messaging_Channel_Asset: 'channel',
-              }[name]!,
+          '/create/${{
+            SelectionOption.Sub_Asset: 'main',
+            SelectionOption.NFT: 'nft',
+            SelectionOption.Messaging_Channel_Asset: 'channel',
+          }[name]!}',
           arguments: {'symbol': asString(name)},
         ),
       );
 
-  Future<void> produceModal(List items) async {
+  Future<void> produceModal(List<Widget> items) async {
     await showModalBottomSheet<void>(
         context: context,
         elevation: 1,
@@ -512,35 +460,33 @@ class SelectionItems {
         shape: components.shape.topRounded8,
         builder: (BuildContext context) {
           streams.app.scrim.add(true);
-          DraggableScrollableController draggableScrollController =
+          final DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
-          var minExtent =
+          final double minExtent =
               min((items.length * 52 + 16).ofMediaHeight(context), 0.5);
-          var initialExtent = minExtent;
-          var maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
+          final double initialExtent = minExtent;
+          double maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
           maxExtent = min(1.0, max(minExtent, maxExtent));
           return DraggableScrollableSheet(
             controller: draggableScrollController,
-            snap: false,
             expand: false,
             initialChildSize: initialExtent,
             minChildSize: minExtent,
             maxChildSize: maxExtent,
-            builder: ((context, scrollController) {
+            builder: (BuildContext context, ScrollController scrollController) {
               return FrontCurve(
-                  fuzzyTop: true,
                   child: ListView(
-                    shrinkWrap: true,
-                    controller: scrollController,
-                    children: <Widget>[
-                      ...[SizedBox(height: 8)],
-                      ...items,
-                      ...[SizedBox(height: 8)],
-                    ],
-                  ));
-            }),
+                shrinkWrap: true,
+                controller: scrollController,
+                children: <Widget>[
+                  ...<Widget>[const SizedBox(height: 8)],
+                  ...items,
+                  ...<Widget>[const SizedBox(height: 8)],
+                ],
+              ));
+            },
           );
-        }).then((value) => streams.app.scrim.add(false));
+        }).then((_) => streams.app.scrim.add(false));
   }
 
   Future<void> build({
@@ -553,7 +499,7 @@ class SelectionItems {
     while (streams.app.keyboard.value != KeyboardStatus.down) {
       // drop keyboard incase it's up
       FocusScope.of(context).unfocus();
-      await Future.delayed(Duration(milliseconds: 600));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
     }
     if (modalSet == SelectionSet.Wallets) {
       await produceModal([
@@ -562,9 +508,6 @@ class SelectionItems {
           [
             for (Wallet wallet in pros.wallets) walletItem(wallet, controller!)
           ]);
-    } else if (modalSet == SelectionSet.Holdings) {
-      produceModal(
-          [for (String holding in holdingNames ?? []) holdingItem(holding)]);
     } else if (modalSet == SelectionSet.Admins) {
       produceModal(
         [for (String name in holdingNames ?? []) restrictedItem(name)],
@@ -572,10 +515,6 @@ class SelectionItems {
     } else if (modalSet == SelectionSet.Parents) {
       produceModal(
           [for (String holding in holdingNames ?? []) parentItem(holding)]);
-    } else if (modalSet == SelectionSet.Fee) {
-      produceModal(
-        [for (SelectionOption name in names) feeItem(name)],
-      );
     } else if (modalSet == SelectionSet.Decimal) {
       produceModal(
         [
@@ -601,8 +540,8 @@ class SelectionItems {
         if (symbol == null) {
           produceModal(
             [
-              for (var namedBehaviorValue in [
-                for (var i = 0; i < names.length; i += 1)
+              for (List<Object> namedBehaviorValue in [
+                for (int i = 0; i < names.length; i += 1)
                   [names[i], behaviors[i], values[i]]
               ])
                 item(namedBehaviorValue[0] as SelectionOption,
@@ -613,8 +552,8 @@ class SelectionItems {
         } else {
           produceModal(
             [
-              for (var namedBehaviorValue in [
-                for (var i = 0; i < names.length; i += 1)
+              for (List<Object> namedBehaviorValue in [
+                for (int i = 0; i < names.length; i += 1)
                   [names[i], behaviors[i], values[i]]
               ])
                 item(namedBehaviorValue[0] as SelectionOption,
@@ -626,8 +565,8 @@ class SelectionItems {
       } else if (names.length == behaviors.length) {
         produceModal(
           [
-            for (var namedBehavior in [
-              for (var i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
+            for (List<Object> namedBehavior in [
+              for (int i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
             ])
               item(namedBehavior[0] as SelectionOption,
                   behavior: namedBehavior[1] as VoidCallback)
@@ -660,12 +599,12 @@ class SimpleSelectionItems {
           if (streams.app.scrim.value == false) {
             streams.app.scrim.add(true);
           }
-          DraggableScrollableController draggableScrollController =
+          final DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
-          var minExtent =
+          final double minExtent =
               min((items.length * 52 + 16 + 24).ofMediaHeight(context), 0.5);
-          var initialExtent = minExtent;
-          var maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
+          final double initialExtent = minExtent;
+          double maxExtent = (items.length * 52 + 16).ofMediaHeight(context);
           maxExtent = min(1.0, max(minExtent, maxExtent));
 
           /// failed attempt to use set state
@@ -673,22 +612,21 @@ class SimpleSelectionItems {
           //    StateSetter setState /*You can rename this!*/) {
           return DraggableScrollableSheet(
             controller: draggableScrollController,
-            snap: false,
             expand: false,
             initialChildSize: initialExtent,
             minChildSize: minExtent,
             maxChildSize: maxExtent,
-            builder: ((context, scrollController) {
+            builder:
+                ((BuildContext context, ScrollController scrollController) {
               return FrontCurve(
-                  fuzzyTop: true,
                   alignment: Alignment.topCenter,
                   child: ListView(
                     shrinkWrap: true,
                     controller: scrollController,
                     children: <Widget>[
-                      ...[SizedBox(height: 8)],
+                      ...[const SizedBox(height: 8)],
                       ...items,
-                      ...[SizedBox(height: 8)],
+                      ...[const SizedBox(height: 8)],
                     ],
                   ));
             }),

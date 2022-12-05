@@ -52,7 +52,7 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
     serverFocus.dispose();
     network.dispose();
     serverAddress.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -118,10 +118,10 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
+                    children: <Widget>[
                       SizedBox(height: 100),
                       components.containers.navBar(context,
-                          child: Row(children: [submitButton])),
+                          child: Row(children: <Widget>[submitButton])),
                     ])),
           ]),
         )));

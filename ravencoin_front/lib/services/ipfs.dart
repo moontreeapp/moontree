@@ -6,11 +6,10 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/services/storage.dart';
 
 class LogoGetter extends IpfsCall {
+  LogoGetter([String? ipfsHash]) : super(ipfsHash);
   String? logo;
   Map<dynamic, dynamic> json = {};
   bool ableToInterpret = false;
-
-  LogoGetter([ipfsHash]) : super(ipfsHash);
 
   /// given a hash get the logo and other metadata set it on object
   /// return true if able to interpret data
@@ -26,14 +25,14 @@ class LogoGetter extends IpfsCall {
   }
 
   Future<bool> _getMetadata() async {
-    var response = await callIpfs();
-    var jsonBody;
+    final http.Response response = await callIpfs();
+    Map? jsonBody;
     if (_verify(response)) {
       jsonBody = _detectJson(response);
       if (jsonBody is Map<dynamic, dynamic>) {
         return _interpret(jsonBody);
       } else {
-        return await _interpretAsImage(response.bodyBytes);
+        return _interpretAsImage(response.bodyBytes);
       }
     }
     return false;
@@ -44,7 +43,7 @@ class LogoGetter extends IpfsCall {
 
   Map<dynamic, dynamic>? _detectJson(http.Response response) {
     try {
-      return jsonDecode(response.body);
+      return jsonDecode(response.body) as Map?;
     } catch (e) {
       return null;
     }
@@ -59,11 +58,11 @@ class LogoGetter extends IpfsCall {
   */
   bool _interpret(Map jsonBody) {
     String? imgString;
-    var keyName = '';
-    for (var kn in ['logo', 'icon', 'image']) {
+    String keyName = '';
+    for (String kn in ['logo', 'icon', 'image']) {
       if (jsonBody.keys.contains(kn)) {
         keyName = kn;
-        imgString = jsonBody[kn];
+        imgString = jsonBody[kn] as String;
         break;
       }
     }
@@ -93,7 +92,7 @@ class LogoGetter extends IpfsCall {
   /// save bytes return path
   Future<bool> _interpretAsImage(Uint8List bytes,
       {String? givenIpfsHash}) async {
-    AssetLogos storage = AssetLogos();
+    final AssetLogos storage = AssetLogos();
     //var path =
     (await storage.writeLogo(
       filename: givenIpfsHash ?? logo ?? ipfsHash!,
@@ -107,9 +106,8 @@ class LogoGetter extends IpfsCall {
 }
 
 class IpfsMiniExplorer extends IpfsCall {
+  IpfsMiniExplorer([String? ipfsHash]) : super(ipfsHash);
   MetadataType kind = MetadataType.unknown;
-
-  IpfsMiniExplorer([ipfsHash]) : super(ipfsHash);
 
   /// returns string: json or path of image or null
   Future<String?> get([String? givenIpfsHash]) async {
@@ -123,8 +121,8 @@ class IpfsMiniExplorer extends IpfsCall {
   }
 
   Future<String?> _getMetadata() async {
-    var response = await callIpfs();
-    var jsonBody;
+    final http.Response response = await callIpfs();
+    Map? jsonBody;
     if (_verify(response)) {
       jsonBody = _detectJson(response);
       if (jsonBody is Map<dynamic, dynamic>) {
@@ -143,7 +141,7 @@ class IpfsMiniExplorer extends IpfsCall {
 
   Map<dynamic, dynamic>? _detectJson(http.Response response) {
     try {
-      return jsonDecode(response.body);
+      return jsonDecode(response.body) as Map?;
     } catch (e) {
       return null;
     }
@@ -167,10 +165,9 @@ class IpfsMiniExplorer extends IpfsCall {
 }
 
 class IpfsCall {
+  IpfsCall([this.ipfsHash = '', this.url = 'https://gateway.ipfs.io/ipfs/']);
   late String? ipfsHash;
   late String? url;
-
-  IpfsCall([this.ipfsHash = '', this.url = 'https://gateway.ipfs.io/ipfs/']);
 
   Future<http.Response> callIpfs({
     String? givenHash,
@@ -184,8 +181,8 @@ class IpfsCall {
   /// returns the hash of a logo if one is explicitly sepcified
   static String? searchJsonForLogo({Map? jsonMap, String? jsonString}) {
     var logo;
-    jsonMap = jsonMap ?? jsonDecode(jsonString ?? '{}');
-    for (var key in ['logo', 'icon', 'image']) {
+    jsonMap = jsonMap ?? jsonDecode(jsonString ?? '{}') as Map?;
+    for (String key in ['logo', 'icon', 'image']) {
       if (jsonMap!.keys.contains(key)) {
         logo = jsonMap[key];
         break;
@@ -212,6 +209,6 @@ class IpfsCall {
       .replaceAll('}', '')
       .replaceAll(',', '')
       .split(' ')
-      .where((hash) => isIpfs(hash))
+      .where((String hash) => isIpfs(hash))
       .toSet();
 }

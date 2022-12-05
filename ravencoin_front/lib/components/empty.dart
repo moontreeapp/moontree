@@ -47,12 +47,14 @@ class EmptyComponents {
   }) =>
       Container(
           alignment: Alignment.center,
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Icon(icon ?? Icons.savings,
-                size: 50.0, color: Theme.of(context).secondaryHeaderColor),
-            Text(msg),
-            //RavenButton.getRVN(context), // hidden for alpha
-          ]));
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(icon ?? Icons.savings,
+                    size: 50.0, color: Theme.of(context).secondaryHeaderColor),
+                Text(msg),
+                //RavenButton.getRVN(context), // hidden for alpha
+              ]));
 
   ListView getZeroHoldingsPlaceholder(
     BuildContext context, {
@@ -112,7 +114,8 @@ class EmptyComponents {
       Container(
           height: 72,
           padding: EdgeInsets.only(top: 8.0, left: 16),
-          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <
+              Widget>[
             Container(
               height: 40,
               width: 40,
@@ -126,7 +129,7 @@ class EmptyComponents {
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   if (holding) ...[
                     Container(
                       height: MediaQuery.of(context).size.height * (12 / 760),
@@ -162,7 +165,7 @@ class EmptyComponents {
             border: Border.all(width: 2, color: AppColors.primaries[0])),
         //child: ClipRRect(borderRadius: BorderRadius.circular(100.0)),
       ),
-      title: Row(children: [
+      title: Row(children: <Widget>[
         Container(
             height: MediaQuery.of(context).size.height * (12 / 760),
             width: 79,
@@ -171,7 +174,7 @@ class EmptyComponents {
                 borderRadius: BorderRadius.circular(
                     (MediaQuery.of(context).size.height * (12 / 760)) * .5)))
       ]),
-      subtitle: Row(children: [
+      subtitle: Row(children: <Widget>[
         Container(
             height: MediaQuery.of(context).size.height * (12 / 760),
             width: 148,
@@ -183,7 +186,7 @@ class EmptyComponents {
       trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
+          children: <Widget>[
             Container(
               height: MediaQuery.of(context).size.height * (12 / 760),
               width: 47,
@@ -237,31 +240,33 @@ class EmptyComponents {
   Widget transactionPlaceholder(BuildContext context) => Container(
       height: 64,
       padding: EdgeInsets.only(top: 8.0, left: 16, right: 16),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height * (12 / 760),
-                width: 79,
-                decoration: BoxDecoration(
-                    color: AppColors.primaries[0],
-                    borderRadius: BorderRadius.circular(
-                        (MediaQuery.of(context).size.height * (12 / 760)) *
-                            .5)),
-              ),
-              SizedBox(height: 8),
-              Container(
-                height: MediaQuery.of(context).size.height * (12 / 760),
-                width: 148,
-                decoration: BoxDecoration(
-                    color: AppColors.primaries[0],
-                    borderRadius: BorderRadius.circular(
-                        (MediaQuery.of(context).size.height * (12 / 760)) *
-                            .5)),
-              ),
-            ]),
-        components.icons.out(context, color: AppColors.primaries[0])
-      ]));
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.height * (12 / 760),
+                    width: 79,
+                    decoration: BoxDecoration(
+                        color: AppColors.primaries[0],
+                        borderRadius: BorderRadius.circular(
+                            (MediaQuery.of(context).size.height * (12 / 760)) *
+                                .5)),
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    height: MediaQuery.of(context).size.height * (12 / 760),
+                    width: 148,
+                    decoration: BoxDecoration(
+                        color: AppColors.primaries[0],
+                        borderRadius: BorderRadius.circular(
+                            (MediaQuery.of(context).size.height * (12 / 760)) *
+                                .5)),
+                  ),
+                ]),
+            components.icons.out(context, color: AppColors.primaries[0])
+          ]));
 }

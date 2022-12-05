@@ -5,7 +5,6 @@ import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
-import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
@@ -18,7 +17,7 @@ class WalletView extends StatefulWidget {
 }
 
 class _WalletViewState extends State<WalletView> {
-  dynamic data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   bool disabled = false;
   bool showSecret = false;
   ToolbarOptions toolbarOptions =
@@ -60,7 +59,7 @@ class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    secret = data['secret'] ?? '';
+    secret = data['secret'] as String? ?? '';
     data['secretName'] = SecretType.mnemonic;
     secretName = (data['secretName'] as SecretType)
         .name
@@ -115,7 +114,7 @@ class _WalletViewState extends State<WalletView> {
                 Tab(text: 'Transactions')
               ]))));
 
-  TabBarView body() => TabBarView(children: [
+  TabBarView body() => TabBarView(children: <Widget>[
         detailsView(),
         NotificationListener<UserScrollNotification>(
             onNotification: visibilityOfSendReceive,
@@ -194,11 +193,14 @@ class _WalletViewState extends State<WalletView> {
   List<Widget> addressesView() => wallet is LeaderWallet
       ? [
           for (var walletAddress
-              in wallet.addresses..sort((a, b) => a.compareTo(b)))
+              in wallet.addressesFor()..sort((a, b) => a.compareTo(b)))
             ListTile(
+              dense: true,
+              visualDensity: VisualDensity.compact,
+              contentPadding: EdgeInsets.only(left: 0, right: 0),
               onTap: () => setState(() {
                 // Delay to make sure the frames are rendered properly
-                //await Future.delayed(const Duration(milliseconds: 300));
+                //await Future<void>.delayed(const Duration(milliseconds: 300));
 
                 _scrollController.animateTo(
                     _scrollController.position.minScrollExtent,
@@ -218,17 +220,15 @@ class _WalletViewState extends State<WalletView> {
                 //    .wif; // .wif is the format that raven-Qt-testnet expects
                 //.base58Priv;
                 //.privKey;
-                exposureAndIndex = Column(children: [
+                exposureAndIndex = Column(children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
+                    children: <Widget>[
                       Text(
                         'Index: ' + walletAddress.hdIndex.toString(),
                       ),
                       Text(
-                        (walletAddress.exposure == NodeExposure.internal
-                            ? 'Internal (change)'
-                            : 'External (receive)'),
+                        (walletAddress.exposure.name.toTitleCase()),
                       ),
                       Text(
                           'Balance: ' +
@@ -253,13 +253,12 @@ class _WalletViewState extends State<WalletView> {
                   */
                 ]);
               }),
-              title: Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                children: [
-                  (walletAddress.exposure == NodeExposure.internal
-                      ? components.icons.out(context)
-                      : components.icons.income(context)),
-                  Text(walletAddress.address,
+              leading: (walletAddress.exposure == NodeExposure.internal
+                  ? components.icons.out(context)
+                  : components.icons.income(context)),
+              title: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(walletAddress.address,
                       style: pros.vouts.byAddress
                               .getAll(walletAddress.address)
                               .isNotEmpty
@@ -267,20 +266,19 @@ class _WalletViewState extends State<WalletView> {
                               .textTheme
                               .caption!
                               .copyWith(fontWeight: FontWeight.bold)
-                          : Theme.of(context).textTheme.caption),
-                  Text(
-                      utils
-                          .satToAmount(services.transaction
-                              .walletUnspents(wallet)
-                              .where((vout) =>
-                                  vout.toAddress == walletAddress.address)
-                              .map((vout) => vout.rvnValue)
-                              .toList()
-                              .sumInt())
-                          .toString(),
-                      style: Theme.of(context).textTheme.caption),
-                ],
-              ),
+                          : Theme.of(context).textTheme.caption)),
+
+              trailing: Text(
+                  utils
+                      .satToAmount(services.transaction
+                          .walletUnspents(wallet)
+                          .where(
+                              (vout) => vout.toAddress == walletAddress.address)
+                          .map((vout) => vout.rvnValue)
+                          .toList()
+                          .sumInt())
+                      .toString(),
+                  style: Theme.of(context).textTheme.caption),
               //trailing: Text('address.value'),
               //trailing: (address.value > 0
               //    ? Text(
@@ -300,7 +298,7 @@ class _WalletViewState extends State<WalletView> {
               onLongPress: () {},
               title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     Text(address ?? '',
                         style: Theme.of(context).textTheme.caption),
                     components.icons.income(context),
@@ -315,7 +313,7 @@ class _WalletViewState extends State<WalletView> {
             ? () {}
             : () => Navigator.pushNamed(context, '/transaction/send',
                     arguments: {
-                      'symbol': pros.securities.currentCrypto.symbol,
+                      'symbol': pros.securities.currentCoin.symbol,
                       'walletId': wallet.id
                     }),
       );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -22,7 +24,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  late List listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   bool ignoring = false;
   static const double minExtent = .065; //.0736842105263158;
   //minExtent = 1-(MediaQuery.of(context).size.height - 56)  // pix
@@ -53,7 +56,7 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     _slideController.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -65,7 +68,7 @@ class _HomePageState extends State<HomePage>
       back: NavMenu(),
       front: Stack(
         alignment: Alignment.bottomCenter,
-        children: [
+        children: <Widget>[
           SlideTransition(
             position: _slideAnimation,
             child: FrontCurve(
@@ -110,7 +113,7 @@ class _HomePageState extends State<HomePage>
                     // ignore: dead_code
                     : ListView(
                         controller: _scrollController,
-                        children: [
+                        children: <Widget>[
                           Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
                         ],
                       ),

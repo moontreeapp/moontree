@@ -51,7 +51,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Future<void> _init() async {
-    await Future.delayed(Duration(milliseconds: 3500));
+    await Future<void>.delayed(Duration(milliseconds: 3500));
     await HIVE_INIT.setupDatabaseStart();
     await HIVE_INIT.setupDatabase1();
 
@@ -72,21 +72,21 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
     //}, null);
 
-    await Future.delayed(Duration(milliseconds: 1));
+    await Future<void>.delayed(Duration(milliseconds: 1));
     setState(() {
       shape = components.shape.topRoundedBorder8;
     });
     _fadeController.forward();
-    await Future.delayed(Duration(milliseconds: 1000));
-    //await Future.delayed(Duration(milliseconds: 1000));
+    await Future<void>.delayed(Duration(milliseconds: 1000));
+    //await Future<void>.delayed(Duration(milliseconds: 1000));
     //_slideController.forward();
     //// hack to trigger animate Welcome
     //streams.app.loading.add(false);
     //streams.app.loading.add(true);
     //streams.app.loading.add(false);
-    //await Future.delayed(Duration(milliseconds: 1000));
+    //await Future<void>.delayed(Duration(milliseconds: 1000));
     //_fadeController.forward();
-    //await Future.delayed(Duration(milliseconds: 1000));
+    //await Future<void>.delayed(Duration(milliseconds: 1000));
     //setState(() {
     //  _slideController.reset();
     //  showAppBar = true;
@@ -114,7 +114,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           /**/
           Stack(
         alignment: Alignment.topCenter,
-        children: [
+        children: <Widget>[
           if (!showAppBar) BackdropAppBarContents(spoof: true),
           SlideTransition(
               position: _slideAnimation,

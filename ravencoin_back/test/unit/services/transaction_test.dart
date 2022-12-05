@@ -33,8 +33,8 @@ void main() async {
     test('asset wallet unspents', () {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: pros.securities.primaryIndex.getOne(
-                  'MOONTREE', SecurityType.asset, Chain.ravencoin, Net.test))
+              security: pros.securities.primaryIndex
+                  .getOne('MOONTREE', Chain.ravencoin, Net.test))
           .toList();
       //expect(?, ?);
     });
@@ -42,8 +42,8 @@ void main() async {
     test('asset wallet unspents', () {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: pros.securities.primaryIndex.getOne(
-                  'MOONTREE', SecurityType.asset, Chain.ravencoin, Net.test))
+              security: pros.securities.primaryIndex
+                  .getOne('MOONTREE', Chain.ravencoin, Net.test))
           .toList();
       //expect(?, ?);
     });
@@ -51,8 +51,8 @@ void main() async {
     test('missing asset wallet unspents', () {
       VoutProclaim.whereUnspent(
               given: wallet.vouts,
-              security: pros.securities.primaryIndex.getOne(
-                  'lalala', SecurityType.asset, Chain.ravencoin, Net.test))
+              security: pros.securities.primaryIndex
+                  .getOne('lalala', Chain.ravencoin, Net.test))
           .toList();
       //expect(0);
     });
@@ -76,16 +76,16 @@ void main() async {
       var utxos = await services.balance.collectUTXOs(
           walletId: wallet.id,
           amount: 5,
-          security: pros.securities.primaryIndex.getOne(
-              'MOONTREE', SecurityType.asset, Chain.ravencoin, Net.test));
+          security: pros.securities.primaryIndex
+              .getOne('MOONTREE', Chain.ravencoin, Net.test));
       expect(utxos.map((utxo) => utxo.assetValue).toList(), [100]);
     });
     test('take multiple from the top', () async {
       var utxos = await services.balance.collectUTXOs(
           walletId: wallet.id,
           amount: 1200,
-          security: pros.securities.primaryIndex.getOne(
-              'MOONTREE', SecurityType.asset, Chain.ravencoin, Net.test));
+          security: pros.securities.primaryIndex
+              .getOne('MOONTREE', Chain.ravencoin, Net.test));
       expect(utxos.map((utxo) => utxo.assetValue).toList(), [1000, 500]);
     });
   });
@@ -133,7 +133,7 @@ void main() async {
   // ignore: omit_local_variable_types
   // tests.Generated gen = tests.Generated.asEmpty();
   // setUpAll(() async => gen = await tests.generate());
-  // tearDownAll(() async => await tests.closeHive());
+  // tearDownAll(() async =>  tests.closeHive());
 
   /// make amount nearly an entire utxo check to see if by addInputs
   /// we include more utxos to cover the fees

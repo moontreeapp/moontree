@@ -25,7 +25,7 @@ class LocalAuthApi {
 
   /// this name seems misleading "isDeviceSupported"
   /// Returns false if no nativeSecurity is setup, true if it is...
-  Future<bool> get isSetup async => await _auth.isDeviceSupported();
+  Future<bool> get isSetup async => _auth.isDeviceSupported();
 
   Future<List<BiometricType>> get availableBiometrics async =>
       await _auth.getAvailableBiometrics();

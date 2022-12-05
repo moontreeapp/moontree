@@ -88,7 +88,7 @@ class IconComponents {
     //      );
     //  var indicator =
     //      generateIndicator(name: asset, imageDetails: imageDetails);
-    //  return Stack(alignment: Alignment.bottomRight, children: [
+    //  return Stack(alignment: Alignment.bottomRight, children: <Widget>[
     //    _assetAvatarMoontree(height: height, width: width),
     //    if (indicator != null) indicator,
     //  ]);
@@ -121,8 +121,8 @@ class IconComponents {
 
   /// return custom logo (presumably previously downloaded from ipfs) or null
   Widget? _assetAvatarSecurity(String symbol, {double? height, double? width}) {
-    var security = pros.securities.primaryIndex.getOne(
-        symbol, SecurityType.asset, pros.settings.chain, pros.settings.net);
+    var security = pros.securities.primaryIndex
+        .getOne(symbol, pros.settings.chain, pros.settings.net);
     if (security != null &&
         !([null, '']).contains(security.asset?.logo?.data)) {
       try {
@@ -201,7 +201,7 @@ class IconComponents {
           background,
         );
     var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
-    var ret = Stack(alignment: Alignment.bottomRight, children: [
+    var ret = Stack(alignment: Alignment.bottomRight, children: <Widget>[
       Container(
         height: height,
         width: width,
@@ -270,7 +270,7 @@ class IconComponents {
           background,
         );
     var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
-    var ret = Stack(alignment: Alignment.bottomRight, children: [
+    var ret = Stack(alignment: Alignment.bottomRight, children: <Widget>[
       Container(
           height: height,
           width: width,
@@ -409,7 +409,7 @@ import 'package:ravencoin_front/widgets/other/circle_gradient.dart';
   }
     // replace with the new thing...
   Widget moneybag(ColorPair background, Image foreground) =>
-      Stack(children: [PopCircle(colorPair: background), foreground]);
+      Stack(children: <Widget>[PopCircle(colorPair: background), foreground]);
 
 */
 /*
@@ -444,7 +444,7 @@ import 'package:ravencoin_front/widgets/other/circle_gradient.dart';
 /*
   import 'package:jdenticon_dart/jdenticon_dart.dart';
   Widget _assetJdenticon(String asset, {double? height, double? width}) {
-    //return Stack(children: [
+    //return Stack(children: <Widget>[
     ///return ClipRRect(
     ///    borderRadius: BorderRadius.circular(100.0),
     ///    child:

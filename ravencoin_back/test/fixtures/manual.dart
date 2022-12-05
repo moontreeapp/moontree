@@ -12,7 +12,7 @@ Future<void> fillDatabaseWithLargeSpendables() async {
       rvnValue: 10000000000000000,
       //100,000,128.88355600
       type: '',
-      toAddress: pros.wallets.currentWallet.addresses.first.address,
+      toAddress: pros.wallets.currentWallet.addressesFor().first.address,
       assetSecurityId: pros.securities.EVR.id));
   await pros.balances.save(Balance(
       walletId: pros.settings.currentWalletId,
@@ -21,7 +21,7 @@ Future<void> fillDatabaseWithLargeSpendables() async {
       unconfirmed: 0));
   await pros.unspents.save(Unspent(
     walletId: pros.settings.currentWalletId,
-    addressId: pros.wallets.currentWallet.addresses.first.id,
+    addressId: pros.wallets.currentWallet.addressesFor().first.id,
     transactionId:
         'b1c76d0d4e8019f8dfedb401348caf8229c40aabde0762d738f88f0f0f9efcba',
     position: 0,

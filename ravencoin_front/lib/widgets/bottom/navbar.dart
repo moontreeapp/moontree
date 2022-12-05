@@ -66,7 +66,7 @@ class _NavBarState extends State<NavBar> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -83,7 +83,7 @@ class _NavBarState extends State<NavBar> {
         child: SingleChildScrollView(
           child: Column(
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: <Widget>[
               // we will need to make these buttons dependant upon the navigation
               // of the front page through streams but for now, we'll show they
               // can changed based upon whats selected:
@@ -98,7 +98,7 @@ class _NavBarState extends State<NavBar> {
                     padding: EdgeInsets.only(left: 0, right: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: <Widget>[
                         sectorIcon(appContext: AppContext.wallet),
                         sectorIcon(appContext: AppContext.manage),
                         sectorIcon(appContext: AppContext.swap),
@@ -155,40 +155,16 @@ class _NavBarState extends State<NavBar> {
                               .add(Snack(message: 'Claimed your EVR first.'));
                         }
                       },
-                      onPressed: () async {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/transaction/send');
-                        if (Current.wallet is LeaderWallet &&
-                            streams.app.triggers.value ==
-                                ThresholdTrigger.backup &&
-                            !Current.wallet.backedUp) {
-                          await Future.delayed(Duration(milliseconds: 800));
-                          streams.app.xlead.add(true);
+                      onPressed: () =>
                           Navigator.of(components.navigator.routeContext!)
-                              .pushNamed(
-                            '/security/backup',
-                            arguments: {'fadeIn': true},
-                          );
-                        }
-                      },
+                              .pushNamed('/transaction/send'),
                     ),
               components.buttons.actionButton(
                 context,
                 label: 'receive',
-                onPressed: () async {
-                  Navigator.of(components.navigator.routeContext!)
-                      .pushNamed('/transaction/receive');
-                  if (Current.wallet is LeaderWallet &&
-                      streams.app.triggers.value == ThresholdTrigger.backup &&
-                      !Current.wallet.backedUp) {
-                    await Future.delayed(Duration(milliseconds: 800));
-                    streams.app.xlead.add(true);
-                    Navigator.of(components.navigator.routeContext!).pushNamed(
-                      '/security/backup',
-                      arguments: {'fadeIn': true},
-                    );
-                  }
-                },
+                onPressed: () =>
+                    Navigator.of(components.navigator.routeContext!)
+                        .pushNamed('/transaction/receive'),
               )
             ]
           : widget.appContext == AppContext.manage

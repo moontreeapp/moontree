@@ -10,7 +10,7 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
 
   static final Net defaultNet = Net.main;
   static final Chain defaultChain = Chain.ravencoin;
-  static final String defaultUrl = 'moontree.com';
+  static final String defaultDomain = domainOf(defaultChain, defaultNet);
   static final int defaultPort = portOf(defaultChain, defaultNet);
   static final List<TutorialStatus> tutorials = const [
     TutorialStatus.blockchain
@@ -24,7 +24,7 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
         SettingName.electrum_net:
             Setting(name: SettingName.electrum_net, value: defaultNet),
         SettingName.electrum_domain:
-            Setting(name: SettingName.electrum_domain, value: defaultUrl),
+            Setting(name: SettingName.electrum_domain, value: defaultDomain),
         SettingName.electrum_port:
             Setting(name: SettingName.electrum_port, value: defaultPort),
         SettingName.auth_method: Setting(
@@ -67,17 +67,19 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   String get domainPort =>
       '${primaryIndex.getOne(SettingName.electrum_domain)?.value}:${primaryIndex.getOne(SettingName.electrum_port)?.value}';
 
-  String get defaultDomainPort => '$defaultUrl:$defaultPort';
+  String get domainPortOfChainNet => domainPortOf(chain, net);
 
-  Future restoreDomainPort() async => await saveAll([
-        Setting(name: SettingName.electrum_domain, value: defaultUrl),
+  String get defaultDomainPort => '$defaultDomain:$defaultPort';
+
+  Future restoreDomainPort() async => saveAll([
+        Setting(name: SettingName.electrum_domain, value: defaultDomain),
         Setting(name: SettingName.electrum_port, value: defaultPort),
       ]);
 
   Future savePreferredWalletId(String walletId) async =>
       await save(Setting(name: SettingName.wallet_preferred, value: walletId));
 
-  Future setCurrentWalletId([String? walletId]) async => await save(Setting(
+  Future setCurrentWalletId([String? walletId]) async => save(Setting(
       name: SettingName.wallet_current, value: walletId ?? preferredWalletId));
 
   Net get net => primaryIndex.getOne(SettingName.electrum_net)!.value;
@@ -98,7 +100,7 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   Future incrementLoginAttempts() async =>
       await saveLoginAttempts(loginAttempts + <DateTime>[DateTime.now()]);
 
-  Future resetLoginAttempts() async => await saveLoginAttempts([]);
+  Future resetLoginAttempts() async => saveLoginAttempts([]);
 
   Chain get chain => primaryIndex.getOne(SettingName.blockchain)!.value;
 
@@ -110,16 +112,15 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
       Setting(name: SettingName.electrum_net, value: net),
       Setting(name: SettingName.blockchain, value: chain)
     ]);
+    await setDomainPortForChainNet();
+  }
 
+  Future setDomainPortForChainNet() async {
     /// triggers should be set to change the domain:port by chain:net
     /// for now we'll put it here:
     await saveAll([
       Setting(name: SettingName.electrum_port, value: portOf(chain, net)),
-      Setting(
-          name: SettingName.electrum_domain,
-          value: chain == Chain.ravencoin
-              ? defaultUrl
-              : defaultUrl /* electrum for evrmore? */),
+      Setting(name: SettingName.electrum_domain, value: domainOf(chain, net)),
     ]);
   }
 

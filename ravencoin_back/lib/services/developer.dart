@@ -37,7 +37,7 @@ class DeveloperService {
       pros.settings.primaryIndex.getOne(SettingName.mode_dev)?.value ==
       FeatureLevel.expert;
 
-  Future toggleDevMode([bool? turnOn]) async => await pros.settings.save(
+  Future toggleDevMode([bool? turnOn]) async => pros.settings.save(
         Setting(
             name: SettingName.mode_dev,
             value: turnOn == true
@@ -47,7 +47,7 @@ class DeveloperService {
                     : FeatureLevel.easy),
       );
 
-  Future toggleAdvDevMode([bool? turnOn]) async => await pros.settings.save(
+  Future toggleAdvDevMode([bool? turnOn]) async => pros.settings.save(
         Setting(
             name: SettingName.mode_dev,
             value: turnOn == true

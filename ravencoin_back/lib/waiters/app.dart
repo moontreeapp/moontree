@@ -53,7 +53,7 @@ class AppWaiter extends Waiter {
   Future<void> logoutThread() async {
     while (true) {
       var x = DateTime.now().difference(lastActiveTime).inSeconds;
-      await Future.delayed(
+      await Future<void>.delayed(
           Duration(seconds: idleGracePeriod - (idleGracePeriod > x ? x : 0)));
       if (
           // we have a password

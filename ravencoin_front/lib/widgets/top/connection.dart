@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
@@ -106,7 +107,7 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -114,7 +115,7 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   /* blinking animations */
   //Future<void> rebuildMe() async {
-  //  await Future.delayed(Duration(milliseconds: 600));
+  //  await Future<void>.delayed(Duration(milliseconds: 600));
   //  if (connectionBusy) {
   //    // don't blink when spinner runs... separate into different streams?
   //    if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
@@ -153,7 +154,7 @@ class _ConnectionLightState extends State<ConnectionLight>
                 icon: circleIcon,
                 onPressed: navToBlockchain,
               )
-            : Stack(alignment: Alignment.center, children: [
+            : Stack(alignment: Alignment.center, children: <Widget>[
                 ColorFiltered(
                     colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
                     child: components.icons.assetAvatar(
@@ -183,9 +184,12 @@ class _ConnectionLightState extends State<ConnectionLight>
       'Network',
       'Scan',
       'Setup',
+      'Backupintro',
+      'BackupConfirm',
+      'Backup',
     ].contains(streams.app.page.value)) {
       ScaffoldMessenger.of(context).clearSnackBars();
-      streams.app.xlead.add(true);
+      streams.app.lead.add(LeadIcon.dismiss);
       produceBlockchainModal(components.navigator.routeContext!);
       //Navigator.of(components.navigator.routeContext!)
       //    .pushNamed('/settings/network/blockchain');

@@ -48,18 +48,6 @@ extension BySecurityMethodsForUnspent on Index<_SecurityKey, Unspent> {
   List<Unspent> getAll(Security security) => getByKeyStr(security.id);
 }
 
-// bySecurityType
-
-class _SecurityTypeKey extends Key<Unspent> {
-  @override
-  String getKey(Unspent unspent) => unspent.security?.securityType.name ?? '';
-}
-
-extension BySecurityTypeMethodsForUnspent on Index<_SecurityTypeKey, Unspent> {
-  List<Unspent> getAll(SecurityType securityType) =>
-      getByKeyStr(securityType.name);
-}
-
 // byAddress - (toAddress)
 
 class _AddressKey extends Key<Unspent> {
@@ -69,6 +57,18 @@ class _AddressKey extends Key<Unspent> {
 
 extension ByAddressMethodsForUnspent on Index<_AddressKey, Unspent> {
   List<Unspent> getAll(String address) => getByKeyStr(address);
+}
+
+// byChainNet - (toChainNet)
+
+class _ChainNetKey extends Key<Unspent> {
+  @override
+  String getKey(Unspent unspent) => unspent.chainNetId;
+}
+
+extension ByChainNetMethodsForUnspent on Index<_ChainNetKey, Unspent> {
+  List<Unspent> getAll(Chain chain, Net net) =>
+      getByKeyStr(Unspent.getChainNetId(chain, net));
 }
 
 // bySymbol

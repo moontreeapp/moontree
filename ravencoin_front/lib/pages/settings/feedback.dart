@@ -145,16 +145,16 @@ class _FeedbackState extends State<Feedback> {
             : null,
         errorText: null,
         onChanged: (value) => enableSend(),
-        onEditingComplete: () async => await attemptSend(),
+        onEditingComplete: () async => attemptSend(),
       );
 
-  Widget get filePicked => Column(children: [
+  Widget get filePicked => Column(children: <Widget>[
         Divider(indent: 0, endIndent: 0),
         Padding(
             padding: EdgeInsets.only(left: 0, right: 0, top: 16, bottom: 0),
             child: ListTile(
               dense: true,
-              contentPadding: EdgeInsets.all(0),
+              contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.attachment_rounded, color: Colors.black),
               title: FittedBox(
                   fit: BoxFit.fitWidth,
@@ -167,7 +167,7 @@ class _FeedbackState extends State<Feedback> {
                       color: AppColors.black38)),
               trailing: IconButton(
                   alignment: Alignment.centerRight,
-                  padding: EdgeInsets.all(0),
+                  padding: EdgeInsets.zero,
                   icon: Icon(Icons.close_rounded, color: Color(0xDE000000)),
                   onPressed: () => setState(() => file = null)),
             )),

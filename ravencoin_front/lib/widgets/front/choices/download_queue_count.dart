@@ -22,7 +22,7 @@ class _DownloadQueueCount extends State<DownloadQueueCount> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -36,7 +36,7 @@ class _DownloadQueueCount extends State<DownloadQueueCount> {
     final both = addresses > 0 && transactions > 0;
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
+      children: <Widget>[
         Text(
           'download queue: '
           '${addresses + transactions}',

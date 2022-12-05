@@ -79,36 +79,37 @@ class ImportWalletService {
 
   bool validateJson(String text) {
     try {
-      final json_obj =
-          json.decode(text) as Map<String, Map<String, Map<String, dynamic>>>;
+      final json_obj = json.decode(
+          text); //as Map<String, Map<String, Map<String, Map<String, String>>>>;
       if (!json_obj.containsKey('wallets')) {
         return false;
       }
       for (final wallet_obj in json_obj['wallets']!.values) {
-        final importType = typeForImport(wallet_obj['type']);
-        if (!(wallet_obj['backedUp'] is bool)) {
+        final importType = typeForImport(wallet_obj['wallet type']);
+        if (![true, false].contains(wallet_obj['backed up'])) {
           return false;
         }
-        if (!(wallet_obj['name'] is String)) {
+        if (!(wallet_obj['wallet name'] is String)) {
           return false;
         }
         if (!(wallet_obj['secret'] is String)) {
           return false;
         }
-        final secret = wallet_obj['secret'] as String;
-        final cipherUpdate = CipherUpdate.fromMap(wallet_obj['cipherUpdate']);
-        final cipher = pros.ciphers.primaryIndex
-            .getOne(cipherUpdate.cipherType, cipherUpdate.passwordId)!;
 
-        // Ensure we can actually decrypt
-        if (importType == WalletType.leader) {
-          //Encrypted Entropy
-          final entropy = hex.decrypt(secret, cipher.cipher);
-          bip39.entropyToMnemonic(entropy);
-        } else if (importType == WalletType.single) {
-          //Encrypted WIF
-          EncryptedWIF(secret, cipher.cipher).secret;
-        }
+        /// Ensure we can actually decrypt
+        //final secret = wallet_obj['secret'] as String;
+        //final cipherUpdate =
+        //    CipherUpdate.fromMap(wallet_obj['cipher encryption']);
+        //final cipher = pros.ciphers.primaryIndex
+        //    .getOne(cipherUpdate.cipherType, cipherUpdate.passwordId)!;
+        //if (importType == WalletType.leader) {
+        //  //Encrypted Entropy
+        //  final entropy = hex.decrypt(secret, cipher.cipher);
+        //  bip39.entropyToMnemonic(entropy);
+        //} else if (importType == WalletType.single) {
+        //  //Encrypted WIF
+        //  EncryptedWIF(secret, cipher.cipher).secret;
+        //}
       }
       return true;
     } catch (e) {
@@ -128,9 +129,10 @@ class ImportWalletService {
       var results = <HandleResult>[];
       for (var entry in decodedJSON['wallets']!.entries) {
         var wallet = await services.wallet.create(
-          walletType: typeForImport(entry.value['type']),
+          walletType: typeForImport(entry.value['wallet type']),
           cipherUpdate: services.cipher.currentCipherUpdate,
           secret: entry.value['secret'],
+          name: entry.value['wallet name'],
           alwaysReturn: true,
           getSecret: _getEntropy,
           saveSecret: _saveSecret,

@@ -29,7 +29,7 @@ class _ChosenBlockchainState extends State<ChosenBlockchain> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();

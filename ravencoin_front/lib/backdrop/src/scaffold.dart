@@ -488,7 +488,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
 
   Widget _buildBackPanel() {
     return Stack(
-      children: [
+      children: <Widget>[
         FocusScope(
           canRequestFocus: isBackLayerRevealed,
           child: Material(

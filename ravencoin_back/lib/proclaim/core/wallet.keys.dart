@@ -8,7 +8,8 @@ class _IdKey extends Key<Wallet> {
 }
 
 extension ByIdMethodsForWallet on Index<_IdKey, Wallet> {
-  Wallet? getOne(String walletId) => getByKeyStr(walletId).firstOrNull;
+  Wallet? getOne(String? walletId) =>
+      walletId == null ? null : getByKeyStr(walletId).firstOrNull;
 }
 
 /// byWalletType

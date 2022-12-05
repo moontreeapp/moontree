@@ -50,12 +50,13 @@ class AssetNavbar extends StatelessWidget {
               message: 'Unable to send, please try again later',
             ));
           },
+          arguments: {'security': transactionsBloc.security},
         ),
         components.buttons.actionButton(
           context,
           label: 'receive',
           link: '/transaction/receive',
-          arguments: transactionsBloc.security != pros.securities.currentCrypto
+          arguments: transactionsBloc.security != pros.securities.currentCoin
               ? {'symbol': transactionsBloc.security.symbol}
               : null,
         )
@@ -164,7 +165,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.topCenter,
-      children: [
+      children: <Widget>[
         if (widget.cachedMetadataView != null) CoinSpecTabs(),
         Padding(
             padding: EdgeInsets.only(

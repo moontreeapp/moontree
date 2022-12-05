@@ -37,11 +37,6 @@ class _TransactionListState extends State<TransactionList> {
   @override
   void initState() {
     super.initState();
-    transactionCount = widget.symbol == null
-        ? pros.vouts.records.map((v) => v.security == null).length
-        : pros.vouts.records
-            .map((v) => v.security?.symbol == widget.symbol)
-            .length;
     listeners.add(
         pros.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
@@ -53,9 +48,7 @@ class _TransactionListState extends State<TransactionList> {
           .where((change) => change.record.security?.symbol == widget.symbol);
       if (items.isNotEmpty) {
         print('refreshing list - vouts');
-        setState(() {
-          transactionCount = items.length;
-        });
+        setState(() {});
       }
     }));
     listeners.add(pros.rates.batchedChanges.listen((batchedChanges) {
@@ -75,7 +68,7 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -89,39 +82,45 @@ class _TransactionListState extends State<TransactionList> {
   Widget build(BuildContext context) {
     transactions = widget.transactions ??
         services.transaction.getTransactionRecords(wallet: Current.wallet);
+    if (transactions.isEmpty) {
+      transactionCount = pros.unspents.bySymbol
+          .getAll(widget.symbol ?? pros.securities.currentCoin.symbol)
+          .length;
+    } else {
+      transactionCount = transactions.length;
+    }
     return transactions.isEmpty && services.wallet.currentWallet.minerMode
-        ? Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Container(
-                alignment: Alignment.topCenter,
-                padding:
-                    EdgeInsets.only(top: 32, left: 16, right: 16, bottom: 0),
-                child: Text(
-                  '"Mine to Wallet" is enabled, so transaction history is not available. \n\nTo download your transaction history please disable "Mine to Wallet" in Settings.',
-                  softWrap: true,
-                  maxLines: 10,
-                )),
-            if (services.developer.developerMode)
-              components.buttons.actionButtonSoft(
-                context,
-                label: 'Go to Settings',
-                link: '/settings/network/mining',
-              ),
-            SizedBox(height: 80),
-          ])
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+                Container(
+                    alignment: Alignment.topCenter,
+                    padding: EdgeInsets.only(
+                        top: 32, left: 16, right: 16, bottom: 0),
+                    child: Text(
+                      '"Mine to Wallet" is enabled, so transaction history is not available. \n\nTo download your transaction history please disable "Mine to Wallet" in Settings.',
+                      softWrap: true,
+                      maxLines: 10,
+                    )),
+                if (services.developer.developerMode)
+                  components.buttons.actionButtonSoft(
+                    context,
+                    label: 'Go to Settings',
+                    link: '/settings/network/mining',
+                  ),
+                SizedBox(height: 80),
+              ])
         : transactions.isEmpty
             //? components.empty.transactions(context, msg: widget.msg)
             ? components.empty.getTransactionsPlaceholder(context,
                 scrollController: widget.scrollController!,
-                count: min(10, transactionCount))
+                count: transactionCount == 0 ? 1 : min(10, transactionCount))
             : Container(
                 alignment: Alignment.center,
-                child:
-                    //RefreshIndicator(
-                    //  child:
-                    _transactionsView(context),
-                //  onRefresh: () => refresh(),
-                //)
-              );
+                child: RefreshIndicator(
+                  child: _transactionsView(context),
+                  onRefresh: () => refresh(),
+                ));
   }
 
   ListView _transactionsView(BuildContext context) => ListView(
@@ -153,7 +152,7 @@ class _TransactionListState extends State<TransactionList> {
                         //        .assetAvatar(transactionRecord.security.symbol)),
                         title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: <Widget>[
                               Text(
                                   services.conversion.securityAsReadable(
                                       transactionRecord.value,

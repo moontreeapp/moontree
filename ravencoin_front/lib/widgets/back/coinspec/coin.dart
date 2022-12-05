@@ -1,3 +1,4 @@
+import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -10,6 +11,7 @@ class Coin extends StatefulWidget {
   final String pageTitle;
   final int holdingSat;
   final String? totalSupply;
+  final SimpleSendFormCubit? cubit;
 
   Coin({
     Key? key,
@@ -17,6 +19,7 @@ class Coin extends StatefulWidget {
     required this.symbol,
     required this.holdingSat,
     this.totalSupply,
+    this.cubit,
   }) : super(key: key);
 
   @override
@@ -48,7 +51,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [icon, subHeader],
+      children: <Widget>[icon, subHeader],
     );
   }
 
@@ -56,7 +59,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
         onTap: () async {
           if (services.developer.developerMode) {
             controller.reverse();
-            await Future.delayed(Duration(milliseconds: 240));
+            await Future<void>.delayed(Duration(milliseconds: 240));
             setState(() => front = !front);
           }
         },
@@ -64,7 +67,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
 
             /// used to push it down because we hid stuff and want to cetner:
             Column(
-          children: [
+          children: <Widget>[
             SizedBox(height: .015.ofMediaHeight(context)),
             Hero(
               tag: widget.symbol.toLowerCase(),
@@ -144,13 +147,12 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
     return widget.pageTitle == 'Send'
         ? GestureDetector(
             child: text,
-            onTap: () => streams.spend.form.add(SpendForm.merge(
-                form: streams.spend.form.value, amount: holding.toDouble())))
+            onTap: () => widget.cubit?.set(amount: holding.toDouble()))
         : text;
   }
 
   Widget get backText => Text(
-        widget.symbol == pros.securities.currentCrypto.symbol
+        widget.symbol == pros.securities.currentCoin.symbol
             ? symbolName(widget.symbol)
             : widget.symbol,
         style: Theme.of(context)

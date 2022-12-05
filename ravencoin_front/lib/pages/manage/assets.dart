@@ -13,7 +13,7 @@ class Asset extends StatefulWidget {
 }
 
 class _AssetState extends State<Asset> {
-  Map<String, dynamic> data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +26,12 @@ class _AssetState extends State<Asset> {
           pageTitle: 'Asset',
           security: pros.securities.primaryIndex.getOne(
             symbol,
-            SecurityType.asset,
             pros.settings.chain,
             pros.settings.net,
           )!),
       front: FrontCurve(
           height: MediaQuery.of(context).size.height * .64,
-          child: Column(children: [
+          child: Column(children: <Widget>[
             Expanded(child: AssetDetails(symbol: symbol)),
             NavBar(
               placeholderManage: !services.developer.developerMode,
