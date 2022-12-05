@@ -86,7 +86,7 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
     String? symbol,
     bool allowUnconfirmed = true,
   }) {
-    symbol = symbol ?? chainSymbol(chain);
+    symbol = symbol ?? chain.symbol;
     if (totalConfirmed(walletId, symbol: symbol, chain: chain, net: net) +
             (allowUnconfirmed
                 ? totalUnconfirmed(walletId,

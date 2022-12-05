@@ -3,15 +3,16 @@ part of 'joins.dart';
 // Joins on Transaction
 
 extension TransactionBelongsToAddress on Transaction {
-  Set<Address?>? get addresses => (vouts.map((vout) => vout.address).toList() +
-          vins.map((vin) => vin.address).toList())
-      .toSet()
-    ..remove(null);
+  Set<Address?>? get addresses =>
+      (vouts.map((Vout vout) => vout.address).toList() +
+              vins.map((Vin vin) => vin.address).toList())
+          .toSet()
+        ..remove(null);
 }
 
 extension TransactionBelongsToWallet on Transaction {
-  Set<Wallet?>? get wallets => (vouts.map((vout) => vout.wallet).toList() +
-          vins.map((vin) => vin.wallet).toList())
+  Set<Wallet?>? get wallets => (vouts.map((Vout vout) => vout.wallet).toList() +
+          vins.map((Vin vin) => vin.wallet).toList())
       .toSet()
     ..remove(null);
 }
@@ -43,7 +44,7 @@ extension TransactionHasManyAssetMemos on Transaction {
 extension TransactionHasOneValue on Transaction {
   int get value => pros.vouts.byTransaction
       .getAll(id)
-      .map((vout) => vout.rvnValue)
+      .map((Vout vout) => vout.rvnValue)
       .toList()
       .sumInt();
 }

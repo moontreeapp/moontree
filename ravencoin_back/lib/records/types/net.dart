@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:wallet_utils/wallet_utils.dart';
 
 import '../_type_id.dart';
 
@@ -14,19 +13,16 @@ enum Net {
   test
 }
 
-String netSymbolModifier(Net net) {
-  switch (net) {
-    case Net.main:
-      return '';
-    case Net.test:
-      return 't';
-    default:
-      return '';
+extension NetExtension on Net {
+  String get symbolModifier {
+    switch (this) {
+      case Net.main:
+        return '';
+      case Net.test:
+        return 't';
+    }
   }
+
+  String get key => name;
+  String get readable => 'net: $name';
 }
-
-String netKey(Net net) => net.name;
-
-String netReadable(Net net) => 'net: ${net.name}';
-
-String netName(Net net) => net.name;

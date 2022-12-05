@@ -81,7 +81,7 @@ class VersionDescription with ToStringMixin {
   });
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         previous,
         current,
         latest,

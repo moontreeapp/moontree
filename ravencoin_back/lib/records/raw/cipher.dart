@@ -3,14 +3,14 @@ import 'package:equatable/equatable.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class Cipher with EquatableMixin {
+  Cipher({required this.cipher, required this.cipherType, this.passwordId});
+
   final CipherType cipherType;
   final int? passwordId;
   final CipherBase cipher;
 
-  Cipher({required this.cipher, required this.cipherType, this.passwordId});
-
   @override
-  List<Object?> get props => [cipherType, passwordId, cipher];
+  List<Object?> get props => <Object?>[cipherType, passwordId, cipher];
 
   @override
   String toString() => toMap.toString();

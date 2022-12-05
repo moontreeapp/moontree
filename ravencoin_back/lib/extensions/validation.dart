@@ -27,9 +27,9 @@ extension RVNNumericValidationExtension on String {
 
   bool get isDouble {
     if (contains('.')) {
-      var num = split('.');
-      var whole = num.first;
-      var remainder = num.sublist(1).join('');
+      final List<String> num = split('.');
+      final String whole = num.first;
+      final String remainder = num.sublist(1).join();
       if ((whole.length > 14 && whole.contains(',')) ||
           (whole.length > 11 && !whole.contains(',')) ||
           remainder.length > 8) {
@@ -46,7 +46,7 @@ extension RVNNumericValidationExtension on String {
 
   bool get isNumeric => isInt || isDouble;
   num? toNum() {
-    var amount;
+    num? amount;
     if (isInt) {
       amount = int.parse(this);
     } else if (isDouble) {
@@ -56,7 +56,7 @@ extension RVNNumericValidationExtension on String {
   }
 
   num? toRVNAmount() {
-    var amount;
+    num? amount;
     if (isInt) {
       amount = int.parse(this);
     } else if (isDouble) {

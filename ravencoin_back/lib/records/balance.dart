@@ -2,8 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:ravencoin_back/records/security.dart';
-import 'package:ravencoin_back/records/types/chain.dart';
-import 'package:ravencoin_back/records/types/net.dart';
 import 'package:ravencoin_back/utilities/exceptions.dart';
 import 'package:ravencoin_back/utilities/transform.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
@@ -50,7 +48,8 @@ class Balance with EquatableMixin {
   }
 
   @override
-  List<Object> get props => [walletId, security, confirmed, unconfirmed];
+  List<Object> get props =>
+      <Object>[walletId, security, confirmed, unconfirmed];
 
   @override
   String toString() =>

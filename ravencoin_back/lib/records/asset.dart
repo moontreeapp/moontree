@@ -56,7 +56,7 @@ class Asset with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         symbol,
         satsInCirculation,
         divisibility,
@@ -72,7 +72,7 @@ class Asset with EquatableMixin {
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position, ${chainNetReadable(chain, net)})';
+      'position: $position, ${ChainNet(chain, net).readable})';
 
   factory Asset.from(
     Asset asset, {
@@ -93,14 +93,14 @@ class Asset with EquatableMixin {
       metadata: metadata ?? asset.metadata,
       transactionId: transactionId ?? asset.transactionId,
       position: position ?? asset.position,
-      symbol: symbol ?? (chain != null ? chainSymbol(chain) : asset.symbol),
+      symbol: symbol ?? (chain != null ? chain.symbol : asset.symbol),
       chain: chain ?? asset.chain,
       net: net ?? asset.net,
     );
   }
 
   static String key(String symbol, Chain chain, Net net) =>
-      '$symbol:${chainNetKey(chain, net)}';
+      '$symbol:${ChainNet(chain, net).key}';
 
   String get id => key(symbol, chain, net);
   String? get parentSymbol {

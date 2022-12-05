@@ -23,7 +23,8 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   bool skipHistory;
 
   @override
-  List<Object?> get props => [id, cipherUpdate, name, backedUp, skipHistory];
+  List<Object?> get props =>
+      <Object?>[id, cipherUpdate, name, backedUp, skipHistory];
 
   Wallet({
     required this.id,

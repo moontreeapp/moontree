@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart';
 import 'package:bs58check/bs58check.dart' as bs58;
 
 import 'package:ravencoin_back/security/cipher_base.dart';

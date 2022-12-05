@@ -509,7 +509,7 @@ class IconCacheKey with EquatableMixin {
     required this.width,
   });
   @override
-  List<Object> get props => [asset, assetType, height, width];
+  List<Object> get props => <Object>[asset, assetType, height, width];
 
   @override
   String toString() {

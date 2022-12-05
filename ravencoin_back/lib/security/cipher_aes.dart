@@ -5,16 +5,15 @@ import 'package:pointycastle/export.dart';
 import 'cipher_base.dart';
 
 class CipherAES implements CipherBase {
-  late Uint8List _key; // 32 bytes
-  late Uint8List _iv; // 16 bytes
-
   CipherAES(Uint8List password, {Uint8List? salt}) {
-    var generator = makeKeyGenerator(48, salt: salt);
-    var result = generator.process(password);
+    final Argon2BytesGenerator generator = makeKeyGenerator(48, salt: salt);
+    final Uint8List result = generator.process(password);
     assert(result.length == 48);
     _key = result.sublist(0, 32);
     _iv = result.sublist(32, 48);
   }
+  late Uint8List _key; // 32 bytes
+  late Uint8List _iv; // 16 bytes
 
   /// While passwords can be any length, AES block ciphers require a specific
   /// key length. Using the Argon2 algorithm, we produce a generator that can
@@ -30,15 +29,17 @@ class CipherAES implements CipherBase {
           Argon2Parameters.ARGON2_id,
           salt ?? DEFAULT_SALT,
           desiredKeyLength: length,
-          version: Argon2Parameters.ARGON2_VERSION_13,
+          //version: Argon2Parameters.ARGON2_VERSION_13,
           iterations: DEFAULT_ITERATIONS,
           memoryPowerOf2: DEFAULT_MEMORY,
         ));
 
-  PaddedBlockCipherImpl cipher(encrypt) {
-    var blockCipher = CBCBlockCipher(AESEngine());
-    var params = ParametersWithIV<KeyParameter>(KeyParameter(_key), _iv);
-    var paddingParams =
+  PaddedBlockCipherImpl cipher(bool encrypt) {
+    final CBCBlockCipher blockCipher = CBCBlockCipher(AESEngine());
+    final ParametersWithIV<KeyParameter> params =
+        ParametersWithIV<KeyParameter>(KeyParameter(_key), _iv);
+    final PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>
+        paddingParams =
         PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
             params, null);
     return PaddedBlockCipherImpl(PKCS7Padding(), blockCipher)

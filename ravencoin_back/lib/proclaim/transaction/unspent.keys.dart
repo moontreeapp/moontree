@@ -103,7 +103,7 @@ class _WalletSymbolKey extends Key<Unspent> {
 extension ByWalletSymbolMethodsForUnspent on Index<_WalletSymbolKey, Unspent> {
   List<Unspent> getAll(String walletId, String? symbol) =>
       getByKeyStr(Unspent.getWalletSymbolId(
-          walletId, symbol ?? chainSymbol(pros.settings.chain)));
+          walletId, symbol ?? pros.settings.chain.symbol));
 }
 
 // byWalletConfirmation

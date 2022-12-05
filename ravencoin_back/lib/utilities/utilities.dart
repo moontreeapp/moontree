@@ -70,6 +70,6 @@ abstract class ToStringMixin {
   @override
   String toString() =>
       imported_strings.toStringOverride(this, props, propNames);
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
   List<String> get propNames => [];
 }

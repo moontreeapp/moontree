@@ -44,7 +44,7 @@ class Transaction with EquatableMixin {
   });
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         height,
         confirmed,
         time,

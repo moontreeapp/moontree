@@ -21,7 +21,7 @@ class AssetService {
   Future<void> downloadSubs(String symbol) async {
     var symbolSlash = adminOrRestrictedToMainSlash(symbol);
     var children = await services.client.api.getAssetNames(symbolSlash);
-    for (String kid in children.where((child) =>
+    for (final String kid in children.where((child) =>
         pros.assets.primaryIndex
             .getOne(child, pros.settings.chain, pros.settings.net) ==
         null)) {

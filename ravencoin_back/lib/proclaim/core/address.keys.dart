@@ -48,7 +48,7 @@ extension ByWalletMethodsForAddress on Index<_WalletKey, Address> {
 // byWalletChainNet
 
 String _walletChainNetToKey(String walletId, Chain chain, Net net) =>
-    '$walletId:${chainNetKey(chain, net)}';
+    '$walletId:${ChainNet(chain, net).key}';
 
 class _WalletChainNetKey extends Key<Address> {
   @override
@@ -66,7 +66,7 @@ extension ByWalletChainNetMethodsForAddress
 
 String _walletExposureChainNetToKey(
         String walletId, NodeExposure exposure, Chain chain, Net net) =>
-    '$walletId:$exposure:${chainNetKey(chain, net)}';
+    '$walletId:$exposure:${ChainNet(chain, net).key}';
 
 class _WalletExposureChainNetKey extends Key<Address> {
   @override

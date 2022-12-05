@@ -14,7 +14,7 @@ class Join<A, B> with EquatableMixin {
   Join(this.left, this.right);
 
   @override
-  List<Object?> get props => [left, right];
+  List<Object?> get props => <Object?>[left, right];
 }
 
 Stream<Join<A, B>> streamingLeftJoin<A, B>(

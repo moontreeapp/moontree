@@ -241,7 +241,7 @@ class LeaderExposureKey with EquatableMixin {
       walletId + exposure.name;
 
   @override
-  List<Object> get props => [leader, exposure];
+  List<Object> get props => <Object>[leader, exposure];
 
   @override
   String toString() => 'LeaderExposureKey($leader, $exposure)';

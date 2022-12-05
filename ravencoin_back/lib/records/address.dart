@@ -42,7 +42,7 @@ class Address with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         scripthash,
         address,
         walletId,
@@ -67,5 +67,5 @@ class Address with EquatableMixin {
   String get id => key(scripthash, chain, net);
 
   static String key(String scripthash, Chain chain, Net net) =>
-      '$scripthash:${chainNetKey(chain, net)}';
+      '$scripthash:${ChainNet(chain, net).key}';
 }

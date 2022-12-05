@@ -3,18 +3,19 @@ import 'package:equatable/equatable.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class WalletSecurityPair with EquatableMixin {
+  WalletSecurityPair({required this.wallet, required this.security});
+
   final Wallet wallet;
   final Security security;
 
-  WalletSecurityPair({required this.wallet, required this.security});
-
   @override
-  List<Object?> get props => [wallet, security];
+  List<Object?> get props => <Object?>[wallet, security];
 }
 
-Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
-  return changes.fold({}, (set, change) {
-    Vout vout = change.record;
+Set<WalletSecurityPair> securityPairsFromVoutChanges(
+    List<Change<Vout>> changes) {
+  return changes.fold({}, (Set<WalletSecurityPair> set, Change<Vout> change) {
+    final Vout vout = change.record;
     if (vout.wallet != null) {
       return set
         ..add(WalletSecurityPair(
@@ -27,7 +28,7 @@ Set<WalletSecurityPair> securityPairsFromVoutChanges(List<Change> changes) {
 
 Set<WalletSecurityPair> securityPairsFromVouts(List<Vout> vouts) {
   return {
-    for (var vout in vouts)
+    for (Vout vout in vouts)
       if (vout.wallet != null)
         WalletSecurityPair(
             wallet: vout.wallet!,

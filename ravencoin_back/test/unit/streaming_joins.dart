@@ -11,7 +11,7 @@ class User with EquatableMixin {
   User(this.userId, this.name);
 
   @override
-  List<Object?> get props => [userId, name];
+  List<Object?> get props => <Object?>[userId, name];
 }
 
 class Click with EquatableMixin {
@@ -22,7 +22,7 @@ class Click with EquatableMixin {
   Click(this.clickId, this.userId, this.x, this.y);
 
   @override
-  List<Object?> get props => [clickId, userId, x, y];
+  List<Object?> get props => <Object?>[clickId, userId, x, y];
 }
 
 void main() {

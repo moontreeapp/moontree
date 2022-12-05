@@ -158,12 +158,12 @@ class _ConnectionLightState extends State<ConnectionLight>
                 ColorFiltered(
                     colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
                     child: components.icons.assetAvatar(
-                        chainSymbol(pros.settings.chain),
+                        pros.settings.chain.symbol,
                         net: pros.settings.net,
                         height: 26,
                         width: 26,
                         circled: true)),
-                components.icons.assetAvatar(chainSymbol(pros.settings.chain),
+                components.icons.assetAvatar(pros.settings.chain.symbol,
                     net: pros.settings.net, height: 24, width: 24),
               ]),
       ),

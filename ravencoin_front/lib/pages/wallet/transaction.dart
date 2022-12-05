@@ -103,7 +103,7 @@ class _TransactionPageState extends State<TransactionPage> {
             transactionRecord!.getVouts();
             return 'calculating...';
           } else {
-            return '${transactionRecord!.fee.toAmount().toCommaString()} ${chainSymbol(pros.settings.chain)}';
+            return '${transactionRecord!.fee.toAmount().toCommaString()} ${pros.settings.chain.symbol}';
           }
         }();
 
@@ -197,7 +197,7 @@ class _TransactionPageState extends State<TransactionPage> {
                 title: 'Transaction Info',
                 text: 'ID',
                 url:
-                    'https://${chainSymbol(pros.settings.chain)}${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
+                    'https://${pros.settings.chain.symbol}${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
                 description: 'info',
               ),
               if (transactionMemo != null)

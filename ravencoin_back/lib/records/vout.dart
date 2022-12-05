@@ -104,7 +104,7 @@ class Vout with EquatableMixin, ToStringMixin {
   //bool get confirmed => position > -1;
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         transactionId,
         position,
         type,

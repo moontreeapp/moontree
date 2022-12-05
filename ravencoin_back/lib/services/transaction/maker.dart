@@ -121,7 +121,7 @@ class GenericCreateRequest with ToStringMixin {
   });
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         isSub,
         isMain,
         isNFT,
@@ -201,7 +201,7 @@ class GenericReissueRequest with ToStringMixin {
   });
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         isSub,
         isMain,
         isRestricted,
@@ -272,7 +272,7 @@ class SendRequest with ToStringMixin {
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         sendAll,
         sendAddress,
         holding,
@@ -323,7 +323,7 @@ class SendEstimate with ToStringMixin {
   }) : utxos = utxos ?? [];
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         amount,
         fees,
         utxos,

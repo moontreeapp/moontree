@@ -19,7 +19,7 @@ class Block with EquatableMixin, ToStringMixin {
   Block({required this.height});
 
   @override
-  List<Object?> get props => [height];
+  List<Object?> get props => <Object?>[height];
 
   @override
   List<String> get propNames => ['height'];
