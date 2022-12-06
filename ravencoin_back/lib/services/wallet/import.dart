@@ -79,24 +79,26 @@ class ImportWalletService {
 
   bool validateJson(String text) {
     try {
-      final json_obj = json.decode(
-          text); //as Map<String, Map<String, Map<String, Map<String, String>>>>;
-      if (!json_obj.containsKey('wallets')) {
+      final Map<String, Map<String, Map<String, Map<String, dynamic>>>>
+          jsonObj = json.decode(text)
+              as Map<String, Map<String, Map<String, Map<String, dynamic>>>>;
+      if (!jsonObj.containsKey('wallets')) {
         return false;
       }
-      for (final wallet_obj in json_obj['wallets']!.values) {
-        final importType = typeForImport(wallet_obj['wallet type']);
-        if (![true, false].contains(wallet_obj['backed up'])) {
+      for (final Map<String, Map<String, dynamic>> walletObj
+          in jsonObj['wallets']!.values) {
+        if (!<bool>[true, false].contains(walletObj['backed up'])) {
           return false;
         }
-        if (!(wallet_obj['wallet name'] is String)) {
+        if (!(walletObj['wallet name'] is String)) {
           return false;
         }
-        if (!(wallet_obj['secret'] is String)) {
+        if (!(walletObj['secret'] is String)) {
           return false;
         }
 
         /// Ensure we can actually decrypt
+        //final importType = typeForImport(walletObj['wallet type']);
         //final secret = wallet_obj['secret'] as String;
         //final cipherUpdate =
         //    CipherUpdate.fromMap(wallet_obj['cipher encryption']);
@@ -123,16 +125,17 @@ class ImportWalletService {
     ///   'wallets': {pros.wallets.id: values}
     /// }
     /// try decrypt file
-    var decodedJSON = json.decode(text) as Map<String, dynamic>;
+    final Map<String, Map<String, Map<String, dynamic>>> decodedJSON =
+        json.decode(text) as Map<String, Map<String, Map<String, dynamic>>>;
     if (decodedJSON.containsKey('wallets')) {
       /// create wallets
-      var results = <HandleResult>[];
-      for (var entry in decodedJSON['wallets']!.entries) {
-        var wallet = await services.wallet.create(
-          walletType: typeForImport(entry.value['wallet type']),
+      final List<HandleResult> results = <HandleResult>[];
+      for (final entry in decodedJSON['wallets']!.entries) {
+        final Wallet? wallet = await services.wallet.create(
+          walletType: typeForImport(entry.value['wallet type'] as String),
           cipherUpdate: services.cipher.currentCipherUpdate,
-          secret: entry.value['secret'],
-          name: entry.value['wallet name'],
+          secret: entry.value['secret'] as String?,
+          name: entry.value['wallet name'] as String?,
           alwaysReturn: true,
           getSecret: _getEntropy,
           saveSecret: _saveSecret,
@@ -149,7 +152,7 @@ class ImportWalletService {
   }
 
   Future<HandleResult> handleMnemonics(String text) async =>
-      await attemptWalletSave(await services.wallet.create(
+      attemptWalletSave(await services.wallet.create(
         walletType: WalletType.leader,
         cipherUpdate: services.cipher.currentCipherUpdate,
         secret: text,
@@ -209,7 +212,7 @@ class ImportWalletService {
   ) async {
     _getEntropy = getEntropy;
     _saveSecret = saveSecret;
-    var results = await () {
+    final Object results = await () {
       switch (importFormat) {
         case ImportFormat.json:
           return handleJson;
@@ -223,9 +226,8 @@ class ImportWalletService {
         //  return handleMasterKey;
         case ImportFormat.WIF:
           return handleWIF;
-        default:
-          return handleMnemonics;
       }
+      return handleMnemonics;
     }()(text);
     if (results is List<HandleResult>) {
       return results;
@@ -238,12 +240,12 @@ class ImportWalletService {
 
   Future<HandleResult> attemptWalletSave(Wallet? wallet) async {
     if (wallet != null) {
-      var existingWalletId = detectExistingWallet(wallet);
+      final String? existingWalletId = detectExistingWallet(wallet);
       if (existingWalletId == null) {
         // since we're importing we assume the user has it backed up already
         wallet.backedUp = true;
         wallet.skipHistory = services.wallet.currentWallet.minerMode;
-        var importedChange = await pros.wallets.save(wallet);
+        final Change<Wallet>? importedChange = await pros.wallets.save(wallet);
         // set it as current before returning
         await pros.settings.setCurrentWalletId(importedChange!.record.id);
         return HandleResult(

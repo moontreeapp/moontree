@@ -6,7 +6,7 @@ int binaryClosest({
   Nearest type = Nearest.closest,
   Comparator? comp,
 }) {
-  comp = comp ?? (a, b) => a - b;
+  comp = comp ?? (a, b) => (a - b) as int;
 
   // Quick returns
   if (list.isEmpty) {
@@ -30,9 +30,9 @@ int binaryClosest({
   // Modified binary search
   int binarySearchInternal(List list, Comparator comp, dynamic value,
       Nearest type, int start, int end) {
-    var i = 0;
-    var j = end;
-    var mid = 0;
+    int i = 0;
+    int j = end;
+    int mid = 0;
     while (i < j) {
       mid = ((i + j) / 2).floor();
       if (comp(value, list[mid]) == 0) {
@@ -72,7 +72,7 @@ int binaryClosest({
       }
     }
 
-    var mid_comp = comp(value, mid);
+    int mid_comp = comp(value, mid);
     if (mid_comp < 0) {
       if (mid > 0) {
         switch (type) {
@@ -102,7 +102,6 @@ int binaryClosest({
           case Nearest.ceil:
             return mid + 1;
           case Nearest.closest:
-          default:
             return comp(value, list[mid + 1]).abs() <
                     comp(value, list[mid]).abs()
                 ? mid + 1
@@ -127,7 +126,7 @@ int binarySearch({
   required dynamic value,
   Comparator? comp,
 }) {
-  comp = comp ?? (a, b) => a - b;
+  comp = comp ?? (a, b) => (a - b) as int;
   // Quick returns
   if (list.isEmpty) {
     return -1;
@@ -142,7 +141,7 @@ int binarySearch({
   int binarySearchInternal(
       List list, Comparator comp, dynamic value, int start, int end) {
     if (end >= start) {
-      final mid = ((start + end) / 2).floor();
+      final int mid = ((start + end) / 2).floor();
       if (comp(value, list[mid]) == 0) {
         return mid;
       } else if (comp(value, list[mid]) > 0) {
@@ -162,7 +161,7 @@ bool binaryRemove({
   required dynamic value,
   Comparator? comp,
 }) {
-  var found = binarySearch(
+  int found = binarySearch(
     list: list,
     value: value,
     comp: comp,
@@ -180,8 +179,8 @@ bool binaryInsert({
   Comparator? comp,
   bool double_add = false,
 }) {
-  comp = comp ?? (a, b) => a - b;
-  var index =
+  comp = comp ?? (a, b) => (a - b) as int;
+  int index =
       binaryClosest(list: list, value: value, type: Nearest.ceil, comp: comp);
   if (index >= 0) {
     if (!double_add && comp(value, list[index]) == 0) {

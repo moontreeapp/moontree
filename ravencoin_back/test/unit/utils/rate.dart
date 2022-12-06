@@ -24,7 +24,7 @@ void main() {
 
       Map jsonBody;
       try {
-        jsonBody = jsonDecode(x.body);
+        jsonBody = jsonDecode(x.body) as Map;
       } catch (e) {
         print(e);
         jsonBody = {};
@@ -33,7 +33,7 @@ void main() {
       var cnt = 0;
       for (final key in jsonBody.keys) {
         if ((jsonBody[key]! as Map).containsKey('USD')) {
-          total += jsonBody[key]!['USD']!;
+          total += jsonBody[key]!['USD']! as double;
           cnt += 1;
         }
       }

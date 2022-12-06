@@ -9,7 +9,7 @@ void main() {
 
     expect(randomInRange(0, 1), 0);
 
-    var choice = ChooseAtRandom([1, 2]);
+    var choice = chooseAtRandom([1, 2]);
     expect([1, 2].contains(choice), true);
   });
 }

@@ -99,5 +99,5 @@ class SimpleSendFormState extends CubitState {
     }
   }
 
-  int get sats => utils.amountToSat(amount);
+  int get sats => amountToSat(amount);
 }

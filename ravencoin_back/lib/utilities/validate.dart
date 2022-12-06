@@ -1,3 +1,4 @@
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/extensions/string.dart';
 import 'package:wallet_utils/src/address.dart' show Address;
 import 'package:wallet_utils/src/models/networks.dart' as networks;
@@ -58,8 +59,8 @@ bool isAssetPath(String x) {
   if (x.length > MAX_NAME_LENGTH) {
     return false;
   }
-  var lengthAdds = 0;
-  if (x[0] == '\$') {
+  int lengthAdds = 0;
+  if (x[0] == r'$') {
     lengthAdds += 1;
   }
   if (x[x.length - 1] == '!') {
@@ -75,50 +76,54 @@ bool isAssetPath(String x) {
     x = x.substring(0, x.length - 1);
   }
   if (x[0] == '#') {
-    var qualifier_splits = x.split('/');
-    return isQualifier(qualifier_splits[0]) &&
-        qualifier_splits.sublist(1).every((element) => isSubQualifier(element));
-  } else if (x[0] == '\$') {
+    final List<String> qualifierSplits = x.split('/');
+    return isQualifier(qualifierSplits[0]) &&
+        qualifierSplits
+            .sublist(1)
+            .every((String element) => isSubQualifier(element));
+  } else if (x[0] == r'$') {
     return isRestricted(x);
   } else {
-    var asset_splits = x.split('/');
-    if (asset_splits.length > 1) {
-      var last_asset = asset_splits[asset_splits.length - 1];
-      if (last_asset.contains('#')) {
-        var last_split = last_asset.split('#');
-        if (asset_splits.length > 1) {
-          return isMainAsset(asset_splits[0]) &&
-              asset_splits
-                  .sublist(1, asset_splits.length - 1)
-                  .every((element) => isSubAsset(element)) &&
-              isSubAsset(last_split[0]) &&
-              isNFT(last_split[1]);
+    final List<String> assetSplits = x.split('/');
+    if (assetSplits.length > 1) {
+      final String lastAsset = assetSplits[assetSplits.length - 1];
+      if (lastAsset.contains('#')) {
+        final List<String> lastSplit = lastAsset.split('#');
+        if (assetSplits.length > 1) {
+          return isMainAsset(assetSplits[0]) &&
+              assetSplits
+                  .sublist(1, assetSplits.length - 1)
+                  .every((String element) => isSubAsset(element)) &&
+              isSubAsset(lastSplit[0]) &&
+              isNFT(lastSplit[1]);
         } else {
-          return isMainAsset(last_split[0]) && isNFT(last_split[1]);
+          return isMainAsset(lastSplit[0]) && isNFT(lastSplit[1]);
         }
-      } else if (last_asset.contains('~')) {
-        var last_split = last_asset.split('~');
-        if (asset_splits.length > 1) {
-          return isMainAsset(asset_splits[0]) &&
-              asset_splits
-                  .sublist(1, asset_splits.length - 1)
-                  .every((element) => isSubAsset(element)) &&
-              isSubAsset(last_split[0]) &&
-              isChannel(last_split[1]);
+      } else if (lastAsset.contains('~')) {
+        final List<String> lastSplit = lastAsset.split('~');
+        if (assetSplits.length > 1) {
+          return isMainAsset(assetSplits[0]) &&
+              assetSplits
+                  .sublist(1, assetSplits.length - 1)
+                  .every((String element) => isSubAsset(element)) &&
+              isSubAsset(lastSplit[0]) &&
+              isChannel(lastSplit[1]);
         } else {
-          return isMainAsset(last_split[0]) && isChannel(last_split[1]);
+          return isMainAsset(lastSplit[0]) && isChannel(lastSplit[1]);
         }
       } else {
-        return isMainAsset(asset_splits[0]) &&
-            asset_splits.sublist(1).every((element) => isSubAsset(element));
+        return isMainAsset(assetSplits[0]) &&
+            assetSplits
+                .sublist(1)
+                .every((String element) => isSubAsset(element));
       }
     }
     if (x.contains('#')) {
-      var last_split = x.split('#');
-      return isMainAsset(last_split[0]) && isNFT(last_split[1]);
+      final List<String> lastSplit = x.split('#');
+      return isMainAsset(lastSplit[0]) && isNFT(lastSplit[1]);
     } else if (x.contains('~')) {
-      var last_split = x.split('~');
-      return isMainAsset(last_split[0]) && isChannel(last_split[1]);
+      final List<String> lastSplit = x.split('~');
+      return isMainAsset(lastSplit[0]) && isChannel(lastSplit[1]);
     } else {
       return isMainAsset(x);
     }
@@ -165,7 +170,7 @@ bool isQualifierString(String x) =>
             .contains(QUALIFING_STRING_LOGIC_NO_PARENTHESIS) &&
         !x.replaceAll(RegExp(r'\s+'), '').contains(EMPTY_PARENTHESIS) &&
         x.replaceAll(RegExp(r'\s+'), '').split('').fold(0,
-                (num previousValue, element) {
+                (num previousValue, String element) {
               if (element == '(') {
                 return previousValue + 1;
               } else if (element == ')') {
@@ -183,7 +188,7 @@ bool isQualifierString(String x) =>
         !x.contains(TRAILING_PUNCTUATION) &&
         !x.contains(RAVEN_NAMES) &&
         x.replaceAll(RegExp(r'[\(\)|&!]'), ' ').split(' ').every(
-            (element) => element.isEmpty ? true : isQualifier('#' + element)));
+            (String element) => element.isEmpty || isQualifier('#$element')));
 bool isRestricted(String x) =>
     x.contains(RESTRICTED_NAME_CHARACTERS) &&
     !x.contains(DOUBLE_PUNCTUATION) &&

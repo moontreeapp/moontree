@@ -1,6 +1,5 @@
-import 'package:moontree_utils/extensions/string.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/utilities/utilities.dart';
-import 'package:ravencoin_back/utilities/transform.dart';
 
 extension StringNumericExtension on String {
   /// assumes the string is an amount
@@ -30,7 +29,7 @@ extension StringNumericExtension on String {
 
   /// assumes the string is already in sats.
   int asSatsInt() {
-    String text = utils.removeChars(
+    String text = removeChars(
       split('.').first,
       chars: utils.strings.punctuation + utils.strings.whiteSapce,
     );
@@ -45,26 +44,6 @@ extension StringNumericExtension on String {
     //}
     return text.asInt();
   }
-}
-
-extension IntReadableNumericExtension on int {
-  String toCommaString({String comma = ','}) {
-    final String str = toString();
-    int i = 0;
-    String ret = '';
-    for (final String c in str.characters.reversed as Iterable<String>) {
-      if (i == 3) {
-        ret = '$c$comma$ret';
-        i = 1;
-      } else {
-        ret = '$c$ret';
-        i += 1;
-      }
-    }
-    return ret;
-  }
-
-  double toAmount() => satToAmount(this);
 }
 
 extension DoubleReadableNumericExtension on double {

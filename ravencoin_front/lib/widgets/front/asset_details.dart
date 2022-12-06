@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_front/components/components.dart';
 
 class AssetDetails extends StatefulWidget {

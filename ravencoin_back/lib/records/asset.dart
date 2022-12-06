@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/extensions/validation.dart';
 import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:ravencoin_back/records/types/net.dart';
@@ -226,7 +227,7 @@ class Asset with EquatableMixin {
 
   String get assetTypeName => assetType.name;
 
-  double get amount => utils.satToAmount(satsInCirculation);
+  double get amount => satToAmount(satsInCirculation);
 }
 
 enum AssetType {

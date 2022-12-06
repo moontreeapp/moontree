@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 import 'package:ravencoin_back/security/cipher_aes.dart';
 import 'package:ravencoin_back/utilities/hex.dart' as hex;
 import 'package:ravencoin_back/extensions/string.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 
 var cipher = CipherAES('password'.bytesUint8);
 

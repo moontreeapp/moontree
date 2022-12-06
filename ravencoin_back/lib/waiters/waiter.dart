@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ravencoin_back/utilities/exceptions.dart' show AlreadyListening;
+import 'package:moontree_utils/moontree_utils.dart';
 
 typedef Listener<T> = void Function(T event);
 

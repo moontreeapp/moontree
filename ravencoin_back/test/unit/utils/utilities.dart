@@ -19,11 +19,15 @@ void main() {
           list2.add(e);
         });
         list2.remove(i);
-        expect(utils.binaryRemove(list: list1, comp: (a, b) => a - b, value: i),
+        expect(
+            utils.binaryRemove(
+                list: list1, comp: (a, b) => (a - b) as int, value: i),
             true);
         expect(list1, list2);
       }
-      expect(utils.binaryRemove(list: list, comp: (a, b) => a - b, value: 1001),
+      expect(
+          utils.binaryRemove(
+              list: list, comp: (a, b) => (a - b) as int, value: 1001),
           false);
     });
 

@@ -1,9 +1,12 @@
+// ignore_for_file: avoid_print, avoid_slow_async_io
+
 import 'dart:io';
 
-import 'package:hive/hive.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:proclaim/proclaim.dart';
 import 'package:ulid/ulid.dart';
+import 'package:hive/hive.dart';
+import 'package:proclaim/proclaim.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/consent/consent_client.dart';
 
 /// All: loads all the tables
 /// Lock: loads all the tables necessary to display login screen (step 1)
@@ -13,7 +16,7 @@ enum HiveLoadingStep { all, lock, login }
 class HiveInitializer {
   late final String id;
   late Function init;
-  late Function beforeLoad;
+  late VoidCallback beforeLoad;
   bool destroyOnTeardown;
 
   String get dbDir => 'database-$id';
@@ -21,23 +24,24 @@ class HiveInitializer {
   HiveInitializer({
     String? id,
     Function? init,
-    Function? beforeLoad,
+    VoidCallback? beforeLoad,
     this.destroyOnTeardown = false,
   }) {
     this.id = id ?? Ulid().toString();
-    this.init = init ?? (dbDir) => Hive.init(dbDir);
+    this.init = init ?? (String? dbDir) => Hive.init(dbDir);
     this.beforeLoad = beforeLoad ?? () {};
   }
-  Future setUpStart() async {
+  Future<void> setUpStart() async {
     registerAdapters();
     await init(dbDir);
   }
 
-  Future setUp(HiveLoadingStep step) async {
-    var s = Stopwatch()..start();
+  Future<void> setUp(HiveLoadingStep step) async {
+    final Stopwatch s = Stopwatch()..start();
     await openBoxes(step);
     print('openAllBoxes: ${s.elapsed}');
-    if ([HiveLoadingStep.all, HiveLoadingStep.lock].contains(step)) {
+    if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.lock]
+        .contains(step)) {
       beforeLoad();
     }
     print('beforeLoad: ${s.elapsed}');
@@ -45,7 +49,7 @@ class HiveInitializer {
     print('after load: ${s.elapsed}');
   }
 
-  Future tearDown() async {
+  Future<void> tearDown() async {
     await Hive.close();
     if (destroyOnTeardown) {
       await destroy();
@@ -87,14 +91,16 @@ class HiveInitializer {
 
   /// address must open before wallets because added in wallets waiter
   /// we look up addresses to get highest hdindex
-  Future openBoxes(HiveLoadingStep step) async {
-    if ([HiveLoadingStep.all, HiveLoadingStep.lock].contains(step)) {
+  Future<void> openBoxes(HiveLoadingStep step) async {
+    if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.lock]
+        .contains(step)) {
       await Hive.openBox<Rate>('rates');
       await Hive.openBox<Password>('passwords');
       await Hive.openBox<Setting>('settings');
       await Hive.openBox<Wallet>('wallets');
     }
-    if ([HiveLoadingStep.all, HiveLoadingStep.login].contains(step)) {
+    if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
+        .contains(step)) {
       await Hive.openBox<Address>('addresses');
       await Hive.openBox<Asset>('assets');
       await Hive.openBox<Balance>('balances');
@@ -111,39 +117,41 @@ class HiveInitializer {
   }
 
   void load(HiveLoadingStep step) {
-    if ([HiveLoadingStep.all, HiveLoadingStep.lock].contains(step)) {
+    if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.lock]
+        .contains(step)) {
       //pros.secrets.setSource(MapSource(SecretProclaim.defaults));
       /// this needs to be inmemory:
-      pros.ciphers.setSource(MapSource(CipherProclaim.defaults));
-      pros.rates.setSource(HiveSource('rates'));
-      pros.passwords.setSource(HiveSource('passwords'));
-      pros.settings.setSource(HiveSource(
+      pros.ciphers.setSource(MapSource<Cipher>(CipherProclaim.defaults));
+      pros.rates.setSource(HiveSource<Rate>('rates'));
+      pros.passwords.setSource(HiveSource<Password>('passwords'));
+      pros.settings.setSource(HiveSource<Setting>(
         'settings',
         defaults: SettingProclaim.defaults,
       ));
-      pros.wallets.setSource(HiveSource('wallets'));
+      pros.wallets.setSource(HiveSource<Wallet>('wallets'));
     }
-    if ([HiveLoadingStep.all, HiveLoadingStep.login].contains(step)) {
-      pros.unspents.setSource(HiveSource('unspents'));
-      pros.addresses.setSource(HiveSource('addresses'));
-      pros.balances.setSource(HiveSource('balances'));
-      pros.blocks.setSource(HiveSource('blocks'));
-      pros.assets.setSource(HiveSource('assets'));
-      pros.metadatas.setSource(HiveSource('metadatas'));
-      pros.notes.setSource(HiveSource('notes'));
-      pros.securities.setSource(HiveSource(
+    if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
+        .contains(step)) {
+      pros.unspents.setSource(HiveSource<Unspent>('unspents'));
+      pros.addresses.setSource(HiveSource<Address>('addresses'));
+      pros.balances.setSource(HiveSource<Balance>('balances'));
+      pros.blocks.setSource(HiveSource<Block>('blocks'));
+      pros.assets.setSource(HiveSource<Asset>('assets'));
+      pros.metadatas.setSource(HiveSource<Metadata>('metadatas'));
+      pros.notes.setSource(HiveSource<Note>('notes'));
+      pros.securities.setSource(HiveSource<Security>(
         'securities',
         defaults: SecurityProclaim.defaults,
       ));
-      pros.transactions.setSource(HiveSource('transactions'));
-      pros.vins.setSource(HiveSource('vins'));
-      pros.vouts.setSource(HiveSource('vouts'));
-      pros.statuses.setSource(HiveSource('statuses'));
+      pros.transactions.setSource(HiveSource<Transaction>('transactions'));
+      pros.vins.setSource(HiveSource<Vin>('vins'));
+      pros.vouts.setSource(HiveSource<Vout>('vouts'));
+      pros.statuses.setSource(HiveSource<Status>('statuses'));
     }
   }
 
-  Future destroy() async {
-    var dir = Directory(dbDir);
+  Future<void> destroy() async {
+    final Directory dir = Directory(dbDir);
     if (await dir.exists()) {
       await dir.delete(recursive: true);
     }

@@ -31,13 +31,13 @@ KPWallet newKPWallet({
   return KPWallet(
       ECPair.fromPrivateKey(
         privateKey,
-        network: networkOf(Chain.ravencoin, raven_net.Net.test),
+        network: ChainNet(Chain.ravencoin, raven_net.Net.test).network,
         compressed: compressed,
       ),
       P2PKH(
           data: PaymentData(),
-          network: networkOf(Chain.ravencoin, raven_net.Net.test)),
-      networkOf(Chain.ravencoin, raven_net.Net.test));
+          network: ChainNet(Chain.ravencoin, raven_net.Net.test).network),
+      ChainNet(Chain.ravencoin, raven_net.Net.test).network);
 }
 
 void main() {
@@ -80,9 +80,9 @@ void main() {
 
   test('hdwallet public key', () {
     var testnet = HDWallet.fromSeed(seed,
-        network: networkOf(Chain.ravencoin, raven_net.Net.test));
+        network: ChainNet(Chain.ravencoin, raven_net.Net.test).network);
     var mainnet = HDWallet.fromSeed(seed,
-        network: networkOf(Chain.ravencoin, raven_net.Net.main));
+        network: ChainNet(Chain.ravencoin, raven_net.Net.main).network);
     expect(testnet.pubKey, mainnet.pubKey);
     expect(testnet.address == mainnet.address, false);
   });

@@ -77,10 +77,10 @@ class ChainNet {
   final Chain chain;
   final Net net;
 
-  String get domainPortOf => '$domainOf:$portOf';
+  String get domainPort => '$domain:$port';
 
   /// moontree.com
-  String get domainOf => 'moontree.com';
+  String get domain => 'moontree.com';
 
   /// port map
   ///50001 - mainnet tcp rvn
@@ -91,7 +91,7 @@ class ChainNet {
   ///50022 - mainnet ssl evr
   ///50031 - testnet tcp evr
   ///50032 - testnet ssl evr
-  int get portOf {
+  int get port {
     if (chain == Chain.ravencoin && net == Net.main) {
       return 50002;
     }
@@ -109,7 +109,7 @@ class ChainNet {
 
   String get readable => '${chain.readable}, ${net.readable}';
 
-  NetworkType networkOf(Chain chain, Net net) {
+  NetworkType get network {
     if (chain == Chain.ravencoin && net == Net.main) {
       return mainnet;
     }
