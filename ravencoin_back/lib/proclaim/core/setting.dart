@@ -101,8 +101,8 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
 
   String get netName => net.name;
 
-  List<DateTime> get loginAttempts =>
-      primaryIndex.getOne(SettingName.login_attempts)!.value as List<DateTime>;
+  List<DateTime> get loginAttempts => List<DateTime>.from(
+      primaryIndex.getOne(SettingName.login_attempts)!.value as List<dynamic>);
 
   Future<Change<Setting>?> saveLoginAttempts(List<DateTime> attempts) async =>
       save(Setting(name: SettingName.login_attempts, value: attempts));

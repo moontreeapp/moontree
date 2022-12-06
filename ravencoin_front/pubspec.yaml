@@ -65,7 +65,7 @@ dependencies:
   ravencoin_back: ^1.0.0
   # ravencoin_back:
   #   git: https://github.com/moontreeapp/ravencoin_back.git
-  electrum_adapter: ^2.0.3
+  electrum_adapter: ^2.0.4
   wallet_utils: ^3.0.3
   moontree_utils: ^1.0.5
   #open_settings: ^2.0.2

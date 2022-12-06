@@ -95,68 +95,83 @@ class pages {
   static Map<String, Widget Function(BuildContext)> routes(
           BuildContext context) =>
       {
-        '/splash': (context) => Splash(),
-        '/home': (context) => Home(),
-        '/manage/asset': (context) => Asset(),
-        '/transactions': (context) => Transactions(),
-        '/addresses': (context) => WalletView(), // technical view
-        '/scan': (context) => ScanQR(),
+        '/splash': (BuildContext context) => const Splash(),
+        '/home': (BuildContext context) => const Home(),
+        '/manage/asset': (BuildContext context) => const Asset(),
+        '/transactions': (BuildContext context) => const Transactions(),
+        '/addresses': (BuildContext context) =>
+            const WalletView(), // technical view
+        '/scan': (BuildContext context) => const ScanQR(),
         // create and reissue would make better sense if it referenced assets,
         // but actually these should all be improved to match
         // /wallet or /manage or /swap anyway...
-        '/create/nft': (context) => CreateNFTAsset(),
-        '/create/main': (context) => CreateMainAsset(),
-        '/create/sub': (context) => CreateMainSubAsset(),
-        '/create/qualifier': (context) => CreateQualifierAsset(),
-        '/create/qualifiersub': (context) => CreateQualifierSubAsset(),
-        '/create/channel': (context) => CreateChannelAsset(),
-        '/create/restricted': (context) => CreateRestrictedAsset(),
-        '/create/checkout': (context) => Checkout(
+        '/create/nft': (BuildContext context) => CreateNFTAsset(),
+        '/create/main': (BuildContext context) => CreateMainAsset(),
+        '/create/sub': (BuildContext context) => CreateMainSubAsset(),
+        '/create/qualifier': (BuildContext context) => CreateQualifierAsset(),
+        '/create/qualifiersub': (BuildContext context) =>
+            CreateQualifierSubAsset(),
+        '/create/channel': (BuildContext context) => CreateChannelAsset(),
+        '/create/restricted': (BuildContext context) => CreateRestrictedAsset(),
+        '/create/checkout': (BuildContext context) => const Checkout(
               transactionType: TransactionType.create,
             ),
-        '/reissue/main': (context) => ReissueMainAsset(),
-        '/reissue/sub': (context) => ReissueMainSubAsset(),
-        '/reissue/restricted': (context) => ReissueRestrictedAsset(),
-        '/reissue/checkout': (context) => Checkout(
+        '/reissue/main': (BuildContext context) => ReissueMainAsset(),
+        '/reissue/sub': (BuildContext context) => ReissueMainSubAsset(),
+        '/reissue/restricted': (BuildContext context) =>
+            ReissueRestrictedAsset(),
+        '/reissue/checkout': (BuildContext context) => const Checkout(
               transactionType: TransactionType.reissue,
             ),
-        '/security/backup/backupintro': (context) => BackupIntro(),
-        '/security/backup': (context) => BackupSeed(),
-        '/security/backupKeypair': (context) => ShowKeypair(),
-        '/security/backupConfirm': (context) => VerifySeed(),
-        '/security/password/change': (context) => ChangeLoginPassword(),
-        '/security/method/change': (context) => ChangeLoginMethod(),
-        '/security/resume': (context) => ChangeResume(),
-        '/security/password/login': (context) => LoginPassword(),
-        '/security/native/login': (context) => LoginNative(),
-        '/security/create/setup': (context) => CreateChoice(),
-        '/security/password/createlogin': (context) => CreatePassword(),
-        '/security/native/createlogin': (context) => CreateNative(),
-        '/security/security': (context) => VerifyAuthentication(),
-        '/transaction/transaction': (context) => TransactionPage(),
-        '/transaction/receive': (context) => Receive(),
-        '/transaction/send': (context) => Send(),
-        '/transaction/checkout': (context) => Checkout(
+        '/security/backup/backupintro': (BuildContext context) =>
+            const BackupIntro(),
+        '/security/backup': (BuildContext context) => const BackupSeed(),
+        '/security/backupKeypair': (BuildContext context) =>
+            const ShowKeypair(),
+        '/security/backupConfirm': (BuildContext context) => const VerifySeed(),
+        '/security/password/change': (BuildContext context) =>
+            ChangeLoginPassword(),
+        '/security/method/change': (BuildContext context) =>
+            ChangeLoginMethod(),
+        '/security/resume': (BuildContext context) => ChangeResume(),
+        '/security/password/login': (BuildContext context) => LoginPassword(),
+        '/security/native/login': (BuildContext context) => LoginNative(),
+        '/security/create/setup': (BuildContext context) =>
+            const CreateChoice(),
+        '/security/password/createlogin': (BuildContext context) =>
+            const CreatePassword(),
+        '/security/native/createlogin': (BuildContext context) =>
+            const CreateNative(),
+        '/security/security': (BuildContext context) => VerifyAuthentication(),
+        '/transaction/transaction': (BuildContext context) =>
+            const TransactionPage(),
+        '/transaction/receive': (BuildContext context) => const Receive(),
+        '/transaction/send': (BuildContext context) => const Send(),
+        '/transaction/checkout': (BuildContext context) => const Checkout(
               transactionType: TransactionType.spend,
             ),
-        '/settings/export/export': (context) =>
-            Checkout(transactionType: TransactionType.export),
-        '/settings/about': (context) => About(),
-        '/settings/level': (context) => Advanced(),
-        '/settings/currency': (context) => Language(),
-        '/settings/export': (context) => Export(),
-        '/settings/feedback': (context) => Feedback(),
-        '/settings/import': (context) => Import(),
+        '/settings/export/export': (BuildContext context) =>
+            const Checkout(transactionType: TransactionType.export),
+        '/settings/about': (BuildContext context) => About(),
+        '/settings/level': (BuildContext context) => const Advanced(),
+        '/settings/currency': (BuildContext context) => Language(),
+        '/settings/export': (BuildContext context) => const Export(),
+        '/settings/feedback': (BuildContext context) => const Feedback(),
+        '/settings/import': (BuildContext context) => const Import(),
         //'/settings/network': (context) => ElectrumNetwork(),
-        '/settings/network/mining': (context) => MiningChoice(),
+        '/settings/network/mining': (BuildContext context) =>
+            const MiningChoice(),
         //'/settings/network/blockchain': (context) => BlockchainChoices(),
-        '/settings/network/blockchain': (context) => ElectrumNetworkPage(),
-        '/settings/preferences': (context) => Preferences(),
-        '/settings/support': (context) => Support(),
-        '/settings/technical': (context) => TechnicalView(),
-        '/settings/database': (context) => DatabaseOptions(),
-        '/settings/developer': (context) => DeveloperOptions(),
-        '/settings/advanced': (context) => AdvancedDeveloperOptions(),
-        '/settings/sweep': (context) => SweepPage(),
+        '/settings/network/blockchain': (BuildContext context) =>
+            const ElectrumNetworkPage(),
+        '/settings/preferences': (BuildContext context) => Preferences(),
+        '/settings/support': (BuildContext context) => Support(),
+        '/settings/technical': (BuildContext context) => const TechnicalView(),
+        '/settings/database': (BuildContext context) => const DatabaseOptions(),
+        '/settings/developer': (BuildContext context) =>
+            const DeveloperOptions(),
+        '/settings/advanced': (BuildContext context) =>
+            const AdvancedDeveloperOptions(),
+        '/settings/sweep': (BuildContext context) => SweepPage(),
       };
 }

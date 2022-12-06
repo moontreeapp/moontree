@@ -94,7 +94,9 @@ class ClientService {
     print('creating Client');
     lastActiveTime = DateTime.now();
     await periodicTimer?.cancel();
-    periodicTimer = Stream<int>.periodic(inactiveGracePeriod).listen((_) async {
+    periodicTimer =
+        Stream<int>.periodic(inactiveGracePeriod, (int count) => count++)
+            .listen((_) async {
       if (streams.client.busy.value &&
           DateTime.now().difference(lastActiveTime).inSeconds >=
               inactiveGracePeriod.inSeconds) {

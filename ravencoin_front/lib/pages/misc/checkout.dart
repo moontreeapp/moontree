@@ -83,7 +83,7 @@ class _CheckoutState extends State<Checkout> {
   late CheckoutStruct struct;
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
-  late SendEstimate? estimate;
+  SendEstimate? estimate;
   late bool disabled = false;
   late DateTime startTime;
 
