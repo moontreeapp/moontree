@@ -19,7 +19,7 @@ class Note with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         transactionId,
         note,
       ];

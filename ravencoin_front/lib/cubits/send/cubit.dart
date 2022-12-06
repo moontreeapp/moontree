@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart' show FeeRate, standardFee;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/cubits/parents.dart';
@@ -11,13 +12,13 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
   SimpleSendFormCubit() : super(SimpleSendFormState.initial());
 
   @override
-  void reset() async => emit(SimpleSendFormState.initial());
+  Future<void> reset() async => emit(SimpleSendFormState.initial());
 
   @override
   SimpleSendFormState submitting() => state.load(isSubmitting: true);
 
   @override
-  void enter() async {
+  Future<void> enter() async {
     emit(submitting());
     emit(state);
   }

@@ -1,7 +1,8 @@
-import 'package:flutter/services.dart';
-import 'package:ravencoin_back/extensions/extensions.dart';
-import 'package:ravencoin_back/utilities/utilities.dart';
 import 'dart:math' as math;
+import 'package:flutter/services.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
+import 'package:ravencoin_back/utilities/utilities.dart';
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override
@@ -35,8 +36,8 @@ class MainAssetNameTextFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    var text = newValue.text.toUpperCase();
-    text = ['RVN', 'RAVEN', 'RAVENCOIN'].contains(text)
+    String text = newValue.text.toUpperCase();
+    text = <String>['RVN', 'RAVEN', 'RAVENCOIN'].contains(text)
         ? ''
         : text
             .replaceAll('..', '.')
@@ -65,7 +66,7 @@ class CommaIntValueTextFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    var text = newValue.text.isInt
+    final String text = newValue.text.isInt
         ? newValue.text.asSatsInt().toCommaString()
         : newValue.text;
     if (newValue.text.length == text.length) {
@@ -83,10 +84,9 @@ class CommaIntValueTextFormatter extends TextInputFormatter {
 }
 
 class DecimalTextInputFormatter extends TextInputFormatter {
-  final int decimalRange;
-
   DecimalTextInputFormatter({required this.decimalRange})
       : assert(decimalRange >= 0);
+  final int decimalRange;
 
   @override
   TextEditingValue formatEditUpdate(
@@ -96,16 +96,16 @@ class DecimalTextInputFormatter extends TextInputFormatter {
     TextSelection newSelection = newValue.selection;
     String truncated = newValue.text;
 
-    String value = newValue.text
+    final String value = newValue.text
         .replaceAll(',', '')
         .replaceAll('-', '')
         .replaceAll(' ', '');
 
     if (value.contains('.') &&
         value.substring(value.indexOf('.') + 1).length <= decimalRange) {
-      var split = value.split('.');
-      var tail = split.sublist(1).join().replaceAll('.', '');
-      truncated = split.first + '.' + tail;
+      final List<String> split = value.split('.');
+      final String tail = split.sublist(1).join().replaceAll('.', '');
+      truncated = '${split.first}.$tail';
       newSelection = newValue.selection.copyWith(
           baseOffset: truncated.length, extentOffset: truncated.length);
     } else if (value.contains('.') &&
@@ -122,7 +122,6 @@ class DecimalTextInputFormatter extends TextInputFormatter {
     return TextEditingValue(
       text: truncated,
       selection: newSelection,
-      composing: TextRange.empty,
     );
   }
 }
@@ -133,8 +132,8 @@ class VerifierStringTextFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    var text = utils.removeCharsOtherThan(newValue.text.toUpperCase(),
-        chars: utils.strings.verifierStringAllowed);
+    final String text = removeCharsOtherThan(newValue.text.toUpperCase(),
+        chars: verifierStringAllowed);
     if (newValue.text.length == text.length) {
       return newValue.copyWith(text: newValue.text.toUpperCase());
     }

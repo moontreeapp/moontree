@@ -1,4 +1,4 @@
-import 'cipher_base.dart';
+import 'package:moontree_utils/types/cipher_base.dart';
 
 enum SecretType {
   wif, // SingleWallet

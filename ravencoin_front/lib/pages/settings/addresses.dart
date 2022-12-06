@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/components/status.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class WalletView extends StatefulWidget {
   final dynamic data;
-  const WalletView({this.data}) : super();
+  const WalletView({Key? key, this.data}) : super(key: key);
 
   @override
   _WalletViewState createState() => _WalletViewState();
@@ -21,7 +23,7 @@ class _WalletViewState extends State<WalletView> {
   bool disabled = false;
   bool showSecret = false;
   ToolbarOptions toolbarOptions =
-      ToolbarOptions(copy: true, selectAll: true, cut: false, paste: false);
+      const ToolbarOptions(copy: true, selectAll: true);
   bool showUSD = false;
   late String secret;
   late String secretName;
@@ -41,17 +43,21 @@ class _WalletViewState extends State<WalletView> {
     super.initState();
   }
 
-  void _toggleShow() {
-    setState(() {
-      showSecret = !showSecret;
-    });
-  }
+  //void _toggleShow() {
+  //  setState(() {
+  //    showSecret = !showSecret;
+  //  });
+  //}
 
-  bool visibilityOfSendReceive(notification) {
+  bool visibilityOfSendReceive(UserScrollNotification notification) {
     if (notification.direction == ScrollDirection.forward) {
-      if (!isFabVisible) setState(() => isFabVisible = true);
+      if (!isFabVisible) {
+        setState(() => isFabVisible = true);
+      }
     } else if (notification.direction == ScrollDirection.reverse) {
-      if (isFabVisible) setState(() => isFabVisible = false);
+      if (isFabVisible) {
+        setState(() => isFabVisible = false);
+      }
     }
     return true;
   }
@@ -70,17 +76,12 @@ class _WalletViewState extends State<WalletView> {
         ? data['wallet'] as LeaderWallet
         : data['wallet'] as SingleWallet;
     if (wallet.cipher != null) {
-      address = address ??
-          (wallet is LeaderWallet
-              ? services.wallet.getEmptyAddress(
-                  wallet as LeaderWallet, NodeExposure.external)
-              : services.wallet.single
-                  .getKPWallet(wallet as SingleWallet)
-                  .address);
-    } else {
-      address = address ?? null;
+      address ??= wallet is LeaderWallet
+          ? services.wallet
+              .getEmptyAddress(wallet as LeaderWallet, NodeExposure.external)
+          : services.wallet.single.getKPWallet(wallet as SingleWallet).address;
     }
-    disabled = Current.holdings.length == 0;
+    disabled = Current.holdings.isEmpty;
     return DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -98,17 +99,17 @@ class _WalletViewState extends State<WalletView> {
           leading: components.buttons.back(context),
           elevation: 2,
           centerTitle: false,
-          title: Text('Wallet'),
-          actions: [components.status],
+          title: const Text('Wallet'),
+          actions: <AppLifecycleReactor>[components.status],
           flexibleSpace: Container(
-            alignment: Alignment(0.0, -0.5),
-            child: Text(
+            alignment: const Alignment(0.0, -0.5),
+            child: const Text(
               '\n Current.balanceUSD?.valueUSD ?? Current.balanceRVN.value',
             ),
           ),
-          bottom: PreferredSize(
+          bottom: const PreferredSize(
               preferredSize: Size.fromHeight(50.0),
-              child: TabBar(tabs: [
+              child: TabBar(tabs: <Widget>[
                 Tab(text: 'Details'),
                 Tab(text: 'Holdings'),
                 Tab(text: 'Transactions')
@@ -132,7 +133,7 @@ class _WalletViewState extends State<WalletView> {
   ListView detailsView() => ListView(
           shrinkWrap: true,
           controller: _scrollController,
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           children: <Widget>[
             /*
             Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
@@ -157,47 +158,50 @@ class _WalletViewState extends State<WalletView> {
                     : 'Show ' + secretName + ' Secret')),
             SizedBox(height: 30.0),
             */
-            Text('Wallet Addresses'),
-            SizedBox(height: 10.0),
+            const Text('Wallet Addresses'),
+            const SizedBox(height: 10.0),
             Center(
               child: Column(
                 children: <Widget>[
-                  address != null
-                      ? QrImage(
-                          backgroundColor: Colors.white,
-                          data: address!,
-                          semanticsLabel: address!,
-                          version: QrVersions.auto,
-                          size: 200.0)
-                      : Text(
-                          'QR code unrenderable since wallet cannot be decrypted. Please login again.'),
-                  SizedBox(height: 10.0),
-                  address != null
-                      ? SelectableText(address!,
-                          cursorColor: Colors.grey[850],
-                          showCursor: true,
-                          toolbarOptions: toolbarOptions)
-                      : Text(
-                          'address unknown since wallet cannot be decrypted. Please login again.'),
-                  SizedBox(height: 10.0),
+                  if (address != null)
+                    QrImage(
+                        backgroundColor: Colors.white,
+                        data: address!,
+                        semanticsLabel: address!,
+                        //version: QrVersions.auto,
+                        size: 200.0)
+                  else
+                    const Text(
+                        'QR code unrenderable since wallet cannot be decrypted. Please login again.'),
+                  const SizedBox(height: 10.0),
+                  if (address != null)
+                    SelectableText(address!,
+                        cursorColor: Colors.grey[850],
+                        showCursor: true,
+                        toolbarOptions: toolbarOptions)
+                  else
+                    const Text(
+                        'address unknown since wallet cannot be decrypted. Please login again.'),
+                  const SizedBox(height: 10.0),
                   exposureAndIndex,
                   //Text('$' + addressBalance), //that seemed to take just as long...
                 ],
               ),
             ),
-            SizedBox(height: 30.0),
+            const SizedBox(height: 30.0),
             ...addressesView(),
-            SizedBox(height: 30.0),
+            const SizedBox(height: 30.0),
           ]);
 
   List<Widget> addressesView() => wallet is LeaderWallet
-      ? [
-          for (var walletAddress
-              in wallet.addressesFor()..sort((a, b) => a.compareTo(b)))
+      ? <Widget>[
+          for (Address walletAddress
+              in wallet.addressesFor()
+                ..sort((Address a, Address b) => a.compareTo(b)))
             ListTile(
               dense: true,
               visualDensity: VisualDensity.compact,
-              contentPadding: EdgeInsets.only(left: 0, right: 0),
+              contentPadding: EdgeInsets.zero,
               onTap: () => setState(() {
                 // Delay to make sure the frames are rendered properly
                 //await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -225,23 +229,13 @@ class _WalletViewState extends State<WalletView> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
-                        'Index: ' + walletAddress.hdIndex.toString(),
+                        'Index: ${walletAddress.hdIndex}',
                       ),
                       Text(
-                        (walletAddress.exposure.name.toTitleCase()),
+                        walletAddress.exposure.name.toTitleCase(),
                       ),
                       Text(
-                          'Balance: ' +
-                              utils
-                                  .satToAmount(services.transaction
-                                      .walletUnspents(wallet)
-                                      .where((vout) =>
-                                          vout.toAddress ==
-                                          walletAddress.address)
-                                      .map((vout) => vout.rvnValue)
-                                      .toList()
-                                      .sumInt())
-                                  .toString(),
+                          'Balance: ${satToAmount(services.transaction.walletUnspents(wallet).where((Vout vout) => vout.toAddress == walletAddress.address).map((Vout vout) => vout.rvnValue).toList().sumInt())}',
                           style: Theme.of(context).textTheme.caption),
                     ],
                   ),
@@ -253,9 +247,9 @@ class _WalletViewState extends State<WalletView> {
                   */
                 ]);
               }),
-              leading: (walletAddress.exposure == NodeExposure.internal
+              leading: walletAddress.exposure == NodeExposure.internal
                   ? components.icons.out(context)
-                  : components.icons.income(context)),
+                  : components.icons.income(context),
               title: FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Text(walletAddress.address,
@@ -269,12 +263,11 @@ class _WalletViewState extends State<WalletView> {
                           : Theme.of(context).textTheme.caption)),
 
               trailing: Text(
-                  utils
-                      .satToAmount(services.transaction
+                  satToAmount(services.transaction
                           .walletUnspents(wallet)
-                          .where(
-                              (vout) => vout.toAddress == walletAddress.address)
-                          .map((vout) => vout.rvnValue)
+                          .where((Vout vout) =>
+                              vout.toAddress == walletAddress.address)
+                          .map((Vout vout) => vout.rvnValue)
                           .toList()
                           .sumInt())
                       .toString(),
@@ -292,7 +285,7 @@ class _WalletViewState extends State<WalletView> {
               //leading: components.icons.assetAvatar(transaction.security.symbol)
             )
         ]
-      : [
+      : <Widget>[
           ListTile(
               onTap: () {},
               onLongPress: () {},
@@ -307,8 +300,8 @@ class _WalletViewState extends State<WalletView> {
         ];
 
   ElevatedButton sendButton() => ElevatedButton.icon(
-        icon: Icon(Icons.north_east),
-        label: Text('Send'),
+        icon: const Icon(Icons.north_east),
+        label: const Text('Send'),
         onPressed: disabled
             ? () {}
             : () => Navigator.pushNamed(context, '/transaction/send',

@@ -1,8 +1,8 @@
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/extensions/string.dart';
-import 'package:ravencoin_back/records/types/net.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/src/models/networks.dart'
     show NetworkType, mainnet, testnet, evrmoreMainnet, evrmoreTestnet;
+import 'package:ravencoin_back/records/types/net.dart';
 import '../_type_id.dart';
 
 part 'chain.g.dart';
@@ -24,17 +24,21 @@ enum Chain {
   ravencoin,
 }
 
-String chainSymbol(Chain chain) {
-  switch (chain) {
-    case Chain.ravencoin:
-      return 'RVN';
-    case Chain.evrmore:
-      return 'EVR';
-    case Chain.none:
-      return '';
-    default:
-      return 'RVN';
+extension ChainExtension on Chain {
+  String get symbol {
+    switch (this) {
+      case Chain.ravencoin:
+        return 'RVN';
+      case Chain.evrmore:
+        return 'EVR';
+      case Chain.none:
+        return '';
+    }
   }
+
+  String get title => name.toTitleCase();
+  String get key => name;
+  String get readable => 'chain: $name';
 }
 
 String symbolName(String symbol) {
@@ -67,62 +71,61 @@ String nameSymbol(String name) {
   }
 }
 
-String chainName(Chain chain) => chain.name.toTitleCase();
+class ChainNet {
+  ChainNet(this.chain, this.net);
 
-String chainNetSymbol(Chain chain, Net net) =>
-    chainSymbol(chain) + netSymbolModifier(net);
+  final Chain chain;
+  final Net net;
 
-String chainKey(Chain chain) => chain.name;
+  String get domainPort => '$domain:$port';
 
-String chainNetKey(Chain chain, Net net) => chainKey(chain) + ':' + netKey(net);
+  /// moontree.com
+  String get domain => 'moontree.com';
 
-String chainReadable(Chain chain) => 'chain: ${chain.name}';
-String chainNetReadable(Chain chain, Net net) =>
-    '${chainReadable(chain)}, ${netReadable(net)}';
-
-NetworkType networkOf(Chain chain, Net net) {
-  if (chain == Chain.ravencoin && net == Net.main) {
-    return mainnet;
-  }
-  if (chain == Chain.ravencoin && net == Net.test) {
-    return testnet;
-  }
-  if (chain == Chain.evrmore && net == Net.main) {
-    return evrmoreMainnet;
-  }
-  if (chain == Chain.evrmore && net == Net.test) {
-    return evrmoreTestnet;
-  }
-  return mainnet;
-}
-
-/// moontree.com
-String domainOf(Chain chain, Net net) => 'moontree.com';
-
-/// port map
-///50001 - mainnet tcp rvn
-///50002 - mainnet ssl rvn
-///50011 - testnet tcp rvnt
-///50012 - testnet ssl rvnt
-///50021 - mainnet tcp evr
-///50022 - mainnet ssl evr
-///50031 - testnet tcp evr
-///50032 - testnet ssl evr
-int portOf(Chain chain, Net net) {
-  if (chain == Chain.ravencoin && net == Net.main) {
+  /// port map
+  ///50001 - mainnet tcp rvn
+  ///50002 - mainnet ssl rvn
+  ///50011 - testnet tcp rvnt
+  ///50012 - testnet ssl rvnt
+  ///50021 - mainnet tcp evr
+  ///50022 - mainnet ssl evr
+  ///50031 - testnet tcp evr
+  ///50032 - testnet ssl evr
+  int get port {
+    if (chain == Chain.ravencoin && net == Net.main) {
+      return 50002;
+    }
+    if (chain == Chain.ravencoin && net == Net.test) {
+      return 50012;
+    }
+    if (chain == Chain.evrmore && net == Net.main) {
+      return 50022;
+    }
+    if (chain == Chain.evrmore && net == Net.test) {
+      return 50032;
+    }
     return 50002;
   }
-  if (chain == Chain.ravencoin && net == Net.test) {
-    return 50012;
-  }
-  if (chain == Chain.evrmore && net == Net.main) {
-    return 50022;
-  }
-  if (chain == Chain.evrmore && net == Net.test) {
-    return 50032;
-  }
-  return 50002;
-}
 
-String domainPortOf(Chain chain, Net net) =>
-    '${domainOf(chain, net)}:${portOf(chain, net)}';
+  String get readable => '${chain.readable}, ${net.readable}';
+
+  NetworkType get network {
+    if (chain == Chain.ravencoin && net == Net.main) {
+      return mainnet;
+    }
+    if (chain == Chain.ravencoin && net == Net.test) {
+      return testnet;
+    }
+    if (chain == Chain.evrmore && net == Net.main) {
+      return evrmoreMainnet;
+    }
+    if (chain == Chain.evrmore && net == Net.test) {
+      return evrmoreTestnet;
+    }
+    return mainnet;
+  }
+
+  String get symbol => chain.symbol + net.symbolModifier;
+
+  String get key => '${chain.key}:${net.key}';
+}

@@ -1,7 +1,8 @@
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 bool rvnCondition(String address, {Net? net}) =>
-    address.contains(RegExp(utils.strings.ravenBase58Regex(net)));
+    address.contains(RegExp(ravenBase58Regex(net == Net.main)));
 
 bool assetCondition(String asset) =>
     !asset.contains('..') &&
@@ -10,8 +11,8 @@ bool assetCondition(String asset) =>
     !asset.contains('_.') &&
     !asset.endsWith('_') &&
     !asset.endsWith('.') &&
-    !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
-    asset.contains(RegExp(utils.strings.assetBaseRegex));
+    !<String>['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
+    asset.contains(RegExp(assetBaseRegex));
 
 /// unused but meant to verify a whole asset string such as:
 /// 'FANFT/RAVENHEAD24#PaintedRVN5'
@@ -20,7 +21,7 @@ bool wholeAssetCondition(String asset) =>
     asset
         .split('/')
         .getRange(1, asset.split('/').length)
-        .every((element) => subAssetCondition(element));
+        .every((String element) => subAssetCondition(element));
 
 /// unused but meant to verify a sub asset string such as:
 /// 'RAVENHEAD24#PaintedRVN5'
@@ -39,8 +40,8 @@ bool subAssetCondition(String asset) =>
     !asset.endsWith('_') &&
     !asset.endsWith('.') &&
     asset.length >= 3 &&
-    !['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
-    asset.contains(RegExp(utils.strings.subAssetBaseRegex));
+    !<String>['RVN', 'RAVEN', 'RAVENCOIN'].contains(asset) &&
+    asset.contains(RegExp(subAssetBaseRegex));
 
 /// not complete. todo
 bool unsCondition(String address) =>

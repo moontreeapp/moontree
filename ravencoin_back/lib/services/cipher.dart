@@ -1,9 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'dart:typed_data';
 
-import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/utilities/hex.dart' as hex;
-
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
+
 
 class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
@@ -13,9 +15,9 @@ class CipherService {
   DateTime? lastLoginTime;
   DateTime loginTime() => lastLoginTime = DateTime.now();
 
-  bool get canAskForPasswordNow => lastLoginTime != null
-      ? DateTime.now().difference(lastLoginTime!).inSeconds >= gracePeriod
-      : true;
+  bool get canAskForPasswordNow => lastLoginTime == null
+      ? true
+      : DateTime.now().difference(lastLoginTime!).inSeconds >= gracePeriod;
 
   CipherType get latestCipherType => services.password.exist
       ? pros.passwords.current!.saltedHash == ''
@@ -42,8 +44,8 @@ class CipherService {
     CipherBase? cipher,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
-    var records = <Wallet>[];
-    for (var wallet in pros.wallets.records) {
+    List<Wallet> records = <Wallet>[];
+    for (Wallet wallet in pros.wallets.records) {
       if (wallet.cipherUpdate != currentCipherUpdate) {
         if (wallet is LeaderWallet) {
           records.add(await reencryptLeaderWallet(wallet, cipher, saveSecret));
@@ -63,10 +65,10 @@ class CipherService {
     CipherBase? cipher,
     Future<void> Function(Secret secret)? saveSecret,
   ]) async {
-    final encryptedEntropy =
-        hex.encrypt(await wallet.entropy, cipher ?? currentCipher!);
-    final seed = await wallet.seed;
-    final newId = HDWallet.fromSeed(seed).pubKey;
+    final String encryptedEntropy =
+        encrypt(await wallet.entropy, cipher ?? currentCipher!);
+    final Uint8List seed = await wallet.seed;
+    final String newId = HDWallet.fromSeed(seed).pubKey;
     assert(wallet.id == newId);
     if (saveSecret != null) {
       await saveSecret(Secret(
@@ -91,7 +93,7 @@ class CipherService {
     CipherBase? cipher,
     Future<void> Function(Secret secret)? saveSecret,
   ]) async {
-    var reencrypt = EncryptedWIF.fromWIF(
+    EncryptedWIF reencrypt = EncryptedWIF.fromWIF(
       await wallet.wif,
       cipher ?? currentCipher!,
     );
@@ -120,7 +122,8 @@ class CipherService {
   }) {
     password = getPassword(password: password, altPassword: altPassword);
     salt = getSalt(salt: salt, altSalt: altSalt);
-    for (var currentCipherUpdate in currentCipherUpdates ?? _cipherUpdates) {
+    for (CipherUpdate currentCipherUpdate
+        in currentCipherUpdates ?? _cipherUpdates) {
       pros.ciphers.registerCipher(currentCipherUpdate, password, salt);
     }
   }
@@ -148,8 +151,8 @@ class CipherService {
   /// after wallets are updated or verified to be up to date
   /// remove all ciphers that no wallet uses and that are not the current one
   Future<void> cleanupCiphers() async {
-    await pros.ciphers.removeAll(pros.ciphers.records
-        .where((cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
+    await pros.ciphers.removeAll(pros.ciphers.records.where(
+        (Cipher cipher) => !_cipherUpdates.contains(cipher.cipherUpdate)));
 
     if (pros.ciphers.records.length > 2) {
       // in theory a wallet is not updated ... error?

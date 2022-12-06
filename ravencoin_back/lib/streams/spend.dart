@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:ravencoin_back/records/vout.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:ravencoin_back/records/vout.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
-import 'package:ravencoin_back/utilities/utilities.dart';
 
 // used in pages.send and BalanceHeader of ravencoin_front
 class Spend {
@@ -62,7 +62,7 @@ class SpendForm with EquatableMixin {
       'note=$note, address=$address, addressName=$addressName)';
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         symbol ?? '',
         amount ?? '',
         fee ?? '',

@@ -6,6 +6,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/spend.dart';
@@ -616,8 +617,7 @@ class SimpleSelectionItems {
             initialChildSize: initialExtent,
             minChildSize: minExtent,
             maxChildSize: maxExtent,
-            builder:
-                ((BuildContext context, ScrollController scrollController) {
+            builder: (BuildContext context, ScrollController scrollController) {
               return FrontCurve(
                   alignment: Alignment.topCenter,
                   child: ListView(
@@ -629,7 +629,7 @@ class SimpleSelectionItems {
                       ...[const SizedBox(height: 8)],
                     ],
                   ));
-            }),
+            },
           );
           //});
         }).then((value) {

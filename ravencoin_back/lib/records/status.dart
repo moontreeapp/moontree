@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/extensions/extensions.dart';
 import 'package:ravencoin_back/records/types/status_type.dart';
 
 import '_type_id.dart';
@@ -25,7 +24,7 @@ class Status with EquatableMixin {
   });
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         linkId,
         statusType,
         status,

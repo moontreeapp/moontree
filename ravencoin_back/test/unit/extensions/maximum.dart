@@ -2,7 +2,7 @@
 
 import 'package:test/test.dart';
 
-import 'package:ravencoin_back/extensions/stream/maximum.dart';
+import 'package:ravencoin_back/utilities/stream/maximum.dart';
 
 void main() {
   group('MaximumExtension', () {

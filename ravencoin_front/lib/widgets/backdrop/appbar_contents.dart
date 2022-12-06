@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
@@ -102,10 +101,8 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
       ? GestureDetector(
           onTap: () async {
             if (services.developer.developerMode) {
-              print(services.wallet
-                  .getEmptyAddress(Current.wallet, NodeExposure.internal));
-              print(services.wallet
-                  .getEmptyAddress(Current.wallet, NodeExposure.external));
+              print(pros.settings.loginAttempts.runtimeType);
+              print(services.tutorial.completed);
             }
           },
           child: appBar,

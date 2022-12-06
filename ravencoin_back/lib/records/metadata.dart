@@ -8,7 +8,6 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:ravencoin_back/records/types/metadata_type.dart';
-import 'package:ravencoin_back/extensions/object.dart';
 import 'package:ravencoin_back/records/types/net.dart';
 
 import '_type_id.dart';
@@ -62,7 +61,7 @@ class Metadata with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         symbol,
         metadata,
         data ?? '',
@@ -76,7 +75,7 @@ class Metadata with EquatableMixin {
   @override
   String toString() => 'Metadata(symbol: $symbol, metadata: $metadata, '
       'data: $data, kind: $kind, parent: $parent, logo: $logo, '
-      '${chainNetReadable(chain, net)}';
+      '${ChainNet(chain, net).readable}';
 
   factory Metadata.from(
     Metadata metadata, {
@@ -95,14 +94,14 @@ class Metadata with EquatableMixin {
       kind: kind ?? metadata.kind,
       data: data ?? metadata.data,
       metadata: metadataValue ?? metadata.metadata,
-      symbol: symbol ?? (chain != null ? chainSymbol(chain) : metadata.symbol),
+      symbol: symbol ?? (chain != null ? chain.symbol : metadata.symbol),
       chain: chain ?? metadata.chain,
       net: net ?? metadata.net,
     );
   }
 
   static String key(String symbol, String metadata, Chain chain, Net net) =>
-      '$symbol:$metadata:${chainNetKey(chain, net)}';
+      '$symbol:$metadata:${ChainNet(chain, net).key}';
 
   String get id => key(symbol, metadata, chain, net);
   String get metadataTypeName => kind.name;

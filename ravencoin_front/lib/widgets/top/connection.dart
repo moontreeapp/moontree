@@ -19,7 +19,7 @@ class ConnectionLight extends StatefulWidget {
 
 class _ConnectionLightState extends State<ConnectionLight>
     with TickerProviderStateMixin {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
   Color connectionStatusColor = AppColors.error;
   Map<ConnectionStatus, Color> connectionColor = {
@@ -158,12 +158,12 @@ class _ConnectionLightState extends State<ConnectionLight>
                 ColorFiltered(
                     colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
                     child: components.icons.assetAvatar(
-                        chainSymbol(pros.settings.chain),
+                        pros.settings.chain.symbol,
                         net: pros.settings.net,
                         height: 26,
                         width: 26,
                         circled: true)),
-                components.icons.assetAvatar(chainSymbol(pros.settings.chain),
+                components.icons.assetAvatar(pros.settings.chain.symbol,
                     net: pros.settings.net, height: 24, width: 24),
               ]),
       ),

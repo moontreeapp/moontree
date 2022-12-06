@@ -6,7 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:proclaim/index.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../extensions/stream/partition.dart';
+import 'package:ravencoin_back/utilities/stream/partition.dart';
 
 class Join<A, B> with EquatableMixin {
   A left;
@@ -14,7 +14,7 @@ class Join<A, B> with EquatableMixin {
   Join(this.left, this.right);
 
   @override
-  List<Object?> get props => [left, right];
+  List<Object?> get props => <Object?>[left, right];
 }
 
 Stream<Join<A, B>> streamingLeftJoin<A, B>(

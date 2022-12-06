@@ -27,7 +27,7 @@ class TechnicalView extends StatefulWidget {
 }
 
 class _TechnicalViewState extends State<TechnicalView> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   final accountName = TextEditingController();
 
   @override

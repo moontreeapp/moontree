@@ -17,7 +17,7 @@ class ActivityLight extends StatefulWidget {
 
 class _ActivityLightState extends State<ActivityLight>
     with TickerProviderStateMixin {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   bool connectionBusy = false;
   ActivityMessage activityMessage = ActivityMessage();
   late String pageTitle = '';

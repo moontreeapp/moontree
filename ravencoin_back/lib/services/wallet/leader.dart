@@ -1,12 +1,12 @@
 // ignore_for_file: omit_local_variable_types
 
-import 'package:equatable/equatable.dart';
-import 'package:quiver/iterables.dart';
-import 'package:ravencoin_back/streams/client.dart';
-import 'package:wallet_utils/wallet_utils.dart' show HDWallet;
-import 'package:bip39/bip39.dart' as bip39;
-import 'package:ravencoin_back/utilities/hex.dart' as hex;
+import 'dart:typed_data';
 
+import 'package:equatable/equatable.dart';
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' show HDWallet;
+import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/utilities/seed_wallet.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
@@ -14,7 +14,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 // returns any that it can't find a cipher for
 class LeaderWalletService {
   final int requiredGap = 20;
-  Set backlog = <LeaderWallet>{};
+  Set<LeaderWallet> backlog = <LeaderWallet>{};
   bool newLeaderProcessRunning = false;
 
   bool gapSatisfied(LeaderWallet leader, [NodeExposure? exposure]) =>
@@ -31,7 +31,7 @@ class LeaderWalletService {
         null) {
       await services.wallet.leader.deriveMoreAddresses(
         leader,
-        exposure == null ? null : [exposure],
+        exposure == null ? null : <NodeExposure>[exposure],
       );
     } else {
       services.wallet.leader.backlog.add(leader);
@@ -65,7 +65,7 @@ class LeaderWalletService {
     LeaderWallet wallet,
     NodeExposure exposure,
   ) async =>
-      await deriveAddressByIndex(
+      deriveAddressByIndex(
           wallet: wallet,
           exposure: exposure,
           hdIndex: wallet.highestIndexOf(exposure) + 1);
@@ -75,7 +75,7 @@ class LeaderWalletService {
     required NodeExposure exposure,
     required int hdIndex,
   }) async {
-    final subwallet = await getSubWallet(wallet, hdIndex, exposure);
+    final HDWallet subwallet = await getSubWallet(wallet, hdIndex, exposure);
     return Address(
         scripthash: subwallet.scripthash,
         address: subwallet.address!,
@@ -100,16 +100,14 @@ class LeaderWalletService {
       (await getSeedWallet(wallet)).subwallet(hdIndex, exposure: exposure);
 
   Future<HDWallet> getSubWalletFromAddress(Address address) async =>
-      (await getSeedWallet(address.wallet as LeaderWallet))
+      (await getSeedWallet(address.wallet! as LeaderWallet))
           .subwallet(address.hdIndex, exposure: address.exposure);
 
   Future<LeaderWallet> generate() async {
-    final cipherUpdate = services.cipher.currentCipherUpdate;
-    final leaderWallet = await makeLeaderWallet(
+    final CipherUpdate cipherUpdate = services.cipher.currentCipherUpdate;
+    final LeaderWallet? leaderWallet = await makeLeaderWallet(
         pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
-        entropy: null,
-        name: null,
         alwaysReturn: true);
     await pros.wallets.save(leaderWallet!);
     return leaderWallet;
@@ -125,12 +123,12 @@ class LeaderWalletService {
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     entropy = entropy ?? bip39.mnemonicToEntropy(bip39.generateMnemonic());
-    final mnemonic = bip39.entropyToMnemonic(entropy);
-    final seed = bip39.mnemonicToSeed(mnemonic);
-    final newId = HDWallet.fromSeed(seed).pubKey;
-    final encryptedEntropy = hex.encrypt(entropy, cipher); // here's how
+    final String mnemonic = bip39.entropyToMnemonic(entropy);
+    final Uint8List seed = bip39.mnemonicToSeed(mnemonic);
+    final String newId = HDWallet.fromSeed(seed).pubKey;
+    final String encryptedEntropy = encrypt(entropy, cipher); // here's how
 
-    var existingWallet = pros.wallets.primaryIndex.getOne(newId);
+    final Wallet? existingWallet = pros.wallets.primaryIndex.getOne(newId);
     if (existingWallet == null) {
       // save encryptedEntropy here!
       if (saveSecret != null) {
@@ -148,7 +146,9 @@ class LeaderWalletService {
         getEntropy: getEntropy,
       );
     }
-    if (alwaysReturn) return existingWallet as LeaderWallet;
+    if (alwaysReturn) {
+      return existingWallet as LeaderWallet;
+    }
     return null;
   }
 
@@ -169,8 +169,9 @@ class LeaderWalletService {
     Future<String> Function(String id)? getEntropy,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
-    var secret = bip39.mnemonicToEntropy(mnemonic ?? bip39.generateMnemonic());
-    var leaderWallet = await makeLeaderWallet(
+    final String secret =
+        bip39.mnemonicToEntropy(mnemonic ?? bip39.generateMnemonic());
+    final LeaderWallet? leaderWallet = await makeLeaderWallet(
       cipher,
       cipherUpdate: cipherUpdate,
       entropy: secret,
@@ -194,9 +195,10 @@ class LeaderWalletService {
     LeaderWallet wallet, [
     List<NodeExposure>? exposures,
   ]) async {
-    exposures = exposures ?? [NodeExposure.external, NodeExposure.internal];
-    var newAddresses = <Address>{};
-    for (var exposure in exposures) {
+    exposures = exposures ??
+        <NodeExposure>[NodeExposure.external, NodeExposure.internal];
+    final Set<Address> newAddresses = <Address>{};
+    for (final NodeExposure exposure in exposures) {
       newAddresses.add(await deriveNextAddress(
         wallet,
         exposure,
@@ -212,14 +214,15 @@ class LeaderWalletService {
   }) async {
     if (pros.ciphers.primaryIndex.getOneByCipherUpdate(wallet.cipherUpdate) !=
         null) {
-      exposures = exposures ?? [NodeExposure.external, NodeExposure.internal];
-      var newAddresses = <Address>{};
-      for (var exposure in exposures) {
-        for (var hdIndex in range(highestIndex)) {
+      exposures = exposures ??
+          <NodeExposure>[NodeExposure.external, NodeExposure.internal];
+      final Set<Address> newAddresses = <Address>{};
+      for (final NodeExposure exposure in exposures) {
+        for (final int hdIndex in range(highestIndex)) {
           newAddresses.add(await deriveAddressByIndex(
             wallet: wallet,
             exposure: exposure,
-            hdIndex: hdIndex as int,
+            hdIndex: hdIndex,
           ));
         }
       }
@@ -231,27 +234,25 @@ class LeaderWalletService {
 }
 
 class LeaderExposureKey with EquatableMixin {
+  LeaderExposureKey(this.leader, this.exposure);
   LeaderWallet leader;
   NodeExposure exposure;
-
-  LeaderExposureKey(this.leader, this.exposure);
 
   String get key => produceKey(leader.id, exposure);
   static String produceKey(String walletId, NodeExposure exposure) =>
       walletId + exposure.name;
 
   @override
-  List<Object> get props => [leader, exposure];
+  List<Object> get props => <Object>[leader, exposure];
 
   @override
   String toString() => 'LeaderExposureKey($leader, $exposure)';
 }
 
 class LeaderExposureIndex {
+  LeaderExposureIndex({this.saved = -1, this.used = -1});
   int saved = 0;
   int used = 0;
-
-  LeaderExposureIndex({this.saved = -1, this.used = -1});
 
   int get currentGap => saved - used;
 

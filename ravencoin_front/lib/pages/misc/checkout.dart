@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/utilities/transform.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
@@ -83,7 +83,7 @@ class _CheckoutState extends State<Checkout> {
   late CheckoutStruct struct;
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
-  late SendEstimate? estimate;
+  SendEstimate? estimate;
   late bool disabled = false;
   late DateTime startTime;
 

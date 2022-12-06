@@ -1,7 +1,7 @@
+import 'package:tuple/tuple.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
-import 'package:ravencoin_back/utilities/hex.dart' as hexx;
-import 'package:tuple/tuple.dart';
 
 class ImportFrom {
   late String text;
@@ -57,7 +57,7 @@ class ImportFrom {
   }) {
     var decrypted =
         services.password.required && text.contains(RegExp(r'^[a-fA-F0-9]+$'))
-            ? hexx.hexToAscii(hexx.decrypt(text, cipher))
+            ? hexToAscii(decrypt(text, cipher))
             : text;
     return decrypted;
   }

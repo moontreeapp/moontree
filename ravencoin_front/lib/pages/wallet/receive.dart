@@ -37,7 +37,7 @@ class _ReceiveState extends State<Receive> {
   String username = '';
   String? errorText;
   List<Security> fetchedNames = <Security>[];
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   bool get rawAddress =>
       requestMessage.text == '' &&

@@ -37,7 +37,7 @@ class Rate with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [base, quote, rate];
+  List<Object?> get props => <Object?>[base, quote, rate];
 
   String get id => Rate.rateKey(base, quote);
 

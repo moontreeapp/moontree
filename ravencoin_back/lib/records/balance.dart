@@ -1,12 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:ravencoin_back/records/security.dart';
-import 'package:ravencoin_back/records/types/chain.dart';
-import 'package:ravencoin_back/records/types/net.dart';
-import 'package:ravencoin_back/utilities/exceptions.dart';
-import 'package:ravencoin_back/utilities/transform.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
+import 'package:ravencoin_back/records/security.dart';
 
 import '_type_id.dart';
 
@@ -50,7 +47,8 @@ class Balance with EquatableMixin {
   }
 
   @override
-  List<Object> get props => [walletId, security, confirmed, unconfirmed];
+  List<Object> get props =>
+      <Object>[walletId, security, confirmed, unconfirmed];
 
   @override
   String toString() =>
@@ -89,7 +87,7 @@ class Balance with EquatableMixin {
 
   double get amount => satToAmount(value);
 
-  double get rvn => (confirmed / 100000000); //+ (unconfirmed / 100000000);
+  double get rvn => confirmed / 100000000;
 
   String get valueRVN =>
       NumberFormat('RVN #,##0.00000000', 'en_US').format(rvn);
@@ -118,8 +116,8 @@ class BalanceUSD {
 
   double get value => confirmed + unconfirmed;
 
-  String get valueUSD => NumberFormat('\$ #,##0.00', 'en_US')
-      .format((confirmed /*+ unconfirmed*/) /*.toStringAsFixed(2)*/);
+  String get valueUSD => NumberFormat(r'$ #,##0.00', 'en_US')
+      .format(confirmed /*+ unconfirmed*/ /*.toStringAsFixed(2)*/);
 
   BalanceUSD operator +(BalanceUSD balanceUSD) => BalanceUSD(
       confirmed: confirmed + balanceUSD.confirmed,

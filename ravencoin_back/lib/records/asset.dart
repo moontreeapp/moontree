@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/extensions/validation.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:ravencoin_back/records/types/net.dart';
-import 'package:ravencoin_back/utilities/utilities.dart';
 
 import '_type_id.dart';
 
@@ -56,7 +56,7 @@ class Asset with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         symbol,
         satsInCirculation,
         divisibility,
@@ -72,7 +72,7 @@ class Asset with EquatableMixin {
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position, ${chainNetReadable(chain, net)})';
+      'position: $position, ${ChainNet(chain, net).readable})';
 
   factory Asset.from(
     Asset asset, {
@@ -93,14 +93,14 @@ class Asset with EquatableMixin {
       metadata: metadata ?? asset.metadata,
       transactionId: transactionId ?? asset.transactionId,
       position: position ?? asset.position,
-      symbol: symbol ?? (chain != null ? chainSymbol(chain) : asset.symbol),
+      symbol: symbol ?? (chain != null ? chain.symbol : asset.symbol),
       chain: chain ?? asset.chain,
       net: net ?? asset.net,
     );
   }
 
   static String key(String symbol, Chain chain, Net net) =>
-      '$symbol:${chainNetKey(chain, net)}';
+      '$symbol:${ChainNet(chain, net).key}';
 
   String get id => key(symbol, chain, net);
   String? get parentSymbol {
@@ -226,7 +226,7 @@ class Asset with EquatableMixin {
 
   String get assetTypeName => assetType.name;
 
-  double get amount => utils.satToAmount(satsInCirculation);
+  double get amount => satToAmount(satsInCirculation);
 }
 
 enum AssetType {

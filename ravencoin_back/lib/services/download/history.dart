@@ -1,18 +1,25 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
-import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 import 'package:tuple/tuple.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' show evrAirdropTx;
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+
+import 'asset.dart';
 
 class HistoryService {
   bool busy = false;
   int calledAllDoneProcess = 0; // used to hide transactions while downloading
-  Future aggregatedDownloadProcess(List<Address> addresses) async {
+  Future<void> aggregatedDownloadProcess(List<Address> addresses) async {
     busy = true;
-    var txHashes =
+    final Set<String> txHashes =
         filterOutPreviouslyDownloaded(await getHistories(addresses)).toSet();
-    var txs = await grabTransactions(txHashes);
-    await saveThese([for (var tx in txs) await parseTx(tx)]);
+    final List<Tx> txs = await grabTransactions(txHashes);
+    await saveThese(<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>>[
+      for (Tx tx in txs) await parseTx(tx)
+    ]);
     busy = false;
   }
 
@@ -46,27 +53,29 @@ class HistoryService {
 
   Future<List<String>> getHistories(List<Address> addresses) async {
     try {
-      var listOfLists = await services.client.api.getHistories(addresses);
-      return [
-        for (var x in listOfLists) x.map((history) => history.txHash).toList()
-      ].expand((e) => e).toList();
+      final List<List<ScripthashHistory>> listOfLists =
+          await services.client.api.getHistories(addresses);
+      return <List<String>>[
+        for (List<ScripthashHistory> x in listOfLists)
+          x.map((ScripthashHistory history) => history.txHash).toList()
+      ].expand((List<String> e) => e).toList();
     } catch (e) {
       try {
-        var txIds = <List<String>>[];
-        for (var address in addresses) {
-          var historiesItem;
+        final List<List<String>> txIds = <List<String>>[];
+        for (final Address address in addresses) {
+          List<String> historiesItem;
           try {
             historiesItem = (await services.client.api.getHistory(address))
-                .map((history) => history.txHash)
+                .map((ScripthashHistory history) => history.txHash)
                 .toList();
           } catch (e) {
-            historiesItem = [];
+            historiesItem = <String>[];
           }
           txIds.add(historiesItem);
         }
-        return txIds.expand((e) => e).toList();
+        return txIds.expand((List<String> e) => e).toList();
       } catch (e) {
-        return [];
+        return <String>[];
       }
     }
   }
@@ -74,23 +83,24 @@ class HistoryService {
   /// called during address subscription
   Future<List<String>> getHistory(Address address) async {
     try {
-      final t = (await services.client.api.getHistory(address))
-          .map((history) => history.txHash)
+      final List<String> t = (await services.client.api.getHistory(address))
+          .map((ScripthashHistory history) => history.txHash)
           .toList();
       return t;
     } catch (e) {
-      return [];
+      return <String>[];
     }
   }
 
-  Future getAndSaveMempoolTransactions() async {
-    var x = pros.transactions.mempool.map((t) => t.id).toSet();
+  Future<void> getAndSaveMempoolTransactions() async {
+    final Set<String> x =
+        pros.transactions.mempool.map((Transaction t) => t.id).toSet();
     if (x.isNotEmpty) {
       await getAndSaveTransactions(x);
     }
   }
 
-  Future getAndSaveTransactions(
+  Future<void> getAndSaveTransactions(
     Set<String> txIds, {
     bool saveVin = true,
     bool saveVout = true,
@@ -108,7 +118,7 @@ class HistoryService {
     //busy = false;
   }
 
-  Future allDoneProcess() async {
+  Future<void> allDoneProcess() async {
     busy = true;
     calledAllDoneProcess += 1;
     await saveDanglingTransactions();
@@ -119,13 +129,10 @@ class HistoryService {
   /// still need this for getting correct balances of some transactions...
   /// one more step - get all vins that have no corresponding vout (in the db)
   /// and get the vouts for them
-  Future saveDanglingTransactions() async {
-    final txs = pros.vins.dangling.map((vin) => vin.voutTransactionId).toSet();
-    await getTransactions(
-      filterOutPreviouslyDownloaded(txs),
-      saveVin: false,
-      saveVout: true,
-    );
+  Future<void> saveDanglingTransactions() async {
+    final Set<String> txs =
+        pros.vins.dangling.map((Vin vin) => vin.voutTransactionId).toSet();
+    await getTransactions(filterOutPreviouslyDownloaded(txs), saveVin: false);
 
     /// this really doesn't seem necessary because we grab it when we pull.
     // make sure you have all the vouts that you need for transactions according
@@ -142,11 +149,11 @@ class HistoryService {
     Iterable<String> transactionIds,
   ) =>
       transactionIds
-          .where((transactionId) =>
+          .where((String transactionId) =>
               transactionId !=
                   evrAirdropTx && // don't download genesis block of Evrmore, it's too big.
               !pros.transactions.confirmed
-                  .map((e) => e.id)
+                  .map((Transaction e) => e.id)
                   .contains(transactionId))
           .toSet();
 
@@ -159,18 +166,19 @@ class HistoryService {
     Chain chain,
     Net net,
   ) async {
-    var symbol = vout.scriptPubKey.asset ?? 'RVN';
-    var value = vout.valueSat;
-    var security = pros.securities.primaryIndex.getOne(symbol, chain, net);
-    var asset = pros.assets.primaryIndex.getOne(symbol, chain, net);
+    String symbol = vout.scriptPubKey.asset ?? 'RVN';
+    int value = vout.valueSat;
+    Security? security =
+        pros.securities.primaryIndex.getOne(symbol, chain, net);
+    Asset? asset = pros.assets.primaryIndex.getOne(symbol, chain, net);
     if (security == null ||
         asset == null ||
         vout.scriptPubKey.type == 'reissue_asset') {
-      if (['transfer_asset', 'reissue_asset']
+      if (<String>['transfer_asset', 'reissue_asset']
           .contains(vout.scriptPubKey.type)) {
-        value = utils.amountToSat(vout.scriptPubKey.amount);
+        value = amountToSat(vout.scriptPubKey.amount);
         //if we have no record of it in pros.securities...
-        var assetRetrieved =
+        final AssetRetrieved? assetRetrieved =
             await services.download.asset.get(symbol, vout: vout);
         if (assetRetrieved != null) {
           value = assetRetrieved.value;
@@ -179,7 +187,7 @@ class HistoryService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = utils.amountToSat(vout.scriptPubKey.amount);
+        value = amountToSat(vout.scriptPubKey.amount);
         asset = Asset(
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',
@@ -201,17 +209,18 @@ class HistoryService {
         streams.asset.added.add(asset);
       }
     }
-    return Tuple3(value, security ?? pros.securities.currentCoin, asset);
+    return Tuple3<int, Security, Asset?>(
+        value, security ?? pros.securities.currentCoin, asset);
   }
 
   Future<List<Tx>> grabTransactions(Iterable<String> transactionIds) async {
     busy = true;
-    var txs = <Tx>[];
+    List<Tx> txs = <Tx>[];
     try {
       txs = await services.client.api.getTransactions(transactionIds);
     } catch (e) {
-      var futures = <Future<Tx>>[];
-      for (var transactionId in transactionIds) {
+      final List<Future<Tx>> futures = <Future<Tx>>[];
+      for (final String transactionId in transactionIds) {
         futures.add(services.client.api.getTransaction(transactionId));
       }
       txs = await Future.wait<Tx>(futures);
@@ -220,15 +229,17 @@ class HistoryService {
   }
 
   Future<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>> parseTx(Tx tx) async {
-    var newVins = <Vin>{};
-    var newVouts = <Vout>{};
-    var newTxs = <Transaction>{};
+    final Set<Vin> newVins = <Vin>{};
+    final Set<Vout> newVouts = <Vout>{};
+    final Set<Transaction> newTxs = <Transaction>{};
     Chain? chain;
     Net? net;
-    var safeChain = Chain.none;
-    var safeNet = Net.main;
-    for (var vout in tx.vout) {
-      if (vout.scriptPubKey.type == 'nullassetdata') continue;
+    Chain safeChain = Chain.none;
+    Net safeNet = Net.main;
+    for (final TxVout vout in tx.vout) {
+      if (vout.scriptPubKey.type == 'nullassetdata') {
+        continue;
+      }
 
       /// if addresses had a chain...
       //chain ??= pros.addresses.byAddress
@@ -238,7 +249,8 @@ class HistoryService {
       //    pros.addresses.byAddress.getOne(vout.scriptPubKey.addresses?[0])?.net;
       safeChain = chain ?? pros.settings.chain;
       safeNet = net ?? pros.settings.net;
-      var vs = await handleAssetData(tx, vout, safeChain, safeNet);
+      final Tuple3<int, Security, Asset?> vs =
+          await handleAssetData(tx, vout, safeChain, safeNet);
       newVouts.add(Vout(
         //chain: safeChain,
         //net: safeNet,
@@ -246,10 +258,10 @@ class HistoryService {
         position: vout.n,
         type: vout.scriptPubKey.type,
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-        rvnValue: ['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
-        assetValue: vs.item3 == null
-            ? null
-            : utils.amountToSat(vout.scriptPubKey.amount),
+        rvnValue:
+            <String>['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
+        assetValue:
+            vs.item3 == null ? null : amountToSat(vout.scriptPubKey.amount),
         assetSecurityId: vs.item2.id,
         memo: vout.memo,
         assetMemo: vout.assetMemo,
@@ -269,7 +281,7 @@ class HistoryService {
         time: tx.time,
       ));
     }
-    for (var vin in tx.vin) {
+    for (final TxVin vin in tx.vin) {
       if (vin.txid != null && vin.vout != null) {
         newVins.add(Vin(
           //chain: safeChain,
@@ -289,7 +301,8 @@ class HistoryService {
         ));
       }
     }
-    return Tuple3(newTxs, newVins, newVouts);
+    return Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>(
+        newTxs, newVins, newVouts);
   }
 
   Future<void>? getTransactions(
@@ -301,7 +314,7 @@ class HistoryService {
       return;
     }
     busy = true;
-    var txs = <Tx>[];
+    List<Tx> txs = <Tx>[];
     try {
       /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
       if (!saveVin) {
@@ -313,8 +326,8 @@ class HistoryService {
       //print('getting transactionIds $transactionIds');
       txs = await services.client.api.getTransactions(transactionIds);
     } catch (e) {
-      var futures = <Future<Tx>>[];
-      for (var transactionId in transactionIds) {
+      final List<Future<Tx>> futures = <Future<Tx>>[];
+      for (final String transactionId in transactionIds) {
         futures.add(services.client.api.getTransaction(transactionId));
       }
       txs = await Future.wait<Tx>(futures);
@@ -331,8 +344,7 @@ class HistoryService {
     String transactionId, {
     bool saveVin = true,
   }) async =>
-      await saveTransaction(
-          await services.client.api.getTransaction(transactionId),
+      saveTransaction(await services.client.api.getTransaction(transactionId),
           saveVin: saveVin);
 
   /// when an address status change: make our historic tx data match blockchain
@@ -341,8 +353,9 @@ class HistoryService {
     bool saveVin = true,
     bool saveVout = true,
   }) async {
-    var futures = [
-      for (var tx in txs)
+    final List<Future<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>>> futures =
+        <Future<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>>>[
+      for (Tx tx in txs)
         saveTransaction(
           tx,
           saveVin: saveVin,
@@ -359,10 +372,10 @@ class HistoryService {
   Future<void> saveThese(
     List<Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>> threes,
   ) async {
-    final transactions = <Transaction>{};
-    final vins = <Vin>{};
-    final vouts = <Vout>{};
-    for (var three in threes) {
+    final Set<Transaction> transactions = <Transaction>{};
+    final Set<Vin> vins = <Vin>{};
+    final Set<Vout> vouts = <Vout>{};
+    for (final Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>> three in threes) {
       transactions.addAll(three.item1);
       vins.addAll(three.item2);
       vouts.addAll(three.item3);
@@ -378,15 +391,17 @@ class HistoryService {
     bool saveVout = true,
     bool justReturn = false,
   }) async {
-    var newVins = <Vin>{};
-    var newVouts = <Vout>{};
-    var newTxs = <Transaction>{};
+    final Set<Vin> newVins = <Vin>{};
+    final Set<Vout> newVouts = <Vout>{};
+    final Set<Transaction> newTxs = <Transaction>{};
     Chain? chain;
     Net? net;
-    var safeChain = Chain.none;
-    var safeNet = Net.main;
-    for (var vout in tx.vout) {
-      if (vout.scriptPubKey.type == 'nullassetdata') continue;
+    Chain safeChain = Chain.none;
+    Net safeNet = Net.main;
+    for (final TxVout vout in tx.vout) {
+      if (vout.scriptPubKey.type == 'nullassetdata') {
+        continue;
+      }
 
       /// if addresses had a chain...
       //chain ??= pros.addresses.byAddress
@@ -396,7 +411,8 @@ class HistoryService {
       //    pros.addresses.byAddress.getOne(vout.scriptPubKey.addresses?[0])?.net;
       safeChain = chain ?? pros.settings.chain;
       safeNet = net ?? pros.settings.net;
-      var vs = await handleAssetData(tx, vout, safeChain, safeNet);
+      final Tuple3<int, Security, Asset?> vs =
+          await handleAssetData(tx, vout, safeChain, safeNet);
       if (saveVout) {
         newVouts.add(Vout(
           //chain: safeChain,
@@ -405,10 +421,10 @@ class HistoryService {
           position: vout.n,
           type: vout.scriptPubKey.type,
           lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-          rvnValue: ['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
-          assetValue: vs.item3 == null
-              ? null
-              : utils.amountToSat(vout.scriptPubKey.amount),
+          rvnValue:
+              <String>['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
+          assetValue:
+              vs.item3 == null ? null : amountToSat(vout.scriptPubKey.amount),
           assetSecurityId: vs.item2.id,
           memo: vout.memo,
           assetMemo: vout.assetMemo,
@@ -430,7 +446,7 @@ class HistoryService {
       ));
     }
     if (saveVin) {
-      for (var vin in tx.vin) {
+      for (final TxVin vin in tx.vin) {
         if (vin.txid != null && vin.vout != null) {
           newVins.add(Vin(
             //chain: safeChain,
@@ -452,12 +468,14 @@ class HistoryService {
       }
     }
     if (justReturn) {
-      return Tuple3(newTxs, newVins, newVouts);
+      return Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>(
+          newTxs, newVins, newVouts);
     } else {
       await pros.transactions.saveAll(newTxs);
       await pros.vins.saveAll(newVins);
       await pros.vouts.saveAll(newVouts);
     }
-    return Tuple3({}, {}, {});
+    return const Tuple3<Set<Transaction>, Set<Vin>, Set<Vout>>(
+        <Transaction>{}, <Vin>{}, <Vout>{});
   }
 }

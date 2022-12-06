@@ -33,17 +33,21 @@ class Protocol extends _i1.SerializationManager {
       return customConstructors[t]!(data, this) as T;
     }
     if (t == _i2.Consent) {
-      return _i2.Consent.fromJson(data, this) as T;
+      return _i2.Consent.fromJson(data as Map<String, dynamic>, this) as T;
     }
     if (t == _i3.ConsentDocument) {
-      return _i3.ConsentDocument.fromJson(data, this) as T;
+      return _i3.ConsentDocument.fromJson(data as Map<String, dynamic>, this)
+          as T;
     }
     if (t == _i1.getType<_i2.Consent?>()) {
-      return (data != null ? _i2.Consent.fromJson(data, this) : null) as T;
+      return (data != null
+          ? _i2.Consent.fromJson(data as Map<String, dynamic>, this)
+          : null) as T;
     }
     if (t == _i1.getType<_i3.ConsentDocument?>()) {
-      return (data != null ? _i3.ConsentDocument.fromJson(data, this) : null)
-          as T;
+      return (data != null
+          ? _i3.ConsentDocument.fromJson(data as Map<String, dynamic>, this)
+          : null) as T;
     }
     return super.deserialize<T>(data, t);
   }

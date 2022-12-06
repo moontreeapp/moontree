@@ -1,16 +1,18 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:math';
 import 'package:collection/collection.dart';
-import 'package:moontree_utils/extensions/map.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:moontree_utils/extensions/map.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:shimmer/shimmer.dart';
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
@@ -27,8 +29,8 @@ class HoldingList extends StatefulWidget {
 }
 
 class _HoldingList extends State<HoldingList> {
-  List<StreamSubscription> listeners = [];
-  List<AssetHolding>? holdings = null;
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
+  List<AssetHolding>? holdings;
   int holdingCount = 0;
   bool showUSD = false;
   bool showPath = false;
@@ -42,7 +44,7 @@ class _HoldingList extends State<HoldingList> {
   late Security currentCrypto;
 
   int getCount() {
-    var x = Current.wallet.holdingCount;
+    int x = Current.wallet.holdingCount;
     if (x == 0) {
       x = pros.assets.length;
     }
@@ -61,7 +63,7 @@ class _HoldingList extends State<HoldingList> {
     listeners
         .add(pros.assets.batchedChanges.listen((List<Change<Asset>> changes) {
       // need a way to know this wallet's asset list without vouts for newLeaderProcess
-      var count = getCount();
+      final int count = getCount();
       if (count > holdingCount) {
         holdingCount = count;
       }
@@ -109,7 +111,7 @@ class _HoldingList extends State<HoldingList> {
     setState(() => showPath = !showPath);
   }
 
-  Future refresh() async {
+  Future<void> refresh() async {
     await services.balance.recalculateAllBalances();
     setState(() {});
   }
@@ -120,8 +122,8 @@ class _HoldingList extends State<HoldingList> {
 
     balances = Current.wallet.balances.toSet();
     addresses = Current.wallet.addressesFor().toSet();
-    final transactions = Current.wallet.transactions.toSet();
-    holdings = (
+    final Set<Transaction> transactions = Current.wallet.transactions.toSet();
+    holdings =
         //holdings != null && holdings!.isNotEmpty
         //    ? holdings
         //    :
@@ -129,26 +131,27 @@ class _HoldingList extends State<HoldingList> {
             //services.download.unspents
             //    .unspentBalancesByWalletId[Current.walletId] ??
             //[]
-            balances));
+            balances);
 
     /// affects https://github.com/moontreeapp/moontreeV1/issues/648
     // filter out empties unless all we have is one item (empty RVN)
     if (holdings != null && holdings!.length > 1) {
-      holdings = holdings!.where((holding) => holding.value > 0).toList();
+      holdings =
+          holdings!.where((AssetHolding holding) => holding.value > 0).toList();
     }
 
     bool overrideEmptyEcho = false;
     if (overrideEmpty) {
       overrideEmpty = false;
       overrideEmptyEcho = true;
-      final walletId = Current.walletId;
-      balances = {};
-      for (final symbol in pros.wallets.primaryIndex
+      final String walletId = Current.walletId;
+      balances = <Balance>{};
+      for (final String symbol in pros.wallets.primaryIndex
           .getOne(walletId)!
           .addressesFor()
-          .map((a) => a.vouts)
-          .expand((i) => i)
-          .map((v) => v.assetSecurityId?.split(':').first ?? 'RVN')
+          .map((Address a) => a.vouts)
+          .expand((List<Vout> i) => i)
+          .map((Vout v) => v.assetSecurityId?.split(':').first ?? 'RVN')
           .toSet()) {
         balances.add(Balance(
             walletId: walletId,
@@ -175,10 +178,9 @@ class _HoldingList extends State<HoldingList> {
     balances, no transactions - show balances
     balances, transactions - show balances
     */
-    final currentIsLeader = Current.wallet is LeaderWallet;
-    final busy = currentIsLeader
-        ? streams.client.busy.value || addresses.length < 40
-        : false;
+    final bool currentIsLeader = Current.wallet is LeaderWallet;
+    final bool busy =
+        currentIsLeader && (streams.client.busy.value || addresses.length < 40);
     if (!currentIsLeader) {
       // single wallets sometimes never stop spinning
       streams.client.busy.add(false);
@@ -199,8 +201,7 @@ class _HoldingList extends State<HoldingList> {
           scrollController: widget.scrollController,
           header: 'Get Started',
           message:
-              'Use the Import or Receive button to add ${chainName(pros.settings.chain)} & assets to your wallet.',
-          placeholderType: PlaceholderType.wallet);
+              'Use the Import or Receive button to add ${pros.settings.chain.title} & assets to your wallet.');
     } else if (balances.isEmpty && transactions.isEmpty && busy) {
       return GestureDetector(
           // did not refresh fall back...
@@ -213,7 +214,7 @@ class _HoldingList extends State<HoldingList> {
               count: max(holdingCount, 1),
               holding: true));
     } else if (balances.isEmpty && transactions.isEmpty && !busy) {
-      if (Current.wallet.unspents.length > 0) {
+      if (Current.wallet.unspents.isNotEmpty) {
         refresh();
         return components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
@@ -224,8 +225,7 @@ class _HoldingList extends State<HoldingList> {
           scrollController: widget.scrollController,
           header: 'Empty Wallet',
           message:
-              'This wallet has never been used before.\nClick "Receive" to get started.',
-          placeholderType: PlaceholderType.wallet);
+              'This wallet has never been used before.\nClick "Receive" to get started.');
     } else if (balances.isEmpty && transactions.isNotEmpty && !busy) {
       ///// if they have removed all assets and rvn from wallet, for each asset
       ///// we've ever held, create empty Balance, and empty AssetHolding.
@@ -248,7 +248,7 @@ class _HoldingList extends State<HoldingList> {
       //      confirmed: 0,
       //      unconfirmed: 0));
       //} my8ZWfDD8LitTMTQj3Pd7NofVh764HfYoZ
-      if (Current.wallet.unspents.length > 0) {
+      if (Current.wallet.unspents.isNotEmpty) {
         refresh();
         return components.empty.getAssetsPlaceholder(context,
             scrollController: widget.scrollController,
@@ -259,7 +259,6 @@ class _HoldingList extends State<HoldingList> {
           scrollController: widget.scrollController,
           header: 'Empty Wallet',
           message: 'This wallet appears empty but has a transaction history.',
-          placeholderType: PlaceholderType.wallet,
           behavior: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -285,7 +284,7 @@ class _HoldingList extends State<HoldingList> {
     streams.app.wallet.asset.add(balance.security.symbol);
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transactions',
-      arguments: {'holding': balance, 'walletId': wallet?.id ?? null},
+      arguments: <String, Object?>{'holding': balance, 'walletId': wallet?.id},
     );
   }
 
@@ -294,9 +293,9 @@ class _HoldingList extends State<HoldingList> {
     Wallet? wallet,
     bool isEmpty = false,
   }) {
-    var rvnHolding = <Widget>[];
-    var assetHoldings = <Widget>[];
-    final searchBar = Padding(
+    final List<Widget> rvnHolding = <Widget>[];
+    final List<Widget> assetHoldings = <Widget>[];
+    final Padding searchBar = Padding(
         padding: const EdgeInsets.only(top: 1, bottom: 16, left: 16, right: 16),
         child: TextFieldFormatted(
             controller: searchController,
@@ -312,7 +311,7 @@ class _HoldingList extends State<HoldingList> {
             labelText: 'Search',
             suffixIcon: IconButton(
               icon: const Padding(
-                  padding: EdgeInsets.only(top: 0, right: 14),
+                  padding: EdgeInsets.only(right: 14),
                   child: Icon(Icons.clear_rounded, color: AppColors.black38)),
               onPressed: () => setState(() {
                 searchController.text = '';
@@ -321,8 +320,8 @@ class _HoldingList extends State<HoldingList> {
             ),
             onChanged: (_) => setState(() {}),
             onEditingComplete: () => setState(() => showSearchBar = false)));
-    for (AssetHolding holding in holdings ?? []) {
-      var thisHolding = ListTile(
+    for (final AssetHolding holding in holdings ?? <AssetHolding>[]) {
+      final ListTile thisHolding = ListTile(
           //dense: true,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -339,7 +338,7 @@ class _HoldingList extends State<HoldingList> {
                           ? const Icon(Icons.search)
                           : const Icon(
                               Icons.search,
-                              shadows: [
+                              shadows: <Shadow>[
                                 Shadow(
                                     color: AppColors.black12,
                                     offset: Offset(1, 1),
@@ -383,12 +382,14 @@ class _HoldingList extends State<HoldingList> {
     }
 
     /// in this case we're looking at an wallet in the EVR blockchain
-    final claimInvite = <Widget>[];
+    final List<Widget> claimInvite = <Widget>[];
     if (streams.claim.unclaimed.value
             .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
         (pros.settings.chain == Chain.evrmore &&
             pros.blocks.records.first.height <= 60 * 24 * 60 &&
-            pros.unspents.records.where((u) => u.height == 0).length > 0)) {
+            pros.unspents.records
+                .where((Unspent u) => u.height == 0)
+                .isNotEmpty)) {
       claimInvite.add(ListTile(
           //dense: true,
           contentPadding:
@@ -396,15 +397,15 @@ class _HoldingList extends State<HoldingList> {
           onTap: () async => components.message.giveChoices(
                 context,
                 title: 'Claim Your EVR',
-                content: ('All EVR in the Evrmore fairdrop must be claimed '
+                content: 'All EVR in the Evrmore fairdrop must be claimed '
                     'within 60 days of the snapshot (which occured on october '
-                    '25th 2022). Claim your EVR now!'),
-                behaviors: {
+                    '25th 2022). Claim your EVR now!',
+                behaviors: <String, void Function()>{
                   'OK': () => Navigator.of(context).pop(),
                 },
               ),
           //onLongPress: popup^,
-          leading: Container(
+          leading: SizedBox(
               height: 40,
               width: 40,
               child: components.icons.assetAvatar('EVR')),
@@ -413,16 +414,15 @@ class _HoldingList extends State<HoldingList> {
       claimInvite.add(const Divider(height: 1));
     }
 
-    final listView = ListView(
+    final ListView listView = ListView(
         controller: widget.scrollController,
-        dragStartBehavior: DragStartBehavior.start,
         physics: const ClampingScrollPhysics(),
-        children: claimInvite.length > 0
+        children: claimInvite.isNotEmpty
             ? claimInvite
             : <Widget>[
                 ...rvnHolding,
                 ...assetHoldings,
-                ...[components.empty.blankNavArea(context)]
+                ...<Widget>[components.empty.blankNavArea(context)]
               ]);
     //if (services.developer.advancedDeveloperMode == true) {
     //  return RefreshIndicator(
@@ -447,21 +447,21 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future<void> onTap(Wallet? wallet, AssetHolding holding) async {
-    final unspentSum = [
-      ...[
-        for (var x
-            in Current.wallet.unspents.where((u) => u.symbol == holding.symbol))
+    final int unspentSum = <int>[
+      ...<int>[
+        for (Unspent x in Current.wallet.unspents
+            .where((Unspent u) => u.symbol == holding.symbol))
           x.value
       ],
-      ...[0]
+      ...<int>[0]
     ].sum;
-    final unspentBal = [
-      ...[
-        for (var x in Current.wallet.balances
-            .where((b) => b.security.symbol == holding.symbol))
+    final int unspentBal = <int>[
+      ...<int>[
+        for (Balance x in Current.wallet.balances
+            .where((Balance b) => b.security.symbol == holding.symbol))
           x.value
       ],
-      ...[0]
+      ...<int>[0]
     ].sum;
     if (unspentSum != unspentBal) {
       await services.balance.recalculateAllBalances();
@@ -479,7 +479,7 @@ class _HoldingList extends State<HoldingList> {
       SelectionItems(
         context,
         symbol: holding.symbol,
-        names: [
+        names: <SelectionOption>[
           if (holding.main != null) SelectionOption.Main,
           if (holding.sub != null) SelectionOption.Sub,
           if (holding.subAdmin != null) SelectionOption.Sub_Admin,
@@ -491,7 +491,7 @@ class _HoldingList extends State<HoldingList> {
           if (holding.nft != null) SelectionOption.NFT,
           if (holding.channel != null) SelectionOption.Channel,
         ],
-        behaviors: [
+        behaviors: <void Function()>[
           if (holding.main != null)
             () => navigate(holding.main!, wallet: wallet),
           if (holding.sub != null)
@@ -513,7 +513,7 @@ class _HoldingList extends State<HoldingList> {
           if (holding.channel != null)
             () => navigate(holding.channel!, wallet: wallet),
         ],
-        values: [
+        values: <String>[
           if (holding.main != null)
             services.conversion.securityAsReadable(
               holding.main!.value,
@@ -579,7 +579,7 @@ class _HoldingList extends State<HoldingList> {
     }
   }
 
-  Widget leadingIcon(AssetHolding holding) => Container(
+  Widget leadingIcon(AssetHolding holding) => SizedBox(
           height: 40,
           width: 40,
           child: //Hero(
@@ -609,8 +609,8 @@ class _HoldingList extends State<HoldingList> {
 
   Widget title(AssetHolding holding) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Container(
+        Row(children: <Widget>[
+          SizedBox(
               width: holding.symbol == currentCrypto.symbol
                   ? MediaQuery.of(context).size.width / 2
                   : MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
@@ -628,7 +628,7 @@ class _HoldingList extends State<HoldingList> {
         ]),
         Text(
           holding.mainLength > 1 && holding.restricted != null
-              ? [
+              ? <String>[
                   if (holding.main != null) 'Main',
                   if (holding.admin != null) 'Admin',
                   if (holding.restricted != null) 'Restricted',

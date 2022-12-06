@@ -12,6 +12,7 @@
 /// rotation occures right after settings are loaded. we can capture the
 /// previous previous version if we want at that call.
 
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class VersionService {
@@ -20,10 +21,12 @@ class VersionService {
 
   /// preivous becomes current if diff, writes current, returns both in map
   Future<void> rotate(String latest) async {
-    final previous =
-        pros.settings.primaryIndex.getOne(SettingName.version_previous)?.value;
-    final current =
-        pros.settings.primaryIndex.getOne(SettingName.version_current)?.value;
+    final String? previous = pros.settings.primaryIndex
+        .getOne(SettingName.version_previous)
+        ?.value as String?;
+    final String? current = pros.settings.primaryIndex
+        .getOne(SettingName.version_current)
+        ?.value as String?;
     if (latest != current) {
       await pros.settings.save(Setting(
         name: SettingName.version_previous,
@@ -51,37 +54,37 @@ class VersionService {
         previous: previous ??
             (pros.settings.primaryIndex
                 .getOne(SettingName.version_previous)
-                ?.value),
+                ?.value as String?),
         current: current ??
             (pros.settings.primaryIndex
                 .getOne(SettingName.version_current)
-                ?.value),
+                ?.value as String?),
         database: database ??
             (pros.settings.primaryIndex
                 .getOne(SettingName.version_database)
-                ?.value),
+                ?.value as int?),
         latest: latest,
       );
 
   String? get current =>
-      pros.settings.primaryIndex.getOne(SettingName.version_current)?.value;
+      pros.settings.primaryIndex.getOne(SettingName.version_current)?.value
+          as String?;
 }
 
 class VersionDescription with ToStringMixin {
-  final String? previous;
-  final String? current;
-  final String? latest;
-  final int? database;
-
   VersionDescription({
     this.previous,
     this.current,
     this.latest,
     this.database,
   });
+  final String? previous;
+  final String? current;
+  final String? latest;
+  final int? database;
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         previous,
         current,
         latest,
@@ -89,7 +92,7 @@ class VersionDescription with ToStringMixin {
       ];
 
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'previous',
         'current',
         'latest',

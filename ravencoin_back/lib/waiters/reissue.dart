@@ -1,6 +1,7 @@
 /// creating assets
 // ignore_for_file: omit_local_variable_types
 
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:tuple/tuple.dart';
 

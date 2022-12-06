@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:proclaim/proclaim.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 
 part 'unspent.keys.dart';
 
@@ -39,7 +40,7 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
   }
 
   // on startup it's blank
-  static Map<String, Unspent> get defaults => {};
+  static Map<String, Unspent> get defaults => <String, Unspent>{};
 
   Iterable<Unspent> byScripthashes(
     Set<String> scripthashes, [
@@ -48,13 +49,13 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
   ]) =>
       pros.unspents.byChainNet
           .getAll(chain ?? pros.settings.chain, net ?? pros.settings.net)
-          .where((e) => scripthashes.contains(e.scripthash));
+          .where((Unspent e) => scripthashes.contains(e.scripthash));
   Future<void> clearByScripthashes(
     Set<String> scripthashes, [
     Chain? chain,
     Net? net,
   ]) async =>
-      await pros.unspents.removeAll(byScripthashes(scripthashes, chain, net));
+      pros.unspents.removeAll(byScripthashes(scripthashes, chain, net));
 
   int totalConfirmed(
     String walletId, {
@@ -64,7 +65,7 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
   }) =>
       byWalletChainSymbolConfirmation
           .getAll(walletId, chain, net, symbol ?? 'RVN', true)
-          .map((e) => e.value)
+          .map((Unspent e) => e.value)
           .sumInt();
 
   int totalUnconfirmed(
@@ -75,7 +76,7 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
   }) =>
       byWalletChainSymbolConfirmation
           .getAll(walletId, chain, net, symbol ?? 'RVN', false)
-          .map((e) => e.value)
+          .map((Unspent e) => e.value)
           .sumInt();
 
   void assertSufficientFunds(
@@ -86,7 +87,7 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
     String? symbol,
     bool allowUnconfirmed = true,
   }) {
-    symbol = symbol ?? chainSymbol(chain);
+    symbol = symbol ?? chain.symbol;
     if (totalConfirmed(walletId, symbol: symbol, chain: chain, net: net) +
             (allowUnconfirmed
                 ? totalUnconfirmed(walletId,
@@ -98,8 +99,8 @@ class UnspentProclaim extends Proclaim<_IdKey, Unspent> {
   }
 
   Set<String> get getSymbols =>
-      pros.unspents.records.map((e) => e.symbol).toSet();
+      pros.unspents.records.map((Unspent e) => e.symbol).toSet();
 
   Set<String> getSymbolsByWallet(String walletId) =>
-      byWallet.getAll(walletId).map((e) => e.symbol).toSet();
+      byWallet.getAll(walletId).map((Unspent e) => e.symbol).toSet();
 }

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:electrum_adapter/methods/scripthash/unspent.dart';
 
@@ -87,14 +88,14 @@ class Unspent with EquatableMixin, ToStringMixin {
       position: position ?? unspent.position,
       height: height ?? unspent.height,
       value: value ?? unspent.value,
-      symbol: symbol ?? (chain != null ? chainSymbol(chain) : unspent.symbol),
+      symbol: symbol ?? (chain != null ? chain.symbol : unspent.symbol),
       chain: chain ?? unspent.chain,
       net: net ?? unspent.net,
     );
   }
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         addressId,
         transactionId,
         position,
@@ -136,17 +137,17 @@ class Unspent with EquatableMixin, ToStringMixin {
   String get walletSymbolConfirmationId =>
       getWalletSymbolConfirmationId(walletId, symbol, isConfirmed);
 
-  static String getChainNetId(Chain chain, Net net) => chainNetKey(chain, net);
+  static String getChainNetId(Chain chain, Net net) => ChainNet(chain, net).key;
 
   static String getWalletSymbolId(String walletId, String symbol) =>
       '$walletId:$symbol';
   static String getWalletChainId(String walletId, Chain chain, Net net) =>
-      '$walletId:${chainNetKey(chain, net)}';
+      '$walletId:${ChainNet(chain, net).key}';
   static String getWalletChainSymbolId(
           String walletId, Chain chain, Net net, String symbol) =>
-      '$walletId:${chainNetKey(chain, net)}:$symbol';
+      '$walletId:${ChainNet(chain, net).key}:$symbol';
   static String getSymbolChainId(String symbol, Chain chain, Net net) =>
-      '${chainNetKey(chain, net)}:$symbol';
+      '${ChainNet(chain, net).key}:$symbol';
   static String getWalletConfirmationId(String walletId, bool isConfirmed) =>
       '$walletId:${isConfirmed.toString()}';
   static String getWalletSymbolConfirmationId(
@@ -154,13 +155,13 @@ class Unspent with EquatableMixin, ToStringMixin {
       '$walletId:$symbol:${isConfirmed.toString()}';
   static String getWalletChainConfirmationId(
           String walletId, Chain chain, Net net, bool isConfirmed) =>
-      '$walletId:${chainNetKey(chain, net)}:${isConfirmed.toString()}';
+      '$walletId:${ChainNet(chain, net).key}:${isConfirmed.toString()}';
   static String getWalletChainSymbolConfirmationId(String walletId, Chain chain,
           Net net, String symbol, bool isConfirmed) =>
-      '$walletId:${chainNetKey(chain, net)}:$symbol:${isConfirmed.toString()}';
+      '$walletId:${ChainNet(chain, net).key}:$symbol:${isConfirmed.toString()}';
 
   static String key(String transactionId, int position, Chain chain, Net net) =>
-      '$transactionId:$position:${chainNetKey(chain, net)}';
+      '$transactionId:$position:${ChainNet(chain, net).key}';
 
   String get voutId => Vout.key(transactionId, position);
 }

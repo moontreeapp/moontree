@@ -55,23 +55,23 @@ class Security with EquatableMixin {
   }
 
   @override
-  List<Object> get props => [symbol, chain, net];
+  List<Object> get props => <Object>[symbol, chain, net];
 
   @override
   String toString() => 'Security(symbol: $symbol, '
-      '${chainNetReadable(chain, net)})';
+      '${ChainNet(chain, net).readable})';
 
   String get id => key(symbol, chain, net);
 
   static String key(String symbol, Chain chain, Net net) =>
-      '$symbol:${chainNetKey(chain, net)}';
+      '$symbol:${ChainNet(chain, net).key}';
 
   /// todo identify a ipfs hash correctly...
   // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
 
   bool get isFiat => chain == Chain.none;
 
-  bool get isCoin => chainSymbol(chain) == symbol;
+  bool get isCoin => chain.symbol == symbol;
 
   bool get isAsset => !isFiat && !isCoin;
 

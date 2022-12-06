@@ -29,7 +29,7 @@ class SimpleSendFormState extends CubitState {
       'isSubmitting=$isSubmitting)';
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         security,
         address,
         amount,
@@ -99,5 +99,5 @@ class SimpleSendFormState extends CubitState {
     }
   }
 
-  int get sats => utils.amountToSat(amount);
+  int get sats => amountToSat(amount);
 }

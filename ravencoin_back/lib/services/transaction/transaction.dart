@@ -1,9 +1,9 @@
 import 'package:intl/intl.dart';
-import 'package:moontree_utils/extensions/map.dart';
+import 'package:tuple/tuple.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' as wallet_utils;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
-import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
-import 'package:wallet_utils/wallet_utils.dart' show FeeRates;
 
 import 'maker.dart';
 
@@ -38,15 +38,19 @@ class TransactionService {
     //if (!services.download.history.transactionsDownloaded()) {
     //  return <TransactionRecord>[];
     //}
-    var givenAddresses =
-        wallet.addressesFor().map((address) => address.address).toSet();
-    var transactionRecords = <TransactionRecord>[];
-    final currentCrypto = pros.securities.currentCoin;
+    final Set<String> givenAddresses =
+        wallet.addressesFor().map((Address address) => address.address).toSet();
+    final List<TransactionRecord> transactionRecords = <TransactionRecord>[];
+    final Security currentCrypto = pros.securities.currentCoin;
 
-    final net = networkOf(pros.settings.chain, pros.settings.net);
-    final specialTag = {net.burnAddresses.addTag: net.burnAmounts.addTag};
-    final specialReissue = {net.burnAddresses.reissue: net.burnAmounts.reissue};
-    final specialCreate = {
+    final wallet_utils.NetworkType net = pros.settings.chainNet.network;
+    final Map<String, int> specialTag = <String, int>{
+      net.burnAddresses.addTag: net.burnAmounts.addTag
+    };
+    final Map<String, int> specialReissue = <String, int>{
+      net.burnAddresses.reissue: net.burnAmounts.reissue
+    };
+    final Map<String, int> specialCreate = <String, int>{
       net.burnAddresses.issueMain: net.burnAmounts.issueMain,
       net.burnAddresses.issueMessage: net.burnAmounts.issueMessage,
       net.burnAddresses.issueQualifier: net.burnAmounts.issueQualifier,
@@ -56,21 +60,21 @@ class TransactionService {
       net.burnAddresses.issueSubQualifier: net.burnAmounts.issueSubQualifier,
       net.burnAddresses.issueUnique: net.burnAmounts.issueUnique
     };
-    for (var transaction in pros.transactions.chronological) {
-      final securitiesInvolved = ((transaction.vins
-                  .where((vin) =>
+    for (final Transaction transaction in pros.transactions.chronological) {
+      final Set<Security?> securitiesInvolved = ((transaction.vins
+                  .where((Vin vin) =>
                       givenAddresses.contains(vin.vout?.toAddress) &&
                       vin.vout?.security != null)
-                  .map((vin) => vin.vout?.security)
+                  .map((Vin vin) => vin.vout?.security)
                   .toList()) +
               (transaction.vouts
-                  .where((vout) =>
+                  .where((Vout vout) =>
                       givenAddresses.contains(vout.toAddress) &&
                       vout.security != null)
-                  .map((vout) => vout.security)
+                  .map((Vout vout) => vout.security)
                   .toList()))
           .toSet();
-      for (var security in securitiesInvolved) {
+      for (final Security? security in securitiesInvolved) {
         if (securities == null || securities.contains(security)) {
           // from other to me: selfIn = 0
           //   other in and self in is totalin
@@ -91,25 +95,25 @@ class TransactionService {
 
           // This is only used for checking special addresses
           // This will never contain our own addrs
-          final outgoingAddrs = <String, int>{};
+          final Map<String, int> outgoingAddrs = <String, int>{};
 
           if (security == currentCrypto) {
-            var selfIn = 0;
-            var othersIn = 0;
-            var selfOut = 0;
-            var othersOut = 0;
+            int selfIn = 0;
+            int othersIn = 0;
+            int selfOut = 0;
+            int othersOut = 0;
 
             // self out can be broken into two categories based on the address it was sent to
-            var outIntentional = 0;
+            int outIntentional = 0;
             // ignore: unused_local_variable
-            var outChange = 0; // actually used.
-            var feeFlag = false;
+            int outChange = 0; // actually used.
+            bool feeFlag = false;
 
-            var totalInRVN = 0;
-            var totalOutRVN = 0;
-            var ioType;
+            int totalInRVN = 0;
+            int totalOutRVN = 0;
+            TransactionRecordType? ioType;
             // Nothing too special about incoming...
-            for (final vin in transaction.vins) {
+            for (final Vin vin in transaction.vins) {
               /// #651 I wonder if at this point there isn't a vout associated
               /// with the vin because vouts are still downloading... maybe
               /// that's the root cause of the transactions displaying wrong
@@ -120,14 +124,14 @@ class TransactionService {
               /// disabled vouts to test this theory we're unable to see
               /// transactions at all until vouts are downloaded... so that's
               /// probably not it... we'll wait till the issue surfaces again.
-              var vinVout = vin.vout;
+              final Vout? vinVout = vin.vout;
 
               /// we have another issue when it comes to the claim process:
               /// we don't download the genesis block of the EVR chain so we do
               /// not have the vout that those claim transactions point to. so
               /// we have a special case for that here.
 
-              if (vin.voutTransactionId == evrAirdropTx) {
+              if (vin.voutTransactionId == wallet_utils.evrAirdropTx) {
                 //print(pros.unspents.records);
                 //print(vin.transactionId);
                 //var value = pros.unspents.records
@@ -177,7 +181,7 @@ class TransactionService {
               }
             }
 
-            for (final vout in transaction.vouts) {
+            for (final Vout vout in transaction.vouts) {
               if (vout.security == currentCrypto) {
                 totalOutRVN += vout.rvnValue;
                 if (givenAddresses.contains(vout.toAddress)) {
@@ -195,14 +199,14 @@ class TransactionService {
                       specialReissue.containsKey(vout.toAddress) ||
                       specialTag.containsKey(vout.toAddress) ||
                       vout.toAddress == net.burnAddresses.burn) {
-                    final current = outgoingAddrs[vout.toAddress!] ?? 0;
+                    final int current = outgoingAddrs[vout.toAddress!] ?? 0;
                     outgoingAddrs[vout.toAddress!] = current + vout.rvnValue;
                   }
                 }
               }
             }
 
-            final fee = (selfIn + othersIn) - (selfOut + othersOut) ==
+            final int fee = (selfIn + othersIn) - (selfOut + othersOut) ==
                     (selfIn + othersIn)
                 ? totalInRVN - totalOutRVN
                 : (selfIn + othersIn) - (selfOut + othersOut);
@@ -212,11 +216,11 @@ class TransactionService {
 
             // TODO: Better verification; see if actual valid asset vouts exist
 
-            final tagIntersection = outgoingAddrs.keys
+            final Set<String> tagIntersection = outgoingAddrs.keys
                 .toSet()
                 .intersection(specialTag.keys.toSet());
             if (tagIntersection.isNotEmpty) {
-              for (final address in tagIntersection) {
+              for (final String address in tagIntersection) {
                 if (outgoingAddrs[address] == specialTag[address]) {
                   ioType = TransactionRecordType.tag;
                 }
@@ -225,11 +229,11 @@ class TransactionService {
               ioType ??= TransactionRecordType.burn;
             }
 
-            final reissueIntersection = outgoingAddrs.keys
+            final Set<String> reissueIntersection = outgoingAddrs.keys
                 .toSet()
                 .intersection(specialReissue.keys.toSet());
             if (reissueIntersection.isNotEmpty) {
-              for (final address in reissueIntersection) {
+              for (final String address in reissueIntersection) {
                 if (outgoingAddrs[address] == specialReissue[address]) {
                   ioType = TransactionRecordType.reissue;
                 }
@@ -238,12 +242,12 @@ class TransactionService {
               ioType ??= TransactionRecordType.burn;
             }
 
-            final createIntersection = outgoingAddrs.keys
+            final Set<String> createIntersection = outgoingAddrs.keys
                 .toSet()
                 .intersection(specialCreate.keys.toSet());
             // Known burn addr for creation
             if (createIntersection.isNotEmpty) {
-              for (final address in createIntersection) {
+              for (final String address in createIntersection) {
                 if (outgoingAddrs[address] == specialCreate[address]) {
                   ioType = TransactionRecordType.create;
                 }
@@ -258,7 +262,9 @@ class TransactionService {
             // then it's sent to self, unless we're looking at ravencoin, in that case
             // maybe this was just a fee to send an asset, in that case, its just a
             // regular out transaction...
-            if ((transaction.vouts.map((e) => !e.isAsset).every((e) => e))) {
+            if (transaction.vouts
+                .map((Vout e) => !e.isAsset)
+                .every((bool e) => e)) {
               if (othersIn == 0 && othersOut == 0 && selfIn == selfOut + fee) {
                 if (ioType != TransactionRecordType.claim) {
                   ioType = TransactionRecordType.self;
@@ -282,7 +288,7 @@ class TransactionService {
               security: security!,
               totalIn: selfIn,
               totalOut: selfOut,
-              valueOverride: [
+              valueOverride: <TransactionRecordType>[
                 TransactionRecordType.self,
                 TransactionRecordType.claim
               ].contains(ioType)
@@ -298,24 +304,24 @@ class TransactionService {
               formattedDatetime: transaction.formattedDatetime,
             ));
           } else {
-            var selfIn = 0;
-            var selfInRVN = 0;
-            var othersIn = 0;
-            var othersInRVN = 0;
+            int selfIn = 0;
+            int selfInRVN = 0;
+            int othersIn = 0;
+            int othersInRVN = 0;
 
-            var selfOut = 0;
-            var selfOutRVN = 0;
-            var othersOut = 0;
-            var othersOutRVN = 0;
+            int selfOut = 0;
+            int selfOutRVN = 0;
+            int othersOut = 0;
+            int othersOutRVN = 0;
             // self out can be broken into two categories based on the address it was sent to
-            var outIntentional = 0;
+            int outIntentional = 0;
             // ignore: unused_local_variable
-            var outChange = 0; // used
-            var feeFlag = false;
+            int outChange = 0; // used
+            bool feeFlag = false;
 
             // Nothing too special about incoming...
-            for (final vin in transaction.vins) {
-              var vinVout = vin.vout;
+            for (final Vin vin in transaction.vins) {
+              Vout? vinVout = vin.vout;
               if (vinVout == null) {
                 /// unable to await so set flag
                 //services.download.history
@@ -338,7 +344,7 @@ class TransactionService {
               }
             }
 
-            for (final vout in transaction.vouts) {
+            for (final Vout vout in transaction.vouts) {
               if (vout.security == currentCrypto) {
                 if (givenAddresses.contains(vout.toAddress)) {
                   selfOutRVN += vout.rvnValue;
@@ -348,7 +354,7 @@ class TransactionService {
                       specialReissue.containsKey(vout.toAddress) ||
                       specialTag.containsKey(vout.toAddress) ||
                       vout.toAddress == net.burnAddresses.burn) {
-                    final current = outgoingAddrs[vout.toAddress!] ?? 0;
+                    final int current = outgoingAddrs[vout.toAddress!] ?? 0;
                     outgoingAddrs[vout.toAddress!] = current + vout.rvnValue;
                   }
                 }
@@ -368,18 +374,18 @@ class TransactionService {
               }
             }
 
-            var ioType;
+            TransactionRecordType? ioType;
 
             // Known burn addr for tagging
             // This goes first as tags can also be in creations
 
             // TODO: Better verification; see if actual valid asset vouts exist
 
-            final tagIntersection = outgoingAddrs.keys
+            final Set<String> tagIntersection = outgoingAddrs.keys
                 .toSet()
                 .intersection(specialTag.keys.toSet());
             if (tagIntersection.isNotEmpty) {
-              for (final address in tagIntersection) {
+              for (final String address in tagIntersection) {
                 if (outgoingAddrs[address] == specialTag[address]) {
                   ioType = TransactionRecordType.tag;
                 }
@@ -388,11 +394,11 @@ class TransactionService {
               ioType ??= TransactionRecordType.burn;
             }
 
-            final reissueIntersection = outgoingAddrs.keys
+            final Set<String> reissueIntersection = outgoingAddrs.keys
                 .toSet()
                 .intersection(specialReissue.keys.toSet());
             if (reissueIntersection.isNotEmpty) {
-              for (final address in reissueIntersection) {
+              for (final String address in reissueIntersection) {
                 if (outgoingAddrs[address] == specialReissue[address]) {
                   ioType = TransactionRecordType.reissue;
                 }
@@ -401,12 +407,12 @@ class TransactionService {
               ioType ??= TransactionRecordType.burn;
             }
 
-            final createIntersection = outgoingAddrs.keys
+            final Set<String> createIntersection = outgoingAddrs.keys
                 .toSet()
                 .intersection(specialCreate.keys.toSet());
             // Known burn addr for creation
             if (createIntersection.isNotEmpty) {
-              for (final address in createIntersection) {
+              for (final String address in createIntersection) {
                 if (outgoingAddrs[address] == specialCreate[address]) {
                   ioType = TransactionRecordType.create;
                 }
@@ -433,7 +439,7 @@ class TransactionService {
               security: security!,
               totalIn: selfIn,
               totalOut: selfOut,
-              valueOverride: [
+              valueOverride: <TransactionRecordType>[
                 TransactionRecordType.self,
               ].contains(ioType)
                   ? outIntentional
@@ -449,9 +455,9 @@ class TransactionService {
         }
       }
     }
-    var ret = <TransactionRecord>[];
-    var actual = <TransactionRecord>[];
-    for (var txRecord in transactionRecords) {
+    final List<TransactionRecord> ret = <TransactionRecord>[];
+    final List<TransactionRecord> actual = <TransactionRecord>[];
+    for (final TransactionRecord txRecord in transactionRecords) {
       if (txRecord.formattedDatetime == 'In Transit') {
         ret.add(txRecord);
       } else {
@@ -470,20 +476,22 @@ class TransactionService {
     String? memo,
     String? msg,
   }) async {
-    final destinationAddress = services.wallet.getEmptyAddress(
+    final String destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
       NodeExposure.external,
     );
-    final utxos = streams.claim.unclaimed.value.getOr(from.id, <Vout>{});
-    final claimAmount = utxos
-        .map((e) => e.rvnValue)
-        .reduce((value, element) => value + element);
+    final Set<Vout> utxos =
+        streams.claim.unclaimed.value.getOr(from.id, <Vout>{});
+    final int claimAmount = utxos
+        .map((Vout e) => e.rvnValue)
+        .reduce((int value, int element) => value + element);
 
-    var txEstimate = await services.transaction.make.claimAllEVR(
+    final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+        await services.transaction.make.claimAllEVR(
       destinationAddress,
       SendEstimate(claimAmount, memo: memo, utxos: utxos.toList()),
       wallet: from,
-      feeRate: FeeRates.standard,
+      feeRate: wallet_utils.FeeRates.standard,
     );
     streams.spend.send.add(TransactionNote(
       txHex: txEstimate.item1.toHex(),
@@ -505,13 +513,13 @@ class TransactionService {
     Set<Vout>? usedUTXOs,
     bool incremental = false,
   }) async {
-    usedUTXOs = usedUTXOs ?? {};
-    final destinationAddress = services.wallet.getEmptyAddress(
+    usedUTXOs = usedUTXOs ?? <Vout>{};
+    final String destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
       NodeExposure.external,
     );
-    final assetBalances = from.balances
-        .where((b) => !pros.securities.coins.contains(b.security))
+    final List<Balance> assetBalances = from.balances
+        .where((Balance b) => !pros.securities.coins.contains(b.security))
         .toList();
 
     if (from.unspents.isEmpty || from.RVNValue == 0) {
@@ -521,17 +529,18 @@ class TransactionService {
 
     if (assets &&
         assetBalances.isNotEmpty &&
-        assetBalances.fold(0, (int agg, e) => e.value + agg) > 0) {
+        assetBalances.fold(0, (int agg, Balance e) => e.value + agg) > 0) {
       if (currency) {
         // ASSETS && RVN
         if (from.unspents.length < limit) {
           // we should be able to do it all in one transaction
-          var txEstimate = await services.transaction.make.transactionSweepAll(
+          final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+              await services.transaction.make.transactionSweepAll(
             destinationAddress,
             SendEstimate(from.RVNValue, memo: memo),
             wallet: from,
-            securities: assetBalances.map((e) => e.security).toSet(),
-            feeRate: FeeRates.standard,
+            securities: assetBalances.map((Balance e) => e.security).toSet(),
+            feeRate: wallet_utils.FeeRates.standard,
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
@@ -568,18 +577,19 @@ class TransactionService {
       } else {
         // JUST ASSETS
         if (from.unspents
-                    .where((e) => !pros.securities.contains(e.security))
+                    .where((Unspent e) => !pros.securities.contains(e.security))
                     .length <
                 limit &&
             usedUTXOs.isEmpty &&
             !incremental) {
-          for (var balance in assetBalances) {
-            var txEstimate = await services.transaction.make.transaction(
+          for (final Balance balance in assetBalances) {
+            final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+                await services.transaction.make.transaction(
               destinationAddress,
               SendEstimate(balance.value,
                   security: balance.security, memo: memo),
               wallet: from,
-              feeRate: FeeRates.standard,
+              feeRate: wallet_utils.FeeRates.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
@@ -591,9 +601,11 @@ class TransactionService {
           return usedUTXOs;
         } else {
           // get all utxos
-          var assetUtxosBySecurity = <Security, List<Vout>>{};
-          final securities = assetBalances.map((e) => e.security).toSet();
-          for (var security in securities) {
+          final Map<Security, List<Vout>> assetUtxosBySecurity =
+              <Security, List<Vout>>{};
+          final Set<Security> securities =
+              assetBalances.map((Balance e) => e.security).toSet();
+          for (final Security security in securities) {
             assetUtxosBySecurity[security] =
                 (await services.balance.collectUTXOs(
               walletId: from.id,
@@ -601,26 +613,26 @@ class TransactionService {
                   pros.balances.primaryIndex.getOne(from.id, security)!.value,
               security: security,
             ))
-                    .where((e) => !usedUTXOs!.contains(e))
+                    .where((Vout e) => !usedUTXOs!.contains(e))
                     .toList();
           }
           // batch by limit and make transaction
-          var utxosBySecurity = <Security, List<Vout>>{};
-          for (var key in assetUtxosBySecurity.keys) {
-            utxosBySecurity[key] = [];
-            var i = 0;
-            for (var value in assetUtxosBySecurity[key]!) {
+          Map<Security, List<Vout>> utxosBySecurity = <Security, List<Vout>>{};
+          for (final Security key in assetUtxosBySecurity.keys) {
+            utxosBySecurity[key] = <Vout>[];
+            int i = 0;
+            for (final Vout value in assetUtxosBySecurity[key]!) {
               utxosBySecurity[key]!.add(value);
               i++;
               if (i == limit) {
-                var txEstimate = await services.transaction.make
-                    .transactionSweepAssetIncrementally(
+                final Tuple2<wallet_utils.Transaction, SendEstimate>
+                    txEstimate = await services.transaction.make
+                        .transactionSweepAssetIncrementally(
                   destinationAddress,
-                  SendEstimate(0,
-                      security: null, memo: memo), // essentially ignored
+                  SendEstimate(0, memo: memo), // essentially ignored
                   utxosBySecurity: utxosBySecurity,
                   wallet: from,
-                  feeRate: FeeRates.standard,
+                  feeRate: wallet_utils.FeeRates.standard,
                 );
                 streams.spend.send.add(TransactionNote(
                   txHex: txEstimate.item1.toHex(),
@@ -628,22 +640,22 @@ class TransactionService {
                   note: note,
                 ));
                 usedUTXOs.addAll(txEstimate.item2.utxos);
-                await Future<void>.delayed(Duration(seconds: 10));
+                await Future<void>.delayed(const Duration(seconds: 10));
                 utxosBySecurity = <Security, List<Vout>>{};
-                utxosBySecurity[key] = [];
+                utxosBySecurity[key] = <Vout>[];
                 i = 0;
               }
             }
           }
           if (utxosBySecurity.isNotEmpty) {
-            var txEstimate = await services.transaction.make
-                .transactionSweepAssetIncrementally(
+            final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+                await services.transaction.make
+                    .transactionSweepAssetIncrementally(
               destinationAddress,
-              SendEstimate(0,
-                  security: null, memo: memo), // essentially ignored
+              SendEstimate(0, memo: memo), // essentially ignored
               utxosBySecurity: utxosBySecurity,
               wallet: from,
-              feeRate: FeeRates.standard,
+              feeRate: wallet_utils.FeeRates.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
@@ -651,7 +663,7 @@ class TransactionService {
               note: note,
             ));
             usedUTXOs.addAll(txEstimate.item2.utxos);
-            await Future<void>.delayed(Duration(seconds: 10));
+            await Future<void>.delayed(const Duration(seconds: 10));
           }
           return usedUTXOs;
         }
@@ -659,54 +671,56 @@ class TransactionService {
     } else {
       // JUST RVN
       if (from.unspents
-                  .where((e) => !pros.securities.contains(e.security))
+                  .where((Unspent e) => !pros.securities.contains(e.security))
                   .length <
               limit &&
           usedUTXOs.isEmpty &&
           !incremental) {
-        var txEstimate = await services.transaction.make.transactionSendAllRVN(
+        final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+            await services.transaction.make.transactionSendAllRVN(
           destinationAddress,
           SendEstimate(from.RVNValue, memo: memo),
           wallet: from,
-          feeRate: FeeRates.standard,
+          feeRate: wallet_utils.FeeRates.standard,
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
           successMsg: msg ?? 'Successfully Swept',
           note: note,
         ));
-        await Future<void>.delayed(Duration(seconds: 10));
+        await Future<void>.delayed(const Duration(seconds: 10));
         usedUTXOs.addAll(txEstimate.item2.utxos);
         return usedUTXOs;
       } else {
         // get all utxos
-        var cryptoUtxos = (await services.balance.collectUTXOs(
-                walletId: from.id, amount: from.RVNValue, security: null))
-            .where((e) => !usedUTXOs!.contains(e))
+        final List<Vout> cryptoUtxos = (await services.balance
+                .collectUTXOs(walletId: from.id, amount: from.RVNValue))
+            .where((Vout e) => !usedUTXOs!.contains(e))
             .toList();
         // batch by limit and make transaction
-        var utxos = <Vout>[];
-        var i = 0;
-        var total = 0;
-        for (var utxo in cryptoUtxos) {
+        List<Vout> utxos = <Vout>[];
+        int i = 0;
+        int total = 0;
+        for (final Vout utxo in cryptoUtxos) {
           total = total + utxo.rvnValue;
           utxos.add(utxo);
           i++;
           if (i == limit) {
-            var txEstimate = await services.transaction.make
-                .transactionSendAllRVNIncrementally(
+            final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+                await services.transaction.make
+                    .transactionSendAllRVNIncrementally(
               destinationAddress,
-              SendEstimate(total, security: null, memo: memo),
+              SendEstimate(total, memo: memo),
               utxosCurrency: utxos,
               wallet: from,
-              feeRate: FeeRates.standard,
+              feeRate: wallet_utils.FeeRates.standard,
             );
             streams.spend.send.add(TransactionNote(
               txHex: txEstimate.item1.toHex(),
               successMsg: '',
               note: note,
             ));
-            await Future<void>.delayed(Duration(seconds: 10));
+            await Future<void>.delayed(const Duration(seconds: 10));
             usedUTXOs.addAll(txEstimate.item2.utxos);
             utxos = <Vout>[];
             i = 0;
@@ -714,14 +728,14 @@ class TransactionService {
           }
         }
         if (utxos.isNotEmpty) {
-          var txEstimate = await services.transaction.make
-              .transactionSendAllRVNIncrementally(
+          final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+              await services.transaction.make
+                  .transactionSendAllRVNIncrementally(
             destinationAddress,
-            SendEstimate(total,
-                security: null, memo: memo), // essentially ignored
+            SendEstimate(total, memo: memo), // essentially ignored
             utxosCurrency: utxos,
             wallet: from,
-            feeRate: FeeRates.standard,
+            feeRate: wallet_utils.FeeRates.standard,
           );
           streams.spend.send.add(TransactionNote(
             txHex: txEstimate.item1.toHex(),
@@ -751,12 +765,12 @@ class TransactionService {
     required bool currency,
     required bool assets,
   }) async {
-    final destinationAddress = services.wallet.getEmptyAddress(
+    final String destinationAddress = services.wallet.getEmptyAddress(
       pros.wallets.primaryIndex.getOne(toWalletId)!,
       NodeExposure.external,
     );
-    final assetBalances =
-        from.balances.where((b) => b.security.symbol != 'RVN').toList();
+    final List<Balance> assetBalances =
+        from.balances.where((Balance b) => b.security.symbol != 'RVN').toList();
 
     // if we have assets, send them, and send all the rvn
     // if we don't have assets or don't want to send them, just sendallRVN
@@ -766,16 +780,17 @@ class TransactionService {
       return false;
     }
 
-    var fees = 0;
+    int fees = 0;
     if (assets &&
         assetBalances.isNotEmpty &&
-        assetBalances.fold(0, (int agg, e) => e.value + agg) > 0) {
-      for (var balance in assetBalances) {
-        var txEstimate = await services.transaction.make.transaction(
+        assetBalances.fold(0, (int agg, Balance e) => e.value + agg) > 0) {
+      for (final Balance balance in assetBalances) {
+        final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+            await services.transaction.make.transaction(
           destinationAddress,
           SendEstimate(balance.value, security: balance.security),
           wallet: from,
-          feeRate: FeeRates.standard,
+          feeRate: wallet_utils.FeeRates.standard,
         );
         streams.spend.send.add(TransactionNote(
           txHex: txEstimate.item1.toHex(),
@@ -785,13 +800,14 @@ class TransactionService {
       }
     }
     if (currency) {
-      final balance =
-          from.balances.where((e) => e.security.symbol == 'RVN').first;
-      var txEstimate = await services.transaction.make.transactionSendAllRVN(
+      final Balance balance =
+          from.balances.where((Balance e) => e.security.symbol == 'RVN').first;
+      final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
+          await services.transaction.make.transactionSendAllRVN(
         destinationAddress,
-        SendEstimate(balance.value - fees, security: null),
+        SendEstimate(balance.value - fees),
         wallet: from,
-        feeRate: FeeRates.standard,
+        feeRate: wallet_utils.FeeRates.standard,
       );
       streams.spend.send.add(TransactionNote(
         txHex: txEstimate.item1.toHex(),
@@ -835,17 +851,6 @@ enum TransactionRecordType {
 }
 
 class TransactionRecord {
-  Transaction transaction;
-  Security security;
-  String formattedDatetime;
-  int totalIn;
-  int totalOut;
-  int? height;
-  TransactionRecordType type;
-  int fee;
-  int? valueOverride;
-  bool pulling = false;
-
   TransactionRecord({
     required this.transaction,
     required this.security,
@@ -857,6 +862,16 @@ class TransactionRecord {
     this.totalOut = 0,
     this.valueOverride,
   });
+  Transaction transaction;
+  Security security;
+  String formattedDatetime;
+  int totalIn;
+  int totalOut;
+  int? height;
+  TransactionRecordType type;
+  int fee;
+  int? valueOverride;
+  bool pulling = false;
 
   int get value => valueOverride ?? (totalIn - totalOut).abs();
   bool get out => (totalIn - totalOut) >= 0;
@@ -900,17 +915,17 @@ class TransactionRecord {
   }
 
   bool get toSelf => type == TransactionRecordType.self;
-  bool get isNormal => [
+  bool get isNormal => <TransactionRecordType>[
         TransactionRecordType.incoming,
         TransactionRecordType.outgoing,
       ].contains(type);
 
-  void getVouts() async {
+  Future<void> getVouts() async {
     if (!pulling) {
       pulling = true;
-      var voutTransactionIds = <String>{};
-      for (final vin in transaction.vins) {
-        var vinVout = vin.vout;
+      final Set<String> voutTransactionIds = <String>{};
+      for (final Vin vin in transaction.vins) {
+        final Vout? vinVout = vin.vout;
         if (vinVout == null) {
           voutTransactionIds.add(vin.voutTransactionId);
         }
@@ -920,17 +935,15 @@ class TransactionRecord {
         services.download.history
             .filterOutPreviouslyDownloaded(voutTransactionIds),
         saveVin: false,
-        saveVout: true,
       );
     }
   }
 }
 
 class SecurityTotal {
+  SecurityTotal({required this.security, required this.value});
   final Security security;
   final int value;
-
-  SecurityTotal({required this.security, required this.value});
 
   SecurityTotal operator +(SecurityTotal other) => security == other.security
       ? SecurityTotal(security: security, value: value + other.value)

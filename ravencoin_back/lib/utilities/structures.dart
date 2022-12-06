@@ -1,20 +1,6 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class AssetHolding {
-  final String symbol;
-  final Balance? main;
-  final Balance? admin;
-  final Balance? restricted;
-  final Balance? restrictedAdmin;
-  final Balance? nft;
-  final Balance? channel;
-  final Balance? sub;
-  final Balance? subAdmin;
-  final Balance? qualifier;
-  final Balance? qualifierSub;
-  final Balance? coin;
-  final Balance? fiat;
-
   AssetHolding({
     required this.symbol,
     this.main,
@@ -63,6 +49,20 @@ class AssetHolding {
         fiat: fiat ?? existing.fiat,
       );
 
+  final String symbol;
+  final Balance? main;
+  final Balance? admin;
+  final Balance? restricted;
+  final Balance? restrictedAdmin;
+  final Balance? nft;
+  final Balance? channel;
+  final Balance? sub;
+  final Balance? subAdmin;
+  final Balance? qualifier;
+  final Balance? qualifierSub;
+  final Balance? coin;
+  final Balance? fiat;
+
   @override
   String toString() => 'AssetHolding('
       'symbol: $symbol, '
@@ -94,7 +94,7 @@ class AssetHolding {
       (coin != null ? 'Coin ' : '') +
       (fiat != null ? 'Fiat ' : '');
 
-  int get length => [
+  int get length => <Balance?>[
         main,
         admin,
         restricted,
@@ -107,19 +107,19 @@ class AssetHolding {
         qualifierSub,
         coin,
         fiat,
-      ].where((element) => element != null).length;
+      ].where((Balance? element) => element != null).length;
 
-  int get subLength => [
+  int get subLength => <Balance?>[
         sub,
         subAdmin,
-      ].where((element) => element != null).length;
+      ].where((Balance? element) => element != null).length;
 
-  int get mainLength => [
+  int get mainLength => <Balance?>[
         main,
         admin,
         restricted,
         restrictedAdmin,
-      ].where((element) => element != null).length;
+      ].where((Balance? element) => element != null).length;
 
   String? get singleSymbol => length > 1
       ? null
@@ -141,9 +141,9 @@ class AssetHolding {
   String? get restrictedSymbol => restricted != null ? '\$$symbol' : null;
   String? get restrictedAdminSymbol =>
       restrictedAdmin != null ? '\$$symbol!' : null;
-  String? get nftSymbol => nft != null ? '$symbol' : null;
-  String? get channelSymbol => channel != null ? '$symbol' : null;
-  String? get subSymbol => sub != null ? '$symbol' : null;
+  String? get nftSymbol => nft != null ? '$symbol' : null; // # ?
+  String? get channelSymbol => channel != null ? '$symbol' : null; //~ ?
+  String? get subSymbol => sub != null ? '$symbol' : null; // / ?
   String? get subAdminSymbol => subAdmin != null ? '$symbol!' : null;
   String? get qualifierSymbol => qualifier != null ? '#$symbol' : null;
   String? get qualifierSubSymbol => qualifierSub != null ? '#$symbol' : null;
@@ -179,7 +179,7 @@ class AssetHolding {
       qualifierSub ??
       coin ??
       fiat;
-  int get value => [
+  int get value => <Balance?>[
         main,
         admin,
         restricted,
@@ -192,6 +192,8 @@ class AssetHolding {
         qualifierSub,
         coin,
         fiat,
-      ].where((element) => element != null).fold(
-          0, (previousValue, element) => (element?.value ?? 0) + previousValue);
+      ].where((Balance? element) => element != null).fold(
+          0,
+          (int previousValue, Balance? element) =>
+              (element?.value ?? 0) + previousValue);
 }

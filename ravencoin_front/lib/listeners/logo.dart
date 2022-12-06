@@ -2,6 +2,7 @@
 /// why does this live here?
 /// because moontree_raven manages storage for exports and other files like asset logos.
 import 'package:rxdart/rxdart.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/services/ipfs.dart';
 
