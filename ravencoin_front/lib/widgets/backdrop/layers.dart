@@ -29,7 +29,7 @@ class BackdropLayers extends StatefulWidget {
 }
 
 class _BackdropLayersState extends State<BackdropLayers> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   @override
   void initState() {

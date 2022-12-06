@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:proclaim/proclaim.dart';
+import 'package:moontree_utils/types/cipher_base.dart';
 import 'package:ravencoin_back/security/cipher_aes.dart';
-import 'package:ravencoin_back/security/cipher_base.dart';
 import 'package:ravencoin_back/security/cipher_none.dart';
 
 import 'package:ravencoin_back/records/records.dart';

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';

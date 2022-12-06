@@ -1,8 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
-
-import 'cipher_base.dart';
+import 'package:moontree_utils/types/cipher_base.dart';
 
 class CipherAES implements CipherBase {
   CipherAES(Uint8List password, {Uint8List? salt}) {

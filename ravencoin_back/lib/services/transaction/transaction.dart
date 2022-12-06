@@ -4,7 +4,6 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart' as wallet_utils;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
-import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 
 import 'maker.dart';
 
@@ -132,7 +131,7 @@ class TransactionService {
               /// not have the vout that those claim transactions point to. so
               /// we have a special case for that here.
 
-              if (vin.voutTransactionId == evrAirdropTx) {
+              if (vin.voutTransactionId == wallet_utils.evrAirdropTx) {
                 //print(pros.unspents.records);
                 //print(vin.transactionId);
                 //var value = pros.unspents.records

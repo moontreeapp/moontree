@@ -3,9 +3,9 @@
 import 'dart:async';
 import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' show evrAirdropTx;
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/utilities/strings.dart' show evrAirdropTx;
 
 import 'asset.dart';
 

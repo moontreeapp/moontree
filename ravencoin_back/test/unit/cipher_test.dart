@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 
 import 'package:ravencoin_back/security/security.dart';
-import 'package:ravencoin_back/extensions/string.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 final Uint8List key128 = '128bit-securekey'.bytesUint8;

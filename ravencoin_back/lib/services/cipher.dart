@@ -3,10 +3,9 @@
 import 'dart:typed_data';
 
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/utilities/hex.dart' as hex;
-
 import 'package:wallet_utils/wallet_utils.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
+
 
 class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
@@ -67,7 +66,7 @@ class CipherService {
     Future<void> Function(Secret secret)? saveSecret,
   ]) async {
     final String encryptedEntropy =
-        hex.encrypt(await wallet.entropy, cipher ?? currentCipher!);
+        encrypt(await wallet.entropy, cipher ?? currentCipher!);
     final Uint8List seed = await wallet.seed;
     final String newId = HDWallet.fromSeed(seed).pubKey;
     assert(wallet.id == newId);

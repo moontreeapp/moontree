@@ -12,7 +12,7 @@ class DownloadActivity extends StatefulWidget {
 }
 
 class _DownloadActivity extends State<DownloadActivity> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   ActivityMessage message = ActivityMessage();
 
   @override

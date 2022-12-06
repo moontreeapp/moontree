@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
+import 'package:wallet_utils/wallet_utils.dart' show FeeRate, FeeRates;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
@@ -8,7 +10,6 @@ import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/wallet.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:wallet_utils/wallet_utils.dart' show FeeRate, FeeRates;
 
 class SweepPage extends StatefulWidget {
   @override

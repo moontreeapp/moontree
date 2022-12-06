@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
@@ -15,7 +16,7 @@ class AssetList extends StatefulWidget {
 }
 
 class _AssetList extends State<AssetList> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   late Iterable<AssetHolding> assets;
   bool showPath = false;
   int assetCount = 0;
@@ -194,13 +195,14 @@ class _AssetList extends State<AssetList> {
             () => navigate(asset.qualifier!.security.symbol, wallet: wallet),
         ],
         values: [
-          if (asset.admin != null) assetDetails['main']!.amount.toCommaString(),
+          if (asset.admin != null)
+            assetDetails['main']!.amount.toSatsCommaString(),
           if (asset.subAdmin != null)
-            assetDetails['main']!.amount.toCommaString(),
+            assetDetails['main']!.amount.toSatsCommaString(),
           if (asset.restricted != null)
-            assetDetails['restricted']!.amount.toCommaString(),
+            assetDetails['restricted']!.amount.toSatsCommaString(),
           if (asset.qualifier != null)
-            assetDetails['qualifier']!.amount.toCommaString(),
+            assetDetails['qualifier']!.amount.toSatsCommaString(),
         ],
       ).build();
     }

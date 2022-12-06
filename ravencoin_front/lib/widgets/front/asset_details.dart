@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -24,9 +26,13 @@ class _AssetDetails extends State<AssetDetails> {
   }
 
   Widget body() => ListView(
-        padding: EdgeInsets.only(top: 8, bottom: 112),
+        padding: const EdgeInsets.only(top: 8, bottom: 112),
         children: <Widget>[
-              for (var text in ['Name', 'Global Quantity', 'Decimals'])
+              for (String text in <String>[
+                'Name',
+                'Global Quantity',
+                'Decimals'
+              ])
                 ListTile(
                   dense: true,
                   title:
@@ -36,35 +42,35 @@ class _AssetDetails extends State<AssetDetails> {
                 ),
             ] +
             [
-              if (widget.symbol.startsWith('\$'))
+              if (widget.symbol.startsWith(r'$'))
                 Padding(
-                  padding:
-                      EdgeInsets.only(left: 16, right: 16, top: 15, bottom: 15),
+                  padding: const EdgeInsets.only(
+                      left: 16, right: 16, top: 15, bottom: 15),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text('Verifier',
                           style: Theme.of(context).textTheme.bodyText1),
-                      Container(
+                      SizedBox(
                         width:
                             (MediaQuery.of(context).size.width - 16 - 16 - 8) /
                                 1.5,
                         child: Text(
-                            element('Verifier') +
-                                '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED'
-                                    '(#KYC & #AML) OR #VERIFIED',
+                            '${element('Verifier')}'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED'
+                            '(#KYC & #AML) OR #VERIFIED',
                             overflow: TextOverflow.fade,
                             softWrap: true,
                             maxLines: 100,
@@ -75,18 +81,19 @@ class _AssetDetails extends State<AssetDetails> {
                 )
             ] +
             [
-              (assetDetails!.metadata == '' || assetDetails!.metadata.isIpfs)
-                  ? link('IPFS', 'https://gateway.ipfs.io/ipfs/')
-                  : ListTile(
-                      dense: true,
-                      title: Text('TXID',
-                          style: Theme.of(context).textTheme.bodyText1),
-                      trailing: Text(element('TXID'),
-                          style: Theme.of(context).textTheme.bodyText1),
-                    )
+              if (assetDetails!.metadata == '' || assetDetails!.metadata.isIpfs)
+                link('IPFS', 'https://gateway.ipfs.io/ipfs/')
+              else
+                ListTile(
+                  dense: true,
+                  title: Text('TXID',
+                      style: Theme.of(context).textTheme.bodyText1),
+                  trailing: Text(element('TXID'),
+                      style: Theme.of(context).textTheme.bodyText1),
+                )
             ] +
             [
-              for (var text in ['Reissuable'])
+              for (String text in ['Reissuable'])
                 ListTile(
                   dense: true,
                   title:
@@ -105,7 +112,7 @@ class _AssetDetails extends State<AssetDetails> {
       case 'Name':
         return widget.symbol;
       case 'Global Quantity':
-        return assetDetails!.amount.toCommaString();
+        return assetDetails!.amount.toSatsCommaString();
       case 'Decimals':
         return assetDetails!.divisibility.toString();
       case 'Verifier':

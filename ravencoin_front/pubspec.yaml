@@ -48,7 +48,7 @@ dependencies:
   path_provider: ^2.0.11 # to get the correct path to store our file
   permission_handler: ^10.1.0 # to handle the permissions to read and write files
   platform_device_id: ^1.0.1
-  proclaim: ^4.0.2
+  proclaim: ^4.0.3
   collection: ^1.16.0
   crypto: ^3.0.2
   image: ^3.2.2
@@ -61,12 +61,13 @@ dependencies:
   shimmer: ^2.0.0
   ulid: ^2.0.0
   url_launcher: ^6.1.6
+  http: ^0.13.5
   ravencoin_back: ^1.0.0
   # ravencoin_back:
   #   git: https://github.com/moontreeapp/ravencoin_back.git
-  electrum_adapter: ^2.0.2
-  wallet_utils: ^3.0.2
-  moontree_utils: ^1.0.4
+  electrum_adapter: ^2.0.3
+  wallet_utils: ^3.0.3
+  moontree_utils: ^1.0.5
   #open_settings: ^2.0.2
   app_settings: ^4.1.8
   bloc: ^8.1.0

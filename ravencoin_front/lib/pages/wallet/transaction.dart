@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/utils/data.dart';
@@ -103,7 +105,7 @@ class _TransactionPageState extends State<TransactionPage> {
             transactionRecord!.getVouts();
             return 'calculating...';
           } else {
-            return '${transactionRecord!.fee.toAmount().toCommaString()} ${pros.settings.chain.symbol}';
+            return '${transactionRecord!.fee.toAmount().toSatsCommaString()} ${pros.settings.chain.symbol}';
           }
         }();
 

@@ -1,9 +1,8 @@
 // dart test test/reservoir/rx_race_test.dart --chain-stack-traces
-
 import 'package:test/test.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:ravencoin_back/extensions/stream/buffer_count_window.dart';
+import 'package:ravencoin_back/utilities/stream/buffer_count_window.dart';
 
 void main() {
   group('RxRace', () {

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/wallet/transactions/bloc.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_front/services/storage.dart';
 import 'package:ravencoin_front/widgets/back/coinspec/spec.dart';
 import 'package:ravencoin_front/widgets/back/coinspec/tabs.dart';

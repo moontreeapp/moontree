@@ -28,7 +28,7 @@ class TransactionList extends StatefulWidget {
 
 class _TransactionListState extends State<TransactionList> {
   //widget.currentAccountId //  we don't rebuild on this, we're given it.
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   late Iterable<TransactionRecord> transactions;
   bool showUSD = false;
   Rate? rateUSD;

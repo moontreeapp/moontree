@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:ravencoin_back/security/cipher_base.dart';
 import 'package:ravencoin_back/proclaim/proclaim.dart';
 import 'package:ravencoin_back/records/records.dart';
 

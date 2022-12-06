@@ -1,8 +1,8 @@
 // dart test test/unit/extensions/string.dart
-import 'package:moontree_utils/moontree_utils.dart';
 import 'package:test/test.dart';
-import 'package:ravencoin_back/extensions/string.dart';
-import 'package:ravencoin_back/extensions/validation.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 
 void main() {
   group('String Extensions', () {

@@ -9,8 +9,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/records/raw/secret.dart';
-import 'package:ravencoin_back/utilities/random.dart';
 
 class Storage {
   Future<Directory> get _localDir async => getApplicationDocumentsDirectory();

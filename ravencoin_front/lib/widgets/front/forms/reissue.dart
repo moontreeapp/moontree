@@ -7,6 +7,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
+import 'package:wallet_utils/src/utilities/validation.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -15,7 +18,6 @@ import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_back/streams/reissue.dart';
 import 'package:ravencoin_front/utils/transformers.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:ravencoin_back/utilities/validate.dart';
 
 class ReissueAsset extends StatefulWidget {
   static const int ipfsLength = 89;
@@ -32,7 +34,7 @@ class ReissueAsset extends StatefulWidget {
 }
 
 class _ReissueAssetState extends State<ReissueAsset> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   GenericReissueForm? reissueForm;
   TextEditingController parentController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -68,8 +70,8 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   String limitQ(String q, String d) {
     if (q.contains('.')) {
-      var splits = q.split('.');
-      var maxd = int.parse(d);
+      List<String> splits = q.split('.');
+      int maxd = int.parse(d);
       if (splits[1].length > maxd) {
         return splits.first + '.' + splits[1].substring(0, maxd);
       }
@@ -90,7 +92,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
           decimalController.text =
               (value?.decimal ?? decimalController.text).toString();
           quantityController.text = limitQ(
-              value?.quantity?.toCommaString() ?? quantityController.text,
+              value?.quantity?.toSatsCommaString() ?? quantityController.text,
               decimalController.text);
           reissueValue = value?.reissuable ?? reissueValue;
           verifierController.text = value?.verifier ?? verifierController.text;
@@ -127,7 +129,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   Widget build(BuildContext context) {
     remainingNameLength =
         // max asset length
-        MAX_NAME_LENGTH -
+        maxNameLength -
             // parent text and implied '/'
             (isSub ? parentController.text.length + 1 : 0) -
             // everything else has a special character denoting its type
@@ -161,42 +163,42 @@ class _ReissueAssetState extends State<ReissueAsset> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                   Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                           child: nameField,
                         ),
                         if (needsQuantity)
                           Padding(
-                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                             child: quantityField,
                           ),
                         if (needsDecimal)
                           Padding(
-                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                             child: decimalField,
                           ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                           child: ipfsField,
                         ),
                         if (needsVerifier)
                           Padding(
-                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                             child: verifierField,
                           ),
                         if (needsReissue)
                           Padding(
-                              padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                               child: reissueRow),
                       ]),
                 ])),
             SliverFillRemaining(
                 hasScrollBody: false,
                 child: Padding(
-                    padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
+                    padding:
+                        const EdgeInsets.only(bottom: 40, left: 16, right: 16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
@@ -209,11 +211,11 @@ class _ReissueAssetState extends State<ReissueAsset> {
         focusNode: parentFocus,
         controller: parentController,
         readOnly: true,
-        labelText: 'Parent ' + 'Asset',
-        hintText: 'Parent ' + 'Asset',
+        labelText: 'Parent Asset',
+        hintText: 'Parent Asset',
         errorText: parentValidationErr,
         suffixIcon: IconButton(
-          icon: Padding(
+          icon: const Padding(
               padding: EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: () => _produceParentModal(), // main subs, nft, channel
@@ -238,7 +240,6 @@ class _ReissueAssetState extends State<ReissueAsset> {
         hintText: 'MOONTREE.COM',
       ),
       onTap: isRestricted ? _produceAdminAssetModal : null,
-      onChanged: null,
       onEditingComplete: isRestricted
           ? () => FocusScope.of(context).requestFocus(quantityFocus)
           : () {
@@ -249,8 +250,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         focusNode: quantityFocus,
         controller: quantityController,
         enabled: minQuantity == 21000000000 ? false : true,
-        keyboardType:
-            TextInputType.numberWithOptions(decimal: true, signed: false),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textInputAction: TextInputAction.done,
         inputFormatters: <TextInputFormatter>[
           DecimalTextInputFormatter(decimalRange: minDecimal)
@@ -278,7 +278,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         labelText: 'Decimals',
         hintText: 'Decimals',
         suffixIcon: IconButton(
-          icon: Padding(
+          icon: const Padding(
               padding: EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
@@ -341,7 +341,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
                 context: context,
                 builder: (BuildContext context) {
                   streams.app.scrim.add(true);
-                  return AlertDialog(
+                  return const AlertDialog(
                     content:
                         Text('Reissuable asset can increase in quantity and '
                             'decimal in the future.\n\nNon-reissuable '
@@ -396,7 +396,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void validateVerifier({String? verifier}) {
     verifier = verifier ?? verifierController.text;
-    var oldValidation = verifierValidated;
+    bool oldValidation = verifierValidated;
     verifierValidated = verifierValidation(verifier);
     if (oldValidation != verifierValidated || !verifierValidated) {
       setState(() {});
@@ -407,7 +407,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void validateAssetData({String? data}) {
     data = data ?? ipfsController.text;
-    var oldValidation = ipfsValidated;
+    bool oldValidation = ipfsValidated;
     ipfsValidated = assetDataValidation(data);
     if (oldValidation != ipfsValidated || !ipfsValidated) {
       setState(() {});
@@ -421,7 +421,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
     quantity = quantity ??
         (quantityController.text == '' ? '0' : quantityController.text)
             .toDouble();
-    var oldValidation = quantityValidated;
+    bool oldValidation = quantityValidated;
     quantityValidated = quantityValidation(quantity);
     if (oldValidation != quantityValidated || !quantityValidated) {
       setState(() {});
@@ -433,7 +433,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void validateDecimal({int? decimal}) {
     decimal = decimal ?? decimalController.text.asSatsInt();
-    var oldValidation = decimalValidated;
+    bool oldValidation = decimalValidated;
     decimalValidated = decimalValidation(decimal);
     if (oldValidation != decimalValidated || !decimalValidated) {
       setState(() {});
@@ -533,18 +533,20 @@ class _ReissueAssetState extends State<ReissueAsset> {
               ['IPFS/Txid', ipfsController.text, '9'],
             if (needsVerifier)
               ['Verifier String', verifierController.text, '6'],
-            if (needsReissue) ['Reissuable', reissueValue ? 'Yes' : 'No', '3'],
+            if (needsReissue)
+              ['Reissuable', if (reissueValue) 'Yes' else 'No', '3'],
           ],
           fees: [
             // Standard / Fast transaction, will pull from settings?
             ['Standard Transaction', 'calculating fee...'],
-            isSub
-                ? ['Reissue', '100']
-                : isMain
-                    ? ['Reissue', '100']
-                    : isRestricted
-                        ? ['Reissue', '100']
-                        : ['Reissue', '100']
+            if (isSub)
+              ['Reissue', '100']
+            else
+              isMain
+                  ? ['Reissue', '100']
+                  : isRestricted
+                      ? ['Reissue', '100']
+                      : ['Reissue', '100']
           ],
           total: 'calculating total...',
           // produce transaction structure here and the checkout screen will
@@ -561,7 +563,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   void formatQuantity() =>
       quantityController.text = quantityController.text.isInt
           ? quantityController.text.asSatsInt().toCommaString()
-          : quantityController.text.toDouble().toCommaString();
+          : quantityController.text.toDouble().toSatsCommaString();
 
   void _produceParentModal() {
     SelectionItems(context, modalSet: SelectionSet.Parents).build(

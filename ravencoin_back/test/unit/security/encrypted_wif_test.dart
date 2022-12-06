@@ -2,7 +2,6 @@ import 'package:test/test.dart';
 
 import 'package:ravencoin_back/security/cipher_aes.dart';
 import 'package:ravencoin_back/security/encrypted_wif.dart';
-import 'package:ravencoin_back/extensions/string.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 // WIF derived from 'daring field mesh message behave tenant immense shrimp asthma gadget that mammal'

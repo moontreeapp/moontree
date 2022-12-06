@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
+import 'package:flutter/material.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
@@ -10,19 +11,19 @@ import 'package:ravencoin_front/widgets/other/textfield.dart';
 import 'package:ravencoin_front/widgets/assets/icons.dart';
 
 class BlockchainChoice extends StatefulWidget {
+  const BlockchainChoice({Key? key, this.data}) : super(key: key);
   final dynamic data;
-  const BlockchainChoice({this.data}) : super();
 
   @override
   _BlockchainChoice createState() => _BlockchainChoice();
 }
 
 class _BlockchainChoice extends State<BlockchainChoice> {
-  final choiceFocus = FocusNode();
-  final choiceController = TextEditingController();
+  final FocusNode choiceFocus = FocusNode();
+  final TextEditingController choiceController = TextEditingController();
   Chain chainChoice = Chain.ravencoin;
   Net netChoice = Net.main;
-  late Tuple2<Chain, Net> chainNet;
+  late ChainNet chainNet;
   bool showHelper = true;
 
   @override
@@ -30,7 +31,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
     super.initState();
     chainChoice = pros.settings.chain;
     netChoice = pros.settings.net;
-    chainNet = Tuple2(chainChoice, netChoice);
+    chainNet = ChainNet(chainChoice, netChoice);
   }
 
   @override
@@ -82,9 +83,9 @@ class _BlockchainChoice extends State<BlockchainChoice> {
 
   void _produceBlockchainModal() => produceBlockchainModal(
         context,
-        first: (Tuple2<Chain, Net> value) => setState(() {
-          chainChoice = value.item1;
-          netChoice = value.item2;
+        first: (ChainNet value) => setState(() {
+          chainChoice = value.chain;
+          netChoice = value.net;
           chainNet = value;
           showHelper = false;
         }),
@@ -100,11 +101,11 @@ bool isConnected() =>
 
 void produceBlockchainModal(
   BuildContext context, {
-  Function(Tuple2<Chain, Net>)? first,
+  Function(ChainNet)? first,
   Function? second,
 }) =>
-    SimpleSelectionItems(context, items: [
-      for (var x in [
+    SimpleSelectionItems(context, items: <Widget>[
+      for (ChainBundle x in <ChainBundle>[
         ChainBundle(icons.evrmore, 'Evrmore', Chain.evrmore, Net.main),
         ChainBundle(icons.ravencoin, 'Ravencoin', Chain.ravencoin, Net.main),
         ChainBundle(
@@ -114,7 +115,7 @@ void produceBlockchainModal(
       ])
         if (services
             .developer.featureLevelBlockchainMap[services.developer.userLevel]!
-            .contains(Tuple2(x.chain, x.net)))
+            .contains(x.chainNet))
           ListTile(
               leading: x.icon(height: 24, width: 24, circled: true),
               title: Text(x.name,
@@ -128,33 +129,35 @@ void produceBlockchainModal(
               onTap: () => !(isSelected(x.chain, x.net) && isConnected())
                   ? changeChainNet(
                       context,
-                      Tuple2(x.chain, x.net),
+                      x.chainNet,
                       first: first,
                       second: second,
                     )
                   : null),
     ]).build();
 
-void changeChainNet(
+Future<void> changeChainNet(
   BuildContext context,
-  Tuple2<Chain, Net> value, {
-  Function(Tuple2<Chain, Net>)? first,
+  ChainNet value, {
+  Function(ChainNet)? first,
   Function? second,
 }) async {
   Navigator.of(context).pop();
+  // streams.client.busy.add(true); // we want this here?
   (first ?? (_) {})(value);
   components.loading.screen(
     message:
-        'Connecting to ${value.item1.name.toTitleCase()}${value.item2 == Net.test ? ' ' + value.item2.name.toTitleCase() : ''}',
+        'Connecting to ${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}',
     returnHome: false,
   );
   streams.client.busy.add(true);
-  await services.client.switchNetworks(chain: value.item1, net: value.item2);
+  await services.client.switchNetworks(chain: value.chain, net: value.net);
   streams.app.snack.add(Snack(message: 'Successfully connected'));
   (second ?? () {})();
 }
 
 class ChainBundle {
+  ChainBundle(this.icon, this.name, this.chain, this.net);
   final Widget Function({
     double? height,
     double? width,
@@ -163,5 +166,5 @@ class ChainBundle {
   final String name;
   final Chain chain;
   final Net net;
-  ChainBundle(this.icon, this.name, this.chain, this.net);
+  ChainNet get chainNet => ChainNet(chain, net);
 }

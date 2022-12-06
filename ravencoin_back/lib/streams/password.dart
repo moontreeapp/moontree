@@ -3,18 +3,20 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/extensions/stream/maximum.dart';
+import 'package:ravencoin_back/utilities/stream/maximum.dart';
 
 class PasswordStreams {
-  final latest = latestPassword$;
-  final exists = passwordExists$;
+  final BehaviorSubject<Password?> latest = latestPassword$;
+  final Stream<bool> exists = passwordExists$;
 }
 
-final BehaviorSubject<Password?> latestPassword$ = BehaviorSubject.seeded(null)
-  ..addStream(pros.passwords.changes
-      .where((change) => change is Loaded || change is Added)
-      .map((change) => change.record)
-      .maximum((p1, p2) => p1.id - p2.id));
+final BehaviorSubject<Password?> latestPassword$ =
+    BehaviorSubject<Password?>.seeded(null)
+      ..addStream(pros.passwords.changes
+          .where(
+              (Change<Password> change) => change is Loaded || change is Added)
+          .map((Change<Password> change) => change.record)
+          .maximum((Password p1, Password p2) => p1.id - p2.id));
 
 final Stream<bool> passwordExists$ =
-    latestPassword$.map((password) => password == null ? false : true);
+    latestPassword$.map((Password? password) => password != null);

@@ -19,7 +19,7 @@ class QRData {
 
 QRData populateFromQR({
   required String code,
-  List<dynamic>? holdings,
+  List<String>? holdings,
   String? currentSymbol,
 }) {
   String? address;

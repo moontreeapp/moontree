@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/theme/theme.dart';
@@ -14,7 +15,7 @@ class CoinSpec extends StatefulWidget {
   final Color? color;
   final SimpleSendFormCubit? cubit;
 
-  CoinSpec({
+  const CoinSpec({
     Key? key,
     required this.pageTitle,
     required this.security,
@@ -47,19 +48,19 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final holdingBalance = widget.security.balance;
-    var holdingSat = 0;
+    final Balance? holdingBalance = widget.security.balance;
+    int holdingSat = 0;
     if (holdingBalance != null) {
       holding = holdingBalance.amount;
       holdingSat = holdingBalance.value;
     }
-    var amountSat = utils.amountToSat(amount);
+    int amountSat = amountToSat(amount);
     if (holding - amount == 0) {
       amountSat = holdingSat;
     }
     try {
       visibleFiatAmount = services.conversion.securityAsReadable(
-          utils.amountToSat(double.parse(visibleAmount)),
+          amountToSat(double.parse(visibleAmount)),
           symbol: symbol,
           asUSD: true);
     } catch (e) {
@@ -75,7 +76,6 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
       color: widget.color,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Coin(
               cubit: widget.cubit,
@@ -86,7 +86,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                   ? pros.assets.primaryIndex
                       .getOne(symbol, pros.settings.chain, pros.settings.net)
                       ?.amount
-                      .toCommaString()
+                      .toSatsCommaString()
                   : null),
           widget.bottom ?? specBottom(holdingSat, amountSat),
         ],
@@ -113,8 +113,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                 Text(
                     services.conversion.securityAsReadable(
                         holdingSat - widget.cubit!.state.sats,
-                        symbol: symbol,
-                        asUSD: false),
+                        symbol: symbol),
                     style: (holding - amount) >= 0
                         ? Theme.of(context)
                             .textTheme

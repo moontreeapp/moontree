@@ -6,7 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:proclaim/index.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../extensions/stream/partition.dart';
+import 'package:ravencoin_back/utilities/stream/partition.dart';
 
 class Join<A, B> with EquatableMixin {
   A left;

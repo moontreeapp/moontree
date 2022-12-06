@@ -12,7 +12,7 @@ class ChosenBlockchain extends StatefulWidget {
 }
 
 class _ChosenBlockchainState extends State<ChosenBlockchain> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   late String pageTitle = '';
 
   @override

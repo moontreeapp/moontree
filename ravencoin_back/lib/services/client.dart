@@ -3,12 +3,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:moontree_utils/extensions/map.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/utilities/database.dart' as database;
-import 'package:ravencoin_back/utilities/lock.dart';
 
 /// client creation, logic, and settings.s
 class ClientService {

@@ -19,7 +19,7 @@ class ConnectionLight extends StatefulWidget {
 
 class _ConnectionLightState extends State<ConnectionLight>
     with TickerProviderStateMixin {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
   Color connectionStatusColor = AppColors.error;
   Map<ConnectionStatus, Color> connectionColor = {

@@ -4,8 +4,8 @@
 import 'dart:async';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/utilities/lock.dart';
 
 enum HiveLoaded { yes, no, partial }
 

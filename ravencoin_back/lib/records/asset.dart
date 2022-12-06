@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:ravencoin_back/extensions/validation.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:ravencoin_back/records/types/net.dart';
-import 'package:ravencoin_back/utilities/utilities.dart';
 
 import '_type_id.dart';
 

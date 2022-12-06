@@ -1,10 +1,9 @@
-import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class AdvancedDeveloperOptions extends StatelessWidget {
-  const AdvancedDeveloperOptions() : super();
+  const AdvancedDeveloperOptions({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class AdvancedDeveloperOptions extends StatelessWidget {
           child: CustomScrollView(slivers: <Widget>[
             SliverToBoxAdapter(
                 child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         left: 16, right: 16, top: 16, bottom: 16),
                     child: Container(
                         alignment: Alignment.topLeft,
@@ -25,14 +24,13 @@ class AdvancedDeveloperOptions extends StatelessWidget {
                             description:
                                 'Unlocks experimental functionality. Use at your own risk. Make a paper backup of all wallets first.',
                             initial: services.developer.advancedDeveloperMode,
-                            onChanged: (value) async {
+                            onChanged: (bool value) async {
                               await services.developer.toggleAdvDevMode(value);
                               await services.developer.postToggleFeatureCheck();
-                              final chainNet = services.developer
+                              final ChainNet? chainNet = services.developer
                                   .postToggleBlockchainCheck();
                               if (chainNet != null) {
-                                changeChainNet(context,
-                                    Tuple2(chainNet.item1, chainNet.item2));
+                                changeChainNet(context, chainNet);
                               }
                             })))),
           ]),

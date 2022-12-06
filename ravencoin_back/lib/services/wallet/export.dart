@@ -13,12 +13,12 @@ export json string example:
         "PasswordId":"0"}}}}
 */
 
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 import 'constants.dart';
 
 import 'package:convert/convert.dart' as convert;
-import 'package:ravencoin_back/utilities/hex.dart' as hex;
 
 class ExportWalletService {
   /// entire file is encrypted
@@ -44,7 +44,7 @@ class ExportWalletService {
             'wallet type': typeForExport(wallet),
             'backed up': wallet.backedUp,
             'secret': services.password.required
-                ? hex.encrypt(
+                ? encrypt(
                     convert.hex.encode(
                         (await wallet.secret(wallet.cipher!)).codeUnits),
                     services.cipher.currentCipher!)
@@ -53,7 +53,7 @@ class ExportWalletService {
             // Leaderwallets are always mnemonics
             // Singlewallets are always WIFs
             'secret type': services.password.required
-                ? hex.encrypt(
+                ? encrypt(
                     convert.hex.encode(wallet.secretTypeToString.codeUnits),
                     services.cipher.currentCipher!)
                 : wallet.secretTypeToString,

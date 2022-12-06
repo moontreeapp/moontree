@@ -4,6 +4,8 @@ import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallet_utils/wallet_utils.dart' show FeeRate;
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -17,7 +19,6 @@ import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/utils/params.dart';
 import 'package:ravencoin_front/utils/data.dart';
-import 'package:wallet_utils/wallet_utils.dart' show FeeRate;
 
 class Send extends StatefulWidget {
   final dynamic data;
@@ -29,13 +30,13 @@ class Send extends StatefulWidget {
 
 class _SendState extends State<Send> {
   Map<String, dynamic> data = <String, dynamic>{};
-  List<StreamSubscription> listeners = [];
-  final sendAsset = TextEditingController();
-  final sendAddress = TextEditingController();
-  final sendAmount = TextEditingController();
-  final sendFee = TextEditingController();
-  final sendMemo = TextEditingController();
-  final sendNote = TextEditingController();
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
+  final TextEditingController sendAsset = TextEditingController();
+  final TextEditingController sendAddress = TextEditingController();
+  final TextEditingController sendAmount = TextEditingController();
+  final TextEditingController sendFee = TextEditingController();
+  final TextEditingController sendMemo = TextEditingController();
+  final TextEditingController sendNote = TextEditingController();
   FocusNode sendAssetFocusNode = FocusNode();
   FocusNode sendAddressFocusNode = FocusNode();
   FocusNode sendAmountFocusNode = FocusNode();
@@ -52,7 +53,7 @@ class _SendState extends State<Send> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SimpleSendFormCubit>(context)..reset();
+    BlocProvider.of<SimpleSendFormCubit>(context).reset();
   }
 
   @override
@@ -83,8 +84,8 @@ class _SendState extends State<Send> {
 
   void populateFromData(SimpleSendFormCubit cubit) {
     if (data.isNotEmpty) {
-      if ([null, pros.settings.chain.name].contains(data['chain'])) {
-        if ([null, pros.settings.net.name].contains(data['net'])) {
+      if (<String?>[null, pros.settings.chain.name].contains(data['chain'])) {
+        if (<String?>[null, pros.settings.net.name].contains(data['net'])) {
           cubit.set(
             security: data['security'] as Security? ?? cubit.state.security,
             address: data['address'] as String? ?? cubit.state.address,
@@ -107,23 +108,24 @@ class _SendState extends State<Send> {
           positive: false,
         ));
       }
-      data = {};
+      data = <String, dynamic>{};
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final cubit = BlocProvider.of<SimpleSendFormCubit>(context);
+    final SimpleSendFormCubit cubit =
+        BlocProvider.of<SimpleSendFormCubit>(context);
     data = populateData(context, data);
     populateFromData(cubit);
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: BlocBuilder<SimpleSendFormCubit, SimpleSendFormState>(
             bloc: cubit..enter(),
-            builder: (context, state) {
+            builder: (BuildContext context, SimpleSendFormState state) {
               sendAsset.text = state.security.name;
               if (state.amount > 0) {
-                final text = enforceDivisibility(
+                final String text = enforceDivisibility(
                   _asDoubleString(state.amount),
                   divisibility: state.security.divisibility,
                 );
@@ -151,7 +153,7 @@ class _SendState extends State<Send> {
                     const FrontCurve(
                         fuzzyTop: false,
                         height: 8,
-                        frontLayerBoxShadow: [
+                        frontLayerBoxShadow: <BoxShadow>[
                           BoxShadow(
                               color: Color(0x33000000),
                               offset: Offset(0, -2),
@@ -178,7 +180,7 @@ class _SendState extends State<Send> {
                         ListView(
                           physics: const ClampingScrollPhysics(),
                           padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 16, bottom: 0),
+                              left: 16, right: 16, top: 16),
                           children: <Widget>[
                             const SizedBox(height: 8),
                             if (Platform.isIOS) const SizedBox(height: 8),
@@ -194,8 +196,7 @@ class _SendState extends State<Send> {
                                     .textField(context,
                                         focusNode: sendAssetFocusNode,
                                         labelText: 'Asset',
-                                        hintText:
-                                            chainName(pros.settings.chain),
+                                        hintText: pros.settings.chain.title,
                                         suffixIcon: IconButton(
                                           icon: const Padding(
                                               padding:
@@ -222,9 +223,9 @@ class _SendState extends State<Send> {
                                     CustomMaterialTextSelectionControls(
                                         context: components
                                             .navigator.scaffoldContext,
-                                        offset: const Offset(0, 0)),
+                                        offset: Offset.zero),
                                 autocorrect: false,
-                                inputFormatters: [
+                                inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter(
                                       RegExp(r'[a-zA-Z0-9]'),
                                       allow: true)
@@ -245,7 +246,8 @@ class _SendState extends State<Send> {
                                                     'text/plain'))
                                                 ?.text ??
                                             '')),
-                                onChanged: (value) => cubit.set(address: value),
+                                onChanged: (String value) =>
+                                    cubit.set(address: value),
                                 onEditingComplete: () {
                                   cubit.set(address: sendAddress.text);
                                   FocusScope.of(context)
@@ -258,7 +260,7 @@ class _SendState extends State<Send> {
                                 textInputAction: TextInputAction.next,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
-                                        decimal: true, signed: false),
+                                        decimal: true),
                                 inputFormatters: <TextInputFormatter>[
                                   //DecimalTextInputFormatter(decimalRange: divisibility)
                                   FilteringTextInputFormatter(RegExp(r'[.0-9]'),
@@ -278,7 +280,7 @@ class _SendState extends State<Send> {
                                     return 'too large';
                                   }
                                   if (x.isNumeric) {
-                                    var y = x.toNum();
+                                    final num? y = x.toNum();
                                     if (y != null && y.isRVNAmount) {
                                       return null;
                                     }
@@ -315,7 +317,7 @@ class _SendState extends State<Send> {
                                   }
                                 },
                                 onEditingComplete: () {
-                                  var value = sendAmount.text;
+                                  String value = sendAmount.text;
                                   value = enforceDivisibility(value,
                                       divisibility:
                                           state.security.divisibility);
@@ -383,7 +385,8 @@ class _SendState extends State<Send> {
                                                       'text/plain'))
                                                   ?.text ??
                                               '')),
-                                  onChanged: (value) => cubit.set(memo: value),
+                                  onChanged: (String value) =>
+                                      cubit.set(memo: value),
                                   onEditingComplete: () {
                                     cubit.set(memo: sendMemo.text);
                                     FocusScope.of(context)
@@ -411,7 +414,8 @@ class _SendState extends State<Send> {
                                                       'text/plain'))
                                                   ?.text ??
                                               '')),
-                                  onChanged: (value) => cubit.set(note: value),
+                                  onChanged: (String value) =>
+                                      cubit.set(note: value),
                                   onEditingComplete: () {
                                     cubit.set(note: sendNote.text);
                                     FocusScope.of(context)
@@ -424,7 +428,7 @@ class _SendState extends State<Send> {
                         KeyboardHidesWidgetWithDelay(
                             child: components.buttons.layeredButtons(
                           context,
-                          buttons: [
+                          buttons: <Widget>[
                             components.buttons.actionButton(
                               context,
                               focusNode: previewFocusNode,
@@ -508,17 +512,17 @@ class _SendState extends State<Send> {
   }
 
   void _startSend(SimpleSendFormState state) {
-    var vAddress = sendAddress.text != '' && _validateAddress();
-    var vMemo = _verifyMemo();
+    final bool vAddress = sendAddress.text != '' && _validateAddress();
+    final bool vMemo = _verifyMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       if ((state.security.balance?.amount ?? 0) >=
           double.parse(sendAmount.text)) {
-        var sendRequest = SendRequest(
+        final SendRequest sendRequest = SendRequest(
           sendAll: (state.security.balance?.amount ?? 0) == state.amount,
           wallet: Current.wallet,
           sendAddress: state.address,
-          holding: (state.security.balance?.amount ?? 0.0),
+          holding: state.security.balance?.amount ?? 0.0,
           visibleAmount: _asDoubleString(state.amount),
           sendAmountAsSats: state.sats,
           feeRate: state.fee,
@@ -551,7 +555,7 @@ class _SendState extends State<Send> {
     streams.spend.make.add(sendRequest);
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transaction/checkout',
-      arguments: {
+      arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(
           symbol: sendRequest.security!.symbol,
           displaySymbol: sendRequest.security!.name,
@@ -562,9 +566,10 @@ class _SendState extends State<Send> {
             if (addressName != '') ['Known As', addressName],
             [
               'Amount',
-              sendRequest.sendAll
-                  ? 'calculating amount...'
-                  : sendRequest.visibleAmount
+              if (sendRequest.sendAll)
+                'calculating amount...'
+              else
+                sendRequest.visibleAmount
             ],
             if (!['', null].contains(sendRequest.memo))
               ['Memo', sendRequest.memo!],
@@ -587,14 +592,14 @@ class _SendState extends State<Send> {
   }
 
   void _produceAssetModal(SimpleSendFormCubit cubit) {
-    final tail = Current.holdingNames
-        .where((item) => item != pros.securities.currentCoin.symbol)
+    final List<String> tail = Current.holdingNames
+        .where((String item) => item != pros.securities.currentCoin.symbol)
         .toList();
-    final head = Current.holdingNames
-        .where((item) => item == pros.securities.currentCoin.symbol)
+    final List<String> head = Current.holdingNames
+        .where((String item) => item == pros.securities.currentCoin.symbol)
         .toList();
     SimpleSelectionItems(context, items: [
-      for (var name in head + tail)
+      for (String name in head + tail)
         ListTile(
             visualDensity: VisualDensity.compact,
             onTap: () {
@@ -629,7 +634,6 @@ class _SendState extends State<Send> {
           leading: feeConcept.icon,
           title: Text(feeConcept.nameTitlecase,
               style: Theme.of(context).textTheme.bodyText1),
-          trailing: null,
         )
     ]).build();
   }

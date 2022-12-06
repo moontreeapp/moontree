@@ -1,6 +1,6 @@
 import 'package:stream_channel/stream_channel.dart';
 import 'package:test/test.dart';
-import 'package:ravencoin_back/utilities/validate.dart';
+import 'package:wallet_utils/src/utilities/validation.dart';
 import 'package:electrum_adapter/connect.dart';
 import 'package:electrum_adapter/client/base_client.dart';
 

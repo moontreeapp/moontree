@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:ravencoin_back/utilities/search.dart';
+import 'package:moontree_utils/src/search.dart';
 import 'package:test/test.dart';
 import 'package:ravencoin_back/utilities/utilities.dart';
 
@@ -20,14 +20,12 @@ void main() {
         });
         list2.remove(i);
         expect(
-            utils.binaryRemove(
-                list: list1, comp: (a, b) => (a - b) as int, value: i),
+            binaryRemove(list: list1, comp: (a, b) => (a - b) as int, value: i),
             true);
         expect(list1, list2);
       }
       expect(
-          utils.binaryRemove(
-              list: list, comp: (a, b) => (a - b) as int, value: 1001),
+          binaryRemove(list: list, comp: (a, b) => (a - b) as int, value: 1001),
           false);
     });
 

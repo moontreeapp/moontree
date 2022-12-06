@@ -11,7 +11,7 @@ class DownloadQueueCount extends StatefulWidget {
 }
 
 class _DownloadQueueCount extends State<DownloadQueueCount> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   @override
   void initState() {

@@ -4,11 +4,12 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
+import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
@@ -21,7 +22,7 @@ class ElectrumNetwork extends StatefulWidget {
 }
 
 class _ElectrumNetworkState extends State<ElectrumNetwork> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   TextEditingController network = TextEditingController(text: 'Ravencoin');
   TextEditingController serverAddress = TextEditingController(text: '');
   FocusNode networkFocus = FocusNode();
