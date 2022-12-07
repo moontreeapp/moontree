@@ -3,13 +3,13 @@ import 'package:tuple/tuple.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:wallet_utils/wallet_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'constants.dart';
+import 'package:ravencoin_back/services/wallet/constants.dart';
 
 class HandleResult {
+  HandleResult(this.success, this.location, this.message);
   final bool success;
   final String location;
   final LingoKey message;
-  HandleResult(this.success, this.location, this.message);
 }
 
 class ImportWalletService {
@@ -83,13 +83,13 @@ class ImportWalletService {
       }
       for (final Map<String, Map<String, dynamic>> walletObj
           in jsonObj['wallets']!.values) {
-        if (!<bool>[true, false].contains(walletObj['backed up'])) {
+        if (!<bool>[true, false].contains(walletObj['backed up']! as bool)) {
           return false;
         }
-        if (!(walletObj['wallet name'] is String)) {
+        if (walletObj['wallet name'] is! String) {
           return false;
         }
-        if (!(walletObj['secret'] is String)) {
+        if (walletObj['secret'] is! String) {
           return false;
         }
 
@@ -126,7 +126,8 @@ class ImportWalletService {
     if (decodedJSON.containsKey('wallets')) {
       /// create wallets
       final List<HandleResult> results = <HandleResult>[];
-      for (final entry in decodedJSON['wallets']!.entries) {
+      for (final MapEntry<String, Map<String, dynamic>> entry
+          in decodedJSON['wallets']!.entries) {
         final Wallet? wallet = await services.wallet.create(
           walletType: typeForImport(entry.value['wallet type'] as String),
           cipherUpdate: services.cipher.currentCipherUpdate,
@@ -142,7 +143,7 @@ class ImportWalletService {
     }
     //} catch (e) {}
     // fix later: validate the json before it gets here. then parse it here.
-    return [
+    return <HandleResult>[
       HandleResult(false, '', LingoKey.leaderWalletSecretType /* todo fix */)
     ];
   }
@@ -235,7 +236,7 @@ class ImportWalletService {
     if (results is List<HandleResult>) {
       return results;
     }
-    return [results as HandleResult];
+    return <HandleResult>[results as HandleResult];
   }
 
   Future<HandleResult> handleNotImplemented(String _) async =>
