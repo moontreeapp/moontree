@@ -5,6 +5,7 @@ import 'package:convert/convert.dart' show hex;
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show satsPerCoin, parseSendAmountAndFeeFromSerializedTransaction;
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/records/records.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 
@@ -37,17 +38,17 @@ class FeeGuard {
     final Map<String, Tuple2<String?, int>> inputs =
         <String, Tuple2<String?, int>>{};
     for (final Vout utxo in estimate.utxos) {
-      if (utxo.isAsset) {
-        inputs['${utxo.transactionId}:${utxo.position}'] =
-            Tuple2<String?, int>(null, utxo.coinValue);
-      }
+      //if (!utxo.isAsset) { // I don't think there's a need to filter down to the coin, but idk
+      inputs['${utxo.transactionId}:${utxo.position}'] =
+          Tuple2<String?, int>(null, utxo.coinValue);
+      //}
     }
     final Tuple2<Map<String?, int>, int> result =
         parseSendAmountAndFeeFromSerializedTransaction(
       inputs,
       Uint8List.fromList(hex.decode(tx)),
     );
-    if (result.item2 > estimate.utxoCoinTotal) {
+    if (result.item2 > 2 * satsPerCoin) {
       throw FeeGuardException('Parsed fee too large.');
     }
     return true;
