@@ -35,18 +35,17 @@ class FeeGuard {
   }
 
   bool parsed() {
-    final Map<String, Tuple2<String?, int>> inputs =
+    final Map<String, Tuple2<String?, int>> cryptoAssetSatsByVinTxPos =
         <String, Tuple2<String?, int>>{};
     for (final Vout utxo in estimate.utxos) {
-      //if (!utxo.isAsset) { // I don't think there's a need to filter down to the coin, but idk
-      inputs['${utxo.transactionId}:${utxo.position}'] =
-          Tuple2<String?, int>(null, utxo.coinValue);
-      //}
+      cryptoAssetSatsByVinTxPos['${utxo.transactionId}:${utxo.position}'] =
+          Tuple2<String?, int>(
+              utxo.isAsset ? utxo.security!.symbol : null, utxo.coinValue);
     }
     final Tuple2<Map<String?, int>, int> result =
         parseSendAmountAndFeeFromSerializedTransaction(
-      inputs,
-      Uint8List.fromList(hex.decode(tx)),
+      cryptoAssetSatsByVinTxPos,
+      tx.hexDecode,
     );
     if (result.item2 > 2 * satsPerCoin) {
       throw FeeGuardException('Parsed fee too large.');

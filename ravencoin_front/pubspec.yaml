@@ -67,7 +67,7 @@ dependencies:
   #   git: https://github.com/moontreeapp/ravencoin_back.git
   electrum_adapter: ^2.0.4
   wallet_utils: ^3.0.5
-  moontree_utils: ^1.0.5
+  moontree_utils: ^1.0.7
   #open_settings: ^2.0.2
   app_settings: ^4.1.8
   bloc: ^8.1.0
