@@ -218,18 +218,28 @@ class ImportWalletService {
           return handleBip38;
         case ImportFormat.privateKey:
           return handlePrivateKey;
-        //case ImportFormat.masterKey:
-        //  return handleMasterKey;
         case ImportFormat.WIF:
           return handleWIF;
+        case ImportFormat.jsonWif:
+          return handleNotImplemented;
+        case ImportFormat.jsonMt:
+          return handleNotImplemented;
+        case ImportFormat.seed:
+          return handleNotImplemented;
+        case ImportFormat.masterKey:
+          return handleNotImplemented;
+        case ImportFormat.invalid:
+          return handleNotImplemented;
       }
-      return handleMnemonics;
     }()(text);
     if (results is List<HandleResult>) {
       return results;
     }
     return [results as HandleResult];
   }
+
+  Future<HandleResult> handleNotImplemented(String _) async =>
+      HandleResult(false, 'not implemented', LingoKey.walletUnableToCreate);
 
   String? detectExistingWallet(Wallet wallet) =>
       pros.wallets.primaryIndex.getOne(wallet.id)?.id;
