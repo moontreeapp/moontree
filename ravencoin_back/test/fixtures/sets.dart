@@ -203,7 +203,7 @@ class FixtureSet1 extends FixtureSet {
         '0': Vout(
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
-            rvnValue: 5000000,
+            coinValue: 5000000,
             position: 0,
             type: 'pubkeyhash',
             toAddress: 'address 0 address',
@@ -213,7 +213,7 @@ class FixtureSet1 extends FixtureSet {
             additionalAddresses: null), // spent
         '1': Vout(
             transactionId: '1',
-            rvnValue: 0,
+            coinValue: 0,
             position: 0,
             type: 'transfer_asset',
             toAddress: 'address 1 address',
@@ -223,7 +223,7 @@ class FixtureSet1 extends FixtureSet {
             additionalAddresses: null), // claimed by a Vin
         '2': Vout(
             transactionId: '1',
-            rvnValue: 0,
+            coinValue: 0,
             position: 99,
             type: 'transfer_asset',
             toAddress: 'address 1 address',
@@ -233,7 +233,7 @@ class FixtureSet1 extends FixtureSet {
             additionalAddresses: null), // not consumed
         '3': Vout(
             transactionId: '2',
-            rvnValue: 10000000,
+            coinValue: 10000000,
             position: -1,
             type: 'pubkeyhash',
             toAddress: 'address 2 address',
@@ -244,7 +244,7 @@ class FixtureSet1 extends FixtureSet {
         '4': Vout(
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
-            rvnValue: 10000000,
+            coinValue: 10000000,
             position: 1,
             type: 'pubkeyhash',
             toAddress: 'address 3 address',
@@ -254,7 +254,7 @@ class FixtureSet1 extends FixtureSet {
             additionalAddresses: null), // spent
         '5': Vout(
             transactionId: '10',
-            rvnValue: 0,
+            coinValue: 0,
             position: 0,
             type: 'transfer_asset',
             toAddress: 'address 1 address',
@@ -264,7 +264,7 @@ class FixtureSet1 extends FixtureSet {
             additionalAddresses: null), // consumed?
         '6': Vout(
             transactionId: '1',
-            rvnValue: 0,
+            coinValue: 0,
             position: 100,
             type: 'transfer_asset',
             toAddress: 'address 1 address',
@@ -274,7 +274,7 @@ class FixtureSet1 extends FixtureSet {
             additionalAddresses: null), // not consumed
         '7': Vout(
             transactionId: '1',
-            rvnValue: 0,
+            coinValue: 0,
             position: 101,
             type: 'transfer_asset',
             toAddress: 'address 1 address',
@@ -285,7 +285,7 @@ class FixtureSet1 extends FixtureSet {
         '8': Vout(
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
-            rvnValue: 5000000,
+            coinValue: 5000000,
             position: 11,
             type: 'pubkeyhash',
             toAddress: 'address 1 address',
@@ -295,7 +295,7 @@ class FixtureSet1 extends FixtureSet {
             additionalAddresses: null), // unspent
         '9': Vout(
             transactionId: '2',
-            rvnValue: 10000000,
+            coinValue: 10000000,
             position: -10,
             type: 'pubkeyhash',
             toAddress: 'address 1 address',
@@ -306,7 +306,7 @@ class FixtureSet1 extends FixtureSet {
         '10': Vout(
             transactionId:
                 'f01424fdc167dc40acb2f68b330807a839c443a769cc8f95ea0737c852b1a5e6',
-            rvnValue: 10000000,
+            coinValue: 10000000,
             position: 10,
             type: 'pubkeyhash',
             toAddress: 'address 0 address',

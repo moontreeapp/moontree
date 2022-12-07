@@ -7,7 +7,7 @@ import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'waiter.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 
 class BlockWaiter extends Waiter {
   bool notify = true;

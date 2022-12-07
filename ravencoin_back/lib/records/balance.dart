@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/records/security.dart';
+import 'package:wallet_utils/wallet_utils.dart' show satsPerCoin;
 
 import '_type_id.dart';
 
@@ -87,7 +88,7 @@ class Balance with EquatableMixin {
 
   double get amount => satToAmount(value);
 
-  double get rvn => confirmed / 100000000;
+  double get rvn => confirmed / satsPerCoin;
 
   String get valueRVN =>
       NumberFormat('RVN #,##0.00000000', 'en_US').format(rvn);

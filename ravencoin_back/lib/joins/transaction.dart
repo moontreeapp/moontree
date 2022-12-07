@@ -44,7 +44,7 @@ extension TransactionHasManyAssetMemos on Transaction {
 extension TransactionHasOneValue on Transaction {
   int get value => pros.vouts.byTransaction
       .getAll(id)
-      .map((Vout vout) => vout.rvnValue)
+      .map((Vout vout) => vout.coinValue)
       .toList()
       .sumInt();
 }

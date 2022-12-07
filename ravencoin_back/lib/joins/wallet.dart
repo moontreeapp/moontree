@@ -79,6 +79,12 @@ extension WalletHasrvnValue on Wallet {
       .fold(0, (int running, Balance b) => b.value + running);
 }
 
+extension WalletHasCoinValue on Wallet {
+  int get coinValue => balances
+      .where((Balance b) => b.security == pros.securities.currentCoin)
+      .fold(0, (int running, Balance b) => b.value + running);
+}
+
 //extension WalletHasAssetValue on Wallet {
 //  int get assetValue(Asset asset) => balances
 //      .where((Balance b) => b.security.symbol == 'RVN')

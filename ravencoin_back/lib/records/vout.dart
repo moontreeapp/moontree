@@ -20,7 +20,7 @@ class Vout with EquatableMixin, ToStringMixin {
   final String type;
 
   @HiveField(3)
-  final int rvnValue; // always RVN
+  final int coinValue; // always RVN
 
   // amount of asset
   @HiveField(4)
@@ -56,7 +56,7 @@ class Vout with EquatableMixin, ToStringMixin {
     required this.transactionId,
     required this.position,
     required this.type,
-    required this.rvnValue,
+    required this.coinValue,
     this.assetValue,
     this.lockingScript,
     this.memo,
@@ -71,7 +71,7 @@ class Vout with EquatableMixin, ToStringMixin {
     String? transactionId,
     int? position,
     String? type,
-    int? rvnValue,
+    int? coinValue,
     int? assetValue,
     String? lockingScript,
     String? memo,
@@ -84,7 +84,7 @@ class Vout with EquatableMixin, ToStringMixin {
       transactionId: transactionId ?? unspent.txHash,
       position: position ?? unspent.position,
       type: type ?? 'pubkeyhash',
-      rvnValue: rvnValue ?? unspent.value,
+      coinValue: coinValue ?? unspent.value,
       toAddress: toAddress ??
           unspent.address?.address ??
           pros.addresses.primaryIndex
@@ -109,7 +109,7 @@ class Vout with EquatableMixin, ToStringMixin {
         transactionId,
         position,
         type,
-        rvnValue,
+        coinValue,
         assetValue,
         lockingScript,
         memo,
@@ -123,11 +123,11 @@ class Vout with EquatableMixin, ToStringMixin {
   bool? get stringify => true;
 
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'transactionId',
         'position',
         'type',
-        'rvnValue',
+        'coinValue',
         'assetValue',
         'lockingScript',
         'memo',
@@ -142,12 +142,14 @@ class Vout with EquatableMixin, ToStringMixin {
   static String key(String transactionId, int position) =>
       '$transactionId:$position';
 
-  List<String> get toAddresses =>
-      [if (toAddress != null) toAddress!, ...additionalAddresses ?? []];
+  List<String> get toAddresses => <String>[
+        if (toAddress != null) toAddress!,
+        ...additionalAddresses ?? <String>[]
+      ];
 
   int securityValue({Security? security}) =>
       security == null || security.symbol == pros.securities.currentCoin.symbol
-          ? rvnValue
+          ? coinValue
           : (security.id == assetSecurityId)
               ? assetValue ?? 0
               : 0;
@@ -155,5 +157,5 @@ class Vout with EquatableMixin, ToStringMixin {
   String get securityId => assetSecurityId ?? pros.securities.currentCoin.id;
 
   bool get isAsset =>
-      !pros.securities.coins.map((e) => e.id).contains(securityId);
+      !pros.securities.coins.map((Security e) => e.id).contains(securityId);
 }

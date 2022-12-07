@@ -62,12 +62,13 @@ void main() async {
     test('pick smallest UTXO of sufficient size', () async {
       var utxos =
           await services.balance.collectUTXOs(walletId: wallet.id, amount: 500);
-      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [5000000]);
+      expect(utxos.map((utxo) => utxo.coinValue).toList(), [5000000]);
     });
     test('take multiple from the top', () async {
       var utxos = await services.balance
           .collectUTXOs(walletId: wallet.id, amount: 12000000);
-      expect(utxos.map((utxo) => utxo.rvnValue).toList(), [10000000, 10000000]);
+      expect(
+          utxos.map((utxo) => utxo.coinValue).toList(), [10000000, 10000000]);
     });
   });
 

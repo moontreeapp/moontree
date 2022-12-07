@@ -7,7 +7,7 @@ import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'waiter.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 
 class LeaderWaiter extends Waiter {
   Set<Change<Wallet>> backlog = {};

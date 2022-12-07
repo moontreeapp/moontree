@@ -1,7 +1,7 @@
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:tuple/tuple.dart';
 
-import 'waiter.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/import.dart';
 import 'package:ravencoin_back/streams/app.dart';

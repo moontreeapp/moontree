@@ -1,12 +1,10 @@
 import 'dart:typed_data';
-
 import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart'
     show StringBytesExtension, ToStringMixin;
 import 'package:wallet_utils/wallet_utils.dart' as wu;
 import 'package:ravencoin_back/ravencoin_back.dart';
-
-import 'sign.dart';
+import 'package:ravencoin_back/services/transaction/sign.dart';
 
 /* Unused
 class NFTCreateRequest {
@@ -140,7 +138,7 @@ class GenericCreateRequest with ToStringMixin {
         parent,
       ];
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'isSub',
         'isMain',
         'isNFT',
@@ -220,7 +218,7 @@ class GenericReissueRequest with ToStringMixin {
         parent,
       ];
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'isSub',
         'isMain',
         'isRestricted',
@@ -287,7 +285,7 @@ class SendRequest with ToStringMixin {
         note ?? '?',
       ];
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'sendAll',
         'sendAddress',
         'holding',
@@ -321,7 +319,7 @@ class SendEstimate with ToStringMixin {
     this.assetMemo,
     this.memo,
     this.creation = false,
-  }) : utxos = utxos ?? [];
+  }) : utxos = utxos ?? <Vout>[];
 
   factory SendEstimate.copy(SendEstimate detail) {
     return SendEstimate(detail.amount,
@@ -357,6 +355,8 @@ class SendEstimate with ToStringMixin {
       : fees + extraFees;
   int get utxoTotal => utxos.fold(0,
       (int total, Vout vout) => total + vout.securityValue(security: security));
+  int get utxoCoinTotal =>
+      utxos.fold(0, (int total, Vout vout) => total + vout.coinValue);
 
   int get changeDue => utxoTotal - total;
 
@@ -382,7 +382,6 @@ class TransactionMaker {
   Future<Tuple2<wu.Transaction, SendEstimate>> transactionBy(
     SendRequest sendRequest,
   ) async {
-    Tuple2<wu.Transaction, SendEstimate> tuple;
     final SendEstimate estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
       security: sendRequest.security == pros.securities.currentCoin
@@ -392,7 +391,7 @@ class TransactionMaker {
       memo: sendRequest.memo,
     );
 
-    tuple = (sendRequest.sendAll ||
+    return (sendRequest.sendAll ||
                 double.parse(sendRequest.visibleAmount) ==
                     sendRequest.holding) &&
             (sendRequest.security == null ||
@@ -411,14 +410,13 @@ class TransactionMaker {
             feeRate: sendRequest.feeRate,
             /*assetMemoExpiry: not captured yet*/
           );
-    return tuple;
   }
 
   Future<Tuple2<wu.Transaction, SendEstimate>> createTransactionBy(
     GenericCreateRequest createRequest,
   ) async {
     final SendEstimate estimate = SendEstimate(
-      ((createRequest.quantity ?? 1) * 100000000).toInt(),
+      ((createRequest.quantity ?? 1) * wu.satsPerCoin).toInt(),
       security: createRequest.security,
       creation: true,
       //assetMemo: createRequest.assetMemo, // not on front end
@@ -458,7 +456,7 @@ class TransactionMaker {
     GenericReissueRequest reissueRequest,
   ) async {
     final SendEstimate estimate = SendEstimate(
-      ((reissueRequest.quantity ?? 0) * 100000000).toInt(),
+      ((reissueRequest.quantity ?? 0) * wu.satsPerCoin).toInt(),
       security: reissueRequest.security,
       creation: true,
     );
@@ -466,7 +464,7 @@ class TransactionMaker {
         ? await transactionReissueRestrictedAsset(
             estimate,
             reissueRequest.originalDecimals ?? 0,
-            (reissueRequest.originalQuantity! * 100000000).toInt(),
+            (reissueRequest.originalQuantity! * wu.satsPerCoin).toInt(),
             reissueRequest.decimals ?? 0,
             reissueRequest.reissuable ?? false,
             wallet: reissueRequest.wallet,
@@ -478,7 +476,7 @@ class TransactionMaker {
         : await transactionReissueAsset(
             estimate,
             reissueRequest.originalDecimals ?? 0,
-            (reissueRequest.originalQuantity! * 100000000).toInt(),
+            (reissueRequest.originalQuantity! * wu.satsPerCoin).toInt(),
             reissueRequest.decimals ?? 0,
             reissueRequest.reissuable ?? false,
             wallet: reissueRequest.wallet,
@@ -499,7 +497,7 @@ class TransactionMaker {
     wu.TransactionBuilder? txb;
     wu.Transaction tx;
 
-    if (estimate.amount > 10 * 100000000) {
+    if (estimate.amount > 10 * wu.satsPerCoin) {
       throw ArgumentError('Amount must be at most 10');
     }
     if (estimate.security == null || estimate.security!.symbol[0] != '#') {
@@ -524,7 +522,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.issueQualifier - feeSats;
@@ -560,7 +558,7 @@ class TransactionMaker {
     wu.TransactionBuilder? txb;
     wu.Transaction tx;
 
-    if (estimate.amount > 10 * 100000000) {
+    if (estimate.amount > 10 * wu.satsPerCoin) {
       throw ArgumentError('Amount must be at most 10');
     }
     if (estimate.security == null || estimate.security!.symbol[0] != '#') {
@@ -576,7 +574,7 @@ class TransactionMaker {
     ].contains(estimate.security)
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
-            amount: 100000000,
+            amount: wu.satsPerCoin,
             security: Security(
               symbol: parentAsset,
               chain: pros.settings.chain,
@@ -587,7 +585,7 @@ class TransactionMaker {
     for (final Vout utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
     }
-    final int securityChange = securityIn - 100000000;
+    final int securityChange = securityIn - wu.satsPerCoin;
 
     final String returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
@@ -606,7 +604,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven = satsIn -
           pros.settings.network.burnAmounts.issueSubQualifier -
@@ -665,7 +663,7 @@ class TransactionMaker {
     ].contains(estimate.security)
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
-            amount: 100000000,
+            amount: wu.satsPerCoin,
             security: Security(
               symbol: '${estimate.security!.symbol.substring(1)}!',
               chain: pros.settings.chain,
@@ -689,7 +687,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.issueRestricted - feeSats;
@@ -746,7 +744,7 @@ class TransactionMaker {
     List<Vout> utxosRaven = <Vout>[];
     final List<Vout> utxosSecurity = await services.balance.collectUTXOs(
         walletId: wallet.id,
-        amount: 100000000, // 1 virtual sat for ownership asset
+        amount: wu.satsPerCoin, // 1 virtual sat for ownership asset
         security: Security(
           symbol: '${estimate.security!.symbol.substring(1)}!',
           chain: pros.settings.chain,
@@ -769,7 +767,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.reissue - feeSats;
@@ -826,7 +824,7 @@ class TransactionMaker {
     List<Vout> utxosRaven = <Vout>[];
     final List<Vout> utxosSecurity = await services.balance.collectUTXOs(
         walletId: wallet.id,
-        amount: 100000000, // 1 sat for ownership asset
+        amount: wu.satsPerCoin, // 1 sat for ownership asset
         security: Security(
           symbol: estimate.security!.symbol[0] == r'$'
               ? '${estimate.security!.symbol.substring(1)}!'
@@ -838,7 +836,7 @@ class TransactionMaker {
     for (final Vout utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
     }
-    final int securityChange = securityIn - 100000000;
+    final int securityChange = securityIn - wu.satsPerCoin;
 
     final String returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
@@ -857,7 +855,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven = satsIn - pros.settings.network.burnAmounts.addTag - feeSats;
 
@@ -911,7 +909,7 @@ class TransactionMaker {
     List<Vout> utxosRaven = <Vout>[];
     final List<Vout> utxosSecurity = await services.balance.collectUTXOs(
         walletId: wallet.id,
-        amount: 100000000, // 1 virtual sat for ownership asset
+        amount: wu.satsPerCoin, // 1 virtual sat for ownership asset
         security: Security(
           symbol: '${estimate.security!.symbol}!',
           chain: pros.settings.chain,
@@ -934,7 +932,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.reissue - feeSats;
@@ -1001,7 +999,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.issueMain - feeSats;
@@ -1055,7 +1053,7 @@ class TransactionMaker {
     ].contains(estimate.security)
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
-            amount: 100000000,
+            amount: wu.satsPerCoin,
             security: Security(
               symbol: '$parentAsset!',
               chain: pros.settings.chain,
@@ -1079,7 +1077,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.issueSub - feeSats;
@@ -1131,7 +1129,7 @@ class TransactionMaker {
     ].contains(estimate.security)
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
-            amount: 100000000,
+            amount: wu.satsPerCoin,
             security: Security(
               symbol: '$parentAsset!',
               chain: pros.settings.chain,
@@ -1158,7 +1156,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven = satsIn - extraFee - feeSats;
       txb.generateCreateChildAssetVouts(
@@ -1199,7 +1197,9 @@ class TransactionMaker {
     int feeSats = 0;
     List<Vout> utxosRaven = <Vout>[];
     final List<Vout> utxosSecurity = await services.balance.collectUTXOs(
-        walletId: wallet.id, amount: 100000000, security: estimate.security);
+        walletId: wallet.id,
+        amount: wu.satsPerCoin,
+        security: estimate.security);
     final String returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     int returnRaven = -1; // Init to bad val
@@ -1217,7 +1217,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven = satsIn - feeSats;
       if (returnRaven > 0) {
@@ -1230,7 +1230,7 @@ class TransactionMaker {
       // Sends the asset to the address currently holding it with a message
       txb.addOutput(
         utxosRaven.first.toAddress,
-        100000000,
+        wu.satsPerCoin,
         asset: estimate.security!.symbol,
         memo: estimate.assetMemo,
       );
@@ -1290,7 +1290,7 @@ class TransactionMaker {
       // We also add inputs in this loop
       for (final Vout utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       for (final Vout utxo in utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
@@ -1350,7 +1350,7 @@ class TransactionMaker {
       );
       for (final Vout utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
-        total = total + utxo.rvnValue;
+        total = total + utxo.coinValue;
       }
       txb.addOutput(
         toAddress,
@@ -1495,7 +1495,7 @@ class TransactionMaker {
       // We also add inputs in this loop
       for (final Vout utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       for (final Vout utxo in utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);

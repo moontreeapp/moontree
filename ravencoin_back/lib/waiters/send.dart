@@ -5,7 +5,8 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:tuple/tuple.dart';
 
-import 'waiter.dart';
+import '../services/transaction/verify.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:wallet_utils/wallet_utils.dart' as ravencoin;
@@ -18,24 +19,23 @@ class SendWaiter extends Waiter {
         Tuple2<ravencoin.Transaction, SendEstimate> tuple;
         try {
           tuple = await services.transaction.make.transactionBy(sendRequest);
-          ravencoin.Transaction tx = tuple.item1;
-          SendEstimate estimate = tuple.item2;
-
-          /// extra safety - fee guard clause
-          if (estimate.fees > 2 * 100000000 ||
-              estimate.inferredTransactionFee > 2 * 100000000) {
-            throw Exception(
-                'FEE IS TOO LARGE! NO FEE SHOULD EVER BE THIS BIG!');
+          final ravencoin.Transaction tx = tuple.item1;
+          final SendEstimate estimate = tuple.item2;
+          if (FeeGuard(tx.toHex(), estimate).check()) {
+            streams.spend.made.add(TransactionNote(
+              txHex: tx.toHex(),
+              note: sendRequest.note,
+            ));
+            streams.spend.estimate.add(estimate);
+            streams.spend.make.add(null);
           }
-          streams.spend.made.add(TransactionNote(
-            txHex: tx.toHex(),
-            note: sendRequest.note,
-          ));
-          streams.spend.estimate.add(estimate);
-          streams.spend.make.add(null);
         } on InsufficientFunds {
           streams.app.snack.add(Snack(
               message: 'Send Failure: Insufficient Funds', positive: false));
+          streams.spend.success.add(false);
+        } on FeeGuardException catch (e) {
+          streams.app.snack
+              .add(Snack(message: 'Send Failure: $e', positive: false));
           streams.spend.success.add(false);
         }
         // catch (e) {
@@ -56,7 +56,7 @@ class SendWaiter extends Waiter {
       // tx + note
       if (transactionNote != null) {
         //try {
-        var txid =
+        final txid =
             await services.client.api.sendTransaction(transactionNote.txHex);
         if (transactionNote.note != null) {
           await pros.notes

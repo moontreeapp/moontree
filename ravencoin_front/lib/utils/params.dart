@@ -1,4 +1,5 @@
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' show coinsPerChain;
 import 'package:ravencoin_back/proclaim/proclaim.dart';
 
 Map<String, String> parseReceiveParams(String address) =>
@@ -29,8 +30,8 @@ String cleanSatAmount(String amount) {
   if (text == '') {
     text = '0';
   }
-  if (int.parse(text) > 21000000000) {
-    text = '21000000000';
+  if (int.parse(text) > coinsPerChain) {
+    text = '$coinsPerChain';
   }
   return text;
 }
@@ -55,8 +56,8 @@ String cleanDecAmount(
       caseSensitive: false,
     ).hasMatch(amount)) {
       try {
-        if (double.parse(amount) > 21000000000) {
-          amount = '21000000000';
+        if (double.parse(amount) > coinsPerChain) {
+          amount = 'coinsPerChain';
         }
       } catch (e) {
         amount = '0';

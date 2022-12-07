@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
-import 'waiter.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 import 'package:electrum_adapter/methods/server/ping.dart';
 
 class RavenClientWaiter extends Waiter {

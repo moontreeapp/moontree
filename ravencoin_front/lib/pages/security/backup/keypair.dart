@@ -162,7 +162,7 @@ class _ShowKeypairState extends State<ShowKeypair>
       //height: 48,
       alignment: Alignment.topCenter,
       child: Text(
-        'This is the Private Key for this wallet. Whoever has this can access the funds.',
+        'This is the private key (wif) for this wallet. Whoever has this can access the funds.',
         textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
@@ -174,7 +174,7 @@ class _ShowKeypairState extends State<ShowKeypair>
       //height: 48,
       alignment: Alignment.topCenter,
       child: Text(
-        'Be sure to back up your private key in a secure place.',
+        'Be sure to back up your private key securely.',
         textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme

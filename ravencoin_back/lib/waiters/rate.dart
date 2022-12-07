@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/utilities/rate.dart';
-import 'waiter.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 
 class RateWaiter extends Waiter {
   // should be pushed to clients on change instead

@@ -146,7 +146,7 @@ class TrimUnspent with EquatableMixin {
   TrimUnspent({
     required this.transactionId,
     required this.position,
-    required this.rvnValue,
+    required this.coinValue,
     required this.assetValue,
     required this.address,
     required this.lockingScript,

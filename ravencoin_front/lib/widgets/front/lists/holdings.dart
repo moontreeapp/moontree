@@ -48,7 +48,7 @@ class _HoldingList extends State<HoldingList> {
     if (x == 0) {
       x = pros.assets.length;
     }
-    return (Current.wallet.rvnValue > 0 ? 1 : 0) + x;
+    return (Current.wallet.coinValue > 0 ? 1 : 0) + x;
   }
 
   @override

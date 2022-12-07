@@ -258,7 +258,7 @@ class HistoryService {
         position: vout.n,
         type: vout.scriptPubKey.type,
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-        rvnValue:
+        coinValue:
             <String>['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
         assetValue:
             vs.item3 == null ? null : amountToSat(vout.scriptPubKey.amount),
@@ -421,7 +421,7 @@ class HistoryService {
           position: vout.n,
           type: vout.scriptPubKey.type,
           lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
-          rvnValue:
+          coinValue:
               <String>['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
           assetValue:
               vs.item3 == null ? null : amountToSat(vout.scriptPubKey.amount),
