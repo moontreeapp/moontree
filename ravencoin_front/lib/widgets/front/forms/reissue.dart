@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' show coinsPerChain;
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:wallet_utils/src/utilities/validation.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -249,7 +250,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   Widget get quantityField => TextFieldFormatted(
         focusNode: quantityFocus,
         controller: quantityController,
-        enabled: minQuantity == 21000000000 ? false : true,
+        enabled: minQuantity != coinsPerChain,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textInputAction: TextInputAction.done,
         inputFormatters: <TextInputFormatter>[
@@ -259,7 +260,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         hintText: '21,000,000',
         errorText: quantityController.text != '' &&
                 !quantityValidation(quantityController.text.toDouble())
-            ? 'Additional Quantity cannot exceed ${21000000000 - minQuantity}'
+            ? 'Additional Quantity cannot exceed ${coinsPerChain - minQuantity}'
             : null,
         onChanged: (String value) =>
             validateQuantity(quantity: value == '' ? 0.0 : value.toDouble()),

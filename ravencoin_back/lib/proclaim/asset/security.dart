@@ -1,21 +1,21 @@
 import 'package:collection/collection.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:proclaim/proclaim.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 
 part 'security.keys.dart';
 
 class SecurityProclaim extends Proclaim<_IdKey, Security> {
   late IndexMultiple<_SymbolKey, Security> bySymbol;
-  static final staticUSD =
-      Security(symbol: 'USD', chain: Chain.none, net: Net.main);
-  static final staticRVN =
-      Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.main);
-  static final staticEVR =
-      Security(symbol: 'EVR', chain: Chain.evrmore, net: Net.main);
-  static final staticRVNt =
-      Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test);
-  static final staticEVRt =
-      Security(symbol: 'EVR', chain: Chain.evrmore, net: Net.test);
+  static Security staticUSD =
+      const Security(symbol: 'USD', chain: Chain.none, net: Net.main);
+  static Security staticRVN =
+      const Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.main);
+  static Security staticEVR =
+      const Security(symbol: 'EVR', chain: Chain.evrmore, net: Net.main);
+  static Security staticRVNt =
+      const Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test);
+  static Security staticEVRt =
+      const Security(symbol: 'EVR', chain: Chain.evrmore, net: Net.test);
 
   SecurityProclaim() : super(_IdKey()) {
     bySymbol = addIndexMultiple('symbol', _SymbolKey());
@@ -38,7 +38,7 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
   final Security RVNt = SecurityProclaim.staticRVNt;
   final Security EVRt = SecurityProclaim.staticEVRt;
 
-  final List<Security> coins = [
+  final List<Security> coins = <Security>[
     SecurityProclaim.staticEVR,
     SecurityProclaim.staticRVN,
     SecurityProclaim.staticEVRt,
@@ -48,7 +48,7 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
 
   Set<String>? _coinSymbols;
   Set<String> get coinSymbols =>
-      _coinSymbols ??= coins.map((e) => e.symbol).toSet();
+      _coinSymbols ??= coins.map((Security e) => e.symbol).toSet();
 
   Security get currentCoin {
     if (pros.settings.chain == Chain.ravencoin &&

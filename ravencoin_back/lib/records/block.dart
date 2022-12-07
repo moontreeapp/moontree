@@ -10,24 +10,22 @@ part 'block.g.dart';
 
 @HiveType(typeId: TypeId.Block)
 class Block with EquatableMixin, ToStringMixin {
-  @HiveField(0)
   final int height;
 
   // what information do we need about blockchain? just current height I think.
   //@HiveField(1)
   //final int hex or blocktime or... idk;
 
-  Block({required this.height});
+  const Block({required this.height});
 
+  factory Block.fromBlockHeader(BlockHeader blockHeader) =>
+      Block(height: blockHeader.height);
+  @HiveField(0)
   @override
   List<Object?> get props => <Object?>[height];
 
   @override
-  List<String> get propNames => ['height'];
-
-  factory Block.fromBlockHeader(BlockHeader blockHeader) {
-    return Block(height: blockHeader.height);
-  }
+  List<String> get propNames => <String>['height'];
 
   String get id => Block.blockKey();
 

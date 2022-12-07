@@ -5,11 +5,10 @@ import 'dart:typed_data';
 import 'package:hive/hive.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:moontree_utils/moontree_utils.dart';
-
+import 'package:wallet_utils/wallet_utils.dart' as ravenwallet;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/utilities/seed_wallet.dart';
-import 'package:wallet_utils/wallet_utils.dart' as ravenwallet;
 
 import '../_type_id.dart';
 
@@ -80,7 +79,7 @@ class LeaderWallet extends Wallet {
   String get encrypted => encryptedEntropy;
 
   Future<String> get encryptedSecret async => encryptedEntropy == ''
-      ? await (_getEntropy ?? (id) async => id)(id)
+      ? await (_getEntropy ?? (String id) async => id)(id)
       : encryptedEntropy;
 
   @override

@@ -11,27 +11,27 @@ part 'address.g.dart';
 @HiveType(typeId: TypeId.Address)
 class Address with EquatableMixin {
   @HiveField(0)
-  String scripthash;
+  final String scripthash;
 
   @HiveField(1)
-  String address;
+  final String address;
 
   @HiveField(2)
-  String walletId;
+  final String walletId;
 
   @HiveField(3)
-  int hdIndex;
+  final int hdIndex;
 
   @HiveField(4)
-  NodeExposure exposure;
+  final NodeExposure exposure;
 
   @HiveField(5)
-  Net net;
+  final Net net;
 
   @HiveField(6, defaultValue: Chain.ravencoin)
-  Chain chain;
+  final Chain chain;
 
-  Address({
+  const Address({
     required this.scripthash,
     required this.address,
     required this.walletId,

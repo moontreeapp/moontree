@@ -41,7 +41,7 @@ class Secret with EquatableMixin {
   @override
   String toString() => toMap.toString();
 
-  Map<String, dynamic> get toMap => {
+  Map<String, dynamic> get toMap => <String, dynamic>{
         'pubkey': pubkey,
         'scripthash': scripthash,
         'passwordId': passwordId,
@@ -59,8 +59,8 @@ class Secret with EquatableMixin {
   ) =>
       '$pubkey:$scripthash:$passwordId:$secretType';
 
-  String get linkId => Secret.LinkId(pubkey, scripthash, passwordId);
+  String get linkId => Secret.linkKey(pubkey, scripthash, passwordId);
 
-  static String LinkId(String? pubkey, String? scripthash, int? passwordId) =>
+  static String linkKey(String? pubkey, String? scripthash, int? passwordId) =>
       '$pubkey:$scripthash:$passwordId';
 }

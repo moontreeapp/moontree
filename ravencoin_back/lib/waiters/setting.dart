@@ -1,6 +1,6 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 
-import 'waiter.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 
 class SettingWaiter extends Waiter {
   void init() {

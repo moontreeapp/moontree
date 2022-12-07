@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/records/security.dart';
+import 'package:wallet_utils/wallet_utils.dart' show satsPerCoin;
 
 import '_type_id.dart';
 
@@ -13,18 +14,18 @@ part 'balance.g.dart';
 class Balance with EquatableMixin {
   // do we need unique ID?
   @HiveField(0)
-  String walletId;
+  final String walletId;
 
   @HiveField(1)
-  Security security;
+  final Security security;
 
   @HiveField(2)
-  int confirmed;
+  final int confirmed;
 
   @HiveField(3)
-  int unconfirmed;
+  final int unconfirmed;
 
-  Balance({
+  const Balance({
     required this.walletId,
     required this.security,
     required this.confirmed,
@@ -87,7 +88,7 @@ class Balance with EquatableMixin {
 
   double get amount => satToAmount(value);
 
-  double get rvn => confirmed / 100000000;
+  double get rvn => confirmed / satsPerCoin;
 
   String get valueRVN =>
       NumberFormat('RVN #,##0.00000000', 'en_US').format(rvn);

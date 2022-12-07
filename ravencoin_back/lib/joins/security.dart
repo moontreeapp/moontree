@@ -27,6 +27,6 @@ extension SecurityHasBalances on Security {
   List<Balance> get balances => pros.balances.bySecurity.getAll(this);
   Balance? get balance => pros.balances.bySecurity
       .getAll(this)
-      .where((b) => b.walletId == pros.settings.currentWalletId)
+      .where((Balance b) => b.walletId == pros.settings.currentWalletId)
       .firstOrNull;
 }

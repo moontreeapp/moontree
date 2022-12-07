@@ -173,34 +173,34 @@ class TransactionService {
               }
               if ((vinVout?.security ?? currentCrypto) == currentCrypto) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
-                  selfIn += vinVout?.rvnValue ?? 0;
+                  selfIn += vinVout?.coinValue ?? 0;
                 } else {
-                  othersIn += vinVout?.rvnValue ?? 0;
+                  othersIn += vinVout?.coinValue ?? 0;
                 }
-                totalInRVN += vinVout?.rvnValue ?? 0;
+                totalInRVN += vinVout?.coinValue ?? 0;
               }
             }
 
             for (final Vout vout in transaction.vouts) {
               if (vout.security == currentCrypto) {
-                totalOutRVN += vout.rvnValue;
+                totalOutRVN += vout.coinValue;
                 if (givenAddresses.contains(vout.toAddress)) {
-                  selfOut += vout.rvnValue;
+                  selfOut += vout.coinValue;
                   if (wallet.internalAddresses
                       .map((Address a) => a.address)
                       .contains(vout.toAddress)) {
-                    outChange += vout.rvnValue;
+                    outChange += vout.coinValue;
                   } else {
-                    outIntentional += vout.rvnValue;
+                    outIntentional += vout.coinValue;
                   }
                 } else {
-                  othersOut += vout.rvnValue;
+                  othersOut += vout.coinValue;
                   if (specialCreate.containsKey(vout.toAddress) ||
                       specialReissue.containsKey(vout.toAddress) ||
                       specialTag.containsKey(vout.toAddress) ||
                       vout.toAddress == net.burnAddresses.burn) {
                     final int current = outgoingAddrs[vout.toAddress!] ?? 0;
-                    outgoingAddrs[vout.toAddress!] = current + vout.rvnValue;
+                    outgoingAddrs[vout.toAddress!] = current + vout.coinValue;
                   }
                 }
               }
@@ -297,8 +297,8 @@ class TransactionService {
               height: transaction.height,
               type: ioType,
               fee: feeFlag ||
-                      fee < (-1) * 1502 * 100000000 ||
-                      fee > 1502 * 100000000
+                      fee < (-1) * 1502 * wallet_utils.satsPerCoin ||
+                      fee > 1502 * wallet_utils.satsPerCoin
                   ? 0
                   : fee,
               formattedDatetime: transaction.formattedDatetime,
@@ -331,9 +331,9 @@ class TransactionService {
               vinVout = vin.vout;
               if (vinVout?.security == currentCrypto) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
-                  selfInRVN += vinVout?.rvnValue ?? 0;
+                  selfInRVN += vinVout?.coinValue ?? 0;
                 } else {
-                  othersInRVN += vinVout?.rvnValue ?? 0;
+                  othersInRVN += vinVout?.coinValue ?? 0;
                 }
               } else if (vinVout?.security == security) {
                 if (givenAddresses.contains(vinVout?.toAddress)) {
@@ -347,15 +347,15 @@ class TransactionService {
             for (final Vout vout in transaction.vouts) {
               if (vout.security == currentCrypto) {
                 if (givenAddresses.contains(vout.toAddress)) {
-                  selfOutRVN += vout.rvnValue;
+                  selfOutRVN += vout.coinValue;
                 } else {
-                  othersOutRVN += vout.rvnValue;
+                  othersOutRVN += vout.coinValue;
                   if (specialCreate.containsKey(vout.toAddress) ||
                       specialReissue.containsKey(vout.toAddress) ||
                       specialTag.containsKey(vout.toAddress) ||
                       vout.toAddress == net.burnAddresses.burn) {
                     final int current = outgoingAddrs[vout.toAddress!] ?? 0;
-                    outgoingAddrs[vout.toAddress!] = current + vout.rvnValue;
+                    outgoingAddrs[vout.toAddress!] = current + vout.coinValue;
                   }
                 }
               } else if (vout.security == security) {
@@ -483,9 +483,8 @@ class TransactionService {
     final Set<Vout> utxos =
         streams.claim.unclaimed.value.getOr(from.id, <Vout>{});
     final int claimAmount = utxos
-        .map((Vout e) => e.rvnValue)
+        .map((Vout e) => e.coinValue)
         .reduce((int value, int element) => value + element);
-
     final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
         await services.transaction.make.claimAllEVR(
       destinationAddress,
@@ -522,7 +521,7 @@ class TransactionService {
         .where((Balance b) => !pros.securities.coins.contains(b.security))
         .toList();
 
-    if (from.unspents.isEmpty || from.RVNValue == 0) {
+    if (from.unspents.isEmpty || from.coinValue == 0) {
       // unable to perform any transactions
       return usedUTXOs;
     }
@@ -537,7 +536,7 @@ class TransactionService {
           final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
               await services.transaction.make.transactionSweepAll(
             destinationAddress,
-            SendEstimate(from.RVNValue, memo: memo),
+            SendEstimate(from.coinValue, memo: memo),
             wallet: from,
             securities: assetBalances.map((Balance e) => e.security).toSet(),
             feeRate: wallet_utils.FeeRates.standard,
@@ -679,7 +678,7 @@ class TransactionService {
         final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
             await services.transaction.make.transactionSendAllRVN(
           destinationAddress,
-          SendEstimate(from.RVNValue, memo: memo),
+          SendEstimate(from.coinValue, memo: memo),
           wallet: from,
           feeRate: wallet_utils.FeeRates.standard,
         );
@@ -694,7 +693,7 @@ class TransactionService {
       } else {
         // get all utxos
         final List<Vout> cryptoUtxos = (await services.balance
-                .collectUTXOs(walletId: from.id, amount: from.RVNValue))
+                .collectUTXOs(walletId: from.id, amount: from.coinValue))
             .where((Vout e) => !usedUTXOs!.contains(e))
             .toList();
         // batch by limit and make transaction
@@ -702,7 +701,7 @@ class TransactionService {
         int i = 0;
         int total = 0;
         for (final Vout utxo in cryptoUtxos) {
-          total = total + utxo.rvnValue;
+          total = total + utxo.coinValue;
           utxos.add(utxo);
           i++;
           if (i == limit) {
@@ -775,7 +774,7 @@ class TransactionService {
     // if we have assets, send them, and send all the rvn
     // if we don't have assets or don't want to send them, just sendallRVN
 
-    if (from.unspents.isEmpty || from.RVNValue == 0) {
+    if (from.unspents.isEmpty || from.coinValue == 0) {
       // unable to perform any transactions
       return false;
     }
@@ -824,7 +823,7 @@ class TransactionService {
     //    SendEstimate estimate = tuple.item2;
     //
     //    /// extra safety - fee guard clause
-    //    if (estimate.fees > 2 * 100000000) {
+    //    if (estimate.fees > 2 * wallet_utils.satsPerCoin) {
     //      throw Exception(
     //          'FEE IS TOO LARGE! NO FEE SHOULD EVER BE THIS BIG!');
     //    }

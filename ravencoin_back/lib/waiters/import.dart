@@ -1,6 +1,7 @@
 import 'package:ravencoin_back/services/wallet/constants.dart';
+import 'package:tuple/tuple.dart';
 
-import 'waiter.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/import.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -11,21 +12,22 @@ class ImportWaiter extends Waiter {
     streams.import.attempt.listen((ImportRequest? importRequest) async {
       if (importRequest != null) {
         /// if import is currently occuring, wait til its finished.
-        var x = 0;
+        int x = 0;
         while (services.wallet.leader.newLeaderProcessRunning && x < 10) {
-          await Future<void>.delayed(Duration(seconds: 1));
+          await Future<void>.delayed(const Duration(seconds: 1));
           x += 1;
         }
-        var firstWallet = false;
+        bool firstWallet = false;
         if (pros.wallets.records.length == 1 && pros.balances.records.isEmpty) {
           /// don't remove just set it as preferred.
           //await pros.wallets.remove(pros.wallets.records.first);
           firstWallet = true;
         }
-        var importFrom = ImportFrom(text: importRequest.text);
+        final ImportFrom importFrom = ImportFrom(text: importRequest.text);
         if (importFrom.importFormat != ImportFormat.invalid) {
           streams.client.busy.add(true);
-          var tuple3 = await importFrom.handleImport(
+          final Tuple3<bool, List<String?>, List<String?>> tuple3 =
+              await importFrom.handleImport(
             importRequest.getEntropy,
             importRequest.saveSecret,
           ); // success, title, msg
@@ -51,7 +53,8 @@ class ImportWaiter extends Waiter {
               await importRequest.onSuccess!();
             }
             streams.app.snack.add(Snack(
-                message: tuple3.item3.firstWhere((element) => element != null)
+                message: tuple3.item3
+                        .firstWhere((String? element) => element != null)
                     //?.split(': ')
                     //.first
                     ??

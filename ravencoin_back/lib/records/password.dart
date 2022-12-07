@@ -7,12 +7,12 @@ part 'password.g.dart';
 @HiveType(typeId: TypeId.Password)
 class Password with EquatableMixin {
   @HiveField(0)
-  int id;
+  final int id;
 
   @HiveField(1)
-  String saltedHash;
+  final String saltedHash;
 
-  Password({
+  const Password({
     required this.id,
     required this.saltedHash,
   });

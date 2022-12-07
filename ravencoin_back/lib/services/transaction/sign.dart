@@ -1,6 +1,6 @@
 import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:wallet_utils/wallet_utils.dart' show TransactionBuilder;
+import 'package:wallet_utils/wallet_utils.dart' show ECPair, TransactionBuilder;
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 extension SignEachInput on TransactionBuilder {
@@ -11,6 +11,9 @@ extension SignEachInput on TransactionBuilder {
   Future<void> signEachInput(List<Vout> utxos) async {
     for (final Tuple2<int, Vout> e in utxos.enumeratedTuple<Vout>()) {
       final Vout utxo = e.item2;
+      final ECPair keypair =
+          await services.wallet.getAddressKeypair(utxo.address!);
+      print(keypair);
       sign(
         vin: e.item1,
         keyPair: await services.wallet.getAddressKeypair(utxo.address!),

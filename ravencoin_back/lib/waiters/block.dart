@@ -3,12 +3,11 @@
 /// if block headers was not a subscribe, but a function we could call on
 /// demand I believe we could save the electrumx server some bandwidth costs...
 
+import 'package:electrum_adapter/electrum_adapter.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:electrum_adapter/electrum_adapter.dart';
-
-import 'package:ravencoin_back/ravencoin_back.dart';
-import 'waiter.dart';
+import 'package:ravencoin_back/waiters/waiter.dart';
 
 class BlockWaiter extends Waiter {
   bool notify = true;
@@ -40,12 +39,12 @@ class BlockWaiter extends Waiter {
       'blocks.changes',
       pros.blocks.changes,
       (Change<Block> change) => change.when(
-        loaded: (loaded) {},
-        added: (added) async {
+        loaded: (Loaded<Block> loaded) {},
+        added: (Added<Block> added) async {
           await services.download.history.getAndSaveMempoolTransactions();
         },
-        updated: (updated) {},
-        removed: (removed) {},
+        updated: (Updated<Block> updated) {},
+        removed: (Removed<Block> removed) {},
       ),
       autoDeinit: true,
     );

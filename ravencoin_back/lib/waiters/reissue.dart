@@ -1,14 +1,13 @@
 /// creating assets
 // ignore_for_file: omit_local_variable_types
 
-import 'package:moontree_utils/moontree_utils.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:tuple/tuple.dart';
-
-import 'waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' as wu;
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
-import 'package:wallet_utils/wallet_utils.dart' as ravencoin;
+import 'package:ravencoin_back/waiters/waiter.dart';
 
 class ReissueWaiter extends Waiter {
   void init() {
@@ -17,16 +16,16 @@ class ReissueWaiter extends Waiter {
       if (reissueRequest != null) {
         await Future<void>.delayed(
             const Duration(milliseconds: 500)); // wait for please wait
-        Tuple2<ravencoin.Transaction, SendEstimate> tuple;
+        Tuple2<wu.Transaction, SendEstimate> tuple;
         print(reissueRequest.isRestricted);
         try {
           tuple = await services.transaction.make
               .reissueTransactionBy(reissueRequest);
-          ravencoin.Transaction tx = tuple.item1;
-          SendEstimate estimate = tuple.item2;
+          final wu.Transaction tx = tuple.item1;
+          final SendEstimate estimate = tuple.item2;
 
           /// extra safety - fee guard clause
-          if (estimate.fees > 2 * 100000000) {
+          if (estimate.fees > 2 * wu.satsPerCoin) {
             throw Exception(
                 'FEE IS TOO LARGE! NO FEE SHOULD EVER BE THIS BIG!');
           }
@@ -55,7 +54,7 @@ class ReissueWaiter extends Waiter {
     streams.reissue.send.listen((String? txHex) async {
       if (txHex != null) {
         //try {
-        var txid = await services.client.api.sendTransaction(txHex);
+        final txid = await services.client.api.sendTransaction(txHex);
         print('txid');
         print(txid);
         if (txid != '') {

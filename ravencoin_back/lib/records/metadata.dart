@@ -87,18 +87,17 @@ class Metadata with EquatableMixin {
     bool? logo,
     Chain? chain,
     Net? net,
-  }) {
-    return Metadata(
-      logo: logo ?? metadata.logo,
-      parent: parent ?? metadata.parent,
-      kind: kind ?? metadata.kind,
-      data: data ?? metadata.data,
-      metadata: metadataValue ?? metadata.metadata,
-      symbol: symbol ?? (chain != null ? chain.symbol : metadata.symbol),
-      chain: chain ?? metadata.chain,
-      net: net ?? metadata.net,
-    );
-  }
+  }) =>
+      Metadata(
+        logo: logo ?? metadata.logo,
+        parent: parent ?? metadata.parent,
+        kind: kind ?? metadata.kind,
+        data: data ?? metadata.data,
+        metadata: metadataValue ?? metadata.metadata,
+        symbol: symbol ?? (chain != null ? chain.symbol : metadata.symbol),
+        chain: chain ?? metadata.chain,
+        net: net ?? metadata.net,
+      );
 
   static String key(String symbol, String metadata, Chain chain, Net net) =>
       '$symbol:$metadata:${ChainNet(chain, net).key}';

@@ -105,23 +105,23 @@ class Asset with EquatableMixin {
   String get id => key(symbol, chain, net);
   String? get parentSymbol {
     if (assetType == AssetType.sub) {
-      var splits = symbol.split('/');
+      final List<String> splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
     }
     if (assetType == AssetType.subAdmin) {
-      var splits = symbol.split('/');
+      final List<String> splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
     }
     if (assetType == AssetType.qualifierSub) {
-      var splits = symbol.split('/#');
+      final List<String> splits = symbol.split('/#');
       return splits.sublist(0, splits.length - 1).join('/#');
     }
     if (assetType == AssetType.unique) {
-      var splits = symbol.split('#');
+      final List<String> splits = symbol.split('#');
       return splits.sublist(0, splits.length - 1).join('#');
     }
     if (assetType == AssetType.channel) {
-      var splits = symbol.split('~');
+      final List<String> splits = symbol.split('~');
       return splits.sublist(0, splits.length - 1).join('~');
     }
     return null;
@@ -132,23 +132,23 @@ class Asset with EquatableMixin {
 
   String? get shortName {
     if (assetType == AssetType.sub) {
-      var splits = symbol.split('/');
+      final List<String> splits = symbol.split('/');
       return splits[splits.length - 1];
     }
     if (assetType == AssetType.subAdmin) {
-      var splits = symbol.split('/');
+      final List<String> splits = symbol.split('/');
       return splits[splits.length - 1];
     }
     if (assetType == AssetType.qualifierSub) {
-      var splits = symbol.split('/#');
+      final List<String> splits = symbol.split('/#');
       return splits[splits.length - 1];
     }
     if (assetType == AssetType.unique) {
-      var splits = symbol.split('#');
+      final List<String> splits = symbol.split('#');
       return splits[splits.length - 1];
     }
     if (assetType == AssetType.channel) {
-      var splits = symbol.split('~');
+      final List<String> splits = symbol.split('~');
       return splits[splits.length - 1];
     }
     return null;

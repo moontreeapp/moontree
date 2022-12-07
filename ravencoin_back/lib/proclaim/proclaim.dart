@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_classes_with_only_static_members, camel_case_types
+
 import 'asset/asset.dart';
 import 'asset/metadata.dart';
 import 'asset/security.dart';

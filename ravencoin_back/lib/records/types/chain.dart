@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:equatable/equatable.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/src/models/networks.dart'
     show NetworkType, mainnet, testnet, evrmoreMainnet, evrmoreTestnet;
@@ -71,11 +72,17 @@ String nameSymbol(String name) {
   }
 }
 
-class ChainNet {
+class ChainNet with EquatableMixin {
   ChainNet(this.chain, this.net);
 
   final Chain chain;
   final Net net;
+
+  @override
+  List<Object?> get props => <Object?>[chain, net];
+
+  @override
+  String toString() => props.toString();
 
   String get domainPort => '$domain:$port';
 

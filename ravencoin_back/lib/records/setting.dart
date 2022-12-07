@@ -8,7 +8,7 @@ part 'setting.g.dart';
 
 @HiveType(typeId: TypeId.Setting)
 class Setting with EquatableMixin {
-  Setting({
+  const Setting({
     required this.name,
     required this.value,
   });
@@ -25,10 +25,10 @@ class Setting with EquatableMixin {
       );
 
   @HiveField(0)
-  SettingName name;
+  final SettingName name;
 
   @HiveField(1)
-  dynamic value;
+  final dynamic value;
 
   @override
   List<Object?> get props => <Object?>[name, value];

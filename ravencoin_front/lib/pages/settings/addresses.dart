@@ -79,7 +79,8 @@ class _WalletViewState extends State<WalletView> {
       address ??= wallet is LeaderWallet
           ? services.wallet
               .getEmptyAddress(wallet as LeaderWallet, NodeExposure.external)
-          : services.wallet.single.getKPWallet(wallet as SingleWallet).address;
+          : wallet.addresses.first.address;
+      //services.wallet.single.getKPWallet(wallet as SingleWallet).address;
     }
     disabled = Current.holdings.isEmpty;
     return DefaultTabController(
@@ -235,7 +236,7 @@ class _WalletViewState extends State<WalletView> {
                         walletAddress.exposure.name.toTitleCase(),
                       ),
                       Text(
-                          'Balance: ${satToAmount(services.transaction.walletUnspents(wallet).where((Vout vout) => vout.toAddress == walletAddress.address).map((Vout vout) => vout.rvnValue).toList().sumInt())}',
+                          'Balance: ${satToAmount(services.transaction.walletUnspents(wallet).where((Vout vout) => vout.toAddress == walletAddress.address).map((Vout vout) => vout.coinValue).toList().sumInt())}',
                           style: Theme.of(context).textTheme.caption),
                     ],
                   ),
@@ -267,7 +268,7 @@ class _WalletViewState extends State<WalletView> {
                           .walletUnspents(wallet)
                           .where((Vout vout) =>
                               vout.toAddress == walletAddress.address)
-                          .map((Vout vout) => vout.rvnValue)
+                          .map((Vout vout) => vout.coinValue)
                           .toList()
                           .sumInt())
                       .toString(),

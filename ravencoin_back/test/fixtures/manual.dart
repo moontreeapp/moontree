@@ -9,7 +9,7 @@ Future<void> fillDatabaseWithLargeSpendables() async {
       transactionId:
           'b1c76d0d4e8019f8dfedb401348caf8229c40aabde0762d738f88f0f0f9efcba',
       position: 0,
-      rvnValue: 10000000000000000,
+      coinValue: 10000000000000000,
       //100,000,128.88355600
       type: '',
       toAddress: pros.wallets.currentWallet.addressesFor().first.address,

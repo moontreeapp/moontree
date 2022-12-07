@@ -5,9 +5,10 @@ import 'package:moontree_utils/moontree_utils.dart';
 typedef Listener<T> = void Function(T event);
 
 abstract class Waiter {
-  final Map<String, StreamSubscription> listeners = {};
-
   Waiter();
+
+  final Map<String, StreamSubscription<dynamic>> listeners =
+      <String, StreamSubscription<dynamic>>{};
 
   Future<void> listen<T>(
     String key,
@@ -26,14 +27,14 @@ abstract class Waiter {
   }
 
   Future<void> deinit() async {
-    for (var listener in listeners.values) {
+    for (final StreamSubscription<dynamic> listener in listeners.values) {
       await listener.cancel();
     }
     listeners.clear();
   }
 
   Future<void> deinitKeys(List<String> keys) async {
-    for (var listener in keys) {
+    for (final String listener in keys) {
       print('removing $listener');
       await listeners[listener]?.cancel();
       listeners.remove(listener);

@@ -11,25 +11,25 @@ part 'unspent.g.dart';
 @HiveType(typeId: TypeId.Unspent)
 class Unspent with EquatableMixin, ToStringMixin {
   @HiveField(0)
-  String walletId;
+  final String walletId;
 
   @HiveField(1)
-  String addressId;
+  final String addressId;
 
   @HiveField(2)
-  String transactionId;
+  final String transactionId;
 
   @HiveField(3)
-  int position;
+  final int position;
 
   @HiveField(4)
-  int height;
+  final int height;
 
   @HiveField(5)
-  int value;
+  final int value;
 
   @HiveField(6)
-  String symbol;
+  final String symbol;
 
   @HiveField(7, defaultValue: Chain.ravencoin)
   final Chain chain;
@@ -37,7 +37,7 @@ class Unspent with EquatableMixin, ToStringMixin {
   @HiveField(8, defaultValue: Net.main)
   final Net net;
 
-  Unspent({
+  const Unspent({
     required this.walletId,
     required this.addressId,
     required this.transactionId,

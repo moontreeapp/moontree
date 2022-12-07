@@ -1,12 +1,10 @@
 import 'dart:typed_data';
-
 import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart'
     show StringBytesExtension, ToStringMixin;
-import 'package:wallet_utils/wallet_utils.dart' as wallet_utils;
+import 'package:wallet_utils/wallet_utils.dart' as wu;
 import 'package:ravencoin_back/ravencoin_back.dart';
-
-import 'sign.dart';
+import 'package:ravencoin_back/services/transaction/sign.dart';
 
 /* Unused
 class NFTCreateRequest {
@@ -140,7 +138,7 @@ class GenericCreateRequest with ToStringMixin {
         parent,
       ];
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'isSub',
         'isMain',
         'isNFT',
@@ -220,7 +218,7 @@ class GenericReissueRequest with ToStringMixin {
         parent,
       ];
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'isSub',
         'isMain',
         'isRestricted',
@@ -251,7 +249,7 @@ class SendRequest with ToStringMixin {
   late double holding;
   late String visibleAmount;
   late int sendAmountAsSats;
-  late wallet_utils.FeeRate feeRate;
+  late wu.FeeRate feeRate;
   late Wallet wallet;
   late Security? security;
   late String? assetMemo;
@@ -287,7 +285,7 @@ class SendRequest with ToStringMixin {
         note ?? '?',
       ];
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'sendAll',
         'sendAddress',
         'holding',
@@ -321,7 +319,7 @@ class SendEstimate with ToStringMixin {
     this.assetMemo,
     this.memo,
     this.creation = false,
-  }) : utxos = utxos ?? [];
+  }) : utxos = utxos ?? <Vout>[];
 
   factory SendEstimate.copy(SendEstimate detail) {
     return SendEstimate(detail.amount,
@@ -357,6 +355,8 @@ class SendEstimate with ToStringMixin {
       : fees + extraFees;
   int get utxoTotal => utxos.fold(0,
       (int total, Vout vout) => total + vout.securityValue(security: security));
+  int get utxoCoinTotal =>
+      utxos.fold(0, (int total, Vout vout) => total + vout.coinValue);
 
   int get changeDue => utxoTotal - total;
 
@@ -379,10 +379,9 @@ class SendEstimate with ToStringMixin {
 }
 
 class TransactionMaker {
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>> transactionBy(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionBy(
     SendRequest sendRequest,
   ) async {
-    Tuple2<wallet_utils.Transaction, SendEstimate> tuple;
     final SendEstimate estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
       security: sendRequest.security == pros.securities.currentCoin
@@ -392,7 +391,7 @@ class TransactionMaker {
       memo: sendRequest.memo,
     );
 
-    tuple = (sendRequest.sendAll ||
+    return (sendRequest.sendAll ||
                 double.parse(sendRequest.visibleAmount) ==
                     sendRequest.holding) &&
             (sendRequest.security == null ||
@@ -411,14 +410,13 @@ class TransactionMaker {
             feeRate: sendRequest.feeRate,
             /*assetMemoExpiry: not captured yet*/
           );
-    return tuple;
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>> createTransactionBy(
+  Future<Tuple2<wu.Transaction, SendEstimate>> createTransactionBy(
     GenericCreateRequest createRequest,
   ) async {
     final SendEstimate estimate = SendEstimate(
-      ((createRequest.quantity ?? 1) * 100000000).toInt(),
+      ((createRequest.quantity ?? 1) * wu.satsPerCoin).toInt(),
       security: createRequest.security,
       creation: true,
       //assetMemo: createRequest.assetMemo, // not on front end
@@ -430,7 +428,7 @@ class TransactionMaker {
             estimate,
             wallet: createRequest.wallet,
             ipfsData: createRequest.assetData,
-            feeRate: wallet_utils.FeeRates.standard,
+            feeRate: wu.FeeRates.standard,
           )
         : createRequest.isSub
             ? await transactionCreateSubAsset(
@@ -440,7 +438,7 @@ class TransactionMaker {
                 createRequest.reissuable ?? false,
                 wallet: createRequest.wallet,
                 ipfsData: createRequest.assetData,
-                feeRate: wallet_utils.FeeRates.standard,
+                feeRate: wu.FeeRates.standard,
               )
             :
             // Restricted and Qualifier
@@ -450,15 +448,15 @@ class TransactionMaker {
                 createRequest.reissuable ?? false,
                 wallet: createRequest.wallet,
                 ipfsData: createRequest.assetData,
-                feeRate: wallet_utils.FeeRates.standard,
+                feeRate: wu.FeeRates.standard,
               );
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>> reissueTransactionBy(
+  Future<Tuple2<wu.Transaction, SendEstimate>> reissueTransactionBy(
     GenericReissueRequest reissueRequest,
   ) async {
     final SendEstimate estimate = SendEstimate(
-      ((reissueRequest.quantity ?? 0) * 100000000).toInt(),
+      ((reissueRequest.quantity ?? 0) * wu.satsPerCoin).toInt(),
       security: reissueRequest.security,
       creation: true,
     );
@@ -466,7 +464,7 @@ class TransactionMaker {
         ? await transactionReissueRestrictedAsset(
             estimate,
             reissueRequest.originalDecimals ?? 0,
-            (reissueRequest.originalQuantity! * 100000000).toInt(),
+            (reissueRequest.originalQuantity! * wu.satsPerCoin).toInt(),
             reissueRequest.decimals ?? 0,
             reissueRequest.reissuable ?? false,
             wallet: reissueRequest.wallet,
@@ -474,11 +472,11 @@ class TransactionMaker {
                 reissueRequest.assetData == reissueRequest.originalAssetData
                     ? null
                     : reissueRequest.assetData,
-            feeRate: wallet_utils.FeeRates.standard)
+            feeRate: wu.FeeRates.standard)
         : await transactionReissueAsset(
             estimate,
             reissueRequest.originalDecimals ?? 0,
-            (reissueRequest.originalQuantity! * 100000000).toInt(),
+            (reissueRequest.originalQuantity! * wu.satsPerCoin).toInt(),
             reissueRequest.decimals ?? 0,
             reissueRequest.reissuable ?? false,
             wallet: reissueRequest.wallet,
@@ -486,21 +484,20 @@ class TransactionMaker {
                 reissueRequest.assetData == reissueRequest.originalAssetData
                     ? null
                     : reissueRequest.assetData,
-            feeRate: wallet_utils.FeeRates.standard);
+            feeRate: wu.FeeRates.standard);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionCreateQualifier(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionCreateQualifier(
     SendEstimate estimate, {
     required Wallet wallet,
     Uint8List? ipfsData,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
     String? newAssetToAddress,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
 
-    if (estimate.amount > 10 * 100000000) {
+    if (estimate.amount > 10 * wu.satsPerCoin) {
       throw ArgumentError('Amount must be at most 10');
     }
     if (estimate.security == null || estimate.security!.symbol[0] != '#') {
@@ -514,7 +511,7 @@ class TransactionMaker {
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -525,7 +522,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.issueQualifier - feeSats;
@@ -546,23 +543,22 @@ class TransactionMaker {
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueQualifier);
     await txb!.signEachInput(utxosRaven);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionCreateSubQualifier(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionCreateSubQualifier(
     SendEstimate estimate,
     String parentAsset, {
     required Wallet wallet,
     Uint8List? ipfsData,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
     String? newAssetToAddress,
     String? parentAssetToAddress,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
 
-    if (estimate.amount > 10 * 100000000) {
+    if (estimate.amount > 10 * wu.satsPerCoin) {
       throw ArgumentError('Amount must be at most 10');
     }
     if (estimate.security == null || estimate.security!.symbol[0] != '#') {
@@ -578,7 +574,7 @@ class TransactionMaker {
     ].contains(estimate.security)
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
-            amount: 100000000,
+            amount: wu.satsPerCoin,
             security: Security(
               symbol: parentAsset,
               chain: pros.settings.chain,
@@ -589,14 +585,14 @@ class TransactionMaker {
     for (final Vout utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
     }
-    final int securityChange = securityIn - 100000000;
+    final int securityChange = securityIn - wu.satsPerCoin;
 
     final String returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -608,7 +604,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven = satsIn -
           pros.settings.network.burnAmounts.issueSubQualifier -
@@ -638,11 +634,10 @@ class TransactionMaker {
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueSubQualifier);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionCreateRestricted(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionCreateRestricted(
     SendEstimate estimate,
     int divisibility,
     bool reissuable, {
@@ -651,10 +646,10 @@ class TransactionMaker {
     String? parentAssetToAddress,
     Uint8List? ipfsData,
     String? verifier,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     if (estimate.security == null || estimate.security!.symbol[0] != r'$') {
       throw ArgumentError('Asset must be a restricted asset');
     }
@@ -668,7 +663,7 @@ class TransactionMaker {
     ].contains(estimate.security)
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
-            amount: 100000000,
+            amount: wu.satsPerCoin,
             security: Security(
               symbol: '${estimate.security!.symbol.substring(1)}!',
               chain: pros.settings.chain,
@@ -680,7 +675,7 @@ class TransactionMaker {
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -692,7 +687,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.issueRestricted - feeSats;
@@ -720,10 +715,10 @@ class TransactionMaker {
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueRestricted);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
+  Future<Tuple2<wu.Transaction, SendEstimate>>
       transactionReissueRestrictedAsset(
     SendEstimate estimate,
     int originalDivisibility,
@@ -735,10 +730,10 @@ class TransactionMaker {
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
 
     if (estimate.security == null || estimate.security!.symbol[0] != r'$') {
       throw ArgumentError('Asset must be a restricted asset');
@@ -749,7 +744,7 @@ class TransactionMaker {
     List<Vout> utxosRaven = <Vout>[];
     final List<Vout> utxosSecurity = await services.balance.collectUTXOs(
         walletId: wallet.id,
-        amount: 100000000, // 1 virtual sat for ownership asset
+        amount: wu.satsPerCoin, // 1 virtual sat for ownership asset
         security: Security(
           symbol: '${estimate.security!.symbol.substring(1)}!',
           chain: pros.settings.chain,
@@ -760,7 +755,7 @@ class TransactionMaker {
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -772,7 +767,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.reissue - feeSats;
@@ -806,21 +801,20 @@ class TransactionMaker {
     estimate.setExtraFees(pros.settings.network.burnAmounts.reissue);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionQualifyAddress(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionQualifyAddress(
     SendEstimate estimate,
     String qualifyingAsset,
     String addressToQualify,
     bool tag, {
     required Wallet wallet,
     String? qualifierToAddress,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     if (estimate.security == null ||
         estimate.security!.symbol.contains(RegExp(r'^[\$#].*$'))) {
       throw ArgumentError('Asset must be a qualifier or a restricted asset');
@@ -830,7 +824,7 @@ class TransactionMaker {
     List<Vout> utxosRaven = <Vout>[];
     final List<Vout> utxosSecurity = await services.balance.collectUTXOs(
         walletId: wallet.id,
-        amount: 100000000, // 1 sat for ownership asset
+        amount: wu.satsPerCoin, // 1 sat for ownership asset
         security: Security(
           symbol: estimate.security!.symbol[0] == r'$'
               ? '${estimate.security!.symbol.substring(1)}!'
@@ -842,14 +836,14 @@ class TransactionMaker {
     for (final Vout utxo in utxosSecurity) {
       securityIn += utxo.assetValue!;
     }
-    final int securityChange = securityIn - 100000000;
+    final int securityChange = securityIn - wu.satsPerCoin;
 
     final String returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -861,7 +855,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven = satsIn - pros.settings.network.burnAmounts.addTag - feeSats;
 
@@ -893,11 +887,10 @@ class TransactionMaker {
     estimate.setExtraFees(pros.settings.network.burnAmounts.addTag);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionReissueAsset(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionReissueAsset(
     SendEstimate estimate,
     int originalDivisibility,
     int currentSatsInCirculation,
@@ -907,16 +900,16 @@ class TransactionMaker {
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     int feeSats = 0;
     // Grab required assets for transfer amount
     List<Vout> utxosRaven = <Vout>[];
     final List<Vout> utxosSecurity = await services.balance.collectUTXOs(
         walletId: wallet.id,
-        amount: 100000000, // 1 virtual sat for ownership asset
+        amount: wu.satsPerCoin, // 1 virtual sat for ownership asset
         security: Security(
           symbol: '${estimate.security!.symbol}!',
           chain: pros.settings.chain,
@@ -927,7 +920,7 @@ class TransactionMaker {
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -939,7 +932,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.reissue - feeSats;
@@ -972,11 +965,10 @@ class TransactionMaker {
     estimate.setExtraFees(pros.settings.network.burnAmounts.reissue);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionCreateMainAsset(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionCreateMainAsset(
     SendEstimate estimate,
     int divisibility,
     bool reissuability, {
@@ -984,10 +976,10 @@ class TransactionMaker {
     String? newAssetToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     int feeSats = 0;
     // Grab required assets for transfer amount
     List<Vout> utxosRaven = <Vout>[];
@@ -996,7 +988,7 @@ class TransactionMaker {
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1007,7 +999,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.issueMain - feeSats;
@@ -1034,11 +1026,10 @@ class TransactionMaker {
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueMain);
     await txb!.signEachInput(utxosRaven);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionCreateSubAsset(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionCreateSubAsset(
     String parentAsset,
     SendEstimate estimate,
     int divisibility,
@@ -1048,10 +1039,10 @@ class TransactionMaker {
     String? parentOwnershipToAddress,
     String? ownershipToAddress,
     Uint8List? ipfsData,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     int feeSats = 0;
     // Grab required assets for transfer amount
     List<Vout> utxosRaven = <Vout>[];
@@ -1062,7 +1053,7 @@ class TransactionMaker {
     ].contains(estimate.security)
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
-            amount: 100000000,
+            amount: wu.satsPerCoin,
             security: Security(
               symbol: '$parentAsset!',
               chain: pros.settings.chain,
@@ -1074,7 +1065,7 @@ class TransactionMaker {
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1086,7 +1077,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven =
           satsIn - pros.settings.network.burnAmounts.issueSub - feeSats;
@@ -1113,22 +1104,21 @@ class TransactionMaker {
     estimate.setExtraFees(pros.settings.network.burnAmounts.issueSub);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
   // Used for unique and message assets
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionCreateChildAsset(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionCreateChildAsset(
     String parentAsset,
     SendEstimate estimate, {
     required Wallet wallet,
     String? newAssetToAddress,
     String? parentOwnershipToAddress,
     Uint8List? ipfsData,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     int feeSats = 0;
     // Grab required assets for transfer amount
     List<Vout> utxosRaven = <Vout>[];
@@ -1139,7 +1129,7 @@ class TransactionMaker {
     ].contains(estimate.security)
         ? await services.balance.collectUTXOs(
             walletId: wallet.id,
-            amount: 100000000,
+            amount: wu.satsPerCoin,
             security: Security(
               symbol: '$parentAsset!',
               chain: pros.settings.chain,
@@ -1154,7 +1144,7 @@ class TransactionMaker {
         : pros.settings.network.burnAmounts.issueUnique;
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1166,7 +1156,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven = satsIn - extraFee - feeSats;
       txb.generateCreateChildAssetVouts(
@@ -1188,14 +1178,13 @@ class TransactionMaker {
     estimate.setExtraFees(extraFee);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
-      transactionBroadcastMessage(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionBroadcastMessage(
     SendEstimate estimate, {
     required Wallet wallet,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
   }) async {
     if (!(estimate.security!.symbol.contains('!') ||
         estimate.security!.symbol.contains('~'))) {
@@ -1203,18 +1192,20 @@ class TransactionMaker {
       throw ArgumentError.value(estimate.security!.symbol, 'assetName',
           'Can only be an ownership or message channel asset');
     }
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     int feeSats = 0;
     List<Vout> utxosRaven = <Vout>[];
     final List<Vout> utxosSecurity = await services.balance.collectUTXOs(
-        walletId: wallet.id, amount: 100000000, security: estimate.security);
+        walletId: wallet.id,
+        amount: wu.satsPerCoin,
+        security: estimate.security);
     final String returnAddress =
         services.wallet.getEmptyAddress(wallet, NodeExposure.internal);
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1226,7 +1217,7 @@ class TransactionMaker {
       int satsIn = 0;
       for (final Vout utxo in utxosRaven + utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       returnRaven = satsIn - feeSats;
       if (returnRaven > 0) {
@@ -1239,7 +1230,7 @@ class TransactionMaker {
       // Sends the asset to the address currently holding it with a message
       txb.addOutput(
         utxosRaven.first.toAddress,
-        100000000,
+        wu.satsPerCoin,
         asset: estimate.security!.symbol,
         memo: estimate.assetMemo,
       );
@@ -1250,18 +1241,18 @@ class TransactionMaker {
     estimate.setCoinReturn(returnRaven);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>> transaction(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transaction(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
     int? assetMemoExpiry,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     int feeSats = 0;
     // Grab required assets for transfer amount
     List<Vout> utxosRaven = <Vout>[];
@@ -1287,7 +1278,7 @@ class TransactionMaker {
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1299,7 +1290,7 @@ class TransactionMaker {
       // We also add inputs in this loop
       for (final Vout utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       for (final Vout utxo in utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
@@ -1333,34 +1324,33 @@ class TransactionMaker {
     estimate.setUTXOs(utxosRaven + utxosSecurity);
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
   /// we can skip the while loop because we know we want to include all unspents
   /// asside from taking a shortcut, this function is actually necessary because
   /// the other transaction function assume the amount is constant and adds fees
   /// onto it but when sending all you want the fee taken out of the send amount
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>> transactionSendAllRVN(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionSendAllRVN(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
     Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
-    wallet_utils.TransactionBuilder makeTxBuilder(
+    Tuple2<wu.TransactionBuilder, int> makeTxBuilder(
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
       int total = 0;
-      final wallet_utils.TransactionBuilder txb =
-          wallet_utils.TransactionBuilder(
+      final wu.TransactionBuilder txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
       for (final Vout utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
-        total = total + utxo.rvnValue;
+        total = total + utxo.coinValue;
       }
       txb.addOutput(
         toAddress,
@@ -1372,44 +1362,52 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-      return txb;
+      return Tuple2<wu.TransactionBuilder, int>(txb, total);
     }
 
     final List<Vout> utxos = await services.balance.collectUTXOs(
       walletId: wallet.id,
       amount: estimate.amount,
     );
-    wallet_utils.TransactionBuilder txb = makeTxBuilder(utxos, estimate);
-    wallet_utils.Transaction tx = txb.buildSpoofedSigs();
+    Tuple2<wu.TransactionBuilder, int> txbTotal =
+        makeTxBuilder(utxos, estimate);
+    wu.TransactionBuilder txb = txbTotal.item1;
+    int total = txbTotal.item2;
+    wu.Transaction tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
-    txb = makeTxBuilder(utxos, estimate);
+    txbTotal = makeTxBuilder(utxos, estimate);
+    txb = txbTotal.item1;
+    total = txbTotal.item2;
+    final int implicitFee = estimate.amount + estimate.fees;
+    if (total > implicitFee + 1) {
+      throw Exception('implicit Fee is too Large: ${implicitFee - total}');
+    }
     estimate.setUTXOs(utxos);
     await txb.signEachInput(utxos);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
   /// we can skip the while loop because we know we want to include all unspents
   /// asside from taking a shortcut, this function is actually necessary because
   /// the other transaction function assume the amount is constant and adds fees
   /// onto it but when sending all you want the fee taken out of the send amount
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>> transactionSweepAll(
+  Future<Tuple2<wu.Transaction, SendEstimate>> transactionSweepAll(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
     required Set<Security> securities,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
     Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
-    wallet_utils.TransactionBuilder makeTxBuilder(
+    wu.TransactionBuilder makeTxBuilder(
       List<Vout> utxosCurrency,
       Map<Security, List<Vout>> utxosBySecurity,
       SendEstimate estimate,
     ) {
-      final wallet_utils.TransactionBuilder txb =
-          wallet_utils.TransactionBuilder(
+      final wu.TransactionBuilder txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1446,9 +1444,9 @@ class TransactionMaker {
         security: security,
       );
     }
-    wallet_utils.TransactionBuilder txb =
+    wu.TransactionBuilder txb =
         makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
-    wallet_utils.Transaction tx = txb.buildSpoofedSigs();
+    wu.Transaction tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
     txb = makeTxBuilder(utxosCurrency, utxosBySecurity, estimate);
@@ -1458,23 +1456,23 @@ class TransactionMaker {
     await txb.signEachInput(spentUtxos);
     // gives error: incomplete transaction even though inputs and outputs are there and signed, I think.
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
   /// transactionSweepAll above is only called when it is known there are no
   /// more than 1000 inputs. This function is called when there are more than
   /// 1000 asset inputs.
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
+  Future<Tuple2<wu.Transaction, SendEstimate>>
       transactionSweepAssetIncrementally(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
     required Map<Security, List<Vout>> utxosBySecurity,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
     int? assetMemoExpiry,
   }) async {
-    wallet_utils.TransactionBuilder? txb;
-    wallet_utils.Transaction tx;
+    wu.TransactionBuilder? txb;
+    wu.Transaction tx;
     int feeSats = 0;
     // Grab required assets for transfer amount
     List<Vout> utxosRaven = <Vout>[];
@@ -1486,7 +1484,7 @@ class TransactionMaker {
     int returnRaven = -1; // Init to bad val
     while (returnRaven < 0 || feeSats != estimate.fees) {
       feeSats = estimate.fees;
-      txb = wallet_utils.TransactionBuilder(
+      txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1497,7 +1495,7 @@ class TransactionMaker {
       // We also add inputs in this loop
       for (final Vout utxo in utxosRaven) {
         txb.addInput(utxo.transactionId, utxo.position);
-        satsIn += utxo.rvnValue;
+        satsIn += utxo.coinValue;
       }
       for (final Vout utxo in utxosSecurity) {
         txb.addInput(utxo.transactionId, utxo.position);
@@ -1526,24 +1524,23 @@ class TransactionMaker {
     await txb!.signEachInput(utxosRaven + utxosSecurity);
     tx = txb.build();
     estimate.setUTXOs(utxosRaven + utxosSecurity);
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>>
+  Future<Tuple2<wu.Transaction, SendEstimate>>
       transactionSendAllRVNIncrementally(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
     required List<Vout> utxosCurrency,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
     int? assetMemoExpiry,
   }) async {
-    wallet_utils.TransactionBuilder makeTxBuilder(
+    wu.TransactionBuilder makeTxBuilder(
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
-      final wallet_utils.TransactionBuilder txb =
-          wallet_utils.TransactionBuilder(
+      final wu.TransactionBuilder txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1563,34 +1560,32 @@ class TransactionMaker {
       return txb;
     }
 
-    wallet_utils.TransactionBuilder txb =
-        makeTxBuilder(utxosCurrency, estimate);
-    wallet_utils.Transaction tx = txb.buildSpoofedSigs();
+    wu.TransactionBuilder txb = makeTxBuilder(utxosCurrency, estimate);
+    wu.Transaction tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
     estimate.setUTXOs(utxosCurrency);
     txb = makeTxBuilder(utxosCurrency, estimate);
     await txb.signEachInput(utxosCurrency);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 
   /// CLAIM FEATURE:
   /// instead of getting the vouts as we normally would, we get them from stream
-  Future<Tuple2<wallet_utils.Transaction, SendEstimate>> claimAllEVR(
+  Future<Tuple2<wu.Transaction, SendEstimate>> claimAllEVR(
     String toAddress,
     SendEstimate estimate, {
     required Wallet wallet,
-    wallet_utils.FeeRate? feeRate,
+    wu.FeeRate? feeRate,
     Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
-    wallet_utils.TransactionBuilder makeTxBuilder(
+    wu.TransactionBuilder makeTxBuilder(
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
-      final wallet_utils.TransactionBuilder txb =
-          wallet_utils.TransactionBuilder(
+      final wu.TransactionBuilder txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
@@ -1611,13 +1606,13 @@ class TransactionMaker {
     }
 
     final List<Vout> utxos = estimate.utxos;
-    wallet_utils.TransactionBuilder txb = makeTxBuilder(utxos, estimate);
-    wallet_utils.Transaction tx = txb.buildSpoofedSigs();
+    wu.TransactionBuilder txb = makeTxBuilder(utxos, estimate);
+    wu.Transaction tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
     txb = makeTxBuilder(utxos, estimate);
     await txb.signEachInput(utxos);
     tx = txb.build();
-    return Tuple2<wallet_utils.Transaction, SendEstimate>(tx, estimate);
+    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
 }

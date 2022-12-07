@@ -15,7 +15,7 @@ class Cipher with EquatableMixin {
   @override
   String toString() => toMap.toString();
 
-  Map<String, dynamic> get toMap => {
+  Map<String, dynamic> get toMap => <String, dynamic>{
         'CipherType': cipherType.name,
         'PasswordId': passwordId.toString(),
         'Cipher': cipher.toString(),
