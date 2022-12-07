@@ -9,16 +9,16 @@ part 'transaction.g.dart';
 @HiveType(typeId: TypeId.Transaction)
 class Transaction with EquatableMixin {
   @HiveField(0)
-  String id;
+  final String id;
 
   @HiveField(1)
-  bool confirmed;
+  final bool confirmed;
 
   @HiveField(2)
-  int? time;
+  final int? time;
 
   @HiveField(3)
-  int? height;
+  final int? height;
 
   /// other possible tx elements from transaction.get
   //final String hash;
@@ -36,7 +36,7 @@ class Transaction with EquatableMixin {
   //// 0 if its in the most recent block.
   //// 1 if another block has passed.
 
-  Transaction({
+  const Transaction({
     required this.id,
     required this.confirmed,
     this.time,

@@ -129,8 +129,9 @@ class WalletService {
           seedWallet.subwallet(address.hdIndex, exposure: address.exposure);
       return hdWallet.keyPair;
     } else if (wallet is SingleWallet) {
-      final KPWallet kpWallet = services.wallet.single.getKPWallet(wallet);
-      return kpWallet.keyPair;
+      //final KPWallet kpWallet = services.wallet.single.getKPWallet(wallet);
+      //return kpWallet.keyPair;
+      return (await wallet.kpWallet).keyPair;
     } else {
       throw ArgumentError('wallet type unknown');
     }

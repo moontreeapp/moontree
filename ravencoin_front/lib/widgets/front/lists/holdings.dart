@@ -48,7 +48,7 @@ class _HoldingList extends State<HoldingList> {
     if (x == 0) {
       x = pros.assets.length;
     }
-    return (Current.wallet.RVNValue > 0 ? 1 : 0) + x;
+    return (Current.wallet.rvnValue > 0 ? 1 : 0) + x;
   }
 
   @override
@@ -183,7 +183,9 @@ class _HoldingList extends State<HoldingList> {
         currentIsLeader && (streams.client.busy.value || addresses.length < 40);
     if (!currentIsLeader) {
       // single wallets sometimes never stop spinning
-      streams.client.busy.add(false);
+      //if (!streams.client.busy.value || ) {
+      //  streams.client.busy.add(false);
+      //}
     }
 
     if (overrideGettingStarted && balances.isEmpty) {
@@ -196,12 +198,22 @@ class _HoldingList extends State<HoldingList> {
       return _holdingsView(context);
     }
 
-    if (pros.wallets.length == 1 && balances.isEmpty && transactions.isEmpty) {
-      return ComingSoonPlaceholder(
-          scrollController: widget.scrollController,
-          header: 'Get Started',
-          message:
-              'Use the Import or Receive button to add ${pros.settings.chain.title} & assets to your wallet.');
+    if (pros.wallets.length == 1 &&
+        balances.isEmpty &&
+        transactions.isEmpty &&
+        streams.claim.unclaimed.value
+            .getOr(Current.walletId, <Vout>{}).isEmpty) {
+      return GestureDetector(
+          // did not refresh fall back...
+          onTap: () => setState(() {
+                print('tapped getting started');
+                FocusScope.of(context).unfocus;
+              }),
+          child: ComingSoonPlaceholder(
+              scrollController: widget.scrollController,
+              header: 'Get Started',
+              message:
+                  'Use the Import or Receive button to add ${pros.settings.chain.title} & assets to your wallet.'));
     } else if (balances.isEmpty && transactions.isEmpty && busy) {
       return GestureDetector(
           // did not refresh fall back...
@@ -214,6 +226,7 @@ class _HoldingList extends State<HoldingList> {
               count: max(holdingCount, 1),
               holding: true));
     } else if (balances.isEmpty && transactions.isEmpty && !busy) {
+      print(streams.claim.unclaimed.value);
       if (Current.wallet.unspents.isNotEmpty) {
         refresh();
         return components.empty.getAssetsPlaceholder(context,

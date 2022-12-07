@@ -31,9 +31,10 @@ extension WalletHasOneHighestIndexByExposure on Wallet {
   int highestIndexOf(NodeExposure exposure, [Chain? chain, Net? net]) =>
       addressesBy(exposure, chain, net).fold(
           -1,
-          (previousValue, element) => element.hdIndex > previousValue
-              ? element.hdIndex
-              : previousValue);
+          (int previousValue, Address element) =>
+              element.hdIndex > previousValue
+                  ? element.hdIndex
+                  : previousValue);
 }
 
 extension WalletHasManyBalances on Wallet {
@@ -42,19 +43,19 @@ extension WalletHasManyBalances on Wallet {
 
 extension WalletHasManyVouts on Wallet {
   Iterable<Vout> get vouts =>
-      pros.vouts.records.where((vout) => vout.wallet?.id == id);
+      pros.vouts.records.where((Vout vout) => vout.wallet?.id == id);
 }
 
 extension WalletHasManyVins on Wallet {
   Iterable<Vin> get vins =>
-      pros.vins.records.where((vin) => vin.wallet?.id == id);
+      pros.vins.records.where((Vin vin) => vin.wallet?.id == id);
 }
 
 extension WalletHasManyTransactions on Wallet {
   Set<Transaction> get transactions {
     try {
-      return (vouts.map((vout) => vout.transaction!).toList() +
-              vins.map((vin) => vin.transaction!).toList())
+      return (vouts.map((Vout vout) => vout.transaction!).toList() +
+              vins.map((Vin vin) => vin.transaction!).toList())
           .toSet()
         ..remove(null);
     } catch (e) {
@@ -72,10 +73,10 @@ extension WalletHasManyHoldingCount on Wallet {
       .length;
 }
 
-extension WalletHasRVNValue on Wallet {
-  int get RVNValue => balances
+extension WalletHasrvnValue on Wallet {
+  int get rvnValue => balances
       .where((Balance b) => b.security.symbol == 'RVN')
-      .fold(0, (running, Balance b) => b.value + running);
+      .fold(0, (int running, Balance b) => b.value + running);
 }
 
 //extension WalletHasAssetValue on Wallet {
@@ -101,14 +102,14 @@ extension WalletHasManyGapAddresses on Wallet {
     Net? net,
   ]) =>
       addressesBy(exposure, chain, net)
-          .where((address) => address.status?.status != null);
+          .where((Address address) => address.status?.status != null);
 
   Iterable<Address> emptyAddresses(
     NodeExposure exposure, [
     Chain? chain,
     Net? net,
   ]) =>
-      addressesBy(exposure, chain, net).where((address) =>
+      addressesBy(exposure, chain, net).where((Address address) =>
           address.status != null && address.status!.status == null);
 
   Address minimumEmptyAddress(
@@ -116,16 +117,16 @@ extension WalletHasManyGapAddresses on Wallet {
     Chain? chain,
     Net? net,
   }) {
-    final x = emptyAddresses(exposure, chain, net).toList();
+    final List<Address> x = emptyAddresses(exposure, chain, net).toList();
     // KPWallets have only one address that is probably used
     if (x.isEmpty) {
       return addressesFor(chain, net).first;
     }
-    final y = x.fold(
+    final int y = x.fold(
         999999999,
         (int previousValue, Address element) =>
             element.hdIndex < previousValue ? element.hdIndex : previousValue);
-    return x.where((element) => element.hdIndex == y).first;
+    return x.where((Address element) => element.hdIndex == y).first;
   }
 
   Iterable<Address> emptyAddressesAfterIndex(
@@ -134,7 +135,7 @@ extension WalletHasManyGapAddresses on Wallet {
     Chain? chain,
     Net? net,
   ]) =>
-      addressesBy(exposure, chain, net).where((address) =>
+      addressesBy(exposure, chain, net).where((Address address) =>
           address.hdIndex > index && address.status?.status == null);
 
   int highestUsedIndex(
@@ -166,18 +167,20 @@ extension WalletHasManyGapAddresses on Wallet {
     Chain? chain,
     Net? net,
   ]) {
-    final gap = gapAddresses(exposure, chain, net).toList();
+    final List<Address> gap = gapAddresses(exposure, chain, net).toList();
     // KPWallets have only one address that is probably used
-    if (gap.isEmpty) return addressesFor(chain, net).first;
-    final lowest = gap.fold(double.maxFinite.toInt(),
+    if (gap.isEmpty) {
+      return addressesFor(chain, net).first;
+    }
+    final int lowest = gap.fold(double.maxFinite.toInt(),
         (int prev, Address addr) => addr.hdIndex < prev ? addr.hdIndex : prev);
-    return gap.where((element) => element.hdIndex == lowest).first;
+    return gap.where((Address element) => element.hdIndex == lowest).first;
   }
 }
 
 extension WalletHasManyEmptyInternalAddresses on Wallet {
   Iterable<Address> get emptyInternalAddresses =>
-      addressesFor().where((address) =>
+      addressesFor().where((Address address) =>
           address.exposure == NodeExposure.internal &&
           address.status?.status == null);
   //internalAddresses.where((address) => address.vouts.isEmpty);
@@ -185,7 +188,7 @@ extension WalletHasManyEmptyInternalAddresses on Wallet {
 
 extension WalletHasManyEmptyExternalAddresses on Wallet {
   Iterable<Address> get emptyExternalAddresses =>
-      addressesFor().where((address) =>
+      addressesFor().where((Address address) =>
           address.exposure == NodeExposure.external &&
           address.status?.status == null);
   //externalAddresses.where((address) => address.vouts.isEmpty);
@@ -193,7 +196,7 @@ extension WalletHasManyEmptyExternalAddresses on Wallet {
 
 extension WalletHasManyUsedInternalAddresses on Wallet {
   Iterable<Address> get usedInternalAddresses =>
-      addressesFor().where((address) =>
+      addressesFor().where((Address address) =>
           address.exposure == NodeExposure.internal &&
           address.status?.status != null);
   //internalAddresses.where((address) => address.vouts.isNotEmpty);
@@ -201,7 +204,7 @@ extension WalletHasManyUsedInternalAddresses on Wallet {
 
 extension WalletHasManyUsedExternalAddresses on Wallet {
   Iterable<Address> get usedExternalAddresses =>
-      addressesFor().where((address) =>
+      addressesFor().where((Address address) =>
           address.exposure == NodeExposure.external &&
           address.status?.status != null);
   //externalAddresses.where((address) => address.vouts.isNotEmpty);

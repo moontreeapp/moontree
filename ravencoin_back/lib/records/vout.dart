@@ -10,31 +10,31 @@ part 'vout.g.dart';
 @HiveType(typeId: TypeId.Vout)
 class Vout with EquatableMixin, ToStringMixin {
   @HiveField(0)
-  String transactionId;
+  final String transactionId;
 
   @HiveField(1)
-  int position;
+  final int position;
 
   // transaction type 'pubkeyhash' 'transfer_asset' 'new_asset' 'nulldata' etc
   @HiveField(2)
-  String type;
+  final String type;
 
   @HiveField(3)
-  int rvnValue; // always RVN
+  final int rvnValue; // always RVN
 
   // amount of asset
   @HiveField(4)
-  int? assetValue;
+  final int? assetValue;
 
   // used in asset transfers
   @HiveField(5)
-  String? lockingScript;
+  final String? lockingScript;
 
   @HiveField(6)
-  String? memo;
+  final String? memo;
 
   @HiveField(7)
-  String? assetMemo;
+  final String? assetMemo;
 
   /// other values include
   // final double value;
@@ -42,17 +42,17 @@ class Vout with EquatableMixin, ToStringMixin {
 
   // this is the composite id
   @HiveField(8)
-  String? assetSecurityId;
+  final String? assetSecurityId;
 
   // non-multisig transactions // op return memos don't have a to address
   @HiveField(9)
-  String? toAddress;
+  final String? toAddress;
 
   // multisig, in addition to toAddress
   @HiveField(10)
-  List<String>? additionalAddresses;
+  final List<String>? additionalAddresses;
 
-  Vout({
+  const Vout({
     required this.transactionId,
     required this.position,
     required this.type,

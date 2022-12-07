@@ -13,18 +13,18 @@ part 'balance.g.dart';
 class Balance with EquatableMixin {
   // do we need unique ID?
   @HiveField(0)
-  String walletId;
+  final String walletId;
 
   @HiveField(1)
-  Security security;
+  final Security security;
 
   @HiveField(2)
-  int confirmed;
+  final int confirmed;
 
   @HiveField(3)
-  int unconfirmed;
+  final int unconfirmed;
 
-  Balance({
+  const Balance({
     required this.walletId,
     required this.security,
     required this.confirmed,

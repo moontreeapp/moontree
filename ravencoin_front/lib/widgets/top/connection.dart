@@ -132,8 +132,8 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   @override
   Widget build(BuildContext context) {
-    final circleIcon = AnimatedContainer(
-      duration: Duration(milliseconds: 200),
+    final AnimatedContainer circleIcon = AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
       height: 8,
       width: 8,
       decoration: BoxDecoration(
@@ -144,7 +144,7 @@ class _ConnectionLightState extends State<ConnectionLight>
     return GestureDetector(
       onTap: navToBlockchain,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 400),
         alignment: Alignment.center,
         padding: EdgeInsets.zero,
         child: pros.settings.chain == Chain.none
@@ -158,11 +158,11 @@ class _ConnectionLightState extends State<ConnectionLight>
                 ColorFiltered(
                     colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
                     child: components.icons.assetAvatar(
-                        pros.settings.chain.symbol,
-                        net: pros.settings.net,
-                        height: 26,
-                        width: 26,
-                        circled: true)),
+                      pros.settings.chain.symbol,
+                      net: pros.settings.net,
+                      height: 26,
+                      width: 26,
+                    )),
                 components.icons.assetAvatar(pros.settings.chain.symbol,
                     net: pros.settings.net, height: 24, width: 24),
               ]),
@@ -176,9 +176,13 @@ class _ConnectionLightState extends State<ConnectionLight>
       : connectionStatusColor;
 
   void navToBlockchain() {
-    if (streams.app.scrim.value == true) return;
-    if (streams.app.loading.value == true) return;
-    if (![
+    if (streams.app.scrim.value ?? false) {
+      return;
+    }
+    if (streams.app.loading.value == true) {
+      return;
+    }
+    if (!<String>[
       'Login',
       'Createlogin',
       'Network',
@@ -202,9 +206,10 @@ class SpoofedConnectionLight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color connectionStatusColor = AppColors.success;
-    var icon = ColorFiltered(
-        colorFilter: ColorFilter.mode(connectionStatusColor, BlendMode.srcATop),
+    const Color connectionStatusColor = AppColors.success;
+    final ColorFiltered icon = ColorFiltered(
+        colorFilter:
+            const ColorFilter.mode(connectionStatusColor, BlendMode.srcATop),
         child: SvgPicture.asset('assets/status/icon.svg'));
     return IconButton(
       splashRadius: 24,

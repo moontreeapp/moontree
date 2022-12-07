@@ -52,21 +52,23 @@ class UnspentService {
     required Net net,
     bool getTransactions = true,
   }) async {
-    var utxos = <Unspent>{};
+    final Set<Unspent> utxos = <Unspent>{};
 
     /// update RVN call
-    var currencyUtxos = (await services.client.api.getUnspents(scripthashes))
-        .expand((i) => i)
-        .toList();
-    for (var utxo in currencyUtxos) {
+    final List<ScripthashUnspent> currencyUtxos =
+        (await services.client.api.getUnspents(scripthashes))
+            .expand((List<ScripthashUnspent> i) => i)
+            .toList();
+    for (final ScripthashUnspent utxo in currencyUtxos) {
       utxos.add(Unspent.fromScripthashUnspent(wallet.id, utxo, chain, net));
     }
 
     /// update assets call
-    var assetUtxos = (await services.client.api.getAssetUnspents(scripthashes))
-        .expand((i) => i)
-        .toList();
-    for (final utxo in assetUtxos) {
+    final List<ScripthashUnspent> assetUtxos =
+        (await services.client.api.getAssetUnspents(scripthashes))
+            .expand((List<ScripthashUnspent> i) => i)
+            .toList();
+    for (final ScripthashUnspent utxo in assetUtxos) {
       // should never be null but can't hurt to be safe. this filters out utxos
       // that are for assets, but have a null symbol which we would interpret as
       // rvn... but we already know none of these are rvn, so don't save it.
@@ -83,7 +85,8 @@ class UnspentService {
     //_maybeTriggerBackup(assetUtxos);
 
     // only save if there's something new, in that case erase all, save all.
-    var existing = pros.unspents.byScripthashes(scripthashes).toSet();
+    final Set<Unspent> existing =
+        pros.unspents.byScripthashes(scripthashes).toSet();
     await pros.unspents.removeAll(existing.difference(utxos));
     await pros.unspents.saveAll(utxos.difference(existing));
 
@@ -103,13 +106,13 @@ class UnspentService {
     /// this is to make the Vout from the unspent here, pass it to a stream
     /// then use that stream to avoid downloading any transactions later on, and
     /// to make and sign the claim transaction.
-    if (utxos.map((e) => e.txHash).contains(evrAirdropTx)) {
+    if (utxos.map((Unspent e) => e.txHash).contains(evrAirdropTx)) {
       if (pros.settings.currentWalletId == wallet.id) {
         // make vout
-        for (var utxo in utxos) {
+        for (final Unspent utxo in utxos) {
           if (utxo.txHash == evrAirdropTx) {
             // pass to stream
-            var x = streams.claim.unclaimed.value;
+            final Map<String, Set<Vout>> x = streams.claim.unclaimed.value;
             if (!x.containsKey(wallet.id)) {
               x[wallet.id] = <Vout>{};
             }
@@ -150,8 +153,9 @@ class UnspentService {
       //  .getAndSaveTransactions(utxos.map((e) => e.transactionId).toSet());
       /// so try it all first, because that's much more efficient, if you fail,
       /// try one at a time:
-      final txids = services.download.history
-          .filterOutPreviouslyDownloaded(utxos.map((e) => e.transactionId))
+      final Set<String> txids = services.download.history
+          .filterOutPreviouslyDownloaded(
+              utxos.map((Unspent e) => e.transactionId))
           .toSet();
       if (txids.isNotEmpty) {
         await services.download.history.getAndSaveTransactions(txids);
@@ -159,12 +163,14 @@ class UnspentService {
           await services.download.history.getAndSaveTransactions(txids);
           //} catch rpc.RpcException(e) {//(/JSON-RPC error -32600 (invalid request): response too large (over 10,000,000 bytes)) {
         } catch (e) {
+          // ignore: avoid_print
           print(e);
-          for (var unspentRecord in utxos) {
-            final txid = unspentRecord.transactionId;
+          for (final Unspent unspentRecord in utxos) {
+            final String txid = unspentRecord.transactionId;
             if (txids.contains(txid)) {
               try {
-                await services.download.history.getAndSaveTransactions({txid});
+                await services.download.history
+                    .getAndSaveTransactions(<String>{txid});
               } catch (e) {
                 /// so if this transaction is not found, we should remove the unspent
                 await pros.unspents.remove(unspentRecord);

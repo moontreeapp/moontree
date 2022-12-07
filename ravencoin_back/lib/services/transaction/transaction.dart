@@ -485,7 +485,6 @@ class TransactionService {
     final int claimAmount = utxos
         .map((Vout e) => e.rvnValue)
         .reduce((int value, int element) => value + element);
-
     final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
         await services.transaction.make.claimAllEVR(
       destinationAddress,
@@ -522,7 +521,7 @@ class TransactionService {
         .where((Balance b) => !pros.securities.coins.contains(b.security))
         .toList();
 
-    if (from.unspents.isEmpty || from.RVNValue == 0) {
+    if (from.unspents.isEmpty || from.rvnValue == 0) {
       // unable to perform any transactions
       return usedUTXOs;
     }
@@ -537,7 +536,7 @@ class TransactionService {
           final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
               await services.transaction.make.transactionSweepAll(
             destinationAddress,
-            SendEstimate(from.RVNValue, memo: memo),
+            SendEstimate(from.rvnValue, memo: memo),
             wallet: from,
             securities: assetBalances.map((Balance e) => e.security).toSet(),
             feeRate: wallet_utils.FeeRates.standard,
@@ -679,7 +678,7 @@ class TransactionService {
         final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
             await services.transaction.make.transactionSendAllRVN(
           destinationAddress,
-          SendEstimate(from.RVNValue, memo: memo),
+          SendEstimate(from.rvnValue, memo: memo),
           wallet: from,
           feeRate: wallet_utils.FeeRates.standard,
         );
@@ -694,7 +693,7 @@ class TransactionService {
       } else {
         // get all utxos
         final List<Vout> cryptoUtxos = (await services.balance
-                .collectUTXOs(walletId: from.id, amount: from.RVNValue))
+                .collectUTXOs(walletId: from.id, amount: from.rvnValue))
             .where((Vout e) => !usedUTXOs!.contains(e))
             .toList();
         // batch by limit and make transaction
@@ -775,7 +774,7 @@ class TransactionService {
     // if we have assets, send them, and send all the rvn
     // if we don't have assets or don't want to send them, just sendallRVN
 
-    if (from.unspents.isEmpty || from.RVNValue == 0) {
+    if (from.unspents.isEmpty || from.rvnValue == 0) {
       // unable to perform any transactions
       return false;
     }

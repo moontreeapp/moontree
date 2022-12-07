@@ -9,15 +9,15 @@ part 'status.g.dart';
 @HiveType(typeId: TypeId.Status)
 class Status with EquatableMixin {
   @HiveField(0)
-  String linkId; // the headers, address, asset
+  final String linkId; // the headers, address, asset
 
   @HiveField(1)
-  StatusType statusType; // headers, address, asset
+  final StatusType statusType; // headers, address, asset
 
   @HiveField(2)
-  String? status;
+  final String? status;
 
-  Status({
+  const Status({
     required this.linkId,
     required this.statusType,
     this.status,

@@ -20,16 +20,16 @@ extension ByIdMethodsForSecret on Index<_IdKey, Secret> {
 
 class _LinkKey extends Key<Secret> {
   @override
-  String getKey(Secret secret) => secret.linkId.toString();
+  String getKey(Secret secret) => secret.linkId;
 }
 
 extension ByPasswordMethodsForSecret on Index<_LinkKey, Secret> {
   List<Secret> getOne(String? pubkey, String? scripthash, int? passwordId) =>
-      getByKeyStr(Secret.LinkId(pubkey, scripthash, passwordId));
+      getByKeyStr(Secret.linkKey(pubkey, scripthash, passwordId));
   Secret? getOneByPubkey(String pubkey) =>
-      getByKeyStr(Secret.LinkId(pubkey, null, null)).firstOrNull;
+      getByKeyStr(Secret.linkKey(pubkey, null, null)).firstOrNull;
   Secret? getOneByScripthash(String scripthash) =>
-      getByKeyStr(Secret.LinkId(null, scripthash, null)).firstOrNull;
+      getByKeyStr(Secret.linkKey(null, scripthash, null)).firstOrNull;
   Secret? getOneByPasswordId(int passwordId) =>
-      getByKeyStr(Secret.LinkId(null, null, passwordId)).firstOrNull;
+      getByKeyStr(Secret.linkKey(null, null, passwordId)).firstOrNull;
 }

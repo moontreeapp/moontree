@@ -101,8 +101,15 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
       ? GestureDetector(
           onTap: () async {
             if (services.developer.developerMode) {
-              print(pros.settings.loginAttempts.runtimeType);
-              print(services.tutorial.completed);
+              //print(pros.addresses.byAddress
+              //    .getOne('RGysusDLhhrYEKrdPjw4xwXE8P7q5Hwtuf'));
+              //print(Current.wallet.addresses);
+              //print(pros.addresses.records);
+              print(streams.claim.unclaimed.value);
+
+              //print((await services.wallet
+              //        .getAddressKeypair(pros.addresses.records.first))
+              //    .toWIF());
             }
           },
           child: appBar,

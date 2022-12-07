@@ -18,7 +18,7 @@ class VinProclaim extends Proclaim<_IdKey, Vin> {
         addIndexMultiple('voutTransaction', _VoutTransactionIdKey());
   }
 
-  Iterable<Vin> get dangling => records.where((vin) => vin.vout == null);
+  Iterable<Vin> get dangling => records.where((Vin vin) => vin.vout == null);
   Iterable<Vin> danglingOf(List<Vin> vins) =>
-      vins.where((vin) => vin.vout == null);
+      vins.where((Vin vin) => vin.vout == null);
 }

@@ -1,7 +1,7 @@
 /// this really is just a header object - we could call it headers Proclaim...
 import 'package:collection/collection.dart';
-import 'package:ravencoin_back/records/records.dart';
 import 'package:proclaim/proclaim.dart';
+import 'package:ravencoin_back/records/records.dart';
 
 part 'block.keys.dart';
 

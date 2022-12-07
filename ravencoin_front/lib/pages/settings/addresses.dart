@@ -79,7 +79,8 @@ class _WalletViewState extends State<WalletView> {
       address ??= wallet is LeaderWallet
           ? services.wallet
               .getEmptyAddress(wallet as LeaderWallet, NodeExposure.external)
-          : services.wallet.single.getKPWallet(wallet as SingleWallet).address;
+          : wallet.addresses.first.address;
+      //services.wallet.single.getKPWallet(wallet as SingleWallet).address;
     }
     disabled = Current.holdings.isEmpty;
     return DefaultTabController(

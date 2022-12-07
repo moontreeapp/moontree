@@ -11,7 +11,7 @@ import 'waiter.dart';
 
 class LeaderWaiter extends Waiter {
   Set<Change<Wallet>> backlog = {};
-  final _backlogLock = ReaderWriterLock();
+  final ReaderWriterLock _backlogLock = ReaderWriterLock();
 
   void init() {
     /*
@@ -40,37 +40,23 @@ class LeaderWaiter extends Waiter {
             streams.client.connected,
             pros.ciphers.changes,
             (ConnectionStatus connectionStatus, Change<Cipher> change) =>
-                Tuple2(connectionStatus, change)).where((t) =>
-            t.item2.record.cipherType != CipherType.none && // only on startup
-            t.item1 == ConnectionStatus.connected),
+                Tuple2<ConnectionStatus, Change<Cipher>>(
+                    connectionStatus, change)).where(
+            (Tuple2<ConnectionStatus, Change<Cipher>> t) =>
+                t.item2.record.cipherType !=
+                    CipherType.none && // only on startup
+                t.item1 == ConnectionStatus.connected),
         (Tuple2<ConnectionStatus, Change<Cipher>> tuple) async =>
-            pros.wallets.leaders.forEach((wallet) async =>
-                !services.wallet.leader.gapSatisfied(wallet)
-                    ? await services.wallet.leader
-                        .handleDeriveAddress(leader: wallet)
-                    : () {}));
+            pros.wallets.leaders.forEach(checkGap));
 
     listen(
       'streams.wallet.leaderChanges',
-      CombineLatestStream.combine2(
-          streams.wallet.leaderChanges,
-          streams.client.connected,
-          (Change<Wallet> change, ConnectionStatus connection) =>
-              Tuple2(change, connection)),
-      (Tuple2<Change<Wallet>, ConnectionStatus> tuple) async {
-        final change = tuple.item1;
-        final status = tuple.item2;
+      streams.wallet.leaderChanges,
+      (Change<Wallet> change) async {
         await _backlogLock.write(() => backlog.add(change));
-        if (status == ConnectionStatus.connected) {
-          print('derviving from leader2?');
-          await _backlogLock.read(() {
-            for (var walletChange in backlog) {
-              handleLeaderChange(walletChange);
-            }
-          });
+        if (streams.client.connected.value == ConnectionStatus.connected) {
+          await _backlogLock.read(() => backlog.forEach(handleLeaderChange));
           await _backlogLock.write(() => backlog.clear());
-        } else {
-          /// should I be adding this to backlog here?
         }
       },
     );
@@ -91,14 +77,14 @@ class LeaderWaiter extends Waiter {
   void handleLeaderChange(Change<Wallet> change) {
     change.when(
         // never gets called because we load before this waiter is listening...
-        loaded: (loaded) async {},
-        added: (added) async {
+        loaded: (Loaded<Wallet> loaded) async {},
+        added: (Added<Wallet> added) async {
           if (added.record is LeaderWallet) {
             await services.wallet.leader
                 .handleDeriveAddress(leader: added.record as LeaderWallet);
           }
         },
-        updated: (updated) async {
+        updated: (Updated<Wallet> updated) async {
           /*
           /// app is switched to mainnet to testnet or testnet to mainnet... 
           /// we need to derive all the addresses again.
@@ -113,11 +99,17 @@ class LeaderWaiter extends Waiter {
           handleDeriveAddress(leader: leader as LeaderWallet);
           */
         },
-        removed: (removed) {
+        removed: (Removed<Wallet> removed) {
           /// should only happen when replacing the initial blank wallet
           pros.addresses.removeAll(removed.record.addresses.toList());
           services.client.subscribe.subscriptionHandlesAddress
               .remove(removed.record.id);
         });
+  }
+
+  Future<void> checkGap(LeaderWallet wallet) async {
+    if (!services.wallet.leader.gapSatisfied(wallet)) {
+      await services.wallet.leader.handleDeriveAddress(leader: wallet);
+    }
   }
 }
