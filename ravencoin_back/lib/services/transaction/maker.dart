@@ -304,6 +304,7 @@ class SendRequest with ToStringMixin {
 class SendEstimate with ToStringMixin {
   SendEstimate(
     this.amount, {
+    this.sendAll = false,
     this.fees = 0,
     List<Vout>? utxos,
     this.security,
@@ -318,6 +319,7 @@ class SendEstimate with ToStringMixin {
   }
 
   int amount; //sats
+  bool sendAll;
   int fees;
   List<Vout> utxos;
   Security? security;
@@ -385,6 +387,7 @@ class TransactionMaker {
   ) async {
     final SendEstimate estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
+      sendAll: sendRequest.sendAll,
       security: sendRequest.security == pros.securities.currentCoin
           ? null
           : sendRequest.security,
@@ -1343,12 +1346,20 @@ class TransactionMaker {
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
+      int total = 0;
       final wu.TransactionBuilder txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
       for (final Vout utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
+        total = total + utxo.coinValue;
+      }
+      if (total != estimate.amount &&
+          total != estimate.amount + estimate.fees) {
+        throw Exception(
+            'During creation of the "send all" transaction the total amount we '
+            'could send changed. Transaction Failed.');
       }
       txb.addOutput(
         toAddress,

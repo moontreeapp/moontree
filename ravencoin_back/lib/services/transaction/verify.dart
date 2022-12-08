@@ -35,9 +35,16 @@ class FeeGuard {
   }
 
   bool calculated() {
-    if (estimate.utxoCoinTotal > estimate.total) {
-      throw FeeGuardException(
-          'total ins and total outs do not match during a send all transaction.');
+    if (estimate.sendAll) {
+      if (((estimate.security == null ||
+                  estimate.security == pros.securities.currentCoin) &&
+              estimate.utxoCoinTotal > estimate.total) ||
+          ((estimate.security != null &&
+                  estimate.security == pros.securities.currentCoin) &&
+              estimate.utxoCoinTotal > estimate.total + estimate.changeDue)) {
+        throw FeeGuardException(
+            'total ins and total outs do not match during a send all transaction.');
+      }
     }
     return true;
   }
