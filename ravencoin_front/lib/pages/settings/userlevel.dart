@@ -24,7 +24,7 @@ class _AdvancedState extends State<Advanced> {
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: ListView(
           padding: const EdgeInsets.all(16),

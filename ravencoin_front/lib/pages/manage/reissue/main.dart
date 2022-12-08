@@ -40,7 +40,7 @@ class _ReissueMainAssetState extends State<ReissueMainAsset> {
         reissuable: asset.reissuable,
       ));
       return BackdropLayers(
-          back: BlankBack(),
+          back: const BlankBack(),
           front: FrontCurve(
               child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
@@ -48,7 +48,7 @@ class _ReissueMainAssetState extends State<ReissueMainAsset> {
           )));
     }
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -56,5 +56,5 @@ class _ReissueMainAssetState extends State<ReissueMainAsset> {
         )));
   }
 
-  Widget body() => ReissueAsset(preset: FormPresets.main);
+  Widget body() => const ReissueAsset(preset: FormPresets.main);
 }

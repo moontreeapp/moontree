@@ -1,4 +1,3 @@
-import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -67,7 +66,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               textInputAction: TextInputAction.next,
               suffixIcon: IconButton(
                 icon: const Padding(
-                    padding: EdgeInsets.only(right: 14),
+                    padding: const EdgeInsets.only(right: 14),
                     child: Icon(Icons.expand_more_rounded,
                         color: Color(0xDE000000))),
                 onPressed: _produceBlockchainModal,

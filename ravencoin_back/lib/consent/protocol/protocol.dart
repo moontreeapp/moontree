@@ -19,7 +19,8 @@ class Protocol extends _i1.SerializationManager {
 
   factory Protocol() => _instance;
 
-  static final Map<Type, _i1.constructor> customConstructors = {};
+  static final Map<Type, _i1.constructor> customConstructors =
+      <Type, _i1.constructor>{};
 
   static final Protocol _instance = Protocol._();
 

@@ -6,15 +6,16 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
-
 class CipherService {
   /// used in decrypting backups - we don't know what cipher it was encrypted with... we could save it...
-  List<CipherType> get allCipherTypes => [CipherType.aes, CipherType.none];
+  List<CipherType> get allCipherTypes =>
+      <CipherType>[CipherType.aes, CipherType.none];
 
   int gracePeriod = 60 * 1;
   DateTime? lastLoginTime;
   DateTime loginTime() => lastLoginTime = DateTime.now();
 
+  // ignore: avoid_bool_literals_in_conditional_expressions
   bool get canAskForPasswordNow => lastLoginTime == null
       ? true
       : DateTime.now().difference(lastLoginTime!).inSeconds >= gracePeriod;
@@ -139,7 +140,7 @@ class CipherService {
     password = getPassword(password: password, altPassword: altPassword);
     salt = getSalt(salt: salt, altSalt: altSalt);
     return pros.ciphers.registerCipher(
-      password == []
+      password == <dynamic>[]
           ? CipherUpdate(CipherType.none,
               passwordId: pros.passwords.maxPasswordId)
           : currentCipherUpdate,
@@ -161,7 +162,8 @@ class CipherService {
   }
 
   Set<CipherUpdate> get _cipherUpdates =>
-      (services.wallet.getAllCipherUpdates.toList() + [currentCipherUpdate])
+      (services.wallet.getAllCipherUpdates.toList() +
+              <CipherUpdate>[currentCipherUpdate])
           .toSet();
 
   Uint8List getPassword({Uint8List? password, String? altPassword}) {

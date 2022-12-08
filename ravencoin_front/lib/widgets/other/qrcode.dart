@@ -7,7 +7,7 @@ class QRCodeButton extends StatefulWidget {
   final String pageTitle;
   final bool light;
 
-  QRCodeButton({
+  const QRCodeButton({
     Key? key,
     this.pageTitle = 'Home',
     this.light = true,

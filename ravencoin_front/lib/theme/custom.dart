@@ -19,19 +19,19 @@ class CustomTheme with ChangeNotifier {
         primaryColor: AppColors.primary,
         disabledColor: AppColors.disabled,
         fontFamily: 'Nunito',
-        dividerTheme: DividerThemeData(
+        dividerTheme: const DividerThemeData(
           color: AppColors.divider,
           thickness: 1,
           indent: 70,
         ),
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
           iconTheme: IconThemeData.fallback(),
           centerTitle: false,
         ),
-        tooltipTheme: TooltipThemeData(preferBelow: true),
-        textSelectionTheme: TextSelectionThemeData(
+        tooltipTheme: const TooltipThemeData(preferBelow: true),
+        textSelectionTheme: const TextSelectionThemeData(
           cursorColor: AppColors.primary,
           selectionHandleColor: AppColors.primaryDisabled,
           selectionColor: AppColors.disabled,

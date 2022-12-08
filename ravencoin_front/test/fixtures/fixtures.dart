@@ -7,8 +7,8 @@ void useFixtureSources() {
   pros.rates.setSource(MapSource({}));
   pros.securities.setSource(MapSource({
     'RVN:Crypto':
-        Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test),
-    'USD:Fiat': Security(symbol: 'USD', chain: Chain.none, net: Net.test),
+        const Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test),
+    'USD:Fiat': const Security(symbol: 'USD', chain: Chain.none, net: Net.test),
   }));
 }
 

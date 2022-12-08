@@ -22,26 +22,26 @@ class DecorationComponents {
       InputDecoration(
         focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.error, width: 2)),
+            borderSide: const BorderSide(color: AppColors.error, width: 2)),
         errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.error, width: 2)),
+            borderSide: const BorderSide(color: AppColors.error, width: 2)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.primary, width: 2)),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.black12)),
+            borderSide: const BorderSide(color: AppColors.black12)),
         disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.black12)),
+            borderSide: const BorderSide(color: AppColors.black12)),
         labelStyle: Theme.of(context)
             .textTheme
             .subtitle1!
             .copyWith(color: enabled ? null : AppColors.black38),
         alignLabelWithHint: true,
         floatingLabelStyle: labelColor(focusNode, errorText),
-        contentPadding: EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
+        contentPadding: const EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
         labelText: labelText,
         hintText: hintText,
         helperText: getHelperText(focusNode, helperText, alwaysShowHelper),

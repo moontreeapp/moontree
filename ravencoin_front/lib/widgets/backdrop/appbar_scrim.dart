@@ -14,7 +14,7 @@ class AppBarScrim extends StatefulWidget {
 class _AppBarScrimState extends State<AppBarScrim> {
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
-  final Duration waitForSheetDrop = Duration(milliseconds: 10);
+  final Duration waitForSheetDrop = const Duration(milliseconds: 10);
   bool? applyScrim = false;
 
   @override

@@ -8,7 +8,7 @@ String getDerivationPath(
   Net net = Net.main,
 }) =>
     "m/44'/${net == Net.main ? '175' : '1'}'/0'/"
-    '${{
+    '${<NodeExposure, String>{
       NodeExposure.external: '0',
       NodeExposure.internal: '1',
     }[exposure]!}/$index';

@@ -70,7 +70,7 @@ class SlidingPanel extends StatefulWidget {
 
   final PanelState defaultPanelState;
 
-  SlidingPanel(
+  const SlidingPanel(
       {Key? key,
       this.panel,
       this.panelBuilder,
@@ -169,7 +169,7 @@ class _SlidingUpPanelState extends State<SlidingPanel>
         widget.body != null
             ? AnimatedBuilder(
                 animation: _ac,
-                builder: (context, child) {
+                builder: (BuildContext context, child) {
                   return Positioned(
                     top: widget.parallaxEnabled ? _getParallax() : 0.0,
                     child: child ?? const SizedBox(),
@@ -200,7 +200,7 @@ class _SlidingUpPanelState extends State<SlidingPanel>
                 onTap: widget.backdropTapClosesPanel ? () => _close() : null,
                 child: AnimatedBuilder(
                     animation: _ac,
-                    builder: (context, _) {
+                    builder: (BuildContext context, _) {
                       return Container(
                         height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,
@@ -222,7 +222,7 @@ class _SlidingUpPanelState extends State<SlidingPanel>
             : _gestureHandler(
                 child: AnimatedBuilder(
                   animation: _ac,
-                  builder: (context, child) {
+                  builder: (BuildContext context, child) {
                     return Container(
                       height: _ac.value *
                               (MediaQuery.of(context).size.height -

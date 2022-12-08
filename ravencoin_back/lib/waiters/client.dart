@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tuple/tuple.dart';
 import 'package:ravencoin_back/waiters/waiter.dart';
 import 'package:electrum_adapter/methods/server/ping.dart';
 
@@ -11,7 +10,7 @@ class RavenClientWaiter extends Waiter {
   static const Duration originalAdditionalTimeout = Duration(seconds: 1);
   Duration additionalTimeout = originalAdditionalTimeout;
 
-  StreamSubscription? periodicTimer;
+  //StreamSubscription<dynamic>? periodicTimer;
 
   int pinged = 0;
 
@@ -26,7 +25,7 @@ class RavenClientWaiter extends Waiter {
         streams.app.active,
         streams.app.ping,
         (bool active, dynamic ping) => active,
-      ).where((active) => active),
+      ).where((bool active) => active),
       performPing,
     );
   }

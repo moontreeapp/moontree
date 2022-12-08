@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 void main() {
-  final security =
+  const security =
       Security(symbol: 'MOONTREE', chain: Chain.ravencoin, net: Net.test);
   final textC = services.conversion;
 
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('asset amount with divisibilty', () async {
-      await pros.assets.save(Asset(
+      await pros.assets.save(const Asset(
           chain: Chain.ravencoin,
           net: Net.test,
           symbol: 'MOONTREE',
@@ -40,7 +40,7 @@ void main() {
     });
 
     test('asset to RVN then to USD with rate (and divisibility)', () async {
-      await pros.assets.save(Asset(
+      await pros.assets.save(const Asset(
           chain: Chain.ravencoin,
           net: Net.test,
           symbol: 'MOONTREE',
@@ -51,12 +51,12 @@ void main() {
           transactionId: '',
           position: 0));
       await pros.rates.saveAll([
-        Rate(
+        const Rate(
             base:
                 Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test),
             quote: Security(symbol: 'USD', chain: Chain.none, net: Net.test),
             rate: 3.0),
-        Rate(
+        const Rate(
             base: Security(
                 symbol: 'MOONTREE', chain: Chain.ravencoin, net: Net.test),
             quote:
@@ -79,7 +79,7 @@ void main() {
     });
 
     test('RVN to USD with rate', () async {
-      await pros.rates.save(Rate(
+      await pros.rates.save(const Rate(
           base: Security(symbol: 'RVN', chain: Chain.ravencoin, net: Net.test),
           quote: Security(symbol: 'USD', chain: Chain.none, net: Net.test),
           rate: 3.0));

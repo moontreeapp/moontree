@@ -1,44 +1,43 @@
-import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 
 class WalletStreams {
-  final replay = replayWallet$;
-  final leaderChanges = leaderChanges$;
-  final singleChanges = singleChanges$;
-  final deriveAddress = BehaviorSubject<DeriveLeaderAddress?>.seeded(null);
-  final transactions =
+  final Stream<Wallet> replay = replayWallet$;
+  final Stream<Change<Wallet>> leaderChanges = leaderChanges$;
+  final Stream<Change<Wallet>> singleChanges = singleChanges$;
+  final BehaviorSubject<DeriveLeaderAddress?> deriveAddress =
+      BehaviorSubject<DeriveLeaderAddress?>.seeded(null);
+  final BehaviorSubject<WalletExposureTransactions?> transactions =
       BehaviorSubject<WalletExposureTransactions?>.seeded(null);
 }
 
 final Stream<Wallet> replayWallet$ = ReplaySubject<Wallet>()
   ..addStream(pros.wallets.changes
-      .where((change) => change is Loaded || change is Added)
-      .map((added) => added.record));
+      .where((Change<Wallet> change) => change is Loaded || change is Added)
+      .map((Change<Wallet> added) => added.record));
 
-final Stream<Change<Wallet>> leaderChanges$ =
-    pros.wallets.changes.where((change) => change.record is LeaderWallet);
+final Stream<Change<Wallet>> leaderChanges$ = pros.wallets.changes
+    .where((Change<Wallet> change) => change.record is LeaderWallet);
 
-final Stream<Change<Wallet>> singleChanges$ =
-    pros.wallets.changes.where((change) => change.record is SingleWallet);
+final Stream<Change<Wallet>> singleChanges$ = pros.wallets.changes
+    .where((Change<Wallet> change) => change.record is SingleWallet);
 
 class DeriveLeaderAddress {
-  final LeaderWallet leader;
-  final NodeExposure? exposure;
-
   DeriveLeaderAddress({
     required this.leader,
     this.exposure,
   });
+  final LeaderWallet leader;
+  final NodeExposure? exposure;
 }
 
 class WalletExposureTransactions {
-  final Address address;
-  final Iterable<String> transactionIds;
-
   WalletExposureTransactions({
     required this.address,
     required this.transactionIds,
   });
+  final Address address;
+  final Iterable<String> transactionIds;
 
   String get key => produceKey(address.walletId, address.exposure);
   static String produceKey(String walletId, NodeExposure exposure) =>

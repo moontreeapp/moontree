@@ -1,3 +1,5 @@
+export 'package:proclaim/change.dart';
+
 export 'records/records.dart';
 export 'proclaim/proclaim.dart';
 export 'security/security.dart';
@@ -12,5 +14,3 @@ export 'joins/joins.dart';
 
 export 'utilities/utilities.dart';
 export 'lingo/lingo.dart';
-
-export 'package:proclaim/change.dart';

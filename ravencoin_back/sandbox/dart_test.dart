@@ -129,7 +129,7 @@ void main() {
 
   test('DateTime readable', () {
     print(DateTime.now()
-        .subtract(Duration(
+        .subtract(const Duration(
           days: 3,
           hours: 9,
         ))

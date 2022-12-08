@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -20,13 +19,13 @@ class _AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -74,7 +73,7 @@ class _AboutState extends State<About> {
                         color: AppColors.black60,
                         fontWeight: FontWeights.semiBold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     '© 2022 Moontree, LLC',
                     style: Theme.of(context)
@@ -82,7 +81,7 @@ class _AboutState extends State<About> {
                         .subtitle1!
                         .copyWith(color: AppColors.black60),
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                 ]),
           ],
         )));

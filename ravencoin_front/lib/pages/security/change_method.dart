@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -39,7 +38,7 @@ class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
 
   @override
   Widget build(BuildContext context) => BackdropLayers(
-      back: BlankBack(),
+      back: const BlankBack(),
       front: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: FrontCurve(

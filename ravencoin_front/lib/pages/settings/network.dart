@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/colors.dart';
@@ -62,7 +61,7 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),

@@ -60,7 +60,7 @@ class _SweepPageState extends State<SweepPage> {
 
   @override
   Widget build(BuildContext context) => BackdropLayers(
-      back: BlankBack(),
+      back: const BlankBack(),
       front: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: FrontCurve(
@@ -95,7 +95,7 @@ class _SweepPageState extends State<SweepPage> {
                             labelText: 'To',
                             suffixIcon: IconButton(
                               icon: const Padding(
-                                  padding: EdgeInsets.only(right: 14),
+                                  padding: const EdgeInsets.only(right: 14),
                                   child: Icon(Icons.expand_more_rounded,
                                       color: Color(0xDE000000))),
                               onPressed: _produceToModal,
@@ -117,7 +117,7 @@ class _SweepPageState extends State<SweepPage> {
                             hintText: 'Standard',
                             suffixIcon: IconButton(
                               icon: const Padding(
-                                  padding: EdgeInsets.only(right: 14),
+                                  padding: const EdgeInsets.only(right: 14),
                                   child: Icon(Icons.expand_more_rounded,
                                       color: Color(0xDE000000))),
                               onPressed: () => _produceFeeModal(),

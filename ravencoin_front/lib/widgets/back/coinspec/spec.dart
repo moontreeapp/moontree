@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -7,6 +5,7 @@ import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class CoinSpec extends StatefulWidget {
   final String pageTitle;
@@ -54,13 +53,13 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
       holding = holdingBalance.amount;
       holdingSat = holdingBalance.value;
     }
-    int amountSat = amountToSat(amount);
+    int amountSat = amount.asSats;
     if (holding - amount == 0) {
       amountSat = holdingSat;
     }
     try {
       visibleFiatAmount = services.conversion.securityAsReadable(
-          amountToSat(double.parse(visibleAmount)),
+          double.parse(visibleAmount).asSats,
           symbol: symbol,
           asUSD: true);
     } catch (e) {

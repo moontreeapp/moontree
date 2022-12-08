@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:moontree_utils/extensions/map.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -56,7 +55,7 @@ class _NavBarState extends State<NavBar> {
     }));
     listeners.add(pros.balances.batchedChanges
         .listen((List<Change<Balance>> changes) async {
-      var interimBalances = Current.wallet.balances.toSet();
+      Set<Balance> interimBalances = Current.wallet.balances.toSet();
       if (balances != interimBalances) {
         setState(() {
           balances = interimBalances;
@@ -79,8 +78,7 @@ class _NavBarState extends State<NavBar> {
     walletIsEmpty = Current.wallet.balances.isEmpty;
     streams.app.navHeight.add(
         false /*widget.includeSectors*/ ? NavHeight.tall : NavHeight.short);
-    return components.containers.navBar(context,
-        tall: false /*widget.includeSectors*/,
+    return components.containers.navBar(context /*widget.includeSectors*/,
         child: SingleChildScrollView(
           child: Column(
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -90,13 +88,14 @@ class _NavBarState extends State<NavBar> {
               // can changed based upon whats selected:
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children:
-                    actionButtons.intersperse(SizedBox(width: 16)).toList(),
+                children: actionButtons
+                    .intersperse(const SizedBox(width: 16))
+                    .toList(),
               ),
               if (false /*widget.includeSectors*/) ...[
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Padding(
-                    padding: EdgeInsets.only(left: 0, right: 0),
+                    padding: EdgeInsets.zero,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -212,7 +211,7 @@ class _NavBarState extends State<NavBar> {
         iconSize: streams.app.context.value == appContext ? 32 : 24,
         color: streams.app.context.value == appContext
             ? AppColors.primary
-            : Color(0x995C6BC0),
+            : const Color(0x995C6BC0),
       ));
 
   void _produceCreateModal(BuildContext context) {

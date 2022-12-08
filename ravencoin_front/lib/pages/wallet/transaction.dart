@@ -11,6 +11,7 @@ import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
 
 class TransactionPage extends StatefulWidget {
   final dynamic data;
@@ -50,7 +51,7 @@ class _TransactionPageState extends State<TransactionPage> {
     transaction = transactionRecord!.transaction;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     return BackdropLayers(
-      back: BlankBack(),
+      back: const BlankBack(),
       front: FrontCurve(child: detailsBody()),
     );
   }
@@ -105,7 +106,7 @@ class _TransactionPageState extends State<TransactionPage> {
             transactionRecord!.getVouts();
             return 'calculating...';
           } else {
-            return '${transactionRecord!.fee.toAmount().toSatsCommaString()} ${pros.settings.chain.symbol}';
+            return '${transactionRecord!.fee.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}';
           }
         }();
 

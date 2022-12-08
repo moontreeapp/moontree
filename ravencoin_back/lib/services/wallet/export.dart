@@ -32,14 +32,16 @@ class ExportWalletService {
   Future<Map<String, Map<String, dynamic>>> structureForExport(
     Iterable<Wallet> wallets,
   ) async =>
-      {'wallets': await walletsToExportFormat(wallets)};
+      <String, Map<String, dynamic>>{
+        'wallets': await walletsToExportFormat(wallets)
+      };
 
   Future<Map<String, Map<String, dynamic>>> walletsToExportFormat(
     Iterable<Wallet> wallets,
   ) async =>
-      {
-        for (final wallet in wallets) ...{
-          wallet.id: {
+      <String, Map<String, dynamic>>{
+        for (final Wallet wallet in wallets) ...<String, Map<String, dynamic>>{
+          wallet.id: <String, dynamic>{
             'wallet name': wallet.name,
             'wallet type': typeForExport(wallet),
             'backed up': wallet.backedUp,

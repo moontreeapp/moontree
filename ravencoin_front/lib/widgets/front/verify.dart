@@ -19,7 +19,7 @@ class VerifyAuthentication extends StatefulWidget {
   final bool auto;
   final bool asLoginTime;
 
-  VerifyAuthentication({
+  const VerifyAuthentication({
     Key? key,
     this.parentState,
     this.buttonLabel = 'Submit',
@@ -61,7 +61,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
     try {
       data = populateData(context, data);
     } catch (e) {
-      data = {};
+      data = <String, dynamic>{};
     }
 
     if (widget.auto &&
@@ -77,7 +77,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
     //onTap: () => FocusScope.of(context).unfocus(),
     //child:
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
           child: components.page.form(
             context,
@@ -100,15 +100,17 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
               //        style: Theme.of(context).textTheme.bodyText1)),
               //SizedBox(height: 8),
 
-              LockedOutTime(),
-              pros.settings.authMethodIsNativeSecurity
-                  ? bioText
-                  : passwordField,
+              const LockedOutTime(),
+              if (pros.settings.authMethodIsNativeSecurity)
+                bioText
+              else
+                passwordField,
             ],
-            buttons: [
-              pros.settings.authMethodIsNativeSecurity
-                  ? bioButton
-                  : submitButton
+            buttons: <Widget>[
+              if (pros.settings.authMethodIsNativeSecurity)
+                bioButton
+              else
+                submitButton
             ],
           ),
         )
@@ -128,7 +130,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
           focusNode: existingFocus,
           labelText: 'Password',
           errorText: password.text == '' &&
-                  pros.settings.loginAttempts.length > 0 &&
+                  pros.settings.loginAttempts.isNotEmpty &&
                   failedAttempt
               ? 'Incorrect Password'
               : null,
@@ -179,7 +181,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
   }
 
   String used() =>
-      {
+      <int?, String>{
         null: 'unrecognized',
         //0: 'current password',
         //1: 'prior password',
@@ -207,11 +209,11 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
         onPressed: () async => submit(),
       );
 
-  Future submit() async {
+  Future<void> submit() async {
     setState(() => enabled = false);
-    final localAuthApi = LocalAuthApi();
+    final LocalAuthApi localAuthApi = LocalAuthApi();
     streams.app.authenticating.add(true);
-    final validate = await localAuthApi.authenticate();
+    final bool validate = await localAuthApi.authenticate();
     streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (widget.asLoginTime) {

@@ -16,8 +16,8 @@ class AssetWaiter extends Waiter {
 
   void handleAddressChange(Change<Asset> change) {
     change.when(
-        loaded: (loaded) {},
-        added: (added) {
+        loaded: (Loaded<Asset> loaded) {},
+        added: (Added<Asset> added) {
           /// only show message during normal run
           if (!services.wallet.leader.newLeaderProcessRunning) {
             /// we should show a message on every received not just a new asset
@@ -25,7 +25,7 @@ class AssetWaiter extends Waiter {
             //    Snack(message: 'New asset detected: ${added.data.symbol}'));
           }
         },
-        updated: (updated) {},
-        removed: (removed) {});
+        updated: (Updated<Asset> updated) {},
+        removed: (Removed<Asset> removed) {});
   }
 }

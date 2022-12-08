@@ -65,7 +65,8 @@ class _CreateChoiceState extends State<CreateChoice> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => GestureDetector(

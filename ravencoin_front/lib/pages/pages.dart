@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_classes_with_only_static_members
+
 import 'package:flutter/cupertino.dart';
 import 'package:ravencoin_front/pages/home/home.dart';
 import 'package:ravencoin_front/pages/manage/assets.dart';
@@ -32,7 +34,6 @@ import 'package:ravencoin_front/pages/settings/export.dart';
 import 'package:ravencoin_front/pages/settings/feedback.dart';
 import 'package:ravencoin_front/pages/settings/import.dart';
 import 'package:ravencoin_front/pages/settings/language.dart';
-import 'package:ravencoin_front/pages/settings/blockchain.dart';
 import 'package:ravencoin_front/pages/settings/network.dart';
 import 'package:ravencoin_front/pages/settings/mining.dart';
 import 'package:ravencoin_front/pages/settings/database.dart';
@@ -142,7 +143,8 @@ class pages {
             const CreatePassword(),
         '/security/native/createlogin': (BuildContext context) =>
             const CreateNative(),
-        '/security/security': (BuildContext context) => VerifyAuthentication(),
+        '/security/security': (BuildContext context) =>
+            const VerifyAuthentication(),
         '/transaction/transaction': (BuildContext context) =>
             const TransactionPage(),
         '/transaction/receive': (BuildContext context) => const Receive(),

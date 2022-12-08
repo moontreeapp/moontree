@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_classes_with_only_static_members
+
 enum LingoKey {
   leaderWalletType,
   leaderWalletSecretType,
@@ -11,7 +13,7 @@ enum LingoKey {
 }
 
 class Lingo {
-  static Map<LingoKey, String> get english => {
+  static Map<LingoKey, String> get english => <LingoKey, String>{
         LingoKey.walletType: 'Wallet',
         LingoKey.walletSecretType: 'Secret',
         LingoKey.leaderWalletType: 'HD Wallet',
@@ -23,7 +25,7 @@ class Lingo {
         LingoKey.walletUnableToCreate:
             'Wallet was unable to be created for an unknown reason...',
       };
-  static Map<LingoKey, String> get spanish => {
+  static Map<LingoKey, String> get spanish => <LingoKey, String>{
         LingoKey.walletType: 'Billetera',
         LingoKey.walletSecretType: 'Secreto',
         LingoKey.leaderWalletType: 'Billetera Determinista Herárquica',

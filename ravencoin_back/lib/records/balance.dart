@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/records/security.dart';
-import 'package:wallet_utils/wallet_utils.dart' show satsPerCoin;
+import 'package:wallet_utils/wallet_utils.dart'
+    show SatsToAmountExtension, satsPerCoin;
 
 import '_type_id.dart';
 
@@ -86,7 +87,7 @@ class Balance with EquatableMixin {
 
   int get value => confirmed + unconfirmed;
 
-  double get amount => satToAmount(value);
+  double get amount => value.asCoin;
 
   double get rvn => confirmed / satsPerCoin;
 

@@ -24,7 +24,7 @@ class _CreateRestrictedAssetState extends State<CreateRestrictedAsset> {
   Widget build(BuildContext context) {
     streams.create.form.add(GenericCreateForm());
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -32,5 +32,5 @@ class _CreateRestrictedAssetState extends State<CreateRestrictedAsset> {
         )));
   }
 
-  Widget body() => CreateAsset(preset: FormPresets.restricted);
+  Widget body() => const CreateAsset(preset: FormPresets.restricted);
 }

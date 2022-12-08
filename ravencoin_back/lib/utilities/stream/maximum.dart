@@ -12,10 +12,12 @@ extension MaximumExtension<T> on Stream<T> {
   ///
   Stream<T> maximum(Comparator<T> comparator) {
     T? maxSoFar;
-    return map((element) {
+    return map((T element) {
       if (maxSoFar != null) {
-        var comparison = comparator(maxSoFar!, element);
-        if (comparison < 0) maxSoFar = element;
+        final int comparison = comparator(maxSoFar as T, element);
+        if (comparison < 0) {
+          maxSoFar = element;
+        }
       } else {
         maxSoFar = element;
       }

@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/services/wallet.dart'
     show populateWalletsWithSensitives, saveSecret, setupWallets;
-import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/services/consent.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
@@ -69,13 +67,14 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Container(
-          padding: EdgeInsets.only(left: 16, right: 16),
+          padding: const EdgeInsets.only(left: 16, right: 16),
           child: CustomScrollView(slivers: <Widget>[
             SliverToBoxAdapter(
               child: Container(
@@ -110,7 +109,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                   height: .0947.ofMediaHeight(context),
                   child: confirmField),
             ),
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: SizedBox(height: 16),
             ),
             SliverToBoxAdapter(
@@ -168,7 +167,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                       .textTheme
                       .bodyText2,
                   children: <TextSpan>[
-                    TextSpan(text: "I agree to Moontree's\n"),
+                    const TextSpan(text: "I agree to Moontree's\n"),
                     TextSpan(
                         text: 'User Agreement',
                         style: Theme.of(components.navigator.routeContext!)
@@ -179,7 +178,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.user_agreement)));
                           }),
-                    TextSpan(text: ', '),
+                    const TextSpan(text: ', '),
                     TextSpan(
                         text: 'Privacy Policy',
                         style: Theme.of(components.navigator.routeContext!)
@@ -190,7 +189,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.privacy_policy)));
                           }),
-                    TextSpan(text: ',\n and '),
+                    const TextSpan(text: ',\n and '),
                     TextSpan(
                         text: 'Risk Disclosure',
                         style: Theme.of(components.navigator.routeContext!)
@@ -204,7 +203,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                   ],
                 ),
               )),
-          SizedBox(
+          const SizedBox(
             width: 18,
           ),
         ],
@@ -318,7 +317,7 @@ class _CreatePasswordState extends State<CreatePassword> {
       await services.authentication
           .setMethod(method: AuthMethod.moontreePassword);
       await consentToAgreements();
-      //await Future<void>.delayed(Duration(milliseconds: 200)); // in release mode?
+      //await Future<void>.delayed(const Duration(milliseconds: 200)); // in release mode?
       await populateWalletsWithSensitives();
       await services.authentication.setPassword(
         password: password.text,

@@ -52,7 +52,7 @@ class AppWaiter extends Waiter {
   /// only active when the app is active
   Future<void> logoutThread() async {
     while (true) {
-      var x = DateTime.now().difference(lastActiveTime).inSeconds;
+      final int x = DateTime.now().difference(lastActiveTime).inSeconds;
       await Future<void>.delayed(
           Duration(seconds: idleGracePeriod - (idleGracePeriod > x ? x : 0)));
       if (

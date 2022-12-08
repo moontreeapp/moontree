@@ -31,7 +31,7 @@ class CreateAsset extends StatefulWidget {
   final FormPresets preset;
   final bool isSub;
 
-  CreateAsset({
+  const CreateAsset({
     required this.preset,
     this.isSub = false,
   }) : super();
@@ -233,7 +233,7 @@ class _CreateAssetState extends State<CreateAsset> {
         errorText: parentValidationErr,
         suffixIcon: IconButton(
           icon: const Padding(
-              padding: EdgeInsets.only(right: 14),
+              padding: const EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: () => isQualifier
               ? _produceQualifierParentModal()
@@ -313,7 +313,7 @@ class _CreateAssetState extends State<CreateAsset> {
         hintText: 'Decimals',
         suffixIcon: IconButton(
           icon: const Padding(
-              padding: EdgeInsets.only(right: 14),
+              padding: const EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: () => _produceDecimalModal(),
         ),

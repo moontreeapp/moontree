@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/waiters/waiter.dart';
@@ -18,13 +20,13 @@ class SubscriptionWaiter extends Waiter {
   }
 
   void deinitAllSubscriptions() {
-    for (var addressMap
+    for (final Map<String, StreamSubscription<dynamic>> addressMap
         in services.client.subscribe.subscriptionHandlesAddress.values) {
-      for (var listener in addressMap.values) {
+      for (final StreamSubscription<dynamic> listener in addressMap.values) {
         listener.cancel();
       }
     }
-    for (var listener
+    for (final StreamSubscription<dynamic> listener
         in services.client.subscribe.subscriptionHandlesAsset.values) {
       listener.cancel();
     }

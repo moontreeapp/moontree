@@ -1,12 +1,9 @@
 /// here we verify that a transaction is what we though it should be
-import 'dart:typed_data';
 import 'package:tuple/tuple.dart';
-import 'package:convert/convert.dart' show hex;
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show satsPerCoin, parseSendAmountAndFeeFromSerializedTransaction;
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/records/records.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 
 class FeeGuardException extends CustomException {

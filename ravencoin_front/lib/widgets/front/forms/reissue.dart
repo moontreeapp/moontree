@@ -8,7 +8,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:wallet_utils/wallet_utils.dart' show coinsPerChain;
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:wallet_utils/src/utilities/validation.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -25,7 +24,7 @@ class ReissueAsset extends StatefulWidget {
   final FormPresets preset;
   final bool isSub;
 
-  ReissueAsset({
+  const ReissueAsset({
     required this.preset,
     this.isSub = false,
   }) : super();
@@ -64,17 +63,17 @@ class _ReissueAssetState extends State<ReissueAsset> {
   double minQuantity = 0;
   int minDecimal = 0;
   String minIpfs = '';
-  Map<FormPresets, String> presetToTitle = {
+  Map<FormPresets, String> presetToTitle = <FormPresets, String>{
     FormPresets.main: 'Reissue',
     FormPresets.restricted: 'Reissue',
   };
 
   String limitQ(String q, String d) {
     if (q.contains('.')) {
-      List<String> splits = q.split('.');
-      int maxd = int.parse(d);
+      final List<String> splits = q.split('.');
+      final int maxd = int.parse(d);
       if (splits[1].length > maxd) {
-        return splits.first + '.' + splits[1].substring(0, maxd);
+        return '${splits.first}.${splits[1].substring(0, maxd)}';
       }
     }
     return q;
@@ -217,7 +216,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         errorText: parentValidationErr,
         suffixIcon: IconButton(
           icon: const Padding(
-              padding: EdgeInsets.only(right: 14),
+              padding: const EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: () => _produceParentModal(), // main subs, nft, channel
         ),
@@ -234,7 +233,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
       controller: nameController,
       textInputAction: TextInputAction.done,
       keyboardType: isRestricted ? TextInputType.none : null,
-      inputFormatters: [MainAssetNameTextFormatter()],
+      inputFormatters: <TextInputFormatter>[MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textField(
         context,
         labelText: (isSub ? 'Sub ' : '') + presetToTitle[widget.preset]!,
@@ -280,7 +279,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
         hintText: 'Decimals',
         suffixIcon: IconButton(
           icon: const Padding(
-              padding: EdgeInsets.only(right: 14),
+              padding: const EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: minDecimal == 8 ? () {} : () => _produceDecimalModal(),
         ),
@@ -295,7 +294,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
       autocorrect: false,
       controller: verifierController,
       textInputAction: TextInputAction.done,
-      inputFormatters: [VerifierStringTextFormatter()],
+      inputFormatters: <TextInputFormatter>[VerifierStringTextFormatter()],
       decoration: components.styles.decorations.textField(
         context,
         labelText: 'Verifier String',
@@ -349,7 +348,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
                             'assets cannot be modified in anyway.'),
                   );
                 },
-              ).then((value) => streams.app.scrim.add(false)),
+              ).then((dynamic value) => streams.app.scrim.add(false)),
               icon: const Icon(
                 Icons.help_rounded,
                 color: Colors.black,
@@ -397,7 +396,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void validateVerifier({String? verifier}) {
     verifier = verifier ?? verifierController.text;
-    bool oldValidation = verifierValidated;
+    final bool oldValidation = verifierValidated;
     verifierValidated = verifierValidation(verifier);
     if (oldValidation != verifierValidated || !verifierValidated) {
       setState(() {});
@@ -408,7 +407,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void validateAssetData({String? data}) {
     data = data ?? ipfsController.text;
-    bool oldValidation = ipfsValidated;
+    final bool oldValidation = ipfsValidated;
     ipfsValidated = assetDataValidation(data);
     if (oldValidation != ipfsValidated || !ipfsValidated) {
       setState(() {});
@@ -422,7 +421,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
     quantity = quantity ??
         (quantityController.text == '' ? '0' : quantityController.text)
             .toDouble();
-    bool oldValidation = quantityValidated;
+    final bool oldValidation = quantityValidated;
     quantityValidated = quantityValidation(quantity);
     if (oldValidation != quantityValidated || !quantityValidated) {
       setState(() {});
@@ -434,7 +433,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
 
   void validateDecimal({int? decimal}) {
     decimal = decimal ?? decimalController.text.asSatsInt();
-    bool oldValidation = decimalValidated;
+    final bool oldValidation = decimalValidated;
     decimalValidated = decimalValidation(decimal);
     if (oldValidation != decimalValidated || !decimalValidated) {
       setState(() {});
@@ -507,7 +506,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
   }
 
   String fullName([bool full = false]) => (isSub && full)
-      ? parentController.text + '/' + nameController.text
+      ? '${parentController.text}/${nameController.text}'
       : nameController.text;
 
   void checkout(GenericReissueRequest reissueRequest) {
@@ -517,37 +516,37 @@ class _ReissueAssetState extends State<ReissueAsset> {
     /// go to confirmation page
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/reissue/checkout',
-      arguments: {
+      arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(
           /// full symbol name
           symbol: fullName(true),
           displaySymbol: nameController.text,
           subSymbol: '',
           paymentSymbol: pros.securities.currentCoin.symbol,
-          items: [
+          items: <Iterable<String>>[
             /// send the correct items
-            if (isSub) ['Name', fullName(true), '2'],
-            if (!isSub) ['Name', fullName(), '2'],
-            if (needsQuantity) ['Quantity', quantityController.text],
-            if (needsDecimal) ['Decimals', decimalController.text],
+            if (isSub) <String>['Name', fullName(true), '2'],
+            if (!isSub) <String>['Name', fullName(), '2'],
+            if (needsQuantity) <String>['Quantity', quantityController.text],
+            if (needsDecimal) <String>['Decimals', decimalController.text],
             if (ipfsController.text != '')
-              ['IPFS/Txid', ipfsController.text, '9'],
+              <String>['IPFS/Txid', ipfsController.text, '9'],
             if (needsVerifier)
-              ['Verifier String', verifierController.text, '6'],
+              <String>['Verifier String', verifierController.text, '6'],
             if (needsReissue)
-              ['Reissuable', if (reissueValue) 'Yes' else 'No', '3'],
+              <String>['Reissuable', if (reissueValue) 'Yes' else 'No', '3'],
           ],
-          fees: [
+          fees: <Iterable<String>>[
             // Standard / Fast transaction, will pull from settings?
-            ['Standard Transaction', 'calculating fee...'],
+            <String>['Standard Transaction', 'calculating fee...'],
             if (isSub)
-              ['Reissue', '100']
+              <String>['Reissue', '100']
             else
               isMain
-                  ? ['Reissue', '100']
+                  ? <String>['Reissue', '100']
                   : isRestricted
-                      ? ['Reissue', '100']
-                      : ['Reissue', '100']
+                      ? <String>['Reissue', '100']
+                      : <String>['Reissue', '100']
           ],
           total: 'calculating total...',
           // produce transaction structure here and the checkout screen will

@@ -10,7 +10,7 @@ import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/waiters/waiter.dart';
 
 class LeaderWaiter extends Waiter {
-  Set<Change<Wallet>> backlog = {};
+  Set<Change<Wallet>> backlog = <Change<Wallet>>{};
   final ReaderWriterLock _backlogLock = ReaderWriterLock();
 
   void init() {

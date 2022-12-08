@@ -41,5 +41,5 @@ abstract class Waiter {
     }
   }
 
-  Future<void> deinitKey(String key) async => deinitKeys([key]);
+  Future<void> deinitKey(String key) async => deinitKeys(<String>[key]);
 }

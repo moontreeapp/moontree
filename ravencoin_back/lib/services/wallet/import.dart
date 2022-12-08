@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:tuple/tuple.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:wallet_utils/wallet_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';

@@ -214,7 +214,7 @@ class SecureStorage {
   Future<void> example() async {
     const String key = 'key';
     // Create storage
-    final FlutterSecureStorage storage = new FlutterSecureStorage();
+    const FlutterSecureStorage storage = FlutterSecureStorage();
     // Read value
     final String? value = await storage.read(key: key);
     // Read all values

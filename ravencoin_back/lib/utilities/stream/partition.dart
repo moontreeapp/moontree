@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_classes_with_only_static_members
+
 import 'package:rxdart/rxdart.dart';
 
 class PartitionedStream<T> {
@@ -22,11 +24,11 @@ class ParititonUtil {
     bool Function(T event) predicate,
   ) {
     bool Function(T) not(bool Function(T event) test) =>
-        (event) => !test(event);
+        (T event) => !test(event);
 
-    final stream = source.isBroadcast ? source : source.share();
+    final Stream<T> stream = source.isBroadcast ? source : source.share();
 
-    return PartitionedStream(
+    return PartitionedStream<T>(
       stream.where(predicate),
       stream.where(not(predicate)),
     );

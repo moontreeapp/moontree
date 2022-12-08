@@ -80,8 +80,7 @@ class BackdropNavigationBackLayer extends StatelessWidget {
       shrinkWrap: true,
       itemCount: items.length,
       padding: itemPadding,
-      itemBuilder: (context, position) => InkWell(
-        child: items[position],
+      itemBuilder: (BuildContext context, int position) => InkWell(
         onTap: () {
           // fling backdrop
           Backdrop.of(context).fling();
@@ -91,8 +90,10 @@ class BackdropNavigationBackLayer extends StatelessWidget {
         },
         customBorder: itemSplashBorder,
         splashColor: itemSplashColor,
+        child: items[position],
       ),
-      separatorBuilder: separatorBuilder ?? (builder, position) => Container(),
+      separatorBuilder: separatorBuilder ??
+          (BuildContext builder, int position) => Container(),
     );
   }
 }

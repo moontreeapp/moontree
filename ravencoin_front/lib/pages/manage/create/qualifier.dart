@@ -25,7 +25,7 @@ class _CreateQualifierAssetState extends State<CreateQualifierAsset> {
   Widget build(BuildContext context) {
     streams.create.form.add(GenericCreateForm());
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -33,5 +33,5 @@ class _CreateQualifierAssetState extends State<CreateQualifierAsset> {
         )));
   }
 
-  Widget body() => CreateAsset(preset: FormPresets.qualifier);
+  Widget body() => const CreateAsset(preset: FormPresets.qualifier);
 }

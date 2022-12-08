@@ -57,7 +57,7 @@ class _FeedbackState extends State<Feedback> {
     //  size: 2.3,
     //);
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -74,7 +74,7 @@ class _FeedbackState extends State<Feedback> {
           emailField,
           if (file != null) filePicked,
         ],
-        buttons: [fileButton, submitButton],
+        buttons: <Widget>[fileButton, submitButton],
       );
 
   Widget get greeting => Text(
@@ -89,8 +89,8 @@ class _FeedbackState extends State<Feedback> {
         labelText: 'Request Type',
         hintText: 'Request Type',
         suffixIcon: IconButton(
-          icon: Padding(
-              padding: EdgeInsets.only(right: 14),
+          icon: const Padding(
+              padding: const EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: () => _produceFeedbackModal(),
         ),
@@ -149,13 +149,15 @@ class _FeedbackState extends State<Feedback> {
       );
 
   Widget get filePicked => Column(children: <Widget>[
-        Divider(indent: 0, endIndent: 0),
+        const Divider(indent: 0, endIndent: 0),
         Padding(
-            padding: EdgeInsets.only(left: 0, right: 0, top: 16, bottom: 0),
+            padding:
+                const EdgeInsets.only(left: 0, right: 0, top: 16, bottom: 0),
             child: ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
-              leading: Icon(Icons.attachment_rounded, color: Colors.black),
+              leading:
+                  const Icon(Icons.attachment_rounded, color: Colors.black),
               title: FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Text(file!.filename,
@@ -168,10 +170,11 @@ class _FeedbackState extends State<Feedback> {
               trailing: IconButton(
                   alignment: Alignment.centerRight,
                   padding: EdgeInsets.zero,
-                  icon: Icon(Icons.close_rounded, color: Color(0xDE000000)),
+                  icon:
+                      const Icon(Icons.close_rounded, color: Color(0xDE000000)),
                   onPressed: () => setState(() => file = null)),
             )),
-        Divider(),
+        const Divider(),
       ]);
 
   Widget get submitButton => components.buttons.actionButton(context,

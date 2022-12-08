@@ -50,7 +50,7 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
   @override
   Widget build(BuildContext context) {
     return streams.app.splash.value
-        ? PreferredSize(preferredSize: Size(0, 0), child: Container(height: 0))
-        : BackdropAppBarContents();
+        ? PreferredSize(preferredSize: Size.zero, child: Container(height: 0))
+        : const BackdropAppBarContents();
   }
 }

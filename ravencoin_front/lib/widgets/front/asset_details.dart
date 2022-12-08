@@ -160,7 +160,7 @@ class _AssetDetails extends State<AssetDetails> {
 //            builder: (BuildContext context) => AlertDialog(
 //                    title: Text('Open in External App'),
 //                    content: Text('Open discord app or browser?'),
-//                    actions: [
+//                    actions: <Widget>[
 //                      TextButton(
 //                          child: Text('Cancel'),
 //                          onPressed: () => Navigator.of(context).pop()),

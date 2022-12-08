@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class QRCodeContainer extends StatefulWidget {
@@ -64,7 +63,7 @@ class _QRCodeContainerState extends State<QRCodeContainer> {
       loading //|| streams.app.context.value == AppContext.login
           ? Container(width: 0)
           : pageTitle == 'Send'
-              ? Padding(
+              ? const Padding(
                   padding: EdgeInsets.zero,
                   child: QRCodeButton(pageTitle: 'Send-to'))
               : (blanks.contains(pageTitle)

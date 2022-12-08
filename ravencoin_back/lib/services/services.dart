@@ -1,17 +1,18 @@
-import 'download/download.dart';
+// ignore_for_file: avoid_classes_with_only_static_members, camel_case_types
 
 import 'authentication.dart';
 import 'balance.dart';
 import 'cipher.dart';
 import 'client.dart';
 import 'conversion.dart';
-import 'transaction/transaction.dart';
-import 'password.dart';
 import 'developer.dart';
+import 'download/download.dart';
+import 'password.dart';
 import 'rate.dart';
+import 'transaction/transaction.dart';
 import 'tutorial.dart';
-import 'wallet.dart';
 import 'version.dart';
+import 'wallet.dart';
 
 class services {
   static BalanceService balance = BalanceService();

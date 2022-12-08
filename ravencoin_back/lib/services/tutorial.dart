@@ -17,6 +17,7 @@ class TutorialService {
       );
 
   Future<Change<Setting>?> clear() async => pros.settings.save(
-        Setting(name: SettingName.tutorial_status, value: <TutorialStatus>[]),
+        const Setting(
+            name: SettingName.tutorial_status, value: <TutorialStatus>[]),
       );
 }

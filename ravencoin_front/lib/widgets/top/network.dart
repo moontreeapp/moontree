@@ -5,7 +5,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 
 class ChosenBlockchain extends StatefulWidget {
-  ChosenBlockchain({Key? key}) : super(key: key);
+  const ChosenBlockchain({Key? key}) : super(key: key);
 
   @override
   _ChosenBlockchainState createState() => _ChosenBlockchainState();
@@ -45,7 +45,7 @@ class _ChosenBlockchainState extends State<ChosenBlockchain> {
             child: Container(
                 width: 36,
                 alignment: Alignment.center,
-                child: Text('RVN',
+                child: const Text('RVN',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

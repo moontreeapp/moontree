@@ -307,7 +307,7 @@ class _ReceiveState extends State<Receive> {
                               //    crossAxisAlignment: CrossAxisAlignment.start,
                               //    mainAxisAlignment: MainAxisAlignment.start,
                               //    children: <Widget>[
-                              //      SizedBox(height: 15),
+                              //      const SizedBox(height: 15),
                               //      Text(
                               //        'Requested Asset:',
                               //        style: TextStyle(color: Theme.of(context).hintColor),
@@ -344,7 +344,7 @@ class _ReceiveState extends State<Receive> {
                               //          FocusScope.of(context).requestFocus(requestAmountFocus);
                               //        },
                               //      ),
-                              //      SizedBox(height: 15.0),
+                              //      const SizedBox(height: 15.0),
                               //    ]),
                               TextFieldFormatted(
                                   focusNode: requestMessageFocus,

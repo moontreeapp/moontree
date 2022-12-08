@@ -23,7 +23,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
   KeyboardStatus? keyboardStatus = KeyboardStatus.down;
-  final Duration animationDuration = Duration(milliseconds: 150);
+  final Duration animationDuration = const Duration(milliseconds: 150);
   late AnimationController controller;
   late Animation<double> _fadeAnimation;
   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
@@ -43,7 +43,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
     listeners.add(streams.app.keyboard.listen((KeyboardStatus? value) async {
       if (value != keyboardStatus) {
         if (value == KeyboardStatus.down) {
-          await Future<void>.delayed(Duration(milliseconds: 100));
+          await Future<void>.delayed(const Duration(milliseconds: 100));
         }
         if (mounted) {
           setState(() {

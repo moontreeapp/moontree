@@ -2,8 +2,8 @@
 
 import 'dart:async';
 import 'package:tuple/tuple.dart';
-import 'package:moontree_utils/moontree_utils.dart';
-import 'package:wallet_utils/wallet_utils.dart' show evrAirdropTx;
+import 'package:wallet_utils/wallet_utils.dart'
+    show AmountToSatsExtension, evrAirdropTx;
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
@@ -176,7 +176,7 @@ class HistoryService {
         vout.scriptPubKey.type == 'reissue_asset') {
       if (<String>['transfer_asset', 'reissue_asset']
           .contains(vout.scriptPubKey.type)) {
-        value = amountToSat(vout.scriptPubKey.amount);
+        value = vout.scriptPubKey.amount.asSats;
         //if we have no record of it in pros.securities...
         final AssetRetrieved? assetRetrieved =
             await services.download.asset.get(symbol, vout: vout);
@@ -187,7 +187,7 @@ class HistoryService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = amountToSat(vout.scriptPubKey.amount);
+        value = vout.scriptPubKey.amount.asSats;
         asset = Asset(
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',
@@ -260,8 +260,7 @@ class HistoryService {
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
         coinValue:
             <String>['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
-        assetValue:
-            vs.item3 == null ? null : amountToSat(vout.scriptPubKey.amount),
+        assetValue: vs.item3 == null ? null : vout.scriptPubKey.amount.asSats,
         assetSecurityId: vs.item2.id,
         memo: vout.memo,
         assetMemo: vout.assetMemo,
@@ -423,8 +422,7 @@ class HistoryService {
           lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
           coinValue:
               <String>['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
-          assetValue:
-              vs.item3 == null ? null : amountToSat(vout.scriptPubKey.amount),
+          assetValue: vs.item3 == null ? null : vout.scriptPubKey.amount.asSats,
           assetSecurityId: vs.item2.id,
           memo: vout.memo,
           assetMemo: vout.assetMemo,

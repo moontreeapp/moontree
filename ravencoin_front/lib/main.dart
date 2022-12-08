@@ -85,7 +85,7 @@ class RavenMobileApp extends StatelessWidget {
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
       navigatorObservers: [components.navigator],
-      builder: (context, child) {
+      builder: (BuildContext context, child) {
         components.navigator.scaffoldContext = context;
         final scaffold =
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
@@ -93,7 +93,7 @@ class RavenMobileApp extends StatelessWidget {
             backgroundColor:
                 Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
             extendBodyBehindAppBar: false,
-            appBar: BackdropAppBar(),
+            appBar: const BackdropAppBar(),
             body: MultiBlocProvider(
               providers: [
                 BlocProvider<SimpleSendFormCubit>(
@@ -102,7 +102,7 @@ class RavenMobileApp extends StatelessWidget {
               child: child!,
             ),
           ),
-          TutorialLayer(),
+          const TutorialLayer(),
         ]);
         return GestureDetector(
             onTap: () => streams.app.tap.add(null),

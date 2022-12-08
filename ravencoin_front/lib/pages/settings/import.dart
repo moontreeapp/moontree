@@ -82,7 +82,7 @@ class _ImportState extends State<Import> {
           Current.wallet;
     }
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
@@ -142,7 +142,7 @@ class _ImportState extends State<Import> {
           maxLines: importVisible ? 12 : 1,
           textInputAction: TextInputAction.done,
           // interferes with voice - one word at a time:
-          //inputFormatters: [LowerCaseTextFormatter()],
+          //inputFormatters: <TextInputFormatter>[LowerCaseTextFormatter()],
           labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
           hintText: 'Please enter seed words, a WIF, or a private key.',
           helperText:
@@ -203,7 +203,7 @@ class _ImportState extends State<Import> {
 
   Widget get filePicked => Column(children: <Widget>[
         Padding(
-            //padding: EdgeInsets.only(left: 8, top: 16.0),
+            //padding: const EdgeInsets.only(left: 8, top: 16.0),
             padding: const EdgeInsets.only(left: 16, top: 16),
             child: ListTile(
               dense: true,

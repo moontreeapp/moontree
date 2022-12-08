@@ -66,7 +66,8 @@ class _ExportState extends State<Export> {
     return services.password.askCondition
         ? VerifyAuthentication(
             parentState: this, buttonLabel: 'Proceed to Export')
-        : BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+        : BackdropLayers(
+            back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => Column(
@@ -91,7 +92,7 @@ class _ExportState extends State<Export> {
         helperStyle: const TextStyle(color: AppColors.error),
         suffixIcon: IconButton(
           icon: const Padding(
-              padding: EdgeInsets.only(right: 14),
+              padding: const EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: AppColors.black87)),
           onPressed: () => _produceWalletModal(),
         ),

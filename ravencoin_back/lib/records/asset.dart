@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:moontree_utils/moontree_utils.dart';
-import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:ravencoin_back/records/types/net.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 import '_type_id.dart';
 
@@ -180,19 +179,19 @@ class Asset with EquatableMixin {
   bool get isNFT => assetType == AssetType.unique;
   bool get isChannel => assetType == AssetType.unique;
 
-  String get baseSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
+  String get baseSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
       ? symbol.substring(1, symbol.length)
       : symbol.endsWith('!')
           ? symbol.substring(0, symbol.length - 1)
           : symbol;
 
-  String get baseSubSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
+  String get baseSubSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
       ? symbol.substring(1, symbol.length)
       : symbol.endsWith('!')
           ? symbol.substring(0, symbol.length - 1)
           : symbol.replaceAll('#', '/');
 
-  String get adminSymbol => baseSymbol + '!';
+  String get adminSymbol => '$baseSymbol!';
 
   AssetType get assetType => assetTypeOf(symbol);
 
@@ -203,7 +202,7 @@ class Asset with EquatableMixin {
     if (symbol.startsWith('#')) {
       return AssetType.qualifier;
     }
-    if (symbol.startsWith('\$')) {
+    if (symbol.startsWith(r'$')) {
       return AssetType.restricted;
     }
     if (symbol.contains('#')) {
@@ -226,7 +225,7 @@ class Asset with EquatableMixin {
 
   String get assetTypeName => assetType.name;
 
-  double get amount => satToAmount(satsInCirculation);
+  double get amount => satsInCirculation.asCoin;
 }
 
 enum AssetType {

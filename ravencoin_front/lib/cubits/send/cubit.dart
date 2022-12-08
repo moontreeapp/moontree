@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:moontree_utils/moontree_utils.dart';
-import 'package:wallet_utils/wallet_utils.dart' show FeeRate, standardFee;
+import 'package:wallet_utils/wallet_utils.dart'
+    show AmountToSatsExtension, FeeRate, standardFee;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/cubits/parents.dart';
 

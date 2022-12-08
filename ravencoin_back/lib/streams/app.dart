@@ -12,29 +12,38 @@ enum LeadIcon {
 }
 
 class AppStreams {
-  final status = appStatus$;
-  final active = appActive$;
-  final ping = Stream.periodic(Duration(seconds: 60));
-  final tap = BehaviorSubject<bool?>.seeded(null);
-  final verify = BehaviorSubject<bool>.seeded(false);
-  final page = BehaviorSubject<String>.seeded('main');
-  final setting = BehaviorSubject<String?>.seeded(null);
-  final lead = BehaviorSubject<LeadIcon>.seeded(LeadIcon.pass);
-  final context = BehaviorSubject<AppContext>.seeded(AppContext.login);
-  final snack = BehaviorSubject<Snack?>.seeded(null);
-  final navHeight = BehaviorSubject<NavHeight>.seeded(NavHeight.none);
-  final fling = BehaviorSubject<bool?>.seeded(null);
-  final splash = BehaviorSubject<bool>.seeded(true);
-  final triggers = BehaviorSubject<ThresholdTrigger?>.seeded(null);
-  final loading = BehaviorSubject<bool>.seeded(false);
-  final keyboard = BehaviorSubject<KeyboardStatus?>.seeded(null);
+  final BehaviorSubject<String?> status = appStatus$;
+  final BehaviorSubject<bool> active = appActive$;
+  final Stream<dynamic> ping =
+      Stream<dynamic>.periodic(const Duration(seconds: 60));
+  final BehaviorSubject<bool?> tap = BehaviorSubject<bool?>.seeded(null);
+  final BehaviorSubject<bool> verify = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<String> page = BehaviorSubject<String>.seeded('main');
+  final BehaviorSubject<String?> setting =
+      BehaviorSubject<String?>.seeded(null);
+  final BehaviorSubject<LeadIcon> lead =
+      BehaviorSubject<LeadIcon>.seeded(LeadIcon.pass);
+  final BehaviorSubject<AppContext> context =
+      BehaviorSubject<AppContext>.seeded(AppContext.login);
+  final BehaviorSubject<Snack?> snack = BehaviorSubject<Snack?>.seeded(null);
+  final BehaviorSubject<NavHeight> navHeight =
+      BehaviorSubject<NavHeight>.seeded(NavHeight.none);
+  final BehaviorSubject<bool?> fling = BehaviorSubject<bool?>.seeded(null);
+  final BehaviorSubject<bool> splash = BehaviorSubject<bool>.seeded(true);
+  final BehaviorSubject<ThresholdTrigger?> triggers =
+      BehaviorSubject<ThresholdTrigger?>.seeded(null);
+  final BehaviorSubject<bool> loading = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<KeyboardStatus?> keyboard =
+      BehaviorSubject<KeyboardStatus?>.seeded(null);
   //final locked = BehaviorSubject<bool>.seeded(false);
-  final logout = BehaviorSubject<bool>.seeded(false);
-  final scrim = BehaviorSubject<bool?>.seeded(false); // null = disable
-  final tutorial = BehaviorSubject<TutorialStatus?>.seeded(null);
-  final authenticating = BehaviorSubject<bool>.seeded(
+  final BehaviorSubject<bool> logout = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool?> scrim =
+      BehaviorSubject<bool?>.seeded(false); // null = disable
+  final BehaviorSubject<TutorialStatus?> tutorial =
+      BehaviorSubject<TutorialStatus?>.seeded(null);
+  final BehaviorSubject<bool> authenticating = BehaviorSubject<bool>.seeded(
       false); // if we are minimized because of local auth do not logout
-  final browsing = BehaviorSubject<bool>.seeded(
+  final BehaviorSubject<bool> browsing = BehaviorSubject<bool>.seeded(
       false); // if we are minimized because of we are opening browser
 
   WalletSideStreams wallet = WalletSideStreams();
@@ -47,34 +56,25 @@ enum ThresholdTrigger { backup }
 enum KeyboardStatus { up, down }
 
 class WalletSideStreams {
-  final asset = BehaviorSubject<String?>.seeded(null);
-  final refresh = PublishSubject<bool>();
+  final BehaviorSubject<String?> asset = BehaviorSubject<String?>.seeded(null);
+  final PublishSubject<bool> refresh = PublishSubject<bool>();
 }
 
 class ManageSideStreams {
-  final asset = BehaviorSubject<String?>.seeded(null);
+  final BehaviorSubject<String?> asset = BehaviorSubject<String?>.seeded(null);
 }
 
 class SwapSideStreams {
-  final asset = BehaviorSubject<String?>.seeded(null);
+  final BehaviorSubject<String?> asset = BehaviorSubject<String?>.seeded(null);
 }
 
 /// resumed inactive paused detached
-final appStatus$ = BehaviorSubject<String?>.seeded('resumed');
-final appActive$ = BehaviorSubject<bool>.seeded(true)
-  ..addStream(appStatus$.map((status) => status == 'resumed' ? true : false));
+final BehaviorSubject<String?> appStatus$ =
+    BehaviorSubject<String?>.seeded('resumed');
+final BehaviorSubject<bool> appActive$ = BehaviorSubject<bool>.seeded(true)
+  ..addStream(appStatus$.map((String? status) => status == 'resumed'));
 
 class Snack {
-  final String message;
-  // not used
-  final bool positive;
-  final String? details; // if they click on the message, popup details
-  final String? label; // link label
-  final String? link;
-  final String? copy;
-  final Map<String, dynamic>? arguments;
-  final bool showOnLogin;
-
   Snack({
     required this.message,
     this.positive = true,
@@ -85,6 +85,16 @@ class Snack {
     this.arguments,
     this.showOnLogin = false,
   });
+
+  final String message;
+  // not used
+  final bool positive;
+  final String? details; // if they click on the message, popup details
+  final String? label; // link label
+  final String? link;
+  final String? copy;
+  final Map<String, dynamic>? arguments;
+  final bool showOnLogin;
 
   @override
   String toString() {

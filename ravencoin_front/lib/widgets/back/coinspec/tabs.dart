@@ -4,7 +4,7 @@ import 'package:ravencoin_front/theme/theme.dart';
 import '../../../pages/wallet/transactions/bloc.dart';
 
 class CoinSpecTabs extends StatefulWidget {
-  CoinSpecTabs({Key? key}) : super(key: key);
+  const CoinSpecTabs({Key? key}) : super(key: key);
 
   @override
   _CoinSpecTabsState createState() => _CoinSpecTabsState();
@@ -38,7 +38,7 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
         child: Container(
             height: 56,
             alignment: Alignment.topCenter,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),

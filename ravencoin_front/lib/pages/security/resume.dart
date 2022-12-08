@@ -46,12 +46,12 @@ class _ChangeResumeState extends State<ChangeResume> {
         TextButton.icon(
             onPressed: () => Navigator.pushReplacementNamed(
                 context, getMethodPathLogin(), arguments: {}),
-            icon: Icon(Icons.login),
+            icon: const Icon(Icons.login),
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
         TextButton.icon(
             onPressed: () async => submit(),
-            icon: Icon(Icons.login),
+            icon: const Icon(Icons.login),
             label: Text('Login',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
       ]);
@@ -61,14 +61,14 @@ class _ChangeResumeState extends State<ChangeResume> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(
-              padding: EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20.0),
               child: TextField(
                   autocorrect: false,
                   controller: password,
                   obscureText: !passwordVisible,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
+                    border: const UnderlineInputBorder(),
                     hintText: 'previous password',
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -151,24 +151,25 @@ class _ChangeResumeState extends State<ChangeResume> {
   Future failureMessage(String msg) => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-              title: Text('Change Password Recovery failure'),
+              title: const Text('Change Password Recovery failure'),
               content: Text('Previous password did not match. $msg'),
-              actions: [
+              actions: <Widget>[
                 TextButton(
-                    child: Text('ok'), onPressed: () => Navigator.pop(context))
+                    child: const Text('ok'),
+                    onPressed: () => Navigator.pop(context))
               ]));
 
   Future successMessage() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-              title: Text('Success!'),
-              content:
-                  Text('Previous password matched. Change password recovery '
-                      'process will continue, please enter your current '
-                      'password.'),
-              actions: [
+              title: const Text('Success!'),
+              content: const Text(
+                  'Previous password matched. Change password recovery '
+                  'process will continue, please enter your current '
+                  'password.'),
+              actions: <Widget>[
                 TextButton(
-                    child: Text('ok'),
+                    child: const Text('ok'),
                     onPressed: () => Navigator.pushReplacementNamed(
                         context, getMethodPathLogin(),
                         arguments: {}))

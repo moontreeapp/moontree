@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:moontree_utils/extensions/map.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -209,7 +208,7 @@ class ClientService {
     await services.client.createClient();
 
     /// no longer needed since the await waits for the client to be created
-    //await Future<void>.delayed(Duration(seconds: 3));
+    //await Future<void>.delayed(const Duration(seconds: 3));
 
     ///// the leader waiter does not do this:
     /// start derivation process

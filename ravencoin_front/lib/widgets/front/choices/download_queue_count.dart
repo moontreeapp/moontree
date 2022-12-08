@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class DownloadQueueCount extends StatefulWidget {
+  const DownloadQueueCount({Key? key, this.data}) : super(key: key);
   final dynamic data;
-  const DownloadQueueCount({this.data}) : super();
 
   @override
   _DownloadQueueCount createState() => _DownloadQueueCount();
@@ -30,10 +30,10 @@ class _DownloadQueueCount extends State<DownloadQueueCount> {
 
   @override
   Widget build(BuildContext context) {
-    final addresses = services.download.queue.addresses.length;
-    final transactions = services.download.queue.transactions.length +
+    final int addresses = services.download.queue.addresses.length;
+    final int transactions = services.download.queue.transactions.length +
         services.download.queue.dangling.length;
-    final both = addresses > 0 && transactions > 0;
+    final bool both = addresses > 0 && transactions > 0;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -44,12 +44,12 @@ class _DownloadQueueCount extends State<DownloadQueueCount> {
         ),
         if (both)
           Text(
-            '${transactions} transactions',
+            '$transactions transactions',
             style: Theme.of(context).textTheme.subtitle1,
           ),
         if (both)
           Text(
-            '${addresses} addresses',
+            '$addresses addresses',
             style: Theme.of(context).textTheme.subtitle1,
           ),
       ],

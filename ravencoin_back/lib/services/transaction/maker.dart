@@ -1,12 +1,10 @@
 import 'dart:typed_data';
 import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart'
-    show StringBytesExtension, ToStringMixin, amountToSat;
+    show StringBytesExtension, ToStringMixin;
 import 'package:wallet_utils/wallet_utils.dart' as wu;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/sign.dart';
-
-import 'verify.dart';
 
 /* Unused
 class NFTCreateRequest {

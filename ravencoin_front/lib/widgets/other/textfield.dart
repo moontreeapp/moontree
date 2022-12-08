@@ -163,23 +163,26 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
             focusedErrorBorder: widget.focusedErrorBorder ??
                 OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(color: AppColors.error, width: 2)),
+                    borderSide:
+                        const BorderSide(color: AppColors.error, width: 2)),
             errorBorder: widget.errorBorder ??
                 OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(color: AppColors.error, width: 2)),
+                    borderSide:
+                        const BorderSide(color: AppColors.error, width: 2)),
             focusedBorder: widget.focusedBorder ??
                 OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(color: AppColors.primary, width: 2)),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 2)),
             enabledBorder: widget.enabledBorder ??
                 OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(color: AppColors.black12)),
+                    borderSide: const BorderSide(color: AppColors.black12)),
             disabledBorder: widget.disabledBorder ??
                 OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(color: AppColors.black12)),
+                    borderSide: const BorderSide(color: AppColors.black12)),
             labelStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
                 color: (widget.enabled ?? true) ? null : AppColors.black38),
             alignLabelWithHint: true,
@@ -193,7 +196,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
                         ? AppColors.black60
                         : AppColors.error),
             contentPadding: widget.contentPadding ??
-                EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
+                const EdgeInsets.only(left: 16.5, top: 18, bottom: 16),
             labelText: widget.labelText,
             hintText: widget.hintText,
             helperText: widget.alwaysShowHelper

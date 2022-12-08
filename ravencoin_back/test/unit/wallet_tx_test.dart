@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show HDWallet, TransactionBuilder;
 
-import 'package:ravencoin_back/records/types/net.dart' show networks, Net;
+import 'package:ravencoin_back/records/types/net.dart' show Net;
 import 'package:ravencoin_back/records/wallets/extended_wallet_base.dart';
 
 void main() {

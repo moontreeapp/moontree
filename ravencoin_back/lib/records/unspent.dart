@@ -110,7 +110,7 @@ class Unspent with EquatableMixin, ToStringMixin {
   bool? get stringify => true;
 
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'addressId',
         'transactionId',
         'position',

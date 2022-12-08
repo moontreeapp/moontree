@@ -11,7 +11,7 @@ extension ByIdMethodsForSecurity on Index<_IdKey, Security> {
   Security? getOneRaw(String? securityId) =>
       securityId == null ? null : getByKeyStr(securityId).firstOrNull;
   Security? getOne(String? symbol, Chain? chain, Net? net) =>
-      [symbol, chain, net].contains(null)
+      <dynamic>[symbol, chain, net].contains(null)
           ? null
           : getByKeyStr(Security.key(symbol!, chain!, net!)).firstOrNull;
 }

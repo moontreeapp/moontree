@@ -55,7 +55,7 @@ class SendWaiter extends Waiter {
       // tx + note
       if (transactionNote != null) {
         //try {
-        final txid =
+        final String txid =
             await services.client.api.sendTransaction(transactionNote.txHex);
         if (transactionNote.note != null) {
           await pros.notes
@@ -66,8 +66,8 @@ class SendWaiter extends Waiter {
         if (txid != '') {
           // delete utxos if they're specified
           if (transactionNote.usedUtxos != null) {
-            for (var vout in transactionNote.usedUtxos!) {
-              final unspent = vout.unspent;
+            for (Vout vout in transactionNote.usedUtxos!) {
+              final Unspent? unspent = vout.unspent;
               if (unspent != null) {
                 await pros.unspents.remove(unspent);
               }

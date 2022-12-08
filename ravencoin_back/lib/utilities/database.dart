@@ -68,7 +68,7 @@ void resetInMemoryState() {
   //streams.claim.unclaimed.add(<Vout>{});
 }
 
-Future deleteDatabase() async {
+Future<void> deleteDatabase() async {
   resetInMemoryState();
   try {
     await pros.addresses.clear();
@@ -92,21 +92,21 @@ Future deleteDatabase() async {
     print('clearing failed');
   }
   try {
-    await (pros.addresses.source as HiveSource).box.clear();
-    await (pros.assets.source as HiveSource).box.clear();
-    await (pros.balances.source as HiveSource).box.clear();
-    await (pros.blocks.source as HiveSource).box.clear();
-    await (pros.metadatas.source as HiveSource).box.clear();
-    await (pros.notes.source as HiveSource).box.clear();
-    await (pros.passwords.source as HiveSource).box.clear();
-    await (pros.rates.source as HiveSource).box.clear();
-    await (pros.securities.source as HiveSource).box.clear();
-    await (pros.settings.source as HiveSource).box.clear();
-    await (pros.statuses.source as HiveSource).box.clear();
-    await (pros.transactions.source as HiveSource).box.clear();
-    await (pros.vins.source as HiveSource).box.clear();
-    await (pros.vouts.source as HiveSource).box.clear();
-    await (pros.wallets.source as HiveSource).box.clear();
+    await (pros.addresses.source as HiveSource<Address>).box.clear();
+    await (pros.assets.source as HiveSource<Asset>).box.clear();
+    await (pros.balances.source as HiveSource<Balance>).box.clear();
+    await (pros.blocks.source as HiveSource<Block>).box.clear();
+    await (pros.metadatas.source as HiveSource<Metadata>).box.clear();
+    await (pros.notes.source as HiveSource<Note>).box.clear();
+    await (pros.passwords.source as HiveSource<Password>).box.clear();
+    await (pros.rates.source as HiveSource<Rate>).box.clear();
+    await (pros.securities.source as HiveSource<Security>).box.clear();
+    await (pros.settings.source as HiveSource<Setting>).box.clear();
+    await (pros.statuses.source as HiveSource<Status>).box.clear();
+    await (pros.transactions.source as HiveSource<Transaction>).box.clear();
+    await (pros.vins.source as HiveSource<Vin>).box.clear();
+    await (pros.vouts.source as HiveSource<Vout>).box.clear();
+    await (pros.wallets.source as HiveSource<Wallet>).box.clear();
     //await (pros.ciphers.source as MapSource).clear();
     //await (pros.unspents.source as MapSource).clear();
   } catch (e) {

@@ -66,7 +66,8 @@ class _CreateNativeState extends State<CreateNative> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     needsConsent = data['needsConsent'] as bool? ?? false;
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => FutureBuilder<bool>(

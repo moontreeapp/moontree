@@ -45,7 +45,7 @@ class _SwtichChoice extends State<SwtichChoice> {
               setState(() => choice = value);
             }),
       ]),
-      if (widget.description != null) SizedBox(height: 8),
+      if (widget.description != null) const SizedBox(height: 8),
       if (widget.description != null)
         Text(
           widget.description!,

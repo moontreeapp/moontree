@@ -126,7 +126,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   Card _wallet(BuildContext context, Wallet wallet) => Card(
       margin: const EdgeInsets.fromLTRB(40.0, 0.0, 10.0, 5),
       child: Padding(
-          padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0),
+          padding: const EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
@@ -252,11 +252,11 @@ class _TechnicalViewState extends State<TechnicalView> {
   Future alertSuccess() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-            title: Text('Success!'),
-            content: Text('Generating Account...'),
-            actions: [
+            title: const Text('Success!'),
+            content: const Text('Generating Account...'),
+            actions: <Widget>[
               TextButton(
-                  child: Text('ok'),
+                  child: const Text('ok'),
                   onPressed: () => Navigator.of(context).pop())
             ],
           ));

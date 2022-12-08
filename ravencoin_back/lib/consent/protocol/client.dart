@@ -6,9 +6,9 @@
 // ignore_for_file: implementation_imports
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
 import 'dart:io' as _i3;
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'protocol.dart' as _i4;
 
 class _EndpointConsent extends _i1.EndpointRef {
@@ -24,7 +24,7 @@ class _EndpointConsent extends _i1.EndpointRef {
       caller.callServerEndpoint<String>(
         'consent',
         'given',
-        {
+        <String, dynamic>{
           'deviceId': deviceId,
           'documentName': documentName,
         },
@@ -44,7 +44,7 @@ class _EndpointHasGiven extends _i1.EndpointRef {
       caller.callServerEndpoint<bool>(
         'hasGiven',
         'consent',
-        {
+        <String, dynamic>{
           'deviceId': deviceId,
           'documentName': documentName,
         },
@@ -65,7 +65,7 @@ class _EndpointDocument extends _i1.EndpointRef {
       caller.callServerEndpoint<String>(
         'document',
         'upload',
-        {
+        <String, dynamic>{
           'document': document,
           'documentName': documentName,
           'documentVersion': documentVersion,
@@ -96,11 +96,13 @@ class Client extends _i1.ServerpodClient {
   late final _EndpointDocument document;
 
   @override
-  Map<String, _i1.EndpointRef> get endpointRefLookup => {
+  Map<String, _i1.EndpointRef> get endpointRefLookup =>
+      <String, _i1.EndpointRef>{
         'consent': consent,
         'hasGiven': hasGiven,
         'document': document,
       };
   @override
-  Map<String, _i1.ModuleEndpointCaller> get moduleLookup => {};
+  Map<String, _i1.ModuleEndpointCaller> get moduleLookup =>
+      <String, _i1.ModuleEndpointCaller>{};
 }

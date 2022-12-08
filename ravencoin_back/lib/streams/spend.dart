@@ -13,41 +13,43 @@ class Spend {
   //final address = BehaviorSubject<String>.seeded('');
   //final addressName = BehaviorSubject<String>.seeded('');
 
-  final make = BehaviorSubject<SendRequest?>.seeded(null);
-  final made = BehaviorSubject<TransactionNote?>.seeded(null);
-  final estimate = BehaviorSubject<SendEstimate?>.seeded(null);
-  final send = BehaviorSubject<TransactionNote?>.seeded(null);
-  final success = BehaviorSubject<bool?>.seeded(null);
+  final BehaviorSubject<SendRequest?> make =
+      BehaviorSubject<SendRequest?>.seeded(null);
+  final BehaviorSubject<TransactionNote?> made =
+      BehaviorSubject<TransactionNote?>.seeded(null);
+  final BehaviorSubject<SendEstimate?> estimate =
+      BehaviorSubject<SendEstimate?>.seeded(null);
+  final BehaviorSubject<TransactionNote?> send =
+      BehaviorSubject<TransactionNote?>.seeded(null);
+  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null);
 }
 
 class TransactionNote with ToStringMixin {
-  String txHex;
-  String? note;
-  String? successMsg;
-  Set<Vout>? usedUtxos;
-
   TransactionNote({
     required this.txHex,
     this.note,
     this.successMsg,
     this.usedUtxos,
   });
+  String txHex;
+  String? note;
+  String? successMsg;
+  Set<Vout>? usedUtxos;
 
   @override
-  List<Object> get props =>
-      [txHex, note ?? 'null', successMsg ?? 'null', usedUtxos ?? 'null'];
+  List<Object> get props => <Object>[
+        txHex,
+        note ?? 'null',
+        successMsg ?? 'null',
+        usedUtxos ?? 'null'
+      ];
 
   @override
-  List<String> get propNames => ['txHex', 'note?', 'successMsg?', 'usedUtxos?'];
+  List<String> get propNames =>
+      <String>['txHex', 'note?', 'successMsg?', 'usedUtxos?'];
 }
 
 class SpendForm with EquatableMixin {
-  final String? symbol;
-  final double? amount;
-  final String? fee;
-  final String? note;
-  final String? address;
-  final String? addressName;
   SpendForm({
     this.symbol,
     this.amount,
@@ -56,20 +58,6 @@ class SpendForm with EquatableMixin {
     this.address,
     this.addressName,
   });
-
-  @override
-  String toString() => 'SpendForm(symbol=$symbol, amount=$amount, fee=$fee, '
-      'note=$note, address=$address, addressName=$addressName)';
-
-  @override
-  List<Object> get props => <Object>[
-        symbol ?? '',
-        amount ?? '',
-        fee ?? '',
-        note ?? '',
-        address ?? '',
-        addressName ?? '',
-      ];
 
   factory SpendForm.merge({
     SpendForm? form,
@@ -89,18 +77,36 @@ class SpendForm with EquatableMixin {
       addressName: addressName ?? form?.addressName,
     );
   }
+  final String? symbol;
+  final double? amount;
+  final String? fee;
+  final String? note;
+  final String? address;
+  final String? addressName;
+
+  @override
+  String toString() => 'SpendForm(symbol=$symbol, amount=$amount, fee=$fee, '
+      'note=$note, address=$address, addressName=$addressName)';
+
+  @override
+  List<Object> get props => <Object>[
+        symbol ?? '',
+        amount ?? '',
+        fee ?? '',
+        note ?? '',
+        address ?? '',
+        addressName ?? '',
+      ];
 
   set symbol(String? symbol) => this.symbol = symbol;
 
   @override
-  bool operator ==(Object form) {
-    return form is SpendForm
-        ? (form.symbol == symbol &&
-            form.amount == amount &&
-            form.fee == fee &&
-            form.note == note &&
-            form.address == address &&
-            form.addressName == addressName)
-        : false;
-  }
+  bool operator ==(Object other) =>
+      other is SpendForm &&
+      (other.symbol == symbol &&
+          other.amount == amount &&
+          other.fee == fee &&
+          other.note == note &&
+          other.address == address &&
+          other.addressName == addressName);
 }

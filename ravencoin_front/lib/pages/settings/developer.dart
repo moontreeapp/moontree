@@ -8,7 +8,7 @@ class DeveloperOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
