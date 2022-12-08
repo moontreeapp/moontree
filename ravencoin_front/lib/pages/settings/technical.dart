@@ -20,7 +20,7 @@ import 'package:ravencoin_front/components/components.dart';
 /// the wallet should just be clickable so you can do all the actions, except drag in there. import export delete
 
 class TechnicalView extends StatefulWidget {
-  const TechnicalView() : super();
+  const TechnicalView({Key? key}) : super(key: key);
 
   @override
   _TechnicalViewState createState() => _TechnicalViewState();
@@ -28,15 +28,15 @@ class TechnicalView extends StatefulWidget {
 
 class _TechnicalViewState extends State<TechnicalView> {
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
-  final accountName = TextEditingController();
+  final TextEditingController accountName = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    listeners.add(pros.settings.changes.listen((changes) {
+    listeners.add(pros.settings.changes.listen((Change<Setting> changes) {
       setState(() {});
     }));
-    listeners.add(pros.wallets.changes.listen((changes) {
+    listeners.add(pros.wallets.changes.listen((Change<Wallet> changes) {
       setState(() {});
     }));
   }
@@ -89,7 +89,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   /// export all acounts ability
   void _exportAll(BuildContext context) {
     Navigator.pushNamed(context, '/settings/export',
-        arguments: {'accountId': 'all'});
+        arguments: <String, String>{'accountId': 'all'});
   }
 
   /// change the accountId for this wallet and save
@@ -147,15 +147,15 @@ class _TechnicalViewState extends State<TechnicalView> {
                 IconButton(
                     icon: Icon(Icons.remove_red_eye,
                         color: Theme.of(context).primaryColor),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/wallet', arguments: {
-                          'wallet': wallet,
-                          'secret': wallet.cipher != null
-                              ? wallet.secret(wallet.cipher!)
-                              : 'unknown',
-                          'secretName': wallet
-                              .secretType, /* todo translate this to a string */
-                        }))
+                    onPressed: () => Navigator.pushNamed(context, '/wallet',
+                            arguments: <String, Object>{
+                              'wallet': wallet,
+                              'secret': wallet.cipher != null
+                                  ? wallet.secret(wallet.cipher!)
+                                  : 'unknown',
+                              'secretName': wallet
+                                  .secretType, /* todo translate this to a string */
+                            }))
               ])));
 
   ///List _getWallets(accountId) => [
@@ -165,7 +165,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   ListView body() => ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 5),
           children: <Widget>[
-            for (var wallet in pros.wallets) ...[
+            for (Wallet wallet in pros.wallets) ...<Widget>[
               _wallet(context, wallet),
             ]
           ]);
@@ -249,7 +249,7 @@ class _TechnicalViewState extends State<TechnicalView> {
           ]);
 */
   // unused
-  Future alertSuccess() => showDialog(
+  Future<void> alertSuccess() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
             title: const Text('Success!'),

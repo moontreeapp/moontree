@@ -98,7 +98,7 @@ class _NavMenuState extends State<NavMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, ListView> options = {
+    final Map<String, ListView> options = <String, ListView>{
       '/settings/import_export': ListView(
         shrinkWrap: true,
         padding: EdgeInsets.zero,

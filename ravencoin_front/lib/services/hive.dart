@@ -10,35 +10,26 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 enum HiveLoaded { yes, no, partial }
 
 class DataLoadingHelper {
-  final _loadedLock = ReaderWriterLock();
+  DataLoadingHelper() {
+    hiveInit = HiveInitializer(init: (dynamic dbDir) => Hive.initFlutter());
+  }
+  final ReaderWriterLock _loadedLock = ReaderWriterLock();
   HiveLoaded _loaded = HiveLoaded.no;
   late HiveInitializer hiveInit;
 
-  DataLoadingHelper() {
-    hiveInit = HiveInitializer(init: (dbDir) => Hive.initFlutter());
-  }
+  Future<void> setupDatabase() async => hiveInit.setUp(HiveLoadingStep.all);
 
-  Future<void> setupDatabase() async {
-    await hiveInit.setUp(HiveLoadingStep.all);
-  }
+  Future<void> setupDatabaseStart() async => hiveInit.setUpStart();
 
-  Future<void> setupDatabaseStart() async {
-    await hiveInit.setUpStart();
-  }
+  Future<void> setupDatabase1() async => hiveInit.setUp(HiveLoadingStep.lock);
 
-  Future<void> setupDatabase1() async {
-    await hiveInit.setUp(HiveLoadingStep.lock);
-  }
-
-  Future<void> setupDatabase2() async {
-    await hiveInit.setUp(HiveLoadingStep.login);
-  }
+  Future<void> setupDatabase2() async => hiveInit.setUp(HiveLoadingStep.login);
 
   Future<bool> isPartiallyLoaded() async =>
-      await _loadedLock.read(() => _loaded == HiveLoaded.partial);
+      _loadedLock.read(() => _loaded == HiveLoaded.partial);
 
   Future<bool> isLoaded() async =>
-      await _loadedLock.read(() => _loaded == HiveLoaded.yes);
+      _loadedLock.read(() => _loaded == HiveLoaded.yes);
 
   Future<void> setupWaiters() async {
     initWaiters(HiveLoadingStep.all);

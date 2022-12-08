@@ -18,7 +18,7 @@ class _ChosenBlockchainState extends State<ChosenBlockchain> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.page.listen((value) {
+    listeners.add(streams.app.page.listen((String value) {
       if (value != pageTitle) {
         setState(() {
           pageTitle = value;

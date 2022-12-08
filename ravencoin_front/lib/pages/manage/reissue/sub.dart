@@ -24,7 +24,7 @@ class _ReissueMainSubAssetState extends State<ReissueMainSubAsset> {
 
   @override
   Widget build(BuildContext context) {
-    var asset = pros.assets.primaryIndex.getOne(
+    final Asset? asset = pros.assets.primaryIndex.getOne(
         streams.app.manage.asset.value ?? '',
         pros.settings.chain,
         pros.settings.net);

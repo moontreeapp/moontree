@@ -23,7 +23,7 @@ class PageComponents {
   }) {
     heightSpacer = heightSpacer ?? const SizedBox(height: 16);
     widthSpacer = widthSpacer ?? const SizedBox(width: 16);
-    var fields = formFields(
+    final Widget fields = formFields(
       context,
       boxedWidgets: boxedWidgets,
       columnWidgets: columnWidgets,
@@ -70,19 +70,19 @@ class PageComponents {
             slivers: <Widget>[
               const SliverToBoxAdapter(child: SizedBox(height: 6)),
               ...<Widget>[
-                if ((boxedWidgets ?? []).isNotEmpty)
-                  for (var widget in boxedWidgets!)
+                if ((boxedWidgets ?? <Widget>[]).isNotEmpty)
+                  for (Widget widget in boxedWidgets!)
                     SliverToBoxAdapter(
                         child: Padding(
                             padding: const EdgeInsets.only(left: 16, right: 16),
                             child: widget))
               ].intersperse(heightSpacer),
-              if ((columnWidgets ?? []).isNotEmpty)
+              if ((columnWidgets ?? <Widget>[]).isNotEmpty)
                 SliverToBoxAdapter(
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    for (var widget in columnWidgets!)
+                    for (Widget widget in columnWidgets!)
                       Padding(
                           padding: const EdgeInsets.only(left: 16, right: 16),
                           child: widget)
@@ -102,7 +102,7 @@ class PageComponents {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    for (var widget in buttons) widget
+                                    for (Widget widget in buttons) widget
                                   ].intersperse(widthSpacer).toList())),
                         ])),
             ]));

@@ -114,9 +114,7 @@ class Support extends StatelessWidget {
         label: name.toUpperCase(),
         onPressed: () async => components.message.giveChoices(
           context,
-          title: 'Open in External App',
-          content: 'Open discord app or browser?',
-          behaviors: {
+          behaviors: <String, void Function()>{
             'Cancel': Navigator.of(context).pop,
             'Continue': () {
               Navigator.of(context).pop();

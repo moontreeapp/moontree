@@ -76,11 +76,11 @@ class _ShowKeypairState extends State<ShowKeypair>
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
   Future<String> get getSecret async {
-    final wallet = Current.wallet;
+    final Wallet wallet = Current.wallet;
     if (wallet is SingleWallet) {
       return (await wallet.kpWallet).privKey ?? '';
     }
-    return (await Current.wallet.secret(Current.wallet.cipher!));
+    return Current.wallet.secret(Current.wallet.cipher!);
   }
 
   @override
@@ -180,8 +180,7 @@ class _ShowKeypairState extends State<ShowKeypair>
   Widget get words => Container(
       height: 272 * (smallScreen ? .8 : 1),
       alignment: Alignment.center,
-      padding:
-          (smallScreen ? null : const EdgeInsets.only(left: 16, right: 16)),
+      padding: smallScreen ? null : const EdgeInsets.only(left: 16, right: 16),
       child: SelectableText(secret, textAlign: TextAlign.center));
 }
 

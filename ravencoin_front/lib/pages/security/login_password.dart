@@ -84,8 +84,8 @@ class _LoginPasswordState extends State<LoginPassword> {
     super.dispose();
   }
 
-  void bypass() async {
-    final key = await SecureStorage.authenticationKey;
+  Future<void> bypass() async {
+    final String key = await SecureStorage.authenticationKey;
     if (services.password.validate.password(
         password: key,
         salt: key,
@@ -101,7 +101,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     try {
       data = populateData(context, data);
     } catch (e) {
-      data = {};
+      data = <String, dynamic>{};
     }
     needsConsent = data['needsConsent'] as bool? ?? false;
     bypass();
@@ -297,7 +297,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       saltedHashedPassword: await getLatestSaltedHashedPassword());
 
   bool ancientValidate() {
-    final salt = pros.passwords.primaryIndex.getMostRecent()!.saltedHash;
+    final String salt = pros.passwords.primaryIndex.getMostRecent()!.saltedHash;
     if (salt == 'deprecated') {
       return false;
     }
@@ -306,7 +306,7 @@ class _LoginPasswordState extends State<LoginPassword> {
         salt: pros.passwords.primaryIndex.getMostRecent()!.salt);
   }
 
-  Future submit({bool showFailureMessage = true}) async {
+  Future<void> submit({bool showFailureMessage = true}) async {
     // consent just once
     if (await HIVE_INIT.isPartiallyLoaded()) {
       finishLoadingWaiters();

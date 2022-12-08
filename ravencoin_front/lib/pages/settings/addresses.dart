@@ -308,7 +308,7 @@ class _WalletViewState extends State<WalletView> {
         onPressed: disabled
             ? () {}
             : () => Navigator.pushNamed(context, '/transaction/send',
-                    arguments: {
+                    arguments: <String, String>{
                       'symbol': pros.securities.currentCoin.symbol,
                       'walletId': wallet.id
                     }),

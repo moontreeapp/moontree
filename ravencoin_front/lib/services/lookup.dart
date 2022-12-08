@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_classes_with_only_static_members
+
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 
@@ -17,7 +19,7 @@ class Current {
   static List<Balance> get holdings => services.balance.walletBalances(wallet);
 
   static List<String> get holdingNames =>
-      [for (var balance in holdings) balance.security.symbol];
+      <String>[for (Balance balance in holdings) balance.security.symbol];
 
   static Iterable<String> get adminNames => holdings
       .where((Balance balance) => balance.security.asset?.isAdmin ?? false)

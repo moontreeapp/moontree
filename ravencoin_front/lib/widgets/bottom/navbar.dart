@@ -41,7 +41,7 @@ class _NavBarState extends State<NavBar> {
   bool walletIsEmpty = false;
   bool walletHasTransactions = false;
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
-  late Set<Balance> balances = {};
+  late Set<Balance> balances = <Balance>{};
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class _NavBarState extends State<NavBar> {
     }));
     listeners.add(pros.balances.batchedChanges
         .listen((List<Change<Balance>> changes) async {
-      Set<Balance> interimBalances = Current.wallet.balances.toSet();
+      final Set<Balance> interimBalances = Current.wallet.balances.toSet();
       if (balances != interimBalances) {
         setState(() {
           balances = interimBalances;
@@ -92,7 +92,7 @@ class _NavBarState extends State<NavBar> {
                     .intersperse(const SizedBox(width: 16))
                     .toList(),
               ),
-              if (false /*widget.includeSectors*/) ...[
+              if (false /*widget.includeSectors*/) ...<Widget>[
                 const SizedBox(height: 6),
                 Padding(
                     padding: EdgeInsets.zero,
@@ -114,51 +114,49 @@ class _NavBarState extends State<NavBar> {
       widget.actionButtons ??
       (widget.appContext == AppContext.wallet
           ? <Widget>[
-              walletIsEmpty &&
-                      !walletHasTransactions &&
-                      streams.import.result.value ==
-                          null // transactions take a while to show up, so after import make sure to change the button.
-                  ? components.buttons.actionButton(
-                      context,
-                      label: 'import',
-                      onPressed: () async {
-                        Navigator.of(components.navigator.routeContext!)
-                            .pushNamed('/settings/import');
-                      },
-                    )
-                  : components.buttons.actionButton(
-                      context,
-                      label: 'send',
-                      enabled:
-                          //!(pros.settings.chain == Chain.evrmore &&
-                          //        pros.blocks.records.first.height <=
-                          //            60 * 24 * 60 &&
-                          //        pros.unspents.records
-                          //                .where((u) => u.height == 0)
-                          //                .length >
-                          //            0)
-                          streams.claim.unclaimed.value
-                                  .getOr(Current.walletId, <Vout>{}).isEmpty &&
-                              (!walletIsEmpty &&
-                                  connectionStatus ==
-                                      ConnectionStatus.connected),
-                      disabledOnPressed: () {
-                        if (connectionStatus != ConnectionStatus.connected) {
-                          streams.app.snack
-                              .add(Snack(message: 'Not connected to network'));
-                        } else if (walletIsEmpty) {
-                          streams.app.snack.add(Snack(
-                              message:
-                                  'This wallet has no coin, unable to send.'));
-                        } else {
-                          streams.app.snack
-                              .add(Snack(message: 'Claimed your EVR first.'));
-                        }
-                      },
-                      onPressed: () =>
-                          Navigator.of(components.navigator.routeContext!)
-                              .pushNamed('/transaction/send'),
-                    ),
+              if (walletIsEmpty &&
+                  !walletHasTransactions &&
+                  streams.import.result.value == null)
+                components.buttons.actionButton(
+                  context,
+                  label: 'import',
+                  onPressed: () async {
+                    Navigator.of(components.navigator.routeContext!)
+                        .pushNamed('/settings/import');
+                  },
+                )
+              else
+                components.buttons.actionButton(
+                  context,
+                  label: 'send',
+                  enabled:
+                      //!(pros.settings.chain == Chain.evrmore &&
+                      //        pros.blocks.records.first.height <=
+                      //            60 * 24 * 60 &&
+                      //        pros.unspents.records
+                      //                .where((u) => u.height == 0)
+                      //                .length >
+                      //            0)
+                      streams.claim.unclaimed.value
+                              .getOr(Current.walletId, <Vout>{}).isEmpty &&
+                          (!walletIsEmpty &&
+                              connectionStatus == ConnectionStatus.connected),
+                  disabledOnPressed: () {
+                    if (connectionStatus != ConnectionStatus.connected) {
+                      streams.app.snack
+                          .add(Snack(message: 'Not connected to network'));
+                    } else if (walletIsEmpty) {
+                      streams.app.snack.add(Snack(
+                          message: 'This wallet has no coin, unable to send.'));
+                    } else {
+                      streams.app.snack
+                          .add(Snack(message: 'Claimed your EVR first.'));
+                    }
+                  },
+                  onPressed: () =>
+                      Navigator.of(components.navigator.routeContext!)
+                          .pushNamed('/transaction/send'),
+                ),
               components.buttons.actionButton(
                 context,
                 label: 'receive',
@@ -198,16 +196,17 @@ class _NavBarState extends State<NavBar> {
       child: IconButton(
         onPressed: () {
           streams.app.context.add(appContext);
-          if (!['Home', 'Manage', 'Swap'].contains(streams.app.page.value)) {
+          if (!<String>['Home', 'Manage', 'Swap']
+              .contains(streams.app.page.value)) {
             Navigator.popUntil(components.navigator.routeContext!,
                 ModalRoute.withName('/home'));
           }
         },
-        icon: Icon({
+        icon: Icon(<AppContext, IconData>{
           AppContext.wallet: MdiIcons.wallet,
           AppContext.manage: MdiIcons.plusCircle,
           AppContext.swap: MdiIcons.swapHorizontalBold,
-        }[appContext]!),
+        }[appContext]),
         iconSize: streams.app.context.value == appContext ? 32 : 24,
         color: streams.app.context.value == appContext
             ? AppColors.primary

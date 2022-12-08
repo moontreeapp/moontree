@@ -22,7 +22,7 @@ class _ConnectionLightState extends State<ConnectionLight>
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
   Color connectionStatusColor = AppColors.error;
-  Map<ConnectionStatus, Color> connectionColor = {
+  Map<ConnectionStatus, Color> connectionColor = <ConnectionStatus, Color>{
     ConnectionStatus.connected: AppColors.success,
     ConnectionStatus.connecting: AppColors.yellow,
     ConnectionStatus.disconnected: AppColors.error,

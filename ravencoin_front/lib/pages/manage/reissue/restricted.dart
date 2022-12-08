@@ -5,6 +5,8 @@ import 'package:ravencoin_back/streams/reissue.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class ReissueRestrictedAsset extends StatefulWidget {
+  const ReissueRestrictedAsset({Key? key}) : super(key: key);
+
   @override
   _ReissueRestrictedAssetState createState() => _ReissueRestrictedAssetState();
 }
@@ -23,7 +25,7 @@ class _ReissueRestrictedAssetState extends State<ReissueRestrictedAsset> {
 
   @override
   Widget build(BuildContext context) {
-    var asset = pros.assets.primaryIndex.getOne(
+    final Asset? asset = pros.assets.primaryIndex.getOne(
         streams.app.manage.asset.value ?? '',
         pros.settings.chain,
         pros.settings.net);

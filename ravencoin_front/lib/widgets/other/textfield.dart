@@ -155,7 +155,7 @@ class TextFieldFormatted extends StatefulWidget {
 class _TextFieldFormattedState extends State<TextFieldFormatted> {
   @override
   Widget build(BuildContext context) {
-    final decoration = widget.border != null
+    final InputDecoration decoration = widget.border != null
         ? InputDecoration(
             border: widget.border,
           )
@@ -220,7 +220,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
                     .caption!
                     .copyWith(height: .8, color: AppColors.primary),
           );
-    final text = TextField(
+    final TextField text = TextField(
         decoration: decoration,
         onTap: widget.onTap ?? () => setState(() {}), // solves #594
         key: widget.key,

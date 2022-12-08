@@ -27,7 +27,7 @@ class _VerifySeedState extends State<VerifySeed> {
   late List<String> secret;
   late Map<int, SecretWord> shuffled;
   int click = 0;
-  Map<int, SecretWord> clicks = {};
+  Map<int, SecretWord> clicks = <int, SecretWord>{};
   bool clicked = false;
 
   @override

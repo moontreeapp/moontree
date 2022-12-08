@@ -7,16 +7,16 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class ChangePasswordWidget extends StatefulWidget {
+  const ChangePasswordWidget({Key? key, this.data}) : super(key: key);
   final dynamic data;
-  const ChangePasswordWidget({this.data}) : super();
 
   @override
   _ChangePasswordWidget createState() => _ChangePasswordWidget();
 }
 
 class _ChangePasswordWidget extends State<ChangePasswordWidget> {
-  var newPassword = TextEditingController();
-  var confirmPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   FocusNode newPasswordFocus = FocusNode();
   FocusNode confirmPasswordFocus = FocusNode();
   FocusNode buttonFocus = FocusNode();
@@ -139,8 +139,8 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
 
   void validateComplexity({String? password}) {
     password = password ?? newPassword.text;
-    var oldValidation = validatedComplexity;
-    var oldNotification = newNotification;
+    bool oldValidation = validatedComplexity;
+    String? oldNotification = newNotification;
     if (services.password.validate.complexity(password)) {
       if (confirmPassword.text == newPassword.text) {
         validatedComplexity = true;

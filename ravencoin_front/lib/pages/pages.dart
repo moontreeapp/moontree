@@ -95,10 +95,10 @@ class pages {
 
   static Map<String, Widget Function(BuildContext)> routes(
           BuildContext context) =>
-      {
+      <String, Widget Function(BuildContext)>{
         '/splash': (BuildContext context) => const Splash(),
         '/home': (BuildContext context) => const Home(),
-        '/manage/asset': (BuildContext context) => const Asset(),
+        '/manage/asset': (BuildContext context) => const AssetPage(),
         '/transactions': (BuildContext context) => const Transactions(),
         '/addresses': (BuildContext context) =>
             const WalletView(), // technical view

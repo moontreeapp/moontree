@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 MaterialColor generateMaterialColor(Color color) {
-  return MaterialColor(color.value, {
+  return MaterialColor(color.value, <int, Color>{
     50: tintColor(color, 0.5),
     100: tintColor(color, 0.4),
     200: tintColor(color, 0.3),

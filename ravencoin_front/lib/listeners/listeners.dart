@@ -1,5 +1,4 @@
 export 'logo.dart';
-
 import 'package:ravencoin_front/listeners/logo.dart';
 
 // globals

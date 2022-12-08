@@ -305,7 +305,7 @@ class _CreateNativeState extends State<CreateNative> {
         streams.app.snack.add(Snack(
           message: 'No pin detected; please set a password.',
         ));
-        Future.microtask(() => Navigator.pushReplacementNamed(
+        Future<Object?>.microtask(() => Navigator.pushReplacementNamed(
               context,
               getMethodPathCreate(nativeSecurity: false),
             ));

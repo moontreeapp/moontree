@@ -46,7 +46,7 @@ class AssetNavbar extends StatelessWidget {
           label: 'receive',
           link: '/transaction/receive',
           arguments: transactionsBloc.security != pros.securities.currentCoin
-              ? {'symbol': transactionsBloc.security.symbol}
+              ? <String, dynamic>{'symbol': transactionsBloc.security.symbol}
               : null,
         )
       ],
@@ -95,7 +95,7 @@ class CoinDetailsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TransactionsBloc bloc = TransactionsBloc.instance();
-    return StreamBuilder(
+    return StreamBuilder<double>(
         stream: bloc.scrollObserver,
         builder: (BuildContext context, AsyncSnapshot<Object?> snapshot) {
           return Transform.translate(
@@ -146,7 +146,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
             padding: EdgeInsets.only(
                 top: widget.cachedMetadataView != null ? 48 : 0),
             child: FrontCurve(
-              frontLayerBoxShadow: const [],
+              frontLayerBoxShadow: const <BoxShadow>[],
               child: AssetDetailsContent(
                 widget.cachedMetadataView,
                 widget.scrollController,
@@ -196,7 +196,7 @@ class MetadataView extends StatelessWidget {
               context,
               title: 'View Data',
               content: 'View data in external browser?',
-              behaviors: {
+              behaviors: <String, void Function()>{
                 'CANCEL': Navigator.of(context).pop,
                 'BROWSER': () {
                   Navigator.of(context).pop();
@@ -209,16 +209,18 @@ class MetadataView extends StatelessWidget {
         ),
       );
     } else if (securityAsset.primaryMetadata == null) {
-      chilren = [SelectableText(securityAsset.metadata)];
+      chilren = <Widget>[SelectableText(securityAsset.metadata)];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.imagePath) {
-      chilren = [
+      chilren = <Widget>[
         Image.file(AssetLogos()
             .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
       ];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.jsonString) {
-      chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
+      chilren = <Widget>[
+        SelectableText(securityAsset.primaryMetadata!.data ?? '')
+      ];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.unknown) {
-      chilren = [
+      chilren = <Widget>[
         SelectableText(securityAsset.primaryMetadata!.metadata),
         SelectableText(securityAsset.primaryMetadata!.data ?? '')
       ];

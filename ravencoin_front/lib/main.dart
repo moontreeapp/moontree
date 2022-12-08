@@ -64,10 +64,10 @@ class RavenMobileApp extends StatelessWidget {
   Widget build(BuildContext context) {
     components.navigator.mainContext = context;
     //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
-    //    overlays: [SystemUiOverlay.top]);
+    //    overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top]);
-    SystemChrome.setPreferredOrientations([
+        overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
+    SystemChrome.setPreferredOrientations(<DeviceOrientation>[
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
@@ -81,23 +81,21 @@ class RavenMobileApp extends StatelessWidget {
       initialRoute: '/splash',
       // look up flutter view model for sub app structure.
       routes: pages.routes(context),
-      themeMode: ThemeMode.system,
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
-      navigatorObservers: [components.navigator],
-      builder: (BuildContext context, child) {
+      navigatorObservers: <NavigatorObserver>[components.navigator],
+      builder: (BuildContext context, Widget? child) {
         components.navigator.scaffoldContext = context;
-        final scaffold =
+        final Stack scaffold =
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Scaffold(
             backgroundColor:
                 Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
-            extendBodyBehindAppBar: false,
             appBar: const BackdropAppBar(),
             body: MultiBlocProvider(
               providers: [
                 BlocProvider<SimpleSendFormCubit>(
-                    create: (context) => SimpleSendFormCubit()),
+                    create: (BuildContext context) => SimpleSendFormCubit()),
               ],
               child: child!,
             ),

@@ -84,18 +84,18 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       FadeTransition(opacity: animation, child: Column(children: belowIcon));
 
   List<Widget> get belowIcon {
-    final List<Widget> ret = [
+    final List<Widget> ret = <Widget>[
       //SizedBox(height: 9),
       //selections,
       const SizedBox(height: 5),
       // get this from balance
-      front ? frontText : backText,
+      if (front) frontText else backText,
       const SizedBox(height: 1),
     ];
 
     // make it a fixed size
     if (front && widget.pageTitle != 'Asset' && widget.symbol == 'RVN') {
-      ret.addAll([
+      ret.addAll(<Widget>[
         // USD amount of balance fix!
         Text(
             services.conversion.securityAsReadable(
@@ -109,7 +109,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
                 .copyWith(color: AppColors.white87)),
       ]);
     } else if (front && widget.totalSupply != null) {
-      ret.addAll([
+      ret.addAll(<Widget>[
         Text('Total Supply',
             style: Theme.of(context)
                 .textTheme
@@ -126,7 +126,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       const Icon(Icons.circle_outlined, size: 6, color: Color(0x99FFFFFF));
 
   List<Widget> get selectionList =>
-      [selected, const SizedBox(width: 8), unselected];
+      <Widget>[selected, const SizedBox(width: 8), unselected];
 
   Widget get selections => Row(
       mainAxisAlignment: MainAxisAlignment.center,

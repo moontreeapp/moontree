@@ -81,7 +81,7 @@ class _LoginNativeState extends State<LoginNative> {
     try {
       data = populateData(context, data);
     } catch (e) {
-      data = {};
+      data = <String, dynamic>{};
     }
     needsConsent = data['needsConsent'] as bool? ?? false;
     autoInitiateUnlock =
@@ -224,7 +224,7 @@ class _LoginNativeState extends State<LoginNative> {
         },
       );
 
-  Future submit() async {
+  Future<void> submit() async {
     /// just in case
     if (await HIVE_INIT.isPartiallyLoaded()) {
       await finishLoadingWaiters();
@@ -237,9 +237,9 @@ class _LoginNativeState extends State<LoginNative> {
 
     /// there are existing wallets, we should populate them with sensitives now.
     await populateWalletsWithSensitives();
-    final localAuthApi = LocalAuthApi();
+    final LocalAuthApi localAuthApi = LocalAuthApi();
     streams.app.authenticating.add(true);
-    final validate = await localAuthApi.authenticate();
+    final bool validate = await localAuthApi.authenticate();
     streams.app.authenticating.add(false);
     setState(() => enabled = false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {

@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/records/asset.dart' as assetRecord;
+import 'package:ravencoin_back/records/asset.dart' as asset_record;
 import 'package:ravencoin_front/components/components.dart';
 
-class Asset extends StatefulWidget {
-  const Asset() : super();
+class AssetPage extends StatefulWidget {
+  const AssetPage() : super();
 
   @override
-  _AssetState createState() => _AssetState();
+  _AssetPageState createState() => _AssetPageState();
 }
 
-class _AssetState extends State<Asset> {
+class _AssetPageState extends State<AssetPage> {
   Map<String, dynamic> data = <String, dynamic>{};
 
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    var symbol = data['symbol'] as String;
-    var chosenAsset = pros.assets.primaryIndex
+    final String symbol = data['symbol'] as String;
+    final Asset chosenAsset = pros.assets.primaryIndex
         .getOne(symbol, pros.settings.chain, pros.settings.net)!;
     return BackdropLayers(
       back: CoinSpec(
@@ -37,21 +37,23 @@ class _AssetState extends State<Asset> {
               placeholderManage: !services.developer.developerMode,
               includeSectors: false,
               actionButtons: <Widget>[
-                if ([AssetType.main, AssetType.sub]
-                    .contains(chosenAsset.assetType)) ...[
+                if (<AssetType>[AssetType.main, AssetType.sub]
+                    .contains(chosenAsset.assetType)) ...<Widget>[
                   components.buttons.actionButton(context,
                       label: 'create', onPressed: _produceSubCreateModal),
                 ],
-                if ([
+                if (<AssetType>[
                   AssetType.qualifier,
                   AssetType.qualifierSub,
-                ].contains(chosenAsset.assetType)) ...[
+                ].contains(chosenAsset.assetType)) ...<Widget>[
                   components.buttons.actionButton(context,
                       label: 'create',
                       onPressed: () => Navigator.pushNamed(
                             components.navigator.routeContext!,
                             '/create/qualifiersub',
-                            arguments: {'symbol': 'QualifierSub'},
+                            arguments: <String, String>{
+                              'symbol': 'QualifierSub'
+                            },
                           )),
                 ],
                 components.buttons.actionButton(context, label: 'manage',
@@ -73,20 +75,20 @@ class _AssetState extends State<Asset> {
     SelectionItems(context, modalSet: SelectionSet.Sub_Asset).build();
   }
 
-  void _produceMainManageModal(assetRecord.Asset asset) async {
+  Future<void> _produceMainManageModal(asset_record.Asset asset) async {
     if (asset.reissuable &&
-        [AssetType.main, AssetType.sub, AssetType.restricted]
+        <AssetType>[AssetType.main, AssetType.sub, AssetType.restricted]
             .contains(asset.assetType)) {
       await SelectionItems(
         context,
         //symbol: symbol,
         modalSet: SelectionSet.MainManage,
-        behaviors: [
+        behaviors: <void Function()>[
           () {
             Navigator.pushNamed(
               context,
-              '/reissue/' + asset.assetType.name.toLowerCase(),
-              arguments: {'symbol': asset.symbol},
+              '/reissue/${asset.assetType.name.toLowerCase()}',
+              arguments: <String, String>{'symbol': asset.symbol},
             );
           },
           () {

@@ -33,12 +33,14 @@ void postLogin(BuildContext context) {
   if (Current.wallet is LeaderWallet &&
       //streams.app.triggers.value == ThresholdTrigger.backup &&
       !Current.wallet.backedUp) {
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    Navigator.pushReplacementNamed(context, '/home',
+        arguments: <dynamic, dynamic>{});
     Navigator.of(context).pushNamed(
       '/security/backup/backupintro',
-      arguments: {'fadeIn': true},
+      arguments: <String, bool>{'fadeIn': true},
     );
   } else {
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    Navigator.pushReplacementNamed(context, '/home',
+        arguments: <dynamic, dynamic>{});
   }
 }

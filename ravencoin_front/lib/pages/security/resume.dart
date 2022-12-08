@@ -13,8 +13,8 @@ class ChangeResume extends StatefulWidget {
 }
 
 class _ChangeResumeState extends State<ChangeResume> {
-  var password = TextEditingController();
-  var passwordVisible = false;
+  TextEditingController password = TextEditingController();
+  bool passwordVisible = false;
 
   @override
   void initState() {
@@ -45,7 +45,7 @@ class _ChangeResumeState extends State<ChangeResume> {
       Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         TextButton.icon(
             onPressed: () => Navigator.pushReplacementNamed(
-                context, getMethodPathLogin(), arguments: {}),
+                context, getMethodPathLogin(), arguments: <dynamic, dynamic>{}),
             icon: const Icon(Icons.login),
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
@@ -57,7 +57,6 @@ class _ChangeResumeState extends State<ChangeResume> {
       ]);
 
   Column body() => Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(
@@ -86,7 +85,7 @@ class _ChangeResumeState extends State<ChangeResume> {
       );
 
   Future<void> submit() async {
-    final key = await SecureStorage.authenticationKey;
+    final String key = await SecureStorage.authenticationKey;
     if (services.password.validate.previousPassword(
       password: key,
       salt: key,
@@ -124,7 +123,7 @@ class _ChangeResumeState extends State<ChangeResume> {
       );
       successMessage();
     } else {
-      final oldSalt = pros.passwords.primaryIndex.getPrevious()!.salt;
+      final String oldSalt = pros.passwords.primaryIndex.getPrevious()!.salt;
       if (services.password.validate.previousPassword(
         password: password.text,
         salt: oldSalt,
@@ -139,16 +138,17 @@ class _ChangeResumeState extends State<ChangeResume> {
         );
         successMessage();
       } else {
-        var used = services.password.validate.previouslyUsed(password.text);
+        final int? used =
+            services.password.validate.previouslyUsed(password.text);
         failureMessage(used == null
             ? 'This password was not recognized to match any previously used passwords.'
             : 'The provided password was used $used passwords ago.');
       }
-      setState(() => {});
+      setState(() {});
     }
   }
 
-  Future failureMessage(String msg) => showDialog(
+  Future<void> failureMessage(String msg) => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
               title: const Text('Change Password Recovery failure'),
@@ -159,7 +159,7 @@ class _ChangeResumeState extends State<ChangeResume> {
                     onPressed: () => Navigator.pop(context))
               ]));
 
-  Future successMessage() => showDialog(
+  Future<void> successMessage() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
               title: const Text('Success!'),
@@ -172,6 +172,6 @@ class _ChangeResumeState extends State<ChangeResume> {
                     child: const Text('ok'),
                     onPressed: () => Navigator.pushReplacementNamed(
                         context, getMethodPathLogin(),
-                        arguments: {}))
+                        arguments: <dynamic, dynamic>{}))
               ]));
 }

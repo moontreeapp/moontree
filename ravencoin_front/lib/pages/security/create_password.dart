@@ -28,10 +28,10 @@ class CreatePassword extends StatefulWidget {
 
 class _CreatePasswordState extends State<CreatePassword> {
   //late List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
-  var password = TextEditingController();
-  var confirm = TextEditingController();
-  var passwordVisible = false;
-  var confirmVisible = false;
+  TextEditingController password = TextEditingController();
+  TextEditingController confirm = TextEditingController();
+  bool passwordVisible = false;
+  bool confirmVisible = false;
   FocusNode passwordFocus = FocusNode();
   FocusNode confirmFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
@@ -298,10 +298,10 @@ class _CreatePasswordState extends State<CreatePassword> {
         isConsented;
   }
 
-  Future consentToAgreements() async {
+  Future<void> consentToAgreements() async {
     // consent just once
     if (!consented) {
-      final consent = Consent();
+      final Consent consent = Consent();
       await consent.given(await getId(), ConsentDocument.user_agreement);
       await consent.given(await getId(), ConsentDocument.privacy_policy);
       await consent.given(await getId(), ConsentDocument.risk_disclosures);
@@ -309,7 +309,7 @@ class _CreatePasswordState extends State<CreatePassword> {
     }
   }
 
-  Future submit({bool showFailureMessage = true}) async {
+  Future<void> submit({bool showFailureMessage = true}) async {
     // since the concent calls take some time, maybe this should be removed...?
     if (validate()) {
       // only run once - disable button

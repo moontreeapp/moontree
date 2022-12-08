@@ -38,7 +38,7 @@ class _SwtichChoice extends State<SwtichChoice> {
         Text(widget.label, style: Theme.of(context).textTheme.bodyText1),
         Switch(
             value: choice,
-            onChanged: (value) async {
+            onChanged: (bool value) async {
               if (widget.onChanged != null) {
                 await widget.onChanged!(value);
               }

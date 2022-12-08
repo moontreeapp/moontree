@@ -118,7 +118,7 @@ class _ImportState extends State<Import> {
                         ],
                         submitButton(),
                       ]
-                    : [submitButton('Import File')]),
+                    : <Widget>[submitButton('Import File')]),
           )
         ],
       );
@@ -277,7 +277,7 @@ class _ImportState extends State<Import> {
       importFormatDetected = 'Unknown';
     }
     if (oldImportFormatDetected != importFormatDetected) {
-      setState(() => {});
+      setState(() {});
     }
   }
 

@@ -22,7 +22,7 @@ class AssetListener {
   Future<void> grabMetadataForMaster(Asset asset) async {
     // master assets should look at the ipfs on the actual unique assets
     // what if we don't hold that asset? we should pull it?
-    var unique = pros.assets.primaryIndex
+    final Asset? unique = pros.assets.primaryIndex
         .getOne(asset.baseSymbol, asset.chain, asset.net);
     if (unique == null) {
       /// we should pull the asset data for this asset even if we don't own the
@@ -47,8 +47,8 @@ class AssetListener {
     if (asset.hasData && asset.data!.isIpfs) {
       if (asset.primaryMetadata == null) {
         // pull the contents from ipfs and save a metadata record
-        var ipfs = IpfsMiniExplorer(asset.metadata);
-        var resp = await ipfs.get();
+        final IpfsMiniExplorer ipfs = IpfsMiniExplorer(asset.metadata);
+        final String? resp = await ipfs.get();
         await pros.metadatas.save(Metadata(
             chain: pros.settings.chain,
             net: pros.settings.net,
@@ -72,12 +72,13 @@ class LogoListener {
 
   /// look for ipfs hashes in this metadata, make children, mark one as logo
   Future<void> grabChildrenMetadataFor(Metadata metadata) async {
-    var logoHash = IpfsCall.searchJsonForLogo(jsonString: metadata.data);
+    final String? logoHash =
+        IpfsCall.searchJsonForLogo(jsonString: metadata.data);
     // lets search for anything ipfs
-    var hashes = IpfsCall.extractIpfsHashes(metadata.data ?? '');
-    for (var hash in hashes) {
-      var ipfs = IpfsMiniExplorer(hash);
-      var resp = await ipfs.get();
+    final Set<String> hashes = IpfsCall.extractIpfsHashes(metadata.data ?? '');
+    for (String hash in hashes) {
+      final IpfsMiniExplorer ipfs = IpfsMiniExplorer(hash);
+      final String? resp = await ipfs.get();
       pros.metadatas.save(Metadata(
         chain: pros.settings.chain,
         net: pros.settings.net,

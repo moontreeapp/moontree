@@ -45,7 +45,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
     try {
       data = populateData(context, data);
     } catch (e) {
-      data = {};
+      data = <String, dynamic>{};
     }
     return BackdropLayers(
         back: const BlankBack(),
@@ -67,9 +67,8 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              for (Widget x in [
+              for (Widget x in <Widget>[
                 newPasswordField,
                 confirmPasswordField,
               ])
@@ -181,7 +180,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
     }
     if (oldValidation != validatedComplexity ||
         oldNotification != newNotification) {
-      setState(() => {});
+      setState(() {});
     }
   }
 

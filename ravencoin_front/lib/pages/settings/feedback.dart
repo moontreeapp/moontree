@@ -7,15 +7,15 @@ import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class Feedback extends StatefulWidget {
+  const Feedback({Key? key, this.data}) : super(key: key);
   final dynamic data;
-  const Feedback({this.data}) : super();
 
   @override
   _FeedbackState createState() => _FeedbackState();
 }
 
 class _FeedbackState extends State<Feedback> {
-  dynamic data = {};
+  dynamic data = <dynamic, dynamic>{};
   final TextEditingController typeController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -90,7 +90,7 @@ class _FeedbackState extends State<Feedback> {
         hintText: 'Request Type',
         suffixIcon: IconButton(
           icon: const Padding(
-              padding: const EdgeInsets.only(right: 14),
+              padding: EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: () => _produceFeedbackModal(),
         ),
@@ -99,7 +99,7 @@ class _FeedbackState extends State<Feedback> {
             FocusScope.of(context).requestFocus(descriptionFocus),
       );
 
-  Widget get descriptionField => Container(
+  Widget get descriptionField => SizedBox(
       height: 200,
       child: TextFieldFormatted(
           focusNode: descriptionFocus,
@@ -119,8 +119,7 @@ class _FeedbackState extends State<Feedback> {
           helperText: descriptionController.text == ''
               ? 'As a user... I want... so that...'
               : null,
-          errorText: null,
-          onChanged: (value) => enableSend(),
+          onChanged: (String value) => enableSend(),
           onEditingComplete: () {
             print(descriptionFocus.hasFocus);
             FocusScope.of(context).requestFocus(emailFocus);
@@ -143,16 +142,14 @@ class _FeedbackState extends State<Feedback> {
         helperText: emailController.text == ''
             ? "We'll reach out to you if we have any questions"
             : null,
-        errorText: null,
-        onChanged: (value) => enableSend(),
+        onChanged: (String value) => enableSend(),
         onEditingComplete: () async => attemptSend(),
       );
 
   Widget get filePicked => Column(children: <Widget>[
         const Divider(indent: 0, endIndent: 0),
         Padding(
-            padding:
-                const EdgeInsets.only(left: 0, right: 0, top: 16, bottom: 0),
+            padding: const EdgeInsets.only(left: 0, top: 16),
             child: ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -181,7 +178,7 @@ class _FeedbackState extends State<Feedback> {
       enabled: sendEnabled,
       label: 'Send'.toUpperCase(),
       onPressed: () async =>
-          await attemptSend(file?.content ?? descriptionController.text),
+          attemptSend(file?.content ?? descriptionController.text),
       disabledIcon: components.icons.importDisabled(context));
 
   Widget get fileButton => components.buttons.actionButton(
@@ -195,15 +192,15 @@ class _FeedbackState extends State<Feedback> {
       );
 
   void enableSend([String? given]) {
-    var oldsendEnabled = sendEnabled;
+    final bool oldsendEnabled = sendEnabled;
     sendEnabled = true; //validate all fields?
 
     if (oldsendEnabled != sendEnabled) {
-      setState(() => {});
+      setState(() {});
     }
   }
 
-  Future attemptSend([String? importData]) async {
+  Future<void> attemptSend([String? importData]) async {
     FocusScope.of(context).unfocus();
     //var text = (importData ?? descriptionController.text).trim();
     //streams.feeback.send.add(ImportRequest(text: text)); // not real
@@ -211,9 +208,11 @@ class _FeedbackState extends State<Feedback> {
   }
 
   void _produceFeedbackModal() {
-    SelectionItems(context, modalSet: SelectionSet.Feedback, behaviors: [
-      () => setState(() => typeController.text = 'Change'),
-      () => setState(() => typeController.text = 'Bug')
-    ]).build();
+    SelectionItems(context,
+        modalSet: SelectionSet.Feedback,
+        behaviors: <void Function()>[
+          () => setState(() => typeController.text = 'Change'),
+          () => setState(() => typeController.text = 'Bug')
+        ]).build();
   }
 }

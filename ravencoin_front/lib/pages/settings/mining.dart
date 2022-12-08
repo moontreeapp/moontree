@@ -29,7 +29,8 @@ class MiningChoice extends StatelessWidget {
                       //description:
                       //    'In Miner Mode, full transaction histories are not downloaded. This makes syncing your wallets faster.',
                       initial: services.wallet.currentWallet.minerMode,
-                      onChanged: (value) => services.wallet.setMinerMode(value),
+                      onChanged: (bool value) =>
+                          services.wallet.setMinerMode(value),
                     )))),
       ]);
 }

@@ -198,7 +198,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         }
         Future<void>.microtask(() => Navigator.pushReplacementNamed(
             context, getMethodPathLogin(),
-            arguments: {'needsConsent': !hasConsented}));
+            arguments: <String, bool>{'needsConsent': !hasConsented}));
 
         /// testing out instant/custom page transitions
         /// https://stackoverflow.com/questions/52698340/animation-for-named-routes

@@ -31,24 +31,24 @@ class CheckoutStruct {
   final Widget? button;
   final String loadingMessage;
   final int? playcount;
-  static const Iterable<Iterable<String>> exampleItems = [
-    ['Short Text', 'aligned right'],
-    ['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
-    [
+  static const Iterable<Iterable<String>> exampleItems = <List<String>>[
+    <String>['Short Text', 'aligned right'],
+    <String>['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
+    <String>[
       'Multiline (2) - Limited',
       '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
       '2'
     ],
-    [
+    <String>[
       'Multiline (5)',
       '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
       '5'
     ]
   ];
-  static const Iterable<Iterable<String>> exampleFees = [
-    ['Transaction', '1'],
-    ['Sub Asset', '100'],
-    ['long amount', '21,000,000.00000000']
+  static const Iterable<Iterable<String>> exampleFees = <List<String>>[
+    <String>['Transaction', '1'],
+    <String>['Sub Asset', '100'],
+    <String>['long amount', '21,000,000.00000000']
   ];
 
   const CheckoutStruct({

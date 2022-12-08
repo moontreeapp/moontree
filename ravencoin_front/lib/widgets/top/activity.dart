@@ -36,7 +36,7 @@ class _ActivityLightState extends State<ActivityLight>
         setState(() => connectionBusy = value);
       }
     }));
-    listeners.add(streams.app.page.listen((value) {
+    listeners.add(streams.app.page.listen((String value) {
       if (value != pageTitle) {
         setState(() {
           pageTitle = value;
@@ -55,7 +55,7 @@ class _ActivityLightState extends State<ActivityLight>
 
   @override
   Widget build(BuildContext context) {
-    return ['Login', 'Createlogin'].contains(pageTitle)
+    return <String>['Login', 'Createlogin'].contains(pageTitle)
         ? Container()
         : connectionBusy
             ? GestureDetector(
@@ -70,7 +70,7 @@ class _ActivityLightState extends State<ActivityLight>
                           ? const DownloadActivity()
                           : null)
                       : null,
-                  behaviors: {
+                  behaviors: <String, void Function()>{
                     'ok': () {
                       Navigator.of(components.navigator.routeContext!).pop();
                     },

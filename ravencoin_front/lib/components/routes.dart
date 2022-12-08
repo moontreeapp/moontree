@@ -3,15 +3,16 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class RouteStack extends NavigatorObserver {
-  List<Route<dynamic>> routeStack = [];
+  List<Route<dynamic>> routeStack = <Route<dynamic>>[];
   BuildContext? routeContext;
   BuildContext? scaffoldContext;
   BuildContext? mainContext;
   TabController? tabController;
 
   bool nameIsInStack(String name) =>
-      routeStack.map((e) => e.settings.name).contains(name);
+      routeStack.map((Route<dynamic> e) => e.settings.name).contains(name);
 
+  @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     streams.app.tap.add(null); // track user is active
     routeStack.add(route);
@@ -23,6 +24,7 @@ class RouteStack extends NavigatorObserver {
     streams.app.page.add(conformName(route.settings.name));
   }
 
+  @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     streams.app.tap.add(null); // track user is active
     routeStack.removeLast();
@@ -33,7 +35,7 @@ class RouteStack extends NavigatorObserver {
   }
 
   @override
-  void didRemove(Route route, Route? previousRoute) {
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
     streams.app.tap.add(null); // track user is active
     routeStack.removeLast();
     routeContext =
@@ -43,7 +45,7 @@ class RouteStack extends NavigatorObserver {
   }
 
   @override
-  void didReplace({Route? newRoute, Route? oldRoute}) {
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     streams.app.tap.add(null); // track user is active
     routeStack.removeLast();
     if (newRoute != null) {

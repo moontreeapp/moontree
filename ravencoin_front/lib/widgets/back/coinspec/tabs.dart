@@ -9,7 +9,7 @@ class CoinSpecTabs extends StatefulWidget {
   @override
   _CoinSpecTabsState createState() => _CoinSpecTabsState();
 
-  static List<String> tabIndex = ['HISTORY', 'DATA'];
+  static List<String> tabIndex = <String>['HISTORY', 'DATA'];
 }
 
 class _CoinSpecTabsState extends State<CoinSpecTabs>
@@ -60,7 +60,7 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
                         fontWeight: FontWeights.medium,
                         letterSpacing: 1.25,
                         color: AppColors.white60),
-                tabs: [
+                tabs: <Widget>[
                   Tab(text: CoinSpecTabs.tabIndex[0]),
                   Tab(text: CoinSpecTabs.tabIndex[1]),
                 ])));
@@ -68,21 +68,19 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
 }
 
 class _TabIndicator extends BoxDecoration {
+  _TabIndicator() : _painter = _TabIndicatorPainter();
   final BoxPainter _painter;
 
-  _TabIndicator() : _painter = _TabIndicatorPainter();
-
   @override
-  BoxPainter createBoxPainter([onChanged]) => _painter;
+  BoxPainter createBoxPainter([void Function()? onChanged]) => _painter;
 }
 
 class _TabIndicatorPainter extends BoxPainter {
-  final Paint _paint;
-
   _TabIndicatorPainter()
       : _paint = Paint()
           ..color = Colors.white
           ..isAntiAlias = true;
+  final Paint _paint;
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {

@@ -31,7 +31,8 @@ class _TransactionsState extends State<Transactions> {
     transactionsBloc.reset();
 
     /// need these until we make it fully reactive so we can reset the page if underlying data changes
-    listeners.add(pros.vouts.batchedChanges.listen((batchedChanges) {
+    listeners.add(
+        pros.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       if (services.wallet.leader.newLeaderProcessRunning ||
           services.client.subscribe.startupProcessRunning) {
         return;
@@ -81,7 +82,8 @@ class _TransactionsState extends State<Transactions> {
               minChildSize: minHeight,
               maxChildSize: min(1.0, max(minHeight, getMaxExtent(context))),
               controller: dController,
-              builder: (BuildContext context, scrollController) {
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
                 //bloc.scrollObserver.add(dController.size);
                 _scrollListener() {
                   bloc.scrollObserver.add(dController.size);

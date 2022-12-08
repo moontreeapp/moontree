@@ -99,7 +99,7 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
               //print((await services.wallet
               //        .getAddressKeypair(pros.addresses.records.first))
               //    .toWIF());
-              print(pros.vouts.where((v) => v.isAsset).first);
+              //print(pros.vouts.where((v) => v.isAsset).first);
             }
           },
           child: appBar,
@@ -118,7 +118,7 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
         shape: shape,
         automaticallyImplyLeading: false,
         elevation: 0,
-        leading: ['ChooseMethod', 'Login', 'Setup', 'Backupintro']
+        leading: <String>['ChooseMethod', 'Login', 'Setup', 'Backupintro']
                     .contains(streams.app.page.value) ||
                 streams.app.lead.value == LeadIcon.none
             ? null

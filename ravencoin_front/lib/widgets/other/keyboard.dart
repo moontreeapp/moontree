@@ -13,7 +13,7 @@ class KeyboardHidesWidget extends StatefulWidget {
 class _KeyboardStateHidesWidget extends State<KeyboardHidesWidget> {
   @override
   Widget build(BuildContext context) => KeyboardVisibilityBuilder(
-      builder: (BuildContext context, isKeyboardVisible) =>
+      builder: (BuildContext context, bool isKeyboardVisible) =>
           !isKeyboardVisible ? widget.child : Container()
 
       /// should we just make it invisible?

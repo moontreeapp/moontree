@@ -46,9 +46,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(height: 0, width: 0);
-  }
+  Widget build(BuildContext context) => const SizedBox(height: 0, width: 0);
 
   TextStyle style() => snack!.positive
       ? Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.white)
@@ -60,7 +58,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   Future<void> show() async {
     /// don't show snackbars on login screen
-    if (['Setup', 'Createlogin', 'Login'].contains(streams.app.page.value) &&
+    if (<String>['Setup', 'Createlogin', 'Login']
+            .contains(streams.app.page.value) &&
         !snack!.showOnLogin) {
       return;
     }
@@ -71,9 +70,9 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     } else if (streams.app.page.value == 'Home' &&
         streams.app.setting.value != null) {
       navHeight = NavHeight.none;
-    } else if (['Support'].contains(streams.app.page.value)) {
+    } else if (<String>['Support'].contains(streams.app.page.value)) {
       navHeight = NavHeight.tall;
-    } else if ([
+    } else if (<String>[
       'Setup',
       'Createlogin',
       'Login',
@@ -87,7 +86,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       'Transaction',
     ].contains(streams.app.page.value)) {
       navHeight = NavHeight.none;
-    } else if ([
+    } else if (<String>[
       'Blockchain',
       'Import',
       'Sweep',
@@ -109,25 +108,24 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
             copy ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          copy
-              ? Container(
-                  width: (MediaQuery.of(context).size.width - 32) * 0.75,
-                  child: Text(
-                    snack!.message,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: style(),
-                  ))
-              : Container(
-                  //width: (MediaQuery.of(context).size.width - 32),
-                  child: Text(
+          if (copy)
+            SizedBox(
+                width: (MediaQuery.of(context).size.width - 32) * 0.75,
+                child: Text(
                   snack!.message,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: style(),
-                )),
+                ))
+          else
+            Text(
+              snack!.message,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: style(),
+            ),
           if (copy)
-            Container(
+            SizedBox(
                 width: (MediaQuery.of(context).size.width - 32) * 0.25,
                 child: Text(
                   snack!.label ?? snack!.copy ?? 'copy',

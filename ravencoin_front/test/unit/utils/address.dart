@@ -4,21 +4,21 @@ import 'package:ravencoin_front/utils/address.dart';
 
 void main() {
   test('test verification of base58 addresses', () {
-    var mainAddress = 'RVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K';
-    var mTestAddress = 'mVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K';
-    var nTestAddress = 'nVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K';
+    const String mainAddress = 'RVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K';
+    const String mTestAddress = 'mVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K';
+    const String nTestAddress = 'nVNGuyEE9nBUt6aQbwVAhvEjcw7D3c6p2K';
     expect(rvnCondition(mainAddress, net: Net.main), true);
     expect(rvnCondition(mainAddress, net: Net.test), false);
-    expect(rvnCondition('9' + mainAddress, net: Net.main), false);
-    expect(rvnCondition(mainAddress + 'a', net: Net.main), false);
+    expect(rvnCondition('9$mainAddress', net: Net.main), false);
+    expect(rvnCondition('${mainAddress}a', net: Net.main), false);
     expect(rvnCondition(mTestAddress, net: Net.test), true);
     expect(rvnCondition(nTestAddress, net: Net.test), true);
     expect(rvnCondition(mTestAddress, net: Net.main), false);
     expect(rvnCondition(nTestAddress, net: Net.main), false);
-    expect(rvnCondition('9' + mTestAddress, net: Net.test), false);
-    expect(rvnCondition('9' + nTestAddress, net: Net.test), false);
-    expect(rvnCondition(mTestAddress + 'a', net: Net.test), false);
-    expect(rvnCondition(nTestAddress + 'a', net: Net.test), false);
+    expect(rvnCondition('9$mTestAddress', net: Net.test), false);
+    expect(rvnCondition('9$nTestAddress', net: Net.test), false);
+    expect(rvnCondition('${mTestAddress}a', net: Net.test), false);
+    expect(rvnCondition('${nTestAddress}a', net: Net.test), false);
     expect(rvnCondition(mTestAddress.substring(0, 15), net: Net.test), false);
   });
 
