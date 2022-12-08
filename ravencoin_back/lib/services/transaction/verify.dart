@@ -18,7 +18,7 @@ class FeeGuard {
   final String tx;
   final SendEstimate estimate;
 
-  bool check() => explicit() && inferred() && parsed();
+  bool check() => explicit() && inferred() && calculated() && parsed();
 
   bool explicit() {
     if (estimate.fees > 2 * satsPerCoin) {
@@ -30,6 +30,14 @@ class FeeGuard {
   bool inferred() {
     if (estimate.inferredTransactionFee > 2 * satsPerCoin) {
       throw FeeGuardException('Inferred fee is too large.');
+    }
+    return true;
+  }
+
+  bool calculated() {
+    if (estimate.utxoCoinTotal > estimate.total) {
+      throw FeeGuardException(
+          'total ins and total outs do not match during a send all transaction.');
     }
     return true;
   }

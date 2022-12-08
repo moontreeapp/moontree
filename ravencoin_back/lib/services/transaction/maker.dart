@@ -354,10 +354,10 @@ class SendEstimate with ToStringMixin {
   int get total => security == null || security == pros.securities.currentCoin
       ? (creation ? 0 : amount) + fees + extraFees
       : fees + extraFees;
-  int get utxoTotal => utxos.fold(0,
-      (int total, Vout vout) => total + vout.securityValue(security: security));
+  int get utxoTotal => utxos.fold(
+      0, (int t, Vout vout) => t + vout.securityValue(security: security));
   int get utxoCoinTotal =>
-      utxos.fold(0, (int total, Vout vout) => total + vout.coinValue);
+      utxos.fold(0, (int running, Vout vout) => running + vout.coinValue);
 
   int get changeDue => utxoTotal - total;
 
@@ -1339,18 +1339,16 @@ class TransactionMaker {
     Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
-    Tuple2<wu.TransactionBuilder, int> makeTxBuilder(
+    wu.TransactionBuilder makeTxBuilder(
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
-      int total = 0;
       final wu.TransactionBuilder txb = wu.TransactionBuilder(
         network: pros.settings.network,
         chainName: pros.settings.chain.name,
       );
       for (final Vout utxo in utxos) {
         txb.addInput(utxo.transactionId, utxo.position);
-        total = total + utxo.coinValue;
       }
       txb.addOutput(
         toAddress,
@@ -1362,30 +1360,18 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-      return Tuple2<wu.TransactionBuilder, int>(txb, total);
+      return txb;
     }
 
     final List<Vout> utxos = await services.balance.collectUTXOs(
       walletId: wallet.id,
       amount: estimate.amount,
     );
-    Tuple2<wu.TransactionBuilder, int> txbTotal =
-        makeTxBuilder(utxos, estimate);
-    wu.TransactionBuilder txb = txbTotal.item1;
-    int total = txbTotal.item2;
+    wu.TransactionBuilder txb = makeTxBuilder(utxos, estimate);
     wu.Transaction tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
-    txbTotal = makeTxBuilder(utxos, estimate);
-    txb = txbTotal.item1;
-    total = txbTotal.item2;
-    final int implicitTotal = estimate.amount + estimate.fees;
-    if (total > implicitTotal + 1) {
-      /// should be same as
-      //if (estimate.utxoCoinTotal > estimate.total) {
-      throw FeeGuardException(// because any excess would end up being the fee
-          'total ins and total outs do not match during a send all transaction.');
-    }
+    txb = makeTxBuilder(utxos, estimate);
     estimate.setUTXOs(utxos);
     await txb.signEachInput(utxos);
     tx = txb.build();
