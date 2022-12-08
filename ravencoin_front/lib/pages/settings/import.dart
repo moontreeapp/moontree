@@ -21,7 +21,7 @@ import '../../utils/log.dart';
 
 class Import extends StatefulWidget {
   final dynamic data;
-  const Import({this.data}) : super();
+  const Import({Key? key, this.data}) : super(key: key);
 
   @override
   _ImportState createState() => _ImportState();
@@ -65,7 +65,7 @@ class _ImportState extends State<Import> {
   }
 
   Future<String> getClip() async {
-    ClipboardData? clip = await Clipboard.getData('text/plain');
+    final ClipboardData? clip = await Clipboard.getData('text/plain');
     if (clip != null) {
       return clip.text ?? '';
     }
@@ -92,8 +92,7 @@ class _ImportState extends State<Import> {
               fuzzyTop: false,
               child: Platform.isIOS
                   ? body()
-                  : FutureBuilder(
-                      initialData: null,
+                  : FutureBuilder<String>(
                       future: getClip(),
                       builder: (BuildContext context,
                               AsyncSnapshot<Object?> snapshot) =>
@@ -104,16 +103,16 @@ class _ImportState extends State<Import> {
   Widget body([String? clip]) => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          file == null ? textInputField(clip) : filePicked,
+          if (file == null) textInputField(clip) else filePicked,
           components.containers.navBar(
             context,
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: file == null
-                    ? [
+                    ? <Widget>[
                         if (services.developer.advancedDeveloperMode &&
                             !Platform.isIOS &&
-                            words.text == '') ...[
+                            words.text == '') ...<Widget>[
                           fileButton,
                           const SizedBox(width: 16)
                         ],
@@ -136,7 +135,6 @@ class _ImportState extends State<Import> {
           selectionControls: CustomMaterialTextSelectionControls(
               context: components.navigator.scaffoldContext,
               offset: const Offset(0, 20)),
-          enableInteractiveSelection: true,
           autocorrect: false,
           controller: words,
           obscureText: !importVisible,
@@ -206,8 +204,7 @@ class _ImportState extends State<Import> {
   Widget get filePicked => Column(children: <Widget>[
         Padding(
             //padding: EdgeInsets.only(left: 8, top: 16.0),
-            padding:
-                const EdgeInsets.only(left: 16, right: 0, top: 16, bottom: 0),
+            padding: const EdgeInsets.only(left: 16, top: 16),
             child: ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
@@ -263,7 +260,7 @@ class _ImportState extends State<Import> {
       ImportFormat.invalid;
 
   void enableImport({String? given}) {
-    String oldImportFormatDetected = importFormatDetected;
+    final String oldImportFormatDetected = importFormatDetected;
     detection =
         services.wallet.import.detectImportType((given ?? words.text).trim());
     importEnabled = detection != ImportFormat.invalid;
@@ -272,7 +269,7 @@ class _ImportState extends State<Import> {
     }
     if (importEnabled) {
       importFormatDetected =
-          'format recognized as ' + detection.toString().split('.')[1];
+          'format recognized as ${detection.toString().split('.')[1]}';
     } else {
       importFormatDetected = '';
     }
@@ -284,7 +281,7 @@ class _ImportState extends State<Import> {
     }
   }
 
-  Future requestPassword() async => showDialog(
+  Future<void> requestPassword() async => showDialog(
       context: context,
       builder: (BuildContext context) {
         streams.app.scrim.add(true);
@@ -312,9 +309,9 @@ class _ImportState extends State<Import> {
             ],
           ),
         );
-      }).then((value) => streams.app.scrim.add(false));
+      }).then((dynamic value) => streams.app.scrim.add(false));
 
-  Future requestSalt() async => showDialog(
+  Future<void> requestSalt() async => showDialog(
       context: context,
       builder: (BuildContext context) {
         streams.app.scrim.add(true);
@@ -348,84 +345,91 @@ class _ImportState extends State<Import> {
     String text = (importData ?? words.text).trim();
     String resp = text;
     bool encrypted = true;
-    final Map<String, Map<String, dynamic>> textJson;
+    Map<String, dynamic> textJson;
 
     /// decrypt if you must...
     if (importData != null) {
       try {
-        textJson = json.decode(text) as Map<String, Map<String, dynamic>>;
+        textJson = json.decode(text) as Map<String, dynamic>;
+      } catch (e) {
+        textJson = <String, dynamic>{};
+      }
+      if (textJson.isNotEmpty) {
         try {
-          for (final Map<String, dynamic> walletJson in textJson['wallets']!
-              .values as Iterable<Map<String, dynamic>>) {
+          final Map<String, dynamic> wallets =
+              textJson['wallets']! as Map<String, dynamic>;
+          for (final dynamic walletJson in wallets.values) {
             final String decrypted = ImportFrom.maybeDecrypt(
-              text: walletJson['secret'] as String,
+              text: (walletJson as Map<String, dynamic>)['secret'] as String,
               cipher: services.cipher.currentCipher!,
             );
             resp = resp.replaceFirst(walletJson['secret'] as String, decrypted);
           }
         } catch (e) {
-          log(e);
+          //log(e);
         }
-        if (resp == text) {
-          // ask for password, make cipher, pass that cipher in.
-          // what if it's not the latest cipher type? just try all cipher types...
-          for (final CipherType cipherType in services.cipher.allCipherTypes) {
-            await requestPassword();
-            await requestSalt();
-            // cancelled
-            if (password.text == '' && salt.text == '') {
-              break;
-            }
-            await components.loading.screen(
-              message: 'Decrypting',
-              staticImage: true,
-              playCount: 2,
-            );
-            try {
-              for (final Map<String, dynamic> walletJson in textJson['wallets']!
-                  .values as Iterable<Map<String, dynamic>>) {
-                if ((walletJson['secret'] as String).split(' ').length == 12) {
-                  encrypted = false;
-                  break;
-                }
-                final String decrypted = ImportFrom.maybeDecrypt(
-                  text: walletJson['secret'] as String,
-                  cipher: CipherProclaim.cipherInitializers[cipherType]!(
-                      services.cipher.getPassword(
-                          altPassword:
-                              password.text == '' ? salt.text : password.text),
-                      services.cipher.getSalt(
-                          altSalt: salt.text == ''
-                              ? password.text
-                              : salt.text)) as CipherBase,
-                );
-                resp = resp.replaceFirst(
-                    walletJson['secret'] as String, decrypted);
-              }
-            } catch (e) {
-              log(e);
-            }
-            if (resp != text) {
-              break;
-            }
-          }
-          if (resp == text && encrypted) {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  streams.app.scrim.add(true);
-                  return const AlertDialog(
-                      title: Text('Password Not Recognized'),
-                      content: Text(
-                          'Password does not match the password used at the time of encryption.'));
-                }).then((value) => streams.app.scrim.add(false));
-            return;
-          }
-        }
-        text = resp;
-      } catch (e) {
-        resp = '';
       }
+      if (resp == text) {
+        // ask for password, make cipher, pass that cipher in.
+        // what if it's not the latest cipher type? just try all cipher types...
+        for (final CipherType cipherType in services.cipher.allCipherTypes) {
+          await requestPassword();
+          await requestSalt();
+          // cancelled
+          if (password.text == '' && salt.text == '') {
+            break;
+          }
+          await components.loading.screen(
+            message: 'Decrypting',
+            staticImage: true,
+            playCount: 2,
+          );
+          try {
+            final Map<String, dynamic> wallets =
+                textJson['wallets']! as Map<String, dynamic>;
+            for (final dynamic walletJson in wallets.values) {
+              if (((walletJson as Map<String, dynamic>)['secret'] as String)
+                      .split(' ')
+                      .length ==
+                  12) {
+                encrypted = false;
+                break;
+              }
+              final String decrypted = ImportFrom.maybeDecrypt(
+                text: walletJson['secret'] as String,
+                cipher: CipherProclaim.cipherInitializers[cipherType]!(
+                    services.cipher.getPassword(
+                        altPassword:
+                            password.text == '' ? salt.text : password.text),
+                    services.cipher.getSalt(
+                        altSalt: salt.text == ''
+                            ? password.text
+                            : salt.text)) as CipherBase,
+              );
+              resp =
+                  resp.replaceFirst(walletJson['secret'] as String, decrypted);
+            }
+          } catch (e) {
+            log(e);
+          }
+          if (resp != text) {
+            break;
+          }
+        }
+        if (resp == text && encrypted) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                streams.app.scrim.add(true);
+                return const AlertDialog(
+                    title: Text('Password Not Recognized'),
+                    content: Text(
+                        'Password does not match the password used at the time of encryption.'));
+              }).then((dynamic value) => streams.app.scrim.add(false));
+          return;
+        }
+      }
+      text = resp;
     }
     /* will fix decryption later
     */

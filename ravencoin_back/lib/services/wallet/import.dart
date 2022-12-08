@@ -75,15 +75,18 @@ class ImportWalletService {
 
   bool validateJson(String text) {
     try {
-      final Map<String, Map<String, Map<String, Map<String, dynamic>>>>
-          jsonObj = json.decode(text)
-              as Map<String, Map<String, Map<String, Map<String, dynamic>>>>;
-      if (!jsonObj.containsKey('wallets')) {
+      final Map<String, dynamic> jsonObj =
+          json.decode(text) as Map<String, dynamic>;
+      if (jsonObj['wallets'] == null) {
         return false;
       }
-      for (final Map<String, Map<String, dynamic>> walletObj
-          in jsonObj['wallets']!.values) {
-        if (!<bool>[true, false].contains(walletObj['backed up']! as bool)) {
+      final Map<String, dynamic> wallets =
+          jsonObj['wallets']! as Map<String, dynamic>;
+      for (final dynamic walletObj in wallets.values) {
+        if (!<bool>[
+          true,
+          false
+        ].contains((walletObj as Map<String, dynamic>)['backed up'] as bool)) {
           return false;
         }
         if (walletObj['wallet name'] is! String) {
@@ -111,6 +114,7 @@ class ImportWalletService {
       }
       return true;
     } catch (e) {
+      print(e);
       return false;
     }
   }
@@ -121,18 +125,21 @@ class ImportWalletService {
     ///   'wallets': {pros.wallets.id: values}
     /// }
     /// try decrypt file
-    final Map<String, Map<String, Map<String, dynamic>>> decodedJSON =
-        json.decode(text) as Map<String, Map<String, Map<String, dynamic>>>;
-    if (decodedJSON.containsKey('wallets')) {
+
+    final Map<String, dynamic> decodedJSON =
+        json.decode(text) as Map<String, dynamic>;
+    if (decodedJSON['wallets'] != null) {
       /// create wallets
       final List<HandleResult> results = <HandleResult>[];
-      for (final MapEntry<String, Map<String, dynamic>> entry
-          in decodedJSON['wallets']!.entries) {
+      final Map<String, dynamic> wallets =
+          decodedJSON['wallets']! as Map<String, dynamic>;
+      for (final MapEntry<String, dynamic> entry in wallets.entries) {
         final Wallet? wallet = await services.wallet.create(
-          walletType: typeForImport(entry.value['wallet type'] as String),
+          walletType: typeForImport(
+              (entry.value as Map<String, dynamic>)['wallet type'] as String),
           cipherUpdate: services.cipher.currentCipherUpdate,
-          secret: entry.value['secret'] as String?,
-          name: entry.value['wallet name'] as String?,
+          secret: (entry.value as Map<String, dynamic>)['secret'] as String?,
+          name: (entry.value as Map<String, dynamic>)['wallet name'] as String?,
           alwaysReturn: true,
           getSecret: _getEntropy,
           saveSecret: _saveSecret,

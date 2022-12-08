@@ -1,25 +1,24 @@
 // ignore_for_file: omit_local_variable_types
 
+import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' as wu show Transaction;
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/spend.dart';
-import 'package:tuple/tuple.dart';
-
-import '../services/transaction/verify.dart';
+import 'package:ravencoin_back/services/transaction/verify.dart';
 import 'package:ravencoin_back/waiters/waiter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
-import 'package:wallet_utils/wallet_utils.dart' as ravencoin;
 
 class SendWaiter extends Waiter {
   void init() {
     streams.spend.make.listen((SendRequest? sendRequest) async {
       if (sendRequest != null) {
         print('SEND REQUEST $sendRequest');
-        Tuple2<ravencoin.Transaction, SendEstimate> tuple;
+        Tuple2<wu.Transaction, SendEstimate> tuple;
         try {
           tuple = await services.transaction.make.transactionBy(sendRequest);
-          final ravencoin.Transaction tx = tuple.item1;
+          final wu.Transaction tx = tuple.item1;
           final SendEstimate estimate = tuple.item2;
           if (FeeGuard(tx.toHex(), estimate).check()) {
             streams.spend.made.add(TransactionNote(

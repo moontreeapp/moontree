@@ -24,8 +24,8 @@ dependencies:
   serverpod_client: ^0.9.20
   electrum_adapter: ^2.0.4
   proclaim: ^4.0.3
-  wallet_utils: ^3.0.5
-  moontree_utils: ^1.0.7
+  wallet_utils: ^3.0.6
+  moontree_utils: ^1.0.8
 
 #dependency_overrides:
   #proclaim:

@@ -561,23 +561,23 @@ class _SendState extends State<Send> {
           displaySymbol: sendRequest.security!.name,
           subSymbol: '',
           paymentSymbol: pros.securities.currentCoin.symbol,
-          items: [
-            ['To', sendRequest.sendAddress],
-            if (addressName != '') ['Known As', addressName],
-            [
+          items: <List<String>>[
+            <String>['To', sendRequest.sendAddress],
+            if (addressName != '') <String>['Known As', addressName],
+            <String>[
               'Amount',
               if (sendRequest.sendAll)
                 'calculating amount...'
               else
                 sendRequest.visibleAmount
             ],
-            if (!['', null].contains(sendRequest.memo))
-              ['Memo', sendRequest.memo!],
-            if (!['', null].contains(sendRequest.note))
-              ['Note', sendRequest.note!],
+            if (!<String?>['', null].contains(sendRequest.memo))
+              <String>['Memo', sendRequest.memo!],
+            if (!<String?>['', null].contains(sendRequest.note))
+              <String>['Note', sendRequest.note!],
           ],
-          fees: [
-            ['Transaction Fee', 'calculating fee...']
+          fees: <List<String>>[
+            <String>['Transaction Fee', 'calculating fee...']
           ],
           total: 'calculating total...',
           buttonAction: () => streams.spend.send.add(streams.spend.made.value),

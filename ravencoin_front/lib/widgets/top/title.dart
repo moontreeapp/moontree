@@ -28,7 +28,9 @@ class PageTitle extends StatefulWidget {
     'Remove': 'Security',
     'Verify': 'Security',
     'BackupConfirm': 'Backup',
+    'Backupconfirm': 'Backup',
     'BackupKeypair': 'Backup',
+    'Backupkeypair': 'Backup',
     'Channel': 'Create',
     'Nft': 'Create',
     'Main': 'Create',
@@ -39,7 +41,6 @@ class PageTitle extends StatefulWidget {
     'Createlogin': 'Setup',
     'Login': 'Locked',
     'Backupintro': 'Backup',
-    'Backupkeypair': 'Backup',
   };
   static Map<String, String> pageMapReissue = const <String, String>{
     'Main': 'Reissue',

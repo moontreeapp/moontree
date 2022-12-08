@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart'
-    show StringBytesExtension, ToStringMixin;
+    show StringBytesExtension, ToStringMixin, amountToSat;
 import 'package:wallet_utils/wallet_utils.dart' as wu;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/sign.dart';
+
+import 'verify.dart';
 
 /* Unused
 class NFTCreateRequest {
@@ -84,22 +86,7 @@ class RestrictedCreateRequest {
 */
 
 class GenericCreateRequest with ToStringMixin {
-  late bool isSub;
-  late bool isMain;
-  late bool isNFT;
-  late bool isChannel;
-  late bool isQualifier;
-  late bool isRestricted;
-  late String fullName;
-  late Wallet wallet;
-  late String name;
-  late double? quantity;
-  late Uint8List? assetData;
-  late int? decimals;
-  late String? verifier;
-  late bool? reissuable;
-  late String?
-      parent; // you have to use the wallet that holds the prent if sub asset
+  // you have to use the wallet that holds the prent if sub asset
 
   GenericCreateRequest({
     required this.isSub,
@@ -118,6 +105,21 @@ class GenericCreateRequest with ToStringMixin {
     this.reissuable,
     this.parent,
   });
+  late bool isSub;
+  late bool isMain;
+  late bool isNFT;
+  late bool isChannel;
+  late bool isQualifier;
+  late bool isRestricted;
+  late String fullName;
+  late Wallet wallet;
+  late String name;
+  late double? quantity;
+  late Uint8List? assetData;
+  late int? decimals;
+  late String? verifier;
+  late bool? reissuable;
+  late String? parent;
 
   @override
   List<Object?> get props => <Object?>[
@@ -164,22 +166,7 @@ class GenericCreateRequest with ToStringMixin {
 }
 
 class GenericReissueRequest with ToStringMixin {
-  late bool isSub;
-  late bool isMain;
-  late bool isRestricted;
-  late String fullName;
-  late Wallet wallet;
-  late String name;
-  late double? quantity;
-  late int? decimals;
-  late double? originalQuantity;
-  late int? originalDecimals;
-  late Uint8List? originalAssetData;
-  late Uint8List? assetData;
-  late String? verifier;
-  late bool? reissuable;
-  late String?
-      parent; // you have to use the wallet that holds the prent if sub asset
+  // you have to use the wallet that holds the prent if sub asset
 
   GenericReissueRequest({
     required this.isSub,
@@ -198,6 +185,21 @@ class GenericReissueRequest with ToStringMixin {
     this.reissuable,
     this.parent,
   });
+  late bool isSub;
+  late bool isMain;
+  late bool isRestricted;
+  late String fullName;
+  late Wallet wallet;
+  late String name;
+  late double? quantity;
+  late int? decimals;
+  late double? originalQuantity;
+  late int? originalDecimals;
+  late Uint8List? originalAssetData;
+  late Uint8List? assetData;
+  late String? verifier;
+  late bool? reissuable;
+  late String? parent;
 
   @override
   List<Object?> get props => <Object?>[
@@ -244,18 +246,6 @@ class GenericReissueRequest with ToStringMixin {
 }
 
 class SendRequest with ToStringMixin {
-  late bool sendAll;
-  late String sendAddress;
-  late double holding;
-  late String visibleAmount;
-  late int sendAmountAsSats;
-  late wu.FeeRate feeRate;
-  late Wallet wallet;
-  late Security? security;
-  late String? assetMemo;
-  late String? memo;
-  late String? note;
-
   SendRequest({
     required this.sendAll,
     required this.sendAddress,
@@ -269,6 +259,17 @@ class SendRequest with ToStringMixin {
     this.memo,
     this.note,
   });
+  late bool sendAll;
+  late String sendAddress;
+  late double holding;
+  late String visibleAmount;
+  late int sendAmountAsSats;
+  late wu.FeeRate feeRate;
+  late Wallet wallet;
+  late Security? security;
+  late String? assetMemo;
+  late String? memo;
+  late String? note;
 
   @override
   List<Object> get props => <Object>[
@@ -301,16 +302,6 @@ class SendRequest with ToStringMixin {
 }
 
 class SendEstimate with ToStringMixin {
-  int amount; //sats
-  int fees;
-  List<Vout> utxos;
-  Security? security;
-  Uint8List? assetMemo;
-  String? memo;
-  int extraFees = 0;
-  bool creation;
-  int coinReturn = 0;
-
   SendEstimate(
     this.amount, {
     this.fees = 0,
@@ -326,6 +317,16 @@ class SendEstimate with ToStringMixin {
         fees: detail.fees, utxos: detail.utxos.toList());
   }
 
+  int amount; //sats
+  int fees;
+  List<Vout> utxos;
+  Security? security;
+  Uint8List? assetMemo;
+  String? memo;
+  int extraFees = 0;
+  bool creation;
+  int coinReturn = 0;
+
   @override
   List<Object?> get props => <Object?>[
         amount,
@@ -339,7 +340,7 @@ class SendEstimate with ToStringMixin {
       ];
 
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'amount',
         'fees',
         'utxos',
@@ -392,8 +393,7 @@ class TransactionMaker {
     );
 
     return (sendRequest.sendAll ||
-                double.parse(sendRequest.visibleAmount) ==
-                    sendRequest.holding) &&
+                sendRequest.sendAmountAsSats == sendRequest.holding.asSats) &&
             (sendRequest.security == null ||
                 sendRequest.security == pros.securities.currentCoin)
         ? await transactionSendAllRVN(
@@ -1379,9 +1379,12 @@ class TransactionMaker {
     txbTotal = makeTxBuilder(utxos, estimate);
     txb = txbTotal.item1;
     total = txbTotal.item2;
-    final int implicitFee = estimate.amount + estimate.fees;
-    if (total > implicitFee + 1) {
-      throw Exception('implicit Fee is too Large: ${implicitFee - total}');
+    final int implicitTotal = estimate.amount + estimate.fees;
+    if (total > implicitTotal + 1) {
+      /// should be same as
+      //if (estimate.utxoCoinTotal > estimate.total) {
+      throw FeeGuardException(// because any excess would end up being the fee
+          'total ins and total outs do not match during a send all transaction.');
     }
     estimate.setUTXOs(utxos);
     await txb.signEachInput(utxos);
