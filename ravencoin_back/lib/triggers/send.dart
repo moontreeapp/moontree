@@ -6,7 +6,6 @@ import 'package:wallet_utils/wallet_utils.dart' as wu show Transaction;
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_back/services/transaction/verify.dart';
-import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 
@@ -14,13 +13,12 @@ class SendWaiter extends Trigger {
   void init() {
     when(
         thereIsA: streams.spend.make
-                .where((SendRequest? sendRequest) => (sendRequest != null))
-            as Stream<SendRequest>,
-        doThis: (SendRequest sendRequest) async {
+            .where((SendRequest? sendRequest) => sendRequest != null),
+        doThis: (SendRequest? sendRequest) async {
           print('SEND REQUEST $sendRequest');
           Tuple2<wu.Transaction, SendEstimate> tuple;
           try {
-            tuple = await services.transaction.make.transactionBy(sendRequest);
+            tuple = await services.transaction.make.transactionBy(sendRequest!);
             final wu.Transaction tx = tuple.item1;
             final SendEstimate estimate = tuple.item2;
             if (FeeGuard(tx.toHex(), estimate).check()) {
@@ -55,14 +53,13 @@ class SendWaiter extends Trigger {
 
     when(
         thereIsA: streams.spend.send.where(
-                (TransactionNote? transactionNote) => transactionNote != null)
-            as Stream<TransactionNote>,
-        doThis: (TransactionNote transactionNote) async {
+            (TransactionNote? transactionNote) => transactionNote != null),
+        doThis: (TransactionNote? transactionNote) async {
           // tx + note
           //try {
 
           final String txid =
-              await services.client.api.sendTransaction(transactionNote.txHex);
+              await services.client.api.sendTransaction(transactionNote!.txHex);
           if (transactionNote.note != null) {
             await pros.notes
                 .save(Note(transactionId: txid, note: transactionNote.note!));

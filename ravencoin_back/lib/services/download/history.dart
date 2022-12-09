@@ -307,11 +307,9 @@ class HistoryService {
       //print('getting transactionIds $transactionIds');
       txs = await services.client.api.getTransactions(transactionIds);
     } catch (e) {
-      print('getTransactions too large $e');
       final List<Future<Tx>> futures = <Future<Tx>>[];
       for (final String transactionId in transactionIds) {
         futures.add(services.client.api.getTransaction(transactionId));
-        print('txid: $transactionId');
       }
       txs = await Future.wait<Tx>(futures);
     }

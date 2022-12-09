@@ -224,7 +224,7 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
       message: 'Connecting',
       playCount: 1,
       then: () async {
-        waiters.block.notify = true;
+        triggers.block.notify = true;
         await services.client.saveElectrumAddress(
           domain: domain,
           port: int.parse(port),

@@ -1,12 +1,12 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/utilities/rate.dart';
 
-void inittriggers(HiveLoadingStep step) {
+void initTriggers(HiveLoadingStep step) {
   if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.lock]
       .contains(step)) {
     triggers.single.init();
     triggers.leader.init();
-    triggers.setting.init();
+    //triggers.setting.init();
     triggers.app.init();
     triggers.rate.init(RVNtoFiat());
   }

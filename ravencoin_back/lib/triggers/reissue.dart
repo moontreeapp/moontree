@@ -12,16 +12,14 @@ class ReissueWaiter extends Trigger {
   void init() {
     when(
         thereIsA: streams.reissue.request.where(
-            (GenericReissueRequest? reissueRequest) =>
-                reissueRequest != null) as Stream<GenericReissueRequest>,
-        doThis: (GenericReissueRequest reissueRequest) async {
+            (GenericReissueRequest? reissueRequest) => reissueRequest != null),
+        doThis: (GenericReissueRequest? reissueRequest) async {
           await Future<void>.delayed(
               const Duration(milliseconds: 500)); // wait for please wait
           Tuple2<wu.Transaction, SendEstimate> tuple;
-          print(reissueRequest.isRestricted);
           try {
             tuple = await services.transaction.make
-                .reissueTransactionBy(reissueRequest);
+                .reissueTransactionBy(reissueRequest!);
             final wu.Transaction tx = tuple.item1;
             final SendEstimate estimate = tuple.item2;
 
@@ -52,11 +50,10 @@ class ReissueWaiter extends Trigger {
         });
 
     when(
-        thereIsA: streams.reissue.send.where((String? txHex) => txHex != null)
-            as Stream<String>,
-        doThis: (String txHex) async {
+        thereIsA: streams.reissue.send.where((String? txHex) => txHex != null),
+        doThis: (String? txHex) async {
           //try {
-          final String txid = await services.client.api.sendTransaction(txHex);
+          final String txid = await services.client.api.sendTransaction(txHex!);
           print('txid');
           print(txid);
           if (txid != '') {

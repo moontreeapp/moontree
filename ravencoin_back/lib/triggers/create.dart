@@ -13,15 +13,14 @@ class CreateWaiter extends Trigger {
   void init() {
     when(
         thereIsA: streams.create.request.where(
-                (GenericCreateRequest? createRequest) => createRequest != null)
-            as Stream<GenericCreateRequest>,
-        doThis: (GenericCreateRequest createRequest) async {
+            (GenericCreateRequest? createRequest) => createRequest != null),
+        doThis: (GenericCreateRequest? createRequest) async {
           await Future<void>.delayed(
               const Duration(milliseconds: 500)); // wait for please wait
           Tuple2<wu.Transaction, SendEstimate> tuple;
           try {
             tuple = await services.transaction.make
-                .createTransactionBy(createRequest);
+                .createTransactionBy(createRequest!);
             final wu.Transaction tx = tuple.item1;
             final SendEstimate estimate = tuple.item2;
 
@@ -53,11 +52,10 @@ class CreateWaiter extends Trigger {
         });
 
     when(
-        thereIsA: streams.create.send.where((String? txHex) => txHex != null)
-            as Stream<String>,
-        doThis: (String txHex) async {
+        thereIsA: streams.create.send.where((String? txHex) => txHex != null),
+        doThis: (String? txHex) async {
           //try {
-          final String txid = await services.client.api.sendTransaction(txHex);
+          final String txid = await services.client.api.sendTransaction(txHex!);
           print('txid');
           print(txid);
           if (txid != '') {

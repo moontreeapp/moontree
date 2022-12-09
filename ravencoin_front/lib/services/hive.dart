@@ -32,21 +32,21 @@ class DataLoadingHelper {
       _loadedLock.read(() => _loaded == HiveLoaded.yes);
 
   Future<void> setupWaiters() async {
-    initWaiters(HiveLoadingStep.all);
-    unawaited(waiters.app.logoutThread());
+    initTriggers(HiveLoadingStep.all);
+    unawaited(triggers.app.logoutThread());
     //initListeners();
     //await pros.settings.save(
     //    Setting(name: SettingName.Local_Path, value: await Storage().localPath));
   }
 
   Future<void> setupWaiters1() async {
-    initWaiters(HiveLoadingStep.lock);
+    initTriggers(HiveLoadingStep.lock);
     await _loadedLock.write(() => _loaded = HiveLoaded.partial);
   }
 
   Future<void> setupWaiters2() async {
-    initWaiters(HiveLoadingStep.login);
-    unawaited(waiters.app.logoutThread());
+    initTriggers(HiveLoadingStep.login);
+    unawaited(triggers.app.logoutThread());
     //initListeners();
     await _loadedLock.write(() => _loaded = HiveLoaded.yes);
   }

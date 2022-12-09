@@ -11,9 +11,8 @@ class ImportWaiter extends Trigger {
   void init() {
     when(
         thereIsA: streams.import.attempt
-                .where((ImportRequest? importRequest) => importRequest != null)
-            as Stream<ImportRequest>,
-        doThis: (ImportRequest importRequest) async {
+            .where((ImportRequest? importRequest) => importRequest != null),
+        doThis: (ImportRequest? importRequest) async {
           /// if import is currently occuring, wait til its finished.
           int x = 0;
           while (services.wallet.leader.newLeaderProcessRunning && x < 10) {
@@ -27,7 +26,7 @@ class ImportWaiter extends Trigger {
             //await pros.wallets.remove(pros.wallets.records.first);
             firstWallet = true;
           }
-          final ImportFrom importFrom = ImportFrom(text: importRequest.text);
+          final ImportFrom importFrom = ImportFrom(text: importRequest!.text);
           if (importFrom.importFormat != ImportFormat.invalid) {
             streams.client.busy.add(true);
             final Tuple3<bool, List<String?>, List<String?>> tuple3 =
