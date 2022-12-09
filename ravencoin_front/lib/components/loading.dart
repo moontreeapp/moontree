@@ -24,7 +24,7 @@ class LoadingComponents {
                 playCount: playCount,
                 returnHome: returnHome,
                 then: then,
-                staticImage: staticImage,
+                //staticImage: staticImage,
               ));
 
   /// unable to get this to work yet:

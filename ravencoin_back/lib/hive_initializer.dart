@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, avoid_slow_async_io
+// ignore_for_file: avoid_print, avoid_slow_async_io, omit_local_variable_types
 
 import 'dart:io';
 

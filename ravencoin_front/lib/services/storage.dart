@@ -217,8 +217,8 @@ class SecureStorage {
     const FlutterSecureStorage storage = FlutterSecureStorage();
     // Read value
     final String? value = await storage.read(key: key);
-    // Read all values
-    final Map<String, String> allValues = await storage.readAll();
+    // Read all values // unused
+    //final Map<String, String> allValues = await storage.readAll();
     // Write value
     await storage.write(key: key, value: value);
     // Delete value

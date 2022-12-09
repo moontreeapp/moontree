@@ -56,8 +56,9 @@ void main() {
       if (!isAssetPath(element)) fail('Restricted: $element');
       var resp =
           await client.request('blockchain.asset.validator_string', [element]);
-      if (!isQualifierString(resp['string'] as String))
+      if (!isQualifierString(resp['string'] as String)) {
         fail('String: ${resp['string']}');
+      }
     }
   });
 }
