@@ -3,14 +3,13 @@
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 //import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class AssetWaiter extends Waiter {
+class AssetWaiter extends Trigger {
   void init() {
-    listen(
-      'assets.changes',
-      pros.assets.changes,
-      (Change<Asset> change) => handleAddressChange(change),
+    when(
+      thereIsA: pros.assets.changes,
+      doThis: handleAddressChange,
     );
   }
 

@@ -2,22 +2,21 @@ import 'dart:async';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/utilities/rate.dart';
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class RateWaiter extends Waiter {
+class RateWaiter extends Trigger {
   // should be pushed to clients on change instead
   static const Duration _rateWait = Duration(minutes: 10);
 
-  void init(RVNRateInterface rvnRate) {
+  void init(RVNtoFiat rvnRate) {
     _saveRate(rvnRate);
-    listen(
-      'periodic',
-      Stream<dynamic>.periodic(_rateWait),
-      (_) async => _save(await _rate(rvnRate)),
+    when(
+      thereIsA: Stream<dynamic>.periodic(_rateWait),
+      doThis: (_) async => _saveRate(rvnRate),
     );
   }
 
-  Future<double> _rate(RVNRateInterface rvnRate) async =>
+  Future<double> _rate(RVNtoFiat rvnRate) async =>
       await rvnRate.get() ??
       pros.rates.primaryIndex
           .getOne(pros.securities.RVN, pros.securities.USD)
@@ -30,6 +29,6 @@ class RateWaiter extends Waiter {
         rate: rate,
       ));
 
-  Future<Change<Rate>?> _saveRate(RVNRateInterface rvnRate) async =>
+  Future<Change<Rate>?> _saveRate(RVNtoFiat rvnRate) async =>
       _save(await _rate(rvnRate));
 }

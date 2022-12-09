@@ -2,20 +2,16 @@ import 'dart:async';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class SubscriptionWaiter extends Waiter {
+class SubscriptionWaiter extends Trigger {
   void init() {
-    listen(
-      'streams.client.connected',
-      streams.client.connected,
-      (ConnectionStatus connected) {
-        pros.addresses.isNotEmpty
-            ? connected == ConnectionStatus.connected
-                ? services.client.subscribe.toAllAddresses()
-                : deinitAllSubscriptions()
-            : () {};
-      },
+    when(
+      thereIsA: streams.client.connected.where((ConnectionStatus connected) =>
+          connected == ConnectionStatus.connected),
+      doThis: (ConnectionStatus connected) => pros.addresses.isNotEmpty
+          ? services.client.subscribe.toAllAddresses()
+          : deinitAllSubscriptions(),
     );
   }
 

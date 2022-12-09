@@ -1,15 +1,22 @@
 import 'package:rxdart/rxdart.dart';
+import 'package:moontree_utils/moontree_utils.dart'
+    show ReadableIdentifierExtension;
 
 class ClientStreams {
   //final client = BehaviorSubject<RavenElectrumClient?>.seeded(null);
   final BehaviorSubject<ConnectionStatus> connected =
-      BehaviorSubject<ConnectionStatus>.seeded(ConnectionStatus.disconnected);
-  final BehaviorSubject<bool> busy = BehaviorSubject<bool>.seeded(false);
+      BehaviorSubject<ConnectionStatus>.seeded(ConnectionStatus.disconnected)
+        ..name = 'client.connected';
+  final BehaviorSubject<bool> busy = BehaviorSubject<bool>.seeded(false)
+    ..name = 'client.busy';
   final BehaviorSubject<ActivityMessage> activity =
-      BehaviorSubject<ActivityMessage>.seeded(ActivityMessage());
+      BehaviorSubject<ActivityMessage>.seeded(ActivityMessage())
+        ..name = 'client.activity';
   final BehaviorSubject<ActivityMessage> download =
-      BehaviorSubject<ActivityMessage>.seeded(ActivityMessage());
-  final PublishSubject<bool> queue = PublishSubject<bool>();
+      BehaviorSubject<ActivityMessage>.seeded(ActivityMessage())
+        ..name = 'client.download';
+  final PublishSubject<bool> queue = PublishSubject<bool>()
+    ..name = 'client.queue';
 }
 
 enum ConnectionStatus { connected, connecting, disconnected }

@@ -14,7 +14,7 @@ import 'unspent.dart';
 import 'setting.dart';
 import 'single.dart';
 
-class waiters {
+class triggers {
   static AddressWaiter address = AddressWaiter();
   static AssetWaiter asset = AssetWaiter();
   static AppWaiter app = AppWaiter();
@@ -26,7 +26,7 @@ class waiters {
   static RavenClientWaiter client = RavenClientWaiter();
   static ReissueWaiter reissue = ReissueWaiter();
   static SendWaiter send = SendWaiter();
-  static SettingWaiter setting = SettingWaiter();
+  //static SettingWaiter setting = SettingWaiter();
   static UnspentWaiter unspent = UnspentWaiter();
   // Wallets
   static LeaderWaiter leader = LeaderWaiter();

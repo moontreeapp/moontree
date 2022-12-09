@@ -1,14 +1,13 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class SingleWaiter extends Waiter {
+class SingleWaiter extends Trigger {
   void init() {
-    listen(
-      'ciphers.changes',
-      pros.ciphers.changes,
-      (Change<Cipher> change) {
+    when(
+      thereIsA: pros.ciphers.changes,
+      doThis: (Change<Cipher> change) {
         change.when(
           // if this cipher update is in the list of wallets missing ciphers...
           // initialize the wallet and remove it from the list of wallets missing ciphers
@@ -24,20 +23,17 @@ class SingleWaiter extends Waiter {
       },
     );
 
-    listen(
-      'streams.client.connected',
-      streams.client.connected,
-      (ConnectionStatus status) async {
-        if (status == ConnectionStatus.connected) {
-          pros.wallets.singles.forEach(checkGap);
-        }
+    when(
+      thereIsA: streams.client.connected.where(
+          (ConnectionStatus status) => status == ConnectionStatus.connected),
+      doThis: (ConnectionStatus _) async {
+        pros.wallets.singles.forEach(checkGap);
       },
     );
 
-    listen(
-      'streams.wallet.singleChanges',
-      streams.wallet.singleChanges,
-      (Change<Wallet> change) {
+    when(
+      thereIsA: streams.wallet.singleChanges,
+      doThis: (Change<Wallet> change) {
         change.when(
             loaded: (Loaded<Wallet> loaded) {},
             added: (Added<Wallet> added) async {
@@ -54,7 +50,8 @@ class SingleWaiter extends Waiter {
   }
 
   Future<void> attemptSingleWalletAddressDerive(
-      CipherUpdate cipherUpdate) async {
+    CipherUpdate cipherUpdate,
+  ) async {
     for (final SingleWallet wallet in pros.wallets.singles) {
       if (wallet.cipherUpdate == cipherUpdate) {
         await checkGap(wallet);

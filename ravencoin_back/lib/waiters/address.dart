@@ -1,12 +1,11 @@
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/waiters/waiter.dart';
 
-class AddressWaiter extends Waiter {
+class AddressWaiter extends Trigger {
   void init() {
-    listen(
-      'addresses.changes',
-      pros.addresses.changes,
-      (Change<Address> change) => handleAddressChange(change),
+    when(
+      thereIsA: pros.addresses.changes,
+      doThis: handleAddressChange,
     );
   }
 

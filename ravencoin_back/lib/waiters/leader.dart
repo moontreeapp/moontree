@@ -7,15 +7,15 @@ import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class LeaderWaiter extends Waiter {
+class LeaderWaiter extends Trigger {
   Set<Change<Wallet>> backlog = <Change<Wallet>>{};
   final ReaderWriterLock _backlogLock = ReaderWriterLock();
 
   void init() {
     /*
-    listen(
+    when(
       'wallets/cipher',
       CombineLatestStream.combine2(
         streams.wallet.replay,
@@ -34,9 +34,8 @@ class LeaderWaiter extends Waiter {
     /// this is used for the case of if we closed the app during
     /// import and never saved the addresses, we want to restart
     /// the import process for this wallet to derive addresses
-    listen(
-        'connected/cipher',
-        CombineLatestStream.combine2(
+    when(
+        thereIsA: CombineLatestStream.combine2(
             streams.client.connected,
             pros.ciphers.changes,
             (ConnectionStatus connectionStatus, Change<Cipher> change) =>
@@ -46,13 +45,12 @@ class LeaderWaiter extends Waiter {
                 t.item2.record.cipherType !=
                     CipherType.none && // only on startup
                 t.item1 == ConnectionStatus.connected),
-        (Tuple2<ConnectionStatus, Change<Cipher>> tuple) async =>
+        doThis: (Tuple2<ConnectionStatus, Change<Cipher>> tuple) async =>
             pros.wallets.leaders.forEach(checkGap));
 
-    listen(
-      'streams.wallet.leaderChanges',
-      streams.wallet.leaderChanges,
-      (Change<Wallet> change) async {
+    when(
+      thereIsA: streams.wallet.leaderChanges,
+      doThis: (Change<Wallet> change) async {
         await _backlogLock.write(() => backlog.add(change));
         if (streams.client.connected.value == ConnectionStatus.connected) {
           await _backlogLock.read(() => backlog.forEach(handleLeaderChange));
@@ -62,7 +60,7 @@ class LeaderWaiter extends Waiter {
     );
 
     /// not triggered except by it's own instantiation
-    //listen(
+    //when(
     //  'streams.wallet.deriveAddress',
     //  streams.wallet.deriveAddress,
     //  (DeriveLeaderAddress? deriveDetails) async => deriveDetails == null

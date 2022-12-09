@@ -1,12 +1,11 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class UnspentWaiter extends Waiter {
+class UnspentWaiter extends Trigger {
   void init() {
-    listen(
-      'unspents.changes',
-      pros.unspents.changes,
-      (Change<Unspent> change) => handleUnspentChange(change),
+    when(
+      thereIsA: pros.unspents.changes,
+      doThis: (Change<Unspent> change) => handleUnspentChange(change),
     );
   }
 

@@ -7,38 +7,39 @@ import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class BlockWaiter extends Waiter {
+class BlockWaiter extends Trigger {
   bool notify = true;
   void init() {
-    listen('streams.client.connected', streams.client.connected,
-        (ConnectionStatus connectionStatus) async {
-      if (connectionStatus == ConnectionStatus.connected) {
-        await subscribe();
-        if (notify) {
-          streams.app.snack.add(Snack(message: 'Successfully Connected'));
-          notify = false;
-        }
-      }
-    });
+    when(
+        thereIsA: streams.client.connected.where(
+            (ConnectionStatus connectionStatus) =>
+                connectionStatus == ConnectionStatus.connected),
+        doThis: subscribeAndNotify);
+  }
+
+  Future<void> subscribeAndNotify(ConnectionStatus _) async {
+    await subscribe();
+    if (notify) {
+      streams.app.snack.add(Snack(message: 'Successfully Connected'));
+      notify = false;
+    }
   }
 
   Future<void> subscribe() async {
-    await listen(
-      'ravenClient.subscribeHeaders',
-      await services.client.api.subscribeHeaders(),
-      (BlockHeader blockHeader) async {
+    await when(
+      thereIsA: await services.client.api.subscribeHeaders(),
+      doThis: (BlockHeader blockHeader) async {
         await pros.blocks.save(Block.fromBlockHeader(blockHeader));
       },
       autoDeinit: true,
     );
 
     // update existing mempool transactions each block
-    await listen<Change<Block>>(
-      'blocks.changes',
-      pros.blocks.changes,
-      (Change<Block> change) => change.when(
+    await when<Change<Block>>(
+      thereIsA: pros.blocks.changes,
+      doThis: (Change<Block> change) => change.when(
         loaded: (Loaded<Block> loaded) {},
         added: (Added<Block> added) async {
           await services.download.history.getAndSaveMempoolTransactions();
