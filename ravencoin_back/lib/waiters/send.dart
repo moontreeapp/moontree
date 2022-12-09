@@ -55,6 +55,7 @@ class SendWaiter extends Waiter {
       // tx + note
       if (transactionNote != null) {
         //try {
+
         final String txid =
             await services.client.api.sendTransaction(transactionNote.txHex);
         if (transactionNote.note != null) {
