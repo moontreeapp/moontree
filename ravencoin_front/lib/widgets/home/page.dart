@@ -11,13 +11,12 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 /// an animation with vsync on this widget or something, idk.
 
 class HomePage extends StatefulWidget {
-  final AppContext appContext;
-
   const HomePage({
     Key? key,
     required this.appContext,
   }) : super(key: key);
 
+  final AppContext appContext;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -29,12 +28,12 @@ class _HomePageState extends State<HomePage>
   bool ignoring = false;
   static const double minExtent = .065; //.0736842105263158;
   //minExtent = 1-(MediaQuery.of(context).size.height - 56)  // pix
-  final Duration animationDuration = Duration(milliseconds: 300);
-  late ScrollController _scrollController = ScrollController();
+  final Duration animationDuration = const Duration(milliseconds: 300);
+  late final ScrollController _scrollController = ScrollController();
   late AnimationController _slideController;
   late final Animation<Offset> _slideAnimation = Tween<Offset>(
-    begin: const Offset(0, 0),
-    end: Offset(0, 1 - minExtent),
+    begin: Offset.zero,
+    end: const Offset(0, 1 - minExtent),
   ).animate(CurvedAnimation(
     parent: _slideController,
     curve: Curves.easeInOut,
@@ -65,29 +64,27 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-      back: NavMenu(),
+      back: const NavMenu(),
       front: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
           SlideTransition(
             position: _slideAnimation,
             child: FrontCurve(
-                fuzzyTop: true,
                 child: IgnorePointer(ignoring: ignoring, child: assetHomeView)),
           ),
           AnimatedBuilder(
               animation: _slideAnimation,
-              builder: (context, _) {
+              builder: (BuildContext context, _) {
                 return Transform.translate(
                     offset: Offset(0.0, _slideController.value * 140),
-                    child: Container(
-                        child: NavBar(
+                    child: NavBar(
                       appContext: widget.appContext,
                       placeholderManage:
                           !services.developer.advancedDeveloperMode,
                       placeholderSwap:
                           !services.developer.advancedDeveloperMode,
-                    )));
+                    ));
               }),
         ],
       ),
@@ -113,7 +110,7 @@ class _HomePageState extends State<HomePage>
                     // ignore: dead_code
                     : ListView(
                         controller: _scrollController,
-                        children: <Widget>[
+                        children: const <Widget>[
                           Text('swap\n\n\n\n\n\n\n\n\n\n\n\n'),
                         ],
                       ),

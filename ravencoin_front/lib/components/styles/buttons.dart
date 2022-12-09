@@ -38,8 +38,7 @@ class ButtonStyleComponents {
         foregroundColor: MaterialStateProperty.all(AppColors.black),
         backgroundColor: MaterialStateProperty.all(
             chosen ? AppColors.primaries[1] : AppColors.primaries[0]),
-        side: MaterialStateProperty.all(
-            BorderSide(width: 0, style: BorderStyle.none)),
+        side: MaterialStateProperty.all(BorderSide.none),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
                 (MediaQuery.of(context).size.height * (32 / 760)) * .5))),
@@ -50,8 +49,7 @@ class ButtonStyleComponents {
             Theme.of(context).textTheme.enabledButton),
         foregroundColor: MaterialStateProperty.all(AppColors.black),
         backgroundColor: MaterialStateProperty.all(AppColors.primaries[0]),
-        side: MaterialStateProperty.all(
-            BorderSide(width: 0, style: BorderStyle.none)),
+        side: MaterialStateProperty.all(BorderSide.none),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
                 (MediaQuery.of(context).size.height * 0.05263157895) * .5))),

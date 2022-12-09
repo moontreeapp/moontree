@@ -9,7 +9,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_back/streams/create.dart';
 import 'package:ravencoin_back/streams/reissue.dart';
@@ -92,15 +91,6 @@ enum SelectionOption {
 }
 
 class SelectionItems {
-  late List<SelectionOption> names;
-  late List<String> customNames;
-  late List<VoidCallback> behaviors;
-  late List<String> values;
-  late String? symbol;
-  String? symbolColors;
-  late SelectionSet? modalSet;
-  final BuildContext context;
-
   SelectionItems(
     this.context, {
     List<SelectionOption>? names,
@@ -156,6 +146,14 @@ class SelectionItems {
     this.values = values ?? [];
     this.customNames = customNames ?? [];
   }
+  late List<SelectionOption> names;
+  late List<String> customNames;
+  late List<VoidCallback> behaviors;
+  late List<String> values;
+  late String? symbol;
+  String? symbolColors;
+  late SelectionSet? modalSet;
+  final BuildContext context;
 
   String asString(SelectionOption name) =>
       name.name.toTitleCase(underscoresAsSpace: true);
@@ -503,22 +501,25 @@ class SelectionItems {
       await Future<void>.delayed(const Duration(milliseconds: 600));
     }
     if (modalSet == SelectionSet.Wallets) {
-      await produceModal([
+      await produceModal(<Widget>[
             if (pros.wallets.length > 1) walletItemAll(controller!)
           ] +
-          [
+          <Widget>[
             for (Wallet wallet in pros.wallets) walletItem(wallet, controller!)
           ]);
     } else if (modalSet == SelectionSet.Admins) {
       produceModal(
-        [for (String name in holdingNames ?? []) restrictedItem(name)],
+        <Widget>[
+          for (String name in holdingNames ?? <String>[]) restrictedItem(name)
+        ],
       );
     } else if (modalSet == SelectionSet.Parents) {
-      produceModal(
-          [for (String holding in holdingNames ?? []) parentItem(holding)]);
+      produceModal(<Widget>[
+        for (String holding in holdingNames ?? <String>[]) parentItem(holding)
+      ]);
     } else if (modalSet == SelectionSet.Decimal) {
       produceModal(
-        [
+        <Widget>[
           for (SelectionOption name
               in names.sublist(0, names.length - (minDecimal ?? 0)))
             decimalItem(name,
@@ -527,12 +528,12 @@ class SelectionItems {
       );
     } else if (modalSet == SelectionSet.Create) {
       produceModal(
-        [for (SelectionOption name in names) createItem(name)],
+        <Widget>[for (SelectionOption name in names) createItem(name)],
       );
     } else if (modalSet == SelectionSet.Sub_Asset) {
       symbolColors = streams.app.manage.asset.value;
       produceModal(
-        [
+        <Widget>[
           for (SelectionOption name in names) createItem(name)
         ], //subAssetItem(name)],
       );
@@ -540,10 +541,10 @@ class SelectionItems {
       if (names.length == behaviors.length && names.length == values.length) {
         if (symbol == null) {
           produceModal(
-            [
-              for (List<Object> namedBehaviorValue in [
+            <Widget>[
+              for (List<Object> namedBehaviorValue in <List<Object>>[
                 for (int i = 0; i < names.length; i += 1)
-                  [names[i], behaviors[i], values[i]]
+                  <Object>[names[i], behaviors[i], values[i]]
               ])
                 item(namedBehaviorValue[0] as SelectionOption,
                     behavior: namedBehaviorValue[1] as VoidCallback,
@@ -552,10 +553,10 @@ class SelectionItems {
           );
         } else {
           produceModal(
-            [
-              for (List<Object> namedBehaviorValue in [
+            <Widget>[
+              for (List<Object> namedBehaviorValue in <List<Object>>[
                 for (int i = 0; i < names.length; i += 1)
-                  [names[i], behaviors[i], values[i]]
+                  <Object>[names[i], behaviors[i], values[i]]
               ])
                 item(namedBehaviorValue[0] as SelectionOption,
                     behavior: namedBehaviorValue[1] as VoidCallback,
@@ -565,9 +566,10 @@ class SelectionItems {
         }
       } else if (names.length == behaviors.length) {
         produceModal(
-          [
-            for (List<Object> namedBehavior in [
-              for (int i = 0; i < names.length; i += 1) [names[i], behaviors[i]]
+          <Widget>[
+            for (List<Object> namedBehavior in <List<Object>>[
+              for (int i = 0; i < names.length; i += 1)
+                <Object>[names[i], behaviors[i]]
             ])
               item(namedBehavior[0] as SelectionOption,
                   behavior: namedBehavior[1] as VoidCallback)
@@ -575,7 +577,7 @@ class SelectionItems {
         );
       } else {
         produceModal(
-          [for (SelectionOption name in names) item(name)],
+          <Widget>[for (SelectionOption name in names) item(name)],
         );
       }
     }
@@ -583,11 +585,10 @@ class SelectionItems {
 }
 
 class SimpleSelectionItems {
+  SimpleSelectionItems(this.context, {required this.items, this.then});
   final BuildContext context;
   late List<Widget> items;
   late void Function()? then;
-
-  SimpleSelectionItems(this.context, {required this.items, this.then});
 
   Future<void> build() async {
     await showModalBottomSheet<void>(
@@ -644,10 +645,9 @@ class SimpleSelectionItems {
 }
 
 class SimpleScrim {
+  SimpleScrim(this.context, {this.then});
   final BuildContext context;
   late void Function()? then;
-
-  SimpleScrim(this.context, {this.then});
 
   Future<void> build() async {
     await showModalBottomSheet<void>(

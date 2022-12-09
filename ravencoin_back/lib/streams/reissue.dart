@@ -2,26 +2,19 @@ import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ReissueStreams {
-  final form = BehaviorSubject<GenericReissueForm?>.seeded(null);
-  final request = BehaviorSubject<GenericReissueRequest?>.seeded(null);
-  final made = BehaviorSubject<String?>.seeded(null);
-  final estimate = BehaviorSubject<SendEstimate?>.seeded(null);
-  final send = BehaviorSubject<String?>.seeded(null);
-  final success = BehaviorSubject<bool?>.seeded(null);
+  final BehaviorSubject<GenericReissueForm?> form =
+      BehaviorSubject<GenericReissueForm?>.seeded(null);
+  final BehaviorSubject<GenericReissueRequest?> request =
+      BehaviorSubject<GenericReissueRequest?>.seeded(null);
+  final BehaviorSubject<String?> made = BehaviorSubject<String?>.seeded(null);
+  final BehaviorSubject<SendEstimate?> estimate =
+      BehaviorSubject<SendEstimate?>.seeded(null);
+  final BehaviorSubject<String?> send = BehaviorSubject<String?>.seeded(null);
+  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null);
 }
 
 class GenericReissueForm {
-  final String? name;
-  final String? ipfs;
-  final double? quantity;
-  final int? decimal;
-  final String? minIpfs;
-  final double? minQuantity;
-  final int? minDecimal;
-  final bool? reissuable;
-  final String? verifier;
-  final String? parent; // you have to use the wallet that holds the prent
-
+  // you have to use the wallet that holds the prent
   GenericReissueForm({
     this.name,
     this.ipfs,
@@ -34,18 +27,6 @@ class GenericReissueForm {
     this.reissuable,
     this.parent,
   });
-  @override
-  String toString() => 'GenericReissueForm('
-      'name=$name, '
-      'ipfs=$ipfs, '
-      'quantity=$quantity, '
-      'decimal=$decimal, '
-      'minIpfs=$minIpfs, '
-      'minQuantity=$minQuantity, '
-      'minDecimal=$minDecimal, '
-      'verifier=$verifier, '
-      'reissuable=$reissuable, '
-      'parent=$parent)';
 
   factory GenericReissueForm.merge({
     GenericReissueForm? form,
@@ -73,22 +54,42 @@ class GenericReissueForm {
       parent: parent ?? form?.parent,
     );
   }
+  final String? name;
+  final String? ipfs;
+  final double? quantity;
+  final int? decimal;
+  final String? minIpfs;
+  final double? minQuantity;
+  final int? minDecimal;
+  final bool? reissuable;
+  final String? verifier;
+  final String? parent;
+  @override
+  String toString() => 'GenericReissueForm('
+      'name=$name, '
+      'ipfs=$ipfs, '
+      'quantity=$quantity, '
+      'decimal=$decimal, '
+      'minIpfs=$minIpfs, '
+      'minQuantity=$minQuantity, '
+      'minDecimal=$minDecimal, '
+      'verifier=$verifier, '
+      'reissuable=$reissuable, '
+      'parent=$parent)';
 
   set symbol(String? symbol) => this.symbol = symbol;
 
   @override
-  bool operator ==(Object form) {
-    return form is GenericReissueForm
-        ? (form.name == name &&
-            form.ipfs == ipfs &&
-            form.quantity == quantity &&
-            form.decimal == decimal &&
-            form.minIpfs == minIpfs &&
-            form.minQuantity == minQuantity &&
-            form.minDecimal == minDecimal &&
-            form.verifier == verifier &&
-            form.reissuable == reissuable &&
-            form.parent == parent)
-        : false;
-  }
+  bool operator ==(Object other) =>
+      other is GenericReissueForm &&
+      (other.name == name &&
+          other.ipfs == ipfs &&
+          other.quantity == quantity &&
+          other.decimal == decimal &&
+          other.minIpfs == minIpfs &&
+          other.minQuantity == minQuantity &&
+          other.minDecimal == minDecimal &&
+          other.verifier == verifier &&
+          other.reissuable == reissuable &&
+          other.parent == parent);
 }

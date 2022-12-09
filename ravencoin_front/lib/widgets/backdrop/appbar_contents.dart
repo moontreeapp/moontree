@@ -1,29 +1,18 @@
-import 'dart:async';
 import 'dart:io' show Platform;
-import 'package:electrum_adapter/electrum_adapter.dart';
-import 'package:hive/hive.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_front/services/auth.dart';
-import 'package:ravencoin_front/services/lookup.dart';
-import 'package:bip39/bip39.dart' as bip39;
-import 'package:ravencoin_front/services/wallet.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
-import 'package:electrum_adapter/methods/server/ping.dart';
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {
   final bool spoof;
   final bool animate;
 
-  const BackdropAppBarContents({
+  BackdropAppBarContents({
     Key? key,
     this.spoof = false,
     this.animate = true,
@@ -81,7 +70,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const <BoxShadow>[],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         const AppBarScrim(),
       ],
@@ -105,11 +94,12 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
               //    .getOne('RGysusDLhhrYEKrdPjw4xwXE8P7q5Hwtuf'));
               //print(Current.wallet.addresses);
               //print(pros.addresses.records);
-              print(streams.claim.unclaimed.value);
+              //print(streams.claim.unclaimed.value);
 
               //print((await services.wallet
               //        .getAddressKeypair(pros.addresses.records.first))
               //    .toWIF());
+              //print(pros.vouts.where((v) => v.isAsset).first);
             }
           },
           child: appBar,
@@ -128,11 +118,14 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
         shape: shape,
         automaticallyImplyLeading: false,
         elevation: 0,
-        leading: ['ChooseMethod', 'Login', 'Setup', 'Backupintro']
-                    .contains(streams.app.page.value) ||
-                streams.app.lead.value == LeadIcon.none
-            ? null
-            : PageLead(mainContext: context),
+        leading: () {
+          if (<String>['ChooseMethod', 'Login', 'Setup', 'Backupintro']
+                  .contains(streams.app.page.value) ||
+              streams.app.lead.value == LeadIcon.none) {
+            return null;
+          }
+          return PageLead();
+        }(),
         centerTitle: spoof,
         title: PageTitle(animate: animate),
         actions: <Widget>[
@@ -148,7 +141,8 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
           /// this is not needed since we have a shimmer and we'll subtle color
           /// the connection light in the event that we have network activity.
           //if (!spoof) ActivityLight(),
-          if (!spoof) spoof ? SpoofedConnectionLight() : ConnectionLight(),
+          if (!spoof)
+            spoof ? const SpoofedConnectionLight() : const ConnectionLight(),
           if (!spoof) const QRCodeContainer(),
           if (!spoof) const SnackBarViewer(),
           if (!spoof) const SizedBox(width: 6),

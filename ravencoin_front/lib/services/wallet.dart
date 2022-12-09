@@ -151,10 +151,10 @@ Future<void> updateEnumLowerCase() async {
   }
   if (pros.settings.chain == Chain.none) {
     await pros.settings.save(
-        Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+        const Setting(name: SettingName.blockchain, value: Chain.ravencoin),
         force: true);
     await pros.settings.save(
-        Setting(name: SettingName.electrum_net, value: Net.main),
+        const Setting(name: SettingName.electrum_net, value: Net.main),
         force: true);
   }
   final List<Rate> rates = pros.rates.records.toList();
@@ -177,10 +177,10 @@ Future<void> updateChain() async {
   }
   if (pros.settings.chain == Chain.none) {
     await pros.settings.save(
-        Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+        const Setting(name: SettingName.blockchain, value: Chain.ravencoin),
         force: true);
     await pros.settings.save(
-        Setting(name: SettingName.electrum_net, value: Net.main),
+        const Setting(name: SettingName.electrum_net, value: Net.main),
         force: true);
   }
   final List<Asset> assets = pros.assets.records.toList();

@@ -11,6 +11,7 @@ import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 enum TransactionType { spend, create, reissue, export }
 
@@ -30,24 +31,24 @@ class CheckoutStruct {
   final Widget? button;
   final String loadingMessage;
   final int? playcount;
-  static const Iterable<Iterable<String>> exampleItems = [
-    ['Short Text', 'aligned right'],
-    ['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
-    [
+  static const Iterable<Iterable<String>> exampleItems = <List<String>>[
+    <String>['Short Text', 'aligned right'],
+    <String>['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
+    <String>[
       'Multiline (2) - Limited',
       '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
       '2'
     ],
-    [
+    <String>[
       'Multiline (5)',
       '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
       '5'
     ]
   ];
-  static const Iterable<Iterable<String>> exampleFees = [
-    ['Transaction', '1'],
-    ['Sub Asset', '100'],
-    ['long amount', '21,000,000.00000000']
+  static const Iterable<Iterable<String>> exampleFees = <List<String>>[
+    <String>['Transaction', '1'],
+    <String>['Sub Asset', '100'],
+    <String>['long amount', '21,000,000.00000000']
   ];
 
   const CheckoutStruct({
@@ -137,7 +138,8 @@ class _CheckoutState extends State<Checkout> {
     data = populateData(context, data);
     struct = data['struct'] as CheckoutStruct? ?? const CheckoutStruct();
     startTime = DateTime.now();
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => CustomScrollView(
@@ -177,7 +179,7 @@ class _CheckoutState extends State<Checkout> {
                   style: Theme.of(context).textTheme.bodyText1))
         ]),
         //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-        //  SizedBox(width: 5),
+        //  const SizedBox(width: 5),
         //  Text(struct.subSymbol!.toUpperCase(),
         //      style: Theme.of(context).checkoutSubAsset),
         //])
@@ -250,7 +252,7 @@ class _CheckoutState extends State<Checkout> {
       disabled = true;
       if (estimate != null) {
         disabled = false;
-        return satToAmount(estimate!.amount).toString();
+        return estimate!.amount.asCoin.toString();
         //return satToAmount(estimate!.total - estimate!.fees).toString();
       }
       return x;
@@ -263,7 +265,7 @@ class _CheckoutState extends State<Checkout> {
       disabled = true;
       if (estimate != null) {
         disabled = false;
-        return satToAmount(estimate!.fees).toString();
+        return estimate!.fees.asCoin.toString();
       }
       return x;
     }
@@ -354,7 +356,7 @@ class _CheckoutState extends State<Checkout> {
       disabled = true;
       if (estimate != null) {
         disabled = false;
-        return satToAmount(estimate!.total).toString();
+        return estimate!.total.asCoin.toString();
       }
     }
     return x;

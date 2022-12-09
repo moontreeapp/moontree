@@ -24,7 +24,7 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
   IndexUnique<_IdKey, Security> get byKey =>
       indices[constPrimaryIndex]! as IndexUnique<_IdKey, Security>;
 
-  static Map<String, Security> get defaults => {
+  static Map<String, Security> get defaults => <String, Security>{
         SecurityProclaim.staticUSD.id: SecurityProclaim.staticUSD,
         SecurityProclaim.staticRVN.id: SecurityProclaim.staticRVN,
         SecurityProclaim.staticEVR.id: SecurityProclaim.staticEVR,

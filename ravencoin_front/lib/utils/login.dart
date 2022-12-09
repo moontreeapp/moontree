@@ -22,6 +22,7 @@ Future<void> login(
   streams.app.splash.add(false); // trigger to refresh app bar again
   streams.app.logout.add(false);
   streams.app.verify.add(true);
+  //streams.app.lead.add(LeadIcon.menu);
   postLogin(context);
 
   /// here we can put logic to migrate database on new version or something:
@@ -33,12 +34,14 @@ void postLogin(BuildContext context) {
   if (Current.wallet is LeaderWallet &&
       //streams.app.triggers.value == ThresholdTrigger.backup &&
       !Current.wallet.backedUp) {
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    Navigator.pushReplacementNamed(context, '/home',
+        arguments: <dynamic, dynamic>{});
     Navigator.of(context).pushNamed(
       '/security/backup/backupintro',
-      arguments: {'fadeIn': true},
+      arguments: <String, bool>{'fadeIn': true},
     );
   } else {
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    Navigator.pushReplacementNamed(context, '/home',
+        arguments: <dynamic, dynamic>{});
   }
 }

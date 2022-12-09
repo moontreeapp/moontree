@@ -31,7 +31,7 @@ class _BackupIntroState extends State<BackupIntro> {
     return WillPopScope(
         onWillPop: () async => false,
         child: BackdropLayers(
-            back: BlankBack(),
+            back: const BlankBack(),
             front: FrontCurve(
               child: components.page.form(
                 context,
@@ -46,7 +46,7 @@ class _BackupIntroState extends State<BackupIntro> {
                             .subtitle1!
                             .copyWith(color: AppColors.black),
                       )),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Container(
                       alignment: Alignment.topCenter,
                       child: Text(
@@ -58,7 +58,7 @@ class _BackupIntroState extends State<BackupIntro> {
                             .copyWith(color: AppColors.error),
                       ))
                 ],
-                buttons: [
+                buttons: <Widget>[
                   components.buttons.actionButton(
                     context,
                     label: 'BACKUP',

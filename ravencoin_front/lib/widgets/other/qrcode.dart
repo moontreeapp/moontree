@@ -7,7 +7,7 @@ class QRCodeButton extends StatefulWidget {
   final String pageTitle;
   final bool light;
 
-  QRCodeButton({
+  const QRCodeButton({
     Key? key,
     this.pageTitle = 'Home',
     this.light = true,
@@ -20,7 +20,7 @@ class QRCodeButton extends StatefulWidget {
 class _QRCodeButtonState extends State<QRCodeButton> {
   @override
   Widget build(BuildContext context) =>
-      ['Send', 'Scan'].contains(widget.pageTitle)
+      <String>['Send', 'Scan'].contains(widget.pageTitle)
           ? Container(width: 0)
           : IconButton(
               padding: EdgeInsets.zero,
@@ -44,7 +44,7 @@ class _QRCodeButtonState extends State<QRCodeButton> {
                 if (widget.pageTitle == 'Send-to') {
                   Navigator.of(components.navigator.routeContext!)
                       .pushReplacementNamed('/scan',
-                          arguments: {'addressOnly': true});
+                          arguments: <String, bool>{'addressOnly': true});
                 } else {
                   Navigator.of(components.navigator.routeContext!)
                       .pushNamed('/scan');

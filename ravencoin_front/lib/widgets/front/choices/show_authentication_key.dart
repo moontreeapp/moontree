@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/storage.dart';
@@ -32,12 +31,11 @@ class _ShowAuthenticationChoice extends State<ShowAuthenticationChoice> {
             widget.desc!,
             style: Theme.of(context).textTheme.bodyText2,
           ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Row(
           children: <Widget>[
             components.buttons.actionButtonSoft(
               context,
-              enabled: true,
               label: '$msg Key',
               onPressed: () => setState(() {
                 show = !show;
@@ -46,11 +44,11 @@ class _ShowAuthenticationChoice extends State<ShowAuthenticationChoice> {
             ),
           ],
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         if (show)
           FutureBuilder<String>(
               future: SecureStorage.authenticationKey,
-              builder: (context, AsyncSnapshot<String> snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
                   return SelectableText(snapshot.data!);
                 }

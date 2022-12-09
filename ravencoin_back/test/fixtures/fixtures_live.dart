@@ -4,10 +4,11 @@ import 'package:dotenv/dotenv.dart' as dotenv;
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/utilities/database.dart' as raven_database;
 
-Future useLiveSources() async {
+Future<void> useLiveSources() async {
   dotenv.load();
-  var mnemonic = dotenv.env['TEST_WALLET_01']!;
-  var hiveInit = HiveInitializer(init: (dbDir) => Hive.init('database'));
+  final String mnemonic = dotenv.env['TEST_WALLET_01']!;
+  final HiveInitializer hiveInit =
+      HiveInitializer(init: (dynamic dbDir) => Hive.init('database'));
   await hiveInit.setUp(HiveLoadingStep.all);
   initWaiters(HiveLoadingStep.all);
   await services.wallet.createSave(

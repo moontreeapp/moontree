@@ -8,7 +8,6 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
-import 'package:ravencoin_back/streams/app.dart';
 
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -99,7 +98,7 @@ class _NavMenuState extends State<NavMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, ListView> options = {
+    final Map<String, ListView> options = <String, ListView>{
       '/settings/import_export': ListView(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
@@ -310,12 +309,11 @@ class _NavMenuState extends State<NavMenu> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 0),
+                          padding: const EdgeInsets.only(left: 16, right: 16),
                           child: Row(
                             children: <Widget>[logoutButton],
                           )),
-                      SizedBox(height: (.065).ofMediaHeight(context) + 16)
+                      SizedBox(height: .065.ofMediaHeight(context) + 16)
                     ])
               else
                 Container(),

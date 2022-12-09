@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:json_rpc_2/json_rpc_2.dart' as rpc;
 import 'package:wallet_utils/wallet_utils.dart';
 
 enum ValueType { confirmed, unconfirmed }

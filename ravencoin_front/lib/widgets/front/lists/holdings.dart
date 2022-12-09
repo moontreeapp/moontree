@@ -4,11 +4,9 @@ import 'dart:async';
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:moontree_utils/extensions/map.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
@@ -37,8 +35,8 @@ class _HoldingList extends State<HoldingList> {
   bool overrideEmpty = false;
   bool showSearchBar = false;
   Rate? rateUSD;
-  Set<Balance> balances = {};
-  Set<Address> addresses = {};
+  Set<Balance> balances = <Balance>{};
+  Set<Address> addresses = <Address>{};
   TextEditingController searchController = TextEditingController();
   bool overrideGettingStarted = false;
   late Security currentCrypto;
@@ -324,7 +322,7 @@ class _HoldingList extends State<HoldingList> {
             labelText: 'Search',
             suffixIcon: IconButton(
               icon: const Padding(
-                  padding: EdgeInsets.only(right: 14),
+                  padding: const EdgeInsets.only(right: 14),
                   child: Icon(Icons.clear_rounded, color: AppColors.black38)),
               onPressed: () => setState(() {
                 searchController.text = '';

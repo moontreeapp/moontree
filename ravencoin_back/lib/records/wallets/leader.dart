@@ -68,8 +68,14 @@ class LeaderWallet extends Wallet {
       _getEntropy = getEntropy;
 
   @override
-  List<Object?> get props =>
-      [id, cipherUpdate, encryptedEntropy, backedUp, skipHistory, name];
+  List<Object?> get props => <Object?>[
+        id,
+        cipherUpdate,
+        encryptedEntropy,
+        backedUp,
+        skipHistory,
+        name
+      ];
 
   @override
   String toString() =>

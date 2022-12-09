@@ -11,7 +11,7 @@ import 'package:ravencoin_front/widgets/front/choices/blockchain_choice.dart'
     show produceBlockchainModal;
 
 class ConnectionLight extends StatefulWidget {
-  ConnectionLight({Key? key}) : super(key: key);
+  const ConnectionLight({Key? key}) : super(key: key);
 
   @override
   _ConnectionLightState createState() => _ConnectionLightState();
@@ -22,7 +22,7 @@ class _ConnectionLightState extends State<ConnectionLight>
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
   Color connectionStatusColor = AppColors.error;
-  Map<ConnectionStatus, Color> connectionColor = {
+  Map<ConnectionStatus, Color> connectionColor = <ConnectionStatus, Color>{
     ConnectionStatus.connected: AppColors.success,
     ConnectionStatus.connecting: AppColors.yellow,
     ConnectionStatus.disconnected: AppColors.error,
@@ -51,13 +51,13 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   void createAnimations() {
     _controllerH = AnimationController(
-      duration: Duration(milliseconds: durationH),
+      duration: const Duration(milliseconds: durationH),
       vsync: this,
     );
     _controllerH.value = .5;
     _controllerH.repeat(reverse: true);
     _controllerV = AnimationController(
-      duration: Duration(milliseconds: durationV),
+      duration: const Duration(milliseconds: durationV),
       vsync: this,
     );
     _controllerV.value = .5;
@@ -115,7 +115,7 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   /* blinking animations */
   //Future<void> rebuildMe() async {
-  //  await Future<void>.delayed(Duration(milliseconds: 600));
+  //  await Future<void>.delayed(const Duration(milliseconds: 600));
   //  if (connectionBusy) {
   //    // don't blink when spinner runs... separate into different streams?
   //    if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
@@ -189,7 +189,7 @@ class _ConnectionLightState extends State<ConnectionLight>
       'Scan',
       'Setup',
       'Backupintro',
-      'BackupConfirm',
+      'Backupconfirm',
       'Backup',
     ].contains(streams.app.page.value)) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -202,7 +202,7 @@ class _ConnectionLightState extends State<ConnectionLight>
 }
 
 class SpoofedConnectionLight extends StatelessWidget {
-  SpoofedConnectionLight({Key? key}) : super(key: key);
+  const SpoofedConnectionLight({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

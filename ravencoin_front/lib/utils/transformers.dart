@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
-import 'package:ravencoin_back/utilities/utilities.dart';
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override

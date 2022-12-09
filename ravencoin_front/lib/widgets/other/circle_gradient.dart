@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ColorPair {
-  final int colorInt1, colorInt2;
   const ColorPair(this.colorInt1, this.colorInt2);
+  final int colorInt1, colorInt2;
   Color get color1 => Color(colorInt1);
   Color get color2 => Color(colorInt2);
 }
 
-const gradients = [
+const List<ColorPair> gradients = <ColorPair>[
   ColorPair(0xFFC93538, 0xFF993436),
   ColorPair(0xFF99CBFB, 0xFF376898),
   ColorPair(0xFF656696, 0xFF343434),
@@ -24,16 +24,15 @@ const gradients = [
 ];
 
 class CircleGradient extends CustomPainter {
-  final ColorPair colors;
-
   CircleGradient(this.colors);
+  final ColorPair colors;
 
   @override
   void paint(Canvas canvas, Size size) {
     // The 'offset' is how "off center" the gradient is within the circle
-    var offset = 0.75;
-    RadialGradient gradient = RadialGradient(
-      center: Alignment(-offset, -offset),
+    const double offset = 0.75;
+    final RadialGradient gradient = RadialGradient(
+      center: const Alignment(-offset, -offset),
       radius: 0.5 + offset * 2,
       colors: <Color>[colors.color1, colors.color2],
     );
@@ -61,15 +60,14 @@ class CircleGradient extends CustomPainter {
 }
 
 class PopCircle extends StatelessWidget {
+  const PopCircle({
+    this.colorPair = PopCircle.defaultColorPair,
+    this.padding = EdgeInsets.zero,
+  });
   static const ColorPair defaultColorPair = ColorPair(0xFFC93538, 0xFF993436);
 
   final ColorPair colorPair;
   final EdgeInsetsGeometry padding;
-
-  PopCircle({
-    this.colorPair = PopCircle.defaultColorPair,
-    this.padding = EdgeInsets.zero,
-  });
 
   @override
   Widget build(BuildContext context) => AspectRatio(

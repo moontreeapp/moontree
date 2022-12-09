@@ -84,22 +84,7 @@ class RestrictedCreateRequest {
 */
 
 class GenericCreateRequest with ToStringMixin {
-  late bool isSub;
-  late bool isMain;
-  late bool isNFT;
-  late bool isChannel;
-  late bool isQualifier;
-  late bool isRestricted;
-  late String fullName;
-  late Wallet wallet;
-  late String name;
-  late double? quantity;
-  late Uint8List? assetData;
-  late int? decimals;
-  late String? verifier;
-  late bool? reissuable;
-  late String?
-      parent; // you have to use the wallet that holds the prent if sub asset
+  // you have to use the wallet that holds the prent if sub asset
 
   GenericCreateRequest({
     required this.isSub,
@@ -118,6 +103,21 @@ class GenericCreateRequest with ToStringMixin {
     this.reissuable,
     this.parent,
   });
+  late bool isSub;
+  late bool isMain;
+  late bool isNFT;
+  late bool isChannel;
+  late bool isQualifier;
+  late bool isRestricted;
+  late String fullName;
+  late Wallet wallet;
+  late String name;
+  late double? quantity;
+  late Uint8List? assetData;
+  late int? decimals;
+  late String? verifier;
+  late bool? reissuable;
+  late String? parent;
 
   @override
   List<Object?> get props => <Object?>[
@@ -164,22 +164,7 @@ class GenericCreateRequest with ToStringMixin {
 }
 
 class GenericReissueRequest with ToStringMixin {
-  late bool isSub;
-  late bool isMain;
-  late bool isRestricted;
-  late String fullName;
-  late Wallet wallet;
-  late String name;
-  late double? quantity;
-  late int? decimals;
-  late double? originalQuantity;
-  late int? originalDecimals;
-  late Uint8List? originalAssetData;
-  late Uint8List? assetData;
-  late String? verifier;
-  late bool? reissuable;
-  late String?
-      parent; // you have to use the wallet that holds the prent if sub asset
+  // you have to use the wallet that holds the prent if sub asset
 
   GenericReissueRequest({
     required this.isSub,
@@ -198,6 +183,21 @@ class GenericReissueRequest with ToStringMixin {
     this.reissuable,
     this.parent,
   });
+  late bool isSub;
+  late bool isMain;
+  late bool isRestricted;
+  late String fullName;
+  late Wallet wallet;
+  late String name;
+  late double? quantity;
+  late int? decimals;
+  late double? originalQuantity;
+  late int? originalDecimals;
+  late Uint8List? originalAssetData;
+  late Uint8List? assetData;
+  late String? verifier;
+  late bool? reissuable;
+  late String? parent;
 
   @override
   List<Object?> get props => <Object?>[
@@ -244,18 +244,6 @@ class GenericReissueRequest with ToStringMixin {
 }
 
 class SendRequest with ToStringMixin {
-  late bool sendAll;
-  late String sendAddress;
-  late double holding;
-  late String visibleAmount;
-  late int sendAmountAsSats;
-  late wu.FeeRate feeRate;
-  late Wallet wallet;
-  late Security? security;
-  late String? assetMemo;
-  late String? memo;
-  late String? note;
-
   SendRequest({
     required this.sendAll,
     required this.sendAddress,
@@ -269,6 +257,17 @@ class SendRequest with ToStringMixin {
     this.memo,
     this.note,
   });
+  late bool sendAll;
+  late String sendAddress;
+  late double holding;
+  late String visibleAmount;
+  late int sendAmountAsSats;
+  late wu.FeeRate feeRate;
+  late Wallet wallet;
+  late Security? security;
+  late String? assetMemo;
+  late String? memo;
+  late String? note;
 
   @override
   List<Object> get props => <Object>[
@@ -301,18 +300,9 @@ class SendRequest with ToStringMixin {
 }
 
 class SendEstimate with ToStringMixin {
-  int amount; //sats
-  int fees;
-  List<Vout> utxos;
-  Security? security;
-  Uint8List? assetMemo;
-  String? memo;
-  int extraFees = 0;
-  bool creation;
-  int coinReturn = 0;
-
   SendEstimate(
     this.amount, {
+    this.sendAll = false,
     this.fees = 0,
     List<Vout>? utxos,
     this.security,
@@ -325,6 +315,17 @@ class SendEstimate with ToStringMixin {
     return SendEstimate(detail.amount,
         fees: detail.fees, utxos: detail.utxos.toList());
   }
+
+  int amount; //sats
+  bool sendAll;
+  int fees;
+  List<Vout> utxos;
+  Security? security;
+  Uint8List? assetMemo;
+  String? memo;
+  int extraFees = 0;
+  bool creation;
+  int coinReturn = 0;
 
   @override
   List<Object?> get props => <Object?>[
@@ -339,7 +340,7 @@ class SendEstimate with ToStringMixin {
       ];
 
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'amount',
         'fees',
         'utxos',
@@ -353,10 +354,10 @@ class SendEstimate with ToStringMixin {
   int get total => security == null || security == pros.securities.currentCoin
       ? (creation ? 0 : amount) + fees + extraFees
       : fees + extraFees;
-  int get utxoTotal => utxos.fold(0,
-      (int total, Vout vout) => total + vout.securityValue(security: security));
+  int get utxoTotal => utxos.fold(
+      0, (int t, Vout vout) => t + vout.securityValue(security: security));
   int get utxoCoinTotal =>
-      utxos.fold(0, (int total, Vout vout) => total + vout.coinValue);
+      utxos.fold(0, (int running, Vout vout) => running + vout.coinValue);
 
   int get changeDue => utxoTotal - total;
 
@@ -384,6 +385,7 @@ class TransactionMaker {
   ) async {
     final SendEstimate estimate = SendEstimate(
       sendRequest.sendAmountAsSats,
+      sendAll: sendRequest.sendAll,
       security: sendRequest.security == pros.securities.currentCoin
           ? null
           : sendRequest.security,
@@ -392,8 +394,7 @@ class TransactionMaker {
     );
 
     return (sendRequest.sendAll ||
-                double.parse(sendRequest.visibleAmount) ==
-                    sendRequest.holding) &&
+                sendRequest.sendAmountAsSats == sendRequest.holding.asSats) &&
             (sendRequest.security == null ||
                 sendRequest.security == pros.securities.currentCoin)
         ? await transactionSendAllRVN(
@@ -1339,7 +1340,7 @@ class TransactionMaker {
     Set<int>? previousFees,
     int? assetMemoExpiry,
   }) async {
-    Tuple2<wu.TransactionBuilder, int> makeTxBuilder(
+    wu.TransactionBuilder makeTxBuilder(
       List<Vout> utxos,
       SendEstimate estimate,
     ) {
@@ -1352,6 +1353,12 @@ class TransactionMaker {
         txb.addInput(utxo.transactionId, utxo.position);
         total = total + utxo.coinValue;
       }
+      if (total != estimate.amount &&
+          total != estimate.amount + estimate.fees) {
+        throw Exception(
+            'During creation of the "send all" transaction the total amount we '
+            'could send changed. Transaction Failed.');
+      }
       txb.addOutput(
         toAddress,
         estimate.amount,
@@ -1362,27 +1369,18 @@ class TransactionMaker {
       if (estimate.memo != null) {
         txb.addMemo(estimate.memo);
       }
-      return Tuple2<wu.TransactionBuilder, int>(txb, total);
+      return txb;
     }
 
     final List<Vout> utxos = await services.balance.collectUTXOs(
       walletId: wallet.id,
       amount: estimate.amount,
     );
-    Tuple2<wu.TransactionBuilder, int> txbTotal =
-        makeTxBuilder(utxos, estimate);
-    wu.TransactionBuilder txb = txbTotal.item1;
-    int total = txbTotal.item2;
+    wu.TransactionBuilder txb = makeTxBuilder(utxos, estimate);
     wu.Transaction tx = txb.buildSpoofedSigs();
     estimate.setFees(tx.fee(goal: feeRate));
     estimate.setAmount(estimate.amount - estimate.fees);
-    txbTotal = makeTxBuilder(utxos, estimate);
-    txb = txbTotal.item1;
-    total = txbTotal.item2;
-    final int implicitFee = estimate.amount + estimate.fees;
-    if (total > implicitFee + 1) {
-      throw Exception('implicit Fee is too Large: ${implicitFee - total}');
-    }
+    txb = makeTxBuilder(utxos, estimate);
     estimate.setUTXOs(utxos);
     await txb.signEachInput(utxos);
     tx = txb.build();

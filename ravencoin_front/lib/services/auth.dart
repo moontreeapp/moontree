@@ -11,7 +11,7 @@ enum AuthenticationResult {
 }
 
 class LocalAuthApi {
-  final _auth = LocalAuthentication();
+  final LocalAuthentication _auth = LocalAuthentication();
   AuthenticationResult? reason;
 
   Future<bool> get canCheckBiometrics async {

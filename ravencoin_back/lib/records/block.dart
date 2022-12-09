@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 
 import '_type_id.dart';

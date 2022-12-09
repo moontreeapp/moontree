@@ -53,7 +53,7 @@ class CreateWaiter extends Waiter {
     streams.create.send.listen((String? txHex) async {
       if (txHex != null) {
         //try {
-        final txid = await services.client.api.sendTransaction(txHex);
+        final String txid = await services.client.api.sendTransaction(txHex);
         print('txid');
         print(txid);
         if (txid != '') {

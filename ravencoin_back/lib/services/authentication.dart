@@ -19,7 +19,7 @@ class AuthenticationService {
     String? message,
   }) async {
     await services.password.create.save(password, salt, saveSecret);
-    var cipher = services.cipher.updatePassword(
+    final CipherBase cipher = services.cipher.updatePassword(
       altPassword: password,
       altSalt: salt,
     );

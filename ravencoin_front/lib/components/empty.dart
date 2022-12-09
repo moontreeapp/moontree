@@ -1,7 +1,6 @@
-import 'package:moontree_utils/src/list.dart' show range;
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:moontree_utils/src/list.dart' show range;
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
@@ -62,20 +61,22 @@ class EmptyComponents {
     int count = 1,
     bool holding = false,
   }) {
-    final thisHolding = Shimmer.fromColors(
+    final Shimmer thisHolding = Shimmer.fromColors(
         baseColor: AppColors.primaries[0],
         highlightColor: Colors.white,
         child: assetPlaceholder(context, holding: holding));
     return ListView(
         controller: scrollController,
-        dragStartBehavior: DragStartBehavior.start,
         physics: const ClampingScrollPhysics(),
         children: <Widget>[
-          SizedBox(height: 8),
-          ...[
-            for (var _ in range(count)) ...[thisHolding, Divider()]
+          const SizedBox(height: 8),
+          ...<Widget>[
+            for (int _ in range(count)) ...<Widget>[
+              thisHolding,
+              const Divider()
+            ]
           ],
-          ...[blankNavArea(context)]
+          ...<Widget>[blankNavArea(context)]
         ]);
   }
 
@@ -85,20 +86,22 @@ class EmptyComponents {
     int count = 1,
     bool holding = false,
   }) {
-    final thisHolding = Shimmer.fromColors(
+    final Shimmer thisHolding = Shimmer.fromColors(
         baseColor: AppColors.primaries[0],
         highlightColor: Colors.white,
         child: assetPlaceholder(context, holding: holding));
     return ListView(
         controller: scrollController,
-        dragStartBehavior: DragStartBehavior.start,
         physics: const ClampingScrollPhysics(),
         children: <Widget>[
-          SizedBox(height: 8),
-          ...[
-            for (var _ in range(count)) ...[thisHolding, Divider()]
+          const SizedBox(height: 8),
+          ...<Widget>[
+            for (int _ in range(count)) ...<Widget>[
+              thisHolding,
+              const Divider()
+            ]
           ],
-          ...[blankNavArea(context)]
+          ...<Widget>[blankNavArea(context)]
         ]);
   }
 
@@ -113,9 +116,8 @@ class EmptyComponents {
   }) =>
       Container(
           height: 72,
-          padding: EdgeInsets.only(top: 8.0, left: 16),
-          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <
-              Widget>[
+          padding: const EdgeInsets.only(top: 8.0, left: 16),
+          child: Row(children: <Widget>[
             Container(
               height: 40,
               width: 40,
@@ -125,12 +127,12 @@ class EmptyComponents {
                   border: Border.all(width: 2, color: AppColors.primaries[0])),
               //child: ClipRRect(borderRadius: BorderRadius.circular(100.0)),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  if (holding) ...[
+                  if (holding) ...<Widget>[
                     Container(
                       height: MediaQuery.of(context).size.height * (12 / 760),
                       width: 79,
@@ -141,7 +143,7 @@ class EmptyComponents {
                                       (12 / 760)) *
                                   .5)),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                   ],
                   Container(
                     height: MediaQuery.of(context).size.height * (12 / 760),
@@ -195,7 +197,7 @@ class EmptyComponents {
                   borderRadius: BorderRadius.circular(
                       (MediaQuery.of(context).size.height * (12 / 760)) * .5)),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               height: MediaQuery.of(context).size.height * (12 / 760),
               width: 47,
@@ -218,17 +220,16 @@ class EmptyComponents {
   }) {
     return ListView(
         controller: scrollController,
-        dragStartBehavior: DragStartBehavior.start,
         physics: const ClampingScrollPhysics(),
         children: <Widget>[
-          SizedBox(height: 8),
-          ...[
-            for (var _ in range(count)) ...[
+          const SizedBox(height: 8),
+          ...<Widget>[
+            for (int _ in range(count)) ...<Widget>[
               getTransactionsShimmer(context),
-              Divider()
+              const Divider()
             ]
           ],
-          ...[blankNavArea(context)]
+          ...<Widget>[blankNavArea(context)]
         ]);
   }
 
@@ -239,7 +240,7 @@ class EmptyComponents {
 
   Widget transactionPlaceholder(BuildContext context) => Container(
       height: 64,
-      padding: EdgeInsets.only(top: 8.0, left: 16, right: 16),
+      padding: const EdgeInsets.only(top: 8.0, left: 16, right: 16),
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -256,7 +257,7 @@ class EmptyComponents {
                             (MediaQuery.of(context).size.height * (12 / 760)) *
                                 .5)),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Container(
                     height: MediaQuery.of(context).size.height * (12 / 760),
                     width: 148,

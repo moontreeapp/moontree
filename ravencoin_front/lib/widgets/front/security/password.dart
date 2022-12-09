@@ -7,16 +7,16 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class ChangePasswordWidget extends StatefulWidget {
+  const ChangePasswordWidget({Key? key, this.data}) : super(key: key);
   final dynamic data;
-  const ChangePasswordWidget({this.data}) : super();
 
   @override
   _ChangePasswordWidget createState() => _ChangePasswordWidget();
 }
 
 class _ChangePasswordWidget extends State<ChangePasswordWidget> {
-  var newPassword = TextEditingController();
-  var confirmPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   FocusNode newPasswordFocus = FocusNode();
   FocusNode confirmPasswordFocus = FocusNode();
   FocusNode buttonFocus = FocusNode();
@@ -40,29 +40,29 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
   Widget build(BuildContext context) => CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
             child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft, child: newPasswordField))),
         SliverToBoxAdapter(
             child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft,
                     child: confirmPasswordField))),
         SliverToBoxAdapter(
             child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                   alignment: Alignment.topLeft,
                   child: Center(child: components.text.passwordWarning),
                 ))),
         SliverToBoxAdapter(
             child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft,
                     child: Row(children: <Widget>[submitButton])))),
@@ -82,7 +82,7 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
         suffixIcon: IconButton(
           icon: Icon(
               newPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Color(0x99000000)),
+              color: const Color(0x99000000)),
           onPressed: () => setState(() {
             newPasswordVisible = !newPasswordVisible;
           }),
@@ -111,7 +111,7 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
         suffixIcon: IconButton(
           icon: Icon(
               confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Color(0x99000000)),
+              color: const Color(0x99000000)),
           onPressed: () => setState(() {
             confirmPasswordVisible = !confirmPasswordVisible;
           }),
@@ -130,7 +130,7 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
         enabled: enabledCheck(),
         label: 'Set',
         focusNode: buttonFocus,
-        disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
+        disabledIcon: const Icon(Icons.lock_rounded, color: AppColors.black38),
         onPressed: () async => submit(),
       );
 
@@ -139,8 +139,8 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
 
   void validateComplexity({String? password}) {
     password = password ?? newPassword.text;
-    var oldValidation = validatedComplexity;
-    var oldNotification = newNotification;
+    bool oldValidation = validatedComplexity;
+    String? oldNotification = newNotification;
     if (services.password.validate.complexity(password)) {
       if (confirmPassword.text == newPassword.text) {
         validatedComplexity = true;
@@ -158,7 +158,7 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
     }
     if (oldValidation != validatedComplexity ||
         oldNotification != newNotification) {
-      setState(() => {});
+      setState(() {});
     }
   }
 
@@ -169,8 +169,9 @@ class _ChangePasswordWidget extends State<ChangePasswordWidget> {
   //  return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   //}
 
-  Future submit() async {
-    await Future<void>.delayed(Duration(milliseconds: 200)); // in release mode?
+  Future<void> submit() async {
+    await Future<void>.delayed(
+        const Duration(milliseconds: 200)); // in release mode?
     if (services.password.validate.complexity(newPassword.text)) {
       FocusScope.of(context).unfocus();
       services.authentication.setPassword(

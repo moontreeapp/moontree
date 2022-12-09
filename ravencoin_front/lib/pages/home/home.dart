@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
             !Current.wallet.backedUp;
     if (backupCondition) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!<String>['Backupintro', 'Backup', 'BackupConfirm']
+        if (!<String>['Backupintro', 'Backup', 'Backupconfirm']
             .contains(streams.app.page.value)) {
           streams.app.lead.add(LeadIcon.none);
           Navigator.of(context).pushNamed(

@@ -5,7 +5,7 @@ import 'list_item.dart';
 
 class FrontLayerContent extends StatefulWidget {
   final ScrollController scrollController;
-  FrontLayerContent(this.scrollController);
+  const FrontLayerContent(this.scrollController);
 
   @override
   State<FrontLayerContent> createState() => _LayerContentState();

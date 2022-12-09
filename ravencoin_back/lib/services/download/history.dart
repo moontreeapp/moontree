@@ -2,8 +2,8 @@
 
 import 'dart:async';
 import 'package:tuple/tuple.dart';
-import 'package:moontree_utils/moontree_utils.dart';
-import 'package:wallet_utils/wallet_utils.dart' show evrAirdropTx;
+import 'package:wallet_utils/wallet_utils.dart'
+    show AmountToSatsExtension, evrAirdropTx;
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
@@ -104,19 +104,8 @@ class HistoryService {
     Set<String> txIds, {
     bool saveVin = true,
     bool saveVout = true,
-  }) async {
-    await getTransactions(txIds, saveVin: saveVin, saveVout: saveVout);
-    //busy = true;
-    //await saveTransactions(
-    //  [
-    //    for (var transactionId in txIds)
-    //      await services.client.api.getTransaction(transactionId)
-    //  ],
-    //  saveVin: saveVin,
-    //  saveVout: saveVout,
-    //);
-    //busy = false;
-  }
+  }) async =>
+      getTransactions(txIds, saveVin: saveVin, saveVout: saveVout);
 
   Future<void> allDoneProcess() async {
     busy = true;
@@ -129,32 +118,23 @@ class HistoryService {
   /// still need this for getting correct balances of some transactions...
   /// one more step - get all vins that have no corresponding vout (in the db)
   /// and get the vouts for them
-  Future<void> saveDanglingTransactions() async {
-    final Set<String> txs =
-        pros.vins.dangling.map((Vin vin) => vin.voutTransactionId).toSet();
-    await getTransactions(filterOutPreviouslyDownloaded(txs), saveVin: false);
-
-    /// this really doesn't seem necessary because we grab it when we pull.
-    // make sure you have all the vouts that you need for transactions according
-    // to the unspents:
-    //await getTransactions(
-    //  filterOutPreviouslyDownloaded(
-    //      pros.unspents.records.map((e) => e.transactionId).toSet()),
-    //  saveVin: false, //
-    //  saveVout: true,
-    //);
-  }
+  Future<void> saveDanglingTransactions() async => getTransactions(
+      filterOutPreviouslyDownloaded(
+          pros.vins.dangling.map((Vin vin) => vin.voutTransactionId).toSet()),
+      saveVin: false);
 
   Iterable<String> filterOutPreviouslyDownloaded(
     Iterable<String> transactionIds,
   ) =>
       transactionIds
-          .where((String transactionId) =>
-              transactionId !=
-                  evrAirdropTx && // don't download genesis block of Evrmore, it's too big.
-              !pros.transactions.confirmed
-                  .map((Transaction e) => e.id)
-                  .contains(transactionId))
+          .where((String transactionId) => !pros.transactions.confirmed
+              .map((Transaction e) => e.id)
+              .contains(transactionId))
+          .toSet();
+
+  Iterable<String> filterOutTooLarge(Iterable<String> transactionIds) =>
+      transactionIds
+          .where((String transactionId) => transactionId != evrAirdropTx)
           .toSet();
 
   /// we capture securities here. if it's one we've never seen,
@@ -176,7 +156,7 @@ class HistoryService {
         vout.scriptPubKey.type == 'reissue_asset') {
       if (<String>['transfer_asset', 'reissue_asset']
           .contains(vout.scriptPubKey.type)) {
-        value = amountToSat(vout.scriptPubKey.amount);
+        value = vout.scriptPubKey.amount.asSats;
         //if we have no record of it in pros.securities...
         final AssetRetrieved? assetRetrieved =
             await services.download.asset.get(symbol, vout: vout);
@@ -187,7 +167,7 @@ class HistoryService {
         }
       } else if (vout.scriptPubKey.type == 'new_asset') {
         symbol = vout.scriptPubKey.asset!;
-        value = amountToSat(vout.scriptPubKey.amount);
+        value = vout.scriptPubKey.amount.asSats;
         asset = Asset(
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',
@@ -216,6 +196,7 @@ class HistoryService {
   Future<List<Tx>> grabTransactions(Iterable<String> transactionIds) async {
     busy = true;
     List<Tx> txs = <Tx>[];
+    transactionIds = filterOutTooLarge(transactionIds);
     try {
       txs = await services.client.api.getTransactions(transactionIds);
     } catch (e) {
@@ -260,8 +241,7 @@ class HistoryService {
         lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
         coinValue:
             <String>['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
-        assetValue:
-            vs.item3 == null ? null : amountToSat(vout.scriptPubKey.amount),
+        assetValue: vs.item3 == null ? null : vout.scriptPubKey.amount.asSats,
         assetSecurityId: vs.item2.id,
         memo: vout.memo,
         assetMemo: vout.assetMemo,
@@ -313,11 +293,12 @@ class HistoryService {
     if (transactionIds.isEmpty) {
       return;
     }
+    transactionIds = filterOutTooLarge(transactionIds);
     busy = true;
     List<Tx> txs = <Tx>[];
     try {
       /// kinda a hack https://github.com/moontreeapp/moontree/issues/444#issuecomment-1101667621
-      if (!saveVin) {
+      if (!saveVin || transactionIds.length > 50) {
         /// for a wallet with any serious amount of transactions getTransactions
         /// will probably error in the event we're getting dangling transactions
         /// (saveVin == false) so in that case go straight to catch clause:
@@ -326,9 +307,11 @@ class HistoryService {
       //print('getting transactionIds $transactionIds');
       txs = await services.client.api.getTransactions(transactionIds);
     } catch (e) {
+      print('getTransactions too large $e');
       final List<Future<Tx>> futures = <Future<Tx>>[];
       for (final String transactionId in transactionIds) {
         futures.add(services.client.api.getTransaction(transactionId));
+        print('txid: $transactionId');
       }
       txs = await Future.wait<Tx>(futures);
     }
@@ -340,12 +323,13 @@ class HistoryService {
     busy = false;
   }
 
-  Future<void>? getTransaction(
-    String transactionId, {
-    bool saveVin = true,
-  }) async =>
-      saveTransaction(await services.client.api.getTransaction(transactionId),
-          saveVin: saveVin);
+  /// doesn't seem to be used...
+  //Future<void>? getTransaction(
+  //  String transactionId, {
+  //  bool saveVin = true,
+  //}) async =>
+  //    saveTransaction(await services.client.api.getTransaction(transactionId),
+  //        saveVin: saveVin);
 
   /// when an address status change: make our historic tx data match blockchain
   Future<void> saveTransactions(
@@ -423,8 +407,7 @@ class HistoryService {
           lockingScript: vs.item3 != null ? vout.scriptPubKey.hex : null,
           coinValue:
               <String>['RVN', 'EVR'].contains(vs.item2.symbol) ? vs.item1 : 0,
-          assetValue:
-              vs.item3 == null ? null : amountToSat(vout.scriptPubKey.amount),
+          assetValue: vs.item3 == null ? null : vout.scriptPubKey.amount.asSats,
           assetSecurityId: vs.item2.id,
           memo: vout.memo,
           assetMemo: vout.assetMemo,

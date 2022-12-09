@@ -14,7 +14,7 @@ import 'package:convert/convert.dart';
 
 import 'package:ravencoin_back/records/types/net.dart' as raven_net;
 
-final mnemonic =
+const mnemonic =
     'smile build brain topple moon scrap area aim budget enjoy polar erosion';
 
 final seed = bip39.mnemonicToSeed(mnemonic);
@@ -102,10 +102,10 @@ void main() {
     //    encryptedPrivateKey:
     //        CipherNone().encrypt(Uint8List.fromList(hex.decode(privateKey))),
     //    wif: 'Kxr9tQED9H44gCmp6HAdmemAzU3n84H3dGkuWTKvE23JgHMW8gct');
-    var ewif = EncryptedWIF.fromWIF(wif, CipherNone());
+    var ewif = EncryptedWIF.fromWIF(wif, const CipherNone());
     var wallet = SingleWallet(
         id: ewif.walletId,
-        cipherUpdate: CipherUpdate(CipherType.none),
+        cipherUpdate: const CipherUpdate(CipherType.none),
         encryptedWIF: ewif.encryptedSecret);
     expect(wallet.encryptedWIF,
         '803095cb26affefcaaa835ff968d60437c7c764da40cdd1a1b497406c7902a8ac901');

@@ -1,11 +1,9 @@
 /// here we verify that a transaction is what we though it should be
-import 'dart:typed_data';
 import 'package:tuple/tuple.dart';
-import 'package:convert/convert.dart' show hex;
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show satsPerCoin, parseSendAmountAndFeeFromSerializedTransaction;
-import 'package:ravencoin_back/records/records.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 
 class FeeGuardException extends CustomException {
@@ -17,7 +15,7 @@ class FeeGuard {
   final String tx;
   final SendEstimate estimate;
 
-  bool check() => explicit() && inferred() && parsed();
+  bool check() => explicit() && inferred() && calculated() && parsed();
 
   bool explicit() {
     if (estimate.fees > 2 * satsPerCoin) {
@@ -33,21 +31,35 @@ class FeeGuard {
     return true;
   }
 
+  bool calculated() {
+    if (estimate.sendAll) {
+      if (((estimate.security == null ||
+                  estimate.security == pros.securities.currentCoin) &&
+              estimate.utxoCoinTotal > estimate.total) ||
+          ((estimate.security != null &&
+                  estimate.security == pros.securities.currentCoin) &&
+              estimate.utxoCoinTotal > estimate.total + estimate.changeDue)) {
+        throw FeeGuardException(
+            'total ins and total outs do not match during a send all transaction.');
+      }
+    }
+    return true;
+  }
+
   bool parsed() {
-    final Map<String, Tuple2<String?, int>> inputs =
+    final Map<String, Tuple2<String?, int>> cryptoAssetSatsByVinTxPos =
         <String, Tuple2<String?, int>>{};
     for (final Vout utxo in estimate.utxos) {
-      if (utxo.isAsset) {
-        inputs['${utxo.transactionId}:${utxo.position}'] =
-            Tuple2<String?, int>(null, utxo.coinValue);
-      }
+      cryptoAssetSatsByVinTxPos['${utxo.transactionId}:${utxo.position}'] =
+          Tuple2<String?, int>(
+              utxo.isAsset ? utxo.security!.symbol : null, utxo.coinValue);
     }
     final Tuple2<Map<String?, int>, int> result =
         parseSendAmountAndFeeFromSerializedTransaction(
-      inputs,
-      Uint8List.fromList(hex.decode(tx)),
+      cryptoAssetSatsByVinTxPos,
+      tx.hexDecode,
     );
-    if (result.item2 > estimate.utxoCoinTotal) {
+    if (result.item2 > 2 * satsPerCoin) {
       throw FeeGuardException('Parsed fee too large.');
     }
     return true;

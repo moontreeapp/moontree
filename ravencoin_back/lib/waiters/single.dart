@@ -27,7 +27,7 @@ class SingleWaiter extends Waiter {
     listen(
       'streams.client.connected',
       streams.client.connected,
-      (ConnectionStatus status) {
+      (ConnectionStatus status) async {
         if (status == ConnectionStatus.connected) {
           pros.wallets.singles.forEach(checkGap);
         }
@@ -41,7 +41,7 @@ class SingleWaiter extends Waiter {
         change.when(
             loaded: (Loaded<Wallet> loaded) {},
             added: (Added<Wallet> added) async {
-              checkGap(added.record as SingleWallet);
+              await checkGap(added.record as SingleWallet);
             },
             updated: (Updated<Wallet> updated) {
               /* never happens */
@@ -57,7 +57,7 @@ class SingleWaiter extends Waiter {
       CipherUpdate cipherUpdate) async {
     for (final SingleWallet wallet in pros.wallets.singles) {
       if (wallet.cipherUpdate == cipherUpdate) {
-        checkGap(wallet);
+        await checkGap(wallet);
       }
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -45,7 +46,7 @@ class AssetNavbar extends StatelessWidget {
           label: 'receive',
           link: '/transaction/receive',
           arguments: transactionsBloc.security != pros.securities.currentCoin
-              ? {'symbol': transactionsBloc.security.symbol}
+              ? <String, dynamic>{'symbol': transactionsBloc.security.symbol}
               : null,
         )
       ],
@@ -64,15 +65,17 @@ class AssetDetailsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<String>(
         stream: transactionsBloc.currentTab,
-        builder: (context, snapshot) {
-          final tab = snapshot.data ?? 'HISTORY';
-          final showTransactions = tab == CoinSpecTabs.tabIndex[0];
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          final String tab = snapshot.data ?? 'HISTORY';
+          final bool showTransactions = tab == CoinSpecTabs.tabIndex[0];
           return showTransactions
               ? TransactionList(
                   scrollController: scrollController,
                   symbol: transactionsBloc.security.symbol,
-                  transactions: transactionsBloc.currentTxs.where((tx) =>
-                      tx.security.symbol == transactionsBloc.security.symbol),
+                  transactions: transactionsBloc.currentTxs.where(
+                      (TransactionRecord tx) =>
+                          tx.security.symbol ==
+                          transactionsBloc.security.symbol),
                   msg:
                       '\nNo ${transactionsBloc.security.symbol} transactions.\n')
               : MetaDataWidget(cachedMetadataView);
@@ -91,10 +94,10 @@ class CoinDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = TransactionsBloc.instance();
-    return StreamBuilder(
+    final TransactionsBloc bloc = TransactionsBloc.instance();
+    return StreamBuilder<double>(
         stream: bloc.scrollObserver,
-        builder: (context, snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<Object?> snapshot) {
           return Transform.translate(
             offset: Offset(
                 0,
@@ -138,12 +141,12 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
-        if (widget.cachedMetadataView != null) CoinSpecTabs(),
+        if (widget.cachedMetadataView != null) const CoinSpecTabs(),
         Padding(
             padding: EdgeInsets.only(
                 top: widget.cachedMetadataView != null ? 48 : 0),
             child: FrontCurve(
-              frontLayerBoxShadow: [],
+              frontLayerBoxShadow: const <BoxShadow>[],
               child: AssetDetailsContent(
                 widget.cachedMetadataView,
                 widget.scrollController,
@@ -174,18 +177,18 @@ class MetadataView extends StatelessWidget {
   Widget build(BuildContext context) {
     Asset securityAsset = transactionsBloc.security.asset!;
 
-    var chilren = <Widget>[];
+    List<Widget> chilren = <Widget>[];
     if (securityAsset.primaryMetadata == null &&
         securityAsset.hasData &&
         securityAsset.data!.isIpfs) {
-      final height =
+      final double height =
           (transactionsBloc.scrollObserver.value.ofMediaHeight(context) + 32) /
               2;
       return Container(
         alignment: Alignment.topCenter,
         height: height,
         child: Padding(
-          padding: EdgeInsets.only(top: 16),
+          padding: const EdgeInsets.only(top: 16),
           child: components.buttons.actionButtonSoft(
             context,
             label: 'View Data',
@@ -193,7 +196,7 @@ class MetadataView extends StatelessWidget {
               context,
               title: 'View Data',
               content: 'View data in external browser?',
-              behaviors: {
+              behaviors: <String, void Function()>{
                 'CANCEL': Navigator.of(context).pop,
                 'BROWSER': () {
                   Navigator.of(context).pop();
@@ -206,20 +209,22 @@ class MetadataView extends StatelessWidget {
         ),
       );
     } else if (securityAsset.primaryMetadata == null) {
-      chilren = [SelectableText(securityAsset.metadata)];
+      chilren = <Widget>[SelectableText(securityAsset.metadata)];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.imagePath) {
-      chilren = [
+      chilren = <Widget>[
         Image.file(AssetLogos()
             .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
       ];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.jsonString) {
-      chilren = [SelectableText(securityAsset.primaryMetadata!.data ?? '')];
+      chilren = <Widget>[
+        SelectableText(securityAsset.primaryMetadata!.data ?? '')
+      ];
     } else if (securityAsset.primaryMetadata!.kind == MetadataType.unknown) {
-      chilren = [
+      chilren = <Widget>[
         SelectableText(securityAsset.primaryMetadata!.metadata),
         SelectableText(securityAsset.primaryMetadata!.data ?? '')
       ];
     }
-    return ListView(padding: EdgeInsets.all(10.0), children: chilren);
+    return ListView(padding: const EdgeInsets.all(10.0), children: chilren);
   }
 }

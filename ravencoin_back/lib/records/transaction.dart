@@ -62,6 +62,6 @@ class Transaction with EquatableMixin {
       DateTime.fromMillisecondsSinceEpoch((time ?? 0) * 1000);
 
   String get formattedDatetime => time != null
-      ? formatDate(datetime, [MM, ' ', d, ', ', yyyy])
+      ? formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy])
       : 'In Transit';
 }

@@ -112,8 +112,8 @@ class PasswordValidationService {
   //[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
   //    .any((int i) => password.contains(i.toString()));
 
-  List<String> complexityExplained(String password) => [
-        if (password == '') ...['must not be blank']
+  List<String> complexityExplained(String password) => <String>[
+        if (password == '') ...<String>['must not be blank']
       ];
   //[
   //  if (password.length < 12) ...['must be at least 12 characters long'],
@@ -135,7 +135,7 @@ class PasswordCreationService {
     return digest.toString();
   }
 
-  Future save(
+  Future<void> save(
     String password,
     String salt,
     Future<void> Function(Secret secret) saveSecret,

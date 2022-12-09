@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BlankBack extends StatelessWidget {
-  BlankBack({Key? key}) : super(key: key);
+  const BlankBack({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

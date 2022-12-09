@@ -57,7 +57,7 @@ class VoutProclaim extends Proclaim<_IdKey, Vout> {
 
   // I think instead of clearning we could avoid download in the first place...
   Future<void> clearUnnecessaryVouts() async {
-    Set<Vout> x = pros.vouts.records.toSet();
+    final Set<Vout> x = pros.vouts.records.toSet();
     x.removeAll(pros.wallets
         .map((Wallet w) => w.vouts)
         .expand((Iterable<Vout> i) => i)

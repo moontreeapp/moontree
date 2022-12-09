@@ -27,7 +27,7 @@ class _VerifySeedState extends State<VerifySeed> {
   late List<String> secret;
   late Map<int, SecretWord> shuffled;
   int click = 0;
-  Map<int, SecretWord> clicks = {};
+  Map<int, SecretWord> clicks = <int, SecretWord>{};
   bool clicked = false;
 
   @override
@@ -59,7 +59,7 @@ class _VerifySeedState extends State<VerifySeed> {
     return WillPopScope(
         onWillPop: () async => false,
         child: BackdropLayers(
-            back: BlankBack(), front: FrontCurve(child: body())));
+            back: const BlankBack(), front: FrontCurve(child: body())));
   }
 
   Widget body() => Stack(children: <Widget>[
@@ -70,7 +70,7 @@ class _VerifySeedState extends State<VerifySeed> {
             warning,
             if (smallScreen) words
           ],
-          buttons: [submitButton],
+          buttons: <Widget>[submitButton],
         ),
         if (!smallScreen) wordsInStack
       ]);

@@ -10,7 +10,7 @@ class BalanceService {
   /// But as it turns out we have to get the the status of every address anyway
   /// so grabbing their unspents is just as fast as grabbing their balances
   /// so we just do that instead (recalculateAllBalances)
-  Future calculateAllBalances({Set<Wallet>? wallets}) async {
+  Future<void> calculateAllBalances({Set<Wallet>? wallets}) async {
     wallets = pros.wallets.records.toSet();
 
     //for (var wallet in wallets) {
@@ -28,26 +28,26 @@ class BalanceService {
   }
 
   /// recalculates the balance of every symbol in every wallet
-  Future recalculateAllBalances({Set<String>? walletIds}) async {
+  Future<void> recalculateAllBalances({Set<String>? walletIds}) async {
     walletIds = walletIds ?? pros.wallets.ids;
-    Set<Balance> balances = {};
+    final Set<Balance> balances = <Balance>{};
     await pros.balances.removeAllByIds(walletIds);
-    for (var walletId in walletIds) {
-      for (var symbol in pros.unspents.getSymbolsByWallet(walletId)) {
-        var security = pros.securities.primaryIndex
+    for (final String walletId in walletIds) {
+      for (final String symbol in pros.unspents.getSymbolsByWallet(walletId)) {
+        final Security security = pros.securities.primaryIndex
                 .getOne(symbol, pros.settings.chain, pros.settings.net) ??
             Security(
               symbol: symbol,
               chain: pros.settings.chain,
               net: pros.settings.net,
             );
-        var confirmed = pros.unspents.totalConfirmed(
+        final int confirmed = pros.unspents.totalConfirmed(
           walletId,
           symbol: symbol,
           chain: security.chain,
           net: security.net,
         );
-        var unconfirmed = pros.unspents.totalUnconfirmed(
+        final int unconfirmed = pros.unspents.totalUnconfirmed(
           walletId,
           symbol: symbol,
           chain: security.chain,
@@ -79,22 +79,22 @@ class BalanceService {
       chain: security?.chain ?? pros.settings.chain,
       net: security?.net ?? pros.settings.net,
     );
-    var gathered = 0;
-    var unspents =
+    int gathered = 0;
+    final List<Unspent> unspents =
         (pros.unspents.byWalletSymbol.getAll(walletId, security?.symbol))
             .toList();
-    var collection = <Vout>[];
+    final List<Vout> collection = <Vout>[];
     // initialize Random with a hidden deterministic seed
-    final _random =
-        Random(unspents.map((e) => e.transactionId).join().hashCode);
+    final Random rand =
+        Random(unspents.map((Unspent e) => e.transactionId).join().hashCode);
     while (amount - gathered > 0) {
-      var randomIndex = _random.nextInt(unspents.length);
-      var unspent = unspents[randomIndex];
+      final int randomIndex = rand.nextInt(unspents.length);
+      final Unspent unspent = unspents[randomIndex];
       unspents.removeAt(randomIndex);
-      var vout = unspent.vout;
+      Vout? vout = unspent.vout;
       if (vout == null) {
         await services.download.history.getAndSaveTransactions(
-          {unspent.transactionId},
+          <String>{unspent.transactionId},
         );
         vout = unspent.vout!;
       }
@@ -124,9 +124,9 @@ class BalanceService {
   }
 
   Balance walletBalance(Wallet wallet, Security security) {
-    var retBalance =
+    Balance retBalance =
         Balance(walletId: '', confirmed: 0, unconfirmed: 0, security: security);
-    for (var balance in wallet.balances) {
+    for (final Balance balance in wallet.balances) {
       if (balance.security == security) {
         retBalance = retBalance + balance;
       }

@@ -32,7 +32,7 @@ void main() async {
       Updated<Vout>(0, sets.FixtureSet1().vouts['0']!)
     ];
     final Set<WalletSecurityPair> pairs = securityPairsFromVoutChanges(changes);
-    expect(pairs, {
+    expect(pairs, <WalletSecurityPair>{
       WalletSecurityPair(wallet: wallet, security: pros.securities.RVN),
       WalletSecurityPair(
           wallet: wallet,

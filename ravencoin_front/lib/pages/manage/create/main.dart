@@ -25,7 +25,7 @@ class _CreateMainAssetState extends State<CreateMainAsset> {
   Widget build(BuildContext context) {
     streams.create.form.add(GenericCreateForm());
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -33,5 +33,5 @@ class _CreateMainAssetState extends State<CreateMainAsset> {
         )));
   }
 
-  Widget body() => CreateAsset(preset: FormPresets.main);
+  Widget body() => const CreateAsset(preset: FormPresets.main);
 }

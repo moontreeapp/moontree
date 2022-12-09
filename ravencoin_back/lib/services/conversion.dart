@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class ConversionService {
   String rvnUSD(
@@ -22,7 +23,7 @@ class ConversionService {
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
     if (symbol == pros.securities.currentCoin.symbol) {
-      final double asAmount = satToAmount(sats);
+      final double asAmount = sats.asCoin;
       return asUSD
           ? rvnUSD(asAmount)
           : NumberFormat('#,##0.########', 'en_US').format(asAmount);
@@ -30,7 +31,7 @@ class ConversionService {
     // asset sats -> asset -> rvn -> usd
     security = getSecurityOf(symbol: symbol, security: security);
     final Asset? asset = getAssetOf(symbol: symbol);
-    final double asAmount = satToAmount(sats);
+    final double asAmount = sats.asCoin;
     return asUSD
         ? rvnUSD(asAmount * (security.toRVNRate))
         : NumberFormat(

@@ -45,10 +45,10 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
     try {
       data = populateData(context, data);
     } catch (e) {
-      data = {};
+      data = <String, dynamic>{};
     }
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: FrontCurve(
@@ -67,14 +67,14 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              for (Widget x in [
+              for (Widget x in <Widget>[
                 newPasswordField,
                 confirmPasswordField,
               ])
                 Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: x)
             ],
           ),
@@ -83,7 +83,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                 Center(child: components.text.passwordWarning),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 components.containers.navBar(context,
                     child: Row(children: <Widget>[submitButton]))
               ]))
@@ -104,7 +104,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         suffixIcon: IconButton(
           icon: Icon(
               newPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Color(0x99000000)),
+              color: const Color(0x99000000)),
           onPressed: () => setState(() {
             newPasswordVisible = !newPasswordVisible;
           }),
@@ -133,7 +133,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         suffixIcon: IconButton(
           icon: Icon(
               confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Color(0x99000000)),
+              color: const Color(0x99000000)),
           onPressed: () => setState(() {
             confirmPasswordVisible = !confirmPasswordVisible;
           }),
@@ -152,7 +152,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
         enabled: enabledCheck(),
         label: 'Set',
         focusNode: buttonFocus,
-        disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
+        disabledIcon: const Icon(Icons.lock_rounded, color: AppColors.black38),
         onPressed: () async => submit(),
       );
 
@@ -180,7 +180,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
     }
     if (oldValidation != validatedComplexity ||
         oldNotification != newNotification) {
-      setState(() => {});
+      setState(() {});
     }
   }
 

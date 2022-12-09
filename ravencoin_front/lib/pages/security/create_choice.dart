@@ -65,7 +65,8 @@ class _CreateChoiceState extends State<CreateChoice> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => GestureDetector(
@@ -148,7 +149,7 @@ class _CreateChoiceState extends State<CreateChoice> {
               .setMethod(method: AuthMethod.nativeSecurity);
           streams.app.splash.add(false);
           Navigator.pushReplacementNamed(context, getMethodPathCreate(),
-              arguments: {'needsConsent': true});
+              arguments: <String, bool>{'needsConsent': true});
         },
       );
 
@@ -161,7 +162,7 @@ class _CreateChoiceState extends State<CreateChoice> {
               .setMethod(method: AuthMethod.moontreePassword);
           streams.app.splash.add(false);
           Navigator.pushReplacementNamed(context, getMethodPathCreate(),
-              arguments: {'needsConsent': true});
+              arguments: <String, bool>{'needsConsent': true});
         },
       );
 }

@@ -11,7 +11,7 @@ import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/concepts/concepts.dart' as concepts;
+import 'package:ravencoin_front/concepts/fee.dart' as fees;
 import 'package:ravencoin_front/widgets/other/selection_control.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/services/lookup.dart';
@@ -238,7 +238,8 @@ class _SendState extends State<Send> {
                                     : null,
                                 suffixIcon: IconButton(
                                     icon: const Padding(
-                                        padding: EdgeInsets.only(right: 14),
+                                        padding:
+                                            const EdgeInsets.only(right: 14),
                                         child: Icon(Icons.paste_rounded,
                                             color: AppColors.black60)),
                                     onPressed: () async => cubit.set(
@@ -342,7 +343,8 @@ class _SendState extends State<Send> {
                                 hintText: 'Standard',
                                 suffixIcon: IconButton(
                                     icon: const Padding(
-                                        padding: EdgeInsets.only(right: 14),
+                                        padding:
+                                            const EdgeInsets.only(right: 14),
                                         child: Icon(Icons.expand_more_rounded,
                                             color: Color(0xDE000000))),
                                     onPressed: () => _produceFeeModal(cubit)),
@@ -561,23 +563,23 @@ class _SendState extends State<Send> {
           displaySymbol: sendRequest.security!.name,
           subSymbol: '',
           paymentSymbol: pros.securities.currentCoin.symbol,
-          items: [
-            ['To', sendRequest.sendAddress],
-            if (addressName != '') ['Known As', addressName],
-            [
+          items: <List<String>>[
+            <String>['To', sendRequest.sendAddress],
+            if (addressName != '') <String>['Known As', addressName],
+            <String>[
               'Amount',
               if (sendRequest.sendAll)
                 'calculating amount...'
               else
                 sendRequest.visibleAmount
             ],
-            if (!['', null].contains(sendRequest.memo))
-              ['Memo', sendRequest.memo!],
-            if (!['', null].contains(sendRequest.note))
-              ['Note', sendRequest.note!],
+            if (!<String?>['', null].contains(sendRequest.memo))
+              <String>['Memo', sendRequest.memo!],
+            if (!<String?>['', null].contains(sendRequest.note))
+              <String>['Note', sendRequest.note!],
           ],
-          fees: [
-            ['Transaction Fee', 'calculating fee...']
+          fees: <List<String>>[
+            <String>['Transaction Fee', 'calculating fee...']
           ],
           total: 'calculating total...',
           buttonAction: () => streams.spend.send.add(streams.spend.made.value),
@@ -598,7 +600,7 @@ class _SendState extends State<Send> {
     final List<String> head = Current.holdingNames
         .where((String item) => item == pros.securities.currentCoin.symbol)
         .toList();
-    SimpleSelectionItems(context, items: [
+    SimpleSelectionItems(context, items: <Widget>[
       for (String name in head + tail)
         ListTile(
             visualDensity: VisualDensity.compact,
@@ -623,8 +625,11 @@ class _SendState extends State<Send> {
   }
 
   void _produceFeeModal(SimpleSendFormCubit cubit) {
-    SimpleSelectionItems(context, items: [
-      for (var feeConcept in [concepts.fees.fast, concepts.fees.standard])
+    SimpleSelectionItems(context, items: <Widget>[
+      for (final fees.FeeConcept feeConcept in <fees.FeeConcept>[
+        fees.fast,
+        fees.standard
+      ])
         ListTile(
           visualDensity: VisualDensity.compact,
           onTap: () {
@@ -632,7 +637,7 @@ class _SendState extends State<Send> {
             cubit.set(fee: feeConcept.feeRate);
           },
           leading: feeConcept.icon,
-          title: Text(feeConcept.nameTitlecase,
+          title: Text(feeConcept.title,
               style: Theme.of(context).textTheme.bodyText1),
         )
     ]).build();

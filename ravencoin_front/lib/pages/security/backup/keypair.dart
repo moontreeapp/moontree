@@ -3,14 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 //import 'package:screenshot_callback/screenshot_callback.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/pages/security/backup/types.dart';
-import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/lookup.dart';
-import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
-import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 import 'package:flutter/rendering.dart';
@@ -57,7 +52,7 @@ class _ShowKeypairState extends State<ShowKeypair>
 
     /// from exploring animations - want to return to
     //controller = AnimationController(
-    //    vsync: this, duration: Duration(milliseconds: 2400));
+    //    vsync: this, duration: const Duration(milliseconds: 2400));
     //animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     //curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
   }
@@ -81,11 +76,11 @@ class _ShowKeypairState extends State<ShowKeypair>
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
   Future<String> get getSecret async {
-    final wallet = Current.wallet;
+    final Wallet wallet = Current.wallet;
     if (wallet is SingleWallet) {
       return (await wallet.kpWallet).privKey ?? '';
     }
-    return (await Current.wallet.secret(Current.wallet.cipher!));
+    return Current.wallet.secret(Current.wallet.cipher!);
   }
 
   @override
@@ -94,7 +89,7 @@ class _ShowKeypairState extends State<ShowKeypair>
     //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
     return FutureBuilder<String>(
         future: getSecret,
-        builder: (context, AsyncSnapshot<String> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
             secret = snapshot.data!;
             return services.password.askCondition
@@ -106,13 +101,13 @@ class _ShowKeypairState extends State<ShowKeypair>
                   )
                 : body();
           } else {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
         });
   }
 
   Widget body() => BackdropLayers(
-      back: BlankBack(),
+      back: const BlankBack(),
       front: FrontCurve(
           child: Stack(children: <Widget>[
         components.page.form(
@@ -185,7 +180,7 @@ class _ShowKeypairState extends State<ShowKeypair>
   Widget get words => Container(
       height: 272 * (smallScreen ? .8 : 1),
       alignment: Alignment.center,
-      padding: (smallScreen ? null : EdgeInsets.only(left: 16, right: 16)),
+      padding: smallScreen ? null : const EdgeInsets.only(left: 16, right: 16),
       child: SelectableText(secret, textAlign: TextAlign.center));
 }
 

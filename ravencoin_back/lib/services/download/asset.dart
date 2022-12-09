@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:moontree_utils/moontree_utils.dart';
 import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class AssetService {
   String adminOrRestrictedToMainSlash(String symbol) => symbol.endsWith('!')
@@ -46,8 +46,7 @@ class AssetService {
   }) async {
     final AssetMeta? meta = await services.client.api.getMeta(symbol);
     if (meta != null) {
-      final int value =
-          vout == null ? 0 : amountToSat(vout.scriptPubKey.amount);
+      final int value = vout == null ? 0 : vout.scriptPubKey.amount.asSats;
       final Asset asset = Asset(
         chain: pros.settings.chain,
         net: pros.settings.net,

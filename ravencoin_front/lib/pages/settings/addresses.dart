@@ -9,6 +9,7 @@ import 'package:ravencoin_front/components/status.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
 
 class WalletView extends StatefulWidget {
   final dynamic data;
@@ -101,7 +102,7 @@ class _WalletViewState extends State<WalletView> {
           elevation: 2,
           centerTitle: false,
           title: const Text('Wallet'),
-          actions: <AppLifecycleReactor>[components.status],
+          actions: const <AppLifecycleReactor>[components.status],
           flexibleSpace: Container(
             alignment: const Alignment(0.0, -0.5),
             child: const Text(
@@ -139,7 +140,7 @@ class _WalletViewState extends State<WalletView> {
             /*
             Text('WARNING!\nDo NOT disclose the Mnemonic Secret to anyone!',
                 style: TextStyle(color: Theme.of(context).bad)),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             Text(secretName + ' Secret:'),
             Center(
                 child: Visibility(
@@ -151,13 +152,13 @@ class _WalletViewState extends State<WalletView> {
                 toolbarOptions: toolbarOptions,
               ),
             )),
-            SizedBox(height: 30.0),
+            const SizedBox(height: 30.0),
             ElevatedButton(
                 onPressed: () => _toggleShow(),
                 child: Text(showSecret
                     ? 'Hide ' + secretName + ' Secret'
                     : 'Show ' + secretName + ' Secret')),
-            SizedBox(height: 30.0),
+            const SizedBox(height: 30.0),
             */
             const Text('Wallet Addresses'),
             const SizedBox(height: 10.0),
@@ -236,12 +237,12 @@ class _WalletViewState extends State<WalletView> {
                         walletAddress.exposure.name.toTitleCase(),
                       ),
                       Text(
-                          'Balance: ${satToAmount(services.transaction.walletUnspents(wallet).where((Vout vout) => vout.toAddress == walletAddress.address).map((Vout vout) => vout.coinValue).toList().sumInt())}',
+                          'Balance: ${services.transaction.walletUnspents(wallet).where((Vout vout) => vout.toAddress == walletAddress.address).map((Vout vout) => vout.coinValue).toList().sumInt().asCoin}',
                           style: Theme.of(context).textTheme.caption),
                     ],
                   ),
                   /*
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   SelectableText(
                     'private key: ' + (privateKey ?? 'unknown'),
                   ),
@@ -264,13 +265,14 @@ class _WalletViewState extends State<WalletView> {
                           : Theme.of(context).textTheme.caption)),
 
               trailing: Text(
-                  satToAmount(services.transaction
-                          .walletUnspents(wallet)
-                          .where((Vout vout) =>
-                              vout.toAddress == walletAddress.address)
-                          .map((Vout vout) => vout.coinValue)
-                          .toList()
-                          .sumInt())
+                  services.transaction
+                      .walletUnspents(wallet)
+                      .where((Vout vout) =>
+                          vout.toAddress == walletAddress.address)
+                      .map((Vout vout) => vout.coinValue)
+                      .toList()
+                      .sumInt()
+                      .asCoin
                       .toString(),
                   style: Theme.of(context).textTheme.caption),
               //trailing: Text('address.value'),
@@ -306,7 +308,7 @@ class _WalletViewState extends State<WalletView> {
         onPressed: disabled
             ? () {}
             : () => Navigator.pushNamed(context, '/transaction/send',
-                    arguments: {
+                    arguments: <String, String>{
                       'symbol': pros.securities.currentCoin.symbol,
                       'walletId': wallet.id
                     }),

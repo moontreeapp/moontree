@@ -8,21 +8,18 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 
 class PageLead extends StatefulWidget {
-  final BuildContext mainContext;
-
-  const PageLead({Key? key, required this.mainContext}) : super(key: key);
+  const PageLead({Key? key}) : super(key: key);
 
   @override
   _PageLead createState() => _PageLead();
 }
 
 class _PageLead extends State<PageLead> {
-  late String pageTitle = '';
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   String? settingTitle;
   late LeadIcon xlead = LeadIcon.pass;
   late bool loading = false;
-  late List<StreamSubscription<dynamic>> listeners =
-      <StreamSubscription<dynamic>>[];
 
   @override
   void initState() {
@@ -31,13 +28,6 @@ class _PageLead extends State<PageLead> {
       if (value != loading) {
         setState(() {
           loading = value;
-        });
-      }
-    }));
-    listeners.add(streams.app.page.listen((String value) {
-      if (value != pageTitle) {
-        setState(() {
-          pageTitle = value;
         });
       }
     }));
@@ -71,10 +61,10 @@ class _PageLead extends State<PageLead> {
   }
 
   Widget body() {
-    if (loading && pageTitle != 'Network') {
+    if (loading && streams.app.page.value != 'Network') {
       return Container();
     }
-    if (pageTitle == 'Home' &&
+    if (streams.app.page.value == 'Home' &&
         (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
@@ -92,7 +82,7 @@ class _PageLead extends State<PageLead> {
             //streams.app.setting.add(settingTitle);
           });
     }
-    if (pageTitle != 'Home' &&
+    if (streams.app.page.value != 'Home' &&
         (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
@@ -106,7 +96,7 @@ class _PageLead extends State<PageLead> {
           });
     }
 
-    if (pageTitle == 'Home') {
+    if (streams.app.page.value == 'Home') {
       return IconButton(
           splashRadius: 24,
           onPressed: () {
@@ -119,15 +109,15 @@ class _PageLead extends State<PageLead> {
           padding: const EdgeInsets.only(left: 16),
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));
     }
-    if (pageTitle == '') {
+    if (streams.app.page.value == '') {
       //return Container();
     }
     if (xlead == LeadIcon.none ||
-        <String>['Splash', 'Login'].contains(pageTitle)) {
+        <String>['Splash', 'Login'].contains(streams.app.page.value)) {
       return Container();
     }
     if (xlead == LeadIcon.dismiss ||
-        <String>['Send', 'Scan', 'Receive'].contains(pageTitle)) {
+        <String>['Send', 'Scan', 'Receive'].contains(streams.app.page.value)) {
       return IconButton(
           splashRadius: 24,
           icon: const Icon(Icons.close_rounded, color: Colors.white),
@@ -153,7 +143,7 @@ class _PageLead extends State<PageLead> {
       'Qualifiersub',
       'Nft',
       'Channel',
-    ].contains(pageTitle)) {
+    ].contains(streams.app.page.value)) {
       return IconButton(
           splashRadius: 24,
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
@@ -165,7 +155,7 @@ class _PageLead extends State<PageLead> {
             Navigator.pop(components.navigator.routeContext ?? context);
           });
     }
-    if (<String>['Createlogin'].contains(pageTitle)) {
+    if (<String>['Createlogin'].contains(streams.app.page.value)) {
       return IconButton(
           splashRadius: 24,
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
@@ -180,7 +170,7 @@ class _PageLead extends State<PageLead> {
             streams.app.splash.add(false);
           });
     }
-    if (<String>['BackupConfirm', 'Backup'].contains(pageTitle)) {
+    if (<String>['Backupconfirm', 'Backup'].contains(streams.app.page.value)) {
       /// the reason for this is after we took out encryptedEntropy from
       /// LeaderWallets we needed to make all the functions dealing with getting
       /// sensitive information futures, and since they're futures, we had to

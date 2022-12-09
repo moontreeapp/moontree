@@ -26,9 +26,9 @@ class Receive extends StatefulWidget {
 class _ReceiveState extends State<Receive> {
   Map<String, dynamic> data = <String, dynamic>{};
   String? address;
-  final requestMessage = TextEditingController();
-  final requestAmount = TextEditingController();
-  final requestLabel = TextEditingController();
+  final TextEditingController requestMessage = TextEditingController();
+  final TextEditingController requestAmount = TextEditingController();
+  final TextEditingController requestLabel = TextEditingController();
   FocusNode requestAmountFocus = FocusNode();
   FocusNode requestLabelFocus = FocusNode();
   FocusNode requestMessageFocus = FocusNode();
@@ -48,17 +48,18 @@ class _ReceiveState extends State<Receive> {
     if (rawAddress) {
       uri = address!;
     } else {
-      final amount = requestAmount.text == ''
+      final String amount = requestAmount.text == ''
           ? ''
           : 'amount=${Uri.encodeComponent(requestAmount.text)}';
-      final label = requestLabel.text == ''
+      final String label = requestLabel.text == ''
           ? ''
           : 'label=${Uri.encodeComponent(requestLabel.text)}';
-      final message = requestMessage.text == ''
+      final String message = requestMessage.text == ''
           ? ''
           //: 'message=${Uri.encodeComponent(requestMessage.text)}';
           : 'message=asset:${Uri.encodeComponent(requestMessage.text)}';
-      final to = username == '' ? '' : 'to=${Uri.encodeComponent(username)}';
+      final String to =
+          username == '' ? '' : 'to=${Uri.encodeComponent(username)}';
 
       /// should we add the rest of the fields?
       //var net = x == '' ? '' : 'net=${Uri.encodeComponent(x)}';
@@ -66,14 +67,15 @@ class _ReceiveState extends State<Receive> {
       //var note = x == '' ? '' : 'note=${Uri.encodeComponent(x)}';
       //var memo = x == '' ? '' : 'memo=${Uri.encodeComponent(x)}';
 
-      var tail = [amount, label, message, to].join('&').replaceAll('&&', '&');
-      tail = '?' +
-          (tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail);
+      String tail =
+          <String>[amount, label, message, to].join('&').replaceAll('&&', '&');
+      tail =
+          '?${tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail}';
       tail = tail.length == 1 ? '' : tail;
       uri = '${pros.settings.chain.name.replaceAll('coin', '')}:$address$tail';
     }
     if (refresh) {
-      setState(() => {});
+      setState(() {});
     }
   }
 
@@ -131,7 +133,7 @@ class _ReceiveState extends State<Receive> {
                   net: pros.settings.net,
                 ))
             .toList()
-        : [];
+        : <Security>[];
   }
 
   @override
@@ -307,7 +309,7 @@ class _ReceiveState extends State<Receive> {
                               //    crossAxisAlignment: CrossAxisAlignment.start,
                               //    mainAxisAlignment: MainAxisAlignment.start,
                               //    children: <Widget>[
-                              //      SizedBox(height: 15),
+                              //      const SizedBox(height: 15),
                               //      Text(
                               //        'Requested Asset:',
                               //        style: TextStyle(color: Theme.of(context).hintColor),
@@ -344,7 +346,7 @@ class _ReceiveState extends State<Receive> {
                               //          FocusScope.of(context).requestFocus(requestAmountFocus);
                               //        },
                               //      ),
-                              //      SizedBox(height: 15.0),
+                              //      const SizedBox(height: 15.0),
                               //    ]),
                               TextFieldFormatted(
                                   focusNode: requestMessageFocus,

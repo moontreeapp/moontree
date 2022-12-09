@@ -41,7 +41,7 @@ class _AssetDetails extends State<AssetDetails> {
                       style: Theme.of(context).textTheme.bodyText1),
                 ),
             ] +
-            [
+            <Widget>[
               if (widget.symbol.startsWith(r'$'))
                 Padding(
                   padding: const EdgeInsets.only(
@@ -80,7 +80,7 @@ class _AssetDetails extends State<AssetDetails> {
                   ),
                 )
             ] +
-            [
+            <Widget>[
               if (assetDetails!.metadata == '' || assetDetails!.metadata.isIpfs)
                 link('IPFS', 'https://gateway.ipfs.io/ipfs/')
               else
@@ -92,8 +92,8 @@ class _AssetDetails extends State<AssetDetails> {
                       style: Theme.of(context).textTheme.bodyText1),
                 )
             ] +
-            [
-              for (String text in ['Reissuable'])
+            <Widget>[
+              for (String text in <String>['Reissuable'])
                 ListTile(
                   dense: true,
                   title:
@@ -140,9 +140,8 @@ class _AssetDetails extends State<AssetDetails> {
         dense: true,
         onTap: () => components.message.giveChoices(
           context,
-          title: 'Open in External App',
           content: 'Open block explorer in browser?',
-          behaviors: {
+          behaviors: <String, void Function()>{
             'Cancel': Navigator.of(context).pop,
             'Continue': () {
               Navigator.of(context).pop();
@@ -160,7 +159,7 @@ class _AssetDetails extends State<AssetDetails> {
 //            builder: (BuildContext context) => AlertDialog(
 //                    title: Text('Open in External App'),
 //                    content: Text('Open discord app or browser?'),
-//                    actions: [
+//                    actions: <Widget>[
 //                      TextButton(
 //                          child: Text('Cancel'),
 //                          onPressed: () => Navigator.of(context).pop()),

@@ -7,7 +7,7 @@ class BlockchainChoices extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -18,10 +18,11 @@ class BlockchainChoices extends StatelessWidget {
   Widget body() => CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
             child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 16),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 0, bottom: 16),
                 child: Container(
-                    alignment: Alignment.topLeft, child: BlockchainChoice()))),
-        ElectrumNetwork(),
+                    alignment: Alignment.topLeft,
+                    child: const BlockchainChoice()))),
+        const ElectrumNetwork(),
       ]);
 }

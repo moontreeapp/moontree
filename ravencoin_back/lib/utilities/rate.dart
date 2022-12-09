@@ -52,7 +52,7 @@ class RVNtoFiat implements RVNRateInterface {
   }
 
   void _conformFiat() {
-    fiatConformed = {
+    fiatConformed = <String, String>{
       'Moontree': fiat.toUpperCase(),
       'CoinGecko': fiat.toLowerCase(),
       'Bittrex': fiat.toUpperCase(),
@@ -78,7 +78,7 @@ class RVNtoFiat implements RVNRateInterface {
               return 'https://moontree.com/prices';
           }
         }()),
-        headers: {'accept': 'application/json'},
+        headers: <String, String>{'accept': 'application/json'},
       );
 
   /// parces structure to get value, also gets avg time of observations
@@ -131,7 +131,7 @@ class RVNtoFiat implements RVNRateInterface {
       }
       return _interpretMoontreeStructure(jsonBody, anytime: true);
     }
-    return Tuple2(total / cnt, time / cnt);
+    return Tuple2<double, double>(total / cnt, time / cnt);
   }
 
   double _interpret(http.Response response) {
@@ -165,7 +165,7 @@ class RVNtoFiat implements RVNRateInterface {
       return jsonBody['ravencoin'][fiat] as double;
     }
     if (serviceName == 'Bittrex') {
-      Map jsonBody;
+      Map<String, dynamic> jsonBody;
       try {
         jsonBody = jsonDecode(response.body) as Map<String, dynamic>;
       } catch (e) {

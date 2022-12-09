@@ -1,5 +1,4 @@
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:wallet_utils/src/wallets/kp_wallet.dart';
 import 'package:wallet_utils/src/wallets/hd_wallet.dart';
 import 'package:wallet_utils/wallet_utils.dart' show ECPair;
 

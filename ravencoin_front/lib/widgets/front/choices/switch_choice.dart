@@ -38,14 +38,14 @@ class _SwtichChoice extends State<SwtichChoice> {
         Text(widget.label, style: Theme.of(context).textTheme.bodyText1),
         Switch(
             value: choice,
-            onChanged: (value) async {
+            onChanged: (bool value) async {
               if (widget.onChanged != null) {
                 await widget.onChanged!(value);
               }
               setState(() => choice = value);
             }),
       ]),
-      if (widget.description != null) SizedBox(height: 8),
+      if (widget.description != null) const SizedBox(height: 8),
       if (widget.description != null)
         Text(
           widget.description!,

@@ -12,7 +12,7 @@ class SecretProclaim extends Proclaim<_IdKey, Secret> {
   SecretProclaim() : super(_IdKey()) {
     byLink = addIndexMultiple('byLink', _LinkKey());
   }
-  static Map<String, Secret> get defaults => {};
+  static Map<String, Secret> get defaults => <String, Secret>{};
 
   int? get maxPasswordId =>
       max(<int>[for (Secret secret in records) secret.passwordId!]);

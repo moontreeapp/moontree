@@ -81,7 +81,7 @@ class _LoginNativeState extends State<LoginNative> {
     try {
       data = populateData(context, data);
     } catch (e) {
-      data = {};
+      data = <String, dynamic>{};
     }
     needsConsent = data['needsConsent'] as bool? ?? false;
     autoInitiateUnlock =
@@ -92,13 +92,15 @@ class _LoginNativeState extends State<LoginNative> {
       });
       autoInitiateUnlock = false;
     }
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Container(
-          padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
           child: CustomScrollView(slivers: <Widget>[
             SliverToBoxAdapter(
               child: SizedBox(height: 76.figmaH),
@@ -123,10 +125,12 @@ class _LoginNativeState extends State<LoginNative> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          (needsConsent ? ulaMessage : SizedBox(height: 100)),
-                          SizedBox(height: 40),
+                          (needsConsent
+                              ? ulaMessage
+                              : const SizedBox(height: 100)),
+                          const SizedBox(height: 40),
                           Row(children: <Widget>[bioButton]),
-                          SizedBox(height: 40),
+                          const SizedBox(height: 40),
                         ]))),
           ])));
 
@@ -158,7 +162,7 @@ class _LoginNativeState extends State<LoginNative> {
                       .textTheme
                       .bodyText2,
                   children: <TextSpan>[
-                    TextSpan(text: "I agree to Moontree's\n"),
+                    const TextSpan(text: "I agree to Moontree's\n"),
                     TextSpan(
                         text: 'User Agreement',
                         style: Theme.of(components.navigator.routeContext!)
@@ -169,7 +173,7 @@ class _LoginNativeState extends State<LoginNative> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.user_agreement)));
                           }),
-                    TextSpan(text: ', '),
+                    const TextSpan(text: ', '),
                     TextSpan(
                         text: 'Privacy Policy',
                         style: Theme.of(components.navigator.routeContext!)
@@ -180,7 +184,7 @@ class _LoginNativeState extends State<LoginNative> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.privacy_policy)));
                           }),
-                    TextSpan(text: ',\n and '),
+                    const TextSpan(text: ',\n and '),
                     TextSpan(
                         text: 'Risk Disclosure',
                         style: Theme.of(components.navigator.routeContext!)
@@ -194,7 +198,7 @@ class _LoginNativeState extends State<LoginNative> {
                   ],
                 ),
               )),
-          SizedBox(
+          const SizedBox(
             width: 18,
           ),
         ],
@@ -220,22 +224,22 @@ class _LoginNativeState extends State<LoginNative> {
         },
       );
 
-  Future submit() async {
+  Future<void> submit() async {
     /// just in case
     if (await HIVE_INIT.isPartiallyLoaded()) {
       await finishLoadingWaiters();
 
       /// doesn't await work?
       //while (!(await HIVE_INIT.isLoaded())) {
-      //  await Future<void>.delayed(Duration(milliseconds: 50));
+      //  await Future<void>.delayed(const Duration(milliseconds: 50));
       //}
     }
 
     /// there are existing wallets, we should populate them with sensitives now.
     await populateWalletsWithSensitives();
-    final localAuthApi = LocalAuthApi();
+    final LocalAuthApi localAuthApi = LocalAuthApi();
     streams.app.authenticating.add(true);
-    final validate = await localAuthApi.authenticate();
+    final bool validate = await localAuthApi.authenticate();
     streams.app.authenticating.add(false);
     setState(() => enabled = false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {

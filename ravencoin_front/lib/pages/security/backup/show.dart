@@ -56,7 +56,7 @@ class _BackupSeedState extends State<BackupSeed>
 
     /// from exploring animations - want to return to
     //controller = AnimationController(
-    //    vsync: this, duration: Duration(milliseconds: 2400));
+    //    vsync: this, duration: const Duration(milliseconds: 2400));
     //animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     //curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
   }
@@ -119,7 +119,7 @@ class _BackupSeedState extends State<BackupSeed>
   }
 
   Widget body() => BackdropLayers(
-      back: BlankBack(),
+      back: const BlankBack(),
       front: FrontCurve(
           child: Stack(children: <Widget>[
         components.page.form(
@@ -129,7 +129,7 @@ class _BackupSeedState extends State<BackupSeed>
             _warning,
             if (smallScreen) words,
           ],
-          buttons: [submitButton],
+          buttons: <Widget>[submitButton],
         ),
         if (!smallScreen) wordsInStack
       ])));
@@ -226,7 +226,7 @@ class _BackupSeedState extends State<BackupSeed>
         //  controller.reset();
         //  controller.forward();
         //  // wait the approapriate amount of time for the animation to play
-        //  await Future<void>.delayed(Duration(milliseconds: 2400));
+        //  await Future<void>.delayed(const Duration(milliseconds: 2400));
         //},
       );
 }

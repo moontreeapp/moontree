@@ -12,16 +12,19 @@ class UnspentWaiter extends Waiter {
 
   void handleUnspentChange(Change<Unspent> change) {
     change.when(
-        loaded: (loaded) {},
-        added: (added) async => recalculateBalancesIfNecessary(),
-        updated: (updated) async => recalculateBalancesIfNecessary(),
-        removed: (removed) async => recalculateBalancesIfNecessary());
+        loaded: (Loaded<Unspent> loaded) {},
+        added: (Added<Unspent> added) async => recalculateBalancesIfNecessary(),
+        updated: (Updated<Unspent> updated) async =>
+            recalculateBalancesIfNecessary(),
+        removed: (Removed<Unspent> removed) async =>
+            recalculateBalancesIfNecessary());
   }
 
   Future<void> recalculateBalancesIfNecessary() async {
-    final wallet = services.wallet.currentWallet;
+    final Wallet wallet = services.wallet.currentWallet;
     if (wallet.balances.isNotEmpty) {
-      await services.balance.recalculateAllBalances(walletIds: {wallet.id});
+      await services.balance
+          .recalculateAllBalances(walletIds: <String>{wallet.id});
       streams.app.wallet.refresh.add(true);
     }
   }

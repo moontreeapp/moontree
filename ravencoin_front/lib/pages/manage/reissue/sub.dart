@@ -24,7 +24,7 @@ class _ReissueMainSubAssetState extends State<ReissueMainSubAsset> {
 
   @override
   Widget build(BuildContext context) {
-    var asset = pros.assets.primaryIndex.getOne(
+    final Asset? asset = pros.assets.primaryIndex.getOne(
         streams.app.manage.asset.value ?? '',
         pros.settings.chain,
         pros.settings.net);
@@ -40,7 +40,7 @@ class _ReissueMainSubAssetState extends State<ReissueMainSubAsset> {
         reissuable: asset.reissuable,
       ));
       return BackdropLayers(
-          back: BlankBack(),
+          back: const BlankBack(),
           front: FrontCurve(
               child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
@@ -48,7 +48,7 @@ class _ReissueMainSubAssetState extends State<ReissueMainSubAsset> {
           )));
     }
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -56,5 +56,5 @@ class _ReissueMainSubAssetState extends State<ReissueMainSubAsset> {
         )));
   }
 
-  Widget body() => ReissueAsset(preset: FormPresets.main, isSub: true);
+  Widget body() => const ReissueAsset(preset: FormPresets.main, isSub: true);
 }

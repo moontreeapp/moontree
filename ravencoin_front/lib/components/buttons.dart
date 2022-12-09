@@ -46,14 +46,16 @@ class ButtonComponents {
     bool enabled = true,
     bool invert = false,
   }) =>
-      Container(
+      SizedBox(
         height: MediaQuery.of(context).size.height * (40 / 760),
         child: OutlinedButton(
           focusNode: focusNode,
           onPressed: enabled
               ? (link != null
                   ? () {
-                      onPressed == null ? () {} : onPressed();
+                      if (onPressed != null) {
+                        onPressed();
+                      }
                       Navigator.of(components.navigator.routeContext!)
                           .pushNamed(link, arguments: arguments);
                     }
@@ -82,14 +84,16 @@ class ButtonComponents {
     FocusNode? focusNode,
     bool enabled = true,
   }) =>
-      Container(
+      SizedBox(
         height: 40.figmaH,
         child: OutlinedButton(
           focusNode: focusNode,
           onPressed: enabled
               ? (link != null
                   ? () {
-                      onPressed == null ? () {} : onPressed();
+                      if (onPressed != null) {
+                        onPressed();
+                      }
                       Navigator.of(components.navigator.routeContext!)
                           .pushNamed(link, arguments: arguments);
                     }
@@ -116,8 +120,8 @@ class ButtonComponents {
     double width = 98,
     int? number,
   }) =>
-      Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-        Container(
+      Column(children: <Widget>[
+        SizedBox(
             height: 24,
             child: Text(
               number?.toString() ?? '',
@@ -126,14 +130,14 @@ class ButtonComponents {
                   .bodyText2!
                   .copyWith(color: AppColors.black60),
             )),
-        Container(
+        SizedBox(
           height: MediaQuery.of(context).size.height * (32 / 760),
           width: width,
           child: OutlinedButton(
             onPressed: enabled ? onPressed ?? () {} : () {},
             style: chosen
                 ? components.styles.buttons.word(context, chosen: true)
-                : components.styles.buttons.word(context, chosen: false),
+                : components.styles.buttons.word(context),
             child: FittedBox(
                 fit: BoxFit.fitWidth,
                 child: Text(
@@ -161,10 +165,9 @@ class ButtonComponents {
           KeyboardHidesWidget
           */
                 ),
-            Container(
+            SizedBox(
               height: 120,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   IgnorePointer(
                     child: Container(
@@ -173,7 +176,7 @@ class ButtonComponents {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [
+                          colors: <Color>[
                             Colors.white.withOpacity(0.0),
                             Colors.white,
                           ],
@@ -184,17 +187,17 @@ class ButtonComponents {
                   Container(
                     height: 80,
                     alignment: Alignment.topCenter,
+                    decoration: const BoxDecoration(color: Colors.white),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        SizedBox(width: 16),
+                        const SizedBox(width: 16),
                         ...<Widget>[
-                          for (var button in buttons) button,
-                        ].intersperse(widthSpacer ?? SizedBox(width: 16)),
-                        SizedBox(width: 16),
+                          for (Widget button in buttons) button,
+                        ].intersperse(widthSpacer ?? const SizedBox(width: 16)),
+                        const SizedBox(width: 16),
                       ],
                     ),
-                    decoration: BoxDecoration(color: Colors.white),
                   ),
                 ],
               ),
@@ -223,11 +226,11 @@ class ButtonComponents {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   ...<Widget>[
-                    for (var button in buttons) button,
-                  ].intersperse(widthSpacer ?? SizedBox(width: 16)),
-                  SizedBox(width: 16),
+                    for (Widget button in buttons) button,
+                  ].intersperse(widthSpacer ?? const SizedBox(width: 16)),
+                  const SizedBox(width: 16),
                 ],
               ),
             )

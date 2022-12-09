@@ -10,9 +10,9 @@ void main() async {
   setUp(() async {
     await hiveInit.setUp(HiveLoadingStep.all);
     pros.settings.setSource(MapSource({
-      '0': Setting(
+      '0': const Setting(
           name: SettingName.electrum_domain, value: 'testnet.rvn.rocks'),
-      '1': Setting(name: SettingName.electrum_port, value: 50002),
+      '1': const Setting(name: SettingName.electrum_port, value: 50002),
     }));
 
     waiters.leader.init();

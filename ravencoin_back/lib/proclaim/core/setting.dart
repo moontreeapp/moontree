@@ -19,34 +19,34 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
 
   static Map<String, Setting> get defaults => <SettingName, Setting>{
         SettingName.version_database:
-            Setting(name: SettingName.version_database, value: 1),
-        SettingName.login_attempts:
-            Setting(name: SettingName.login_attempts, value: <DateTime>[]),
+            const Setting(name: SettingName.version_database, value: 1),
+        SettingName.login_attempts: const Setting(
+            name: SettingName.login_attempts, value: <DateTime>[]),
         SettingName.electrum_net:
-            Setting(name: SettingName.electrum_net, value: defaultNet),
+            const Setting(name: SettingName.electrum_net, value: defaultNet),
         SettingName.electrum_domain: Setting(
             name: SettingName.electrum_domain, value: defaultChainNet.domain),
         SettingName.electrum_port:
             Setting(name: SettingName.electrum_port, value: defaultPort),
-        SettingName.auth_method: Setting(
+        SettingName.auth_method: const Setting(
             name: SettingName.auth_method, value: AuthMethod.nativeSecurity),
         SettingName.blockchain:
-            Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+            const Setting(name: SettingName.blockchain, value: Chain.ravencoin),
         SettingName.wallet_current:
-            Setting(name: SettingName.wallet_current, value: '0'),
+            const Setting(name: SettingName.wallet_current, value: '0'),
         SettingName.wallet_preferred:
-            Setting(name: SettingName.wallet_preferred, value: '0'),
+            const Setting(name: SettingName.wallet_preferred, value: '0'),
         SettingName.user_name:
-            Setting(name: SettingName.user_name, value: null),
+            const Setting(name: SettingName.user_name, value: null),
         SettingName.send_immediate:
-            Setting(name: SettingName.send_immediate, value: false),
+            const Setting(name: SettingName.send_immediate, value: false),
         SettingName.version_current:
-            Setting(name: SettingName.send_immediate, value: null),
+            const Setting(name: SettingName.send_immediate, value: null),
         SettingName.version_previous:
-            Setting(name: SettingName.send_immediate, value: null),
+            const Setting(name: SettingName.send_immediate, value: null),
         SettingName.mode_dev:
-            Setting(name: SettingName.mode_dev, value: FeatureLevel.easy),
-        SettingName.tutorial_status: Setting(
+            const Setting(name: SettingName.mode_dev, value: FeatureLevel.easy),
+        SettingName.tutorial_status: const Setting(
             name: SettingName.tutorial_status, value: <TutorialStatus>[]),
       }.map((SettingName settingName, Setting setting) =>
           MapEntry<String, Setting>(settingName.name, setting));

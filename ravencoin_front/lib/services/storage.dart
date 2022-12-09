@@ -42,7 +42,7 @@ class Backup extends Storage {
     rawExport = rawExport ?? jsonEncode(export);
     if (!await Permission.storage.request().isGranted) {
       // ignore: null_argument_to_non_null_type
-      return Future.value(null);
+      return Future<File>.value(null);
     }
     return (await _verifyLocalFile(await _localFile(filename)))
       ..writeAsString(rawExport);
@@ -155,7 +155,7 @@ class AssetLogos extends Storage {
   }) async {
     if (!await Permission.storage.request().isGranted) {
       // ignore: null_argument_to_non_null_type
-      return Future.value(null);
+      return Future<File>.value(null);
     }
 
     return (await _verifyLocalFile(await _localFile(filename)))
@@ -214,11 +214,11 @@ class SecureStorage {
   Future<void> example() async {
     const String key = 'key';
     // Create storage
-    final FlutterSecureStorage storage = new FlutterSecureStorage();
+    const FlutterSecureStorage storage = FlutterSecureStorage();
     // Read value
     final String? value = await storage.read(key: key);
-    // Read all values
-    final Map<String, String> allValues = await storage.readAll();
+    // Read all values // unused
+    //final Map<String, String> allValues = await storage.readAll();
     // Write value
     await storage.write(key: key, value: value);
     // Delete value

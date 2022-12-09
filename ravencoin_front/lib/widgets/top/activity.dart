@@ -6,10 +6,9 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
-import 'package:ravencoin_front/widgets/front/choices/download_queue_count.dart';
 
 class ActivityLight extends StatefulWidget {
-  ActivityLight({Key? key}) : super(key: key);
+  const ActivityLight({Key? key}) : super(key: key);
 
   @override
   _ActivityLightState createState() => _ActivityLightState();
@@ -37,7 +36,7 @@ class _ActivityLightState extends State<ActivityLight>
         setState(() => connectionBusy = value);
       }
     }));
-    listeners.add(streams.app.page.listen((value) {
+    listeners.add(streams.app.page.listen((String value) {
       if (value != pageTitle) {
         setState(() {
           pageTitle = value;
@@ -56,7 +55,7 @@ class _ActivityLightState extends State<ActivityLight>
 
   @override
   Widget build(BuildContext context) {
-    return ['Login', 'Createlogin'].contains(pageTitle)
+    return <String>['Login', 'Createlogin'].contains(pageTitle)
         ? Container()
         : connectionBusy
             ? GestureDetector(
@@ -68,10 +67,10 @@ class _ActivityLightState extends State<ActivityLight>
                           activityMessage.message == null
                       ? (services.developer.advancedDeveloperMode == true
                           //? DownloadQueueCount()
-                          ? DownloadActivity()
+                          ? const DownloadActivity()
                           : null)
                       : null,
-                  behaviors: {
+                  behaviors: <String, void Function()>{
                     'ok': () {
                       Navigator.of(components.navigator.routeContext!).pop();
                     },

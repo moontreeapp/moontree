@@ -32,7 +32,7 @@ class _ResyncChoice extends State<ResyncChoice> {
           'Clears database of transaction history and holdings, and redownloads it all.',
           style: Theme.of(context).textTheme.bodyText2,
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Row(children: <Widget>[
           components.buttons.actionButtonSoft(
             context,

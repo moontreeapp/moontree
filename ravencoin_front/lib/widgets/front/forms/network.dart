@@ -14,8 +14,8 @@ import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class ElectrumNetwork extends StatefulWidget {
+  const ElectrumNetwork({Key? key, this.data}) : super(key: key);
   final dynamic data;
-  const ElectrumNetwork({this.data}) : super();
 
   @override
   _ElectrumNetworkState createState() => _ElectrumNetworkState();
@@ -81,11 +81,12 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         //        child: networkTextField)),
         SliverToBoxAdapter(
             child: Padding(
-                padding: EdgeInsets.only(top: 16), child: serverTextField)),
+                padding: const EdgeInsets.only(top: 16),
+                child: serverTextField)),
         if (services.developer.advancedDeveloperMode)
           SliverToBoxAdapter(
               child: Padding(
-                  padding: EdgeInsets.only(top: 36),
+                  padding: const EdgeInsets.only(top: 36),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -95,10 +96,10 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         if (services.developer.advancedDeveloperMode)
           SliverToBoxAdapter(
               child: Padding(
-                  padding: EdgeInsets.only(top: 0),
+                  padding: EdgeInsets.zero,
                   child: Container(
                       alignment: Alignment.topLeft,
-                      child: DownloadActivity()))),
+                      child: const DownloadActivity()))),
 
         //SliverToBoxAdapter(
         //    child: Container(height: MediaQuery.of(context).size.height / 2)),
@@ -108,7 +109,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  SizedBox(height: 100),
+                  const SizedBox(height: 100),
                   components.containers.navBar(context,
                       child: Row(children: <Widget>[submitButton])),
                 ])),
@@ -186,14 +187,14 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
   bool validateDomainPort(String value) =>
       value.contains(':') && value.split(':').last.isInt;
 
-  void save() async {
+  Future<void> save() async {
     /// todo: verify before saving
     //streams.app.verify.add(false);
     //services.password.askCondition
     //          ? VerifyAuthentication(parentState: this)
     //          :
-    var port = serverAddress.text.split(':').last;
-    var domain = serverAddress.text
+    final String port = serverAddress.text.split(':').last;
+    final String domain = serverAddress.text
         .substring(0, serverAddress.text.lastIndexOf(port) - 1);
     components.loading.screen(
       message: 'Connecting',
@@ -205,7 +206,6 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         );
         await services.client.createClient();
       },
-      returnHome: true,
     );
     pressed = true;
   }

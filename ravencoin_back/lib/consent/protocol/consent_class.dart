@@ -46,7 +46,7 @@ class Consent extends _i1.SerializableEntity {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'deviceId': deviceId,
       'documentName': documentName,

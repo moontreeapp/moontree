@@ -1,5 +1,5 @@
-const exportedLeaderType = 'Leader';
-const exportedSingleType = 'Single';
+const String exportedLeaderType = 'Leader';
+const String exportedSingleType = 'Single';
 
 enum ImportFormat {
   json,

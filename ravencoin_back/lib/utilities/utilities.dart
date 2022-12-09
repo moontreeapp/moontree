@@ -3,7 +3,6 @@
 import 'package:ravencoin_back/records/balance.dart';
 import 'package:ravencoin_back/records/security.dart';
 import 'package:ravencoin_back/records/transaction.dart';
-import 'package:ravencoin_back/records/types/net.dart';
 import 'assets.dart' as assets;
 import 'structures.dart';
 

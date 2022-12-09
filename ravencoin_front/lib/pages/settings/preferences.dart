@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class Preferences extends StatefulWidget {
+  const Preferences({Key? key}) : super(key: key);
+
   @override
-  State createState() => new _PreferencesState();
+  State createState() => _PreferencesState();
 }
 
 //class Preferences extends StatelessWidget {
@@ -70,12 +72,12 @@ class _PreferencesState extends State<Preferences> {
     );
   }
 
-  Future alertSuccess() => showDialog(
+  Future<void> alertSuccess() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
             title: const Text('Success'),
             content: const Text('Preferences Saved!'),
-            actions: [
+            actions: <Widget>[
               TextButton(
                   child: const Text('ok'),
                   onPressed: () => Navigator.of(context).pop())

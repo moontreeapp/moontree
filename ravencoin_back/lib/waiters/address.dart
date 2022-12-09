@@ -12,19 +12,19 @@ class AddressWaiter extends Waiter {
 
   void handleAddressChange(Change<Address> change) {
     change.when(
-        loaded: (loaded) {},
-        added: (added) async =>
-            await services.client.subscribe.toAddress(added.record),
-        updated: (updated) async =>
-            await services.client.subscribe.toAddress(updated.record),
-        removed: (removed) async {
-          var address = removed.record;
+        loaded: (Loaded<Address> loaded) {},
+        added: (Added<Address> added) async =>
+            services.client.subscribe.toAddress(added.record),
+        updated: (Updated<Address> updated) async =>
+            services.client.subscribe.toAddress(updated.record),
+        removed: (Removed<Address> removed) async {
+          final Address address = removed.record;
           services.client.subscribe.unsubscribeAddress(address);
           //removed.id as String);
 
           /// could be moved to waiter on transactions...
           await pros.vouts
-              .removeAll(address.vouts.map((vout) => vout).toList());
+              .removeAll(address.vouts.map((Vout vout) => vout).toList());
 
           /// no way to join on this:
           //vins.removeAll(address.vins.map((vin) => vin).toList());

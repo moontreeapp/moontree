@@ -14,7 +14,7 @@ void main() {
 
     subject.stream.listen(print);
     subject.stream.listen((_) => print(subject.values));
-    await Future<void>.delayed(Duration(seconds: 1));
+    await Future<void>.delayed(const Duration(seconds: 1));
     subject.add(4);
   });
 

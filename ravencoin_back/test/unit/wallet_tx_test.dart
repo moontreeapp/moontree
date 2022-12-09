@@ -2,23 +2,24 @@
 
 import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:test/test.dart';
+import 'package:wallet_utils/src/models/networks.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show HDWallet, TransactionBuilder;
 
-import 'package:ravencoin_back/records/types/net.dart' show networks, Net;
+import 'package:ravencoin_back/records/types/net.dart' show Net;
 import 'package:ravencoin_back/records/wallets/extended_wallet_base.dart';
 
 void main() {
   group('Wallet Transaction', () {
     test('create & sign a 1-to-1 transaction', () async {
-      var network = ChainNet(Chain.ravencoin, Net.test).network;
+      final NetworkType network = ChainNet(Chain.ravencoin, Net.test).network;
 
-      var wallet = HDWallet.fromBase58(
+      final HDWallet wallet = HDWallet.fromBase58(
           'tprv8jsr128yT1XaEVNpw7t4v5ijZBURTzvqFzy71Favkx7VnMYsmcAf'
           'KMkW8xQ8YJUwDe1NZE6cyU6NQmfeNQWbKrkdnZXEyPdqpKx6UVc1dNF',
           network: network);
 
-      final txb = TransactionBuilder(network: network);
+      final TransactionBuilder txb = TransactionBuilder(network: network);
       txb.setVersion(1);
       txb.addInput(
           '56fcc747b8067133a3dc8907565fa1b31e452c98b3f200687cb836f98c3c46ae',
@@ -28,7 +29,7 @@ void main() {
           4000000); // (in)5000000 - (out)4000000 = (fee)1000000, this is the miner fee
       // print(txb.tx.virtualSize());
       txb.sign(vin: 0, keyPair: wallet.keyPair);
-      var transaction = txb.build().toHex();
+      final String transaction = txb.build().toHex();
       expect(
           transaction,
           '0100000001ae463c8cf936b87c6800f2b3982c451eb3a15f560789dca3337106'

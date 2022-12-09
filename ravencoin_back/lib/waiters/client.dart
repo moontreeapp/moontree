@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tuple/tuple.dart';
 import 'package:ravencoin_back/waiters/waiter.dart';
 import 'package:electrum_adapter/methods/server/ping.dart';
 
@@ -11,7 +10,7 @@ class RavenClientWaiter extends Waiter {
   static const Duration originalAdditionalTimeout = Duration(seconds: 1);
   Duration additionalTimeout = originalAdditionalTimeout;
 
-  StreamSubscription? periodicTimer;
+  //StreamSubscription<dynamic>? periodicTimer;
 
   int pinged = 0;
 
@@ -26,7 +25,7 @@ class RavenClientWaiter extends Waiter {
         streams.app.active,
         streams.app.ping,
         (bool active, dynamic ping) => active,
-      ).where((active) => active),
+      ).where((bool active) => active),
       performPing,
     );
   }
@@ -34,6 +33,10 @@ class RavenClientWaiter extends Waiter {
   Future<void> performPing(bool active) async {
     if (active) {
       try {
+        // todo: when this reconnects sometimes it doubles up and makes two
+        // connections. could it be the timeout on some client call is long
+        // enough that it overlaps two pings? well pinging half as often should
+        // fix it if that's the case. set it for 60*2 and will watch out for it.
         await (await services.client.client).ping();
         pinged++;
       } catch (e) {

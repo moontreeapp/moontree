@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -8,14 +9,13 @@ import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/alphacon.dart';
 import 'package:ravencoin_front/widgets/assets/assets.dart' as assets;
 //import 'package:ravencoin_front/utils/identicon.dart';
-import 'package:equatable/equatable.dart';
 
 class IconComponents {
-  Map<IconCacheKey, Widget> cache = {};
+  Map<IconCacheKey, Widget> cache = <IconCacheKey, Widget>{};
 
-  Icon get back => Icon(Icons.chevron_left_rounded, color: Colors.white);
+  Icon get back => const Icon(Icons.chevron_left_rounded, color: Colors.white);
 
-  Icon get close => Icon(Icons.close, color: Colors.white);
+  Icon get close => const Icon(Icons.close, color: Colors.white);
 
   Widget income(BuildContext context) =>
       Image.asset('assets/icons/receive/receive_green.png');
@@ -32,14 +32,15 @@ class IconComponents {
   Icon importDisabled(BuildContext context) =>
       Icon(Icons.vpn_key_rounded, color: Theme.of(context).disabledColor);
 
-  Icon get import => Icon(Icons.vpn_key_rounded, color: AppColors.black87);
+  Icon get import =>
+      const Icon(Icons.vpn_key_rounded, color: AppColors.black87);
 
-  Icon get export => Icon(Icons.save);
+  Icon get export => const Icon(Icons.save);
 
-  Icon get preview => Icon(MdiIcons.checkboxMarkedCircleOutline);
+  Icon get preview => const Icon(MdiIcons.checkboxMarkedCircleOutline);
 
-  Icon get disabledPreview =>
-      Icon(MdiIcons.checkboxMarkedCircleOutline, color: AppColors.disabled);
+  Icon get disabledPreview => const Icon(MdiIcons.checkboxMarkedCircleOutline,
+      color: AppColors.disabled);
 
   Image get assetMasterImage => Image.asset('assets/masterbag_transparent.png');
   Image get assetRegularImage => Image.asset('assets/assetbag_transparent.png');
@@ -122,10 +123,10 @@ class IconComponents {
 
   /// return custom logo (presumably previously downloaded from ipfs) or null
   Widget? _assetAvatarSecurity(String symbol, {double? height, double? width}) {
-    var security = pros.securities.primaryIndex
+    final Security? security = pros.securities.primaryIndex
         .getOne(symbol, pros.settings.chain, pros.settings.net);
     if (security != null &&
-        !([null, '']).contains(security.asset?.logo?.data)) {
+        !<String?>[null, ''].contains(security.asset?.logo?.data)) {
       try {
         return Image.file(
             AssetLogos().readImageFileNow(security.asset?.logo?.data ?? ''),
@@ -149,8 +150,8 @@ class IconComponents {
     Color? background,
   }) {
     asset = asset ?? '';
-    var assetType = Asset.assetTypeOf(asset);
-    var cacheKey = IconCacheKey(
+    final AssetType assetType = Asset.assetTypeOf(asset);
+    final IconCacheKey cacheKey = IconCacheKey(
       asset: asset,
       height: height ?? 40,
       width: width ?? 40,
@@ -206,7 +207,7 @@ class IconComponents {
       Container(
         height: height,
         width: width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Color.fromARGB(
               255,
@@ -270,8 +271,10 @@ class IconComponents {
           foreground,
           background,
         );
-    var indicator = generateIndicator(name: asset, imageDetails: imageDetails);
-    var ret = Stack(alignment: Alignment.bottomRight, children: <Widget>[
+    final Widget? indicator =
+        generateIndicator(name: asset, imageDetails: imageDetails);
+    final Stack ret =
+        Stack(alignment: Alignment.bottomRight, children: <Widget>[
       Container(
           height: height,
           width: width,
@@ -293,7 +296,7 @@ class IconComponents {
                     imageDetails.foreground[2],
                   ))),
           child: Text(() {
-            final x = (asset?.split(RegExp(r'[/#$~]')).last ?? '☾');
+            final String x = asset?.split(RegExp(r'[/#$~]')).last ?? '☾';
             if (x == '') {
               return '☾';
             }
@@ -337,21 +340,18 @@ class IconComponents {
               ),
               shape: BoxShape.circle,
               border: Border.all(
-                  width: 1,
                   color: Color.fromARGB(
-                    255,
-                    imageDetails.foreground[0],
-                    imageDetails.foreground[1],
-                    imageDetails.foreground[2],
-                  ))),
+                255,
+                imageDetails.foreground[0],
+                imageDetails.foreground[1],
+                imageDetails.foreground[2],
+              ))),
           child: ClipRRect(
               borderRadius: BorderRadius.circular(100.0),
               child: Center(
-                  child: Container(
-                      child: Icon(assetTypeIcon(assetType: assetType),
-                          size: (height + width) / 3,
-                          color:
-                              getIndicatorColor(imageDetails.background))))));
+                  child: Icon(assetTypeIcon(assetType: assetType),
+                      size: (height + width) / 3,
+                      color: getIndicatorColor(imageDetails.background)))));
     }
     return null;
   }
@@ -384,8 +384,6 @@ class IconComponents {
         return MdiIcons.slashForward;
       case AssetType.subAdmin:
         return MdiIcons.crown;
-      default:
-        return Icons.circle_outlined;
     }
   }
 
@@ -436,7 +434,7 @@ import 'package:ravencoin_front/widgets/other/circle_gradient.dart';
         radius: 50,
         background: '23F57D00',
       );
-      identicon.get().then((value) => (AssetLogos()
+      identicon.get().then((dynamic value) => (AssetLogos()
           .writeLogo(filename: '$assetName.svg', bytes: value.bytes)));
       return SvgPicture.network(identicon.url, height: height, width: width);
     }
@@ -452,7 +450,7 @@ import 'package:ravencoin_front/widgets/other/circle_gradient.dart';
     return Container(
       height: height,
       width: width,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
               width: 2,
@@ -488,27 +486,27 @@ import 'package:ravencoin_front/widgets/other/circle_gradient.dart';
 */
 
   CircleAvatar appAvatar() =>
-      CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));
+      const CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));
 
   CircleAvatar accountAvatar() =>
-      CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));
+      const CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));
 
   CircleAvatar walletAvatar(Wallet wallet) => wallet is LeaderWallet
-      ? CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'))
-      : CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));
+      ? const CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'))
+      : const CircleAvatar(backgroundImage: AssetImage('assets/rvn256.png'));
 }
 
 class IconCacheKey with EquatableMixin {
-  final String asset;
-  final AssetType assetType;
-  final double height;
-  final double width;
   IconCacheKey({
     required this.asset,
     required this.assetType,
     required this.height,
     required this.width,
   });
+  final String asset;
+  final AssetType assetType;
+  final double height;
+  final double width;
   @override
   List<Object> get props => <Object>[asset, assetType, height, width];
 
