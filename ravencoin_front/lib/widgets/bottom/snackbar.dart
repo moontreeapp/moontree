@@ -91,7 +91,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       'Import',
       'Sweep',
       'Backup',
-      'BackupConfirm',
+      'Backupconfirm',
       'Receive',
       'Transactions',
       'Send',

@@ -189,7 +189,7 @@ class _ConnectionLightState extends State<ConnectionLight>
       'Scan',
       'Setup',
       'Backupintro',
-      'BackupConfirm',
+      'Backupconfirm',
       'Backup',
     ].contains(streams.app.page.value)) {
       ScaffoldMessenger.of(context).clearSnackBars();

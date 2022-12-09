@@ -27,9 +27,7 @@ class PageTitle extends StatefulWidget {
     'Change': 'Security',
     'Remove': 'Security',
     'Verify': 'Security',
-    'BackupConfirm': 'Backup',
     'Backupconfirm': 'Backup',
-    'BackupKeypair': 'Backup',
     'Backupkeypair': 'Backup',
     'Channel': 'Create',
     'Nft': 'Create',
@@ -54,7 +52,6 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       <StreamSubscription<dynamic>>[];
   bool loading = false;
   bool fullname = false;
-  String pageTitle = 'Home';
   String assetTitle = 'Manage';
   String? settingTitle;
   AppContext appContext = AppContext.login;
@@ -83,13 +80,6 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       if (value != loading) {
         setState(() {
           loading = value;
-        });
-      }
-    }));
-    listeners.add(streams.app.page.listen((String value) {
-      if (value != pageTitle) {
-        setState(() {
-          pageTitle = value;
         });
       }
     }));
@@ -234,7 +224,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (pageTitle == 'Splash') {
+    if (streams.app.page.value == 'Splash') {
       if (widget.animate) {
         slowController.forward(from: 0.0);
         return FadeTransition(
@@ -242,7 +232,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       }
       return const Text('Welcome');
     }
-    if (loading || <String>['main', ''].contains(pageTitle)) {
+    if (loading || <String>['main', ''].contains(streams.app.page.value)) {
       return const Text('');
     }
     FittedBox wrap(String x) => FittedBox(
@@ -271,18 +261,18 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                               ? FontWeights.bold
                               : FontWeights.semiBold,
                         )))));
-    if (<String>['Asset', 'Transactions'].contains(pageTitle)) {
+    if (<String>['Asset', 'Transactions'].contains(streams.app.page.value)) {
       return assetWrap(fullname ? assetTitle : assetName(assetTitle));
     }
     fullname = false;
     return walletNumber() ??
         wrap((streams.reissue.form.value != null
-                ? PageTitle.pageMapReissue[pageTitle]
+                ? PageTitle.pageMapReissue[streams.app.page.value]
                 : null) ??
-            PageTitle.pageMap[pageTitle] ??
-            (pageTitle == 'Home'
+            PageTitle.pageMap[streams.app.page.value] ??
+            (streams.app.page.value == 'Home'
                 ? /*appContext.name.toTitleCase()*/ ' '
-                : pageTitle));
+                : streams.app.page.value));
   }
 
   String assetName(String given) {
@@ -310,7 +300,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   }
 
   Widget? walletNumber() {
-    if (pageTitle != 'Home') {
+    if (streams.app.page.value != 'Home') {
       return null;
     }
     if (pros.wallets.isNotEmpty) {

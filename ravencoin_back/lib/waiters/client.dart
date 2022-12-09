@@ -33,6 +33,10 @@ class RavenClientWaiter extends Waiter {
   Future<void> performPing(bool active) async {
     if (active) {
       try {
+        // todo: when this reconnects sometimes it doubles up and makes two
+        // connections. could it be the timeout on some client call is long
+        // enough that it overlaps two pings? well pinging half as often should
+        // fix it if that's the case. set it for 60*2 and will watch out for it.
         await (await services.client.client).ping();
         pinged++;
       } catch (e) {

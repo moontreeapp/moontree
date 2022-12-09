@@ -8,6 +8,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_back/utilities/database.dart' as database;
+import 'package:wallet_utils/wallet_utils.dart' show evrAirdropTx;
 
 /// client creation, logic, and settings.s
 class ClientService {
@@ -57,6 +58,8 @@ class ClientService {
       //// if we error this time, fail
       //x = await callback();
       x = null;
+    } catch (e) {
+      print('client use error: $e');
     }
     return x as T;
   }
@@ -560,13 +563,38 @@ class ApiService {
       services.client.scope(() async => (await services.client.client)
           .getHistories(addresses.map((Address a) => a.scripthash)));
 
-  Future<Tx> getTransaction(String transactionId) async =>
-      services.client.scope(() async =>
-          (await services.client.client).getTransaction(transactionId));
+  Future<Tx> getTransaction(String transactionId) async {
+    if (transactionId == evrAirdropTx) {
+      print('evrAirdropTx download attempt in getTransaction');
+      return Tx(
+          txid: evrAirdropTx,
+          hash: evrAirdropTx,
+          version: 0,
+          size: 0,
+          vsize: 0,
+          locktime: 0,
+          vin: <TxVin>[],
+          vout: <TxVout>[],
+          hex: '',
+          blockhash: null,
+          height: 0,
+          confirmations: null,
+          time: null,
+          blocktime: null,
+          memo: null);
+    }
+    return services.client.scope(() async =>
+        (await services.client.client).getTransaction(transactionId));
+  }
 
-  Future<List<Tx>> getTransactions(Iterable<String> transactionIds) async =>
-      services.client.scope(() async =>
-          (await services.client.client).getTransactions(transactionIds));
+  Future<List<Tx>> getTransactions(Iterable<String> transactionIds) async {
+    if (transactionIds.contains(evrAirdropTx)) {
+      print('evrAirdropTx download attempt in getTransactions');
+      transactionIds = transactionIds.where((hash) => hash != evrAirdropTx);
+    }
+    return services.client.scope(() async =>
+        (await services.client.client).getTransactions(transactionIds));
+  }
 
   Future<String> sendTransaction(String rawTx) async => services.client.scope(
       () async => (await services.client.client).broadcastTransaction(rawTx));

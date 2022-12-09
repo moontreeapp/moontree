@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 // ignore: unused_import
 import 'package:ravencoin_back/services/consent.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 
 Future<void> logout() async {
@@ -11,6 +12,7 @@ Future<void> logout() async {
   Navigator.pushReplacementNamed(
       components.navigator.routeContext!, getMethodPathLogin(),
       arguments: <String, bool>{'autoInitiateUnlock': false});
+  //streams.app.lead.add(LeadIcon.dismiss);
   streams.app.splash.add(false);
 }
 

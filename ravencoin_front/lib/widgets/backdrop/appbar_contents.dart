@@ -12,7 +12,7 @@ class BackdropAppBarContents extends StatelessWidget
   final bool spoof;
   final bool animate;
 
-  const BackdropAppBarContents({
+  BackdropAppBarContents({
     Key? key,
     this.spoof = false,
     this.animate = true,
@@ -70,7 +70,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const <BoxShadow>[],
           ),
-        testAppBar(appBar, test: true),
+        testAppBar(appBar, test: false),
         // alphaBar,
         const AppBarScrim(),
       ],
@@ -118,11 +118,14 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
         shape: shape,
         automaticallyImplyLeading: false,
         elevation: 0,
-        leading: <String>['ChooseMethod', 'Login', 'Setup', 'Backupintro']
-                    .contains(streams.app.page.value) ||
-                streams.app.lead.value == LeadIcon.none
-            ? null
-            : PageLead(mainContext: context),
+        leading: () {
+          if (<String>['ChooseMethod', 'Login', 'Setup', 'Backupintro']
+                  .contains(streams.app.page.value) ||
+              streams.app.lead.value == LeadIcon.none) {
+            return null;
+          }
+          return PageLead();
+        }(),
         centerTitle: spoof,
         title: PageTitle(animate: animate),
         actions: <Widget>[

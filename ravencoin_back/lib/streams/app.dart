@@ -15,7 +15,7 @@ class AppStreams {
   final BehaviorSubject<String?> status = appStatus$;
   final BehaviorSubject<bool> active = appActive$;
   final Stream<dynamic> ping =
-      Stream<dynamic>.periodic(const Duration(seconds: 60));
+      Stream<dynamic>.periodic(const Duration(seconds: 60 * 2));
   final BehaviorSubject<bool?> tap = BehaviorSubject<bool?>.seeded(null);
   final BehaviorSubject<bool> verify = BehaviorSubject<bool>.seeded(false);
   final BehaviorSubject<String> page = BehaviorSubject<String>.seeded('main');

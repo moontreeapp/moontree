@@ -106,14 +106,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: AppColors.androidSystemBar,
       appBar: showAppBar
-          ? const BackdropAppBarContents(spoof: true, animate: false)
+          ? BackdropAppBarContents(spoof: true, animate: false)
           : null,
       body:
           /**/
           Stack(
         alignment: Alignment.topCenter,
         children: <Widget>[
-          if (!showAppBar) const BackdropAppBarContents(spoof: true),
+          if (!showAppBar) BackdropAppBarContents(spoof: true),
           SlideTransition(
               position: _slideAnimation,
               child: AnimatedContainer(

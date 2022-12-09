@@ -19,22 +19,26 @@ class BackdropAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _BackdropAppBarState extends State<BackdropAppBar> {
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
-  LeadIcon lead = LeadIcon.pass;
+  String pageTitle = '';
 
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.splash.listen((bool value) {
-      setState(() {});
+    listeners.add(streams.app.page.listen((String value) {
+      if (value != pageTitle) {
+        setState(() {
+          pageTitle = value;
+        });
+      }
     }));
+
+    /// this is here because we trigger logouts on backend.
+    /// maybe we could call it from the back, but originally it seemed better to
+    /// pass it to the front layer and have it do it, also because other things
+    /// could listen to the logout behavior. could use a refactor.
     listeners.add(streams.app.logout.listen((bool value) {
       if (value && streams.app.page.value != 'Login') {
         logout();
-      }
-    }));
-    listeners.add(streams.app.lead.listen((LeadIcon value) {
-      if (lead != value) {
-        setState(() => lead = value);
       }
     }));
   }
@@ -51,6 +55,6 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
   Widget build(BuildContext context) {
     return streams.app.splash.value
         ? PreferredSize(preferredSize: Size.zero, child: Container(height: 0))
-        : const BackdropAppBarContents();
+        : BackdropAppBarContents();
   }
 }

@@ -53,6 +53,9 @@ class RouteStack extends NavigatorObserver {
     }
     routeContext =
         routeStack.isEmpty ? null : routeStack.last.navigator?.context;
+
+    /// todo: put the whole path on it, rather than just the page name. this
+    /// requires some attention because lots of stuff is keyed off the page.
     streams.app.page.add(
         conformName(routeStack.isEmpty ? null : routeStack.last.settings.name));
   }
