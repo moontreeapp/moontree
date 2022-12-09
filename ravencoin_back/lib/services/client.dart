@@ -127,7 +127,7 @@ class ClientService {
                   .then(reconnect));
         }
 
-        final RavenElectrumClient? newRavenClient = await _generateClient();
+        final RavenElectrumClient? newRavenClient = await generateClient();
         if (newRavenClient != null) {
           ravenElectrumClient = newRavenClient;
           registerCallbacks(ravenElectrumClient!);
@@ -149,7 +149,7 @@ class ClientService {
     });
   }
 
-  Future<RavenElectrumClient?> _generateClient({
+  Future<RavenElectrumClient?> generateClient({
     String projectName = 'moontree',
     String? projectVersion,
   }) async {
@@ -596,8 +596,25 @@ class ApiService {
         (await services.client.client).getTransactions(transactionIds));
   }
 
-  Future<String> sendTransaction(String rawTx) async => services.client.scope(
-      () async => (await services.client.client).broadcastTransaction(rawTx));
+  /// here we instanteate a client just for the purpose of sending. that way, if
+  /// the client is in use our transaction doesn't get sent to the back of the
+  /// queue. it get's it's own lane.
+  Future<String> sendTransaction(String rawTx) async {
+    final RavenElectrumClient? sendClient =
+        await services.client.generateClient();
+    if (sendClient != null) {
+      final success = await sendClient.broadcastTransaction(rawTx);
+      await sendClient.close();
+      return success;
+    }
+    return '';
+  }
+
+  /// sendTransaction is preferred so this is not currently used: uses the
+  /// regular global client.
+  Future<String> sendTransactionTypical(String rawTx) async =>
+      services.client.scope(() async =>
+          (await services.client.client).broadcastTransaction(rawTx));
 
   Future<AssetMeta?> getMeta(String symbol) async => services.client
       .scope(() async => (await services.client.client).getMeta(symbol));
