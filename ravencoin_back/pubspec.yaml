@@ -25,7 +25,7 @@ dependencies:
   electrum_adapter: ^2.0.4
   proclaim: ^4.0.3
   wallet_utils: ^3.0.6
-  moontree_utils: ^1.0.11
+  moontree_utils: ^1.0.12
   date_format: ^2.0.7
   bip39: ^1.0.6
   convert: ^3.0.2
@@ -38,8 +38,8 @@ dependency_overrides:
   #  path: ../../electrum_adapter
   #wallet_utils:
   #  path: ../../wallet_utils
-  moontree_utils:
-    path: ../../moontree_utils
+  #moontree_utils:
+  #  path: ../../moontree_utils
 
 dev_dependencies:
   build_runner: ^2.0.0
