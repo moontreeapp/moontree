@@ -8,6 +8,7 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_back/services/consent.dart'
     show ConsentDocument, documentEndpoint, consentToAgreements;
 import 'package:ravencoin_front/services/auth.dart';
+import 'package:ravencoin_front/services/dev.dart';
 import 'package:ravencoin_front/services/wallet.dart'
     show populateWalletsWithSensitives;
 import 'package:ravencoin_front/theme/extensions.dart';
@@ -239,7 +240,8 @@ class _LoginNativeState extends State<LoginNative> {
     await populateWalletsWithSensitives();
     final LocalAuthApi localAuthApi = LocalAuthApi();
     streams.app.authenticating.add(true);
-    final bool validate = await localAuthApi.authenticate();
+    final bool validate = await localAuthApi.authenticate(
+        skip: devFlags.contains(DevFlag.skipPin));
     streams.app.authenticating.add(false);
     setState(() => enabled = false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {

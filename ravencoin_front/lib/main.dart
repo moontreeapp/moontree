@@ -13,6 +13,7 @@ import 'package:ravencoin_front/cubits/send/cubit.dart';
 
 import 'package:ravencoin_front/pages/pages.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/dev.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_back/streams/streams.dart';
@@ -22,7 +23,8 @@ import 'package:ravencoin_back/streams/streams.dart';
 //   print('Handling a background message ${message.messageId}');
 // }
 
-Future<void> main() async {
+Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
+  devFlags.addAll(flags ?? []);
   // Catch errors without crashing the app:
   WidgetsFlutterBinding.ensureInitialized();
   runApp(RavenMobileApp());

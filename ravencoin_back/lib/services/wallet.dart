@@ -47,6 +47,7 @@ class WalletService {
     CipherUpdate? cipherUpdate,
     String? mnemonic,
     String? name,
+    bool backedUp = false,
     Future<String> Function(String id)? getSecret,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
@@ -58,6 +59,7 @@ class WalletService {
         cipherUpdate: cipherUpdate,
         mnemonic: mnemonic,
         name: name,
+        backedUp: backedUp,
         getEntropy: getSecret,
         saveSecret: saveSecret,
       );

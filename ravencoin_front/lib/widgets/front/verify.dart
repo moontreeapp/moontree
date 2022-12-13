@@ -3,6 +3,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
+import 'package:ravencoin_front/services/dev.dart';
 import 'package:ravencoin_front/services/password.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
@@ -213,7 +214,8 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
     setState(() => enabled = false);
     final LocalAuthApi localAuthApi = LocalAuthApi();
     streams.app.authenticating.add(true);
-    final bool validate = await localAuthApi.authenticate();
+    final bool validate = await localAuthApi.authenticate(
+        skip: devFlags.contains(DevFlag.skipPin));
     streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (widget.asLoginTime) {
