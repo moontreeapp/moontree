@@ -1,9 +1,8 @@
 // https://docs.flutter.dev/testing/integration-tests
 // run with flutter in browser:
-// flutter test test/integration/test_testing.dart -d <DEVICE_ID>
-// flutter test test/integration/test_testing.dart -d emulator-5554
+// flutter test integration_test/examples/test_testing.dart -d emulator-5554
 // run on andorid emulator:
-// C:\moontree\moontreeV1\ravencoin_front\android>gradlew app:connectedAndroidTest -Ptarget=`pwd`/../test/integration/test_testing.dart
+// C:\moontree\moontreeV1\ravencoin_front\android>gradlew app:connectedAndroidTest -Ptarget=`pwd`/../integration_test/examples/test_testing.dart
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
