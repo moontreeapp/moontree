@@ -1,9 +1,8 @@
 import 'dart:async';
-
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class AppWaiter extends Waiter {
+class AppWaiter extends Trigger {
   DateTime lastActiveTime = DateTime.now();
   int inactiveGracePeriod = 30;
   int idleGracePeriod = 60 * 5;
@@ -11,10 +10,9 @@ class AppWaiter extends Waiter {
 
   void init({Object? reconnect}) {
     /// logout on minimize
-    listen(
-      'streams.app.active',
-      streams.app.active,
-      (bool active) async {
+    when(
+      thereIsA: streams.app.active,
+      doThis: (bool active) async {
         if (!active &&
             services.password.required &&
             streams.app.authenticating.value == false &&
@@ -42,10 +40,9 @@ class AppWaiter extends Waiter {
     /// when app isn't used for 5 minutes lock
     /// we know the user is active by navigation events and gestures that aren't
     /// captured by a button or anything
-    listen(
-      'streams.app.tap',
-      streams.app.tap,
-      (bool? value) async => lastActiveTime = DateTime.now(),
+    when(
+      thereIsA: streams.app.tap,
+      doThis: (bool? _) async => lastActiveTime = DateTime.now(),
     );
   }
 

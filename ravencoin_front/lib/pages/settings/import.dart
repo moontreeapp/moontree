@@ -347,89 +347,92 @@ class _ImportState extends State<Import> {
     bool encrypted = true;
     Map<String, dynamic> textJson;
 
-    /// decrypt if you must...
-    if (importData != null) {
-      try {
-        textJson = json.decode(text) as Map<String, dynamic>;
-      } catch (e) {
-        textJson = <String, dynamic>{};
-      }
-      if (textJson.isNotEmpty) {
+    if (detection == ImportFormat.json) {
+      /// decrypt if you must...
+      if (importData != null) {
         try {
-          final Map<String, dynamic> wallets =
-              textJson['wallets']! as Map<String, dynamic>;
-          for (final dynamic walletJson in wallets.values) {
-            final String decrypted = ImportFrom.maybeDecrypt(
-              text: (walletJson as Map<String, dynamic>)['secret'] as String,
-              cipher: services.cipher.currentCipher!,
-            );
-            resp = resp.replaceFirst(walletJson['secret'] as String, decrypted);
-          }
+          textJson = json.decode(text) as Map<String, dynamic>;
         } catch (e) {
-          //log(e);
+          textJson = <String, dynamic>{};
         }
-      }
-      if (resp == text) {
-        // ask for password, make cipher, pass that cipher in.
-        // what if it's not the latest cipher type? just try all cipher types...
-        for (final CipherType cipherType in services.cipher.allCipherTypes) {
-          await requestPassword();
-          await requestSalt();
-          // cancelled
-          if (password.text == '' && salt.text == '') {
-            break;
-          }
-          await components.loading.screen(
-            message: 'Decrypting',
-            staticImage: true,
-            playCount: 2,
-          );
+        if (textJson.isNotEmpty) {
           try {
             final Map<String, dynamic> wallets =
                 textJson['wallets']! as Map<String, dynamic>;
             for (final dynamic walletJson in wallets.values) {
-              if (((walletJson as Map<String, dynamic>)['secret'] as String)
-                      .split(' ')
-                      .length ==
-                  12) {
-                encrypted = false;
-                break;
-              }
               final String decrypted = ImportFrom.maybeDecrypt(
-                text: walletJson['secret'] as String,
-                cipher: CipherProclaim.cipherInitializers[cipherType]!(
-                    services.cipher.getPassword(
-                        altPassword:
-                            password.text == '' ? salt.text : password.text),
-                    services.cipher.getSalt(
-                        altSalt: salt.text == ''
-                            ? password.text
-                            : salt.text)) as CipherBase,
+                text: (walletJson as Map<String, dynamic>)['secret'] as String,
+                cipher: services.cipher.currentCipher!,
               );
               resp =
                   resp.replaceFirst(walletJson['secret'] as String, decrypted);
             }
           } catch (e) {
-            log(e);
-          }
-          if (resp != text) {
-            break;
+            //log(e);
           }
         }
-        if (resp == text && encrypted) {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                streams.app.scrim.add(true);
-                return const AlertDialog(
-                    title: Text('Password Not Recognized'),
-                    content: Text(
-                        'Password does not match the password used at the time of encryption.'));
-              }).then((dynamic value) => streams.app.scrim.add(false));
-          return;
+        if (resp == text) {
+          // ask for password, make cipher, pass that cipher in.
+          // what if it's not the latest cipher type? just try all cipher types...
+          for (final CipherType cipherType in services.cipher.allCipherTypes) {
+            await requestPassword();
+            await requestSalt();
+            // cancelled
+            if (password.text == '' && salt.text == '') {
+              break;
+            }
+            await components.loading.screen(
+              message: 'Decrypting',
+              staticImage: true,
+              playCount: 2,
+            );
+            try {
+              final Map<String, dynamic> wallets =
+                  textJson['wallets']! as Map<String, dynamic>;
+              for (final dynamic walletJson in wallets.values) {
+                if (((walletJson as Map<String, dynamic>)['secret'] as String)
+                        .split(' ')
+                        .length ==
+                    12) {
+                  encrypted = false;
+                  break;
+                }
+                final String decrypted = ImportFrom.maybeDecrypt(
+                  text: walletJson['secret'] as String,
+                  cipher: CipherProclaim.cipherInitializers[cipherType]!(
+                      services.cipher.getPassword(
+                          altPassword:
+                              password.text == '' ? salt.text : password.text),
+                      services.cipher.getSalt(
+                          altSalt: salt.text == ''
+                              ? password.text
+                              : salt.text)) as CipherBase,
+                );
+                resp = resp.replaceFirst(
+                    walletJson['secret'] as String, decrypted);
+              }
+            } catch (e) {
+              log(e);
+            }
+            if (resp != text) {
+              break;
+            }
+          }
+          if (resp == text && encrypted) {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  streams.app.scrim.add(true);
+                  return const AlertDialog(
+                      title: Text('Password Not Recognized'),
+                      content: Text(
+                          'Password does not match the password used at the time of encryption.'));
+                }).then((dynamic value) => streams.app.scrim.add(false));
+            return;
+          }
         }
+        text = resp;
       }
-      text = resp;
     }
     /* will fix decryption later
     */

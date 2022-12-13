@@ -1,12 +1,12 @@
-import 'package:ravencoin_back/waiters/waiter.dart';
+import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
-class SettingWaiter extends Waiter {
+class SettingWaiter extends Trigger {
   void init() {
     /** simplified version below, you could use this version and then say, 
      * intead of foreach, you say, if any, that way you reconnect only once.
      * but since this is implemented for that, the simpler version below is
      * preferred.
-    listen(
+    when(
       'settings.batchedChanges',
       pros.settings.batchedChanges,
       (List<Change<Setting>> batchedChanges) {
@@ -35,7 +35,7 @@ class SettingWaiter extends Waiter {
     */
 
     /// removed because we want more control over when we reconnect
-    //listen(
+    //when(
     //    'settings.changes.electrum',
     //    pros.settings.changes.where((change) =>
     //        (change is Added || change is Updated) &&
@@ -50,7 +50,7 @@ class SettingWaiter extends Waiter {
 
     /// to reduce listener bloat, this has been added on the function called to
     /// set the value in services.downloads.queue
-    //listen(
+    //when(
     //    'settings.changes.download',
     //    pros.settings.changes.where((change) =>
     //        (change is Added || change is Updated) &&

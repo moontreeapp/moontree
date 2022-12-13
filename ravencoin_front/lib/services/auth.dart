@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
 enum AuthenticationResult {
+  skipped,
   success,
   failure,
   noSupport,
@@ -64,7 +65,14 @@ class LocalAuthApi {
     return true;
   }
 
-  Future<bool> authenticate({bool stickyAuth = false}) async {
+  Future<bool> authenticate({
+    bool stickyAuth = false,
+    bool skip = false,
+  }) async {
+    if (skip) {
+      reason = AuthenticationResult.skipped;
+      return true;
+    }
     //if (!(await isSetup)) {
     //  reason = AuthenticationResult.notSetup;
     //  return false;

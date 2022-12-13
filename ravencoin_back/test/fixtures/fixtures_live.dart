@@ -10,7 +10,7 @@ Future<void> useLiveSources() async {
   final HiveInitializer hiveInit =
       HiveInitializer(init: (dynamic dbDir) => Hive.init('database'));
   await hiveInit.setUp(HiveLoadingStep.all);
-  initWaiters(HiveLoadingStep.all);
+  initTriggers(HiveLoadingStep.all);
   await services.wallet.createSave(
       walletType: WalletType.leader,
       cipherUpdate: defaultCipherUpdate,

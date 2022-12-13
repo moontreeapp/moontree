@@ -166,6 +166,7 @@ class LeaderWalletService {
     required CipherUpdate cipherUpdate,
     String? mnemonic,
     String? name,
+    bool backedUp = false,
     Future<String> Function(String id)? getEntropy,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
@@ -180,6 +181,7 @@ class LeaderWalletService {
       saveSecret: saveSecret,
     );
     if (leaderWallet != null) {
+      leaderWallet.backedUp = backedUp;
       await pros.wallets.save(leaderWallet);
       return leaderWallet;
     }

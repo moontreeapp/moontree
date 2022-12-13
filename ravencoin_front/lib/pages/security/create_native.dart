@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ravencoin_front/services/dev.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -258,7 +259,8 @@ class _CreateNativeState extends State<CreateNative> {
   Future<void> submit() async {
     setState(() => enabled = false);
     streams.app.authenticating.add(true);
-    final bool validate = await localAuthApi.authenticate();
+    final bool validate = await localAuthApi.authenticate(
+        skip: devFlags.contains(DevFlag.skipPin));
     streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       final String key = await SecureStorage.authenticationKey;

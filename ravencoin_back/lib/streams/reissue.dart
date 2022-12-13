@@ -1,16 +1,22 @@
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:moontree_utils/moontree_utils.dart'
+    show ReadableIdentifierExtension;
 
 class ReissueStreams {
   final BehaviorSubject<GenericReissueForm?> form =
-      BehaviorSubject<GenericReissueForm?>.seeded(null);
+      BehaviorSubject<GenericReissueForm?>.seeded(null)..name = 'reissue.form';
   final BehaviorSubject<GenericReissueRequest?> request =
-      BehaviorSubject<GenericReissueRequest?>.seeded(null);
-  final BehaviorSubject<String?> made = BehaviorSubject<String?>.seeded(null);
+      BehaviorSubject<GenericReissueRequest?>.seeded(null)
+        ..name = 'reissue.request';
+  final BehaviorSubject<String?> made = BehaviorSubject<String?>.seeded(null)
+    ..name = 'reissue.made';
   final BehaviorSubject<SendEstimate?> estimate =
-      BehaviorSubject<SendEstimate?>.seeded(null);
-  final BehaviorSubject<String?> send = BehaviorSubject<String?>.seeded(null);
-  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null);
+      BehaviorSubject<SendEstimate?>.seeded(null)..name = 'reissue.estimate';
+  final BehaviorSubject<String?> send = BehaviorSubject<String?>.seeded(null)
+    ..name = 'reissue.send';
+  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null)
+    ..name = 'reissue.success';
 }
 
 class GenericReissueForm {

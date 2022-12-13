@@ -1,17 +1,23 @@
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:moontree_utils/moontree_utils.dart'
+    show ReadableIdentifierExtension;
 
 class CreateStreams {
   final BehaviorSubject<GenericCreateForm?> form =
-      BehaviorSubject<GenericCreateForm?>.seeded(null);
+      BehaviorSubject<GenericCreateForm?>.seeded(null)..name = 'create.form';
   final BehaviorSubject<GenericCreateRequest?> request =
-      BehaviorSubject<GenericCreateRequest?>.seeded(null);
-  //final make = BehaviorSubject<SendRequest?>.seeded(null);
-  final BehaviorSubject<String?> made = BehaviorSubject<String?>.seeded(null);
+      BehaviorSubject<GenericCreateRequest?>.seeded(null)
+        ..name = 'create.request';
+  //final make = BehaviorSubject<SendRequest?>.seeded(null)..name = 'client.activity';
+  final BehaviorSubject<String?> made = BehaviorSubject<String?>.seeded(null)
+    ..name = 'create.made';
   final BehaviorSubject<SendEstimate?> estimate =
-      BehaviorSubject<SendEstimate?>.seeded(null);
-  final BehaviorSubject<String?> send = BehaviorSubject<String?>.seeded(null);
-  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null);
+      BehaviorSubject<SendEstimate?>.seeded(null)..name = 'create.estimate';
+  final BehaviorSubject<String?> send = BehaviorSubject<String?>.seeded(null)
+    ..name = 'create.send';
+  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null)
+    ..name = 'create.success';
 }
 
 class GenericCreateForm {

@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:ravencoin_front/services/dev.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
@@ -22,6 +23,7 @@ Future<String> generateWallet({
   final Wallet? wallet = await services.wallet.createSave(
     walletType: walletType,
     mnemonic: mnemonic,
+    backedUp: devFlags.contains(DevFlag.skipBackup),
     getSecret: _getSecret,
     saveSecret: _saveSecret,
   );

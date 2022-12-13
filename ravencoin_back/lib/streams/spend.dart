@@ -3,25 +3,20 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:ravencoin_back/records/vout.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
+import 'package:moontree_utils/moontree_utils.dart'
+    show ReadableIdentifierExtension;
 
-// used in pages.send and BalanceHeader of ravencoin_front
 class Spend {
-  //final symbol = BehaviorSubject<String>.seeded('Ravencoin');
-  //final amount = BehaviorSubject<double>.seeded(0.0);
-  //final fee = BehaviorSubject<String>.seeded('Standard');
-  //final note = BehaviorSubject<String>.seeded('');
-  //final address = BehaviorSubject<String>.seeded('');
-  //final addressName = BehaviorSubject<String>.seeded('');
-
   final BehaviorSubject<SendRequest?> make =
-      BehaviorSubject<SendRequest?>.seeded(null);
+      BehaviorSubject<SendRequest?>.seeded(null)..name = 'spend.make';
   final BehaviorSubject<TransactionNote?> made =
-      BehaviorSubject<TransactionNote?>.seeded(null);
+      BehaviorSubject<TransactionNote?>.seeded(null)..name = 'spend.made';
   final BehaviorSubject<SendEstimate?> estimate =
-      BehaviorSubject<SendEstimate?>.seeded(null);
+      BehaviorSubject<SendEstimate?>.seeded(null)..name = 'spend.estimate';
   final BehaviorSubject<TransactionNote?> send =
-      BehaviorSubject<TransactionNote?>.seeded(null);
-  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null);
+      BehaviorSubject<TransactionNote?>.seeded(null)..name = 'spend.send';
+  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null)
+    ..name = 'spend.success';
 }
 
 class TransactionNote with ToStringMixin {
