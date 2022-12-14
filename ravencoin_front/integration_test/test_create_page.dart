@@ -133,21 +133,26 @@ void main() {
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
       await dotenv.load();
-      final wallet1 = dotenv.env['TEST_WALLET_01'];
+      final wallet = dotenv.env['TEST_WALLET_02'];
       //final jsonImport = dotenv.env['TEST_JSON_IMPORT'];
       //final jsonKey = dotenv.env['TEST_JSON_KEY'];
       target = find.byType(EditableText);
       expect(target, findsOneWidget);
-      await tester.tap(target);
-      print(wallet1);
-      await tester.enterText(target, wallet1!);
-      target = find.byType(OutlinedButton);
+      await tester.enterText(target, wallet!);
+      target = find.widgetWithText(OutlinedButton, 'IMPORT');
       expect(target, findsOneWidget);
       await tester.tap(target);
 
       // importing
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 60));
+      await tester.pumpAndSettle();
+
+      await Future.delayed(Duration(seconds: 60 * 5));
+      await tester.pumpAndSettle();
+      target = find.widgetWithText(OutlinedButton, 'UNLOCK');
+      await tester.tap(target);
+      await Future.delayed(Duration(seconds: 60 * 60));
       //find.byType(AppBarScrim)
       //find.text('Next')
       //find.byType(PhysicalModel) //dismiss dialogue
