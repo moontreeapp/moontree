@@ -1,23 +1,22 @@
 import 'dart:io' show Platform;
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 //import 'package:screenshot_callback/screenshot_callback.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/security/backup/types.dart';
-import 'package:ravencoin_front/services/auth.dart';
 import 'package:ravencoin_front/services/lookup.dart';
-import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
-import 'package:flutter/rendering.dart';
-
 class BackupSeed extends StatefulWidget {
   final dynamic data;
-  const BackupSeed({this.data}) : super();
+  const BackupSeed({Key? key, this.data}) : super(key: key);
 
   @override
   _BackupSeedState createState() => _BackupSeedState();
@@ -57,7 +56,7 @@ class _BackupSeedState extends State<BackupSeed>
 
     /// from exploring animations - want to return to
     //controller = AnimationController(
-    //    vsync: this, duration: Duration(milliseconds: 2400));
+    //    vsync: this, duration: const Duration(milliseconds: 2400));
     //animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     //curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
   }
@@ -81,7 +80,7 @@ class _BackupSeedState extends State<BackupSeed>
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
   Future<List<String>> get getSecret async {
-    final wallet = Current.wallet;
+    final Wallet wallet = Current.wallet;
     if (wallet is LeaderWallet) {
       return (await wallet.mnemonic).split(' ');
     }
@@ -95,37 +94,42 @@ class _BackupSeedState extends State<BackupSeed>
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
-    return FutureBuilder<List<String>>(
-        future: getSecret,
-        builder: (context, AsyncSnapshot<List<String>> snapshot) {
-          if (snapshot.hasData) {
-            secret = snapshot.data!;
-            return services.password.askCondition
-                ? VerifyAuthentication(
-                    parentState: this,
-                    buttonLabel: 'Show Seed',
-                    intro: intro,
-                    safe: safe,
-                  )
-                : body();
-          } else {
-            return CircularProgressIndicator();
-          }
-        });
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: FutureBuilder<List<String>>(
+            future: getSecret,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+              if (snapshot.hasData) {
+                secret = snapshot.data!;
+                return services.password.askCondition
+                    ? VerifyAuthentication(
+                        parentState: this,
+                        buttonLabel: 'Show Seed',
+                        intro: intro,
+                        safe: safe,
+                        auto: true,
+                        asLoginTime: true,
+                      )
+                    : body();
+              } else {
+                return const CircularProgressIndicator();
+              }
+            }));
   }
 
   Widget body() => BackdropLayers(
-      back: BlankBack(),
+      back: const BlankBack(),
       front: FrontCurve(
-          child: Stack(children: [
+          child: Stack(children: <Widget>[
         components.page.form(
           context,
           columnWidgets: <Widget>[
-            instructions,
-            warning,
+            _instructions,
+            _warning,
             if (smallScreen) words,
           ],
-          buttons: [submitButton],
+          buttons: <Widget>[submitButton],
         ),
         if (!smallScreen) wordsInStack
       ])));
@@ -163,29 +167,9 @@ class _BackupSeedState extends State<BackupSeed>
             .copyWith(color: AppColors.error),
       ));
 
-  Widget get instructions => Container(
-      //height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'Please backup your wallet by writing down these words on a piece of paper.',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.black),
-      ));
+  Widget get _instructions => instructions(context);
 
-  Widget get warning => Container(
-      //height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'You will need these words for recovery.',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.error),
-      ));
+  Widget get _warning => warning(context);
 
   Widget get wordsInStack => Container(
       height: (1 - 72.ofAppHeight).ofAppHeight,
@@ -194,36 +178,40 @@ class _BackupSeedState extends State<BackupSeed>
 
   Widget get words => Container(
       height: 272 * (smallScreen ? .8 : 1),
-      padding: (smallScreen ? null : EdgeInsets.only(left: 16, right: 16)),
-      child:
-          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        for (var x in [0, 3, 6, 9])
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            for (var i in [1, 2, 3])
-              components.buttons.wordButton(context,
-                  width: buttonWidth,
-                  chosen: false,
-                  label: secret[(i + x) - 1],
-                  onPressed: () {},
-                  number: i + x)
-          ]),
-      ]));
+      padding: smallScreen ? null : const EdgeInsets.only(left: 16, right: 16),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            for (int x in <int>[0, 3, 6, 9])
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    for (int i in <int>[1, 2, 3])
+                      components.buttons.wordButton(context,
+                          width: buttonWidth,
+                          label: secret[(i + x) - 1],
+                          onPressed: () {},
+                          number: i + x)
+                  ]),
+          ]));
 
   Widget get submitButton => components.buttons.actionButton(
         context,
-        enabled: true,
-        label: 'Next',
+        label: 'Verify Backup',
         link: '/security/backupConfirm',
         arguments: () {
           //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
-          var shuffledList = [
-            for (var s in secret.enumerated()) SecretWord(s[1], s[0])
+          final List<SecretWord> shuffledList = <SecretWord>[
+            for (Tuple2<int, String> s in secret.enumeratedTuple())
+              SecretWord(word: s.item2, order: s.item1)
           ];
           shuffledList.shuffle();
-          Map<int, SecretWord> shuffled = {
-            for (var s in shuffledList.enumerated()) s[0]: s[1]
+          final Map<int, SecretWord> shuffled = <int, SecretWord>{
+            for (Tuple2<int, SecretWord> s in shuffledList.enumeratedTuple())
+              s.item1: s.item2
           };
-          return {
+          streams.app.lead.add(LeadIcon.back);
+          return <String, dynamic>{
             'secret': secret,
             'shuffled': shuffled,
           };
@@ -238,7 +226,7 @@ class _BackupSeedState extends State<BackupSeed>
         //  controller.reset();
         //  controller.forward();
         //  // wait the approapriate amount of time for the animation to play
-        //  await Future.delayed(Duration(milliseconds: 2400));
+        //  await Future<void>.delayed(const Duration(milliseconds: 2400));
         //},
       );
 }
@@ -279,3 +267,27 @@ class MeasureSize extends SingleChildRenderObjectWidget {
     return MeasureSizeRenderObject(onChange);
   }
 }
+
+Widget instructions(BuildContext context) => Container(
+    //height: 48,
+    alignment: Alignment.topCenter,
+    child: Text(
+      'Please backup your wallet by writing down these words on a piece of paper.',
+      textAlign: TextAlign.center,
+      style: Theme.of(context)
+          .textTheme
+          .subtitle1!
+          .copyWith(color: AppColors.black),
+    ));
+
+Widget warning(BuildContext context) => Container(
+    //height: 48,
+    alignment: Alignment.topCenter,
+    child: Text(
+      'You will need these words for recovery.',
+      textAlign: TextAlign.center,
+      style: Theme.of(context)
+          .textTheme
+          .subtitle1!
+          .copyWith(color: AppColors.error),
+    ));

@@ -28,7 +28,7 @@ void useEmptyFixtures({bool defaults = true}) {
 
 /// meant to be used for any number of complex groupings of app state
 void useFixtureSources(int? version) {
-  var set = {
+  FixtureSet set = {
         0: FixtureSet0(),
         1: FixtureSet1(),
       }[version] ??

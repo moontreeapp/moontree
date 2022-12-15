@@ -1,14 +1,14 @@
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show ECPair, WalletBase;
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:wallet_utils/src/wallets/hd_wallet.dart';
+import 'package:wallet_utils/wallet_utils.dart' show ECPair;
 
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:tuple/tuple.dart';
-
-import 'wallet/leader.dart';
-import 'wallet/single.dart';
-import 'wallet/export.dart';
-import 'wallet/import.dart';
-import 'wallet/constants.dart';
+import 'package:ravencoin_back/utilities/seed_wallet.dart';
+import 'package:ravencoin_back/services/wallet/leader.dart';
+import 'package:ravencoin_back/services/wallet/single.dart';
+import 'package:ravencoin_back/services/wallet/export.dart';
+import 'package:ravencoin_back/services/wallet/import.dart';
+import 'package:ravencoin_back/services/wallet/constants.dart';
 
 class WalletService {
   final LeaderWalletService leader = LeaderWalletService();
@@ -21,22 +21,22 @@ class WalletService {
 
   // should return all cipherUpdates
   Set<CipherUpdate> get getAllCipherUpdates =>
-      pros.wallets.records.map((wallet) => wallet.cipherUpdate).toSet();
+      pros.wallets.records.map((Wallet wallet) => wallet.cipherUpdate).toSet();
 
   // should return cipherUpdates that must be used with current password...
   Set<CipherUpdate> get getCurrentCipherUpdates => pros.wallets.records
-      .map((wallet) => wallet.cipherUpdate)
-      .where((cipherUpdate) =>
+      .map((Wallet wallet) => wallet.cipherUpdate)
+      .where((CipherUpdate cipherUpdate) =>
           cipherUpdate.passwordId == pros.passwords.maxPasswordId)
       .toSet();
 
   // should return cipherUpdates that must be used with previous password...
   Set<CipherUpdate> get getPreviousCipherUpdates =>
       pros.passwords.maxPasswordId == null
-          ? {}
+          ? <CipherUpdate>{}
           : pros.wallets.records
-              .map((wallet) => wallet.cipherUpdate)
-              .where((cipherUpdate) =>
+              .map((Wallet wallet) => wallet.cipherUpdate)
+              .where((CipherUpdate cipherUpdate) =>
                   cipherUpdate.cipherType != CipherType.none &&
                   cipherUpdate.passwordId! < pros.passwords.maxPasswordId!)
               .toSet();
@@ -47,23 +47,25 @@ class WalletService {
     CipherUpdate? cipherUpdate,
     String? mnemonic,
     String? name,
+    bool backedUp = false,
     Future<String> Function(String id)? getSecret,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     cipherUpdate ??= services.cipher.currentCipherUpdate;
     walletType ??= WalletType.leader;
     if (walletType == WalletType.leader) {
-      return await leader.makeSaveLeaderWallet(
+      return leader.makeSaveLeaderWallet(
         pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
         mnemonic: mnemonic,
         name: name,
+        backedUp: backedUp,
         getEntropy: getSecret,
         saveSecret: saveSecret,
       );
     } else {
       //WalletType.single
-      return await single.makeSaveSingleWallet(
+      return single.makeSaveSingleWallet(
         pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
         cipherUpdate: cipherUpdate,
         wif: mnemonic,
@@ -74,43 +76,41 @@ class WalletService {
     }
   }
 
-  Future generate() async => await services.wallet.createSave(
+  Future<Wallet?> generate() async => services.wallet.createSave(
       walletType: WalletType.leader,
-      cipherUpdate: services.cipher.currentCipherUpdate,
-      mnemonic: null);
+      cipherUpdate: services.cipher.currentCipherUpdate);
 
   Future<Wallet?> create({
     required WalletType walletType,
     required CipherUpdate cipherUpdate,
     required String? secret,
+    String? name,
     bool alwaysReturn = false,
     Future<String> Function(String id)? getSecret,
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     switch (walletType) {
       case WalletType.leader:
-        final entropy =
-            bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic());
-        final wallet = await leader.makeLeaderWallet(
+        return leader.makeLeaderWallet(
           pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,
-          entropy: entropy,
+          entropy: bip39.mnemonicToEntropy(secret ?? bip39.generateMnemonic()),
+          name: name,
           alwaysReturn: alwaysReturn,
           getEntropy: getSecret,
           saveSecret: saveSecret,
         );
-        return wallet;
       case WalletType.single:
-        final wallet = await single.makeSingleWallet(
+        return single.makeSingleWallet(
           pros.ciphers.primaryIndex.getOneByCipherUpdate(cipherUpdate)!.cipher,
           cipherUpdate: cipherUpdate,
-          wif: secret!,
+          wif: secret,
+          name: name,
           alwaysReturn: alwaysReturn,
           getWif: getSecret,
           saveSecret: saveSecret,
         );
-        return wallet!;
-      default:
+      case WalletType.none:
         return create(
           walletType: WalletType.leader,
           cipherUpdate: cipherUpdate,
@@ -122,15 +122,17 @@ class WalletService {
   }
 
   Future<ECPair> getAddressKeypair(Address address) async {
-    var wallet = address.wallet;
+    final Wallet? wallet = address.wallet;
     if (wallet is LeaderWallet) {
-      var seedWallet = await services.wallet.leader.getSeedWallet(wallet);
-      var hdWallet =
+      final SeedWallet seedWallet =
+          await services.wallet.leader.getSeedWallet(wallet);
+      final HDWallet hdWallet =
           seedWallet.subwallet(address.hdIndex, exposure: address.exposure);
       return hdWallet.keyPair;
     } else if (wallet is SingleWallet) {
-      var kpWallet = services.wallet.single.getKPWallet(wallet);
-      return kpWallet.keyPair;
+      //final KPWallet kpWallet = services.wallet.single.getKPWallet(wallet);
+      //return kpWallet.keyPair;
+      return (await wallet.kpWallet).keyPair;
     } else {
       throw ArgumentError('wallet type unknown');
     }
@@ -147,7 +149,7 @@ class WalletService {
   /// actaully we should fill all the gaps first according to bip44 spec
 
   /// this settings controls the behavior of this service
-  Future setMinerMode(bool value, {Wallet? wallet}) async {
+  Future<void> setMinerMode(bool value, {Wallet? wallet}) async {
     wallet ??= currentWallet;
     if (wallet.skipHistory != value) {
       if (wallet is LeaderWallet) {

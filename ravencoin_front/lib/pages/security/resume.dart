@@ -13,8 +13,8 @@ class ChangeResume extends StatefulWidget {
 }
 
 class _ChangeResumeState extends State<ChangeResume> {
-  var password = TextEditingController();
-  var passwordVisible = false;
+  TextEditingController password = TextEditingController();
+  bool passwordVisible = false;
 
   @override
   void initState() {
@@ -42,33 +42,32 @@ class _ChangeResumeState extends State<ChangeResume> {
   }
 
   Row submitButton() =>
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         TextButton.icon(
             onPressed: () => Navigator.pushReplacementNamed(
-                context, getMethodPathLogin(), arguments: {}),
-            icon: Icon(Icons.login),
+                context, getMethodPathLogin(), arguments: <dynamic, dynamic>{}),
+            icon: const Icon(Icons.login),
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
         TextButton.icon(
-            onPressed: () async => await submit(),
-            icon: Icon(Icons.login),
+            onPressed: () async => submit(),
+            icon: const Icon(Icons.login),
             label: Text('Login',
                 style: TextStyle(color: Theme.of(context).primaryColor))),
       ]);
 
   Column body() => Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(
-              padding: EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20.0),
               child: TextField(
                   autocorrect: false,
                   controller: password,
                   obscureText: !passwordVisible,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
+                    border: const UnderlineInputBorder(),
                     hintText: 'previous password',
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -86,7 +85,7 @@ class _ChangeResumeState extends State<ChangeResume> {
       );
 
   Future<void> submit() async {
-    final key = await SecureStorage.authenticationKey;
+    final String key = await SecureStorage.authenticationKey;
     if (services.password.validate.previousPassword(
       password: key,
       salt: key,
@@ -124,7 +123,7 @@ class _ChangeResumeState extends State<ChangeResume> {
       );
       successMessage();
     } else {
-      final oldSalt = pros.passwords.primaryIndex.getPrevious()!.salt;
+      final String oldSalt = pros.passwords.primaryIndex.getPrevious()!.salt;
       if (services.password.validate.previousPassword(
         password: password.text,
         salt: oldSalt,
@@ -139,38 +138,40 @@ class _ChangeResumeState extends State<ChangeResume> {
         );
         successMessage();
       } else {
-        var used = services.password.validate.previouslyUsed(password.text);
+        final int? used =
+            services.password.validate.previouslyUsed(password.text);
         failureMessage(used == null
             ? 'This password was not recognized to match any previously used passwords.'
             : 'The provided password was used $used passwords ago.');
       }
-      setState(() => {});
+      setState(() {});
     }
   }
 
-  Future failureMessage(String msg) => showDialog(
+  Future<void> failureMessage(String msg) => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-              title: Text('Change Password Recovery failure'),
+              title: const Text('Change Password Recovery failure'),
               content: Text('Previous password did not match. $msg'),
-              actions: [
+              actions: <Widget>[
                 TextButton(
-                    child: Text('ok'), onPressed: () => Navigator.pop(context))
+                    child: const Text('ok'),
+                    onPressed: () => Navigator.pop(context))
               ]));
 
-  Future successMessage() => showDialog(
+  Future<void> successMessage() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-              title: Text('Success!'),
-              content:
-                  Text('Previous password matched. Change password recovery '
-                      'process will continue, please enter your current '
-                      'password.'),
-              actions: [
+              title: const Text('Success!'),
+              content: const Text(
+                  'Previous password matched. Change password recovery '
+                  'process will continue, please enter your current '
+                  'password.'),
+              actions: <Widget>[
                 TextButton(
-                    child: Text('ok'),
+                    child: const Text('ok'),
                     onPressed: () => Navigator.pushReplacementNamed(
                         context, getMethodPathLogin(),
-                        arguments: {}))
+                        arguments: <dynamic, dynamic>{}))
               ]));
 }

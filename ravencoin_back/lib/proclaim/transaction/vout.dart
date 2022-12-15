@@ -7,13 +7,11 @@ part 'vout.keys.dart';
 class VoutProclaim extends Proclaim<_IdKey, Vout> {
   late IndexMultiple<_TransactionKey, Vout> byTransaction;
   late IndexMultiple<_SecurityKey, Vout> bySecurity;
-  late IndexMultiple<_SecurityTypeKey, Vout> bySecurityType;
   late IndexMultiple<_AddressKey, Vout> byAddress;
 
   VoutProclaim() : super(_IdKey()) {
     byTransaction = addIndexMultiple('transaction', _TransactionKey());
     bySecurity = addIndexMultiple('security', _SecurityKey());
-    bySecurityType = addIndexMultiple('securityType', _SecurityTypeKey());
     byAddress = addIndexMultiple('address', _AddressKey());
   }
 
@@ -32,42 +30,48 @@ class VoutProclaim extends Proclaim<_IdKey, Vout> {
       /*
                   */
       (given ?? pros.vouts.records).where((Vout vout) =>
-          ((includeMempool ? true : (vout.transaction?.confirmed ?? false)) &&
-              (security != null ? vout.security == security : true) &&
-              (security != null && security != pros.securities.currentCrypto
-                  ? vout.securityValue(security: security) > 0
-                  : true) &&
-              pros.vins
-                  .where((vin) => ((includeMempool
-                          ? true
-                          : (vin.transaction?.confirmed ?? false)) &&
-                      vin.voutTransactionId == vout.transactionId &&
-                      vin.voutPosition == vout.position))
-                  .toList()
-                  .isEmpty));
+          (includeMempool || (vout.transaction?.confirmed ?? false)) &&
+          (security == null || vout.security == security) &&
+          (security == null ||
+              security == pros.securities.currentCoin ||
+              vout.securityValue(security: security) > 0) &&
+          pros.vins
+              .where((Vin vin) =>
+                  (includeMempool || (vin.transaction?.confirmed ?? false)) &&
+                  vin.voutTransactionId == vout.transactionId &&
+                  vin.voutPosition == vout.position)
+              .toList()
+              .isEmpty);
+
+  /// this should be easier by looking at unspents
+  //(given ?? pros.vouts.records).where((Vout vout) =>
+  //    pros.unspents.byVoutId.getOne(vout.transactionId, vout.position) != null);
 
   static Iterable<Vout> whereUnconfirmed({
     Iterable<Vout>? given,
     Security? security,
   }) =>
-      (given ?? pros.vouts.records).where((vout) =>
+      (given ?? pros.vouts.records).where((Vout vout) =>
           !(vout.transaction?.confirmed ?? false) &&
           (security != null ? vout.security == security : true));
 
   // I think instead of clearning we could avoid download in the first place...
   Future<void> clearUnnecessaryVouts() async {
-    var x = pros.vouts.records.toSet();
-    x.removeAll(pros.wallets.map((w) => w.vouts).expand((i) => i).toSet());
+    final Set<Vout> x = pros.vouts.records.toSet();
     x.removeAll(pros.wallets
-        .map((w) => w.transactions)
-        .expand((i) => i)
-        .map((t) => t.vouts)
-        .expand((e) => e)
+        .map((Wallet w) => w.vouts)
+        .expand((Iterable<Vout> i) => i)
         .toSet());
     x.removeAll(pros.wallets
-        .map((w) => w.vins)
-        .expand((i) => i)
-        .map((v) => v.vout)
+        .map((Wallet w) => w.transactions)
+        .expand((Set<Transaction> i) => i)
+        .map((Transaction t) => t.vouts)
+        .expand((List<Vout> e) => e)
+        .toSet());
+    x.removeAll(pros.wallets
+        .map((Wallet w) => w.vins)
+        .expand((Iterable<Vin> i) => i)
+        .map((Vin v) => v.vout)
         .toSet());
     await pros.vouts.removeAll(x);
   }

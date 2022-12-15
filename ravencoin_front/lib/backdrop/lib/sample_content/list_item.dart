@@ -16,7 +16,7 @@ class ListItem extends StatelessWidget {
               return AlertDialog(
                 title: const Text("Clicked"),
                 content: const Text("You clicked the card"),
-                actions: [
+                actions: <Widget>[
                   TextButton(
                     child: const Text("OK"),
                     onPressed: () {
@@ -40,7 +40,7 @@ class ListItem extends StatelessWidget {
                   return AlertDialog(
                     title: const Text("Clicked"),
                     content: const Text("You clicked the Button"),
-                    actions: [
+                    actions: <Widget>[
                       TextButton(
                         child: const Text("OK"),
                         onPressed: () {

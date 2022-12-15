@@ -1,8 +1,9 @@
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/extensions/string.dart';
-import 'package:ravencoin_back/records/types/net.dart';
-import 'package:ravencoin_wallet/src/models/networks.dart'
+import 'package:equatable/equatable.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/models/networks.dart'
     show NetworkType, mainnet, testnet, evrmoreMainnet, evrmoreTestnet;
+import 'package:ravencoin_back/records/types/net.dart';
 import '../_type_id.dart';
 
 part 'chain.g.dart';
@@ -24,17 +25,21 @@ enum Chain {
   ravencoin,
 }
 
-String chainSymbol(Chain chain) {
-  switch (chain) {
-    case Chain.ravencoin:
-      return 'RVN';
-    case Chain.evrmore:
-      return 'EVR';
-    case Chain.none:
-      return '';
-    default:
-      return 'RVN';
+extension ChainExtension on Chain {
+  String get symbol {
+    switch (this) {
+      case Chain.ravencoin:
+        return 'RVN';
+      case Chain.evrmore:
+        return 'EVR';
+      case Chain.none:
+        return '';
+    }
   }
+
+  String get title => name.toTitleCase();
+  String get key => name;
+  String get readable => 'chain: $name';
 }
 
 String symbolName(String symbol) {
@@ -52,54 +57,82 @@ String symbolName(String symbol) {
   }
 }
 
-String chainName(Chain chain) => chain.name.toTitleCase();
-
-String chainNetSymbol(Chain chain, Net net) =>
-    chainSymbol(chain) + netSymbolModifier(net);
-
-String chainKey(Chain chain) => chain.name;
-
-String chainNetKey(Chain chain, Net net) => chainKey(chain) + ':' + netKey(net);
-
-String chainReadable(Chain chain) => 'chain: ${chain.name}';
-String chainNetReadable(Chain chain, Net net) =>
-    '${chainReadable(chain)}, ${netReadable(net)}';
-
-NetworkType networkOf(Chain chain, Net net) {
-  if (chain == Chain.ravencoin && net == Net.main) {
-    return mainnet;
+String nameSymbol(String name) {
+  switch (name) {
+    case 'Ravencoin':
+      return 'RVN';
+    case 'Evrmore':
+      return 'EVR';
+    case 'Ravencoin (testnet)':
+      return 'RVN'; // the symbol on testnet is still the coin
+    case 'Evrmore (testnet)':
+      return 'EVR'; // the symbol on testnet is still the coin
+    default:
+      return name;
   }
-  if (chain == Chain.ravencoin && net == Net.test) {
-    return testnet;
-  }
-  if (chain == Chain.evrmore && net == Net.main) {
-    return evrmoreMainnet;
-  }
-  if (chain == Chain.evrmore && net == Net.test) {
-    return evrmoreTestnet;
-  }
-  return mainnet;
 }
 
-/// port map
-///50001 - mainnet tcp rvn
-///50002 - mainnet ssl rvn
-///50011 - testnet tcp rvnt
-///50012 - testnet ssl rvnt
-///50021 - testnet tcp evr
-///50022 - testnet ssl evr
-int portOf(Chain chain, Net net) {
-  if (chain == Chain.ravencoin && net == Net.main) {
+class ChainNet with EquatableMixin {
+  ChainNet(this.chain, this.net);
+
+  final Chain chain;
+  final Net net;
+
+  @override
+  List<Object?> get props => <Object?>[chain, net];
+
+  @override
+  String toString() => props.toString();
+
+  String get domainPort => '$domain:$port';
+
+  /// moontree.com
+  String get domain => 'moontree.com';
+
+  /// port map
+  ///50001 - mainnet tcp rvn
+  ///50002 - mainnet ssl rvn
+  ///50011 - testnet tcp rvnt
+  ///50012 - testnet ssl rvnt
+  ///50021 - mainnet tcp evr
+  ///50022 - mainnet ssl evr
+  ///50031 - testnet tcp evr
+  ///50032 - testnet ssl evr
+  int get port {
+    if (chain == Chain.ravencoin && net == Net.main) {
+      return 50002;
+    }
+    if (chain == Chain.ravencoin && net == Net.test) {
+      return 50012;
+    }
+    if (chain == Chain.evrmore && net == Net.main) {
+      return 50022;
+    }
+    if (chain == Chain.evrmore && net == Net.test) {
+      return 50032;
+    }
     return 50002;
   }
-  if (chain == Chain.ravencoin && net == Net.test) {
-    return 50012;
+
+  String get readable => '${chain.readable}, ${net.readable}';
+
+  NetworkType get network {
+    if (chain == Chain.ravencoin && net == Net.main) {
+      return mainnet;
+    }
+    if (chain == Chain.ravencoin && net == Net.test) {
+      return testnet;
+    }
+    if (chain == Chain.evrmore && net == Net.main) {
+      return evrmoreMainnet;
+    }
+    if (chain == Chain.evrmore && net == Net.test) {
+      return evrmoreTestnet;
+    }
+    return mainnet;
   }
-  if (chain == Chain.evrmore && net == Net.main) {
-    return 50022; //return 8820;
-  }
-  if (chain == Chain.evrmore && net == Net.test) {
-    return 50032;
-  }
-  return 50002;
+
+  String get symbol => chain.symbol + net.symbolModifier;
+
+  String get key => '${chain.key}:${net.key}';
 }

@@ -10,11 +10,11 @@ import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 
 /// moves hashed passwords to secure storage
 Future<void> updatePasswordsToSecureStorage() async {
-  var records = <Password>[];
-  for (var password in pros.passwords.records) {
+  final List<Password> records = <Password>[];
+  for (final Password password in pros.passwords.records) {
     if (password.saltedHash != 'deprecated') {
       records.add(Password.from(password, saltedHash: 'deprecated'));
-      final read =
+      final String? read =
           await SecureStorage.read(SecureStorage.passwordIdKey(password.id));
       // only update historic passwords here:
       if (read == null) {
@@ -31,7 +31,7 @@ Future<void> updatePasswordsToSecureStorage() async {
 /// on update they will be by default set to native auth, but if they have
 /// passwords they should be switched back to password auth.
 Future<void> maybeSwitchToPassword() async {
-  final currentPasswordRecord = pros.passwords.current;
+  final Password? currentPasswordRecord = pros.passwords.current;
   if (currentPasswordRecord != null &&
       currentPasswordRecord.saltedHash != 'deprecated') {
     await services.authentication

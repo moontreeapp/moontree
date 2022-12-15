@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:ravencoin_back/records/records.dart';
 import 'package:proclaim/proclaim.dart';
+import 'package:ravencoin_back/records/records.dart';
 
 part 'rate.keys.dart';
 

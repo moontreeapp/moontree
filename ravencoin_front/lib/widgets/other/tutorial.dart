@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/theme/theme.dart';
@@ -13,7 +15,8 @@ class TutorialLayer extends StatefulWidget {
 }
 
 class _TutorialLayerState extends State<TutorialLayer> {
-  late List listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   Color scrimColor = Colors.transparent;
   HitTestBehavior? behavior = null;
   double? height = 0;
@@ -33,7 +36,7 @@ class _TutorialLayerState extends State<TutorialLayer> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -41,7 +44,7 @@ class _TutorialLayerState extends State<TutorialLayer> {
 
   @override
   Widget build(BuildContext context) => AnimatedContainer(
-        duration: Duration(milliseconds: 100),
+        duration: const Duration(milliseconds: 100),
         onEnd: onEnd,
         height: height,
         color: scrimColor,
@@ -84,21 +87,21 @@ class TutorialContent extends StatelessWidget {
           ? Scaffold(
               backgroundColor: Colors.transparent,
               appBar: PreferredSize(
-                  preferredSize: Size.fromHeight(50),
+                  preferredSize: const Size.fromHeight(50),
                   child: AppBar(
                       backgroundColor: Colors.transparent,
                       elevation: 0,
                       actions: <Widget>[
-                        Padding(
+                        const Padding(
                             padding: EdgeInsets.only(top: 6),
                             child: ConnectionLight()),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 6),
                         Container(width: 40),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                       ])),
               body: Container(
                 alignment: Alignment.topRight,
-                padding: EdgeInsets.only(top: 1, right: 40),
+                padding: const EdgeInsets.only(top: 1, right: 40),
                 child: SpeechBubble(
                   nipOffCenter: 86,
                   child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -128,7 +131,7 @@ class TutorialContent extends StatelessWidget {
   //              title: Text('Password Not Recognized'),
   //              content: Text(
   //                  'Password does not match the password used at the time of encryption.'));
-  //        }).then((value) => streams.app.scrim.add(false));
+  //        }).then((dynamic value) => streams.app.scrim.add(false));
   //  }
   //}
 }

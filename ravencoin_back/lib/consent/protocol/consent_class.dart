@@ -1,47 +1,57 @@
 /* AUTOMATICALLY GENERATED CODE DO NOT MODIFY */
 /*   To generate run: "serverpod generate"    */
 
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: library_private_types_in_public_api
 // ignore_for_file: public_member_api_docs
-// ignore_for_file: unused_import
-// ignore_for_file: unnecessary_import
-// ignore_for_file: overridden_fields
+// ignore_for_file: implementation_imports
 
-import 'package:serverpod_client/serverpod_client.dart';
-import 'dart:typed_data';
-import 'protocol.dart';
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
 
-class Consent extends SerializableEntity {
-  @override
-  String get className => 'Consent';
-
-  int? id;
-  late String device_id;
-  late String document_name;
-  late String document_version;
-
+class Consent extends _i1.SerializableEntity {
   Consent({
     this.id,
-    required this.device_id,
-    required this.document_name,
-    required this.document_version,
+    required this.deviceId,
+    required this.documentName,
+    required this.documentVersion,
+    this.insertedAt,
   });
 
-  Consent.fromSerialization(Map<String, dynamic> serialization) {
-    var _data = unwrapSerializationData(serialization);
-    id = _data['id'];
-    device_id = _data['device_id']!;
-    document_name = _data['document_name']!;
-    document_version = _data['document_version']!;
+  factory Consent.fromJson(
+    Map<String, dynamic> jsonSerialization,
+    _i1.SerializationManager serializationManager,
+  ) {
+    return Consent(
+      id: serializationManager.deserialize<int?>(jsonSerialization['id']),
+      deviceId: serializationManager
+          .deserialize<String>(jsonSerialization['deviceId']),
+      documentName: serializationManager
+          .deserialize<String>(jsonSerialization['documentName']),
+      documentVersion: serializationManager
+          .deserialize<String>(jsonSerialization['documentVersion']),
+      insertedAt: serializationManager
+          .deserialize<DateTime?>(jsonSerialization['insertedAt']),
+    );
   }
 
+  int? id;
+
+  String deviceId;
+
+  String documentName;
+
+  String documentVersion;
+
+  DateTime? insertedAt;
+
   @override
-  Map<String, dynamic> serialize() {
-    return wrapSerializationData({
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
       'id': id,
-      'device_id': device_id,
-      'document_name': document_name,
-      'document_version': document_version,
-    });
+      'deviceId': deviceId,
+      'documentName': documentName,
+      'documentVersion': documentVersion,
+      'insertedAt': insertedAt,
+    };
   }
 }

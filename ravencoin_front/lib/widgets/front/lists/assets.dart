@@ -1,21 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class AssetList extends StatefulWidget {
-  final ScrollController? scrollController;
   const AssetList({Key? key, this.scrollController}) : super(key: key);
+  final ScrollController? scrollController;
 
   @override
   State<AssetList> createState() => _AssetList();
 }
 
 class _AssetList extends State<AssetList> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   late Iterable<AssetHolding> assets;
   bool showPath = false;
   int assetCount = 0;
@@ -26,7 +27,7 @@ class _AssetList extends State<AssetList> {
     assetCount = pros.assets.length;
     listeners.add(pros.assets.changes.listen((Change<Asset> change) {
       // if vouts in our account has changed...
-      var count = pros.assets.length;
+      final int count = pros.assets.length;
       if (count != assetCount) {
         setState(() {
           assetCount = count;
@@ -37,8 +38,8 @@ class _AssetList extends State<AssetList> {
         pros.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       // if vouts in our account has changed...
       if (batchedChanges
-          .where(
-              (change) => change.record.address?.wallet?.id == Current.walletId)
+          .where((Change<Vout> change) =>
+              change.record.address?.wallet?.id == Current.walletId)
           .isNotEmpty) {
         setState(() {});
       }
@@ -47,7 +48,7 @@ class _AssetList extends State<AssetList> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -59,7 +60,7 @@ class _AssetList extends State<AssetList> {
     });
   }
 
-  Future refresh() async {
+  Future<void> refresh() async {
     setState(() {});
   }
 
@@ -119,14 +120,14 @@ class _AssetList extends State<AssetList> {
     streams.app.manage.asset.add(symbol);
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/manage/asset',
-      arguments: {'symbol': symbol, 'walletId': wallet?.id ?? null},
+      arguments: <String, String?>{'symbol': symbol, 'walletId': wallet?.id},
     );
   }
 
   ListView _assetsView(BuildContext context, {Wallet? wallet}) => ListView(
       controller: widget.scrollController,
       children: <Widget>[
-            for (var asset in assets) ...[
+            for (final AssetHolding asset in assets) ...<Widget>[
               ListTile(
                 //dense: true,
                 //contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
@@ -137,10 +138,10 @@ class _AssetList extends State<AssetList> {
                 title: title(asset),
                 //trailing: Icon(Icons.chevron_right_rounded)
               ),
-              Divider(height: 1)
+              const Divider(height: 1)
             ]
           ] +
-          [components.empty.blankNavArea(context)]);
+          <Widget>[components.empty.blankNavArea(context)]);
 
   void onTap(Wallet? wallet, AssetHolding asset) {
     if (asset.length == 1 && (asset.admin != null || asset.subAdmin != null)) {
@@ -158,7 +159,7 @@ class _AssetList extends State<AssetList> {
     } else if (asset.length == 1) {
       navigate(asset.singleSymbol!, wallet: wallet);
     } else {
-      var assetDetails = <String, Asset?>{};
+      final Map<String, Asset?> assetDetails = <String, Asset?>{};
       if (asset.admin != null) {
         assetDetails['main'] = pros.assets.primaryIndex
             .getOne(asset.symbol, pros.settings.chain, pros.settings.net);
@@ -178,13 +179,13 @@ class _AssetList extends State<AssetList> {
       SelectionItems(
         context,
         symbol: asset.symbol,
-        names: [
+        names: <SelectionOption>[
           if (asset.admin != null) SelectionOption.Main,
           if (asset.subAdmin != null) SelectionOption.Main,
           if (asset.restricted != null) SelectionOption.Restricted,
           if (asset.qualifier != null) SelectionOption.Qualifier,
         ],
-        behaviors: [
+        behaviors: <void Function()>[
           if (asset.admin != null) () => navigate(asset.symbol, wallet: wallet),
           if (asset.subAdmin != null)
             () => navigate(asset.symbol, wallet: wallet),
@@ -193,20 +194,21 @@ class _AssetList extends State<AssetList> {
           if (asset.qualifier != null)
             () => navigate(asset.qualifier!.security.symbol, wallet: wallet),
         ],
-        values: [
-          if (asset.admin != null) assetDetails['main']!.amount.toCommaString(),
+        values: <String>[
+          if (asset.admin != null)
+            assetDetails['main']!.amount.toSatsCommaString(),
           if (asset.subAdmin != null)
-            assetDetails['main']!.amount.toCommaString(),
+            assetDetails['main']!.amount.toSatsCommaString(),
           if (asset.restricted != null)
-            assetDetails['restricted']!.amount.toCommaString(),
+            assetDetails['restricted']!.amount.toSatsCommaString(),
           if (asset.qualifier != null)
-            assetDetails['qualifier']!.amount.toCommaString(),
+            assetDetails['qualifier']!.amount.toSatsCommaString(),
         ],
       ).build();
     }
   }
 
-  Widget leadingIcon(AssetHolding asset) => Container(
+  Widget leadingIcon(AssetHolding asset) => SizedBox(
       height: 40,
       width: 40,
       child: components.icons.assetAvatar(asset.restricted != null
@@ -215,9 +217,8 @@ class _AssetList extends State<AssetList> {
               ? asset.qualifierSymbol!
               : asset.symbol));
 
-  Widget title(AssetHolding asset) =>
-      Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Container(
+  Widget title(AssetHolding asset) => Row(children: <Widget>[
+        SizedBox(
             width: MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
             child: FittedBox(
               fit: BoxFit.scaleDown,

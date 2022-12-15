@@ -20,7 +20,7 @@ class VoutAdapter extends TypeAdapter<Vout> {
       transactionId: fields[0] as String,
       position: fields[1] as int,
       type: fields[2] as String,
-      rvnValue: fields[3] as int,
+      coinValue: fields[3] as int,
       assetValue: fields[4] as int?,
       lockingScript: fields[5] as String?,
       memo: fields[6] as String?,
@@ -42,7 +42,7 @@ class VoutAdapter extends TypeAdapter<Vout> {
       ..writeByte(2)
       ..write(obj.type)
       ..writeByte(3)
-      ..write(obj.rvnValue)
+      ..write(obj.coinValue)
       ..writeByte(4)
       ..write(obj.assetValue)
       ..writeByte(5)

@@ -20,23 +20,23 @@ import 'package:ravencoin_front/components/components.dart';
 /// the wallet should just be clickable so you can do all the actions, except drag in there. import export delete
 
 class TechnicalView extends StatefulWidget {
-  const TechnicalView() : super();
+  const TechnicalView({Key? key}) : super(key: key);
 
   @override
   _TechnicalViewState createState() => _TechnicalViewState();
 }
 
 class _TechnicalViewState extends State<TechnicalView> {
-  List<StreamSubscription> listeners = [];
-  final accountName = TextEditingController();
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
+  final TextEditingController accountName = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    listeners.add(pros.settings.changes.listen((changes) {
+    listeners.add(pros.settings.changes.listen((Change<Setting> changes) {
       setState(() {});
     }));
-    listeners.add(pros.wallets.changes.listen((changes) {
+    listeners.add(pros.wallets.changes.listen((Change<Wallet> changes) {
       setState(() {});
     }));
   }
@@ -44,7 +44,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   @override
   void dispose() {
     accountName.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -87,9 +87,9 @@ class _TechnicalViewState extends State<TechnicalView> {
   //}
 
   /// export all acounts ability
-  void _exportAll(context) {
+  void _exportAll(BuildContext context) {
     Navigator.pushNamed(context, '/settings/export',
-        arguments: {'accountId': 'all'});
+        arguments: <String, String>{'accountId': 'all'});
   }
 
   /// change the accountId for this wallet and save
@@ -126,7 +126,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   Card _wallet(BuildContext context, Wallet wallet) => Card(
       margin: const EdgeInsets.fromLTRB(40.0, 0.0, 10.0, 5),
       child: Padding(
-          padding: EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0),
+          padding: const EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 5.0),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
@@ -147,15 +147,15 @@ class _TechnicalViewState extends State<TechnicalView> {
                 IconButton(
                     icon: Icon(Icons.remove_red_eye,
                         color: Theme.of(context).primaryColor),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/wallet', arguments: {
-                          'wallet': wallet,
-                          'secret': wallet.cipher != null
-                              ? wallet.secret(wallet.cipher!)
-                              : 'unknown',
-                          'secretName': wallet
-                              .secretType, /* todo translate this to a string */
-                        }))
+                    onPressed: () => Navigator.pushNamed(context, '/wallet',
+                            arguments: <String, Object>{
+                              'wallet': wallet,
+                              'secret': wallet.cipher != null
+                                  ? wallet.secret(wallet.cipher!)
+                                  : 'unknown',
+                              'secretName': wallet
+                                  .secretType, /* todo translate this to a string */
+                            }))
               ])));
 
   ///List _getWallets(accountId) => [
@@ -165,7 +165,7 @@ class _TechnicalViewState extends State<TechnicalView> {
   ListView body() => ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 5),
           children: <Widget>[
-            for (var wallet in pros.wallets) ...[
+            for (Wallet wallet in pros.wallets) ...<Widget>[
               _wallet(context, wallet),
             ]
           ]);
@@ -188,7 +188,7 @@ class _TechnicalViewState extends State<TechnicalView> {
                       ? ListTile(
                           title: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
+                              children: <Widget>[
                                 Text(account.name),
                                 Text('  ${account.netName}net',
                                     style: Theme.of(context).textTheme.caption),
@@ -249,14 +249,14 @@ class _TechnicalViewState extends State<TechnicalView> {
           ]);
 */
   // unused
-  Future alertSuccess() => showDialog(
+  Future<void> alertSuccess() => showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-            title: Text('Success!'),
-            content: Text('Generating Account...'),
-            actions: [
+            title: const Text('Success!'),
+            content: const Text('Generating Account...'),
+            actions: <Widget>[
               TextButton(
-                  child: Text('ok'),
+                  child: const Text('ok'),
                   onPressed: () => Navigator.of(context).pop())
             ],
           ));

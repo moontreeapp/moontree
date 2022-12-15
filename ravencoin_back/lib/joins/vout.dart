@@ -14,8 +14,8 @@ extension VoutBelongsToVin on Vout {
 
 extension VoutHasOneSecurity on Vout {
   Security? get security => assetSecurityId == null
-      ? pros.securities.currentCrypto
-      : pros.securities.primaryIndex.getOneRaw(assetSecurityId!);
+      ? pros.securities.currentCoin
+      : pros.securities.primaryIndex.getOneRaw(assetSecurityId);
   // if this is not found we should go get it,
   // because this should never not be found.
 }

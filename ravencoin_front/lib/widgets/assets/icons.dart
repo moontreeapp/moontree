@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_classes_with_only_static_members
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -74,7 +76,7 @@ class icons {
           child: ravencoin(height: height, width: width, circled: circled));
 }
 
-class svgIcons {
+class SvgIcons {
   static Widget get moontreeSVG => //Container(
       //child:
       SvgPicture.asset('assets/logo/moontree_logo.svg')
@@ -88,8 +90,7 @@ class svgIcons {
   //    Container(child: SvgPicture.asset('assets/evr.png'));
   //static Widget get evrmoreTest =>
   //    Container(child: SvgPicture.asset('assets/evr.png'));
-  static Widget get ravencoin =>
-      Container(child: SvgPicture.asset('assets/rvn.svg'));
+  static Widget get ravencoin => SvgPicture.asset('assets/rvn.svg');
   //static Widget get ravencoinTest =>
   //    Container(child: SvgPicture.asset('assets/rvn.png'));
 
@@ -100,7 +101,6 @@ class svgIcons {
           color: AppColors.primary,
           shape: BoxShape.circle,
           border: Border.all(
-            width: 1,
             color: AppColors.primary,
           )),
       child: ClipRRect(

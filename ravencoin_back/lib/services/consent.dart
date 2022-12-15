@@ -7,35 +7,34 @@ enum ConsentDocument {
 }
 
 class Consent {
+  Consent() : client = Client('$moontreeUrl/');
   static const String moontreeUrl = 'https://api.moontree.com';
   static const String textUrl = 'https://moontree.com';
 
   final Client client;
 
-  Consent() : client = Client('$moontreeUrl/');
-
   Future<void> given(String deviceId, ConsentDocument consentDocument) async =>
-      await client.consent.given(deviceId, consentDocument.name);
+      client.consent.given(deviceId, consentDocument.name);
 
   Future<bool> haveIConsented(
           String deviceId, ConsentDocument consentDocument) async =>
-      await client.hasGiven.consent(deviceId, consentDocument.name);
+      client.hasGiven.consent(deviceId, consentDocument.name);
 }
 
 String documentEndpoint(ConsentDocument consentDocument) =>
     '${Consent.textUrl}/${consentDocument.name}.html';
 
 Future<bool> discoverConsent(String deviceId) async {
-  final consent = Consent();
-  final userAgreement = await consent.haveIConsented(
+  final Consent consent = Consent();
+  final bool userAgreement = await consent.haveIConsented(
     deviceId,
     ConsentDocument.user_agreement,
   );
-  final privacyPolicy = await consent.haveIConsented(
+  final bool privacyPolicy = await consent.haveIConsented(
     deviceId,
     ConsentDocument.privacy_policy,
   );
-  final riskDisclosure = await consent.haveIConsented(
+  final bool riskDisclosure = await consent.haveIConsented(
     deviceId,
     ConsentDocument.risk_disclosures,
   );
@@ -44,7 +43,7 @@ Future<bool> discoverConsent(String deviceId) async {
 
 /// only for dev use
 Future<void> uploadNewDocument() async {
-  final consent = Consent();
+  final Consent consent = Consent();
   await consent.client.document.upload(
       'QmbjXoq2jj3ikqtJVUCAPhzmSdQY1QderYYNiDxABbMVoY',
       ConsentDocument.user_agreement.name,
@@ -63,7 +62,7 @@ Future<bool> consentToAgreements(String deviceId) async {
   //uploadNewDocument();
   // consent just once
   try {
-    final consent = Consent();
+    final Consent consent = Consent();
     await consent.given(deviceId, ConsentDocument.user_agreement);
     await consent.given(deviceId, ConsentDocument.privacy_policy);
     await consent.given(deviceId, ConsentDocument.risk_disclosures);

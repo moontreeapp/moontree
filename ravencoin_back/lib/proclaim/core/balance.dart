@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:ravencoin_back/records/records.dart';
 import 'package:proclaim/proclaim.dart';
+import 'package:ravencoin_back/records/records.dart';
 
 part 'balance.keys.dart';
 
@@ -22,6 +22,6 @@ class BalanceProclaim extends Proclaim<_IdKey, Balance> {
         unconfirmed: 0,
       );
 
-  Future removeAllByIds(Set<String> walletIds) async =>
-      await removeAll(records.where((b) => walletIds.contains(b.walletId)));
+  Future<List<Change<dynamic>>> removeAllByIds(Set<String> walletIds) async =>
+      removeAll(records.where((Balance b) => walletIds.contains(b.walletId)));
 }

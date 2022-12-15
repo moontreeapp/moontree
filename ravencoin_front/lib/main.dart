@@ -3,6 +3,8 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ravencoin_front/cubits/send/cubit.dart';
 
 //import 'package:flutter/foundation.dart' show kDebugMode;
 // import 'package:firebase_core/firebase_core.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/services.dart';
 
 import 'package:ravencoin_front/pages/pages.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/services/dev.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_back/streams/streams.dart';
@@ -20,7 +23,8 @@ import 'package:ravencoin_back/streams/streams.dart';
 //   print('Handling a background message ${message.messageId}');
 // }
 
-Future<void> main() async {
+Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
+  devFlags.addAll(flags ?? []);
   // Catch errors without crashing the app:
   WidgetsFlutterBinding.ensureInitialized();
   runApp(RavenMobileApp());
@@ -62,10 +66,10 @@ class RavenMobileApp extends StatelessWidget {
   Widget build(BuildContext context) {
     components.navigator.mainContext = context;
     //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
-    //    overlays: [SystemUiOverlay.top]);
+    //    overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top]);
-    SystemChrome.setPreferredOrientations([
+        overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
+    SystemChrome.setPreferredOrientations(<DeviceOrientation>[
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
@@ -79,21 +83,26 @@ class RavenMobileApp extends StatelessWidget {
       initialRoute: '/splash',
       // look up flutter view model for sub app structure.
       routes: pages.routes(context),
-      themeMode: ThemeMode.system,
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
-      navigatorObservers: [components.navigator],
-      builder: (context, child) {
+      navigatorObservers: <NavigatorObserver>[components.navigator],
+      builder: (BuildContext context, Widget? child) {
         components.navigator.scaffoldContext = context;
-        final scaffold = Stack(alignment: Alignment.bottomCenter, children: [
+        final Stack scaffold =
+            Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Scaffold(
             backgroundColor:
                 Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
-            extendBodyBehindAppBar: false,
-            appBar: BackdropAppBar(),
-            body: child!,
+            appBar: const BackdropAppBar(),
+            body: MultiBlocProvider(
+              providers: [
+                BlocProvider<SimpleSendFormCubit>(
+                    create: (BuildContext context) => SimpleSendFormCubit()),
+              ],
+              child: child!,
+            ),
           ),
-          TutorialLayer(),
+          const TutorialLayer(),
         ]);
         return GestureDetector(
             onTap: () => streams.app.tap.add(null),

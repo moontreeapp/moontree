@@ -1,16 +1,18 @@
 import 'package:intl/intl.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class ConversionService {
   String rvnUSD(
     double amount, {
     double? rate,
-    String prefix = '\$ ',
+    String prefix = r'$ ',
   }) =>
       amount == 0
           ? NumberFormat('$prefix#,##0.00', 'en_US').format(0)
           : NumberFormat('$prefix#,##0.00', 'en_US')
-              .format((amount * (rate ?? services.rate.rvnToUSD ?? 0.0)));
+              .format(amount * (rate ?? services.rate.rvnToUSD ?? 0.0));
 
   /// returns a string representation of the value as amount or fiat
   String securityAsReadable(
@@ -20,20 +22,20 @@ class ConversionService {
     bool asUSD = false,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.currentCrypto.symbol) {
-      var asAmount = utils.satToAmount(sats);
+    if (symbol == pros.securities.currentCoin.symbol) {
+      final double asAmount = sats.asCoin;
       return asUSD
           ? rvnUSD(asAmount)
           : NumberFormat('#,##0.########', 'en_US').format(asAmount);
     }
     // asset sats -> asset -> rvn -> usd
     security = getSecurityOf(symbol: symbol, security: security);
-    var asset = getAssetOf(symbol: symbol);
-    var asAmount = utils.satToAmount(sats);
+    final Asset? asset = getAssetOf(symbol: symbol);
+    final double asAmount = sats.asCoin;
     return asUSD
         ? rvnUSD(asAmount * (security.toRVNRate))
         : NumberFormat(
-                '#,##0${(asset?.divisibility ?? 0) > 0 ? '.' + '#' * (asset?.divisibility ?? 0) : ''}',
+                '#,##0${(asset?.divisibility ?? 0) > 0 ? '.${'#' * (asset?.divisibility ?? 0)}' : ''}',
                 'en_US')
             .format(asAmount);
   }
@@ -43,20 +45,17 @@ class ConversionService {
     String? symbol,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.currentCrypto.symbol) {
-      return pros.securities.currentCrypto;
+    if (symbol == pros.securities.currentCoin.symbol) {
+      return pros.securities.currentCoin;
     }
     if (symbol == 'USD') {
       return pros.securities.USD;
     }
     return security ??
-        pros.securities.primaryIndex.getOne(symbol, SecurityType.asset,
-            pros.settings.chain, pros.settings.net) ??
+        pros.securities.primaryIndex
+            .getOne(symbol, pros.settings.chain, pros.settings.net) ??
         Security(
-            symbol: symbol,
-            securityType: SecurityType.asset,
-            chain: pros.settings.chain,
-            net: pros.settings.net);
+            symbol: symbol, chain: pros.settings.chain, net: pros.settings.net);
   }
 
   Asset? getAssetOf({
@@ -64,17 +63,14 @@ class ConversionService {
     String? symbol,
   }) {
     symbol = getSymbol(symbol: symbol, security: security);
-    if (symbol == pros.securities.currentCrypto.symbol) {
+    if (symbol == pros.securities.currentCoin.symbol) {
       return null;
     }
     security = security ??
-        pros.securities.primaryIndex.getOne(symbol, SecurityType.asset,
-            pros.settings.chain, pros.settings.net) ??
+        pros.securities.primaryIndex
+            .getOne(symbol, pros.settings.chain, pros.settings.net) ??
         Security(
-            symbol: symbol,
-            securityType: SecurityType.asset,
-            chain: pros.settings.chain,
-            net: pros.settings.net);
+            symbol: symbol, chain: pros.settings.chain, net: pros.settings.net);
     return pros.assets.primaryIndex
         .getOne(symbol, security.chain, security.net);
   }
@@ -87,6 +83,6 @@ class ConversionService {
         symbol ??
         (() => throw OneOfMultipleMissing(
             'security or symbol required to identify record.'))();
-    return security?.symbol ?? symbol ?? pros.securities.currentCrypto.symbol;
+    return security?.symbol ?? symbol ?? pros.securities.currentCoin.symbol;
   }
 }

@@ -2,13 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
+import 'package:ravencoin_back/streams/create.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
 import 'package:ravencoin_front/services/lookup.dart';
-import 'package:ravencoin_back/streams/create.dart';
-import 'package:ravencoin_back/utilities/validate.dart';
 import 'package:ravencoin_front/utils/transformers.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
@@ -29,7 +31,7 @@ class CreateAsset extends StatefulWidget {
   final FormPresets preset;
   final bool isSub;
 
-  CreateAsset({
+  const CreateAsset({
     required this.preset,
     this.isSub = false,
   }) : super();
@@ -39,7 +41,7 @@ class CreateAsset extends StatefulWidget {
 }
 
 class _CreateAssetState extends State<CreateAsset> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   GenericCreateForm? createForm;
   TextEditingController parentController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -65,7 +67,7 @@ class _CreateAssetState extends State<CreateAsset> {
   String? verifierValidationErr;
   int remainingNameLength = 30;
   int remainingVerifierLength = 89;
-  Map<FormPresets, String> presetToTitle = {
+  Map<FormPresets, String> presetToTitle = <FormPresets, String>{
     FormPresets.main: 'Asset Name',
     FormPresets.restricted: 'Restricted Asset Name',
     FormPresets.qualifier: 'Qualifier Name',
@@ -75,10 +77,10 @@ class _CreateAssetState extends State<CreateAsset> {
 
   String limitQ(String q, String d) {
     if (q.contains('.')) {
-      var splits = q.split('.');
-      var maxd = int.parse(d);
+      final List<String> splits = q.split('.');
+      final int maxd = int.parse(d);
       if (splits[1].length > maxd) {
-        return splits.first + '.' + splits[1].substring(0, maxd);
+        return '${splits.first}.${splits[1].substring(0, maxd)}';
       }
     }
     return q;
@@ -97,7 +99,7 @@ class _CreateAssetState extends State<CreateAsset> {
           decimalController.text =
               (value?.decimal ?? decimalController.text).toString();
           quantityController.text = limitQ(
-              value?.quantity?.toCommaString() ?? quantityController.text,
+              value?.quantity?.toSatsCommaString() ?? quantityController.text,
               decimalController.text);
           reissueValue = value?.reissuable ?? reissueValue;
           verifierController.text = value?.verifier ?? verifierController.text;
@@ -120,7 +122,7 @@ class _CreateAssetState extends State<CreateAsset> {
     decimalFocus.dispose();
     verifierController.dispose();
     verifierFocus.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -130,7 +132,7 @@ class _CreateAssetState extends State<CreateAsset> {
   Widget build(BuildContext context) {
     remainingNameLength =
         // max asset length
-        MAX_NAME_LENGTH -
+        maxNameLength -
             // parent text and implied '/'
             (isSub ? parentController.text.length + 1 : 0) -
             // everything else has a special character denoting its type
@@ -173,51 +175,51 @@ class _CreateAssetState extends State<CreateAsset> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                   Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         if (needsParent || needsQualifierParent)
                           Padding(
-                            padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
+                            padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
                             child: parentFeild,
                           ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                           child: nameField,
                         ),
                         if (needsQuantity)
                           Padding(
-                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                             child: quantityField,
                           ),
                         if (needsDecimal)
                           Padding(
-                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                             child: decimalField,
                           ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                           child: ipfsField,
                         ),
                         if (needsVerifier)
                           Padding(
-                            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                             child: verifierField,
                           ),
                         if (needsReissue)
                           Padding(
-                              padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                               child: reissueRow),
                       ]),
                 ])),
             SliverFillRemaining(
                 hasScrollBody: false,
                 child: Padding(
-                    padding: EdgeInsets.only(bottom: 40, left: 16, right: 16),
+                    padding:
+                        const EdgeInsets.only(bottom: 40, left: 16, right: 16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(children: [submitButton])
+                      children: <Widget>[
+                        Row(children: <Widget>[submitButton])
                       ],
                     )))
           ]);
@@ -226,12 +228,12 @@ class _CreateAssetState extends State<CreateAsset> {
         focusNode: parentFocus,
         controller: parentController,
         readOnly: true,
-        labelText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
-        hintText: 'Parent ' + (isQualifier ? 'Qualifier' : 'Asset'),
+        labelText: 'Parent ${isQualifier ? 'Qualifier' : 'Asset'}',
+        hintText: 'Parent ${isQualifier ? 'Qualifier' : 'Asset'}',
         errorText: parentValidationErr,
         suffixIcon: IconButton(
-          icon: Padding(
-              padding: EdgeInsets.only(right: 14),
+          icon: const Padding(
+              padding: const EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: () => isQualifier
               ? _produceQualifierParentModal()
@@ -251,7 +253,7 @@ class _CreateAssetState extends State<CreateAsset> {
       controller: nameController,
       textInputAction: TextInputAction.done,
       keyboardType: isRestricted ? TextInputType.none : null,
-      inputFormatters: [MainAssetNameTextFormatter()],
+      inputFormatters: <TextInputFormatter>[MainAssetNameTextFormatter()],
       decoration: components.styles.decorations.textField(
         context,
         labelText: (isSub && !isNFT && !isChannel ? 'Sub ' : '') +
@@ -259,7 +261,7 @@ class _CreateAssetState extends State<CreateAsset> {
         hintText: 'MOONTREE.COM',
         errorText: isChannel || isRestricted
             ? null
-            : nameController.text.length > 0 && !nameValidated
+            : nameController.text.isNotEmpty && !nameValidated
                 ? nameValidationErr
                 : null,
       ),
@@ -280,8 +282,7 @@ class _CreateAssetState extends State<CreateAsset> {
   Widget get quantityField => TextFieldFormatted(
         focusNode: quantityFocus,
         controller: quantityController,
-        keyboardType:
-            TextInputType.numberWithOptions(decimal: true, signed: false),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textInputAction: TextInputAction.done,
         inputFormatters: <TextInputFormatter>[
           DecimalTextInputFormatter(
@@ -311,8 +312,8 @@ class _CreateAssetState extends State<CreateAsset> {
         labelText: 'Decimals',
         hintText: 'Decimals',
         suffixIcon: IconButton(
-          icon: Padding(
-              padding: EdgeInsets.only(right: 14),
+          icon: const Padding(
+              padding: const EdgeInsets.only(right: 14),
               child: Icon(Icons.expand_more_rounded, color: Color(0xDE000000))),
           onPressed: () => _produceDecimalModal(),
         ),
@@ -326,7 +327,7 @@ class _CreateAssetState extends State<CreateAsset> {
       autocorrect: false,
       controller: verifierController,
       textInputAction: TextInputAction.done,
-      inputFormatters: [VerifierStringTextFormatter()],
+      inputFormatters: <TextInputFormatter>[VerifierStringTextFormatter()],
       decoration: components.styles.decorations.textField(
         context,
         labelText: 'Verifier String',
@@ -359,21 +360,21 @@ class _CreateAssetState extends State<CreateAsset> {
 
   Widget get reissueRow => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(children: [
+        children: <Widget>[
+          Row(children: <Widget>[
             IconButton(
               onPressed: () => showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   streams.app.scrim.add(true);
-                  return AlertDialog(
+                  return const AlertDialog(
                     content:
                         Text('Reissuable asset can increase in quantity and '
                             'decimal in the future.\n\nNon-reissuable '
                             'assets cannot be modified in anyway.'),
                   );
                 },
-              ).then((value) => streams.app.scrim.add(false)),
+              ).then((dynamic value) => streams.app.scrim.add(false)),
               icon: const Icon(
                 Icons.help_rounded,
                 color: Colors.black,
@@ -401,13 +402,13 @@ class _CreateAssetState extends State<CreateAsset> {
       );
 
   bool nameValidation(String name) {
-    var validName = nameLengthValid(name) && nameTypeValid(name);
+    final bool validName = nameLengthValid(name) && nameTypeValid(name);
     nameValidationErr = validName ? null : nameValidationErr;
     return validName;
   }
 
   Future<bool> nameNotTakenValid(String name) async {
-    var ret = !(await services.client.api.getAssetNames(name))
+    final bool ret = !(await services.client.api.getAssetNames(name))
         .toList()
         .contains(name);
     if (!ret) {
@@ -458,7 +459,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
   Future<void> validateName({String? name}) async {
     name = name ?? nameController.text;
-    var oldValidation = nameValidated;
+    final bool oldValidation = nameValidated;
     nameValidated = nameValidation(name);
     if (nameValidated) {
       nameValidated = await nameNotTakenValid(fullName(true));
@@ -489,7 +490,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
   void validateVerifier({String? verifier}) {
     verifier = verifier ?? verifierController.text;
-    var oldValidation = verifierValidated;
+    final bool oldValidation = verifierValidated;
     verifierValidated = verifierValidation(verifier);
     if (oldValidation != verifierValidated || !verifierValidated) {
       setState(() {});
@@ -500,7 +501,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
   void validateAssetData({String? data}) {
     data = data ?? ipfsController.text;
-    var oldValidation = ipfsValidated;
+    final bool oldValidation = ipfsValidated;
     ipfsValidated = assetDataValidation(data);
     if (oldValidation != ipfsValidated || !ipfsValidated) {
       setState(() {});
@@ -514,7 +515,7 @@ class _CreateAssetState extends State<CreateAsset> {
     quantity = quantity ??
         (quantityController.text == '' ? '0' : quantityController.text)
             .toDouble();
-    var oldValidation = quantityValidated;
+    final bool oldValidation = quantityValidated;
     quantityValidated = quantityValidation(quantity);
     if (oldValidation != quantityValidated || !quantityValidated) {
       setState(() {});
@@ -526,7 +527,7 @@ class _CreateAssetState extends State<CreateAsset> {
 
   void validateDecimal({int? decimal}) {
     decimal = decimal ?? decimalController.text.asSatsInt();
-    var oldValidation = decimalValidated;
+    final bool oldValidation = decimalValidated;
     decimalValidated = decimalValidation(decimal);
     if (oldValidation != decimalValidated || !decimalValidated) {
       setState(() {});
@@ -536,27 +537,23 @@ class _CreateAssetState extends State<CreateAsset> {
   bool get enabled =>
       nameValidated &&
       //nameValidation(nameController.text) &&
-      (needsQuantity
-          ? quantityController.text != '' &&
-              quantityValidation(quantityController.text.toDouble())
-          : true) &&
-      (needsDecimal
-          ? decimalController.text != '' &&
-              decimalValidation(decimalController.text.asSatsInt())
-          : true) &&
+      (!needsQuantity ||
+          quantityController.text != '' &&
+              quantityValidation(quantityController.text.toDouble())) &&
+      (!needsDecimal ||
+          decimalController.text != '' &&
+              decimalValidation(decimalController.text.asSatsInt())) &&
       (ipfsController.text == '' || assetDataValidation(ipfsController.text));
 
   Future<bool> get enabledAsync async => nameController.text.length > 2 &&
           nameValidation(nameController.text) &&
           await nameNotTakenValid(nameController.text) &&
-          (needsQuantity
-              ? quantityController.text != '' &&
-                  quantityValidation(quantityController.text.toDouble())
-              : true) &&
-          (needsDecimal
-              ? decimalController.text != '' &&
-                  decimalValidation(decimalController.text.asSatsInt())
-              : true) &&
+          (!needsQuantity ||
+              quantityController.text != '' &&
+                  quantityValidation(quantityController.text.toDouble())) &&
+          (!needsDecimal ||
+              decimalController.text != '' &&
+                  decimalValidation(decimalController.text.asSatsInt())) &&
           isNFT
       ? assetDataValidation(ipfsController.text)
       : (ipfsController.text == '' || assetDataValidation(ipfsController.text));
@@ -596,7 +593,7 @@ class _CreateAssetState extends State<CreateAsset> {
           nameController.text
       : ((isQualifier || isNFT)
               ? '#'
-              : (isChannel ? '~' : (isRestricted ? '\$' : ''))) +
+              : (isChannel ? '~' : (isRestricted ? r'$' : ''))) +
           nameController.text;
 
   void checkout(GenericCreateRequest createRequest) {
@@ -606,43 +603,45 @@ class _CreateAssetState extends State<CreateAsset> {
     /// go to confirmation page
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/create/checkout',
-      arguments: {
+      arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(
           /// full symbol name
           symbol: fullName(true),
           displaySymbol: nameController.text,
           subSymbol: '',
-          paymentSymbol: pros.securities.currentCrypto.symbol,
-          items: [
+          paymentSymbol: pros.securities.currentCoin.symbol,
+          items: <Iterable<String>>[
             /// send the correct items
-            if (isSub) ['Name', fullName(true), '2'],
-            if (!isSub) ['Name', fullName(), '2'],
-            if (needsQuantity) ['Quantity', quantityController.text],
-            if (needsDecimal) ['Decimals', decimalController.text],
+            if (isSub) <String>['Name', fullName(true), '2'],
+            if (!isSub) <String>['Name', fullName(), '2'],
+            if (needsQuantity) <String>['Quantity', quantityController.text],
+            if (needsDecimal) <String>['Decimals', decimalController.text],
             if (ipfsController.text != '')
-              ['IPFS/Txid', ipfsController.text, '9'],
+              <String>['IPFS/Txid', ipfsController.text, '9'],
             if (needsVerifier)
-              ['Verifier String', verifierController.text, '6'],
-            if (needsReissue) ['Reissuable', reissueValue ? 'Yes' : 'No', '3'],
+              <String>['Verifier String', verifierController.text, '6'],
+            if (needsReissue)
+              <String>['Reissuable', if (reissueValue) 'Yes' else 'No', '3'],
           ],
-          fees: [
+          fees: <Iterable<String>>[
             // Standard / Fast transaction, will pull from settings?
-            ['Standard Transaction', 'calculating fee...'],
-            isNFT
-                ? ['NFT', '5']
-                : isChannel
-                    ? ['Message Channel', '100']
-                    : isQualifier && isSub
-                        ? ['Sub Qualifier Asset', '100']
-                        : isSub
-                            ? ['Sub Asset', '100']
-                            : isMain
-                                ? ['Main Asset', '500']
-                                : isQualifier
-                                    ? ['Qualifier Asset', '1000']
-                                    : isRestricted
-                                        ? ['Restricted Asset', '1500']
-                                        : ['Asset', '500']
+            <String>['Standard Transaction', 'calculating fee...'],
+            if (isNFT)
+              <String>['NFT', '5']
+            else
+              isChannel
+                  ? <String>['Message Channel', '100']
+                  : isQualifier && isSub
+                      ? <String>['Sub Qualifier Asset', '100']
+                      : isSub
+                          ? <String>['Sub Asset', '100']
+                          : isMain
+                              ? <String>['Main Asset', '500']
+                              : isQualifier
+                                  ? <String>['Qualifier Asset', '1000']
+                                  : isRestricted
+                                      ? <String>['Restricted Asset', '1500']
+                                      : <String>['Asset', '500']
           ],
           total: 'calculating total...',
           // produce transaction structure here and the checkout screen will
@@ -659,7 +658,7 @@ class _CreateAssetState extends State<CreateAsset> {
   void formatQuantity() =>
       quantityController.text = quantityController.text.isInt
           ? quantityController.text.asSatsInt().toCommaString()
-          : quantityController.text.toDouble().toCommaString();
+          : quantityController.text.toDouble().toSatsCommaString();
 
   void _produceParentModal() {
     SelectionItems(context, modalSet: SelectionSet.Parents).build(

@@ -4,31 +4,32 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 // unused. see https://github.com/moontreeapp/moontreeV1/issues/648
-Set<Security> securityFromTransactions(Iterable<Transaction> transactions) => [
-      for (var transaction in transactions)
-        [for (var vin in transaction.vins) vin.security!] +
-            [for (var vout in transaction.vouts) vout.security!]
-    ].expand((e) => e).toSet();
+Set<Security> securityFromTransactions(Iterable<Transaction> transactions) =>
+    <List<Security>>[
+      for (Transaction transaction in transactions)
+        <Security>[for (Vin vin in transaction.vins) vin.security!] +
+            <Security>[for (Vout vout in transaction.vouts) vout.security!]
+    ].expand((List<Security> e) => e).toSet();
 
 List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
-  Map<String, AssetHolding> balancesMain = {};
-  Map<String, AssetHolding> balancesSub = {};
-  Map<String, AssetHolding> balancesOther = {};
+  final Map<String, AssetHolding> balancesMain = <String, AssetHolding>{};
+  final Map<String, AssetHolding> balancesSub = <String, AssetHolding>{};
+  final Map<String, AssetHolding> balancesOther = <String, AssetHolding>{};
   //if (holdings.isEmpty) {
   //  holdings = [
   //    Balance(
   //        confirmed: 0,
   //        unconfirmed: 0,
-  //        security: pros.securities.currentCrypto,
+  //        security: pros.securities.currentCoin,
   //        walletId: pros.settings.currentWalletId)
   //  ];
   //}
-  for (var balance in holdings) {
-    var baseSymbol =
+  for (final Balance balance in holdings) {
+    final String baseSymbol =
         balance.security.asset?.baseSymbol ?? balance.security.symbol;
-    var assetType =
-        balance.security.asset?.assetType ?? balance.security.securityType;
-    if ([AssetType.main, AssetType.admin].contains(assetType)) {
+    final Enum assetType =
+        balance.security.asset?.assetType ?? balance.security.getSecurityType;
+    if (<AssetType>[AssetType.main, AssetType.admin].contains(assetType)) {
       if (!balancesMain.containsKey(baseSymbol)) {
         balancesMain[baseSymbol] = AssetHolding(
           symbol: baseSymbol,
@@ -42,7 +43,8 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           admin: assetType == AssetType.admin ? balance : null,
         );
       }
-    } else if ([AssetType.sub, AssetType.subAdmin].contains(assetType)) {
+    } else if (<AssetType>[AssetType.sub, AssetType.subAdmin]
+        .contains(assetType)) {
       if (!balancesSub.containsKey(baseSymbol)) {
         balancesSub[baseSymbol] = AssetHolding(
           symbol: baseSymbol,
@@ -65,7 +67,7 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           restricted: assetType == AssetType.restricted ? balance : null,
           qualifier: assetType == AssetType.qualifier ? balance : null,
           qualifierSub: assetType == AssetType.qualifierSub ? balance : null,
-          crypto: assetType == SecurityType.crypto ? balance : null,
+          coin: assetType == SecurityType.coin ? balance : null,
           fiat: assetType == SecurityType.fiat ? balance : null,
         );
       } else {
@@ -76,7 +78,7 @@ List<AssetHolding> assetHoldings(Iterable<Balance> holdings) {
           restricted: assetType == AssetType.restricted ? balance : null,
           qualifier: assetType == AssetType.qualifier ? balance : null,
           qualifierSub: assetType == AssetType.qualifierSub ? balance : null,
-          crypto: assetType == SecurityType.crypto ? balance : null,
+          coin: assetType == SecurityType.coin ? balance : null,
           fiat: assetType == SecurityType.fiat ? balance : null,
         );
       }
@@ -92,16 +94,12 @@ Balance blank(Asset asset) => Balance(
     confirmed: 0,
     unconfirmed: 0,
     security: asset.security ??
-        Security(
-            securityType: SecurityType.asset,
-            symbol: asset.symbol,
-            chain: Chain.none,
-            net: Net.test));
+        Security(symbol: asset.symbol, chain: Chain.none, net: Net.test));
 
 Map<String, AssetHolding> assetHoldingsFromAssets(String parent) {
-  Map<String, AssetHolding> assets = {};
-  for (var asset in pros.assets) {
-    var assetType = asset.assetType;
+  final Map<String, AssetHolding> assets = <String, AssetHolding>{};
+  for (final Asset asset in pros.assets) {
+    final AssetType assetType = asset.assetType;
     if (!assets.containsKey(asset.baseSubSymbol)) {
       assets[asset.baseSubSymbol] = AssetHolding(
         symbol: asset.baseSubSymbol,

@@ -9,14 +9,14 @@ extension AssetCanHaveOneParent on Asset {
 }
 
 extension AssetHasOneSecurity on Asset {
-  Security? get security => pros.securities.primaryIndex
-      .getOne(symbol, SecurityType.asset, chain, net);
+  Security? get security =>
+      pros.securities.primaryIndex.getOne(symbol, chain, net);
 }
 
 extension AssetHasOneMetadata on Asset {
-  Metadata? get primaryMetadata => [
+  Metadata? get primaryMetadata => <Metadata?>[
         pros.metadatas.primaryIndex.getOne(baseSymbol, metadata, chain, net)
-      ].where((md) => md?.parent == null).firstOrNull;
+      ].where((Metadata? md) => md?.parent == null).firstOrNull;
 }
 
 extension AssetHasManyMetadata on Asset {
@@ -25,21 +25,22 @@ extension AssetHasManyMetadata on Asset {
 
 extension AssetHasOneLogoMetadata on Asset {
   Metadata? get logo {
-    var childrenMetadata = pros.metadatas.bySymbol.getAll(baseSymbol);
-    for (var child in childrenMetadata) {
+    final List<Metadata> childrenMetadata =
+        pros.metadatas.bySymbol.getAll(baseSymbol);
+    for (final Metadata child in childrenMetadata) {
       if (child.logo) {
         return child;
       }
     }
-    var primaryMetadata = [
+    final Metadata? primaryMetadata = <Metadata?>[
       pros.metadatas.primaryIndex.getOne(baseSymbol, metadata, chain, net)
-    ].where((md) => md?.parent == null).firstOrNull;
+    ].where((Metadata? md) => md?.parent == null).firstOrNull;
     if (primaryMetadata?.kind == MetadataType.imagePath) {
       return primaryMetadata;
     }
-    var nonMasterPrimaryMetadata = pros.metadatas.bySymbol
+    final Metadata? nonMasterPrimaryMetadata = pros.metadatas.bySymbol
         .getAll(baseSymbol)
-        .where((md) => md.parent == null)
+        .where((Metadata md) => md.parent == null)
         .firstOrNull;
     if (nonMasterPrimaryMetadata?.kind == MetadataType.imagePath) {
       return nonMasterPrimaryMetadata; // assume parent is logo, could check dims ratio...

@@ -20,9 +20,10 @@ class KeyboardHidesWidgetWithDelay extends StatefulWidget {
 
 class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
     with SingleTickerProviderStateMixin {
-  late List<StreamSubscription> listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   KeyboardStatus? keyboardStatus = KeyboardStatus.down;
-  final Duration animationDuration = Duration(milliseconds: 150);
+  final Duration animationDuration = const Duration(milliseconds: 150);
   late AnimationController controller;
   late Animation<double> _fadeAnimation;
   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
@@ -38,11 +39,11 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
   void initState() {
     super.initState();
     controller = AnimationController(vsync: this, duration: animationDuration);
-    _fadeAnimation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
     listeners.add(streams.app.keyboard.listen((KeyboardStatus? value) async {
       if (value != keyboardStatus) {
         if (value == KeyboardStatus.down) {
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future<void>.delayed(const Duration(milliseconds: 100));
         }
         if (mounted) {
           setState(() {
@@ -56,7 +57,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
   @override
   void dispose() {
     controller.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -73,7 +74,7 @@ class _KeyboardStateHidesWidget extends State<KeyboardHidesWidgetWithDelay>
         ? () {
             controller.reset();
             controller.forward();
-            var ret = keyboardWasUp
+            final Widget ret = keyboardWasUp
                 ? (widget.fade
                     ? FadeTransition(
                         opacity: _fadeAnimation,

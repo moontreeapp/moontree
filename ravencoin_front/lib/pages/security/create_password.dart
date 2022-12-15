@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/services/wallet.dart'
     show populateWalletsWithSensitives, saveSecret, setupWallets;
-import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/services/consent.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
@@ -17,20 +15,23 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/utils/device.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
+import 'package:ravencoin_front/utils/login.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CreatePassword extends StatefulWidget {
+  const CreatePassword({Key? key}) : super(key: key);
+
   @override
   _CreatePasswordState createState() => _CreatePasswordState();
 }
 
 class _CreatePasswordState extends State<CreatePassword> {
-  //late List listeners = [];
-  var password = TextEditingController();
-  var confirm = TextEditingController();
-  var passwordVisible = false;
-  var confirmVisible = false;
+  //late List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
+  TextEditingController password = TextEditingController();
+  TextEditingController confirm = TextEditingController();
+  bool passwordVisible = false;
+  bool confirmVisible = false;
   FocusNode passwordFocus = FocusNode();
   FocusNode confirmFocus = FocusNode();
   FocusNode unlockFocus = FocusNode();
@@ -53,7 +54,7 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   @override
   void dispose() {
-    //for (var listener in listeners) {
+    //for (final StreamSubscription<dynamic>> listener in listeners) {
     //  listener.cancel();
     //}
     password.dispose();
@@ -66,13 +67,14 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Container(
-          padding: EdgeInsets.only(left: 16, right: 16),
+          padding: const EdgeInsets.only(left: 16, right: 16),
           child: CustomScrollView(slivers: <Widget>[
             SliverToBoxAdapter(
               child: Container(
@@ -107,7 +109,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                   height: .0947.ofMediaHeight(context),
                   child: confirmField),
             ),
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: SizedBox(height: 16),
             ),
             SliverToBoxAdapter(
@@ -123,7 +125,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
+                        children: <Widget>[
                           SizedBox(
                             height: .063.ofMediaHeight(context),
                           ),
@@ -131,7 +133,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                           SizedBox(
                             height: .021.ofMediaHeight(context),
                           ),
-                          Row(children: [unlockButton]),
+                          Row(children: <Widget>[unlockButton]),
                           SizedBox(
                             height: .052.ofMediaHeight(context),
                           ),
@@ -152,7 +154,7 @@ class _CreatePasswordState extends State<CreatePassword> {
 
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+        children: <Widget>[
           Container(
               alignment: Alignment.center, width: 18, child: aggrementCheckbox),
           Container(
@@ -165,7 +167,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                       .textTheme
                       .bodyText2,
                   children: <TextSpan>[
-                    TextSpan(text: "I agree to Moontree's\n"),
+                    const TextSpan(text: "I agree to Moontree's\n"),
                     TextSpan(
                         text: 'User Agreement',
                         style: Theme.of(components.navigator.routeContext!)
@@ -176,7 +178,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.user_agreement)));
                           }),
-                    TextSpan(text: ', '),
+                    const TextSpan(text: ', '),
                     TextSpan(
                         text: 'Privacy Policy',
                         style: Theme.of(components.navigator.routeContext!)
@@ -187,7 +189,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.privacy_policy)));
                           }),
-                    TextSpan(text: ',\n and '),
+                    const TextSpan(text: ',\n and '),
                     TextSpan(
                         text: 'Risk Disclosure',
                         style: Theme.of(components.navigator.routeContext!)
@@ -201,7 +203,7 @@ class _CreatePasswordState extends State<CreatePassword> {
                   ],
                 ),
               )),
-          SizedBox(
+          const SizedBox(
             width: 18,
           ),
         ],
@@ -277,7 +279,7 @@ class _CreatePasswordState extends State<CreatePassword> {
               ));
             }
           }),
-      onPressed: () async => await submit());
+      onPressed: () async => submit());
 
   Widget get aggrementCheckbox => Checkbox(
         //checkColor: Colors.white,
@@ -296,10 +298,10 @@ class _CreatePasswordState extends State<CreatePassword> {
         isConsented;
   }
 
-  Future consentToAgreements() async {
+  Future<void> consentToAgreements() async {
     // consent just once
     if (!consented) {
-      final consent = Consent();
+      final Consent consent = Consent();
       await consent.given(await getId(), ConsentDocument.user_agreement);
       await consent.given(await getId(), ConsentDocument.privacy_policy);
       await consent.given(await getId(), ConsentDocument.risk_disclosures);
@@ -307,7 +309,7 @@ class _CreatePasswordState extends State<CreatePassword> {
     }
   }
 
-  Future submit({bool showFailureMessage = true}) async {
+  Future<void> submit({bool showFailureMessage = true}) async {
     // since the concent calls take some time, maybe this should be removed...?
     if (validate()) {
       // only run once - disable button
@@ -315,17 +317,20 @@ class _CreatePasswordState extends State<CreatePassword> {
       await services.authentication
           .setMethod(method: AuthMethod.moontreePassword);
       await consentToAgreements();
-      //await Future.delayed(Duration(milliseconds: 200)); // in release mode?
+      //await Future<void>.delayed(const Duration(milliseconds: 200)); // in release mode?
       await populateWalletsWithSensitives();
       await services.authentication.setPassword(
         password: password.text,
+        //salt: password.text, // we should salt it with the password itself...
+        /// if we salt with this we must provide it to them for decrypting
+        /// exports, which means since this is the way it already is, this will
+        /// require a migration or a password reset before the export feature is
+        /// made available... unless we don't encrypt exports...
         salt: await SecureStorage.authenticationKey,
         message: '',
         saveSecret: saveSecret,
       );
       await exitProcess();
-      streams.app.context.add(AppContext.wallet);
-      streams.app.verify.add(true);
     } else {
       setState(() {
         password.text = '';
@@ -334,16 +339,12 @@ class _CreatePasswordState extends State<CreatePassword> {
   }
 
   Future<void> exitProcess() async {
-    await setupWallets();
-    Navigator.pushReplacementNamed(context, '/home', arguments: {});
-    services.cipher.initCiphers(
-      altPassword: password.text,
-      altSalt: await SecureStorage.authenticationKey,
+    await components.loading.screen(
+      message: 'Creating Wallet',
+      returnHome: false,
+      playCount: 4,
     );
-    await services.cipher.updateWallets();
-    services.cipher.cleanupCiphers();
-    services.cipher.loginTime();
-    streams.app.splash.add(false); // trigger to refresh app bar again
-    streams.app.logout.add(false);
+    await setupWallets();
+    login(context, password: password.text);
   }
 }

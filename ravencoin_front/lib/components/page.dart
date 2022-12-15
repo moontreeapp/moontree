@@ -21,9 +21,9 @@ class PageComponents {
     Widget? widthSpacer,
     ScrollController? controller,
   }) {
-    heightSpacer = heightSpacer ?? SizedBox(height: 16);
-    widthSpacer = widthSpacer ?? SizedBox(width: 16);
-    var fields = formFields(
+    heightSpacer = heightSpacer ?? const SizedBox(height: 16);
+    widthSpacer = widthSpacer ?? const SizedBox(width: 16);
+    final Widget fields = formFields(
       context,
       boxedWidgets: boxedWidgets,
       columnWidgets: columnWidgets,
@@ -36,7 +36,7 @@ class PageComponents {
     return floatingButtons == null
         ? fields
         : Stack(
-            children: [
+            children: <Widget>[
               fields,
               KeyboardHidesWidgetWithDelay(
                   child: components.buttons.floatingButtons(
@@ -58,38 +58,38 @@ class PageComponents {
     ScrollController? controller,
     bool extraSpace = false,
   }) {
-    heightSpacer = heightSpacer ?? SizedBox(height: 16);
-    widthSpacer = widthSpacer ?? SizedBox(width: 16);
+    heightSpacer = heightSpacer ?? const SizedBox(height: 16);
+    widthSpacer = widthSpacer ?? const SizedBox(width: 16);
     return Container(
-        padding: EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 0),
+        padding: const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 0),
         alignment: Alignment.bottomCenter,
         child: CustomScrollView(
             //shrinkWrap: true,
             controller: controller,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             slivers: <Widget>[
-              SliverToBoxAdapter(child: SizedBox(height: 6)),
+              const SliverToBoxAdapter(child: SizedBox(height: 6)),
               ...<Widget>[
-                if ((boxedWidgets ?? []).isNotEmpty)
-                  for (var widget in boxedWidgets!)
+                if ((boxedWidgets ?? <Widget>[]).isNotEmpty)
+                  for (Widget widget in boxedWidgets!)
                     SliverToBoxAdapter(
                         child: Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
+                            padding: const EdgeInsets.only(left: 16, right: 16),
                             child: widget))
               ].intersperse(heightSpacer),
-              if ((columnWidgets ?? []).isNotEmpty)
+              if ((columnWidgets ?? <Widget>[]).isNotEmpty)
                 SliverToBoxAdapter(
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    for (var widget in columnWidgets!)
+                    for (Widget widget in columnWidgets!)
                       Padding(
-                          padding: EdgeInsets.only(left: 16, right: 16),
+                          padding: const EdgeInsets.only(left: 16, right: 16),
                           child: widget)
                   ].intersperse(heightSpacer).toList(),
                 )),
               if (extraSpace)
-                SliverToBoxAdapter(child: SizedBox(height: 120.0)),
+                const SliverToBoxAdapter(child: SizedBox(height: 120.0)),
               if (buttons != null)
                 SliverFillRemaining(
                     hasScrollBody: false,
@@ -102,7 +102,7 @@ class PageComponents {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    for (var widget in buttons) widget
+                                    for (Widget widget in buttons) widget
                                   ].intersperse(widthSpacer).toList())),
                         ])),
             ]));

@@ -9,15 +9,15 @@ part 'rate.g.dart';
 @HiveType(typeId: TypeId.Rate)
 class Rate with EquatableMixin {
   @HiveField(0)
-  Security base;
+  final Security base;
 
   @HiveField(1)
-  Security quote;
+  final Security quote;
 
   @HiveField(2)
-  double rate;
+  final double rate;
 
-  Rate({
+  const Rate({
     required this.base,
     required this.quote,
     required this.rate,
@@ -37,7 +37,7 @@ class Rate with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [base, quote, rate];
+  List<Object?> get props => <Object?>[base, quote, rate];
 
   String get id => Rate.rateKey(base, quote);
 

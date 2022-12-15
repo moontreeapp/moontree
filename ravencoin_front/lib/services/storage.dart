@@ -5,16 +5,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:ravencoin_back/records/raw/secret.dart';
-import 'package:ravencoin_back/utilities/random.dart';
 import 'package:share/share.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:ravencoin_back/records/raw/secret.dart';
 
 class Storage {
-  Future<Directory> get _localDir async =>
-      await getApplicationDocumentsDirectory();
+  Future<Directory> get _localDir async => getApplicationDocumentsDirectory();
 
   Future<String> get localPath async => (await _localDir).path;
 
@@ -23,6 +22,7 @@ class Storage {
       File('${path ?? await localPath}/$filename.$extension');
 
   Future<File> _verifyLocalFile(File file) async {
+    // ignore: avoid_slow_async_io
     if (!await file.exists()) {
       await file.create(recursive: true);
     }
@@ -30,7 +30,7 @@ class Storage {
   }
 
   Future<List<FileSystemEntity>> listDir([String? path]) async =>
-      await (path != null ? Directory(path) : await _localDir).list().toList();
+      (path != null ? Directory(path) : await _localDir).list().toList();
 }
 
 class Backup extends Storage {
@@ -42,14 +42,14 @@ class Backup extends Storage {
     rawExport = rawExport ?? jsonEncode(export);
     if (!await Permission.storage.request().isGranted) {
       // ignore: null_argument_to_non_null_type
-      return Future.value(null);
+      return Future<File>.value(null);
     }
     return (await _verifyLocalFile(await _localFile(filename)))
       ..writeAsString(rawExport);
   }
 
-  void share(String filepath) async =>
-      Share.shareFiles([filepath], text: 'Ravencoin Backup');
+  Future<void> share(String filepath) async =>
+      Share.shareFiles(<String>[filepath], text: 'Ravencoin Backup');
 
   Future<Map<String, dynamic>> readExport({
     File? file,
@@ -58,9 +58,10 @@ class Backup extends Storage {
   }) async {
     file = file ?? await _localFile(filename!, path: path);
     try {
-      return json.decode(await file.readAsString());
+      return json.decode(await file.readAsString()) as Map<String, dynamic>? ??
+          <String, dynamic>{};
     } catch (e) {
-      return {};
+      return <String, dynamic>{};
     }
   }
 
@@ -83,7 +84,7 @@ class Backup extends Storage {
     String? path,
   }) async {
     file = file ?? await _localFile(filename!, path: path);
-    var size = file.lengthSync() / 1024;
+    final double size = file.lengthSync() / 1024;
     try {
       //try {
       //  var content = file.readAsStringSync();
@@ -92,7 +93,7 @@ class Backup extends Storage {
       //      content: content,
       //      size: size);
       //} catch (e) {
-      var contentBytes = await file.readAsBytes();
+      final Uint8List contentBytes = await file.readAsBytes();
       return FileDetails(
           filename: filename ?? file.path.split('/').last,
           contentBytes: contentBytes,
@@ -105,7 +106,7 @@ class Backup extends Storage {
   }
 
   Future<Map<String, dynamic>?> readFromFilePicker() async {
-    FilePickerResult? result =
+    final FilePickerResult? result =
         await FilePicker.platform.pickFiles(allowMultiple: false);
     if (result == null) {
       // file not found?
@@ -113,20 +114,20 @@ class Backup extends Storage {
     }
     //return await readExport(
     //    path: result.files[0].path, filename: result.files[0].name);
-    return await readExport(file: File(result.files.single.path!));
+    return readExport(file: File(result.files.single.path!));
   }
 
   Future<String?> readFromFilePickerRaw() async {
-    FilePickerResult? result =
+    final FilePickerResult? result =
         await FilePicker.platform.pickFiles(allowMultiple: false);
     if (result == null) {
       return null;
     }
-    return await readExportRaw(file: File(result.files.single.path!));
+    return readExportRaw(file: File(result.files.single.path!));
   }
 
   Future<FileDetails?> readFromFilePickerSize() async {
-    FilePickerResult? result =
+    final FilePickerResult? result =
         await FilePicker.platform.pickFiles(allowMultiple: false);
     if (result == null) {
       // file not found?
@@ -134,7 +135,7 @@ class Backup extends Storage {
     }
     //return await readExport(
     //    path: result.files[0].path, filename: result.files[0].name);
-    return await readExportSize(file: File(result.files.single.path!));
+    return readExportSize(file: File(result.files.single.path!));
   }
 }
 
@@ -154,7 +155,7 @@ class AssetLogos extends Storage {
   }) async {
     if (!await Permission.storage.request().isGranted) {
       // ignore: null_argument_to_non_null_type
-      return Future.value(null);
+      return Future<File>.value(null);
     }
 
     return (await _verifyLocalFile(await _localFile(filename)))
@@ -179,7 +180,7 @@ class AssetLogos extends Storage {
   /// Image.file(await storage.readLogoFile(ipfsHash))
   Future<File?> readLogoFile(String filename,
       {bool returnEmptyFile = false}) async {
-    var file = await _localFile(filename);
+    final File file = await _localFile(filename);
     if (!await file.exists()) {
       return file;
     }
@@ -198,27 +199,26 @@ class AssetLogos extends Storage {
 }
 
 class FileDetails {
-  final String filename;
-  final Uint8List? contentBytes;
-  final String? content;
-  final double size;
-
   FileDetails(
       {required this.filename,
       required this.size,
       this.content,
       this.contentBytes});
+  final String filename;
+  final Uint8List? contentBytes;
+  final String? content;
+  final double size;
 }
 
 class SecureStorage {
-  Future example() async {
-    final key = 'key';
+  Future<void> example() async {
+    const String key = 'key';
     // Create storage
-    final storage = new FlutterSecureStorage();
+    const FlutterSecureStorage storage = FlutterSecureStorage();
     // Read value
-    String? value = await storage.read(key: key);
-    // Read all values
-    Map<String, String> allValues = await storage.readAll();
+    final String? value = await storage.read(key: key);
+    // Read all values // unused
+    //final Map<String, String> allValues = await storage.readAll();
     // Write value
     await storage.write(key: key, value: value);
     // Delete value
@@ -227,22 +227,24 @@ class SecureStorage {
     await storage.deleteAll();
   }
 
-  static const authkey = 'authenticationKey';
+  static const String authkey = 'authenticationKey';
 
   static Future<String> get authenticationKey async {
-    final storage = FlutterSecureStorage();
-    String? value = await storage.read(key: authkey);
+    const FlutterSecureStorage storage = FlutterSecureStorage();
+    final String? value = await storage.read(key: authkey);
     if (value != null) {
       return value;
     }
-    final bioKey = randomString();
+    final String bioKey = randomString();
     await storage.write(key: authkey, value: bioKey);
     return bioKey;
   }
 
   static Future<void> writeSecret(Secret? secret) async {
-    if (secret == null) return;
-    final storage = FlutterSecureStorage();
+    if (secret == null) {
+      return;
+    }
+    const FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.write(
       key: secret.pubkey ??
           secret.scripthash ??
@@ -256,8 +258,8 @@ class SecureStorage {
   }
 
   static Future<String?> readSecret(Secret secret) async {
-    final storage = FlutterSecureStorage();
-    return await storage.read(
+    const FlutterSecureStorage storage = FlutterSecureStorage();
+    return storage.read(
         key: secret.pubkey ??
             secret.scripthash ??
             passwordIdKey(secret.passwordId!));
@@ -266,17 +268,17 @@ class SecureStorage {
   static String passwordIdKey(int passwordId) => 'passwordId${passwordId}';
 
   static Future<String?> read(String key) async {
-    final storage = FlutterSecureStorage();
-    return await storage.read(key: key);
+    const FlutterSecureStorage storage = FlutterSecureStorage();
+    return storage.read(key: key);
   }
 
   static Future<Map<String, String>> readAll() async {
-    final storage = FlutterSecureStorage();
-    return await storage.readAll();
+    const FlutterSecureStorage storage = FlutterSecureStorage();
+    return storage.readAll();
   }
 
   static Future<void> write(String key, String? value) async {
-    final storage = FlutterSecureStorage();
+    const FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.write(
       key: key,
       value: value,
@@ -288,7 +290,7 @@ class SecureStorage {
   }
 
   static Future<void> deleteAll() async {
-    final storage = FlutterSecureStorage();
+    const FlutterSecureStorage storage = FlutterSecureStorage();
     storage.deleteAll();
   }
 }

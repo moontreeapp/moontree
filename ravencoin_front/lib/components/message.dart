@@ -27,8 +27,8 @@ class MessageComponents {
               content: child != null && content != null
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
+                      children: <Widget>[
+                        SizedBox(
                             width: MediaQuery.of(context).size.width -
                                 (24 - 24 - 40 - 40),
                             child: Text(content,
@@ -42,10 +42,9 @@ class MessageComponents {
                         child,
                       ],
                     )
-                  : child != null
-                      ? child
-                      : content != null
-                          ? Container(
+                  : child ??
+                      (content != null
+                          ? SizedBox(
                               width: MediaQuery.of(context).size.width -
                                   (24 - 24 - 40 - 40),
                               child: Text(content,
@@ -56,16 +55,16 @@ class MessageComponents {
                                       .textTheme
                                       .bodyText2!
                                       .copyWith(color: AppColors.black38)))
-                          : null,
-              actions: [
-                for (var key in behaviors.keys)
+                          : null),
+              actions: <Widget>[
+                for (String key in behaviors.keys)
                   TextButton(
+                      onPressed: behaviors[key],
                       child: Text(key,
                           style: Theme.of(context).textTheme.button!.copyWith(
                               fontWeight: FontWeights.semiBold,
-                              color: AppColors.primary)),
-                      onPressed: behaviors[key])
+                              color: AppColors.primary)))
               ]);
-        }).then((value) => streams.app.scrim.add(false));
+        }).then((dynamic value) => streams.app.scrim.add(false));
   }
 }

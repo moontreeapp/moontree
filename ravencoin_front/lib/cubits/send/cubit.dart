@@ -1,19 +1,30 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:wallet_utils/wallet_utils.dart'
+    show AmountToSatsExtension, FeeRate, standardFee;
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_front/cubits/state.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart'
-    show FeeRate, FeeRates, standardFee, cheapFee, fastFee;
-import 'package:utils/zips.dart' show zipLists;
+import 'package:ravencoin_front/cubits/parents.dart';
 
 part 'state.dart';
 
-class SimpleSendFormCubit extends Cubit<SimpleSendFormState> {
+class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
+    with SetCubitMixin {
   SimpleSendFormCubit() : super(SimpleSendFormState.initial());
 
+  @override
+  Future<void> reset() async => emit(SimpleSendFormState.initial());
+
+  @override
   SimpleSendFormState submitting() => state.load(isSubmitting: true);
 
-  Future<SimpleSendFormState> set(
+  @override
+  Future<void> enter() async {
+    emit(submitting());
+    emit(state);
+  }
+
+  @override
+  void set({
     Security? security,
     String? address,
     double? amount,
@@ -22,19 +33,19 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState> {
     String? note,
     String? addressName,
     bool? isSubmitting,
-  ) async =>
-      state.load(
-        security: security,
-        address: address,
-        amount: amount,
-        fee: fee,
-        memo: memo,
-        note: note,
-        addressName: addressName,
-        isSubmitting: isSubmitting,
-      );
-
-  void enter() async => emit(state);
+  }) {
+    emit(submitting());
+    emit(state.load(
+      security: security,
+      address: address,
+      amount: amount,
+      fee: fee,
+      memo: memo,
+      note: note,
+      addressName: addressName,
+      isSubmitting: isSubmitting,
+    ));
+  }
 
   //void submit() async {
   //  emit(await submitSend());

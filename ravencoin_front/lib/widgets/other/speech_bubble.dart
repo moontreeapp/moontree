@@ -16,7 +16,7 @@ enum NipLocation {
 class SpeechBubble extends StatelessWidget {
   /// Creates a widget that emulates a speech bubble.
   /// Could be used for a tooltip, or as a pop-up notification, etc.
-  SpeechBubble({
+  const SpeechBubble({
     Key? key,
     required this.child,
     this.nipLocation = NipLocation.top,
@@ -75,8 +75,9 @@ class SpeechBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     Offset? nipOffset;
     AlignmentGeometry? alignment;
-    var rotatedNipHalfHeight = getNipHeight(nipHeight) / 2;
-    var offset = (nipHeight / 2 + rotatedNipHalfHeight) - (nipBorderRadius / 2);
+    double rotatedNipHalfHeight = getNipHeight(nipHeight) / 2;
+    double offset =
+        (nipHeight / 2 + rotatedNipHalfHeight) - (nipBorderRadius / 2);
     switch (nipLocation) {
       case NipLocation.top:
         nipOffset = Offset(nipOffCenter, -offset + rotatedNipHalfHeight);
@@ -150,13 +151,13 @@ class SpeechBubble extends StatelessWidget {
     return Transform.translate(
       offset: nipOffset,
       child: RotationTransition(
-        turns: AlwaysStoppedAnimation(45 / 360),
+        turns: const AlwaysStoppedAnimation<double>(45 / 360),
         child: Material(
           borderRadius: BorderRadius.all(
             Radius.circular(nipBorderRadius),
           ),
           color: color,
-          child: Container(
+          child: SizedBox(
             height: nipHeight,
             width: nipHeight,
           ),

@@ -1,6 +1,9 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:ravencoin_front/services/dev.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 
 Future<String> Function(String id) get getEntropy => _getSecret;
@@ -10,15 +13,17 @@ Future<String> _getSecret(String id) async =>
     await SecureStorage.read(id) ?? '';
 
 Future<void> _saveSecret(Secret secret) async =>
-    await SecureStorage.writeSecret(secret);
+    SecureStorage.writeSecret(secret);
 
 Future<String> generateWallet({
   WalletType? walletType,
   String? mnemonic,
 }) async {
-  final wallet = await services.wallet.createSave(
+  streams.app.triggers.add(ThresholdTrigger.backup);
+  final Wallet? wallet = await services.wallet.createSave(
     walletType: walletType,
     mnemonic: mnemonic,
+    backedUp: devFlags.contains(DevFlag.skipBackup),
     getSecret: _getSecret,
     saveSecret: _saveSecret,
   );
@@ -31,18 +36,18 @@ Future<String> generateWallet({
   return wallet!.id;
 }
 
-Future setupRealWallet([String? id]) async {
-  final mnemonic;
+Future<void> setupRealWallet([String? id]) async {
+  final String? mnemonic;
   if (id != null) {
-    await dotenv.load(fileName: '.env');
-    mnemonic = dotenv.env['TEST_WALLET_0$id']!;
+    await dotenv.load();
+    mnemonic = dotenv.env['TEST_WALLET_0$id'];
   } else {
     mnemonic = null;
   }
   await generateWallet(walletType: WalletType.leader, mnemonic: mnemonic);
 }
 
-Future setupWallets() async {
+Future<void> setupWallets() async {
   if (pros.wallets.records.isEmpty) {
     await setupRealWallet();
     await pros.settings.setCurrentWalletId(pros.wallets.first.id);
@@ -54,17 +59,22 @@ Future<void> switchWallet(String walletId) async {
   /// CLAIM FEATURE -- actually don't clear it here, instead make it a map by walletId
   //streams.claim.unclaimed.add(<Vout>{});
 
+  if (streams.client.busy.value) {
+    await services.client.disconnect();
+    await services.client.createClient();
+  }
+
   await pros.settings.setCurrentWalletId(walletId);
   streams.app.fling.add(false);
   streams.app.setting.add(null);
-  final currentWallet = pros.wallets.primaryIndex.getOne(walletId);
-  if (currentWallet is LeaderWallet && currentWallet.addresses.isEmpty) {
+  final Wallet? currentWallet = pros.wallets.primaryIndex.getOne(walletId);
+  if (currentWallet is LeaderWallet && currentWallet.addressesFor().isEmpty) {
     await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
   }
 }
 
 Future<void> populateWalletsWithSensitives() async {
-  for (var wallet in pros.wallets.records) {
+  for (final Wallet wallet in pros.wallets.records) {
     if (wallet is LeaderWallet) {
       wallet.setSecret(_getSecret);
     } else if (wallet is SingleWallet) {
@@ -75,8 +85,8 @@ Future<void> populateWalletsWithSensitives() async {
 
 /// moves entropy to secure storage
 Future<void> updateWalletsToSecureStorage() async {
-  var records = <Wallet>[];
-  for (var wallet in pros.wallets.records) {
+  final List<Wallet> records = <Wallet>[];
+  for (final Wallet wallet in pros.wallets.records) {
     if (wallet is LeaderWallet) {
       if (wallet.encryptedEntropy != '') {
         records.add(LeaderWallet.from(
@@ -110,8 +120,8 @@ Future<void> updateWalletsToSecureStorage() async {
 
 /// '1' -> 'Wallet 1'
 Future<void> updateWalletNames() async {
-  var records = <Wallet>[];
-  for (var wallet in pros.wallets.records) {
+  final List<Wallet> records = <Wallet>[];
+  for (final Wallet wallet in pros.wallets.records) {
     if (wallet is LeaderWallet) {
       if (wallet.name.isInt) {
         records.add(LeaderWallet.from(
@@ -122,7 +132,7 @@ Future<void> updateWalletNames() async {
         ));
       }
     } else if (wallet is SingleWallet) {
-      if (wallet.name.isInt != '') {
+      if (wallet.name.isInt) {
         records.add(SingleWallet.from(
           wallet,
           name: 'Wallet ${wallet.name}',
@@ -136,54 +146,54 @@ Future<void> updateWalletNames() async {
 /// we brought our enums into conformity by making the values lowercase, so we
 /// should update the indexes of the boxes to reflect that.
 Future<void> updateEnumLowerCase() async {
-  var settings = pros.settings.records.toList();
+  final List<Setting> settings = pros.settings.records.toList();
   await pros.settings.delete();
-  for (var setting in settings) {
+  for (final Setting setting in settings) {
     await pros.settings.save(Setting.from(setting), force: true);
   }
   if (pros.settings.chain == Chain.none) {
     await pros.settings.save(
-        Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+        const Setting(name: SettingName.blockchain, value: Chain.ravencoin),
         force: true);
     await pros.settings.save(
-        Setting(name: SettingName.electrum_net, value: Net.main),
+        const Setting(name: SettingName.electrum_net, value: Net.main),
         force: true);
   }
-  var rates = pros.rates.records.toList();
-  var balances = pros.balances.records.toList();
+  final List<Rate> rates = pros.rates.records.toList();
+  final List<Balance> balances = pros.balances.records.toList();
   await pros.rates.delete();
   await pros.balances.delete();
-  for (var rate in rates) {
+  for (final Rate rate in rates) {
     await pros.rates.save(Rate.from(rate), force: true);
   }
-  for (var balance in balances) {
+  for (final Balance balance in balances) {
     await pros.balances.save(Balance.from(balance), force: true);
   }
 }
 
 Future<void> updateChain() async {
-  var settings = pros.settings.records.toList();
+  final List<Setting> settings = pros.settings.records.toList();
   await pros.settings.delete();
-  for (var setting in settings) {
+  for (final Setting setting in settings) {
     await pros.settings.save(Setting.from(setting), force: true);
   }
   if (pros.settings.chain == Chain.none) {
     await pros.settings.save(
-        Setting(name: SettingName.blockchain, value: Chain.ravencoin),
+        const Setting(name: SettingName.blockchain, value: Chain.ravencoin),
         force: true);
     await pros.settings.save(
-        Setting(name: SettingName.electrum_net, value: Net.main),
+        const Setting(name: SettingName.electrum_net, value: Net.main),
         force: true);
   }
-  var assets = pros.assets.records.toList();
-  var securities = pros.securities.records.toList();
-  var metadatas = pros.metadatas.records.toList();
-  var unspents = pros.unspents.records.toList();
+  final List<Asset> assets = pros.assets.records.toList();
+  final List<Security> securities = pros.securities.records.toList();
+  final List<Metadata> metadatas = pros.metadatas.records.toList();
+  final List<Unspent> unspents = pros.unspents.records.toList();
   await pros.assets.delete();
   await pros.securities.delete();
   await pros.metadatas.delete();
   await pros.unspents.delete();
-  for (var asset in assets) {
+  for (final Asset asset in assets) {
     await pros.assets.save(
         Asset.from(
           asset,
@@ -192,7 +202,7 @@ Future<void> updateChain() async {
         ),
         force: true);
   }
-  for (var security in securities) {
+  for (final Security security in securities) {
     await pros.securities.save(
         Security.from(
           security,
@@ -201,7 +211,7 @@ Future<void> updateChain() async {
         ),
         force: true);
   }
-  for (var metadata in metadatas) {
+  for (final Metadata metadata in metadatas) {
     await pros.metadatas.save(
         Metadata.from(
           metadata,
@@ -210,7 +220,7 @@ Future<void> updateChain() async {
         ),
         force: true);
   }
-  for (var unspent in unspents) {
+  for (final Unspent unspent in unspents) {
     await pros.unspents.save(
         Unspent.from(
           unspent,

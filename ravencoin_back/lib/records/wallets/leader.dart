@@ -4,12 +4,11 @@ import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:ravencoin_back/utilities/hex.dart' as hex;
-
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' as ravenwallet;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/utilities/seed_wallet.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' as ravenwallet;
 
 import '../_type_id.dart';
 
@@ -69,8 +68,14 @@ class LeaderWallet extends Wallet {
       _getEntropy = getEntropy;
 
   @override
-  List<Object?> get props =>
-      [id, cipherUpdate, encryptedEntropy, backedUp, skipHistory, name];
+  List<Object?> get props => <Object?>[
+        id,
+        cipherUpdate,
+        encryptedEntropy,
+        backedUp,
+        skipHistory,
+        name
+      ];
 
   @override
   String toString() =>
@@ -80,11 +85,11 @@ class LeaderWallet extends Wallet {
   String get encrypted => encryptedEntropy;
 
   Future<String> get encryptedSecret async => encryptedEntropy == ''
-      ? await (_getEntropy ?? (id) async => id)(id)
+      ? await (_getEntropy ?? (String id) async => id)(id)
       : encryptedEntropy;
 
   @override
-  Future<String> secret([CipherBase? cipher]) async => await mnemonic;
+  Future<String> secret([CipherBase? cipher]) async => mnemonic;
 
   @override
   Future<ravenwallet.HDWallet> seedWallet(
@@ -123,6 +128,5 @@ class LeaderWallet extends Wallet {
 
   Future<String> get mnemonic async => bip39.entropyToMnemonic(await entropy);
 
-  Future<String> get entropy async =>
-      hex.decrypt(await encryptedSecret, cipher!);
+  Future<String> get entropy async => decrypt(await encryptedSecret, cipher!);
 }

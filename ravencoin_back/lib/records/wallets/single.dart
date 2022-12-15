@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/utilities/seed_wallet.dart';
@@ -53,7 +53,7 @@ class SingleWallet extends Wallet {
 
   @override
   List<Object?> get props =>
-      [id, cipherUpdate, encryptedWIF, skipHistory, name];
+      <Object?>[id, cipherUpdate, encryptedWIF, skipHistory, name];
 
   @override
   String toString() =>
@@ -94,7 +94,7 @@ class SingleWallet extends Wallet {
   Future<String> Function(String id)? get getWif => _getWif;
 
   Future<KPWallet> get kpWallet async =>
-      KPWallet.fromWIF((await wif), pros.settings.network);
+      KPWallet.fromWIF(await wif, pros.settings.network);
 
   Future<String> get wif async => (await ewif).wif;
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -10,8 +12,9 @@ class AppBarScrim extends StatefulWidget {
 }
 
 class _AppBarScrimState extends State<AppBarScrim> {
-  late List listeners = [];
-  final Duration waitForSheetDrop = Duration(milliseconds: 10);
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
+  final Duration waitForSheetDrop = const Duration(milliseconds: 10);
   bool? applyScrim = false;
 
   @override
@@ -22,7 +25,7 @@ class _AppBarScrimState extends State<AppBarScrim> {
         setState(() => applyScrim = null);
       }
       if (applyScrim == true && value == false) {
-        await Future.delayed(waitForSheetDrop);
+        await Future<void>.delayed(waitForSheetDrop);
         setState(() => applyScrim = value);
       }
       if (applyScrim == false && value == true) {
@@ -33,7 +36,7 @@ class _AppBarScrimState extends State<AppBarScrim> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();

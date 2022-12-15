@@ -12,37 +12,36 @@ part 'vin.g.dart';
 @HiveType(typeId: TypeId.Vin)
 class Vin with EquatableMixin {
   @HiveField(0)
-  String transactionId;
+  final String transactionId;
 
   /// all pertinent values are on vouts. so vins point to vouts.
 
   @HiveField(1)
-  String voutTransactionId;
+  final String voutTransactionId;
 
   @HiveField(2)
-  int voutPosition;
+  final int voutPosition;
 
   @HiveField(3)
-  bool isCoinbase;
+  final bool isCoinbase;
 
   /// other possible elements
   // final TxScriptSig? scriptSig;
 
-  Vin(
-      {required this.transactionId,
-      required this.voutTransactionId,
-      required this.voutPosition,
-      this.isCoinbase = false});
-  @override
-  List<Object> get props =>
-      [transactionId, voutTransactionId, voutPosition, isCoinbase];
+  const Vin({
+    required this.transactionId,
+    required this.voutTransactionId,
+    required this.voutPosition,
+    this.isCoinbase = false,
+  });
 
   @override
-  String toString() {
-    return 'Vin('
-        'transactionId: $transactionId, voutTransactionId: $voutTransactionId, voutPosition: $voutPosition, '
-        'isCoinbase: $isCoinbase)';
-  }
+  List<Object> get props =>
+      <Object>[transactionId, voutTransactionId, voutPosition, isCoinbase];
+
+  @override
+  String toString() => 'Vin(transactionId: $transactionId, voutTransactionId: '
+  '$voutTransactionId, voutPosition: $voutPosition, isCoinbase: $isCoinbase)';
 
   /// I think the vinId could be the same as voutId, but we'll just make another
   String get id => sha256

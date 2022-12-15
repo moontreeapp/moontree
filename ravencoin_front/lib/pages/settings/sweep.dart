@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
+import 'package:wallet_utils/wallet_utils.dart' show FeeRate, FeeRates;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/misc/checkout.dart';
@@ -8,7 +10,6 @@ import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/wallet.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show FeeRate, FeeRates;
 
 class SweepPage extends StatefulWidget {
   @override
@@ -16,16 +17,16 @@ class SweepPage extends StatefulWidget {
 }
 
 class _SweepPageState extends State<SweepPage> {
-  final toFocus = FocusNode();
-  final feeFocus = FocusNode();
-  final memoFocus = FocusNode();
-  final noteFocus = FocusNode();
-  final submitFocus = FocusNode();
-  final fromController = TextEditingController();
-  final toController = TextEditingController();
-  final feeController = TextEditingController();
-  final memoController = TextEditingController();
-  final noteController = TextEditingController();
+  final FocusNode toFocus = FocusNode();
+  final FocusNode feeFocus = FocusNode();
+  final FocusNode memoFocus = FocusNode();
+  final FocusNode noteFocus = FocusNode();
+  final FocusNode submitFocus = FocusNode();
+  final TextEditingController fromController = TextEditingController();
+  final TextEditingController toController = TextEditingController();
+  final TextEditingController feeController = TextEditingController();
+  final TextEditingController memoController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
 
   //bool sweepCurrency = true;
   //bool sweepAssets = true;
@@ -59,7 +60,7 @@ class _SweepPageState extends State<SweepPage> {
 
   @override
   Widget build(BuildContext context) => BackdropLayers(
-      back: BlankBack(),
+      back: const BlankBack(),
       front: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: FrontCurve(
@@ -68,7 +69,8 @@ class _SweepPageState extends State<SweepPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                 Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, top: 16),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, top: 16),
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +85,7 @@ class _SweepPageState extends State<SweepPage> {
                               FocusScope.of(context).requestFocus(toFocus);
                             },
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           /// to
                           TextFieldFormatted(
@@ -92,8 +94,8 @@ class _SweepPageState extends State<SweepPage> {
                             readOnly: true,
                             labelText: 'To',
                             suffixIcon: IconButton(
-                              icon: Padding(
-                                  padding: EdgeInsets.only(right: 14),
+                              icon: const Padding(
+                                  padding: const EdgeInsets.only(right: 14),
                                   child: Icon(Icons.expand_more_rounded,
                                       color: Color(0xDE000000))),
                               onPressed: _produceToModal,
@@ -103,7 +105,7 @@ class _SweepPageState extends State<SweepPage> {
                               FocusScope.of(context).requestFocus(feeFocus);
                             },
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           /// fee
                           TextFieldFormatted(
@@ -114,8 +116,8 @@ class _SweepPageState extends State<SweepPage> {
                             labelText: 'Transaction Speed',
                             hintText: 'Standard',
                             suffixIcon: IconButton(
-                              icon: Padding(
-                                  padding: EdgeInsets.only(right: 14),
+                              icon: const Padding(
+                                  padding: const EdgeInsets.only(right: 14),
                                   child: Icon(Icons.expand_more_rounded,
                                       color: Color(0xDE000000))),
                               onPressed: () => _produceFeeModal(),
@@ -129,7 +131,7 @@ class _SweepPageState extends State<SweepPage> {
                               setState(() {});
                             },
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           /// memo
                           TextFieldFormatted(
@@ -157,7 +159,7 @@ class _SweepPageState extends State<SweepPage> {
                               suffixIcon:
                                   clipboard.isAssetData || clipboard.isIpfs
                                       ? IconButton(
-                                          icon: Icon(Icons.paste_rounded,
+                                          icon: const Icon(Icons.paste_rounded,
                                               color: AppColors.black60),
                                           onPressed: () async {
                                             memoController.text =
@@ -167,14 +169,14 @@ class _SweepPageState extends State<SweepPage> {
                                                     '';
                                           })
                                       : null,
-                              onChanged: (value) {
+                              onChanged: (String value) {
                                 setState(() {});
                               },
                               onEditingComplete: () {
                                 FocusScope.of(context).requestFocus(noteFocus);
                                 setState(() {});
                               }),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           /// note
                           TextFieldFormatted(
@@ -204,7 +206,7 @@ class _SweepPageState extends State<SweepPage> {
                                       clipboard.isAddressRVNt
                                   ? null
                                   : IconButton(
-                                      icon: Icon(Icons.paste_rounded,
+                                      icon: const Icon(Icons.paste_rounded,
                                           color: AppColors.black60),
                                       onPressed: () async {
                                         noteController.text =
@@ -214,7 +216,7 @@ class _SweepPageState extends State<SweepPage> {
                                                 '';
                                       },
                                     ),
-                              onChanged: (value) {
+                              onChanged: (String value) {
                                 setState(() {});
                               },
                               onEditingComplete: () {
@@ -224,8 +226,8 @@ class _SweepPageState extends State<SweepPage> {
                               })
                         ])),
                 KeyboardHidesWidgetWithDelay(
-                  child: components.containers
-                      .navBar(context, child: Row(children: [submitButton])),
+                  child: components.containers.navBar(context,
+                      child: Row(children: <Widget>[submitButton])),
                 )
               ]))));
 
@@ -235,7 +237,7 @@ class _SweepPageState extends State<SweepPage> {
       await SimpleSelectionItems(
         components.navigator.routeContext!,
         then: () => dropDownActive = false,
-        items: [
+        items: <Widget>[
               ListTile(
                 visualDensity: VisualDensity.compact,
                 onTap: () async {
@@ -244,12 +246,12 @@ class _SweepPageState extends State<SweepPage> {
                   toController.text =
                       pros.wallets.primaryIndex.getOne(walletId)!.name;
                 },
-                leading: Icon(Icons.add, color: AppColors.primary),
+                leading: const Icon(Icons.add, color: AppColors.primary),
                 title: Text('New Wallet',
                     style: Theme.of(context).textTheme.bodyText1),
               ),
             ] +
-            [
+            <Widget>[
               for (Wallet wallet in pros.wallets.ordered)
                 if (wallet.id != Current.walletId)
                   ListTile(
@@ -259,7 +261,7 @@ class _SweepPageState extends State<SweepPage> {
                       toController.text = wallet.name;
                       Navigator.pop(components.navigator.routeContext!);
                     },
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.account_balance_wallet_rounded,
                       color: AppColors.primary,
                     ),
@@ -279,7 +281,7 @@ class _SweepPageState extends State<SweepPage> {
       await SimpleSelectionItems(
         components.navigator.routeContext!,
         then: () => dropDownActive = false,
-        items: [
+        items: <Widget>[
           ListTile(
             visualDensity: VisualDensity.compact,
             onTap: () async {
@@ -287,7 +289,8 @@ class _SweepPageState extends State<SweepPage> {
               fee = FeeRates.standard;
               feeController.text = 'Standard';
             },
-            leading: Icon(MdiIcons.speedometerMedium, color: AppColors.primary),
+            leading: const Icon(MdiIcons.speedometerMedium,
+                color: AppColors.primary),
             title:
                 Text('Standard', style: Theme.of(context).textTheme.bodyText1),
           ),
@@ -298,7 +301,7 @@ class _SweepPageState extends State<SweepPage> {
               fee = FeeRates.fast;
               feeController.text = 'Fast';
             },
-            leading: Icon(MdiIcons.speedometer, color: AppColors.primary),
+            leading: const Icon(MdiIcons.speedometer, color: AppColors.primary),
             title: Text('Fast', style: Theme.of(context).textTheme.bodyText1),
           ),
         ],
@@ -328,19 +331,21 @@ class _SweepPageState extends State<SweepPage> {
   void confirmSend() {
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transaction/checkout',
-      arguments: {
+      arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(
-          icon: Icon(Icons.account_balance_wallet_rounded,
+          icon: const Icon(Icons.account_balance_wallet_rounded,
               color: AppColors.primary),
           symbol: null,
           displaySymbol: fromController.text,
           subSymbol: null,
           paymentSymbol: null,
-          items: [
-            ['To', toController.text],
-            ['Amount', 'All Coins and Assets'],
-            if (memoController.text != '') ['Memo', memoController.text],
-            if (noteController.text != '') ['Note', noteController.text],
+          items: <List<String>>[
+            <String>['To', toController.text],
+            <String>['Amount', 'All Coins and Assets'],
+            if (memoController.text != '')
+              <String>['Memo', memoController.text],
+            if (noteController.text != '')
+              <String>['Note', noteController.text],
           ],
           fees: null,
           total: null,

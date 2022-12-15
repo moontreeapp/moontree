@@ -1,4 +1,4 @@
-export 'cipher_base.dart';
+export 'package:moontree_utils/types/cipher_base.dart';
 export 'cipher_aes.dart';
 export 'cipher_none.dart';
 

@@ -6,7 +6,7 @@ import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class LockedOutTime extends StatefulWidget {
-  LockedOutTime({Key? key}) : super(key: key);
+  const LockedOutTime({Key? key}) : super(key: key);
 
   @override
   _LockedOutTimeState createState() => _LockedOutTimeState();
@@ -21,8 +21,8 @@ class _LockedOutTimeState extends State<LockedOutTime>
   void initState() {
     super.initState();
     slowController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    slowAnimation = Tween(begin: 1.0, end: 0.0).animate(slowController);
+        AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    slowAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(slowController);
   }
 
   @override
@@ -47,7 +47,7 @@ class _LockedOutTimeState extends State<LockedOutTime>
         //Visibility(
         //    visible: services.password.lockout.timeFromAttempts ~/ 1000 >= 0,
         //    child:
-        LockedOutTimeContent()
+        const LockedOutTimeContent()
         //)
         //)
         ;
@@ -55,7 +55,7 @@ class _LockedOutTimeState extends State<LockedOutTime>
 }
 
 class LockedOutTimeContent extends StatefulWidget {
-  LockedOutTimeContent({Key? key}) : super(key: key);
+  const LockedOutTimeContent({Key? key}) : super(key: key);
 
   @override
   _LockedOutTimeContentState createState() => _LockedOutTimeContentState();
@@ -66,7 +66,7 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
   int originalMilliseconds = 0;
 
   void startTimer() {
-    const oneSec = const Duration(seconds: 1);
+    const Duration oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
@@ -89,30 +89,24 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
 
   @override
   Widget build(BuildContext context) {
-    final loginTime = services.password.lockout.lastFailedAttempt.add(
+    final DateTime loginTime = services.password.lockout.lastFailedAttempt.add(
         Duration(milliseconds: services.password.lockout.timeFromAttempts));
-    final milliseconds =
+    final int milliseconds =
         max(0, loginTime.difference(DateTime.now()).inMilliseconds);
     originalMilliseconds = milliseconds > originalMilliseconds
         ? milliseconds
         : milliseconds <= 0
             ? 0
             : originalMilliseconds;
-    final seconds = milliseconds ~/ 1000;
-    final min = seconds ~/ 60;
-    final sec = (seconds % 60);
-    final tryAgain = 'Please try Again in ';
+    final int seconds = milliseconds ~/ 1000;
+    final int min = seconds ~/ 60;
+    final int sec = seconds % 60;
+    const String tryAgain = 'Please try Again in ';
     return Text(
         min > 0 && sec > 0
-            ? tryAgain +
-                min.toString() +
-                ' minute${min == 1 ? '' : 's'} and ' +
-                sec.toString() +
-                ' second${sec == 1 ? '' : 's'}'
+            ? '$tryAgain$min minute${min == 1 ? '' : 's'} and $sec second${sec == 1 ? '' : 's'}'
             : sec > 0 || (milliseconds > 0 && originalMilliseconds >= 1000)
-                ? tryAgain +
-                    (sec + 1).toString() +
-                    ' second${sec + 1 == 1 ? '.' : 's.'}'
+                ? '$tryAgain${sec + 1} second${sec + 1 == 1 ? '.' : 's.'}'
                 : '',
         style: Theme.of(context)
             .textTheme

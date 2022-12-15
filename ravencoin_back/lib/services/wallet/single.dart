@@ -1,20 +1,23 @@
-import 'package:ravencoin_back/utilities/hex.dart';
-import 'package:ravencoin_wallet/ravencoin_wallet.dart'
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart'
     show KPWallet, NetworkType, ECPair;
 
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class SingleWalletService {
   Future<Address> toAddress(SingleWallet wallet) async {
-    var net = pros.settings.net;
-    var kpWallet = await wallet.kpWallet; //getKPWallet(wallet);
+    final KPWallet kpWallet = await wallet.kpWallet; //getKPWallet(wallet);
     return Address(
-        id: kpWallet.scripthash,
+        scripthash: kpWallet.scripthash,
         address: kpWallet.address!,
         walletId: wallet.id,
         hdIndex: 0,
-        net: net);
+        exposure: NodeExposure.external,
+        chain: pros.settings.chain,
+        net: pros.settings.net);
   }
+
+  bool gapSatisfied(SingleWallet wallet) => wallet.addresses.isNotEmpty;
 
   KPWallet getKPWallet(SingleWallet wallet) => KPWallet.fromWIF(
       EncryptedWIF(wallet.encryptedWIF, wallet.cipher!).wif,
@@ -42,11 +45,11 @@ class SingleWalletService {
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     wif = wif ?? generateRandomWIF(pros.settings.network);
-    final encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
-    final existingWallet =
+    final EncryptedWIF encryptedWIF = EncryptedWIF.fromWIF(wif, cipher);
+    final Wallet? existingWallet =
         pros.wallets.primaryIndex.getOne(encryptedWIF.walletId);
     if (existingWallet == null) {
-      final newWallet = SingleWallet(
+      final SingleWallet newWallet = SingleWallet(
         id: encryptedWIF.walletId,
         encryptedWIF: '', //encryptedWIF.encryptedSecret,
         cipherUpdate: cipherUpdate,
@@ -61,7 +64,7 @@ class SingleWalletService {
         ));
       }
       // TODO: shouldn't we save this to the address pros? and it will subscribe for us...?
-      final address = await services.wallet.single.toAddress(newWallet);
+      final Address address = await services.wallet.single.toAddress(newWallet);
       print('address from KPWallet: ${address.walletId}');
       //await services.client.subscribe.toAddress(address);
       return newWallet;
@@ -79,7 +82,7 @@ class SingleWalletService {
     Future<void> Function(Secret secret)? saveSecret,
   }) async {
     wif = wif ?? generateRandomWIF(pros.settings.network);
-    var singleWallet = await makeSingleWallet(
+    final SingleWallet? singleWallet = await makeSingleWallet(
       cipher,
       cipherUpdate: cipherUpdate,
       wif: wif,

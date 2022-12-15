@@ -9,12 +9,15 @@ class PasswordService {
   final PasswordLockoutService lockout = PasswordLockoutService();
   final PasswordCreationService create = PasswordCreationService();
 
-  bool get exist => pros.passwords.isEmpty ? false : true;
+  bool get exist => pros.passwords.isNotEmpty;
 
   /// are any wallets encrypted with something other than no cipher
   bool get required {
-    for (var cipherUpdate in services.wallet.getAllCipherUpdates) {
-      if (cipherUpdate.cipherType != CipherType.none) return true;
+    for (final CipherUpdate cipherUpdate
+        in services.wallet.getAllCipherUpdates) {
+      if (cipherUpdate.cipherType != CipherType.none) {
+        return true;
+      }
     }
     return false;
   }
@@ -24,8 +27,8 @@ class PasswordService {
       services.cipher.canAskForPasswordNow &&
       !streams.app.verify.value;
 
-  bool interruptedPasswordChange() => {
-        for (var cipherUpdate in services.wallet.getAllCipherUpdates)
+  bool interruptedPasswordChange() => <int?>{
+        for (CipherUpdate cipherUpdate in services.wallet.getAllCipherUpdates)
           if (cipherUpdate.passwordId != pros.passwords.maxPasswordId)
             cipherUpdate.passwordId
       }.isNotEmpty;
@@ -91,12 +94,12 @@ class PasswordValidationService {
   /// 1 = previous
   /// "password was used x passwords ago"
   int? previouslyUsed(String password) {
-    var m = pros.passwords.maxPasswordId;
+    final int? m = pros.passwords.maxPasswordId;
     if (m == null) {
       return null;
     }
-    var ret;
-    for (var pass in pros.passwords.records) {
+    int? ret;
+    for (final Password pass in pros.passwords.records) {
       if (getHash(password, pass.salt) == pass.saltedHash) {
         ret = m - pass.id;
       }
@@ -109,8 +112,8 @@ class PasswordValidationService {
   //[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
   //    .any((int i) => password.contains(i.toString()));
 
-  List<String> complexityExplained(String password) => [
-        if (password == '') ...['must not be blank']
+  List<String> complexityExplained(String password) => <String>[
+        if (password == '') ...<String>['must not be blank']
       ];
   //[
   //  if (password.length < 12) ...['must be at least 12 characters long'],
@@ -125,20 +128,20 @@ class PasswordCreationService {
   String saltPassword(String password, String salt) => '$salt$password';
 
   String hashThis(String saltedPassword) {
-    var bytes = utf8.encode(saltedPassword);
-    var digest = sha256.convert(bytes);
+    final List<int> bytes = utf8.encode(saltedPassword);
+    final Digest digest = sha256.convert(bytes);
     //print('Digest as bytes: ${digest.bytes}');
     //print('Digest as hex string: $digest');
     return digest.toString();
   }
 
-  Future save(
+  Future<void> save(
     String password,
     String salt,
     Future<void> Function(Secret secret) saveSecret,
   ) async {
-    final id = (pros.passwords.maxPasswordId ?? -1) + 1;
-    final saltedHashedPassword = hashThis(saltPassword(
+    final int id = (pros.passwords.maxPasswordId ?? -1) + 1;
+    final String saltedHashedPassword = hashThis(saltPassword(
       password,
       salt, //Password.getSalt((pros.passwords.maxPasswordId ?? -1) + 1),
     ));

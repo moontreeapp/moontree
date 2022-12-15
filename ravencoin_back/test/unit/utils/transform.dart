@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
-import 'package:ravencoin_back/utilities/transform.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 void main() {
   /* 
@@ -7,15 +8,15 @@ void main() {
   */
 
   test('sats to amount', () {
-    expect(satToAmount(1012345678), 10.12345678);
-    expect(satToAmount(1012300000000), 10123);
-    expect(satToAmount(10), 0.00000010);
+    expect(1012345678.asCoin, 10.12345678);
+    expect(1012300000000.asCoin, 10123);
+    expect(10.asCoin, 0.00000010);
   });
 
   test('amount to sat', () {
-    expect(amountToSat(10.12345678), 1012345678);
-    expect(amountToSat(10123), 1012300000000);
-    expect(amountToSat(0.00000010), 10);
+    expect(10.12345678.asSats, 1012345678);
+    expect(10123.asSats, 1012300000000);
+    expect(0.00000010.asSats, 10);
   });
 
   test('test enumerate', () {

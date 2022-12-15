@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 import '_type_id.dart';
@@ -9,31 +10,31 @@ part 'vout.g.dart';
 @HiveType(typeId: TypeId.Vout)
 class Vout with EquatableMixin, ToStringMixin {
   @HiveField(0)
-  String transactionId;
+  final String transactionId;
 
   @HiveField(1)
-  int position;
+  final int position;
 
   // transaction type 'pubkeyhash' 'transfer_asset' 'new_asset' 'nulldata' etc
   @HiveField(2)
-  String type;
+  final String type;
 
   @HiveField(3)
-  int rvnValue; // always RVN
+  final int coinValue; // always RVN
 
   // amount of asset
   @HiveField(4)
-  int? assetValue;
+  final int? assetValue;
 
   // used in asset transfers
   @HiveField(5)
-  String? lockingScript;
+  final String? lockingScript;
 
   @HiveField(6)
-  String? memo;
+  final String? memo;
 
   @HiveField(7)
-  String? assetMemo;
+  final String? assetMemo;
 
   /// other values include
   // final double value;
@@ -41,21 +42,21 @@ class Vout with EquatableMixin, ToStringMixin {
 
   // this is the composite id
   @HiveField(8)
-  String? assetSecurityId;
+  final String? assetSecurityId;
 
   // non-multisig transactions // op return memos don't have a to address
   @HiveField(9)
-  String? toAddress;
+  final String? toAddress;
 
   // multisig, in addition to toAddress
   @HiveField(10)
-  List<String>? additionalAddresses;
+  final List<String>? additionalAddresses;
 
-  Vout({
+  const Vout({
     required this.transactionId,
     required this.position,
     required this.type,
-    required this.rvnValue,
+    required this.coinValue,
     this.assetValue,
     this.lockingScript,
     this.memo,
@@ -70,7 +71,7 @@ class Vout with EquatableMixin, ToStringMixin {
     String? transactionId,
     int? position,
     String? type,
-    int? rvnValue,
+    int? coinValue,
     int? assetValue,
     String? lockingScript,
     String? memo,
@@ -83,10 +84,12 @@ class Vout with EquatableMixin, ToStringMixin {
       transactionId: transactionId ?? unspent.txHash,
       position: position ?? unspent.position,
       type: type ?? 'pubkeyhash',
-      rvnValue: rvnValue ?? unspent.value,
+      coinValue: coinValue ?? unspent.value,
       toAddress: toAddress ??
           unspent.address?.address ??
-          pros.addresses.byScripthash.getOne(unspent.scripthash)?.address,
+          pros.addresses.primaryIndex
+              .getOne(unspent.scripthash, unspent.chain, unspent.net)
+              ?.address,
       assetValue: assetValue,
       lockingScript: lockingScript,
       memo: memo,
@@ -102,11 +105,11 @@ class Vout with EquatableMixin, ToStringMixin {
   //bool get confirmed => position > -1;
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         transactionId,
         position,
         type,
-        rvnValue,
+        coinValue,
         assetValue,
         lockingScript,
         memo,
@@ -120,11 +123,11 @@ class Vout with EquatableMixin, ToStringMixin {
   bool? get stringify => true;
 
   @override
-  List<String> get propNames => [
+  List<String> get propNames => <String>[
         'transactionId',
         'position',
         'type',
-        'rvnValue',
+        'coinValue',
         'assetValue',
         'lockingScript',
         'memo',
@@ -139,19 +142,20 @@ class Vout with EquatableMixin, ToStringMixin {
   static String key(String transactionId, int position) =>
       '$transactionId:$position';
 
-  List<String> get toAddresses =>
-      [if (toAddress != null) toAddress!, ...additionalAddresses ?? []];
+  List<String> get toAddresses => <String>[
+        if (toAddress != null) toAddress!,
+        ...additionalAddresses ?? <String>[]
+      ];
 
-  int securityValue({Security? security}) => security == null ||
-          (security.symbol == pros.securities.currentCrypto.symbol &&
-              security.securityType == SecurityType.crypto)
-      ? rvnValue
-      : (security.id == assetSecurityId)
-          ? assetValue ?? 0
-          : 0;
+  int securityValue({Security? security}) =>
+      security == null || security.symbol == pros.securities.currentCoin.symbol
+          ? coinValue
+          : (security.id == assetSecurityId)
+              ? assetValue ?? 0
+              : 0;
 
-  String get securityId => assetSecurityId ?? pros.securities.currentCrypto.id;
+  String get securityId => assetSecurityId ?? pros.securities.currentCoin.id;
 
   bool get isAsset =>
-      !pros.securities.cryptos.map((e) => e.id).contains(securityId);
+      !pros.securities.coins.map((Security e) => e.id).contains(securityId);
 }

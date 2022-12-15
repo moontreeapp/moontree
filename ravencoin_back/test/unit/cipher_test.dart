@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 
 import 'package:ravencoin_back/security/security.dart';
-import 'package:ravencoin_back/extensions/string.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 
 final Uint8List key128 = '128bit-securekey'.bytesUint8;
 final Uint8List key192 = '192bit-securekeymorebits'.bytesUint8;
@@ -12,7 +12,7 @@ final Uint8List key192 = '192bit-securekeymorebits'.bytesUint8;
 void main() {
   group('Cipher', () {
     test('encrypt with 3-byte password', () {
-      var crypto = CipherAES('***'.bytesUint8);
+      final CipherAES crypto = CipherAES('***'.bytesUint8);
       expect(
           crypto.encrypt('message'.bytesUint8),
           jsonDecode(
@@ -20,7 +20,7 @@ void main() {
     });
 
     test('encrypt with 16-byte password', () {
-      var crypto = CipherAES(key128);
+      final CipherAES crypto = CipherAES(key128);
       expect(
           crypto.encrypt('message'.bytesUint8),
           jsonDecode(
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('encrypt with 24-byte password', () {
-      var crypto = CipherAES(key192);
+      final CipherAES crypto = CipherAES(key192);
       expect(
           crypto.encrypt('message'.bytesUint8),
           jsonDecode(
@@ -36,19 +36,19 @@ void main() {
     });
 
     test('is two-way', () {
-      var crypto = CipherAES(key128);
-      var message = 'message'.bytesUint8;
-      var encrypted = crypto.encrypt(message);
-      var decrypted = crypto.decrypt(encrypted);
+      final CipherAES crypto = CipherAES(key128);
+      final Uint8List message = 'message'.bytesUint8;
+      final Uint8List encrypted = crypto.encrypt(message);
+      final Uint8List decrypted = crypto.decrypt(encrypted);
       expect(encrypted == decrypted, false);
       expect(decrypted, message);
     });
 
     test('works with long messages', () {
-      var crypto = CipherAES(key192);
-      var message = ('A really long message. ' * 1024).bytesUint8;
-      var encrypted = crypto.encrypt(message);
-      var decrypted = crypto.decrypt(encrypted);
+      final CipherAES crypto = CipherAES(key192);
+      final Uint8List message = ('A really long message. ' * 1024).bytesUint8;
+      final Uint8List encrypted = crypto.encrypt(message);
+      final Uint8List decrypted = crypto.decrypt(encrypted);
       expect(decrypted, message);
       expect(decrypted.length, 23552);
     });

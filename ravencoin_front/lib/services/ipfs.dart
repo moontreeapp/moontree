@@ -1,16 +1,15 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:http/http.dart' as http;
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/services/storage.dart';
 
 class LogoGetter extends IpfsCall {
+  LogoGetter([String? ipfsHash]) : super(ipfsHash);
   String? logo;
-  Map<dynamic, dynamic> json = {};
+  Map<dynamic, dynamic> json = <dynamic, dynamic>{};
   bool ableToInterpret = false;
-
-  LogoGetter([ipfsHash]) : super(ipfsHash);
 
   /// given a hash get the logo and other metadata set it on object
   /// return true if able to interpret data
@@ -26,25 +25,24 @@ class LogoGetter extends IpfsCall {
   }
 
   Future<bool> _getMetadata() async {
-    var response = await callIpfs();
-    var jsonBody;
+    final http.Response response = await callIpfs();
+    Map<dynamic, dynamic>? jsonBody;
     if (_verify(response)) {
       jsonBody = _detectJson(response);
       if (jsonBody is Map<dynamic, dynamic>) {
         return _interpret(jsonBody);
       } else {
-        return await _interpretAsImage(response.bodyBytes);
+        return _interpretAsImage(response.bodyBytes);
       }
     }
     return false;
   }
 
-  bool _verify(http.Response response) =>
-      response.statusCode == 200 ? true : false;
+  bool _verify(http.Response response) => response.statusCode == 200;
 
   Map<dynamic, dynamic>? _detectJson(http.Response response) {
     try {
-      return jsonDecode(response.body);
+      return jsonDecode(response.body) as Map<dynamic, dynamic>?;
     } catch (e) {
       return null;
     }
@@ -57,13 +55,13 @@ class LogoGetter extends IpfsCall {
    "image": "https://ipfs.io/ipfs/QmUnMkaEB5FBMDhjPsEtLyHr4ShSAoHUrwqVryCeuMosNr"
   }
   */
-  bool _interpret(Map jsonBody) {
+  bool _interpret(Map<dynamic, dynamic> jsonBody) {
     String? imgString;
-    var keyName = '';
-    for (var kn in ['logo', 'icon', 'image']) {
+    String keyName = '';
+    for (final String kn in <String>['logo', 'icon', 'image']) {
       if (jsonBody.keys.contains(kn)) {
         keyName = kn;
-        imgString = jsonBody[kn];
+        imgString = jsonBody[kn] as String;
         break;
       }
     }
@@ -71,7 +69,7 @@ class LogoGetter extends IpfsCall {
       throw BadResponseException('unable to interpret json data');
       //return false;
     }
-    if (!(jsonBody[keyName] is String)) {
+    if (jsonBody[keyName] is! String) {
       throw BadResponseException('unable to interpret json data');
       //return false;
     }
@@ -93,7 +91,7 @@ class LogoGetter extends IpfsCall {
   /// save bytes return path
   Future<bool> _interpretAsImage(Uint8List bytes,
       {String? givenIpfsHash}) async {
-    AssetLogos storage = AssetLogos();
+    final AssetLogos storage = AssetLogos();
     //var path =
     (await storage.writeLogo(
       filename: givenIpfsHash ?? logo ?? ipfsHash!,
@@ -107,9 +105,8 @@ class LogoGetter extends IpfsCall {
 }
 
 class IpfsMiniExplorer extends IpfsCall {
+  IpfsMiniExplorer([String? ipfsHash]) : super(ipfsHash);
   MetadataType kind = MetadataType.unknown;
-
-  IpfsMiniExplorer([ipfsHash]) : super(ipfsHash);
 
   /// returns string: json or path of image or null
   Future<String?> get([String? givenIpfsHash]) async {
@@ -123,8 +120,8 @@ class IpfsMiniExplorer extends IpfsCall {
   }
 
   Future<String?> _getMetadata() async {
-    var response = await callIpfs();
-    var jsonBody;
+    final http.Response response = await callIpfs();
+    Map<dynamic, dynamic>? jsonBody;
     if (_verify(response)) {
       jsonBody = _detectJson(response);
       if (jsonBody is Map<dynamic, dynamic>) {
@@ -132,18 +129,17 @@ class IpfsMiniExplorer extends IpfsCall {
         return response.body; //jsonBody.toString();
       } else {
         kind = MetadataType.imagePath;
-        return await _saveImage(response.bodyBytes);
+        return _saveImage(response.bodyBytes);
       }
     }
     return null;
   }
 
-  bool _verify(http.Response response) =>
-      response.statusCode == 200 ? true : false;
+  bool _verify(http.Response response) => response.statusCode == 200;
 
   Map<dynamic, dynamic>? _detectJson(http.Response response) {
     try {
-      return jsonDecode(response.body);
+      return jsonDecode(response.body) as Map<dynamic, dynamic>?;
     } catch (e) {
       return null;
     }
@@ -167,25 +163,26 @@ class IpfsMiniExplorer extends IpfsCall {
 }
 
 class IpfsCall {
+  IpfsCall([this.ipfsHash = '', this.url = 'https://gateway.ipfs.io/ipfs/']);
   late String? ipfsHash;
   late String? url;
-
-  IpfsCall([this.ipfsHash = '', this.url = 'https://gateway.ipfs.io/ipfs/']);
 
   Future<http.Response> callIpfs({
     String? givenHash,
     String? givenUrl,
   }) async =>
-      await http.get(
+      http.get(
         Uri.parse('${givenUrl ?? url}${givenHash ?? ipfsHash}'),
-        headers: {'accept': 'application/json'},
+        headers: <String, String>{'accept': 'application/json'},
       );
 
   /// returns the hash of a logo if one is explicitly sepcified
-  static String? searchJsonForLogo({Map? jsonMap, String? jsonString}) {
+  static String? searchJsonForLogo(
+      {Map<dynamic, dynamic>? jsonMap, String? jsonString}) {
     var logo;
-    jsonMap = jsonMap ?? jsonDecode(jsonString ?? '{}');
-    for (var key in ['logo', 'icon', 'image']) {
+    jsonMap =
+        jsonMap ?? jsonDecode(jsonString ?? '{}') as Map<dynamic, dynamic>?;
+    for (final String key in ['logo', 'icon', 'image']) {
       if (jsonMap!.keys.contains(key)) {
         logo = jsonMap[key];
         break;
@@ -212,6 +209,6 @@ class IpfsCall {
       .replaceAll('}', '')
       .replaceAll(',', '')
       .split(' ')
-      .where((hash) => isIpfs(hash))
+      .where((String hash) => isIpfs(hash))
       .toSet();
 }

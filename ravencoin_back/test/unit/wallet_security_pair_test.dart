@@ -8,42 +8,36 @@ import '../fixtures/fixtures.dart' as fixtures;
 import '../fixtures/sets.dart' as sets;
 
 void main() async {
-  var wallet;
   setUp(() {
     fixtures.useFixtureSources(1);
-    wallet = pros.wallets.records.first as LeaderWallet;
   });
 
   test('WalletSecurityPair is unique in Set', () {
-    var s = <WalletSecurityPair>{};
-    var pair = WalletSecurityPair(
+    final LeaderWallet wallet = pros.wallets.records.first as LeaderWallet;
+    final Set<WalletSecurityPair> s = <WalletSecurityPair>{};
+    final WalletSecurityPair pair = WalletSecurityPair(
         wallet: wallet,
-        security: Security(
-            symbol: 'RVN',
-            securityType: SecurityType.crypto,
-            chain: Chain.ravencoin,
-            net: Net.test));
+        security: const Security(
+            symbol: 'RVN', chain: Chain.ravencoin, net: Net.test));
     s.add(pair);
     s.add(pair);
     expect(s.length, 1);
   });
 
   test('securityPairsFromVoutChanges', () {
-    var changes = [
-      Added(0, sets.FixtureSet1().vouts['0']),
-      Added(1, sets.FixtureSet1().vouts['1']),
-      Updated(0, sets.FixtureSet1().vouts['0'])
+    final LeaderWallet wallet = pros.wallets.records.first as LeaderWallet;
+    final List<Change<Vout>> changes = <Change<Vout>>[
+      Added<Vout>(0, sets.FixtureSet1().vouts['0']!),
+      Added<Vout>(1, sets.FixtureSet1().vouts['1']!),
+      Updated<Vout>(0, sets.FixtureSet1().vouts['0']!)
     ];
-    var pairs = securityPairsFromVoutChanges(changes);
-    expect(pairs, {
+    final Set<WalletSecurityPair> pairs = securityPairsFromVoutChanges(changes);
+    expect(pairs, <WalletSecurityPair>{
       WalletSecurityPair(wallet: wallet, security: pros.securities.RVN),
       WalletSecurityPair(
           wallet: wallet,
-          security: Security(
-              symbol: 'MOONTREE',
-              securityType: SecurityType.asset,
-              chain: Chain.ravencoin,
-              net: Net.test)),
+          security: const Security(
+              symbol: 'MOONTREE', chain: Chain.ravencoin, net: Net.test)),
     });
   });
 }

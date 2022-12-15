@@ -23,7 +23,7 @@ class ClaimEvr extends StatefulWidget {
 }
 
 class _ClaimEvr extends State<ClaimEvr> {
-  final submitFocus = FocusNode();
+  final FocusNode submitFocus = FocusNode();
   bool clicked = false;
 
   /// removed because we are now sending to same wallet
@@ -43,7 +43,7 @@ class _ClaimEvr extends State<ClaimEvr> {
   Widget build(BuildContext context) => Row(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
-      children: [submitButton]);
+      children: <Widget>[submitButton]);
 
   Widget get submitButton => TextButton(
       onPressed: () async {
@@ -70,26 +70,25 @@ class _ClaimEvr extends State<ClaimEvr> {
   void confirmSend() {
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transaction/checkout',
-      arguments: {
+      arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(
-          icon: Icon(Icons.account_balance_wallet_rounded,
+          icon: const Icon(Icons.account_balance_wallet_rounded,
               color: AppColors.primary),
           symbol: null,
           displaySymbol: 'Claim EVR',
           subSymbol: null,
           paymentSymbol: null,
-          items: [
-            [
+          items: <Iterable<String>>[
+            <String>[
               'To',
               Current.wallet.name
               // wallet.name /// removed because we are now sending to same wallet
             ],
-            [
+            <String>[
               'EVR',
               services.conversion.securityAsReadable(
                   Current.balanceCurrency.value,
-                  security: Current.balanceCurrency.security,
-                  asUSD: false)
+                  security: Current.balanceCurrency.security)
             ],
           ],
           fees: null,
@@ -104,7 +103,7 @@ class _ClaimEvr extends State<ClaimEvr> {
                 msg: 'Successfully Claimed EVR');
 
             /// clear out the unclaimed vouts so we don't see the claim button again
-            var x = streams.claim.unclaimed.value;
+            final Map<String, Set<Vout>> x = streams.claim.unclaimed.value;
             if (x.containsKey(Current.walletId)) {
               x[Current.walletId] = <Vout>{};
               streams.claim.unclaimed.add(x);

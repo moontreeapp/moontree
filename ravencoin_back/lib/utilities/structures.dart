@@ -1,20 +1,6 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 class AssetHolding {
-  final String symbol;
-  final Balance? main;
-  final Balance? admin;
-  final Balance? restricted;
-  final Balance? restrictedAdmin;
-  final Balance? nft;
-  final Balance? channel;
-  final Balance? sub;
-  final Balance? subAdmin;
-  final Balance? qualifier;
-  final Balance? qualifierSub;
-  final Balance? crypto;
-  final Balance? fiat;
-
   AssetHolding({
     required this.symbol,
     this.main,
@@ -27,7 +13,7 @@ class AssetHolding {
     this.subAdmin,
     this.qualifier,
     this.qualifierSub,
-    this.crypto,
+    this.coin,
     this.fiat,
   });
 
@@ -44,7 +30,7 @@ class AssetHolding {
     Balance? subAdmin,
     Balance? qualifier,
     Balance? qualifierSub,
-    Balance? crypto,
+    Balance? coin,
     Balance? fiat,
   }) =>
       AssetHolding(
@@ -59,9 +45,23 @@ class AssetHolding {
         subAdmin: subAdmin ?? existing.subAdmin,
         qualifier: qualifier ?? existing.qualifier,
         qualifierSub: qualifierSub ?? existing.qualifierSub,
-        crypto: crypto ?? existing.crypto,
+        coin: coin ?? existing.coin,
         fiat: fiat ?? existing.fiat,
       );
+
+  final String symbol;
+  final Balance? main;
+  final Balance? admin;
+  final Balance? restricted;
+  final Balance? restrictedAdmin;
+  final Balance? nft;
+  final Balance? channel;
+  final Balance? sub;
+  final Balance? subAdmin;
+  final Balance? qualifier;
+  final Balance? qualifierSub;
+  final Balance? coin;
+  final Balance? fiat;
 
   @override
   String toString() => 'AssetHolding('
@@ -76,7 +76,7 @@ class AssetHolding {
       'subAdmin: $subAdmin, '
       'qualifier: $qualifier, '
       'qualifierSub: $qualifierSub, '
-      'crypto: $crypto, '
+      'coin: $coin, '
       'fiat: $fiat, '
       ')';
 
@@ -91,10 +91,10 @@ class AssetHolding {
       (subAdmin != null ? 'SubAdmin' : '') +
       (qualifier != null ? 'Qualifier' : '') +
       (qualifierSub != null ? 'QualifierSub' : '') +
-      (crypto != null ? 'Crypto ' : '') +
+      (coin != null ? 'Coin ' : '') +
       (fiat != null ? 'Fiat ' : '');
 
-  int get length => [
+  int get length => <Balance?>[
         main,
         admin,
         restricted,
@@ -105,21 +105,21 @@ class AssetHolding {
         subAdmin,
         qualifier,
         qualifierSub,
-        crypto,
+        coin,
         fiat,
-      ].where((element) => element != null).length;
+      ].where((Balance? element) => element != null).length;
 
-  int get subLength => [
+  int get subLength => <Balance?>[
         sub,
         subAdmin,
-      ].where((element) => element != null).length;
+      ].where((Balance? element) => element != null).length;
 
-  int get mainLength => [
+  int get mainLength => <Balance?>[
         main,
         admin,
         restricted,
         restrictedAdmin,
-      ].where((element) => element != null).length;
+      ].where((Balance? element) => element != null).length;
 
   String? get singleSymbol => length > 1
       ? null
@@ -133,7 +133,7 @@ class AssetHolding {
           channelSymbol ??
           qualifierSymbol ??
           qualifierSubSymbol ??
-          cryptoSymbol ??
+          coinSymbol ??
           fiatSymbol);
 
   String? get mainSymbol => main != null ? symbol : null;
@@ -141,14 +141,14 @@ class AssetHolding {
   String? get restrictedSymbol => restricted != null ? '\$$symbol' : null;
   String? get restrictedAdminSymbol =>
       restrictedAdmin != null ? '\$$symbol!' : null;
-  String? get nftSymbol => nft != null ? '$symbol' : null;
-  String? get channelSymbol => channel != null ? '$symbol' : null;
-  String? get subSymbol => sub != null ? '$symbol' : null;
+  String? get nftSymbol => nft != null ? '$symbol' : null; // # ?
+  String? get channelSymbol => channel != null ? '$symbol' : null; //~ ?
+  String? get subSymbol => sub != null ? '$symbol' : null; // / ?
   String? get subAdminSymbol => subAdmin != null ? '$symbol!' : null;
   String? get qualifierSymbol => qualifier != null ? '#$symbol' : null;
   String? get qualifierSubSymbol => qualifierSub != null ? '#$symbol' : null;
-  String? get cryptoSymbol => crypto != null
-      ? (crypto?.security.symbol ?? symbol)
+  String? get coinSymbol => coin != null
+      ? (coin?.security.symbol ?? symbol)
       : null; // not a raven asset
   String? get fiatSymbol => fiat != null
       ? (fiat?.security.symbol ?? symbol)
@@ -165,7 +165,7 @@ class AssetHolding {
   String get notLast => symbol.substring(0, symbol.length - last.length);
 
   // shouldn't be used?
-  // returns the best value (main, qualifier, restricted, admin, channel, nft, crypto, fiat)
+  // returns the best value (main, qualifier, restricted, admin, channel, nft, coin, fiat)
   Balance? get balance =>
       main ??
       restrictedAdmin ??
@@ -177,9 +177,9 @@ class AssetHolding {
       channel ??
       qualifier ??
       qualifierSub ??
-      crypto ??
+      coin ??
       fiat;
-  int get value => [
+  int get value => <Balance?>[
         main,
         admin,
         restricted,
@@ -190,8 +190,10 @@ class AssetHolding {
         subAdmin,
         qualifier,
         qualifierSub,
-        crypto,
+        coin,
         fiat,
-      ].where((element) => element != null).fold(
-          0, (previousValue, element) => (element?.value ?? 0) + previousValue);
+      ].where((Balance? element) => element != null).fold(
+          0,
+          (int previousValue, Balance? element) =>
+              (element?.value ?? 0) + previousValue);
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,7 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 
 class SnackBarViewer extends StatefulWidget {
-  SnackBarViewer({Key? key}) : super(key: key);
+  const SnackBarViewer({Key? key}) : super(key: key);
 
   @override
   _SnackBarViewerState createState() => _SnackBarViewerState();
@@ -16,8 +17,9 @@ class SnackBarViewer extends StatefulWidget {
 
 class _SnackBarViewerState extends State<SnackBarViewer> {
   Snack? snack;
-  late List listeners = [];
-  final BorderRadius shape = BorderRadius.only(
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
+  final BorderRadius shape = const BorderRadius.only(
     topLeft: Radius.circular(8.0),
     topRight: Radius.circular(8.0),
   );
@@ -37,16 +39,14 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(height: 0, width: 0);
-  }
+  Widget build(BuildContext context) => const SizedBox(height: 0, width: 0);
 
   TextStyle style() => snack!.positive
       ? Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.white)
@@ -58,7 +58,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   Future<void> show() async {
     /// don't show snackbars on login screen
-    if (['Setup', 'Createlogin', 'Login'].contains(streams.app.page.value) &&
+    if (<String>['Setup', 'Createlogin', 'Login']
+            .contains(streams.app.page.value) &&
         !snack!.showOnLogin) {
       return;
     }
@@ -69,9 +70,9 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     } else if (streams.app.page.value == 'Home' &&
         streams.app.setting.value != null) {
       navHeight = NavHeight.none;
-    } else if (['Support'].contains(streams.app.page.value)) {
+    } else if (<String>['Support'].contains(streams.app.page.value)) {
       navHeight = NavHeight.tall;
-    } else if ([
+    } else if (<String>[
       'Setup',
       'Createlogin',
       'Login',
@@ -85,12 +86,12 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       'Transaction',
     ].contains(streams.app.page.value)) {
       navHeight = NavHeight.none;
-    } else if ([
+    } else if (<String>[
       'Blockchain',
       'Import',
       'Sweep',
       'Backup',
-      'BackupConfirm',
+      'Backupconfirm',
       'Receive',
       'Transactions',
       'Send',
@@ -101,31 +102,30 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       navHeight = streams.app.navHeight.value;
     }
 
-    final copy = services.developer.developerMode && snack!.copy != null;
-    final row = Row(
+    final bool copy = services.developer.developerMode && snack!.copy != null;
+    final Row row = Row(
         mainAxisAlignment:
             copy ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        children: [
-          copy
-              ? Container(
-                  width: (MediaQuery.of(context).size.width - 32) * 0.75,
-                  child: Text(
-                    snack!.message,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: style(),
-                  ))
-              : Container(
-                  //width: (MediaQuery.of(context).size.width - 32),
-                  child: Text(
+        children: <Widget>[
+          if (copy)
+            SizedBox(
+                width: (MediaQuery.of(context).size.width - 32) * 0.75,
+                child: Text(
                   snack!.message,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: style(),
-                )),
+                ))
+          else
+            Text(
+              snack!.message,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: style(),
+            ),
           if (copy)
-            Container(
+            SizedBox(
                 width: (MediaQuery.of(context).size.width - 32) * 0.25,
                 child: Text(
                   snack!.label ?? snack!.copy ?? 'copy',
@@ -135,7 +135,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                   style: style(),
                 ))
         ]);
-    var msg = GestureDetector(
+    GestureDetector msg = GestureDetector(
         onTap: () {
           if (copy) {
             Clipboard.setData(ClipboardData(text: snack!.copy));
@@ -144,10 +144,10 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         },
         child: navHeight == NavHeight.none
             ? Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 12, bottom: 12),
                 child: row)
-            : Stack(alignment: Alignment.bottomCenter, children: [
+            : Stack(alignment: Alignment.bottomCenter, children: <Widget>[
                 Container(
                   alignment: Alignment.topLeft,
                   height: 64,
@@ -155,7 +155,8 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                       color: AppColors.snackBar,
                       borderRadius: components.shape.topRoundedBorder8),
                   child: Padding(
-                      padding: EdgeInsets.only(left: 16, right: 16, top: 12),
+                      padding:
+                          const EdgeInsets.only(left: 16, right: 16, top: 12),
                       child: row),
                 ),
                 Container(
@@ -163,20 +164,19 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                     decoration: BoxDecoration(
                         color: Colors.transparent,
                         borderRadius: components.shape.topRoundedBorder16,
-                        boxShadow: [
+                        boxShadow: const <BoxShadow>[
                           // this one is to hide the shadow put on snackbars by default
+                          BoxShadow(color: Color(0xFFFFFFFF), spreadRadius: 1),
                           BoxShadow(
-                              color: const Color(0xFFFFFFFF), spreadRadius: 1),
-                          BoxShadow(
-                              color: const Color(0x33FFFFFF),
+                              color: Color(0x33FFFFFF),
                               offset: Offset(0, 5),
                               blurRadius: 5),
                           BoxShadow(
-                              color: const Color(0x1FFFFFFF),
+                              color: Color(0x1FFFFFFF),
                               offset: Offset(0, 3),
                               blurRadius: 14),
                           BoxShadow(
-                              color: const Color(0x3DFFFFFF),
+                              color: Color(0x3DFFFFFF),
                               offset: Offset(0, 8),
                               blurRadius: 10)
                         ]))
@@ -188,7 +188,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         backgroundColor: AppColors.snackBar,
         shape: components.shape.topRounded8,
         content: msg,
-        padding: EdgeInsets.only(left: 0, right: 0),
+        padding: EdgeInsets.zero,
       ));
     } else if (navHeight == NavHeight.short) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -199,7 +199,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         content: msg,
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(bottom: (Platform.isIOS ? 32 : 60).figmaH),
-        padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
+        padding: EdgeInsets.zero,
         //action: (snack!.copy != null)
         //    ? SnackBarAction(
         //        label: ' ',
@@ -209,9 +209,9 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ));
     } else /*if (snack!.link == null && snack!.details == null)*/ {
       /// make sure we don't display until we've been sent back home
-      var x = 0;
+      int x = 0;
       while (streams.app.page.value != 'Home') {
-        await Future.delayed(Duration(milliseconds: 665));
+        await Future<void>.delayed(const Duration(milliseconds: 665));
         x += 1;
         if (x > 10) {
           break;
@@ -227,7 +227,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         content: msg,
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(bottom: (Platform.isIOS ? 77 : 106).figmaH),
-        padding: EdgeInsets.only(top: 0, bottom: 0, left: 0, right: 0),
+        padding: EdgeInsets.zero,
       ));
     }
     /*
@@ -242,7 +242,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           content: msg,
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(bottom: 102),
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             top: 0,
             bottom: 0,
           ),
@@ -259,7 +259,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                               //title: Text('External App'),
                               content: Text('Open external app (browser)?',
                                   style: Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.black60)),
-                              actions: [
+                              actions: <Widget>[
                                 TextButton(
                                     child: Text('Cancel',
                                         style: Theme.of(context)
@@ -283,7 +283,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           content: msg,
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(bottom: 102),
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             top: 0,
             bottom: 0,
           ),
@@ -296,7 +296,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                               style: Theme.of(context).testTheme.body2),
                           content: Text(snack!.details!,
                               style: Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.black60)),
-                          actions: [
+                          actions: <Widget>[
                             TextButton(
                                 child: Text('Ok',
                                     style: Theme.of(context).textTheme.bodyText2!.copyWith(fontWeight: FontWeights.bold,      letterSpacing: 1.25,      color: AppColors.primary))),

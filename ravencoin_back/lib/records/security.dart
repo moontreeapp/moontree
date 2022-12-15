@@ -24,7 +24,7 @@ class Security with EquatableMixin {
 
   const Security({
     required this.symbol,
-    required this.securityType,
+    this.securityType = SecurityType.coin, // deprecated - redundant.
     required this.chain,
     required this.net,
   });
@@ -32,26 +32,22 @@ class Security with EquatableMixin {
   factory Security.fromSecurity(
     Security other, {
     String? symbol,
-    SecurityType? securityType,
     Chain? chain,
     Net? net,
   }) =>
       Security(
         symbol: symbol ?? other.symbol,
-        securityType: securityType ?? other.securityType,
         chain: chain ?? other.chain,
         net: net ?? other.net,
       );
 
   factory Security.from(
     Security security, {
-    SecurityType? securityType,
     String? symbol,
     Chain? chain,
     Net? net,
   }) {
     return Security(
-      securityType: securityType ?? security.securityType,
       symbol: symbol ?? security.symbol,
       chain: chain ?? security.chain,
       net: net ?? security.net,
@@ -59,26 +55,29 @@ class Security with EquatableMixin {
   }
 
   @override
-  List<Object> get props => [symbol, securityType, chain, net];
+  List<Object> get props => <Object>[symbol, chain, net];
 
   @override
-  String toString() => 'Security(symbol: $symbol, securityType: $securityType, '
-      '${chainNetReadable(chain, net)})';
+  String toString() => 'Security(symbol: $symbol, '
+      '${ChainNet(chain, net).readable})';
 
-  String get id => key(symbol, securityType, chain, net);
+  String get id => key(symbol, chain, net);
 
-  static String key(
-          String symbol, SecurityType securityType, Chain chain, Net net) =>
-      '$symbol:${securityType.name}:${chainNetKey(chain, net)}';
-
-  String get symbolChainNet => symbolChainNetKey(symbol, chain, net);
-
-  static String symbolChainNetKey(String symbol, Chain chain, Net net) =>
-      '$symbol:${chainNetKey(chain, net)}';
-
-  String get securityTypeName => securityType.name;
+  static String key(String symbol, Chain chain, Net net) =>
+      '$symbol:${ChainNet(chain, net).key}';
 
   /// todo identify a ipfs hash correctly...
   // https://ethereum.stackexchange.com/questions/17094/how-to-store-ipfs-hash-using-bytes32/17112#17112
-  bool get isAsset => securityType == SecurityType.asset;
+
+  bool get isFiat => chain == Chain.none;
+
+  bool get isCoin => chain.symbol == symbol;
+
+  bool get isAsset => !isFiat && !isCoin;
+
+  SecurityType get getSecurityType => isFiat
+      ? SecurityType.fiat
+      : isCoin
+          ? SecurityType.coin
+          : SecurityType.asset;
 }

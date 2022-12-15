@@ -5,9 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
-import 'package:ravencoin_front/services/auth.dart' show LocalAuthApi;
 import 'package:ravencoin_front/services/password.dart';
-import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/utils/device.dart';
@@ -27,13 +25,13 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   BorderRadius? shape;
   bool showAppBar = false;
 
-  final Duration animationDuration = Duration(milliseconds: 1000);
+  final Duration animationDuration = const Duration(milliseconds: 1000);
   late AnimationController _slideController;
   late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation =
-      Tween(begin: 1.0, end: 0.0).animate(_fadeController);
+  late final Animation<double> _fadeAnimation =
+      Tween<double>(begin: 1.0, end: 0.0).animate(_fadeController);
   late final Animation<Offset> _slideAnimation = Tween<Offset>(
-    begin: const Offset(0, 0),
+    begin: Offset.zero,
     end: Offset(0, 56 / MediaQuery.of(context).size.height),
   ).animate(CurvedAnimation(
     parent: _slideController,
@@ -51,7 +49,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Future<void> _init() async {
-    await Future.delayed(Duration(milliseconds: 3500));
+    await Future<void>.delayed(const Duration(milliseconds: 3500));
     await HIVE_INIT.setupDatabaseStart();
     await HIVE_INIT.setupDatabase1();
 
@@ -72,21 +70,21 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
     //}, null);
 
-    await Future.delayed(Duration(milliseconds: 1));
+    await Future<void>.delayed(const Duration(milliseconds: 1));
     setState(() {
       shape = components.shape.topRoundedBorder8;
     });
     _fadeController.forward();
-    await Future.delayed(Duration(milliseconds: 1000));
-    //await Future.delayed(Duration(milliseconds: 1000));
+    await Future<void>.delayed(const Duration(milliseconds: 1000));
+    //await Future<void>.delayed(const Duration(milliseconds: 1000));
     //_slideController.forward();
     //// hack to trigger animate Welcome
     //streams.app.loading.add(false);
     //streams.app.loading.add(true);
     //streams.app.loading.add(false);
-    //await Future.delayed(Duration(milliseconds: 1000));
+    //await Future<void>.delayed(const Duration(milliseconds: 1000));
     //_fadeController.forward();
-    //await Future.delayed(Duration(milliseconds: 1000));
+    //await Future<void>.delayed(const Duration(milliseconds: 1000));
     //setState(() {
     //  _slideController.reset();
     //  showAppBar = true;
@@ -114,12 +112,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           /**/
           Stack(
         alignment: Alignment.topCenter,
-        children: [
+        children: <Widget>[
           if (!showAppBar) BackdropAppBarContents(spoof: true),
           SlideTransition(
               position: _slideAnimation,
               child: AnimatedContainer(
-                  duration: Duration(milliseconds: 1000),
+                  duration: const Duration(milliseconds: 1000),
                   alignment: Alignment.center,
                   decoration:
                       BoxDecoration(borderRadius: shape, color: Colors.white),
@@ -143,21 +141,21 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     );
   }
 
-  Future redirectToCreateOrLogin() async {
-    Future passwordFallback() async {
-      services.authentication.setMethod(method: AuthMethod.moontreePassword);
-      Future.microtask(() => Navigator.pushReplacementNamed(
-            context,
-            getMethodPathCreate(),
-          ));
-    }
+  Future<void> redirectToCreateOrLogin() async {
+    //Future passwordFallback() async {
+    //  services.authentication.setMethod(method: AuthMethod.moontreePassword);
+    //  Future.microtask(() => Navigator.pushReplacementNamed(
+    //        context,
+    //        getMethodPathCreate(),
+    //      ));
+    //}
 
     // make a password out of biokey
 
     // this is false on 1st startup -> create
     if (!services.password.required) {
       //streams.app.page.add('Setup');
-      Future.microtask(() => Navigator.pushReplacementNamed(
+      Future<void>.microtask(() => Navigator.pushReplacementNamed(
             context,
             '/security/create/setup',
           ));
@@ -179,15 +177,15 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(
-                    title: Text('Issue detected'),
-                    content: Text(
+                    title: const Text('Issue detected'),
+                    content: const Text(
                         'Change Password process in progress, please submit your previous password...'),
-                    actions: [
+                    actions: <Widget>[
                       TextButton(
-                          child: Text('ok'),
+                          child: const Text('ok'),
                           onPressed: () => Navigator.pushReplacementNamed(
                               context, '/security/resume',
-                              arguments: {}))
+                              arguments: <String, dynamic>{}))
                     ]));
       } else {
         bool hasConsented = false;
@@ -198,9 +196,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             message: 'Unable to connect! Please check connectivity.',
           ));
         }
-        Future.microtask(() => Navigator.pushReplacementNamed(
+        Future<void>.microtask(() => Navigator.pushReplacementNamed(
             context, getMethodPathLogin(),
-            arguments: {'needsConsent': !hasConsented}));
+            arguments: <String, bool>{'needsConsent': !hasConsented}));
 
         /// testing out instant/custom page transitions
         /// https://stackoverflow.com/questions/52698340/animation-for-named-routes
@@ -217,7 +215,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
     /// old: send to homescreen
     //} else {
-    //Future.delayed(Duration(seconds: 60));
+    //Futuredelayed(const Duration(seconds: 60));
     //  Future.microtask(() =>
     //      Navigator.pushReplacementNamed(context, '/home', arguments: {}));
 

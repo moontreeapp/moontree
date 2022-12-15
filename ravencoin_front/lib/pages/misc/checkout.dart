@@ -2,15 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/utilities/transform.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/extensions.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/data.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 enum TransactionType { spend, create, reissue, export }
 
@@ -30,24 +31,24 @@ class CheckoutStruct {
   final Widget? button;
   final String loadingMessage;
   final int? playcount;
-  static const Iterable<Iterable<String>> exampleItems = [
-    ['Short Text', 'aligned right'],
-    ['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
-    [
+  static const Iterable<Iterable<String>> exampleItems = <List<String>>[
+    <String>['Short Text', 'aligned right'],
+    <String>['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
+    <String>[
       'Multiline (2) - Limited',
       '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
       '2'
     ],
-    [
+    <String>[
       'Multiline (5)',
       '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
       '5'
     ]
   ];
-  static const Iterable<Iterable<String>> exampleFees = [
-    ['Transaction', '1'],
-    ['Sub Asset', '100'],
-    ['long amount', '21,000,000.00000000']
+  static const Iterable<Iterable<String>> exampleFees = <List<String>>[
+    <String>['Transaction', '1'],
+    <String>['Sub Asset', '100'],
+    <String>['long amount', '21,000,000.00000000']
   ];
 
   const CheckoutStruct({
@@ -79,10 +80,11 @@ class Checkout extends StatefulWidget {
 }
 
 class _CheckoutState extends State<Checkout> {
-  late Map<String, dynamic> data = {};
+  late Map<String, dynamic> data = <String, dynamic>{};
   late CheckoutStruct struct;
-  late List<StreamSubscription> listeners = [];
-  late SendEstimate? estimate = null;
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
+  SendEstimate? estimate;
   late bool disabled = false;
   late DateTime startTime;
 
@@ -125,7 +127,7 @@ class _CheckoutState extends State<Checkout> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -134,9 +136,10 @@ class _CheckoutState extends State<Checkout> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    struct = data['struct'] ?? CheckoutStruct();
+    struct = data['struct'] as CheckoutStruct? ?? const CheckoutStruct();
     startTime = DateTime.now();
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => CustomScrollView(
@@ -151,12 +154,12 @@ class _CheckoutState extends State<Checkout> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             header,
-            Divider(indent: 16 + 56),
-            SizedBox(height: 14),
+            const Divider(indent: 16 + 56),
+            const SizedBox(height: 14),
             transactionItems,
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             //Divider(indent: 16),
           ],
         ),
@@ -168,22 +171,22 @@ class _CheckoutState extends State<Checkout> {
         leading: struct.icon ??
             components.icons.assetAvatar(struct.symbol!.toUpperCase(),
                 net: pros.settings.net),
-        title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          SizedBox(width: 5),
+        title: Row(children: <Widget>[
+          const SizedBox(width: 5),
           FittedBox(
               fit: BoxFit.fitWidth,
               child: Text(struct.displaySymbol,
                   style: Theme.of(context).textTheme.bodyText1))
         ]),
-        //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-        //  SizedBox(width: 5),
+        //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+        //  const SizedBox(width: 5),
         //  Text(struct.subSymbol!.toUpperCase(),
         //      style: Theme.of(context).checkoutSubAsset),
         //])
       );
 
   Widget get transactionItems => Padding(
-      padding: EdgeInsets.only(left: 16, right: 16),
+      padding: const EdgeInsets.only(left: 16, right: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -199,22 +202,22 @@ class _CheckoutState extends State<Checkout> {
     TextStyle? style,
     bool fee = false,
   }) {
-    var rows = <Widget>[];
-    for (var pair in pairs) {
-      var rightSide = fee
+    final List<Widget> rows = <Widget>[];
+    for (final Iterable<String> pair in pairs) {
+      String rightSide = fee
           ? getRightFee(pair.toList()[1])
           : getRightAmount(pair.toList()[1]);
       if (rightSide.length > 20) {
-        rightSide =
-            ['To', 'IPFS', 'IPFS/TxId', 'ID', 'TxId'].contains(pair.toList()[0])
-                ? rightSide.cutOutMiddle()
-                : rightSide;
+        rightSide = <String>['To', 'IPFS', 'IPFS/TxId', 'ID', 'TxId']
+                .contains(pair.toList()[0])
+            ? rightSide.cutOutMiddle()
+            : rightSide;
       }
       rows.add(Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
+          children: <Widget>[
+            SizedBox(
                 width: (MediaQuery.of(context).size.width - 16 - 16 - 8) *
                     (struct.left ?? .5),
                 child: Text(pair.toList()[0],
@@ -222,25 +225,26 @@ class _CheckoutState extends State<Checkout> {
                     overflow: TextOverflow.fade,
                     softWrap: false,
                     maxLines: 1)),
-            fee || rightSide.length < 21
-                ? Text(rightSide, style: style, textAlign: TextAlign.right)
-                : Container(
-                    width: (MediaQuery.of(context).size.width - 16 - 16 - 8) *
-                        (1 - (struct.left ?? .5)),
-                    child: Text(
-                      rightSide,
-                      style: style,
-                      textAlign: TextAlign.right,
-                      overflow: pair.length == 2
-                          ? TextOverflow.fade
-                          : TextOverflow.fade,
-                      softWrap: pair.length == 2 ? false : true,
-                      maxLines:
-                          pair.length == 2 ? 1 : int.parse(pair.toList()[2]),
-                    )),
+            if (fee || rightSide.length < 21)
+              Text(rightSide, style: style, textAlign: TextAlign.right)
+            else
+              SizedBox(
+                  width: (MediaQuery.of(context).size.width - 16 - 16 - 8) *
+                      (1 - (struct.left ?? .5)),
+                  child: Text(
+                    rightSide,
+                    style: style,
+                    textAlign: TextAlign.right,
+                    overflow: pair.length == 2
+                        ? TextOverflow.fade
+                        : TextOverflow.fade,
+                    softWrap: pair.length != 2,
+                    maxLines:
+                        pair.length == 2 ? 1 : int.parse(pair.toList()[2]),
+                  )),
           ]));
     }
-    return rows.intersperse(SizedBox(height: 21));
+    return rows.intersperse(const SizedBox(height: 21));
   }
 
   String getRightAmount(String x) {
@@ -248,7 +252,7 @@ class _CheckoutState extends State<Checkout> {
       disabled = true;
       if (estimate != null) {
         disabled = false;
-        return satToAmount(estimate!.amount).toString();
+        return estimate!.amount.asCoin.toString();
         //return satToAmount(estimate!.total - estimate!.fees).toString();
       }
       return x;
@@ -261,7 +265,7 @@ class _CheckoutState extends State<Checkout> {
       disabled = true;
       if (estimate != null) {
         disabled = false;
-        return satToAmount(estimate!.fees).toString();
+        return estimate!.fees.asCoin.toString();
       }
       return x;
     }
@@ -273,39 +277,39 @@ class _CheckoutState extends State<Checkout> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+          children: <Widget>[
             if (struct.fees != null)
               Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, bottom: 7),
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 7),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+                  children: <Widget>[
                     ...fees,
                   ],
                 ),
               ),
-            Divider(indent: 0),
+            const Divider(indent: 0),
             if (struct.total != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+                children: <Widget>[
                   Padding(
-                      padding: EdgeInsets.only(
-                          top: 10, left: 16, right: 16, bottom: 0),
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 16, right: 16),
                       child: total),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   components.containers.navBar(context, child: submitButton),
                 ],
               ),
             if (struct.confirm != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+                children: <Widget>[
                   Padding(
-                      padding: EdgeInsets.only(
-                          top: 10, left: 16, right: 16, bottom: 0),
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 16, right: 16),
                       child: confirm),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   components.containers.navBar(context,
                       child: struct.button == null
                           ? submitButton
@@ -316,9 +320,9 @@ class _CheckoutState extends State<Checkout> {
         ),
       );
 
-  List<Widget> get fees => [
+  List<Widget> get fees => <Widget>[
         Text('Fees', style: Theme.of(context).textTheme.checkoutFees),
-        SizedBox(height: 14),
+        const SizedBox(height: 14),
         ...detailItems(
           pairs: struct.fees!,
           style: Theme.of(context).textTheme.checkoutFee,
@@ -327,7 +331,7 @@ class _CheckoutState extends State<Checkout> {
       ];
 
   Widget get total =>
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
         Text('Total:', style: Theme.of(context).textTheme.bodyText1),
         Text(
             '${getRightTotal(struct.total!)} ${struct.paymentSymbol!.toUpperCase()}',
@@ -352,13 +356,13 @@ class _CheckoutState extends State<Checkout> {
       disabled = true;
       if (estimate != null) {
         disabled = false;
-        return satToAmount(estimate!.total).toString();
+        return estimate!.total.asCoin.toString();
       }
     }
     return x;
   }
 
-  Widget get submitButton => Row(children: [
+  Widget get submitButton => Row(children: <Widget>[
         components.buttons.actionButton(
           context,
           enabled: !disabled,
@@ -369,7 +373,6 @@ class _CheckoutState extends State<Checkout> {
                   message: struct.loadingMessage,
                   playCount: struct.playcount ?? 2,
                   then: struct.buttonAction);
-              streams.spend.form.add(null);
             }
           },
         )

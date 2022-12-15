@@ -1,6 +1,5 @@
 import 'dart:typed_data';
-
-import 'cipher_base.dart';
+import 'package:moontree_utils/types/cipher_base.dart';
 
 class CipherNone implements CipherBase {
   const CipherNone();

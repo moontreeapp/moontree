@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,13 +13,16 @@ import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class CreateChoice extends StatefulWidget {
+  const CreateChoice({Key? key}) : super(key: key);
+
   @override
   _CreateChoiceState createState() => _CreateChoiceState();
 }
 
 class _CreateChoiceState extends State<CreateChoice> {
-  Map<String, dynamic> data = {};
-  late List listeners = [];
+  Map<String, dynamic> data = <String, dynamic>{};
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
 
   Future<void> finishLoadingDatabase() async {
     //if (!await finishedLoading) {
@@ -34,7 +38,7 @@ class _CreateChoiceState extends State<CreateChoice> {
     }
   }
 
-  Future<bool> get finishedLoading async => await HIVE_INIT.isLoaded();
+  Future<bool> get finishedLoading async => HIVE_INIT.isLoaded();
 
   @override
   void initState() {
@@ -52,7 +56,7 @@ class _CreateChoiceState extends State<CreateChoice> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -61,19 +65,21 @@ class _CreateChoiceState extends State<CreateChoice> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Container(
-          padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
           child: CustomScrollView(slivers: <Widget>[
             SliverToBoxAdapter(
               child: SizedBox(height: 76.figmaH),
             ),
             SliverToBoxAdapter(
-              child: Container(
+              child: SizedBox(
                 height: 128.figmaH,
                 child: moontree,
               ),
@@ -91,19 +97,19 @@ class _CreateChoiceState extends State<CreateChoice> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
+                        children: <Widget>[
                           invite,
-                          SizedBox(height: 16),
-                          Row(children: [nativeButton]),
-                          SizedBox(height: 16),
-                          Row(children: [passwordButton]),
-                          SizedBox(height: 40),
+                          const SizedBox(height: 16),
+                          Row(children: <Widget>[nativeButton]),
+                          const SizedBox(height: 16),
+                          Row(children: <Widget>[passwordButton]),
+                          const SizedBox(height: 40),
                         ]))),
           ])));
 
-  Widget get moontree => Container(
-        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+  Widget get moontree => SizedBox(
         height: .1534.ofMediaHeight(context),
+        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
       );
 
   Widget get welcomeMessage => Text(
@@ -124,7 +130,7 @@ class _CreateChoiceState extends State<CreateChoice> {
               Theme.of(components.navigator.routeContext!).textTheme.bodyText2,
           children: <TextSpan>[
             TextSpan(
-                text: "Protect your wallet with:",
+                text: 'Protect your wallet with:',
                 //text: "Please set the wallet protection type",
                 style: Theme.of(context)
                     .textTheme
@@ -143,7 +149,7 @@ class _CreateChoiceState extends State<CreateChoice> {
               .setMethod(method: AuthMethod.nativeSecurity);
           streams.app.splash.add(false);
           Navigator.pushReplacementNamed(context, getMethodPathCreate(),
-              arguments: {'needsConsent': true});
+              arguments: <String, bool>{'needsConsent': true});
         },
       );
 
@@ -156,7 +162,7 @@ class _CreateChoiceState extends State<CreateChoice> {
               .setMethod(method: AuthMethod.moontreePassword);
           streams.app.splash.add(false);
           Navigator.pushReplacementNamed(context, getMethodPathCreate(),
-              arguments: {'needsConsent': true});
+              arguments: <String, bool>{'needsConsent': true});
         },
       );
 }

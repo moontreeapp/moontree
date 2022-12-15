@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
 enum AuthenticationResult {
+  skipped,
   success,
   failure,
   noSupport,
@@ -11,7 +12,7 @@ enum AuthenticationResult {
 }
 
 class LocalAuthApi {
-  final _auth = LocalAuthentication();
+  final LocalAuthentication _auth = LocalAuthentication();
   AuthenticationResult? reason;
 
   Future<bool> get canCheckBiometrics async {
@@ -25,7 +26,7 @@ class LocalAuthApi {
 
   /// this name seems misleading "isDeviceSupported"
   /// Returns false if no nativeSecurity is setup, true if it is...
-  Future<bool> get isSetup async => await _auth.isDeviceSupported();
+  Future<bool> get isSetup async => _auth.isDeviceSupported();
 
   Future<List<BiometricType>> get availableBiometrics async =>
       await _auth.getAvailableBiometrics();
@@ -64,7 +65,14 @@ class LocalAuthApi {
     return true;
   }
 
-  Future<bool> authenticate({bool stickyAuth = false}) async {
+  Future<bool> authenticate({
+    bool stickyAuth = false,
+    bool skip = false,
+  }) async {
+    if (skip) {
+      reason = AuthenticationResult.skipped;
+      return true;
+    }
     //if (!(await isSetup)) {
     //  reason = AuthenticationResult.notSetup;
     //  return false;

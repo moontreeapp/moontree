@@ -29,7 +29,7 @@ class BackdropLayers extends StatefulWidget {
 }
 
 class _BackdropLayersState extends State<BackdropLayers> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _BackdropLayersState extends State<BackdropLayers> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -58,7 +58,7 @@ class _BackdropLayersState extends State<BackdropLayers> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
+    return Stack(children: <Widget>[
       Container(
           color: widget.backColor ?? Theme.of(context).backgroundColor,
           height: widget.backHeight,

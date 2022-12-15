@@ -17,7 +17,7 @@ extension VinHasOneSecurity on Vin {
 }
 
 extension VinHasOneValue on Vin {
-  int? get value => vout?.rvnValue;
+  int? get value => vout?.coinValue;
 }
 
 extension VinBelongsToAddress on Vin {

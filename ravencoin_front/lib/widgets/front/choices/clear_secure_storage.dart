@@ -32,24 +32,22 @@ class _ClearSSChoice extends State<ClearSSChoice> {
           'DO NOT DO THIS. EVER.',
           style: Theme.of(context).textTheme.bodyText2,
         ),
-        SizedBox(height: 16),
-        Row(children: [
+        const SizedBox(height: 16),
+        Row(children: <Widget>[
           components.buttons.actionButtonSoft(
             context,
-            enabled: true,
             label: 'Clear Secure Storage',
             onPressed: () async {
               await components.message.giveChoices(context,
                   title: 'Are you sure?',
                   content: "don't do it.",
-                  behaviors: {
+                  behaviors: <String, void Function()>{
                     'CANCEL': () => Navigator.of(context).pop(),
-                    'DO IT': () async => await components.message.giveChoices(
-                            context,
+                    'DO IT': () async => components.message.giveChoices(context,
                             title: 'Are you really sure?',
                             content:
                                 "Look, don't want to do this. You wont be able to login anymore. I mean at least go back and make a paper backup first. The only real reason to do this is for testing purposes or in preparation of erasing the app from your device entirely.",
-                            behaviors: {
+                            behaviors: <String, void Function()>{
                               'CANCEL': () {
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();

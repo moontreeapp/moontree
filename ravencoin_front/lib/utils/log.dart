@@ -6,41 +6,47 @@ import 'package:logging/logging.dart' show Level, Logger;
 export 'package:logging/logging.dart' show Level;
 
 class Log {
-  static Log? defaultLogger;
-
-  static initialize() async {
-    await dotenv.load(fileName: '.env');
-
-    var _log = Log('RootLogger');
-    defaultLogger = _log;
-  }
-
-  late final Logger logger;
-
   Log(String loggerName) {
     logger = Logger(loggerName /*, bindOnRecord: false */);
   }
 
-  void log(message, {level: Level.INFO, Map<String, dynamic>? attributes}) {
-    logger.log(message, level);
+  late final Logger logger;
+
+  static Log? defaultLogger;
+
+  static Future<void> initialize() async {
+    await dotenv.load();
+    defaultLogger = Log('RootLogger');
+  }
+
+  void log(
+    Object? message, {
+    Level level = Level.INFO,
+    Map<String, dynamic>? attributes,
+  }) {
+    logger.log(level, message);
   }
 
   /* Shortcut methods: follows after javacript console error levels */
 
-  void info(message, {Map<String, dynamic>? attributes}) {
-    log(message, level: Level.INFO, attributes: attributes);
+  void info(Object? message, {Map<String, dynamic>? attributes}) {
+    log(message, attributes: attributes);
   }
 
-  void warn(message, {Map<String, dynamic>? attributes}) {
+  void warn(Object? message, {Map<String, dynamic>? attributes}) {
     log(message, level: Level.WARNING, attributes: attributes);
   }
 
-  void error(message, {Map<String, dynamic>? attributes}) {
+  void error(Object? message, {Map<String, dynamic>? attributes}) {
     log(message, level: Level.SEVERE, attributes: attributes);
   }
 }
 
 /// Global default 'log'
-void log(message, {level: Level.INFO, Map<String, dynamic>? attributes}) {
+void log(
+  Object? message, {
+  Level level = Level.INFO,
+  Map<String, dynamic>? attributes,
+}) {
   Log.defaultLogger!.log(message, level: level, attributes: attributes);
 }

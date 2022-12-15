@@ -1,21 +1,22 @@
 // dart test test/reservoir/rx_race_test.dart --chain-stack-traces
-
 import 'package:test/test.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:ravencoin_back/extensions/stream/buffer_count_window.dart';
+import 'package:ravencoin_back/utilities/stream/buffer_count_window.dart';
 
 void main() {
   group('RxRace', () {
     test('never prints more than bufferCount', () async {
       var counterStream = Rx.concat([
-        Stream.periodic(Duration(milliseconds: 100), (i) => i).take(5),
-        Stream.periodic(Duration(milliseconds: 10), (i) => i + 5).take(15),
-        Stream.periodic(Duration(milliseconds: 100), (i) => i + 25).take(5),
+        Stream.periodic(const Duration(milliseconds: 100), (i) => i).take(5),
+        Stream.periodic(const Duration(milliseconds: 10), (i) => i + 5)
+            .take(15),
+        Stream.periodic(const Duration(milliseconds: 100), (i) => i + 25)
+            .take(5),
       ]).asBroadcastStream();
 
       var results = await counterStream
-          .bufferCountTimeout(5, Duration(milliseconds: 200))
+          .bufferCountTimeout(5, const Duration(milliseconds: 200))
           .take(8)
           .toList();
       //expect(results, [

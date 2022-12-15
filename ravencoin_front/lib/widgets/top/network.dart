@@ -5,20 +5,20 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
 
 class ChosenBlockchain extends StatefulWidget {
-  ChosenBlockchain({Key? key}) : super(key: key);
+  const ChosenBlockchain({Key? key}) : super(key: key);
 
   @override
   _ChosenBlockchainState createState() => _ChosenBlockchainState();
 }
 
 class _ChosenBlockchainState extends State<ChosenBlockchain> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   late String pageTitle = '';
 
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.page.listen((value) {
+    listeners.add(streams.app.page.listen((String value) {
       if (value != pageTitle) {
         setState(() {
           pageTitle = value;
@@ -29,7 +29,7 @@ class _ChosenBlockchainState extends State<ChosenBlockchain> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -45,7 +45,7 @@ class _ChosenBlockchainState extends State<ChosenBlockchain> {
             child: Container(
                 width: 36,
                 alignment: Alignment.center,
-                child: Text('RVN',
+                child: const Text('RVN',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

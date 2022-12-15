@@ -7,8 +7,9 @@ class _IdKey extends Key<Address> {
   String getKey(Address address) => address.id;
 }
 
-extension ByRawScripthashMethodsForAddress on Index<_IdKey, Address> {
-  Address? getOne(String scripthash) => getByKeyStr(scripthash).firstOrNull;
+extension ByIdMethodsForAddress on Index<_IdKey, Address> {
+  Address? getOne(String scripthash, Chain chain, Net net) =>
+      getByKeyStr(Address.key(scripthash, chain, net)).firstOrNull;
 }
 
 // byAddress
@@ -22,6 +23,17 @@ extension ByAddressMethodsForAddress on Index<_AddressKey, Address> {
   Address? getOne(String address) => getByKeyStr(address).firstOrNull;
 }
 
+// byScripthash
+
+class _ScripthashKey extends Key<Address> {
+  @override
+  String getKey(Address address) => address.scripthash;
+}
+
+extension ByScripthashMethodsForAddress on Index<_ScripthashKey, Address> {
+  Address? getAll(String scripthash) => getByKeyStr(scripthash).firstOrNull;
+}
+
 // byWallet
 
 class _WalletKey extends Key<Address> {
@@ -33,38 +45,38 @@ extension ByWalletMethodsForAddress on Index<_WalletKey, Address> {
   List<Address> getAll(String walletId) => getByKeyStr(walletId);
 }
 
-// byWalletExposure
+// byWalletChainNet
 
-String _walletExposureToKey(String walletId, NodeExposure exposure) =>
-    '$walletId:$exposure';
+String _walletChainNetToKey(String walletId, Chain chain, Net net) =>
+    '$walletId:${ChainNet(chain, net).key}';
 
-class _WalletExposureKey extends Key<Address> {
+class _WalletChainNetKey extends Key<Address> {
   @override
   String getKey(Address address) =>
-      _walletExposureToKey(address.walletId, address.exposure);
+      _walletChainNetToKey(address.walletId, address.chain, address.net);
 }
 
-extension ByWalletExposureMethodsForAddress
-    on Index<_WalletExposureKey, Address> {
-  List<Address> getAll(String walletId, NodeExposure exposure) =>
-      getByKeyStr(_walletExposureToKey(walletId, exposure));
+extension ByWalletChainNetMethodsForAddress
+    on Index<_WalletChainNetKey, Address> {
+  List<Address> getAll(String walletId, Chain chain, Net net) =>
+      getByKeyStr(_walletChainNetToKey(walletId, chain, net));
 }
 
-// byWalletExposureIndex
+// byWalletExposureChainNetKey
 
-String _walletExposureHDToKey(
-        String walletId, NodeExposure exposure, int hdIndex) =>
-    '$walletId:$exposure:$hdIndex';
+String _walletExposureChainNetToKey(
+        String walletId, NodeExposure exposure, Chain chain, Net net) =>
+    '$walletId:$exposure:${ChainNet(chain, net).key}';
 
-class _WalletExposureHDKey extends Key<Address> {
+class _WalletExposureChainNetKey extends Key<Address> {
   @override
-  String getKey(Address address) => _walletExposureHDToKey(
-      address.walletId, address.exposure, address.hdIndex);
+  String getKey(Address address) => _walletExposureChainNetToKey(
+      address.walletId, address.exposure, address.chain, address.net);
 }
 
-extension ByWalletExposureHDMethodsForAddress
-    on Index<_WalletExposureHDKey, Address> {
-  Address? getOne(String walletId, NodeExposure exposure, int hdIndex) =>
-      getByKeyStr(_walletExposureHDToKey(walletId, exposure, hdIndex))
-          .firstOrNull;
+extension ByWalletExposureChainNetMethodsForAddress
+    on Index<_WalletExposureChainNetKey, Address> {
+  List<Address> getAll(
+          String walletId, NodeExposure exposure, Chain chain, Net net) =>
+      getByKeyStr(_walletExposureChainNetToKey(walletId, exposure, chain, net));
 }

@@ -24,11 +24,11 @@ class Receive extends StatefulWidget {
 }
 
 class _ReceiveState extends State<Receive> {
-  Map<String, dynamic> data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   String? address;
-  final requestMessage = TextEditingController();
-  final requestAmount = TextEditingController();
-  final requestLabel = TextEditingController();
+  final TextEditingController requestMessage = TextEditingController();
+  final TextEditingController requestAmount = TextEditingController();
+  final TextEditingController requestLabel = TextEditingController();
   FocusNode requestAmountFocus = FocusNode();
   FocusNode requestLabelFocus = FocusNode();
   FocusNode requestMessageFocus = FocusNode();
@@ -37,7 +37,7 @@ class _ReceiveState extends State<Receive> {
   String username = '';
   String? errorText;
   List<Security> fetchedNames = <Security>[];
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   bool get rawAddress =>
       requestMessage.text == '' &&
@@ -48,25 +48,34 @@ class _ReceiveState extends State<Receive> {
     if (rawAddress) {
       uri = address!;
     } else {
-      var amount = requestAmount.text == ''
+      final String amount = requestAmount.text == ''
           ? ''
           : 'amount=${Uri.encodeComponent(requestAmount.text)}';
-      var label = requestLabel.text == ''
+      final String label = requestLabel.text == ''
           ? ''
           : 'label=${Uri.encodeComponent(requestLabel.text)}';
-      var message = requestMessage.text == ''
+      final String message = requestMessage.text == ''
           ? ''
           //: 'message=${Uri.encodeComponent(requestMessage.text)}';
           : 'message=asset:${Uri.encodeComponent(requestMessage.text)}';
-      var to = username == '' ? '' : 'to=${Uri.encodeComponent(username)}';
-      var tail = [amount, label, message, to].join('&').replaceAll('&&', '&');
-      tail = '?' +
-          (tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail);
+      final String to =
+          username == '' ? '' : 'to=${Uri.encodeComponent(username)}';
+
+      /// should we add the rest of the fields?
+      //var net = x == '' ? '' : 'net=${Uri.encodeComponent(x)}';
+      //var fee = x == '' ? '' : 'fee=${Uri.encodeComponent(x)}';
+      //var note = x == '' ? '' : 'note=${Uri.encodeComponent(x)}';
+      //var memo = x == '' ? '' : 'memo=${Uri.encodeComponent(x)}';
+
+      String tail =
+          <String>[amount, label, message, to].join('&').replaceAll('&&', '&');
+      tail =
+          '?${tail.endsWith('&') ? tail.substring(0, tail.length - 1) : tail}';
       tail = tail.length == 1 ? '' : tail;
-      uri = 'raven:$address$tail';
+      uri = '${pros.settings.chain.name.replaceAll('coin', '')}:$address$tail';
     }
     if (refresh) {
-      setState(() => {});
+      setState(() {});
     }
   }
 
@@ -78,7 +87,7 @@ class _ReceiveState extends State<Receive> {
     //print('init: ${s.elapsed}');
     /// when the client isn't busy anymore, refresh
     listeners.add(streams.client.busy.listen((bool busy) async {
-      if (!busy && Current.wallet.addresses.isNotEmpty) {
+      if (!busy && Current.wallet.addressesFor().isNotEmpty) {
         print('receive triggered by client not busy');
         address = null;
         setState(() {});
@@ -90,7 +99,7 @@ class _ReceiveState extends State<Receive> {
           loaded: (_) {},
           added: (_) {
             if (Current.wallet.externalAddresses.length == 1 ||
-                Current.wallet.addresses.length > 39) {
+                Current.wallet.addressesFor().length > 39) {
               print('receive triggered by new address');
               address = null;
               setState(() {});
@@ -103,7 +112,7 @@ class _ReceiveState extends State<Receive> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     // Clean up the controller when the widget is disposed.
@@ -114,28 +123,28 @@ class _ReceiveState extends State<Receive> {
     super.dispose();
   }
 
-  void _printLatestValue() async {
+  Future<void> _printLatestValue() async {
     fetchedNames = requestMessage.text.length <= 32
         ? (await services.client.api.getAssetNames(requestMessage.text))
             .toList()
-            .map((e) => Security(
+            .map((String e) => Security(
                   symbol: e,
-                  securityType: SecurityType.asset,
                   chain: pros.settings.chain,
                   net: pros.settings.net,
                 ))
             .toList()
-        : [];
+        : <Security>[];
   }
 
   @override
   Widget build(BuildContext context) {
-    username =
-        pros.settings.primaryIndex.getOne(SettingName.user_name)?.value ?? '';
+    username = pros.settings.primaryIndex.getOne(SettingName.user_name)?.value
+            as String? ??
+        '';
     data = populateData(context, data);
     requestMessage.text = requestMessage.text == ''
-        ? data['symbol'] != null && data['symbol'] != ''
-            ? data['symbol']
+        ? data.containsKey('symbol') && data['symbol'] as String != ''
+            ? data['symbol']! as String
             : ''
         : requestMessage.text;
     address = services.wallet.getEmptyAddress(
@@ -149,7 +158,7 @@ class _ReceiveState extends State<Receive> {
     if (requestMessage.text != '') {
       _makeURI(refresh: false);
     }
-    double height = 1.ofAppHeight;
+    final double height = 1.ofAppHeight;
     return FrontCurve(
         alignment: Alignment.topCenter,
         child: GestureDetector(
@@ -165,7 +174,7 @@ class _ReceiveState extends State<Receive> {
 
   Widget body(double height) => Stack(
         alignment: Alignment.topCenter,
-        children: [
+        children: <Widget>[
           SingleChildScrollView(
               child: Container(
                   height: height,
@@ -174,13 +183,11 @@ class _ReceiveState extends State<Receive> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       SingleChildScrollView(
-                          physics: ClampingScrollPhysics(),
-                          padding: EdgeInsets.only(
-                              top: 16, left: 0, right: 0, bottom: 0),
+                          physics: const ClampingScrollPhysics(),
+                          padding: const EdgeInsets.only(top: 16),
                           child: GestureDetector(
                               onTap: () {
-                                Clipboard.setData(
-                                    new ClipboardData(text: address));
+                                Clipboard.setData(ClipboardData(text: address));
                                 streams.app.snack.add(Snack(
                                     message: 'Address copied to clipboard'));
                                 // not formatted the same...
@@ -189,7 +196,7 @@ class _ReceiveState extends State<Receive> {
                                 //));
                               },
                               onLongPress: () {
-                                Clipboard.setData(new ClipboardData(
+                                Clipboard.setData(ClipboardData(
                                     text: rawAddress ? address : uri));
                                 streams.app.snack.add(
                                     Snack(message: 'URI copied to clipboard'));
@@ -204,7 +211,6 @@ class _ReceiveState extends State<Receive> {
                                   child: QrImage(
                                       backgroundColor: Colors.white,
                                       data: rawAddress ? address! : uri,
-                                      version: QrVersions.auto,
                                       foregroundColor: AppColors.primary,
                                       //embeddedImage: Image.asset(
                                       //        'assets/logo/moontree_logo.png')
@@ -220,20 +226,16 @@ class _ReceiveState extends State<Receive> {
                               .caption!
                               .copyWith(color: AppColors.black87),
                           showCursor: true,
-                          toolbarOptions: ToolbarOptions(
-                              copy: true,
-                              selectAll: true,
-                              cut: false,
-                              paste: false),
+                          toolbarOptions:
+                              const ToolbarOptions(copy: true, selectAll: true),
                         ),
                       ),
                       Visibility(
                         visible: rawAddress,
-                        child: SizedBox(height: 8),
+                        child: const SizedBox(height: 8),
                       ),
                       Padding(
-                          padding: EdgeInsets.only(
-                              top: 0, left: 16, right: 16, bottom: 0),
+                          padding: const EdgeInsets.only(left: 16, right: 16),
                           child: Column(
                             children: <Widget>[
                               /// if this is a RVNt account we could show that here...
@@ -251,7 +253,7 @@ class _ReceiveState extends State<Receive> {
                               //Center(
                               //    child: Column(
                               //        crossAxisAlignment: CrossAxisAlignment.center,
-                              //        children: [
+                              //        children: <Widget>[
                               //      /// does not belong on UI but I still want an indication that what is on QR code is not raw address...
                               //      Visibility(
                               //          visible: !rawAddress,
@@ -307,7 +309,7 @@ class _ReceiveState extends State<Receive> {
                               //    crossAxisAlignment: CrossAxisAlignment.start,
                               //    mainAxisAlignment: MainAxisAlignment.start,
                               //    children: <Widget>[
-                              //      SizedBox(height: 15),
+                              //      const SizedBox(height: 15),
                               //      Text(
                               //        'Requested Asset:',
                               //        style: TextStyle(color: Theme.of(context).hintColor),
@@ -323,17 +325,14 @@ class _ReceiveState extends State<Receive> {
                               //          }
                               //          if (requestMessage.text == 't') {
                               //            return [
-                              //              Security(
-                              //                  symbol: 'testing',
-                              //                  securityType: SecurityType.fiat)
+                              //              Security(symbol: 'testing')
                               //            ];
                               //          }
                               //          if (requestMessage.text.length >= 3) {
                               //            return fetchedNames;
                               //          }
                               //          //(await services.client.api.getAllAssetNames(textEditingValue.text)).map((String s) => Security(
-                              //          //        symbol: s,
-                              //          //        securityType: SecurityType.asset));
+                              //          //        symbol: s));
                               //          return securities.data
                               //              .where((Security option) => option.symbol
                               //                  .contains(requestMessage.text.toUpperCase()))
@@ -347,14 +346,14 @@ class _ReceiveState extends State<Receive> {
                               //          FocusScope.of(context).requestFocus(requestAmountFocus);
                               //        },
                               //      ),
-                              //      SizedBox(height: 15.0),
+                              //      const SizedBox(height: 15.0),
                               //    ]),
                               TextFieldFormatted(
                                   focusNode: requestMessageFocus,
                                   controller: requestMessage,
                                   autocorrect: false,
                                   textInputAction: TextInputAction.next,
-                                  inputFormatters: [
+                                  inputFormatters: <MainAssetNameTextFormatter>[
                                     MainAssetNameTextFormatter(),
                                   ],
                                   //maxLength: 32,
@@ -366,19 +365,19 @@ class _ReceiveState extends State<Receive> {
                                       ? null
                                       : IconButton(
                                           alignment: Alignment.centerRight,
-                                          //padding: EdgeInsets.all(0),
-                                          icon: Icon(Icons.close_rounded,
+                                          //padding: EdgeInsets.zero,
+                                          icon: const Icon(Icons.close_rounded,
                                               color: AppColors.black60),
                                           onPressed: () => setState(() {
                                                 requestMessage.text = '';
                                                 data['symbol'] = null;
                                               })),
                                   onTap: _makeURI,
-                                  onChanged: (value) {
+                                  onChanged: (String value) {
                                     //requestMessage.text =
                                     //    cleanLabel(requestMessage.text);
                                     //_makeURI();
-                                    var oldErrorText = errorText;
+                                    final String? oldErrorText = errorText;
                                     errorText =
                                         value.length > 32 ? 'too long' : null;
                                     if (oldErrorText != errorText) {
@@ -388,11 +387,11 @@ class _ReceiveState extends State<Receive> {
                                   onEditingComplete: () {
                                     requestMessage.text =
                                         cleanLabel(requestMessage.text);
-                                    _makeURI(refresh: true);
+                                    _makeURI();
                                     FocusScope.of(context)
                                         .requestFocus(requestAmountFocus);
                                   }),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               TextFieldFormatted(
                                   focusNode: requestAmountFocus,
                                   controller: requestAmount,
@@ -402,7 +401,7 @@ class _ReceiveState extends State<Receive> {
                                   labelText: 'Amount',
                                   hintText: 'Quantity',
                                   onTap: _makeURI,
-                                  onChanged: (value) {
+                                  onChanged: (String value) {
                                     //requestAmount.text = cleanDecAmount(requestAmount.text);
                                     //_makeURI();
                                   },
@@ -415,7 +414,7 @@ class _ReceiveState extends State<Receive> {
                                     FocusScope.of(context)
                                         .requestFocus(requestLabelFocus);
                                   }),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               TextFieldFormatted(
                                 focusNode: requestLabelFocus,
                                 autocorrect: false,
@@ -424,7 +423,7 @@ class _ReceiveState extends State<Receive> {
                                 labelText: 'Note',
                                 hintText: 'for groceries',
                                 onTap: _makeURI,
-                                onChanged: (value) {
+                                onChanged: (String value) {
                                   //requestLabel.text = cleanLabel(requestLabel.text);
                                   //_makeURI();
                                 },
@@ -444,11 +443,11 @@ class _ReceiveState extends State<Receive> {
                   ))),
           Stack(
             alignment: Alignment.bottomCenter,
-            children: [
+            children: <Widget>[
               Container(height: height + 48),
               KeyboardHidesWidgetWithDelay(
-                  child: components.containers
-                      .navBar(context, child: Row(children: [shareButton]))),
+                  child: components.containers.navBar(context,
+                      child: Row(children: <Widget>[shareButton]))),
             ],
           ),
         ],

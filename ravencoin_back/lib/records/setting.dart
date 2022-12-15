@@ -8,13 +8,7 @@ part 'setting.g.dart';
 
 @HiveType(typeId: TypeId.Setting)
 class Setting with EquatableMixin {
-  @HiveField(0)
-  SettingName name;
-
-  @HiveField(1)
-  dynamic value;
-
-  Setting({
+  const Setting({
     required this.name,
     required this.value,
   });
@@ -24,15 +18,20 @@ class Setting with EquatableMixin {
     SettingName? name,
     dynamic value,
     bool valueIsNull = false,
-  }) {
-    return Setting(
-      name: name ?? setting.name,
-      value: valueIsNull ? null : value ?? setting.value,
-    );
-  }
+  }) =>
+      Setting(
+        name: name ?? setting.name,
+        value: valueIsNull ? null : value ?? setting.value,
+      );
+
+  @HiveField(0)
+  final SettingName name;
+
+  @HiveField(1)
+  final dynamic value;
 
   @override
-  List<Object> get props => [name, value ?? ''];
+  List<Object?> get props => <Object?>[name, value];
 
   @override
   String toString() => 'Setting($name, $value)';
@@ -41,7 +40,7 @@ class Setting with EquatableMixin {
 
   static String key(SettingName name) => name.name;
 
-  Type? get type => {
+  Type? get type => <SettingName, Type>{
         SettingName.version_database: int,
         SettingName.login_attempts: List, //<DateTime>
         SettingName.electrum_net: Net,

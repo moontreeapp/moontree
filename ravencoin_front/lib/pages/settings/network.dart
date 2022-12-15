@@ -1,25 +1,25 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:ravencoin_back/streams/app.dart';
-
-import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/theme/colors.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/client.dart';
+import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/front/choices/download_activity.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class ElectrumNetworkPage extends StatefulWidget {
+  const ElectrumNetworkPage({Key? key, this.data}) : super(key: key);
   final dynamic data;
-  const ElectrumNetworkPage({this.data}) : super();
 
   @override
   _ElectrumNetworkPageState createState() => _ElectrumNetworkPageState();
 }
 
 class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   TextEditingController network = TextEditingController(text: 'Ravencoin');
   TextEditingController serverAddress = TextEditingController(text: '');
   FocusNode networkFocus = FocusNode();
@@ -52,7 +52,7 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
     serverFocus.dispose();
     network.dispose();
     serverAddress.dispose();
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -61,18 +61,18 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: CustomScrollView(slivers: <Widget>[
             SliverToBoxAdapter(
                 child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 16, right: 16, top: 0, bottom: 16),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                     child: Container(
                         alignment: Alignment.topLeft,
-                        child: BlockchainChoice()))),
+                        child: const BlockchainChoice()))),
             //SliverToBoxAdapter(
             //    child: Padding(
             //        padding:
@@ -88,14 +88,14 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
             //        child: networkTextField)),
             SliverToBoxAdapter(
                 child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         left: 16, right: 16, top: 16, bottom: 16),
                     child: serverTextField)),
             if (services.developer.advancedDeveloperMode)
               SliverToBoxAdapter(
                   child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 16, right: 16, top: 36, bottom: 0),
+                      padding:
+                          const EdgeInsets.only(left: 16, right: 16, top: 36),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -105,11 +105,11 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
             if (services.developer.advancedDeveloperMode)
               SliverToBoxAdapter(
                   child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 16, right: 16, top: 0, bottom: 16),
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, bottom: 16),
                       child: Container(
                           alignment: Alignment.topLeft,
-                          child: DownloadActivity()))),
+                          child: const DownloadActivity()))),
 
             //SliverToBoxAdapter(
             //    child: Container(height: MediaQuery.of(context).size.height / 2)),
@@ -118,10 +118,10 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: 100),
+                    children: <Widget>[
+                      const SizedBox(height: 100),
                       components.containers.navBar(context,
-                          child: Row(children: [submitButton])),
+                          child: Row(children: <Widget>[submitButton])),
                     ])),
           ]),
         )));
@@ -201,12 +201,12 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
       value.split(':').last.isInt &&
       value.split(':').last.asInt() <= 65535;
 
-  void validateAndSave() async {
+  Future<void> validateAndSave() async {
     pressed = true;
     await Navigator.pushNamed(
       components.navigator.routeContext!,
       '/security/security',
-      arguments: {
+      arguments: <String, Object>{
         'buttonLabel': 'Submit',
         'onSuccess': () async {
           Navigator.pop(components.navigator.routeContext!);
@@ -216,22 +216,21 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
     );
   }
 
-  void save() async {
-    var port = serverAddress.text.split(':').last;
-    var domain = serverAddress.text
+  Future<void> save() async {
+    final String port = serverAddress.text.split(':').last;
+    final String domain = serverAddress.text
         .substring(0, serverAddress.text.lastIndexOf(port) - 1);
     components.loading.screen(
       message: 'Connecting',
       playCount: 1,
       then: () async {
-        waiters.block.notify = true;
+        triggers.block.notify = true;
         await services.client.saveElectrumAddress(
           domain: domain,
           port: int.parse(port),
         );
         await services.client.createClient();
       },
-      returnHome: true,
     );
   }
 }

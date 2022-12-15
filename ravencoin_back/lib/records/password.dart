@@ -7,12 +7,12 @@ part 'password.g.dart';
 @HiveType(typeId: TypeId.Password)
 class Password with EquatableMixin {
   @HiveField(0)
-  int id;
+  final int id;
 
   @HiveField(1)
-  String saltedHash;
+  final String saltedHash;
 
-  Password({
+  const Password({
     required this.id,
     required this.saltedHash,
   });
@@ -24,7 +24,7 @@ class Password with EquatableMixin {
       );
 
   @override
-  List<Object> get props => [id, saltedHash];
+  List<Object> get props => <Object>[id, saltedHash];
 
   @override
   String toString() => 'Password($id, $saltedHash)';

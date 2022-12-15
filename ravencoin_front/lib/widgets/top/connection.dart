@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
@@ -10,7 +11,7 @@ import 'package:ravencoin_front/widgets/front/choices/blockchain_choice.dart'
     show produceBlockchainModal;
 
 class ConnectionLight extends StatefulWidget {
-  ConnectionLight({Key? key}) : super(key: key);
+  const ConnectionLight({Key? key}) : super(key: key);
 
   @override
   _ConnectionLightState createState() => _ConnectionLightState();
@@ -18,10 +19,10 @@ class ConnectionLight extends StatefulWidget {
 
 class _ConnectionLightState extends State<ConnectionLight>
     with TickerProviderStateMixin {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
   Color connectionStatusColor = AppColors.error;
-  Map<ConnectionStatus, Color> connectionColor = {
+  Map<ConnectionStatus, Color> connectionColor = <ConnectionStatus, Color>{
     ConnectionStatus.connected: AppColors.success,
     ConnectionStatus.connecting: AppColors.yellow,
     ConnectionStatus.disconnected: AppColors.error,
@@ -50,13 +51,13 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   void createAnimations() {
     _controllerH = AnimationController(
-      duration: Duration(milliseconds: durationH),
+      duration: const Duration(milliseconds: durationH),
       vsync: this,
     );
     _controllerH.value = .5;
     _controllerH.repeat(reverse: true);
     _controllerV = AnimationController(
-      duration: Duration(milliseconds: durationV),
+      duration: const Duration(milliseconds: durationV),
       vsync: this,
     );
     _controllerV.value = .5;
@@ -106,7 +107,7 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -114,7 +115,7 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   /* blinking animations */
   //Future<void> rebuildMe() async {
-  //  await Future.delayed(Duration(milliseconds: 600));
+  //  await Future<void>.delayed(const Duration(milliseconds: 600));
   //  if (connectionBusy) {
   //    // don't blink when spinner runs... separate into different streams?
   //    if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
@@ -131,8 +132,8 @@ class _ConnectionLightState extends State<ConnectionLight>
 
   @override
   Widget build(BuildContext context) {
-    final circleIcon = AnimatedContainer(
-      duration: Duration(milliseconds: 200),
+    final AnimatedContainer circleIcon = AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
       height: 8,
       width: 8,
       decoration: BoxDecoration(
@@ -143,7 +144,7 @@ class _ConnectionLightState extends State<ConnectionLight>
     return GestureDetector(
       onTap: navToBlockchain,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 400),
         alignment: Alignment.center,
         padding: EdgeInsets.zero,
         child: pros.settings.chain == Chain.none
@@ -153,16 +154,16 @@ class _ConnectionLightState extends State<ConnectionLight>
                 icon: circleIcon,
                 onPressed: navToBlockchain,
               )
-            : Stack(alignment: Alignment.center, children: [
+            : Stack(alignment: Alignment.center, children: <Widget>[
                 ColorFiltered(
                     colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
                     child: components.icons.assetAvatar(
-                        chainSymbol(pros.settings.chain),
-                        net: pros.settings.net,
-                        height: 26,
-                        width: 26,
-                        circled: true)),
-                components.icons.assetAvatar(chainSymbol(pros.settings.chain),
+                      pros.settings.chain.symbol,
+                      net: pros.settings.net,
+                      height: 26,
+                      width: 26,
+                    )),
+                components.icons.assetAvatar(pros.settings.chain.symbol,
                     net: pros.settings.net, height: 24, width: 24),
               ]),
       ),
@@ -175,17 +176,24 @@ class _ConnectionLightState extends State<ConnectionLight>
       : connectionStatusColor;
 
   void navToBlockchain() {
-    if (streams.app.scrim.value == true) return;
-    if (streams.app.loading.value == true) return;
-    if (![
+    if (streams.app.scrim.value ?? false) {
+      return;
+    }
+    if (streams.app.loading.value == true) {
+      return;
+    }
+    if (!<String>[
       'Login',
       'Createlogin',
       'Network',
       'Scan',
       'Setup',
+      'Backupintro',
+      'Backupconfirm',
+      'Backup',
     ].contains(streams.app.page.value)) {
       ScaffoldMessenger.of(context).clearSnackBars();
-      streams.app.xlead.add(true);
+      streams.app.lead.add(LeadIcon.dismiss);
       produceBlockchainModal(components.navigator.routeContext!);
       //Navigator.of(components.navigator.routeContext!)
       //    .pushNamed('/settings/network/blockchain');
@@ -194,13 +202,14 @@ class _ConnectionLightState extends State<ConnectionLight>
 }
 
 class SpoofedConnectionLight extends StatelessWidget {
-  SpoofedConnectionLight({Key? key}) : super(key: key);
+  const SpoofedConnectionLight({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Color connectionStatusColor = AppColors.success;
-    var icon = ColorFiltered(
-        colorFilter: ColorFilter.mode(connectionStatusColor, BlendMode.srcATop),
+    const Color connectionStatusColor = AppColors.success;
+    final ColorFiltered icon = ColorFiltered(
+        colorFilter:
+            const ColorFilter.mode(connectionStatusColor, BlendMode.srcATop),
         child: SvgPicture.asset('assets/status/icon.svg'));
     return IconButton(
       splashRadius: 24,

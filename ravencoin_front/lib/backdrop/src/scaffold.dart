@@ -20,12 +20,12 @@ import 'package:ravencoin_front/backdrop/backdrop.dart';
 /// Backdrop.of(context).fling();
 /// ```
 class Backdrop extends InheritedWidget {
-  /// Holds the state of this widget.
-  final BackdropScaffoldState data;
-
   /// Creates a [Backdrop] instance.
   const Backdrop({Key? key, required this.data, required Widget child})
       : super(key: key, child: child);
+
+  /// Holds the state of this widget.
+  final BackdropScaffoldState data;
 
   /// Provides access to the state from everywhere in the widget tree.
   static BackdropScaffoldState of(BuildContext context) =>
@@ -70,6 +70,56 @@ class Backdrop extends InheritedWidget {
 /// See also:
 ///  * [Scaffold], which is the plain scaffold used in material apps.
 class BackdropScaffold extends StatefulWidget {
+  /// Creates a backdrop scaffold to be used as a material widget.
+  BackdropScaffold({
+    Key? key,
+    this.animationController,
+    required this.backLayer,
+    required this.frontLayer,
+    this.frontLayerBorderRadius = const BorderRadius.only(
+      topLeft: Radius.circular(16),
+      topRight: Radius.circular(16),
+    ),
+    this.frontLayerElevation = 1,
+    this.frontLayerBoxShadow,
+    this.stickyFrontLayer = false,
+    this.revealBackLayerAtStart = false,
+    this.animationCurve = Curves.ease,
+    this.reverseAnimationCurve,
+    this.frontLayerBackgroundColor,
+    double frontLayerActiveFactor = 1,
+    this.backLayerBackgroundColor,
+    this.frontLayerScrim = Colors.white,
+    this.backLayerScrim = Colors.black54,
+    this.onBackLayerConcealed,
+    this.onBackLayerRevealed,
+    this.maintainBackLayerState = true,
+    this.scaffoldKey,
+    this.appBar,
+    this.floatingActionButton,
+    this.floatingActionButtonLocation,
+    this.floatingActionButtonAnimator,
+    this.persistentFooterButtons,
+    this.drawer,
+    this.onDrawerChanged,
+    this.endDrawer,
+    this.onEndDrawerChanged,
+    this.bottomNavigationBar,
+    this.bottomSheet,
+    this.backgroundColor,
+    this.resizeToAvoidBottomInset,
+    this.primary = true,
+    this.drawerDragStartBehavior = DragStartBehavior.start,
+    this.extendBody = false,
+    this.extendBodyBehindAppBar = false,
+    this.drawerScrimColor,
+    this.drawerEdgeDragWidth,
+    this.drawerEnableOpenDragGesture = true,
+    this.endDrawerEnableOpenDragGesture = true,
+    this.restorationId,
+  })  : frontLayerActiveFactor = frontLayerActiveFactor.clamp(0, 1).toDouble(),
+        super(key: key);
+
   /// Can be used to customize the behaviour of the backdrop animation.
   final AnimationController? animationController;
 
@@ -262,56 +312,6 @@ class BackdropScaffold extends StatefulWidget {
   /// See [Scaffold.restorationId].
   final String? restorationId;
 
-  /// Creates a backdrop scaffold to be used as a material widget.
-  BackdropScaffold({
-    Key? key,
-    this.animationController,
-    required this.backLayer,
-    required this.frontLayer,
-    this.frontLayerBorderRadius = const BorderRadius.only(
-      topLeft: Radius.circular(16),
-      topRight: Radius.circular(16),
-    ),
-    this.frontLayerElevation = 1,
-    this.frontLayerBoxShadow,
-    this.stickyFrontLayer = false,
-    this.revealBackLayerAtStart = false,
-    this.animationCurve = Curves.ease,
-    this.reverseAnimationCurve,
-    this.frontLayerBackgroundColor,
-    double frontLayerActiveFactor = 1,
-    this.backLayerBackgroundColor,
-    this.frontLayerScrim = Colors.white,
-    this.backLayerScrim = Colors.black54,
-    this.onBackLayerConcealed,
-    this.onBackLayerRevealed,
-    this.maintainBackLayerState = true,
-    this.scaffoldKey,
-    this.appBar,
-    this.floatingActionButton,
-    this.floatingActionButtonLocation,
-    this.floatingActionButtonAnimator,
-    this.persistentFooterButtons,
-    this.drawer,
-    this.onDrawerChanged,
-    this.endDrawer,
-    this.onEndDrawerChanged,
-    this.bottomNavigationBar,
-    this.bottomSheet,
-    this.backgroundColor,
-    this.resizeToAvoidBottomInset,
-    this.primary = true,
-    this.drawerDragStartBehavior = DragStartBehavior.start,
-    this.extendBody = false,
-    this.extendBodyBehindAppBar = false,
-    this.drawerScrimColor,
-    this.drawerEdgeDragWidth,
-    this.drawerEnableOpenDragGesture = true,
-    this.endDrawerEnableOpenDragGesture = true,
-    this.restorationId,
-  })  : frontLayerActiveFactor = frontLayerActiveFactor.clamp(0, 1).toDouble(),
-        super(key: key);
-
   @override
   BackdropScaffoldState createState() => BackdropScaffoldState();
 }
@@ -342,7 +342,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
   /// Defaults to
   /// ```dart
   /// AnimationController(
-  ///         vsync: this, duration: Duration(milliseconds: 200), value: 1)
+  ///         vsync: this, duration: const Duration(milliseconds: 200), value: 1)
   /// ```
   AnimationController get animationController => _animationController;
 
@@ -384,7 +384,9 @@ class BackdropScaffoldState extends State<BackdropScaffold>
 
   @override
   void dispose() {
-    if (_shouldDisposeAnimationController) _animationController.dispose();
+    if (_shouldDisposeAnimationController) {
+      _animationController.dispose();
+    }
     super.dispose();
   }
 
@@ -438,7 +440,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
     BoxConstraints constraints,
   ) {
     double backPanelHeight, frontPanelHeight;
-    final availableHeight = constraints.biggest.height;
+    final double availableHeight = constraints.biggest.height;
     if (widget.stickyFrontLayer && _backPanelHeight < availableHeight) {
       // height is adapted to the height of the back panel
       backPanelHeight = _backPanelHeight;
@@ -488,7 +490,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
 
   Widget _buildBackPanel() {
     return Stack(
-      children: [
+      children: <Widget>[
         FocusScope(
           canRequestFocus: isBackLayerRevealed,
           child: Material(
@@ -498,7 +500,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
               children: <Widget>[
                 Flexible(
                   child: _MeasureSize(
-                    onChange: (size) =>
+                    onChange: (Size size) =>
                         setState(() => _backPanelHeight = size.height),
                     child:
                         !widget.maintainBackLayerState && isBackLayerConcealed
@@ -516,7 +518,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
   }
 
   Widget _buildFrontPanel(BuildContext context) {
-    var frontPanel = Material(
+    final Material frontPanel = Material(
       color: widget.frontLayerBackgroundColor,
       elevation: widget.frontLayerElevation,
       borderRadius: widget.frontLayerBorderRadius,
@@ -525,7 +527,6 @@ class BackdropScaffoldState extends State<BackdropScaffold>
         child: Stack(
           children: <Widget>[
             Column(
-              mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Flexible(child: widget.frontLayer),
@@ -573,7 +574,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
         key: scaffoldKey,
         appBar: widget.appBar,
         body: LayoutBuilder(
-          builder: (context, constraints) {
+          builder: (BuildContext context, BoxConstraints constraints) {
             return Stack(
               fit: StackFit.expand,
               children: <Widget>[
@@ -633,7 +634,7 @@ class BackdropScaffoldState extends State<BackdropScaffold>
     return Backdrop(
       data: this,
       child: Builder(
-        builder: (context) => _buildBody(context),
+        builder: (BuildContext context) => _buildBody(context),
       ),
     );
   }
@@ -643,32 +644,37 @@ class BackdropScaffoldState extends State<BackdropScaffold>
 ///
 /// Credit: https://stackoverflow.com/a/60868972/2554745
 class _MeasureSize extends StatefulWidget {
-  final Widget child;
-  final ValueChanged<Size> onChange;
-
   const _MeasureSize({
     Key? key,
     required this.onChange,
     required this.child,
   }) : super(key: key);
+  final Widget child;
+  final ValueChanged<Size> onChange;
 
   @override
   _MeasureSizeState createState() => _MeasureSizeState();
 }
 
 class _MeasureSizeState extends State<_MeasureSize> {
-  final widgetKey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> widgetKey = GlobalKey();
   Size? oldSize;
 
   void _notify() {
-    final context = widgetKey.currentContext;
-    if (context == null) return;
+    final BuildContext? context = widgetKey.currentContext;
+    if (context == null) {
+      return;
+    }
 
-    final newSize = context.size;
-    if (oldSize == newSize) return;
+    final Size? newSize = context.size;
+    if (oldSize == newSize) {
+      return;
+    }
 
     oldSize = newSize;
-    if (newSize != null) widget.onChange(newSize);
+    if (newSize != null) {
+      widget.onChange(newSize);
+    }
   }
 
   @override

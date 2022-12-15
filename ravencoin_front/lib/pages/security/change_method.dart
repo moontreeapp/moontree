@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -11,8 +10,8 @@ class ChangeLoginMethod extends StatefulWidget {
 }
 
 class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
-  var newPassword = TextEditingController();
-  var confirmPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   FocusNode newPasswordFocus = FocusNode();
   FocusNode confirmPasswordFocus = FocusNode();
   FocusNode buttonFocus = FocusNode();
@@ -39,7 +38,7 @@ class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
 
   @override
   Widget build(BuildContext context) => BackdropLayers(
-      back: BlankBack(),
+      back: const BlankBack(),
       front: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: FrontCurve(
@@ -48,34 +47,32 @@ class _ChangeLoginMethodState extends State<ChangeLoginMethod> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                 Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                          padding: EdgeInsets.only(
-                              left: 0, right: 16, top: 24, bottom: 16),
+                          padding: const EdgeInsets.only(
+                              right: 16, top: 24, bottom: 16),
                           child: Container(
                               alignment: Alignment.topLeft,
-                              child: AuthenticationMethodChoice())),
+                              child: const AuthenticationMethodChoice())),
                       if (services.developer.advancedDeveloperMode)
                         Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 left: 16, right: 16, top: 16, bottom: 16),
                             child: Container(
                                 alignment: Alignment.topLeft,
-                                child: ShowAuthenticationChoice())),
+                                child: const ShowAuthenticationChoice())),
                     ]),
                 if (!pros.settings.authMethodIsNativeSecurity)
-                  components.containers
-                      .navBar(context, child: Row(children: [changeButton]))
+                  components.containers.navBar(context,
+                      child: Row(children: <Widget>[changeButton]))
               ]))));
 
   Widget get changeButton => components.buttons.actionButton(
         context,
-        enabled: true,
         label: 'Change Password',
         focusNode: buttonFocus,
-        disabledIcon: Icon(Icons.lock_rounded, color: AppColors.black38),
+        disabledIcon: const Icon(Icons.lock_rounded, color: AppColors.black38),
         link: '/security/password/change',
       );
 }

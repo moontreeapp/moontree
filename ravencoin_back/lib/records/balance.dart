@@ -1,12 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/records/security.dart';
-import 'package:ravencoin_back/records/types/chain.dart';
-import 'package:ravencoin_back/records/types/net.dart';
-import 'package:ravencoin_back/utilities/exceptions.dart';
-import 'package:ravencoin_back/utilities/transform.dart';
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:wallet_utils/wallet_utils.dart'
+    show SatsToAmountExtension, satsPerCoin;
 
 import '_type_id.dart';
 
@@ -16,18 +15,18 @@ part 'balance.g.dart';
 class Balance with EquatableMixin {
   // do we need unique ID?
   @HiveField(0)
-  String walletId;
+  final String walletId;
 
   @HiveField(1)
-  Security security;
+  final Security security;
 
   @HiveField(2)
-  int confirmed;
+  final int confirmed;
 
   @HiveField(3)
-  int unconfirmed;
+  final int unconfirmed;
 
-  Balance({
+  const Balance({
     required this.walletId,
     required this.security,
     required this.confirmed,
@@ -50,7 +49,8 @@ class Balance with EquatableMixin {
   }
 
   @override
-  List<Object> get props => [walletId, security, confirmed, unconfirmed];
+  List<Object> get props =>
+      <Object>[walletId, security, confirmed, unconfirmed];
 
   @override
   String toString() =>
@@ -87,9 +87,9 @@ class Balance with EquatableMixin {
 
   int get value => confirmed + unconfirmed;
 
-  double get amount => satToAmount(value);
+  double get amount => value.asCoin;
 
-  double get rvn => (confirmed / 100000000); //+ (unconfirmed / 100000000);
+  double get rvn => confirmed / satsPerCoin;
 
   String get valueRVN =>
       NumberFormat('RVN #,##0.00000000', 'en_US').format(rvn);
@@ -118,8 +118,8 @@ class BalanceUSD {
 
   double get value => confirmed + unconfirmed;
 
-  String get valueUSD => NumberFormat('\$ #,##0.00', 'en_US')
-      .format((confirmed /*+ unconfirmed*/) /*.toStringAsFixed(2)*/);
+  String get valueUSD => NumberFormat(r'$ #,##0.00', 'en_US')
+      .format(confirmed /*+ unconfirmed*/ /*.toStringAsFixed(2)*/);
 
   BalanceUSD operator +(BalanceUSD balanceUSD) => BalanceUSD(
       confirmed: confirmed + balanceUSD.confirmed,

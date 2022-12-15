@@ -1,4 +1,5 @@
-import 'package:ravencoin_back/utilities/utilities.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' show coinsPerChain;
 import 'package:ravencoin_back/proclaim/proclaim.dart';
 
 Map<String, String> parseReceiveParams(String address) =>
@@ -7,30 +8,30 @@ Map<String, String> parseReceiveParams(String address) =>
 /// message=asset:MOONTREE0
 String requestedAsset(
   Map<String, String> params, {
-  List? holdings,
+  List<String>? holdings,
   String? current,
 }) {
   if (params.containsKey('message')) {
     if (params['message']!.startsWith('asset:')) {
-      var desired = params['message']!.substring(6);
-      if ((holdings ?? []).contains(desired)) {
+      final String desired = params['message']!.substring(6);
+      if ((holdings ?? <String>[]).contains(desired)) {
         return desired;
       }
     }
   }
-  return current ?? pros.securities.currentCrypto.symbol;
+  return current ?? pros.securities.currentCoin.symbol;
 }
 
 String cleanSatAmount(String amount) {
-  var text = utils.removeChars(
+  String text = removeChars(
     amount.split('.').first,
-    chars: utils.strings.punctuation + utils.strings.whiteSapce,
+    chars: punctuation + whiteSapce,
   );
   if (text == '') {
     text = '0';
   }
-  if (int.parse(text) > 21000000000) {
-    text = '21000000000';
+  if (int.parse(text) > coinsPerChain) {
+    text = '$coinsPerChain';
   }
   return text;
 }
@@ -40,26 +41,23 @@ String cleanDecAmount(
   bool zeroToBlank = false,
   bool blankToZero = false,
 }) {
-  amount = utils.removeChars(amount,
-      chars: utils.strings.whiteSapce + utils.strings.punctuationMinusCurrency);
-  if (amount.length > 0) {
+  amount = removeChars(amount, chars: whiteSapce + punctuationMinusCurrency);
+  if (amount.isNotEmpty) {
     if (amount.contains(',')) {
       amount = amount.replaceAll(',', '.');
     }
     if (amount.contains('.')) {
-      var head = amount.split('.')[0];
-      var tail = amount.split('.').sublist(1).join('');
-      amount =
-          head + '.' + tail.substring(0, tail.length > 8 ? 8 : tail.length);
+      final String head = amount.split('.')[0];
+      final String tail = amount.split('.').sublist(1).join();
+      amount = '$head.${tail.substring(0, tail.length > 8 ? 8 : tail.length)}';
     }
     if (RegExp(
-      r"^([\d]+)?(\.)?([\d]+)?$",
+      r'^([\d]+)?(\.)?([\d]+)?$',
       caseSensitive: false,
-      multiLine: false,
     ).hasMatch(amount)) {
       try {
-        if (double.parse(amount) > 21000000000) {
-          amount = '21000000000';
+        if (double.parse(amount) > coinsPerChain) {
+          amount = 'coinsPerChain';
         }
       } catch (e) {
         amount = '0';
@@ -71,7 +69,7 @@ String cleanDecAmount(
     }
   }
   // remove leading 0(s)
-  var ret = '';
+  String ret = '';
   try {
     if (amount == '') {
       if (blankToZero) {
@@ -85,7 +83,7 @@ String cleanDecAmount(
       ret = '0';
     }
   }
-  if (zeroToBlank && ['0', '0.0'].contains(ret)) {
+  if (zeroToBlank && <String>['0', '0.0'].contains(ret)) {
     return '';
   }
   return ret;
@@ -93,12 +91,14 @@ String cleanDecAmount(
 
 String enforceDivisibility(String amount, {int divisibility = 8}) {
   if (amount.contains('.')) {
-    var head = amount.split('.')[0];
-    var tail = amount.split('.').sublist(1).join('');
-    return head +
-        '.' +
-        tail.substring(
-            0, tail.length > divisibility ? divisibility : tail.length);
+    final String head = amount.split('.')[0];
+    final String tail = amount.split('.').sublist(1).join();
+    final String ret =
+        '$head.${tail.substring(0, tail.length > divisibility ? divisibility : tail.length)}';
+    if (ret.endsWith('.')) {
+      return ret.substring(0, ret.length - 1);
+    }
+    return ret;
   }
   return amount;
 }

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/utils/auth.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
@@ -14,14 +17,25 @@ class BackdropAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _BackdropAppBarState extends State<BackdropAppBar> {
-  late List listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
+  String pageTitle = '';
 
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.splash.listen((bool value) {
-      setState(() {});
+    listeners.add(streams.app.page.listen((String value) {
+      if (value != pageTitle) {
+        setState(() {
+          pageTitle = value;
+        });
+      }
     }));
+
+    /// this is here because we trigger logouts on backend.
+    /// maybe we could call it from the back, but originally it seemed better to
+    /// pass it to the front layer and have it do it, also because other things
+    /// could listen to the logout behavior. could use a refactor.
     listeners.add(streams.app.logout.listen((bool value) {
       if (value && streams.app.page.value != 'Login') {
         logout();
@@ -31,7 +45,7 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -40,7 +54,7 @@ class _BackdropAppBarState extends State<BackdropAppBar> {
   @override
   Widget build(BuildContext context) {
     return streams.app.splash.value
-        ? PreferredSize(preferredSize: Size(0, 0), child: Container(height: 0))
+        ? PreferredSize(preferredSize: Size.zero, child: Container(height: 0))
         : BackdropAppBarContents();
   }
 }

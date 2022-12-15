@@ -3,10 +3,12 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
+import 'package:ravencoin_front/services/dev.dart';
 import 'package:ravencoin_front/services/password.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/data.dart';
+import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 
 class VerifyAuthentication extends StatefulWidget {
@@ -15,14 +17,18 @@ class VerifyAuthentication extends StatefulWidget {
   final String? suffix;
   final Widget? intro;
   final Widget? safe;
+  final bool auto;
+  final bool asLoginTime;
 
-  VerifyAuthentication({
+  const VerifyAuthentication({
     Key? key,
     this.parentState,
     this.buttonLabel = 'Submit',
     this.suffix,
     this.intro,
     this.safe,
+    this.auto = true,
+    this.asLoginTime = true,
   }) : super(key: key);
 
   @override
@@ -30,7 +36,7 @@ class VerifyAuthentication extends StatefulWidget {
 }
 
 class _VerifyAuthenticationState extends State<VerifyAuthentication> {
-  Map<String, dynamic> data = {};
+  Map<String, dynamic> data = <String, dynamic>{};
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
   FocusNode existingFocus = FocusNode();
@@ -56,11 +62,12 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
     try {
       data = populateData(context, data);
     } catch (e) {
-      data = {};
+      data = <String, dynamic>{};
     }
 
-    if (pros.settings.authMethodIsNativeSecurity &&
-        (data['autoInitiateUnlock'] ?? true)) {
+    if (widget.auto &&
+        pros.settings.authMethodIsNativeSecurity &&
+        (data['autoInitiateUnlock'] as bool? ?? true)) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await submit();
       });
@@ -71,18 +78,21 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
     //onTap: () => FocusScope.of(context).unfocus(),
     //child:
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
           child: components.page.form(
             context,
             columnWidgets: <Widget>[
               if (widget.intro != null) widget.intro!,
-              if (widget.safe != null) widget.safe!,
               Container(
-                  height: (MediaQuery.of(context).size.height) *
-                      (.3 -
-                          (widget.intro != null ? .07 : 0) -
-                          (widget.safe != null ? .07 : 0))),
+                  height: ((MediaQuery.of(context).size.height) -
+                          (56 +
+                              40 +
+                              16 +
+                              16 +
+                              72.figma(context) +
+                              (widget.intro != null ? 40.figma(context) : 0))) /
+                      3),
               //Center(
               //    child: Text(
               //        'Please verify your password\nto proceed' +
@@ -90,15 +100,18 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
               //        textAlign: TextAlign.center,
               //        style: Theme.of(context).textTheme.bodyText1)),
               //SizedBox(height: 8),
-              LockedOutTime(),
-              pros.settings.authMethodIsNativeSecurity
-                  ? bioText
-                  : passwordField,
+
+              const LockedOutTime(),
+              if (pros.settings.authMethodIsNativeSecurity)
+                bioText
+              else
+                passwordField,
             ],
-            buttons: [
-              pros.settings.authMethodIsNativeSecurity
-                  ? bioButton
-                  : submitButton
+            buttons: <Widget>[
+              if (pros.settings.authMethodIsNativeSecurity)
+                bioButton
+              else
+                submitButton
             ],
           ),
         )
@@ -118,7 +131,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
           focusNode: existingFocus,
           labelText: 'Password',
           errorText: password.text == '' &&
-                  pros.settings.loginAttempts.length > 0 &&
+                  pros.settings.loginAttempts.isNotEmpty &&
                   failedAttempt
               ? 'Incorrect Password'
               : null,
@@ -143,7 +156,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
         context,
         focusNode: submitFocus,
         enabled: password.text != '' && services.password.lockout.timePast(),
-        label: data['buttonLabel'] ?? widget.buttonLabel,
+        label: data['buttonLabel'] as String? ?? widget.buttonLabel,
         onPressed: submitProceedure,
       );
 
@@ -169,7 +182,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
   }
 
   String used() =>
-      {
+      <int?, String>{
         null: 'unrecognized',
         //0: 'current password',
         //1: 'prior password',
@@ -178,8 +191,9 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
       //'has been used before';
       'unrecognized';
 
-  Widget get bioText => Center(
-      child: Text('Please authenticate before proceeding...',
+  Widget get bioText => Container(
+      alignment: Alignment.center,
+      child: Text('Please Authenticate',
           textAlign: TextAlign.center,
           style: Theme.of(context)
               .textTheme
@@ -188,22 +202,25 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
 
   Widget get bioButton => components.buttons.actionButton(
         context,
-        enabled: enabled && services.password.lockout.timePast(),
+        enabled: pros.settings.authMethodIsNativeSecurity ||
+            (enabled && services.password.lockout.timePast()),
         label: widget.buttonLabel == 'Submit'
             ? 'Unlock'
-            : (data['buttonLable'] ?? widget.buttonLabel),
-        onPressed: () async {
-          await submit();
-        },
+            : (data['buttonLable'] as String? ?? widget.buttonLabel),
+        onPressed: () async => submit(),
       );
 
-  Future submit() async {
+  Future<void> submit() async {
     setState(() => enabled = false);
-    final localAuthApi = LocalAuthApi();
+    final LocalAuthApi localAuthApi = LocalAuthApi();
     streams.app.authenticating.add(true);
-    final validate = await localAuthApi.authenticate();
+    final bool validate = await localAuthApi.authenticate(
+        skip: devFlags.contains(DevFlag.skipPin));
     streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
+      if (widget.asLoginTime) {
+        services.cipher.loginTime();
+      }
       streams.app.verify.add(true);
       widget.parentState?.setState(() {});
       (data['onSuccess'] ?? () {})();

@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:ravencoin_back/extensions/validation.dart';
 import 'package:ravencoin_back/records/types/chain.dart';
 import 'package:ravencoin_back/records/types/net.dart';
-import 'package:ravencoin_back/utilities/utilities.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 import '_type_id.dart';
 
@@ -56,7 +55,7 @@ class Asset with EquatableMixin {
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         symbol,
         satsInCirculation,
         divisibility,
@@ -72,7 +71,7 @@ class Asset with EquatableMixin {
   String toString() => 'Asset(symbol: $symbol, '
       'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position, ${chainNetReadable(chain, net)})';
+      'position: $position, ${ChainNet(chain, net).readable})';
 
   factory Asset.from(
     Asset asset, {
@@ -93,35 +92,35 @@ class Asset with EquatableMixin {
       metadata: metadata ?? asset.metadata,
       transactionId: transactionId ?? asset.transactionId,
       position: position ?? asset.position,
-      symbol: symbol ?? (chain != null ? chainSymbol(chain) : asset.symbol),
+      symbol: symbol ?? (chain != null ? chain.symbol : asset.symbol),
       chain: chain ?? asset.chain,
       net: net ?? asset.net,
     );
   }
 
   static String key(String symbol, Chain chain, Net net) =>
-      '$symbol:${chainNetKey(chain, net)}';
+      '$symbol:${ChainNet(chain, net).key}';
 
   String get id => key(symbol, chain, net);
   String? get parentSymbol {
     if (assetType == AssetType.sub) {
-      var splits = symbol.split('/');
+      final List<String> splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
     }
     if (assetType == AssetType.subAdmin) {
-      var splits = symbol.split('/');
+      final List<String> splits = symbol.split('/');
       return splits.sublist(0, splits.length - 1).join('/');
     }
     if (assetType == AssetType.qualifierSub) {
-      var splits = symbol.split('/#');
+      final List<String> splits = symbol.split('/#');
       return splits.sublist(0, splits.length - 1).join('/#');
     }
     if (assetType == AssetType.unique) {
-      var splits = symbol.split('#');
+      final List<String> splits = symbol.split('#');
       return splits.sublist(0, splits.length - 1).join('#');
     }
     if (assetType == AssetType.channel) {
-      var splits = symbol.split('~');
+      final List<String> splits = symbol.split('~');
       return splits.sublist(0, splits.length - 1).join('~');
     }
     return null;
@@ -132,23 +131,23 @@ class Asset with EquatableMixin {
 
   String? get shortName {
     if (assetType == AssetType.sub) {
-      var splits = symbol.split('/');
+      final List<String> splits = symbol.split('/');
       return splits[splits.length - 1];
     }
     if (assetType == AssetType.subAdmin) {
-      var splits = symbol.split('/');
+      final List<String> splits = symbol.split('/');
       return splits[splits.length - 1];
     }
     if (assetType == AssetType.qualifierSub) {
-      var splits = symbol.split('/#');
+      final List<String> splits = symbol.split('/#');
       return splits[splits.length - 1];
     }
     if (assetType == AssetType.unique) {
-      var splits = symbol.split('#');
+      final List<String> splits = symbol.split('#');
       return splits[splits.length - 1];
     }
     if (assetType == AssetType.channel) {
-      var splits = symbol.split('~');
+      final List<String> splits = symbol.split('~');
       return splits[splits.length - 1];
     }
     return null;
@@ -180,19 +179,19 @@ class Asset with EquatableMixin {
   bool get isNFT => assetType == AssetType.unique;
   bool get isChannel => assetType == AssetType.unique;
 
-  String get baseSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
+  String get baseSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
       ? symbol.substring(1, symbol.length)
       : symbol.endsWith('!')
           ? symbol.substring(0, symbol.length - 1)
           : symbol;
 
-  String get baseSubSymbol => symbol.startsWith('#') || symbol.startsWith('\$')
+  String get baseSubSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
       ? symbol.substring(1, symbol.length)
       : symbol.endsWith('!')
           ? symbol.substring(0, symbol.length - 1)
           : symbol.replaceAll('#', '/');
 
-  String get adminSymbol => baseSymbol + '!';
+  String get adminSymbol => '$baseSymbol!';
 
   AssetType get assetType => assetTypeOf(symbol);
 
@@ -203,7 +202,7 @@ class Asset with EquatableMixin {
     if (symbol.startsWith('#')) {
       return AssetType.qualifier;
     }
-    if (symbol.startsWith('\$')) {
+    if (symbol.startsWith(r'$')) {
       return AssetType.restricted;
     }
     if (symbol.contains('#')) {
@@ -226,7 +225,7 @@ class Asset with EquatableMixin {
 
   String get assetTypeName => assetType.name;
 
-  double get amount => utils.satToAmount(satsInCirculation);
+  double get amount => satsInCirculation.asCoin;
 }
 
 enum AssetType {

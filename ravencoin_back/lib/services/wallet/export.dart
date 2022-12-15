@@ -13,12 +13,12 @@ export json string example:
         "PasswordId":"0"}}}}
 */
 
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 
 import 'constants.dart';
 
 import 'package:convert/convert.dart' as convert;
-import 'package:ravencoin_back/utilities/hex.dart' as hex;
 
 class ExportWalletService {
   /// entire file is encrypted
@@ -32,28 +32,30 @@ class ExportWalletService {
   Future<Map<String, Map<String, dynamic>>> structureForExport(
     Iterable<Wallet> wallets,
   ) async =>
-      {'wallets': await walletsToExportFormat(wallets)};
+      <String, Map<String, dynamic>>{
+        'wallets': await walletsToExportFormat(wallets)
+      };
 
   Future<Map<String, Map<String, dynamic>>> walletsToExportFormat(
     Iterable<Wallet> wallets,
   ) async =>
-      {
-        for (final wallet in wallets) ...{
-          wallet.id: {
+      <String, Map<String, dynamic>>{
+        for (final Wallet wallet in wallets) ...<String, Map<String, dynamic>>{
+          wallet.id: <String, dynamic>{
             'wallet name': wallet.name,
             'wallet type': typeForExport(wallet),
             'backed up': wallet.backedUp,
             'secret': services.password.required
-                ? hex.encrypt(
+                ? encrypt(
                     convert.hex.encode(
                         (await wallet.secret(wallet.cipher!)).codeUnits),
                     services.cipher.currentCipher!)
-                : wallet.secret(wallet.cipher!), //encrypted,
+                : await wallet.secret(wallet.cipher!), //encrypted,
             // For now:
             // Leaderwallets are always mnemonics
             // Singlewallets are always WIFs
             'secret type': services.password.required
-                ? hex.encrypt(
+                ? encrypt(
                     convert.hex.encode(wallet.secretTypeToString.codeUnits),
                     services.cipher.currentCipher!)
                 : wallet.secretTypeToString,

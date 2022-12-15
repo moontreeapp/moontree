@@ -4,6 +4,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/auth.dart';
+import 'package:ravencoin_front/services/dev.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 import 'package:ravencoin_front/services/wallet.dart' show saveSecret;
 
@@ -52,9 +53,10 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             groupValue: authenticationMethodChoice,
             onChanged: (AuthMethod? value) async {
               Future<void> onSuccess() async {
-                final localAuthApi = LocalAuthApi();
+                final LocalAuthApi localAuthApi = LocalAuthApi();
                 streams.app.authenticating.add(true);
-                final validate = await localAuthApi.authenticate();
+                final bool validate = await localAuthApi.authenticate(
+                    skip: devFlags.contains(DevFlag.skipPin));
                 streams.app.authenticating.add(false);
                 if (validate) {
                   if (mounted) {
@@ -67,7 +69,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                       staticImage: true,
                       returnHome: true,
                       playCount: 1);
-                  final key = await SecureStorage.authenticationKey;
+                  final String key = await SecureStorage.authenticationKey;
                   await services.authentication.setPassword(
                     password: key,
                     salt: key,
@@ -104,7 +106,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                 await Navigator.pushNamed(
                   components.navigator.routeContext!,
                   '/security/security',
-                  arguments: {
+                  arguments: <String, Object>{
                     'buttonLabel': 'Submit',
                     'onSuccess': () async {
                       Navigator.pop(components.navigator.routeContext!);
@@ -155,7 +157,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               streams.app.verify.add(false); // always require auth
               Navigator.of(components.navigator.routeContext!).pushNamed(
                 '/security/password/change',
-                arguments: {
+                arguments: <String, Object>{
                   'verification.ButtonLabel': 'Continue',
                   'onSuccess.returnHome': true,
                   'then': () async {

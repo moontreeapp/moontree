@@ -1,26 +1,26 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/spend.dart';
-import 'package:ravencoin_front/services/lookup.dart';
-import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/cubits/send/cubit.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class CoinSpec extends StatefulWidget {
   final String pageTitle;
   final Security security;
   final Widget? bottom;
   final Color? color;
+  final SimpleSendFormCubit? cubit;
 
-  CoinSpec({
+  const CoinSpec({
     Key? key,
     required this.pageTitle,
     required this.security,
     this.bottom,
     this.color,
+    this.cubit,
   }) : super(key: key);
 
   @override
@@ -28,7 +28,6 @@ class CoinSpec extends StatefulWidget {
 }
 
 class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
-  List<StreamSubscription> listeners = [];
   double amount = 0.0;
   double holding = 0.0;
   String visibleAmount = '0';
@@ -37,15 +36,6 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.spend.form.listen((SpendForm? value) {
-      if (value != null && value.amount != null && value.amount != amount) {
-        if (mounted) {
-          setState(() {
-            amount = value.amount!;
-          });
-        }
-      }
-    }));
   }
 
   @override
@@ -57,20 +47,19 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final holdingBalance =
-        pros.balances.primaryIndex.getOne(Current.walletId, widget.security);
-    var holdingSat = 0;
+    final Balance? holdingBalance = widget.security.balance;
+    int holdingSat = 0;
     if (holdingBalance != null) {
       holding = holdingBalance.amount;
       holdingSat = holdingBalance.value;
     }
-    var amountSat = utils.amountToSat(amount);
+    int amountSat = amount.asSats;
     if (holding - amount == 0) {
       amountSat = holdingSat;
     }
     try {
       visibleFiatAmount = services.conversion.securityAsReadable(
-          utils.amountToSat(double.parse(visibleAmount)),
+          double.parse(visibleAmount).asSats,
           symbol: symbol,
           asUSD: true);
     } catch (e) {
@@ -86,9 +75,9 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
       color: widget.color,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: <Widget>[
           Coin(
+              cubit: widget.cubit,
               pageTitle: widget.pageTitle,
               symbol: symbol,
               holdingSat: holdingSat,
@@ -96,7 +85,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                   ? pros.assets.primaryIndex
                       .getOne(symbol, pros.settings.chain, pros.settings.net)
                       ?.amount
-                      .toCommaString()
+                      .toSatsCommaString()
                   : null),
           widget.bottom ?? specBottom(holdingSat, amountSat),
         ],
@@ -108,30 +97,32 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     if (widget.pageTitle == 'Asset') {
       return AssetSpecBottom(symbol: symbol);
     }
-    if (widget.pageTitle == 'Send') {
+    if (widget.cubit != null && widget.pageTitle == 'Send') {
       return Padding(
           padding: EdgeInsets.only(
               left: 16, right: 16, bottom: widget.pageTitle == 'Send' ? 9 : 1),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('Remaining:',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText2!
-                    .copyWith(color: AppColors.offWhite)),
-            Text(
-                services.conversion.securityAsReadable(holdingSat - amountSat,
-                    symbol: symbol, asUSD: false),
-                style: (holding - amount) >= 0
-                    ? Theme.of(context)
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Remaining:',
+                    style: Theme.of(context)
                         .textTheme
                         .bodyText2!
-                        .copyWith(color: AppColors.offWhite)
-                    : Theme.of(context)
-                        .textTheme
-                        .bodyText2!
-                        .copyWith(color: AppColors.error))
-          ]));
+                        .copyWith(color: AppColors.offWhite)),
+                Text(
+                    services.conversion.securityAsReadable(
+                        holdingSat - widget.cubit!.state.sats,
+                        symbol: symbol),
+                    style: (holding - amount) >= 0
+                        ? Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(color: AppColors.offWhite)
+                        : Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(color: AppColors.error))
+              ]));
     }
     //return CoinSpecTabs();
     return Container();

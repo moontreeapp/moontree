@@ -6,7 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:proclaim/index.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../extensions/stream/partition.dart';
+import 'package:ravencoin_back/utilities/stream/partition.dart';
 
 class Join<A, B> with EquatableMixin {
   A left;
@@ -14,7 +14,7 @@ class Join<A, B> with EquatableMixin {
   Join(this.left, this.right);
 
   @override
-  List<Object?> get props => [left, right];
+  List<Object?> get props => <Object?>[left, right];
 }
 
 Stream<Join<A, B>> streamingLeftJoin<A, B>(
@@ -23,29 +23,29 @@ Stream<Join<A, B>> streamingLeftJoin<A, B>(
   GetKey<String, A> getKeyA,
   GetKey<String, B> getKeyAFromB,
 ) {
-  var rightWaitingForLeft = <String, Set<B>>{};
-  var leftMap = <String, A>{};
+  final Map<String, Set<B>> rightWaitingForLeft = <String, Set<B>>{};
+  final Map<String, A> leftMap = <String, A>{};
 
-  var streams =
+  final PartitionedStream<B> streams =
       rightStream.partition((B b) => leftMap.containsKey(getKeyAFromB(b)));
 
   streams.falseStream.listen((B b) {
-    var keyA = getKeyAFromB(b);
-    rightWaitingForLeft.putIfAbsent(keyA, () => {});
+    final String keyA = getKeyAFromB(b);
+    rightWaitingForLeft.putIfAbsent(keyA, () => <B>{});
     rightWaitingForLeft[keyA]!.add(b);
   });
 
-  var backlog = StreamController<B>();
+  final StreamController<B> backlog = StreamController<B>();
   leftStream.listen((A a) {
-    var keyA = getKeyA(a);
+    final String keyA = getKeyA(a);
     leftMap[keyA] = a;
     rightWaitingForLeft[keyA]?.forEach((B b) {
       backlog.add(b);
     });
   });
 
-  var getPair = (B b) => Join(leftMap[getKeyAFromB(b)]!, b);
-  var trueJoinStream = streams.trueStream.map(getPair);
-  var backlogJoinStream = backlog.stream.map(getPair);
-  return trueJoinStream.mergeWith([backlogJoinStream]);
+  Join<A, B> getPair(B b) => Join<A, B>(leftMap[getKeyAFromB(b)] as A, b);
+  final Stream<Join<A, B>> trueJoinStream = streams.trueStream.map(getPair);
+  final Stream<Join<A, B>> backlogJoinStream = backlog.stream.map(getPair);
+  return trueJoinStream.mergeWith(<Stream<Join<A, B>>>[backlogJoinStream]);
 }

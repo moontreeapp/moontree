@@ -1,15 +1,15 @@
 // dart test test/unit/extensions/string.dart
 import 'package:test/test.dart';
-import 'package:ravencoin_back/extensions/string.dart';
-import 'package:ravencoin_back/extensions/validation.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/validation_ext.dart';
 
 void main() {
   group('String Extensions', () {
-    test('toCapitalized', () {
-      expect(''.toCapitalized(), '');
-      expect('abc'.toCapitalized(), 'Abc');
-      expect('foo bar'.toCapitalized(), 'Foo bar');
-      expect('fOO BaR'.toCapitalized(), 'FOO BaR');
+    test('toCapitalizedWord', () {
+      expect(''.toCapitalizedWord(), '');
+      expect('abc'.toCapitalizedWord(), 'Abc');
+      expect('foo bar'.toCapitalizedWord(), 'Foo bar');
+      expect('fOO BaR'.toCapitalizedWord(), 'FOO BaR');
     });
     test('toTitleCase', () {
       expect(''.toTitleCase(), '');

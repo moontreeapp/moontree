@@ -1,19 +1,16 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:math';
 import 'package:collection/collection.dart';
-import 'package:utils/extensions/map.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:moontree_utils/extensions/map.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/streams/spend.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:shimmer/shimmer.dart';
-
-final rvn = pros.securities.RVN.symbol;
-final evr = pros.securities.EVR.symbol;
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
@@ -30,25 +27,26 @@ class HoldingList extends StatefulWidget {
 }
 
 class _HoldingList extends State<HoldingList> {
-  List<StreamSubscription> listeners = [];
-  List<AssetHolding>? holdings = null;
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
+  List<AssetHolding>? holdings;
   int holdingCount = 0;
   bool showUSD = false;
   bool showPath = false;
   bool overrideEmpty = false;
   bool showSearchBar = false;
   Rate? rateUSD;
-  Set<Balance> balances = {};
-  Set<Address> addresses = {};
+  Set<Balance> balances = <Balance>{};
+  Set<Address> addresses = <Address>{};
   TextEditingController searchController = TextEditingController();
   bool overrideGettingStarted = false;
+  late Security currentCrypto;
 
   int getCount() {
-    var x = Current.wallet.holdingCount;
+    int x = Current.wallet.holdingCount;
     if (x == 0) {
       x = pros.assets.length;
     }
-    return (Current.wallet.RVNValue > 0 ? 1 : 0) + x;
+    return (Current.wallet.coinValue > 0 ? 1 : 0) + x;
   }
 
   @override
@@ -63,7 +61,7 @@ class _HoldingList extends State<HoldingList> {
     listeners
         .add(pros.assets.batchedChanges.listen((List<Change<Asset>> changes) {
       // need a way to know this wallet's asset list without vouts for newLeaderProcess
-      var count = getCount();
+      final int count = getCount();
       if (count > holdingCount) {
         holdingCount = count;
       }
@@ -88,7 +86,7 @@ class _HoldingList extends State<HoldingList> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -111,17 +109,19 @@ class _HoldingList extends State<HoldingList> {
     setState(() => showPath = !showPath);
   }
 
-  Future refresh() async {
+  Future<void> refresh() async {
     await services.balance.recalculateAllBalances();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    currentCrypto = pros.securities.currentCoin;
+
     balances = Current.wallet.balances.toSet();
-    addresses = Current.wallet.addresses.toSet();
-    final transactions = Current.wallet.transactions.toSet();
-    holdings = (
+    addresses = Current.wallet.addressesFor().toSet();
+    final Set<Transaction> transactions = Current.wallet.transactions.toSet();
+    holdings =
         //holdings != null && holdings!.isNotEmpty
         //    ? holdings
         //    :
@@ -129,33 +129,33 @@ class _HoldingList extends State<HoldingList> {
             //services.download.unspents
             //    .unspentBalancesByWalletId[Current.walletId] ??
             //[]
-            balances));
+            balances);
 
     /// affects https://github.com/moontreeapp/moontreeV1/issues/648
     // filter out empties unless all we have is one item (empty RVN)
     if (holdings != null && holdings!.length > 1) {
-      holdings = holdings!.where((holding) => holding.value > 0).toList();
+      holdings =
+          holdings!.where((AssetHolding holding) => holding.value > 0).toList();
     }
 
     bool overrideEmptyEcho = false;
     if (overrideEmpty) {
       overrideEmpty = false;
       overrideEmptyEcho = true;
-      final walletId = Current.walletId;
-      balances = {};
-      for (final symbol in pros.wallets.primaryIndex
+      final String walletId = Current.walletId;
+      balances = <Balance>{};
+      for (final String symbol in pros.wallets.primaryIndex
           .getOne(walletId)!
-          .addresses
-          .map((a) => a.vouts)
-          .expand((i) => i)
-          .map((v) => v.assetSecurityId?.split(':').first ?? 'RVN')
+          .addressesFor()
+          .map((Address a) => a.vouts)
+          .expand((List<Vout> i) => i)
+          .map((Vout v) => v.assetSecurityId?.split(':').first ?? 'RVN')
           .toSet()) {
         balances.add(Balance(
             walletId: walletId,
             security: pros.securities.bySymbol.getAll(symbol).firstOrNull ??
                 Security(
                   symbol: symbol,
-                  securityType: SecurityType.asset,
                   chain: pros.settings.chain,
                   net: pros.settings.net,
                 ),
@@ -176,13 +176,14 @@ class _HoldingList extends State<HoldingList> {
     balances, no transactions - show balances
     balances, transactions - show balances
     */
-    final currentIsLeader = Current.wallet is LeaderWallet;
-    final busy = currentIsLeader
-        ? streams.client.busy.value || addresses.length < 40
-        : false;
+    final bool currentIsLeader = Current.wallet is LeaderWallet;
+    final bool busy =
+        currentIsLeader && (streams.client.busy.value || addresses.length < 40);
     if (!currentIsLeader) {
       // single wallets sometimes never stop spinning
-      streams.client.busy.add(false);
+      //if (!streams.client.busy.value || ) {
+      //  streams.client.busy.add(false);
+      //}
     }
 
     if (overrideGettingStarted && balances.isEmpty) {
@@ -195,13 +196,22 @@ class _HoldingList extends State<HoldingList> {
       return _holdingsView(context);
     }
 
-    if (pros.wallets.length == 1 && balances.isEmpty && transactions.isEmpty) {
-      return ComingSoonPlaceholder(
-          scrollController: widget.scrollController,
-          header: 'Get Started',
-          message:
-              'Use the Import or Receive button to add Ravencoin & assets to your wallet.',
-          placeholderType: PlaceholderType.wallet);
+    if (pros.wallets.length == 1 &&
+        balances.isEmpty &&
+        transactions.isEmpty &&
+        streams.claim.unclaimed.value
+            .getOr(Current.walletId, <Vout>{}).isEmpty) {
+      return GestureDetector(
+          // did not refresh fall back...
+          onTap: () => setState(() {
+                print('tapped getting started');
+                FocusScope.of(context).unfocus;
+              }),
+          child: ComingSoonPlaceholder(
+              scrollController: widget.scrollController,
+              header: 'Get Started',
+              message:
+                  'Use the Import or Receive button to add ${pros.settings.chain.title} & assets to your wallet.'));
     } else if (balances.isEmpty && transactions.isEmpty && busy) {
       return GestureDetector(
           // did not refresh fall back...
@@ -214,12 +224,19 @@ class _HoldingList extends State<HoldingList> {
               count: max(holdingCount, 1),
               holding: true));
     } else if (balances.isEmpty && transactions.isEmpty && !busy) {
+      print(streams.claim.unclaimed.value);
+      if (Current.wallet.unspents.isNotEmpty) {
+        refresh();
+        return components.empty.getAssetsPlaceholder(context,
+            scrollController: widget.scrollController,
+            count: max(holdingCount, 1),
+            holding: true);
+      }
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Empty Wallet',
           message:
-              'This wallet has never been used before.\nClick "Receive" to get started.',
-          placeholderType: PlaceholderType.wallet);
+              'This wallet has never been used before.\nClick "Receive" to get started.');
     } else if (balances.isEmpty && transactions.isNotEmpty && !busy) {
       ///// if they have removed all assets and rvn from wallet, for each asset
       ///// we've ever held, create empty Balance, and empty AssetHolding.
@@ -242,14 +259,20 @@ class _HoldingList extends State<HoldingList> {
       //      confirmed: 0,
       //      unconfirmed: 0));
       //} my8ZWfDD8LitTMTQj3Pd7NofVh764HfYoZ
+      if (Current.wallet.unspents.isNotEmpty) {
+        refresh();
+        return components.empty.getAssetsPlaceholder(context,
+            scrollController: widget.scrollController,
+            count: max(holdingCount, 1),
+            holding: true);
+      }
       return ComingSoonPlaceholder(
           scrollController: widget.scrollController,
           header: 'Empty Wallet',
           message: 'This wallet appears empty but has a transaction history.',
-          placeholderType: PlaceholderType.wallet,
           behavior: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget>[
               components.buttons.actionButtonSoft(
                 context,
                 label: 'Show Empty Balances',
@@ -263,10 +286,6 @@ class _HoldingList extends State<HoldingList> {
       return _holdingsView(context);
     } else if (balances.isNotEmpty) {
       return _holdingsView(context);
-      //return RefreshIndicator(
-      //  child:
-      //  onRefresh: () => refresh(),
-      //);
     } else {
       return _holdingsView(context);
     }
@@ -274,11 +293,9 @@ class _HoldingList extends State<HoldingList> {
 
   void navigate(Balance balance, {Wallet? wallet}) {
     streams.app.wallet.asset.add(balance.security.symbol);
-    streams.spend.form.add(SpendForm.merge(
-        form: streams.spend.form.value, symbol: balance.security.symbol));
     Navigator.of(components.navigator.routeContext!).pushNamed(
       '/transactions',
-      arguments: {'holding': balance, 'walletId': wallet?.id ?? null},
+      arguments: <String, Object?>{'holding': balance, 'walletId': wallet?.id},
     );
   }
 
@@ -287,10 +304,10 @@ class _HoldingList extends State<HoldingList> {
     Wallet? wallet,
     bool isEmpty = false,
   }) {
-    var rvnHolding = <Widget>[];
-    var assetHoldings = <Widget>[];
-    final searchBar = Padding(
-        padding: EdgeInsets.only(top: 1, bottom: 16, left: 16, right: 16),
+    final List<Widget> rvnHolding = <Widget>[];
+    final List<Widget> assetHoldings = <Widget>[];
+    final Padding searchBar = Padding(
+        padding: const EdgeInsets.only(top: 1, bottom: 16, left: 16, right: 16),
         child: TextFieldFormatted(
             controller: searchController,
             //focusedErrorBorder: InputBorder.none,
@@ -298,13 +315,14 @@ class _HoldingList extends State<HoldingList> {
             //focusedBorder: InputBorder.none,
             //enabledBorder: InputBorder.none,
             //disabledBorder: InputBorder.none,
-            contentPadding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+            contentPadding:
+                const EdgeInsets.only(left: 16, top: 16, bottom: 16),
             autocorrect: false,
             textInputAction: TextInputAction.done,
             labelText: 'Search',
             suffixIcon: IconButton(
-              icon: Padding(
-                  padding: EdgeInsets.only(top: 0, right: 14),
+              icon: const Padding(
+                  padding: const EdgeInsets.only(right: 14),
                   child: Icon(Icons.clear_rounded, color: AppColors.black38)),
               onPressed: () => setState(() {
                 searchController.text = '';
@@ -313,24 +331,25 @@ class _HoldingList extends State<HoldingList> {
             ),
             onChanged: (_) => setState(() {}),
             onEditingComplete: () => setState(() => showSearchBar = false)));
-    for (AssetHolding holding in holdings ?? []) {
-      var thisHolding = ListTile(
+    for (final AssetHolding holding in holdings ?? <AssetHolding>[]) {
+      final ListTile thisHolding = ListTile(
           //dense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () => onTap(wallet, holding),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          onTap: () async => onTap(wallet, holding),
           onLongPress: _togglePath,
           leading: leadingIcon(holding),
           title: title(holding),
           trailing: services.developer.developerMode == true
-              ? ((holding.symbol == rvn || holding.symbol == evr) && !isEmpty
+              ? ((holding.symbol == currentCrypto.symbol) && !isEmpty
                   ? GestureDetector(
                       onTap: () =>
                           setState(() => showSearchBar = !showSearchBar),
                       child: searchController.text == ''
-                          ? Icon(Icons.search)
-                          : Icon(
+                          ? const Icon(Icons.search)
+                          : const Icon(
                               Icons.search,
-                              shadows: [
+                              shadows: <Shadow>[
                                 Shadow(
                                     color: AppColors.black12,
                                     offset: Offset(1, 1),
@@ -343,16 +362,15 @@ class _HoldingList extends State<HoldingList> {
                             ))
                   : null)
               : null);
-      if (holding.symbol == rvn || holding.symbol == evr) {
-        rvnHolding.add(Container(
-            //duration: Duration(milliseconds: 500),
-            child: Column(
-          children: [
+      if (holding.symbol == currentCrypto.symbol) {
+        //if (pros.securities.coinSymbols.contains(holding.symbol)) {
+        rvnHolding.add(Column(
+          children: <Widget>[
             thisHolding,
             if (showSearchBar && !isEmpty) searchBar,
           ],
-        )));
-        rvnHolding.add(Divider(
+        ));
+        rvnHolding.add(const Divider(
           height: 1,
           indent: 70,
           endIndent: 0,
@@ -361,7 +379,7 @@ class _HoldingList extends State<HoldingList> {
         if (searchController.text == '' ||
             holding.symbol.contains(searchController.text.toUpperCase())) {
           assetHoldings.add(thisHolding);
-          assetHoldings.add(Divider(height: 1));
+          assetHoldings.add(const Divider(height: 1));
         }
       }
     }
@@ -375,45 +393,47 @@ class _HoldingList extends State<HoldingList> {
     }
 
     /// in this case we're looking at an wallet in the EVR blockchain
-    final claimInvite = <Widget>[];
+    final List<Widget> claimInvite = <Widget>[];
     if (streams.claim.unclaimed.value
-                .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
-            (pros.settings.chain == Chain.evrmore &&
-                pros.blocks.records.first.height <= 60 * 24 * 60 &&
-                pros.unspents.records.where((u) => u.height == 0).length > 0)) {
+            .getOr(Current.walletId, <Vout>{}).isNotEmpty &&
+        (pros.settings.chain == Chain.evrmore &&
+            pros.blocks.records.first.height <= 60 * 24 * 60 &&
+            pros.unspents.records
+                .where((Unspent u) => u.height == 0)
+                .isNotEmpty)) {
       claimInvite.add(ListTile(
           //dense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () async => await components.message.giveChoices(
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          onTap: () async => components.message.giveChoices(
                 context,
                 title: 'Claim Your EVR',
-                content: ('All EVR in the Evrmore fairdrop must be claimed '
+                content: 'All EVR in the Evrmore fairdrop must be claimed '
                     'within 60 days of the snapshot (which occured on october '
-                    '25th 2022). Claim your EVR now!'),
-                behaviors: {
+                    '25th 2022). Claim your EVR now!',
+                behaviors: <String, void Function()>{
                   'OK': () => Navigator.of(context).pop(),
                 },
               ),
           //onLongPress: popup^,
-          leading: Container(
+          leading: SizedBox(
               height: 40,
               width: 40,
               child: components.icons.assetAvatar('EVR')),
           title: Text('Evrmore', style: Theme.of(context).textTheme.bodyText1),
-          trailing: ClaimEvr()));
-      claimInvite.add(Divider(height: 1));
+          trailing: const ClaimEvr()));
+      claimInvite.add(const Divider(height: 1));
     }
 
-    final listView = ListView(
+    final ListView listView = ListView(
         controller: widget.scrollController,
-        dragStartBehavior: DragStartBehavior.start,
-        physics: ClampingScrollPhysics(),
-        children: claimInvite.length > 0
+        physics: const ClampingScrollPhysics(),
+        children: claimInvite.isNotEmpty
             ? claimInvite
             : <Widget>[
                 ...rvnHolding,
                 ...assetHoldings,
-                ...[components.empty.blankNavArea(context)]
+                ...<Widget>[components.empty.blankNavArea(context)]
               ]);
     //if (services.developer.advancedDeveloperMode == true) {
     //  return RefreshIndicator(
@@ -426,15 +446,38 @@ class _HoldingList extends State<HoldingList> {
     //  );
     //}
     return GestureDetector(
-      onTap: () async => setState(() {
-        print('tapped');
-        FocusScope.of(context).unfocus;
-      }),
+      onTap: () async {
+        await services.balance.recalculateAllBalances();
+        setState(() {
+          print('tapped');
+          FocusScope.of(context).unfocus;
+        });
+      },
       child: listView,
     );
   }
 
-  void onTap(Wallet? wallet, AssetHolding holding) {
+  Future<void> onTap(Wallet? wallet, AssetHolding holding) async {
+    final int unspentSum = <int>[
+      ...<int>[
+        for (Unspent x in Current.wallet.unspents
+            .where((Unspent u) => u.symbol == holding.symbol))
+          x.value
+      ],
+      ...<int>[0]
+    ].sum;
+    final int unspentBal = <int>[
+      ...<int>[
+        for (Balance x in Current.wallet.balances
+            .where((Balance b) => b.security.symbol == holding.symbol))
+          x.value
+      ],
+      ...<int>[0]
+    ].sum;
+    if (unspentSum != unspentBal) {
+      await services.balance.recalculateAllBalances();
+      setState(() {});
+    }
     if (overrideGettingStarted) {
       //components.message.giveChoices(context,
       //    title: 'Still Syncing',
@@ -447,7 +490,7 @@ class _HoldingList extends State<HoldingList> {
       SelectionItems(
         context,
         symbol: holding.symbol,
-        names: [
+        names: <SelectionOption>[
           if (holding.main != null) SelectionOption.Main,
           if (holding.sub != null) SelectionOption.Sub,
           if (holding.subAdmin != null) SelectionOption.Sub_Admin,
@@ -459,7 +502,7 @@ class _HoldingList extends State<HoldingList> {
           if (holding.nft != null) SelectionOption.NFT,
           if (holding.channel != null) SelectionOption.Channel,
         ],
-        behaviors: [
+        behaviors: <void Function()>[
           if (holding.main != null)
             () => navigate(holding.main!, wallet: wallet),
           if (holding.sub != null)
@@ -481,7 +524,7 @@ class _HoldingList extends State<HoldingList> {
           if (holding.channel != null)
             () => navigate(holding.channel!, wallet: wallet),
         ],
-        values: [
+        values: <String>[
           if (holding.main != null)
             services.conversion.securityAsReadable(
               holding.main!.value,
@@ -547,7 +590,7 @@ class _HoldingList extends State<HoldingList> {
     }
   }
 
-  Widget leadingIcon(AssetHolding holding) => Container(
+  Widget leadingIcon(AssetHolding holding) => SizedBox(
           height: 40,
           width: 40,
           child: //Hero(
@@ -576,17 +619,17 @@ class _HoldingList extends State<HoldingList> {
       ;
 
   Widget title(AssetHolding holding) =>
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Container(
-              width: holding.symbol == rvn || holding.symbol == evr
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Row(children: <Widget>[
+          SizedBox(
+              width: holding.symbol == currentCrypto.symbol
                   ? MediaQuery.of(context).size.width / 2
                   : MediaQuery.of(context).size.width - (16 + 40 + 16 + 16),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    holding.symbol == rvn || holding.symbol == evr
+                    holding.symbol == currentCrypto.symbol
                         ? symbolName(holding.symbol)
                         : services.developer.developerMode && showPath
                             ? holding.symbol
@@ -596,7 +639,7 @@ class _HoldingList extends State<HoldingList> {
         ]),
         Text(
           holding.mainLength > 1 && holding.restricted != null
-              ? [
+              ? <String>[
                   if (holding.main != null) 'Main',
                   if (holding.admin != null) 'Admin',
                   if (holding.restricted != null) 'Restricted',
@@ -605,9 +648,8 @@ class _HoldingList extends State<HoldingList> {
               : services.conversion
                   .securityAsReadable(holding.balance?.value ?? 0,
                       security: holding.balance?.security ??
-                          Security(
+                          const Security(
                             symbol: 'unknown',
-                            securityType: SecurityType.fiat,
                             chain: Chain.none,
                             net: Net.test,
                           ),

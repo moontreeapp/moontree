@@ -14,10 +14,9 @@ void main() {
     setUp(() async {
       fixtures.useEmptyFixtures();
       dotenv.load();
-      waiters.leader.init();
+      triggers.leader.init();
       await pros.wallets.save(LeaderWallet(
           id: '0',
-          cipherUpdate: CipherUpdate(CipherType.none),
           encryptedEntropy:
               bip39.mnemonicToEntropy(dotenv.env['TEST_WALLET_01']!)));
       //wallet = pros.wallets.data.first as LeaderWallet;

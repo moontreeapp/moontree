@@ -26,7 +26,7 @@ class _CreateNFTAssetState extends State<CreateNFTAsset> {
     streams.create.form
         .add(GenericCreateForm(parent: streams.app.manage.asset.value));
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -34,5 +34,5 @@ class _CreateNFTAssetState extends State<CreateNFTAsset> {
         )));
   }
 
-  Widget body() => CreateAsset(preset: FormPresets.unique, isSub: true);
+  Widget body() => const CreateAsset(preset: FormPresets.unique, isSub: true);
 }

@@ -17,16 +17,19 @@ class QRData {
   });
 }
 
-QRData populateFromQR(
-    {required String code, List<dynamic>? holdings, String? currentSymbol}) {
-  var address;
-  var addressName;
-  var amount;
-  var note;
-  var symbol;
+QRData populateFromQR({
+  required String code,
+  List<String>? holdings,
+  String? currentSymbol,
+}) {
+  String? address;
+  String? addressName;
+  String? amount;
+  String? note;
+  String? symbol;
   if (code.startsWith('raven:')) {
     address = code.substring(6).split('?')[0];
-    var params = parseReceiveParams(code);
+    final Map<String, String> params = parseReceiveParams(code);
     if (params.containsKey('to')) {
       addressName = cleanLabel(params['to']!);
     }

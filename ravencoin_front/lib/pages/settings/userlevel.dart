@@ -5,8 +5,10 @@ import 'package:ravencoin_front/widgets/widgets.dart';
 enum UserLevel { beginner, intermediate, advanced }
 
 class Advanced extends StatefulWidget {
+  const Advanced({Key? key}) : super(key: key);
+
   @override
-  State createState() => new _AdvancedState();
+  State createState() => _AdvancedState();
 }
 
 class _AdvancedState extends State<Advanced> {
@@ -22,14 +24,14 @@ class _AdvancedState extends State<Advanced> {
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: ListView(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           children: <Widget>[
             RadioListTile<UserLevel>(
                 controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.all(0),
+                contentPadding: EdgeInsets.zero,
                 activeColor: AppColors.primary,
                 value: UserLevel.beginner,
                 groupValue: chosenLevel,
@@ -37,7 +39,7 @@ class _AdvancedState extends State<Advanced> {
                   'Beginner (Recommended)',
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
-                onChanged: (value) /*async*/ {
+                onChanged: (UserLevel? value) /*async*/ {
                   //await pros.settings.save(Setting(
                   //    name: SettingName.Send_Immediate,
                   //    value: !pros.settings.primaryIndex
@@ -49,28 +51,28 @@ class _AdvancedState extends State<Advanced> {
                 }),
             RadioListTile<UserLevel>(
                 controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.all(0),
+                contentPadding: EdgeInsets.zero,
                 activeColor: AppColors.primary,
                 value: UserLevel.intermediate,
                 groupValue: chosenLevel,
                 title: Text('Intermediate',
                     style: Theme.of(context).textTheme.bodyText1),
-                onChanged: (value) {
+                onChanged: (UserLevel? value) {
                   setState(() {
-                    chosenLevel = value!;
+                    chosenLevel = value;
                   });
                 }),
             RadioListTile<UserLevel>(
                 controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.all(0),
+                contentPadding: EdgeInsets.zero,
                 activeColor: AppColors.primary,
                 value: UserLevel.advanced,
                 groupValue: chosenLevel,
                 title: Text('Advanced',
                     style: Theme.of(context).textTheme.bodyText1),
-                onChanged: (value) {
+                onChanged: (UserLevel? value) {
                   setState(() {
-                    chosenLevel = value!;
+                    chosenLevel = value;
                   });
                 }),
           ],

@@ -20,7 +20,8 @@ class Transactions extends StatefulWidget {
 }
 
 class _TransactionsState extends State<Transactions> {
-  late List<StreamSubscription> listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   DraggableScrollableController dController = DraggableScrollableController();
   bool busy = false;
 
@@ -30,7 +31,8 @@ class _TransactionsState extends State<Transactions> {
     transactionsBloc.reset();
 
     /// need these until we make it fully reactive so we can reset the page if underlying data changes
-    listeners.add(pros.vouts.batchedChanges.listen((batchedChanges) {
+    listeners.add(
+        pros.vouts.batchedChanges.listen((List<Change<Vout>> batchedChanges) {
       if (services.wallet.leader.newLeaderProcessRunning ||
           services.client.subscribe.startupProcessRunning) {
         return;
@@ -56,7 +58,7 @@ class _TransactionsState extends State<Transactions> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -74,13 +76,14 @@ class _TransactionsState extends State<Transactions> {
       back: CoinDetailsHeader(bloc.security, minHeight, bloc.nullCacheView),
       front: Stack(
         alignment: Alignment.bottomCenter,
-        children: [
+        children: <Widget>[
           DraggableScrollableSheet(
               initialChildSize: minHeight,
               minChildSize: minHeight,
               maxChildSize: min(1.0, max(minHeight, getMaxExtent(context))),
               controller: dController,
-              builder: (context, scrollController) {
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
                 //bloc.scrollObserver.add(dController.size);
                 _scrollListener() {
                   bloc.scrollObserver.add(dController.size);
@@ -88,12 +91,12 @@ class _TransactionsState extends State<Transactions> {
 
                 dController.addListener(_scrollListener);
                 return CoinDetailsGlidingSheet(
-                  bloc.nullCacheView ? null : MetadataView(),
+                  bloc.nullCacheView ? null : const MetadataView(),
                   dController,
                   scrollController,
                 );
               }),
-          AssetNavbar()
+          const AssetNavbar()
         ],
       ),
     );

@@ -1,24 +1,27 @@
 import 'package:ravencoin_back/services/transaction/maker.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:moontree_utils/moontree_utils.dart'
+    show ReadableIdentifierExtension;
 
 class CreateStreams {
-  final form = BehaviorSubject<GenericCreateForm?>.seeded(null);
-  final request = BehaviorSubject<GenericCreateRequest?>.seeded(null);
-  //final make = BehaviorSubject<SendRequest?>.seeded(null);
-  final made = BehaviorSubject<String?>.seeded(null);
-  final estimate = BehaviorSubject<SendEstimate?>.seeded(null);
-  final send = BehaviorSubject<String?>.seeded(null);
-  final success = BehaviorSubject<bool?>.seeded(null);
+  final BehaviorSubject<GenericCreateForm?> form =
+      BehaviorSubject<GenericCreateForm?>.seeded(null)..name = 'create.form';
+  final BehaviorSubject<GenericCreateRequest?> request =
+      BehaviorSubject<GenericCreateRequest?>.seeded(null)
+        ..name = 'create.request';
+  //final make = BehaviorSubject<SendRequest?>.seeded(null)..name = 'client.activity';
+  final BehaviorSubject<String?> made = BehaviorSubject<String?>.seeded(null)
+    ..name = 'create.made';
+  final BehaviorSubject<SendEstimate?> estimate =
+      BehaviorSubject<SendEstimate?>.seeded(null)..name = 'create.estimate';
+  final BehaviorSubject<String?> send = BehaviorSubject<String?>.seeded(null)
+    ..name = 'create.send';
+  final BehaviorSubject<bool?> success = BehaviorSubject<bool?>.seeded(null)
+    ..name = 'create.success';
 }
 
 class GenericCreateForm {
-  final String? name;
-  final String? ipfs;
-  final double? quantity;
-  final int? decimal;
-  final bool? reissuable;
-  final String? verifier;
-  final String? parent; // you have to use the wallet that holds the prent
+  // you have to use the wallet that holds the prent
 
   GenericCreateForm({
     this.name,
@@ -29,16 +32,6 @@ class GenericCreateForm {
     this.reissuable,
     this.parent,
   });
-  @override
-  String toString() => 'GenericCreateForm('
-      'name=$name, '
-      'ipfs=$ipfs, '
-      'quantity=$quantity, '
-      'decimal=$decimal, '
-      'verifier=$verifier, '
-      'reissuable=$reissuable, '
-      'parent=$parent)';
-
   factory GenericCreateForm.merge({
     GenericCreateForm? form,
     String? name,
@@ -59,19 +52,33 @@ class GenericCreateForm {
       parent: parent ?? form?.parent,
     );
   }
+  final String? name;
+  final String? ipfs;
+  final double? quantity;
+  final int? decimal;
+  final bool? reissuable;
+  final String? verifier;
+  final String? parent;
+  @override
+  String toString() => 'GenericCreateForm('
+      'name=$name, '
+      'ipfs=$ipfs, '
+      'quantity=$quantity, '
+      'decimal=$decimal, '
+      'verifier=$verifier, '
+      'reissuable=$reissuable, '
+      'parent=$parent)';
 
   set symbol(String? symbol) => this.symbol = symbol;
 
   @override
-  bool operator ==(Object form) {
-    return form is GenericCreateForm
-        ? (form.name == name &&
-            form.ipfs == ipfs &&
-            form.quantity == quantity &&
-            form.decimal == decimal &&
-            form.verifier == verifier &&
-            form.reissuable == reissuable &&
-            form.parent == parent)
-        : false;
-  }
+  bool operator ==(Object other) =>
+      other is GenericCreateForm &&
+      (other.name == name &&
+          other.ipfs == ipfs &&
+          other.quantity == quantity &&
+          other.decimal == decimal &&
+          other.verifier == verifier &&
+          other.reissuable == reissuable &&
+          other.parent == parent);
 }

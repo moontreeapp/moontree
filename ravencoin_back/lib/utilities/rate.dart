@@ -1,7 +1,9 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:ravencoin_back/utilities/exceptions.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:tuple/tuple.dart';
 
 abstract class RVNRateInterface {
@@ -50,7 +52,7 @@ class RVNtoFiat implements RVNRateInterface {
   }
 
   void _conformFiat() {
-    fiatConformed = {
+    fiatConformed = <String, String>{
       'Moontree': fiat.toUpperCase(),
       'CoinGecko': fiat.toLowerCase(),
       'Bittrex': fiat.toUpperCase(),
@@ -58,7 +60,7 @@ class RVNtoFiat implements RVNRateInterface {
     }[serviceName]!;
   }
 
-  Future<http.Response> _call() async => await http.get(
+  Future<http.Response> _call() async => http.get(
         Uri.parse(() {
           switch (serviceName) {
             case 'Moontree':
@@ -76,7 +78,7 @@ class RVNtoFiat implements RVNRateInterface {
               return 'https://moontree.com/prices';
           }
         }()),
-        headers: {'accept': 'application/json'},
+        headers: <String, String>{'accept': 'application/json'},
       );
 
   /// parces structure to get value, also gets avg time of observations
@@ -105,17 +107,18 @@ class RVNtoFiat implements RVNRateInterface {
             "values": {
               "USD": 0.022523955}}}
       */
-    var total = 0.0;
-    var cnt = 0;
-    var time = 0;
-    final now = DateTime.now();
-    for (final key in jsonBody.keys) {
-      var value = (jsonBody[key]!['values']! as Map);
-      var timestamp = jsonBody[key]!['last_successful_scrape']! as int;
-      final ts = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    double total = 0.0;
+    int cnt = 0;
+    int time = 0;
+    final DateTime now = DateTime.now();
+    for (final String key in jsonBody.keys) {
+      final Map<String, dynamic> value =
+          jsonBody[key]!['values']! as Map<String, dynamic>;
+      final int timestamp = jsonBody[key]!['last_successful_scrape']! as int;
+      final DateTime ts = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
       if (anytime || now.difference(ts).inHours < recentHours) {
         if (value.containsKey(fiatConformed)) {
-          total += value[fiatConformed]!;
+          total += value[fiatConformed]! as num;
           cnt += 1;
           time += jsonBody[key]!['last_successful_scrape']! as int;
         }
@@ -128,7 +131,7 @@ class RVNtoFiat implements RVNRateInterface {
       }
       return _interpretMoontreeStructure(jsonBody, anytime: true);
     }
-    return Tuple2(total / cnt, time / cnt);
+    return Tuple2<double, double>(total / cnt, time / cnt);
   }
 
   double _interpret(http.Response response) {
@@ -136,7 +139,7 @@ class RVNtoFiat implements RVNRateInterface {
       //Map<String, Map<String, dynamic>> jsonBody;
       Map<String, dynamic> jsonBody;
       try {
-        jsonBody = jsonDecode(response.body);
+        jsonBody = jsonDecode(response.body) as Map<String, dynamic>;
       } catch (e) {
         print(e);
         throw FetchDataException('unable to get data from interpretMoontree');
@@ -144,9 +147,9 @@ class RVNtoFiat implements RVNRateInterface {
       return _interpretMoontreeStructure(jsonBody).item1; // item2 is avgtime
     }
     if (serviceName == 'CoinGecko') {
-      Map jsonBody;
+      Map<String, dynamic> jsonBody;
       try {
-        jsonBody = jsonDecode(response.body);
+        jsonBody = jsonDecode(response.body) as Map<String, dynamic>;
       } catch (e) {
         print(e);
         throw FetchDataException('unable to get data from interpretCoinGecko');
@@ -154,15 +157,17 @@ class RVNtoFiat implements RVNRateInterface {
       if (!jsonBody.keys.contains('ravencoin')) {
         throw BadResponseException('data malformed in interpretCoinGecko');
       }
-      if (!jsonBody['ravencoin'].keys.contains(fiat)) {
+      if (!(jsonBody['ravencoin'] as Map<String, dynamic>)
+          .keys
+          .contains(fiat)) {
         throw BadResponseException('data malformed in interpretCoinGecko');
       }
-      return jsonBody['ravencoin'][fiat];
+      return jsonBody['ravencoin'][fiat] as double;
     }
     if (serviceName == 'Bittrex') {
-      Map jsonBody;
+      Map<String, dynamic> jsonBody;
       try {
-        jsonBody = jsonDecode(response.body);
+        jsonBody = jsonDecode(response.body) as Map<String, dynamic>;
       } catch (e) {
         print(e);
         throw FetchDataException('unable to get data from interpretBittrex');
@@ -171,16 +176,16 @@ class RVNtoFiat implements RVNRateInterface {
         throw BadResponseException('data malformed in interpretBittrex');
       }
       try {
-        return double.parse(jsonBody['lastTradeRate']);
+        return double.parse(jsonBody['lastTradeRate'] as String);
       } catch (e) {
         print(e);
         throw BadResponseException('unable cast to double in interpretBittrex');
       }
     }
     if (serviceName == 'Nomi') {
-      List jsonBody;
+      List<Map<String, dynamic>> jsonBody;
       try {
-        jsonBody = jsonDecode(response.body);
+        jsonBody = jsonDecode(response.body) as List<Map<String, dynamic>>;
       } catch (e) {
         print(e);
         throw FetchDataException('unable to get data from interpretNomi');
@@ -192,7 +197,7 @@ class RVNtoFiat implements RVNRateInterface {
         throw BadResponseException('data malformed in interpretNomi');
       }
       try {
-        return double.parse(jsonBody[0]['price']);
+        return double.parse(jsonBody[0]['price'] as String);
       } catch (e) {
         print(e);
         throw BadResponseException('unable cast to double in interpretNomi');

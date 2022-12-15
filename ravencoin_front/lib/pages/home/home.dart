@@ -5,16 +5,18 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
-import 'package:ravencoin_front/components/components.dart';
 
 class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
   late AppContext appContext = AppContext.wallet;
-  late List<StreamSubscription> listeners = [];
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
 
   @override
   void initState() {
@@ -33,27 +35,10 @@ class _HomeState extends State<Home> {
         });
       }
     }));
-    listeners.add(pros.settings.changes.listen((Change change) {
-      setState(() {});
-    }));
-    listeners.add(
-        streams.app.triggers.listen((ThresholdTrigger? thresholdTrigger) async {
-      if (Current.wallet is LeaderWallet &&
-          thresholdTrigger == ThresholdTrigger.backup &&
-          !Current.wallet.backedUp) {
-        await Future.delayed(Duration(milliseconds: 800 * 3));
-        streams.app.xlead.add(true);
-        Navigator.of(components.navigator.routeContext!).pushNamed(
-          '/security/backup',
-          arguments: {'fadeIn': true},
-        );
-        setState(() {});
-        return;
+    //listeners.add(pros.settings.changes.listen((Change<Setting> change) {
+    //  setState(() {});
+    //}));
 
-        /// reset till next time they open app?
-        //streams.app.triggers.add(null);
-      }
-    }));
     listeners.add(streams.app.wallet.refresh.listen((bool value) {
       print('told to Refresh');
       setState(() {});
@@ -62,7 +47,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -70,7 +55,21 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (services.tutorial.missing.isNotEmpty) {
+    final bool backupCondition =
+        streams.app.triggers.value == ThresholdTrigger.backup &&
+            !Current.wallet.backedUp;
+    if (backupCondition) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!<String>['Backupintro', 'Backup', 'Backupconfirm']
+            .contains(streams.app.page.value)) {
+          streams.app.lead.add(LeadIcon.none);
+          Navigator.of(context).pushNamed(
+            '/security/backup/backupintro',
+            arguments: <String, bool>{'fadeIn': true},
+          );
+        }
+      });
+    } else if (services.tutorial.missing.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await showTutorials();
       });
@@ -78,10 +77,10 @@ class _HomeState extends State<Home> {
     return HomePage(appContext: appContext);
   }
 
-  Future showTutorials() async {
-    for (var tutorial in services.tutorial.missing) {
+  Future<void> showTutorials() async {
+    for (final TutorialStatus tutorial in services.tutorial.missing) {
       streams.app.tutorial.add(tutorial);
-      services.tutorial.complete(tutorial);
+      await services.tutorial.complete(tutorial);
     }
   }
 }

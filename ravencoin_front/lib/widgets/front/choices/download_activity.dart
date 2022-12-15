@@ -12,7 +12,7 @@ class DownloadActivity extends StatefulWidget {
 }
 
 class _DownloadActivity extends State<DownloadActivity> {
-  List<StreamSubscription> listeners = [];
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   ActivityMessage message = ActivityMessage();
 
   @override
@@ -26,7 +26,7 @@ class _DownloadActivity extends State<DownloadActivity> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -36,7 +36,7 @@ class _DownloadActivity extends State<DownloadActivity> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
+      children: <Widget>[
         Text(
           message.message ?? 'Syncing...',
           style: Theme.of(context).textTheme.subtitle1,

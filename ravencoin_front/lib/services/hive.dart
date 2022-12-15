@@ -4,58 +4,49 @@
 import 'dart:async';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/utilities/lock.dart';
 
 enum HiveLoaded { yes, no, partial }
 
 class DataLoadingHelper {
-  final _loadedLock = ReaderWriterLock();
+  DataLoadingHelper() {
+    hiveInit = HiveInitializer(init: (dynamic dbDir) => Hive.initFlutter());
+  }
+  final ReaderWriterLock _loadedLock = ReaderWriterLock();
   HiveLoaded _loaded = HiveLoaded.no;
   late HiveInitializer hiveInit;
 
-  DataLoadingHelper() {
-    hiveInit = HiveInitializer(init: (dbDir) => Hive.initFlutter());
-  }
+  Future<void> setupDatabase() async => hiveInit.setUp(HiveLoadingStep.all);
 
-  Future setupDatabase() async {
-    await hiveInit.setUp(HiveLoadingStep.all);
-  }
+  Future<void> setupDatabaseStart() async => hiveInit.setUpStart();
 
-  Future setupDatabaseStart() async {
-    await hiveInit.setUpStart();
-  }
+  Future<void> setupDatabase1() async => hiveInit.setUp(HiveLoadingStep.lock);
 
-  Future setupDatabase1() async {
-    await hiveInit.setUp(HiveLoadingStep.lock);
-  }
+  Future<void> setupDatabase2() async => hiveInit.setUp(HiveLoadingStep.login);
 
-  Future setupDatabase2() async {
-    await hiveInit.setUp(HiveLoadingStep.login);
-  }
+  Future<bool> isPartiallyLoaded() async =>
+      _loadedLock.read(() => _loaded == HiveLoaded.partial);
 
-  Future isPartiallyLoaded() async =>
-      await _loadedLock.read(() => _loaded == HiveLoaded.partial);
+  Future<bool> isLoaded() async =>
+      _loadedLock.read(() => _loaded == HiveLoaded.yes);
 
-  Future isLoaded() async =>
-      await _loadedLock.read(() => _loaded == HiveLoaded.yes);
-
-  Future setupWaiters() async {
-    initWaiters(HiveLoadingStep.all);
-    unawaited(waiters.app.logoutThread());
+  Future<void> setupWaiters() async {
+    initTriggers(HiveLoadingStep.all);
+    unawaited(triggers.app.logoutThread());
     //initListeners();
     //await pros.settings.save(
     //    Setting(name: SettingName.Local_Path, value: await Storage().localPath));
   }
 
-  Future setupWaiters1() async {
-    initWaiters(HiveLoadingStep.lock);
+  Future<void> setupWaiters1() async {
+    initTriggers(HiveLoadingStep.lock);
     await _loadedLock.write(() => _loaded = HiveLoaded.partial);
   }
 
-  Future setupWaiters2() async {
-    initWaiters(HiveLoadingStep.login);
-    unawaited(waiters.app.logoutThread());
+  Future<void> setupWaiters2() async {
+    initTriggers(HiveLoadingStep.login);
+    unawaited(triggers.app.logoutThread());
     //initListeners();
     await _loadedLock.write(() => _loaded = HiveLoaded.yes);
   }

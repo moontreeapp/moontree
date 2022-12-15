@@ -9,7 +9,7 @@ class MiningChoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BackdropLayers(
-        back: BlankBack(),
+        back: const BlankBack(),
         front: FrontCurve(
             child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -20,8 +20,8 @@ class MiningChoice extends StatelessWidget {
   Widget body() => CustomScrollView(slivers: <Widget>[
         SliverToBoxAdapter(
             child: Padding(
-                padding:
-                    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 16, bottom: 16),
                 child: Container(
                     alignment: Alignment.topLeft,
                     child: SwtichChoice(
@@ -29,7 +29,8 @@ class MiningChoice extends StatelessWidget {
                       //description:
                       //    'In Miner Mode, full transaction histories are not downloaded. This makes syncing your wallets faster.',
                       initial: services.wallet.currentWallet.minerMode,
-                      onChanged: (value) => services.wallet.setMinerMode(value),
+                      onChanged: (bool value) =>
+                          services.wallet.setMinerMode(value),
                     )))),
       ]);
 }

@@ -1,7 +1,7 @@
 // dart test .\test\unit\services\download_assets.dart
 import 'package:test/test.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:electrum_adapter/electrum_adapter.dart';
 
 //import 'package:raven_electrum/methods/asset/meta.dart';??
 /*

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ravencoin_front/utils/login.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
@@ -34,8 +35,9 @@ class LoginPassword extends StatefulWidget {
 }
 
 class _LoginPasswordState extends State<LoginPassword> {
-  Map<String, dynamic> data = {};
-  late List listeners = [];
+  Map<String, dynamic> data = <String, dynamic>{};
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
   FocusNode loginFocus = FocusNode();
@@ -58,7 +60,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
   }
 
-  Future<bool> get finishedLoading async => await HIVE_INIT.isLoaded();
+  Future<bool> get finishedLoading async => HIVE_INIT.isLoaded();
 
   @override
   void initState() {
@@ -73,7 +75,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     password.dispose();
@@ -82,14 +84,14 @@ class _LoginPasswordState extends State<LoginPassword> {
     super.dispose();
   }
 
-  void bypass() async {
-    final key = await SecureStorage.authenticationKey;
+  Future<void> bypass() async {
+    final String key = await SecureStorage.authenticationKey;
     if (services.password.validate.password(
         password: key,
         salt: key,
         saltedHashedPassword: await getLatestSaltedHashedPassword())) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await login(key);
+        await initiateLogin(key);
       });
     }
   }
@@ -99,23 +101,25 @@ class _LoginPasswordState extends State<LoginPassword> {
     try {
       data = populateData(context, data);
     } catch (e) {
-      data = {};
+      data = <String, dynamic>{};
     }
-    needsConsent = data['needsConsent'] ?? false;
+    needsConsent = data['needsConsent'] as bool? ?? false;
     bypass();
-    return BackdropLayers(back: BlankBack(), front: FrontCurve(child: body()));
+    return BackdropLayers(
+        back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
   Widget body() => GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Container(
-          padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
           child: CustomScrollView(slivers: <Widget>[
             SliverToBoxAdapter(
               child: SizedBox(height: 76.figmaH),
             ),
             SliverToBoxAdapter(
-              child: Container(
+              child: SizedBox(
                 height: 128.figmaH,
                 child: moontree,
               ),
@@ -130,7 +134,7 @@ class _LoginPasswordState extends State<LoginPassword> {
               child: Container(
                   alignment: Alignment.bottomCenter,
                   height: 40.figma(context),
-                  child: LockedOutTime()),
+                  child: const LockedOutTime()),
             ),
             SliverToBoxAdapter(
               child: Container(
@@ -143,9 +147,9 @@ class _LoginPasswordState extends State<LoginPassword> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ...(needsConsent
-                              ? [
+                        children: <Widget>[
+                          ...needsConsent
+                              ? <Widget>[
                                   SizedBox(
                                     height: .063.ofMediaHeight(context),
                                   ),
@@ -154,15 +158,15 @@ class _LoginPasswordState extends State<LoginPassword> {
                                     height: .021.ofMediaHeight(context),
                                   ),
                                 ]
-                              : [SizedBox(height: 100)]),
-                          Row(children: [unlockButton]),
-                          SizedBox(height: 40),
+                              : <Widget>[const SizedBox(height: 100)],
+                          Row(children: <Widget>[unlockButton]),
+                          const SizedBox(height: 40),
                         ]))),
           ])));
 
-  Widget get moontree => Container(
-        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+  Widget get moontree => SizedBox(
         height: .1534.ofMediaHeight(context),
+        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
       );
 
   Widget get welcomeMessage => Text(
@@ -203,7 +207,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
   Widget get ulaMessage => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+        children: <Widget>[
           Container(
               alignment: Alignment.center, width: 18, child: aggrementCheckbox),
           Container(
@@ -216,7 +220,7 @@ class _LoginPasswordState extends State<LoginPassword> {
                       .textTheme
                       .bodyText2,
                   children: <TextSpan>[
-                    TextSpan(text: "I agree to Moontree's\n"),
+                    const TextSpan(text: "I agree to Moontree's\n"),
                     TextSpan(
                         text: 'User Agreement',
                         style: Theme.of(components.navigator.routeContext!)
@@ -227,7 +231,7 @@ class _LoginPasswordState extends State<LoginPassword> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.user_agreement)));
                           }),
-                    TextSpan(text: ', '),
+                    const TextSpan(text: ', '),
                     TextSpan(
                         text: 'Privacy Policy',
                         style: Theme.of(components.navigator.routeContext!)
@@ -238,7 +242,7 @@ class _LoginPasswordState extends State<LoginPassword> {
                             launchUrl(Uri.parse(documentEndpoint(
                                 ConsentDocument.privacy_policy)));
                           }),
-                    TextSpan(text: ',\n and '),
+                    const TextSpan(text: ',\n and '),
                     TextSpan(
                         text: 'Risk Disclosure',
                         style: Theme.of(components.navigator.routeContext!)
@@ -252,7 +256,7 @@ class _LoginPasswordState extends State<LoginPassword> {
                   ],
                 ),
               )),
-          SizedBox(
+          const SizedBox(
             width: 18,
           ),
         ],
@@ -275,7 +279,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       enabled: password.text != '' &&
           services.password.lockout.timePast() &&
           passwordText == null &&
-          ((isConsented) || !needsConsent),
+          (isConsented || !needsConsent),
       focusNode: unlockFocus,
       label: passwordText == null ? 'Unlock' : 'Unlocking...',
       disabledOnPressed: () => setState(() {
@@ -285,7 +289,7 @@ class _LoginPasswordState extends State<LoginPassword> {
               ));
             }
           }),
-      onPressed: () async => await submit());
+      onPressed: () async => submit());
 
   Future<bool> validate() async => services.password.validate.password(
       password: password.text,
@@ -293,7 +297,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       saltedHashedPassword: await getLatestSaltedHashedPassword());
 
   bool ancientValidate() {
-    final salt = pros.passwords.primaryIndex.getMostRecent()!.saltedHash;
+    final String salt = pros.passwords.primaryIndex.getMostRecent()!.saltedHash;
     if (salt == 'deprecated') {
       return false;
     }
@@ -302,12 +306,12 @@ class _LoginPasswordState extends State<LoginPassword> {
         salt: pros.passwords.primaryIndex.getMostRecent()!.salt);
   }
 
-  Future submit({bool showFailureMessage = true}) async {
+  Future<void> submit({bool showFailureMessage = true}) async {
     // consent just once
     if (await HIVE_INIT.isPartiallyLoaded()) {
       finishLoadingWaiters();
       while (!(await HIVE_INIT.isLoaded())) {
-        await Future.delayed(Duration(milliseconds: 50));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
       }
     }
 
@@ -317,7 +321,7 @@ class _LoginPasswordState extends State<LoginPassword> {
           message: 'Migrating to latest version. Just a sec...',
           showOnLogin: true));
       setState(() => passwordText = password.text);
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
       await populateWalletsWithSensitives();
       // first of all make a cipher for this
       services.cipher.initCiphers(
@@ -342,7 +346,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       streams.app.snack
           .add(Snack(message: 'Migration complete...', showOnLogin: true));
 
-      await login(password.text, refresh: true);
+      await initiateLogin(password.text, refresh: true);
     } else if (await services.password.lockout
             .handleVerificationAttempt(await validate()) &&
         passwordText == null) {
@@ -350,7 +354,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       if (passwordText != password.text) {
         setState(() => passwordText = password.text);
       }
-      login(password.text,
+      initiateLogin(password.text,
           refresh: (services.version.snapshot?.currentBuild ?? 0) <=
                   (Platform.isIOS ? 20 : 4) &&
               (services.version.snapshot?.buildUpdated ?? false));
@@ -362,7 +366,8 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
   }
 
-  Future<void> login(String providedPassword, {bool refresh = false}) async {
+  Future<void> initiateLogin(String providedPassword,
+      {bool refresh = false}) async {
     /// there are existing wallets, we should populate them with sensitives now.
     await populateWalletsWithSensitives();
     if (!consented) {
@@ -371,23 +376,13 @@ class _LoginPasswordState extends State<LoginPassword> {
     if (refresh) {
       //services.download.overrideGettingStarted = true;
     }
-    try {
-      Navigator.pushReplacementNamed(context, '/home', arguments: {});
-    } catch (e) {
-      print(e);
-    }
+    //try {
+    //  Navigator.pushReplacementNamed(context, '/home', arguments: {});
+    //} catch (e) {
+    //  print(e);
+    //}
     // create ciphers for wallets we have
-    services.cipher.initCiphers(
-      altPassword: providedPassword,
-      altSalt: await SecureStorage.authenticationKey,
-    );
-    await services.cipher.updateWallets();
-    services.cipher.cleanupCiphers();
-    services.cipher.loginTime();
-    streams.app.context.add(AppContext.wallet);
-    streams.app.splash.add(false); // trigger to refresh app bar again
-    streams.app.logout.add(false);
-    streams.app.verify.add(true);
+    login(context, password: providedPassword);
     if (refresh) {
       streams.app.snack
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));

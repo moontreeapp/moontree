@@ -1,41 +1,43 @@
 import 'dart:math';
 
-import 'package:ravencoin_back/utilities/search.dart';
+import 'package:moontree_utils/src/search.dart';
 import 'package:test/test.dart';
-import 'package:ravencoin_back/utilities/utilities.dart';
 
 void main() {
   group('Binary', () {
     test('test remove', () {
-      final list = [];
-      for (var i = 0; i < 1000; i++) {
+      final List list = [];
+      for (int i = 0; i < 1000; i++) {
         list.add(i);
       }
-      for (var i = 0; i < 1000; i++) {
-        final list1 = [];
-        final list2 = [];
+      for (int i = 0; i < 1000; i++) {
+        final List list1 = [];
+        final List list2 = [];
         list.forEach((e) {
           list1.add(e);
           list2.add(e);
         });
         list2.remove(i);
-        expect(utils.binaryRemove(list: list1, comp: (a, b) => a - b, value: i),
+        expect(
+            binaryRemove(list: list1, comp: (a, b) => (a - b) as int, value: i),
             true);
         expect(list1, list2);
       }
-      expect(utils.binaryRemove(list: list, comp: (a, b) => a - b, value: 1001),
+      expect(
+          binaryRemove(list: list, comp: (a, b) => (a - b) as int, value: 1001),
           false);
     });
 
     test('binary insert', () {
-      for (var _ = 0; _ < 100; _++) {
-        final list = [];
-        final rand = Random();
-        final comp = (a, b) => (a - b) as int;
-        for (var i = 0; i < 1000; i++) {
+      for (int _ = 0; _ < 100; _++) {
+        final List list = [];
+        final Random rand = Random();
+        final int Function(dynamic a, dynamic b) comp =
+            (a, b) => (a - b) as int;
+        for (int i = 0; i < 1000; i++) {
           list.add(rand.nextInt(1 << 31));
         }
-        final list1 = [];
+        final List list1 = [];
         list.forEach((element) {
           binaryInsert(list: list1, value: element, comp: comp);
         });

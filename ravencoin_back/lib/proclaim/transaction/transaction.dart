@@ -7,7 +7,7 @@ part 'transaction.keys.dart';
 class TransactionProclaim extends Proclaim<_IdKey, Transaction> {
   late IndexMultiple<_HeightKey, Transaction> byHeight;
   late IndexMultiple<_ConfirmedKey, Transaction> byConfirmed;
-  static const maxInt = 1 << 63;
+  static const int maxInt = 1 << 63;
 
   TransactionProclaim() : super(_IdKey()) {
     byHeight = addIndexMultiple('height', _HeightKey());
@@ -15,7 +15,8 @@ class TransactionProclaim extends Proclaim<_IdKey, Transaction> {
   }
 
   List<Transaction> get chronological => pros.transactions.records.toList()
-    ..sort((a, b) => (b.height ?? maxInt).compareTo(a.height ?? maxInt));
+    ..sort((Transaction a, Transaction b) =>
+        (b.height ?? maxInt).compareTo(a.height ?? maxInt));
 
   List<Transaction> get mempool => pros.transactions.byConfirmed.getAll(false);
 

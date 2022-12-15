@@ -6,27 +6,27 @@ import 'package:ravencoin_back/streams/client.dart';
 
 class QueueService {
   bool updated = false;
-  Set<Address> addresses = {};
+  Set<Address> addresses = <Address>{};
   Address? address;
-  List<Set<String>> transactions = [];
+  List<Set<String>> transactions = <Set<String>>[];
   Set<String>? transactionSet;
-  Set<String> dangling = {};
+  Set<String> dangling = <String>{};
 
   static const Duration queueTimer = Duration(seconds: 1);
-  StreamSubscription? periodic;
+  StreamSubscription<dynamic>? periodic;
 
   void retry() => periodic == null
       ? periodic =
-          Stream.periodic(queueTimer).listen((_) async => await process())
+          Stream<dynamic>.periodic(queueTimer).listen((_) async => process())
       : () {};
 
-  Future reset() async {
+  Future<void> reset() async {
     await periodic?.cancel();
     periodic = null;
     dangling.clear();
     streams.client.queue.add(false);
     streams.client.busy.add(false);
-    streams.client.activity.add(ActivityMessage(active: false));
+    streams.client.activity.add(ActivityMessage());
   }
 
   Future<void> update({

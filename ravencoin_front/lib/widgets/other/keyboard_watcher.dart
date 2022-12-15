@@ -14,7 +14,8 @@ class PeristentKeyboardWatcher extends StatefulWidget {
 class _KeyboardStateHidesWidget extends State<PeristentKeyboardWatcher> {
   @override
   Widget build(BuildContext context) {
-    return KeyboardVisibilityBuilder(builder: (context, isKeyboardVisible) {
+    return KeyboardVisibilityBuilder(
+        builder: (BuildContext context, bool isKeyboardVisible) {
       if (isKeyboardVisible) {
         streams.app.keyboard.add(KeyboardStatus.up);
       } else {

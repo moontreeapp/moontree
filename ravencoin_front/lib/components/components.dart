@@ -1,5 +1,7 @@
 //import 'package:flutter/material.dart';
 
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:ravencoin_front/components/styles/decorations.dart';
 
@@ -16,6 +18,7 @@ import 'shape.dart';
 import 'page.dart';
 import 'styles/buttons.dart';
 
+// ignore: avoid_classes_with_only_static_members
 class components {
   static final Styles styles = Styles();
 
@@ -23,7 +26,7 @@ class components {
   static final ContainerComponents containers = ContainerComponents();
   static final IconComponents icons = IconComponents();
   static final TextComponents text = TextComponents();
-  static final AppLifecycleReactor status = AppLifecycleReactor();
+  static const AppLifecycleReactor status = AppLifecycleReactor();
   static final EmptyComponents empty = EmptyComponents();
   //static final RouteObserver<PageRoute> routeObserver =
   //    RouteObserver<PageRoute>();

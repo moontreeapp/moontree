@@ -10,7 +10,7 @@ enum SecurityType {
   fiat,
 
   @HiveField(1)
-  crypto,
+  coin,
 
   @HiveField(2)
   asset,

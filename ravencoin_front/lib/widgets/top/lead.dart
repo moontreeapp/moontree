@@ -1,24 +1,25 @@
 //import 'package:backdrop/backdrop.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 
 class PageLead extends StatefulWidget {
-  final BuildContext mainContext;
-
-  PageLead({Key? key, required this.mainContext}) : super(key: key);
+  const PageLead({Key? key}) : super(key: key);
 
   @override
   _PageLead createState() => _PageLead();
 }
 
 class _PageLead extends State<PageLead> {
-  late String pageTitle = '';
-  late String? settingTitle = null;
-  late bool xlead = false;
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
+  String? settingTitle;
+  late LeadIcon xlead = LeadIcon.pass;
   late bool loading = false;
-  late List listeners = [];
 
   @override
   void initState() {
@@ -30,21 +31,14 @@ class _PageLead extends State<PageLead> {
         });
       }
     }));
-    listeners.add(streams.app.page.listen((value) {
-      if (value != pageTitle) {
-        setState(() {
-          pageTitle = value;
-        });
-      }
-    }));
-    listeners.add(streams.app.setting.listen((value) {
+    listeners.add(streams.app.setting.listen((String? value) {
       if (value != settingTitle) {
         setState(() {
           settingTitle = value;
         });
       }
     }));
-    listeners.add(streams.app.xlead.listen((value) {
+    listeners.add(streams.app.lead.listen((LeadIcon value) {
       if (value != xlead) {
         setState(() {
           xlead = value;
@@ -55,7 +49,7 @@ class _PageLead extends State<PageLead> {
 
   @override
   void dispose() {
-    for (var listener in listeners) {
+    for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
     super.dispose();
@@ -67,16 +61,18 @@ class _PageLead extends State<PageLead> {
   }
 
   Widget body() {
-    if (loading && pageTitle != 'Network') {
+    if (loading && streams.app.page.value != 'Network') {
       return Container();
     }
-    if (pageTitle == 'Home' &&
+    if (streams.app.page.value == 'Home' &&
         (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
-          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value == true) return;
+            if (streams.app.scrim.value ?? false) {
+              return;
+            }
             streams.app.setting.add('/settings');
             //Navigator.pop(components.navigator.routeContext ?? context);
             //Navigator.pop(components.navigator.routeContext ?? context);
@@ -86,59 +82,58 @@ class _PageLead extends State<PageLead> {
             //streams.app.setting.add(settingTitle);
           });
     }
-    if (pageTitle != 'Home' &&
+    if (streams.app.page.value != 'Home' &&
         (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
-          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value == true) return;
+            if (streams.app.scrim.value ?? false) {
+              return;
+            }
             Navigator.pop(components.navigator.routeContext ?? context);
             streams.app.setting.add(settingTitle);
           });
     }
 
-    if (pageTitle == 'Home') {
+    if (streams.app.page.value == 'Home') {
       return IconButton(
           splashRadius: 24,
           onPressed: () {
-            if (streams.app.scrim.value == true) return;
+            if (streams.app.scrim.value ?? false) {
+              return;
+            }
             ScaffoldMessenger.of(context).clearSnackBars();
             streams.app.fling.add(true);
           },
-          padding: EdgeInsets.only(left: 16),
+          padding: const EdgeInsets.only(left: 16),
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));
     }
-    if (pageTitle == '') {
+    if (streams.app.page.value == '') {
       //return Container();
     }
-    if (pageTitle == 'Splash') {
+    if (xlead == LeadIcon.none ||
+        <String>['Splash', 'Login'].contains(streams.app.page.value)) {
       return Container();
     }
-    if (pageTitle == 'Login') {
-      return Container();
-      //return Container(
-      //  height: 24,
-      //  padding: EdgeInsets.only(left: 16),
-      //  child: SvgPicture.asset(
-      //    'assets/icons/menu/menu.svg',
-      //    color: AppColors.black38,
-      //  ),
-      //);
-    }
-    if (xlead || ['Send', 'Scan', 'Receive'].contains(pageTitle)) {
+    if (xlead == LeadIcon.dismiss ||
+        <String>['Send', 'Scan', 'Receive'].contains(streams.app.page.value)) {
       return IconButton(
           splashRadius: 24,
-          icon: Icon(Icons.close_rounded, color: Colors.white),
+          icon: const Icon(Icons.close_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value == true) return;
+            if (streams.app.scrim.value ?? false) {
+              return;
+            }
+            streams.app.lead.add(LeadIcon.pass);
             streams.app.fling.add(false);
-            if (pageTitle == 'Send') streams.spend.form.add(null);
-            if (xlead) streams.app.xlead.add(false);
+            if (xlead == LeadIcon.dismiss) {
+              streams.app.lead.add(LeadIcon.pass);
+            }
             Navigator.pop(components.navigator.routeContext ?? context);
           });
     }
-    if ([
+    if (<String>[
       'Transactions',
       'Asset',
       'Main',
@@ -148,23 +143,26 @@ class _PageLead extends State<PageLead> {
       'Qualifiersub',
       'Nft',
       'Channel',
-    ].contains(pageTitle)) {
+    ].contains(streams.app.page.value)) {
       return IconButton(
           splashRadius: 24,
-          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value == true) return;
+            if (streams.app.scrim.value ?? false) {
+              return;
+            }
             streams.app.fling.add(false);
-            if (pageTitle == 'Transaction') streams.spend.form.add(null);
             Navigator.pop(components.navigator.routeContext ?? context);
           });
     }
-    if (['Createlogin'].contains(pageTitle)) {
+    if (<String>['Createlogin'].contains(streams.app.page.value)) {
       return IconButton(
           splashRadius: 24,
-          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value == true) return;
+            if (streams.app.scrim.value ?? false) {
+              return;
+            }
             Navigator.pushReplacementNamed(
               components.navigator.routeContext ?? context,
               '/security/create/setup',
@@ -172,7 +170,7 @@ class _PageLead extends State<PageLead> {
             streams.app.splash.add(false);
           });
     }
-    if (['BackupConfirm', 'Mining'].contains(pageTitle)) {
+    if (<String>['Backupconfirm', 'Backup'].contains(streams.app.page.value)) {
       /// the reason for this is after we took out encryptedEntropy from
       /// LeaderWallets we needed to make all the functions dealing with getting
       /// sensitive information futures, and since they're futures, we had to
@@ -186,20 +184,30 @@ class _PageLead extends State<PageLead> {
       /// start the whole process again if they try to cheat.
       return IconButton(
           splashRadius: 24,
-          icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+          icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value == true) return;
-            if (pageTitle == 'Transaction') streams.spend.form.add(null);
-            Navigator.popUntil(components.navigator.routeContext ?? context,
-                ModalRoute.withName('/home'));
+            if (streams.app.scrim.value ?? false) {
+              return;
+            }
+            Navigator.popUntil(
+                components.navigator.routeContext ?? context,
+                //ModalRoute.withName('/home') ||
+                ModalRoute.withName(components.navigator
+                        .nameIsInStack('/security/backup/backupintro')
+                    ? '/security/backup/backupintro'
+                    : '/home'));
+            streams.app.lead
+                .add(LeadIcon.pass); // replace with a refresh trigger?
           });
     }
+
     return IconButton(
         splashRadius: 24,
-        icon: Icon(Icons.chevron_left_rounded, color: Colors.white),
+        icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
         onPressed: () {
-          if (streams.app.scrim.value == true) return;
-          if (pageTitle == 'Transaction') streams.spend.form.add(null);
+          if (streams.app.scrim.value ?? false) {
+            return;
+          }
           Navigator.pop(components.navigator.routeContext ?? context);
         });
   }

@@ -3,9 +3,11 @@ import './sample_content/back_layer_content.dart';
 import './sample_content/front_layer_content.dart';
 import 'modified_draggable_scrollable_sheet.dart' as slide;
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,24 +16,27 @@ class MyApp extends StatelessWidget {
           primaryColor: const Color.fromARGB(255, 0, 132, 255),
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
               .copyWith(secondary: Colors.blue)),
-      home: SlidingPanel(),
+      home: const SlidingPanel(),
     );
   }
 }
 
 class SlidingPanel extends StatefulWidget {
+  const SlidingPanel({Key? key}) : super(key: key);
+
   @override
   State<SlidingPanel> createState() => _SlidingPanelState();
 }
 
 class _SlidingPanelState extends State<SlidingPanel> {
-  final controller = slide.DraggableScrollableController();
+  final slide.DraggableScrollableController controller =
+      slide.DraggableScrollableController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Wallet')),
       body: Stack(
-        children: [
+        children: <Widget>[
           const BackLayerContent(),
           slide.DraggableScrollableActuator(
             child: slide.DraggableScrollableSheet(
@@ -40,8 +45,9 @@ class _SlidingPanelState extends State<SlidingPanel> {
               maxChildSize: 1,
               minChildSize: 0.5,
               snap: true,
-              builder: (context, scrollController) =>
-                  FrontLayerContent(scrollController),
+              builder:
+                  (BuildContext context, ScrollController scrollController) =>
+                      FrontLayerContent(scrollController),
             ),
           )
         ],

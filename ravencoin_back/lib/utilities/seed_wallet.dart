@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:ravencoin_wallet/ravencoin_wallet.dart' show HDWallet, KPWallet;
+import 'package:wallet_utils/wallet_utils.dart' show HDWallet, KPWallet;
 
 import 'package:ravencoin_back/utilities/derivation_path.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -13,9 +13,10 @@ class SeedWallet {
   SeedWallet(this.seed, this.chain, this.net);
 
   HDWallet get wallet =>
-      HDWallet.fromSeed(seed, network: networkOf(chain, net));
+      HDWallet.fromSeed(seed, network: ChainNet(chain, net).network);
 
-  HDWallet subwallet(int hdIndex, {exposure = NodeExposure.external}) =>
+  HDWallet subwallet(int hdIndex,
+          {NodeExposure exposure = NodeExposure.external}) =>
       wallet.derivePath(getDerivationPath(
         hdIndex,
         exposure: exposure,

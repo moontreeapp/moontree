@@ -1,27 +1,29 @@
 import 'dart:async';
+import 'package:electrum_adapter/electrum_adapter.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_electrum/ravencoin_electrum.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class AssetService {
   String adminOrRestrictedToMainSlash(String symbol) => symbol.endsWith('!')
-      ? symbol.replaceAll('!', '/').replaceAll('\$', '')
+      ? symbol.replaceAll('!', '/').replaceAll(r'$', '')
       : symbol.endsWith('/')
-          ? symbol.replaceAll('\$', '')
-          : '$symbol/'.replaceAll('\$', '');
+          ? symbol.replaceAll(r'$', '')
+          : '$symbol/'.replaceAll(r'$', '');
 
   void allAdminsSubs() => pros.assets.byAssetType
       .getAll(AssetType.admin)
-      .where((asset) => !asset.symbol.contains('/'))
-      .map((asset) => asset.symbol)
+      .where((Asset asset) => !asset.symbol.contains('/'))
+      .map((Asset asset) => asset.symbol)
       .forEach(downloadMain);
 
   /// we actaully don't need all the subs now.
   /// We only need the mains of admins we own.
   /// So this is unused in preference to downloadMain
   Future<void> downloadSubs(String symbol) async {
-    var symbolSlash = adminOrRestrictedToMainSlash(symbol);
-    var children = await services.client.api.getAssetNames(symbolSlash);
-    for (String kid in children.where((child) =>
+    final String symbolSlash = adminOrRestrictedToMainSlash(symbol);
+    final Iterable<String> children =
+        await services.client.api.getAssetNames(symbolSlash);
+    for (final String kid in children.where((String child) =>
         pros.assets.primaryIndex
             .getOne(child, pros.settings.chain, pros.settings.net) ==
         null)) {
@@ -42,11 +44,10 @@ class AssetService {
     String symbol, {
     TxVout? vout,
   }) async {
-    var meta = await services.client.api.getMeta(symbol);
+    final AssetMeta? meta = await services.client.api.getMeta(symbol);
     if (meta != null) {
-      var value =
-          vout == null ? 0 : utils.amountToSat(vout.scriptPubKey.amount);
-      var asset = Asset(
+      final int value = vout == null ? 0 : vout.scriptPubKey.amount.asSats;
+      final Asset asset = Asset(
         chain: pros.settings.chain,
         net: pros.settings.net,
         symbol: meta.symbol,
@@ -62,9 +63,8 @@ class AssetService {
         position: meta.source.txPos,
       );
       streams.asset.added.add(asset);
-      var security = Security(
+      final Security security = Security(
         symbol: meta.symbol,
-        securityType: SecurityType.asset,
         chain: asset.chain,
         net: asset.net,
       );
@@ -77,9 +77,8 @@ class AssetService {
 }
 
 class AssetRetrieved {
+  AssetRetrieved(this.asset, this.security, [this.value = 0]);
   final Asset asset;
   final Security security;
   final int value;
-
-  AssetRetrieved(this.asset, this.security, [this.value = 0]);
 }
