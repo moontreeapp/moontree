@@ -193,7 +193,7 @@ void main() {
       // choose amount
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 2));
-      final double amount = 0.00000001 * randomInRange(1, satsPerCoin);
+      final double amount = satCoinRatio * randomInRange(1, satsPerCoin);
       target = find.byKey(Key('sendAmount'), skipOffstage: false);
       expect(target, findsOneWidget);
       await tester.enterText(target, amount.toString());
