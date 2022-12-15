@@ -1,16 +1,23 @@
+//cd ravencoin_front && flutter test integration_test/test_create_page.dart -d emulator-5554
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/main.dart' as app;
 import 'package:ravencoin_front/services/dev.dart';
+import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('end-to-end test', () {
     testWidgets('start the app', (WidgetTester tester) async {
+      // todo: remove skipbackup and actually tap the words in order
       app.main([], [DevFlag.skipPin, DevFlag.skipBackup]);
       // splash screen
       await tester.pumpAndSettle(Duration(seconds: 30));
@@ -145,14 +152,104 @@ void main() {
 
       // importing
       await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 10));
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 50));
+
+      // home page
+      await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 60));
       await tester.pumpAndSettle();
-
-      await Future.delayed(Duration(seconds: 60 * 5));
-      await tester.pumpAndSettle();
-      target = find.widgetWithText(OutlinedButton, 'UNLOCK');
+      await Future.delayed(Duration(seconds: 1));
+      target = find.widgetWithText(OutlinedButton, 'SEND');
+      expect(target, findsOneWidget);
       await tester.tap(target);
-      await Future.delayed(Duration(seconds: 60 * 60));
+
+      // send page
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 2));
+      // todo: choose asset
+      //await tester.pumpAndSettle();
+      //await Future.delayed(Duration(seconds: 2));
+      //target = find.byKey(Key('sendAssetDropDown'));
+      //expect(target, findsOneWidget);
+      //await tester.press(target);
+      //await tester.pumpAndSettle();
+      //await Future.delayed(Duration(seconds: 2));
+      //target = find.widgetWithText(ListTile, 'Ravencoin');
+      //expect(target, findsOneWidget);
+      //await tester.tap(target);
+      // choose address
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 2));
+      final String address = services.wallet.getEmptyAddress(
+        Current.wallet,
+        NodeExposure.external,
+        address: null,
+      );
+      target = find.byKey(Key('sendAddress'), skipOffstage: false);
+      expect(target, findsOneWidget);
+      await tester.enterText(target, address);
+      // choose amount
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 2));
+      final double amount = 0.00000001 * randomInRange(1, satsPerCoin);
+      target = find.byKey(Key('sendAmount'), skipOffstage: false);
+      expect(target, findsOneWidget);
+      await tester.enterText(target, amount.toString());
+      // choose note
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 2));
+      target = find.byKey(Key('sendNote'), skipOffstage: false);
+      expect(target, findsOneWidget);
+      await tester.enterText(target, 'automated testing');
+      //await tester.sendKeyEvent(LogicalKeyboardKey.enter); // does not dismiss
+      //target = find.byType(Coin); // does not dismiss
+      //expect(target, findsOneWidget);
+      //await tester.tap(target);
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      // press preview
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 2));
+      target = find.widgetWithText(OutlinedButton, 'PREVIEW');
+      expect(target, findsOneWidget);
+      await tester.tap(target);
+      // checkout page
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 10));
+      // grab total amount
+      target = find.byKey(Key('checkoutTotal'));
+      expect(target, findsOneWidget);
+      final String? total =
+          (target.first.evaluate().single.widget as Text).data;
+      expect(total, isNotNull);
+      print(total);
+      target = find.widgetWithText(OutlinedButton, 'SEND');
+      expect(target, findsOneWidget);
+      await tester.tap(target);
+      // home page
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 10));
+      target = find.text('Ravencoin');
+      //find.widgetWithText(FittedBox, 'Ravencoin')
+      expect(target, findsOneWidget);
+      await tester.tap(target);
+
+      // transaction list page
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 10));
+      target = find.text(total!);
+      //find.widgetWithText(FittedBox, 'Ravencoin')
+      expect(target, findsOneWidget);
+      await tester.tap(target);
+
+      // LAST PAGE
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 10));
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 50));
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 60 * 5));
       //find.byType(AppBarScrim)
       //find.text('Next')
       //find.byType(PhysicalModel) //dismiss dialogue

@@ -221,9 +221,9 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
                     .copyWith(height: .8, color: AppColors.primary),
           );
     final TextField text = TextField(
+        //key: widget.key,
         decoration: decoration,
         onTap: widget.onTap ?? () => setState(() {}), // solves #594
-        key: widget.key,
         controller: widget.controller,
         focusNode: widget.focusNode,
         keyboardType: widget.keyboardType,

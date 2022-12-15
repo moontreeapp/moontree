@@ -46,9 +46,8 @@ class ClientService {
   Future<T> scope<T>(Future<T> Function() callback) async {
     /// if we haven't had a call for 10 seconds, the client isn't busy
     lastActiveTime = DateTime.now();
-    T? x;
     try {
-      x = await callback();
+      return await callback();
       //} catch (e) {
     } on StateError {
       //print('creatingClient because of StateError');
@@ -57,11 +56,11 @@ class ClientService {
       //await createClient();
       //// if we error this time, fail
       //x = await callback();
-      x = null;
+      return null as T;
     } catch (e) {
       print('client use error: $e');
+      return null as T;
     }
-    return x as T;
   }
 
   String get electrumDomain =>

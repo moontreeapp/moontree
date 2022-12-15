@@ -335,7 +335,8 @@ class _CheckoutState extends State<Checkout> {
         Text('Total:', style: Theme.of(context).textTheme.bodyText1),
         Text(
             '${getRightTotal(struct.total!)} ${struct.paymentSymbol!.toUpperCase()}',
-            style: Theme.of(context).textTheme.bodyText1),
+            style: Theme.of(context).textTheme.bodyText1,
+            key: Key('checkoutTotal')),
       ]);
 
   Widget get confirm => Container(

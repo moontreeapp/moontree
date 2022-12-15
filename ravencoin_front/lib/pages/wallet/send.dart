@@ -188,6 +188,7 @@ class _SendState extends State<Send> {
                             const SizedBox(height: 8),
                             ...<Widget>[
                               TextFieldFormatted(
+                                key: Key('sendAsset'),
                                 focusNode: sendAssetFocusNode,
                                 controller: sendAsset,
                                 readOnly: true,
@@ -198,6 +199,7 @@ class _SendState extends State<Send> {
                                         labelText: 'Asset',
                                         hintText: pros.settings.chain.title,
                                         suffixIcon: IconButton(
+                                          key: Key('sendAssetDropDown'),
                                           icon: const Padding(
                                               padding:
                                                   EdgeInsets.only(right: 14),
@@ -216,6 +218,7 @@ class _SendState extends State<Send> {
                               ),
                               if (addressName != '') Text('To: $addressName'),
                               TextFieldFormatted(
+                                key: Key('sendAddress'),
                                 focusNode: sendAddressFocusNode,
                                 controller: sendAddress,
                                 textInputAction: TextInputAction.next,
@@ -256,6 +259,7 @@ class _SendState extends State<Send> {
                                 },
                               ),
                               TextFieldFormatted(
+                                key: Key('sendAmount'),
                                 focusNode: sendAmountFocusNode,
                                 controller: sendAmount,
                                 textInputAction: TextInputAction.next,
@@ -334,6 +338,7 @@ class _SendState extends State<Send> {
                                 },
                               ),
                               TextFieldFormatted(
+                                key: Key('sendFee'),
                                 onTap: () => _produceFeeModal(cubit),
                                 focusNode: sendFeeFocusNode,
                                 controller: sendFee,
@@ -365,6 +370,7 @@ class _SendState extends State<Send> {
                                 },
                               ),
                               TextFieldFormatted(
+                                  key: Key('sendMemo'),
                                   focusNode: sendMemoFocusNode,
                                   controller: sendMemo,
                                   textInputAction: TextInputAction.next,
@@ -395,6 +401,7 @@ class _SendState extends State<Send> {
                                         .requestFocus(sendNoteFocusNode);
                                   }),
                               TextFieldFormatted(
+                                  key: Key('sendNote'),
                                   focusNode: sendNoteFocusNode,
                                   controller: sendNote,
                                   textInputAction: TextInputAction.next,
