@@ -76,7 +76,8 @@ class _VerifySeedState extends State<VerifySeed> {
       ]);
 
   Widget get instructions => GestureDetector(
-      onDoubleTap: () async => clicked ? await proceed() : clicked = true,
+      onDoubleTap: () async =>
+          clicked && click == 3 ? await proceed(skipped: true) : clicked = true,
       child: Container(
           height: 48,
           alignment: Alignment.topCenter,
@@ -110,22 +111,26 @@ class _VerifySeedState extends State<VerifySeed> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     for (int i in <int>[1, 2, 3])
-                      components.buttons.wordButton(context,
-                          width: buttonWidth,
-                          chosen: shuffled[(i + x) - 1]!.chosen != null,
-                          label: shuffled[(i + x) - 1]!.word, onPressed: () {
-                        if (click < 13) {
-                          final int clicked = (i + x) - 1;
-                          if (shuffled[clicked]!.chosen == click) {
-                            shuffled[clicked]!.chosen = null;
-                            click--;
-                          } else if (shuffled[clicked]!.chosen == null) {
-                            click++;
-                            shuffled[clicked]!.chosen = click;
+                      components.buttons.wordButton(
+                        context,
+                        width: buttonWidth,
+                        chosen: shuffled[(i + x) - 1]!.chosen != null,
+                        label: shuffled[(i + x) - 1]!.word,
+                        onPressed: () {
+                          if (click < 13) {
+                            final int clicked = (i + x) - 1;
+                            if (shuffled[clicked]!.chosen == click) {
+                              shuffled[clicked]!.chosen = null;
+                              click--;
+                            } else if (shuffled[clicked]!.chosen == null) {
+                              click++;
+                              shuffled[clicked]!.chosen = click;
+                            }
                           }
-                        }
-                        setState(() {});
-                      }, number: shuffled[(i + x) - 1]!.chosen)
+                          setState(() {});
+                        },
+                        number: shuffled[(i + x) - 1]!.chosen,
+                      )
                   ]),
           ]));
 
@@ -148,7 +153,7 @@ class _VerifySeedState extends State<VerifySeed> {
         label: 'Verify',
         onPressed: proceed,
       );
-  Future<void> proceed() async {
+  Future<void> proceed({bool skipped = false}) async {
     if (Current.wallet is LeaderWallet) {
       await services.wallet.leader.backedUp(Current.wallet as LeaderWallet);
       await populateWalletsWithSensitives();
@@ -163,7 +168,11 @@ class _VerifySeedState extends State<VerifySeed> {
       Navigator.of(context).pushReplacementNamed('/home');
     }
     if (services.tutorial.missing.isEmpty) {
-      streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
+      if (skipped) {
+        streams.app.snack.add(Snack(message: 'Successfully Skipped Backup'));
+      } else {
+        streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
+      }
     }
     streams.app.wallet.refresh.add(true);
   }

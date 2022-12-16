@@ -92,7 +92,7 @@ void main() {
       // developer page
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 1));
-      target = find.byType(Switch); //find.text('Developer Mode')
+      target = find.byType(Switch);
       expect(target, findsOneWidget);
       await tester.tap(target);
       await tester.pumpAndSettle();
