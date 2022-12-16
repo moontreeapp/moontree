@@ -1,4 +1,7 @@
-//cd ravencoin_front && flutter test integration_test/test_create_page.dart -d emulator-5554
+/* to run test
+cd ravencoin_front
+flutter test integration_test/test_create_to_send.dart -d emulator-5554
+ */
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -68,13 +71,14 @@ void main() {
       expect(target, findsOneWidget);
       await tester.tap(target);
 
+/* for temporary mainnet testing - don't do developer mode, don't switch chains
       // home page
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
       target = find.byType(PageLead);
       expect(target, findsOneWidget);
       await tester.tap(target);
-
+      
       // menu
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 1));
@@ -128,7 +132,7 @@ void main() {
       target = find.widgetWithText(ListTile, 'Ravencoin testnet');
       expect(target, findsOneWidget);
       await tester.tap(target);
-
+*/
       // home page
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
@@ -140,7 +144,8 @@ void main() {
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
       await dotenv.load();
-      final wallet = dotenv.env['TEST_WALLET_02'];
+      /*final wallet = dotenv.env['TEST_WALLET_02']; testnet! */
+      final wallet = dotenv.env['TEST_WALLET_05']; /* mainnet! */
       //final jsonImport = dotenv.env['TEST_JSON_IMPORT'];
       //final jsonKey = dotenv.env['TEST_JSON_KEY'];
       target = find.byType(EditableText);
@@ -224,6 +229,9 @@ void main() {
           (target.first.evaluate().single.widget as Text).data;
       expect(total, isNotNull);
       print(total);
+      // tx can never be larger than 2 rvn
+      expect(total!.split(' ')[0].toDouble() > amount, true);
+      expect(total.split(' ')[0].toDouble() < amount + 2, true);
       target = find.widgetWithText(OutlinedButton, 'SEND');
       expect(target, findsOneWidget);
       await tester.tap(target);
@@ -238,18 +246,23 @@ void main() {
       // transaction list page
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
-      target = find.text(total!);
+      target = find.text(amount.toString());
       //find.widgetWithText(FittedBox, 'Ravencoin')
       expect(target, findsOneWidget);
       await tester.tap(target);
 
+      // transaction page
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 10));
+
       // LAST PAGE
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
-      await tester.pumpAndSettle();
-      await Future.delayed(Duration(seconds: 50));
-      await tester.pumpAndSettle();
-      await Future.delayed(Duration(seconds: 60 * 5));
+      //await tester.pumpAndSettle();
+      //await Future.delayed(Duration(seconds: 50));
+      //await tester.pumpAndSettle();
+      //await Future.delayed(Duration(seconds: 60 * 5));
+      //
       //find.byType(AppBarScrim)
       //find.text('Next')
       //find.byType(PhysicalModel) //dismiss dialogue
