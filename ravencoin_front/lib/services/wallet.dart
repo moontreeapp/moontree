@@ -1,9 +1,10 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:ravencoin_front/services/dev.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/wallet/constants.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_front/services/dev.dart';
+import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
 
 Future<String> Function(String id) get getEntropy => _getSecret;
@@ -229,4 +230,15 @@ Future<void> updateChain() async {
         ),
         force: true);
   }
+}
+
+Future<List<String>> get getSecret async {
+  final Wallet wallet = Current.wallet;
+  if (wallet is LeaderWallet) {
+    return (await wallet.mnemonic).split(' ');
+  }
+  if (wallet is SingleWallet) {
+    return ((await wallet.kpWallet).privKey ?? '').split(' ');
+  }
+  return (await Current.wallet.secret(Current.wallet.cipher!)).split(' ');
 }

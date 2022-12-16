@@ -12,6 +12,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/main.dart' as app;
 import 'package:ravencoin_front/services/dev.dart';
 import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/services/wallet.dart' show getSecret;
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
@@ -21,7 +22,7 @@ void main() {
   group('end-to-end test', () {
     testWidgets('start the app', (WidgetTester tester) async {
       // todo: remove skipbackup and actually tap the words in order
-      app.main([], [DevFlag.skipPin, DevFlag.skipBackup]);
+      app.main([], [DevFlag.skipPin /*, DevFlag.skipBackup*/]);
       // splash screen
       await tester.pumpAndSettle(Duration(seconds: 30));
       // setup page
@@ -47,22 +48,40 @@ void main() {
       await Future.delayed(Duration(seconds: 10));
 
       // backup intro page - skipped in dev
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 10));
+      target = find.widgetWithText(OutlinedButton, 'BACKUP');
+      expect(target, findsOneWidget);
+      await tester.tap(target);
+
+      // backup page
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 2));
+      target = find.widgetWithText(OutlinedButton, 'VERIFY BACKUP');
+      expect(target, findsOneWidget);
+      await tester.tap(target);
+
+      //// backup verify page - skip verifiy process
       //await tester.pumpAndSettle();
-      //target = find.widgetWithText(OutlinedButton, 'BACKUP');
-      //expect(target, findsOneWidget);
-      //await tester.tap(target);
-      //
-      //// backup page
-      //await tester.pumpAndSettle();
-      //target = find.widgetWithText(OutlinedButton, 'VERIFY BACKUP');
-      //expect(target, findsOneWidget);
-      //await tester.tap(target);
-      //
-      //// backup verify page
-      //await tester.pumpAndSettle();
+      //await Future.delayed(Duration(seconds: 10));
       //target = find.text('Please tap your words in the correct order.');
       //expect(target, findsOneWidget);
       //await tester.doubleTap(target);
+
+      // backup verify page -
+      await tester.pumpAndSettle();
+      await Future.delayed(Duration(seconds: 2));
+      final secret = await getSecret;
+      for (final word in secret) {
+        target = find.text(word);
+        expect(target, findsOneWidget);
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+        await Future.delayed(Duration(milliseconds: 250));
+      }
+      target = find.widgetWithText(OutlinedButton, 'VERIFY');
+      expect(target, findsOneWidget);
+      await tester.tap(target);
 
       // tutorial overlay
       await tester.pumpAndSettle();

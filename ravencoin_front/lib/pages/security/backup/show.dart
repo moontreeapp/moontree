@@ -9,7 +9,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/pages/security/backup/types.dart';
-import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/services/wallet.dart' show getSecret;
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
@@ -78,17 +78,6 @@ class _BackupSeedState extends State<BackupSeed>
   }
 
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
-
-  Future<List<String>> get getSecret async {
-    final Wallet wallet = Current.wallet;
-    if (wallet is LeaderWallet) {
-      return (await wallet.mnemonic).split(' ');
-    }
-    if (wallet is SingleWallet) {
-      return ((await wallet.kpWallet).privKey ?? '').split(' ');
-    }
-    return (await Current.wallet.secret(Current.wallet.cipher!)).split(' ');
-  }
 
   @override
   Widget build(BuildContext context) {
