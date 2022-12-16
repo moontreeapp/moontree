@@ -3,7 +3,6 @@ cd ravencoin_front
 flutter test integration_test/test_create_to_send.dart -d emulator-5554
  */
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -90,14 +89,13 @@ void main() {
       expect(target, findsOneWidget);
       await tester.tap(target);
 
-/* for temporary mainnet testing - don't do developer mode, don't switch chains
       // home page
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
       target = find.byType(PageLead);
       expect(target, findsOneWidget);
       await tester.tap(target);
-      
+
       // menu
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 1));
@@ -151,7 +149,7 @@ void main() {
       target = find.widgetWithText(ListTile, 'Ravencoin testnet');
       expect(target, findsOneWidget);
       await tester.tap(target);
-*/
+
       // home page
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
@@ -163,8 +161,7 @@ void main() {
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
       await dotenv.load();
-      /*final wallet = dotenv.env['TEST_WALLET_02']; testnet! */
-      final wallet = dotenv.env['TEST_WALLET_05']; /* mainnet! */
+      final wallet = dotenv.env['TEST_WALLET_02'];
       //final jsonImport = dotenv.env['TEST_JSON_IMPORT'];
       //final jsonKey = dotenv.env['TEST_JSON_KEY'];
       target = find.byType(EditableText);
