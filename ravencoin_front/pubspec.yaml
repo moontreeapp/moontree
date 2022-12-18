@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.6.10+4
+version: 1.7.0+5
 
 environment:
   sdk: '>=2.14.0 <3.0.0'
@@ -85,7 +85,7 @@ dependency_overrides:
   #wallet_utils:
   #  path: ../../wallet_utils
   #moontree_utils:
-  #  path: ../../moontree_utils   
+  #  path: ../../moontree_utils
   #screenshot_callback:
   #  git:
   #    url: https://github.com/ousvat/flutter_screenshot_callback.git
