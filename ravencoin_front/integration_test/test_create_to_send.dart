@@ -217,6 +217,8 @@ void main() {
       final double amount = satCoinRatio * randomInRange(1, satsPerCoin);
       target = find.byKey(Key('sendAmount'), skipOffstage: false);
       expect(target, findsOneWidget);
+      print(amount);
+      print(amount.toString());
       await tester.enterText(target, amount.toString());
       // choose note
       await tester.pumpAndSettle();
@@ -262,6 +264,8 @@ void main() {
       // transaction list page
       await tester.pumpAndSettle();
       await Future.delayed(Duration(seconds: 10));
+      print(amount);
+      print(amount.toString());
       target = find.text(amount.toString());
       //find.widgetWithText(FittedBox, 'Ravencoin')
       expect(target, findsOneWidget);
