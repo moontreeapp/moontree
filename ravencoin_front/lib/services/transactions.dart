@@ -12,18 +12,31 @@ class TransactionHistory {
 
   final Client client;
 
-  List<TransactionView> transactionHistoryBy(
-    Chain chain,
+  List<TransactionView> transactionHistoryBy({
+    String chain,
+    String net,
     String symbol,
+    List<String> pubkeys,
     List<String> addresses,
-  ) async =>
-      client.transactionHistory.get(chain, symbol, addresses);
+  }) async =>
+      client.transactionHistory.get(
+        chain: chain.name, 
+        net: net.name, 
+        symbol: symbol, 
+        pubkeys: pubkeys,
+        addresses: addresses,
+      );
 }
 
 Future<bool> discoverTransactionHistory(String deviceId) async {
   final TransactionHistory transactionHistory = TransactionHistory();
   final List<TransactionView> history = await transactionHistory
-      .transactionHistoryBy(Current.chain, Current.symbol, Current.addresses);
+      .transactionHistoryBy(
+        chain: Current.chain, 
+        net: Current.net, 
+        symbol: Current.symbol, 
+        addresses: Current.addresses, 
+        pubkeys: Current.roots);
   return history;
 }
 */
