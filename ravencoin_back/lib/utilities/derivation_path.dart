@@ -2,8 +2,8 @@ import 'package:ravencoin_back/records/types/node_exposure.dart';
 import 'package:ravencoin_back/records/types/net.dart';
 
 /// because evrmore uses the same path as raven, it is not necessary to modify
-String getDerivationPath(
-  int index, {
+String getDerivationPath({
+  int? index,
   NodeExposure exposure = NodeExposure.external,
   Net net = Net.main,
 }) =>
@@ -11,4 +11,4 @@ String getDerivationPath(
     '${<NodeExposure, String>{
       NodeExposure.external: '0',
       NodeExposure.internal: '1',
-    }[exposure]!}/$index';
+    }[exposure]!}${index == null ? '' : '/$index'}';

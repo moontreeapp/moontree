@@ -18,7 +18,7 @@ class SeedWallet {
   HDWallet subwallet(int hdIndex,
           {NodeExposure exposure = NodeExposure.external}) =>
       wallet.derivePath(getDerivationPath(
-        hdIndex,
+        index: hdIndex,
         exposure: exposure,
         net: net,
       ));

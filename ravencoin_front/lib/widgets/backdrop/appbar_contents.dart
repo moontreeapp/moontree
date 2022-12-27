@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
+import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/colors.dart';
 import 'package:ravencoin_front/widgets/widgets.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -70,7 +71,7 @@ class BackdropAppBarContents extends StatelessWidget
             fuzzyTop: false,
             frontLayerBoxShadow: const <BoxShadow>[],
           ),
-        testAppBar(appBar, test: false),
+        testAppBar(appBar, test: true),
         // alphaBar,
         const AppBarScrim(),
       ],
@@ -100,6 +101,22 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
               //        .getAddressKeypair(pros.addresses.records.first))
               //    .toWIF());
               //print(pros.vouts.where((v) => v.isAsset).first);
+              print((await services.wallet.leader
+                      .getSeedWallet(Current.wallet as LeaderWallet))
+                  .wallet
+                  .base58);
+              //what we send the server
+              print((await services.wallet.leader
+                      .getSeedWallet(Current.wallet as LeaderWallet))
+                  .wallet
+                  .derivePath("m/44'/175'/0'/0")
+                  .base58);
+              print((await services.wallet.leader
+                      .getSeedWallet(Current.wallet as LeaderWallet))
+                  .wallet
+                  .derivePath("m/44'/175'/0'/1")
+                  .base58);
+              print(Current.wallet.roots);
             }
           },
           child: appBar,

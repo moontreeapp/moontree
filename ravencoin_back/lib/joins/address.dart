@@ -15,3 +15,7 @@ extension AddressHasManyVouts on Address {
 extension AddressHasManyUnspents on Address {
   List<Unspent> get unspents => pros.unspents.byAddress.getAll(address);
 }
+
+extension AddressHasAnH160Representation on Address {
+  ByteData get h160 => address.addressToH160;
+}

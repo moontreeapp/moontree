@@ -6,6 +6,7 @@ import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_front/services/dev.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/storage.dart' show SecureStorage;
+import 'package:bip32/bip32.dart';
 
 Future<String> Function(String id) get getEntropy => _getSecret;
 Future<void> Function(Secret secret) get saveSecret => _saveSecret;
@@ -242,3 +243,11 @@ Future<List<String>> get getSecret async {
   }
   return (await Current.wallet.secret(Current.wallet.cipher!)).split(' ');
 }
+
+/// mostly for illustrative purposes
+Future<String?> get getCurrentXpub async =>
+    (await services.wallet.leader.getSeedWallet(Current.wallet as LeaderWallet))
+        .wallet
+        .base58;
+Future<BIP32> get rootNode async =>
+    BIP32.fromBase58(await getCurrentXpub ?? '');
