@@ -50,18 +50,16 @@ class SecurityProclaim extends Proclaim<_IdKey, Security> {
   Set<String> get coinSymbols =>
       _coinSymbols ??= coins.map((Security e) => e.symbol).toSet();
 
-  Security get currentCoin {
-    if (pros.settings.chain == Chain.ravencoin &&
-        pros.settings.net == Net.main) {
+  Security get currentCoin => coinOf(pros.settings.chain, pros.settings.net);
+
+  Security coinOf(Chain chain, Net net) {
+    if (chain == Chain.ravencoin && net == Net.main) {
       return RVN;
-    } else if (pros.settings.chain == Chain.ravencoin &&
-        pros.settings.net == Net.test) {
+    } else if (chain == Chain.ravencoin && net == Net.test) {
       return RVNt;
-    } else if (pros.settings.chain == Chain.evrmore &&
-        pros.settings.net == Net.main) {
+    } else if (chain == Chain.evrmore && net == Net.main) {
       return EVR;
-    } else if (pros.settings.chain == Chain.evrmore &&
-        pros.settings.net == Net.test) {
+    } else if (chain == Chain.evrmore && net == Net.test) {
       return EVRt;
     } else {
       return USD;
