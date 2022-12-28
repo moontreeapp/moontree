@@ -24,8 +24,7 @@ class _TransactionPageState extends State<TransactionPage> {
   Map<String, dynamic> data = <String, dynamic>{};
   Address? address;
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
-  TransactionRecord? transactionRecord;
-  Transaction? transaction;
+  TransactionView? transactionView;
 
   @override
   void initState() {
@@ -46,9 +45,7 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    transactionRecord = data['transactionRecord'] as TransactionRecord?;
-    transaction =
-        transactionRecord!.transaction; // transactionRecord.hash.toHex();
+    transactionView = data['transactionView'] as TransactionView?;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     return BackdropLayers(
       back: const BlankBack(),
@@ -63,7 +60,11 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'Confirmations':
         return getConfirmationsBetweenHelper();
       case 'Type':
-        switch (transactionRecord!.type) {
+        switch (transactionView!.type) {
+          case TransactionViewType.incoming:
+            return 'In';
+          case TransactionViewType.outgoing:
+            return 'Out';
           case TransactionViewType.self:
             return 'to Self';
           case TransactionViewType.fee:
@@ -76,19 +77,25 @@ class _TransactionPageState extends State<TransactionPage> {
             return 'Reissue';
           case TransactionViewType.tag:
             return 'Tag';
-          case TransactionViewType.incoming:
-            return 'In';
-          case TransactionViewType.outgoing:
-            //default:
-            return 'Out';
           case TransactionViewType.claim:
-            //default:
             return 'Claim';
-          default:
-            return 'Transaction';
+          case TransactionViewType.createAsset:
+            return 'Create Asset';
+          case TransactionViewType.createSubAsset:
+            return 'Create Sub Asset';
+          case TransactionViewType.createNFT:
+            return 'Create NFT';
+          case TransactionViewType.createMessage:
+            return 'Create Message';
+          case TransactionViewType.createQualifier:
+            return 'Create Qualifier';
+          case TransactionViewType.createSubQualifier:
+            return 'Create Sub Qualifier';
+          case TransactionViewType.createRestricted:
+            return 'Create Restricted';
         }
       case 'ID':
-        return transaction!.id.cutOutMiddle();
+        return transactionView!.readableHash.cutOutMiddle();
       case 'Memo/IPFS':
         return (String humanName) {
           final String txMemo = transactionMemo ?? '';
@@ -101,39 +108,35 @@ class _TransactionPageState extends State<TransactionPage> {
           return txMemo;
         }(humanName);
       case 'Note':
-        return transaction!.note ?? '';
+        return transactionView!.note ?? '';
       case 'Fee':
-        return () {
-          if (transactionRecord!.fee == 0) {
-            transactionRecord!.getVouts();
-            return 'calculating...';
-          } else {
-            return '${transactionRecord!.fee.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}';
-          }
-        }();
-
+        return transactionView!.fee > 0
+            ? '${transactionView!.fee.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
+            : 'calculating...';
       default:
         return 'unknown';
     }
   }
 
   String? get transactionMemo {
+    /// todo: might have to make a call for transaction memo.
     // should do this logic on the back / in the record
-    return transaction!.memos.isNotEmpty
-        ? transaction!.memos.first.substring(2).hexToUTF8
-        : transaction!.assetMemos.isNotEmpty
-            ? transaction!.assetMemos.first /*.hexToAscii ?*/
-            : null;
+    //return transaction!.memos.isNotEmpty
+    //    ? transaction!.memos.first.substring(2).hexToUTF8
+    //    : transaction!.assetMemos.isNotEmpty
+    //        ? transaction!.assetMemos.first /*.hexToAscii ?*/
+    //        : null;
+    return null;
   }
 
   String elementFull(String humanName) {
     switch (humanName) {
       case 'ID':
-        return transaction!.id;
+        return transactionView!.readableHash;
       case 'Memo/IPFS':
         return transactionMemo ?? '';
       case 'Note':
-        return transaction!.note ?? '';
+        return transactionView!.note ?? '';
       default:
         return 'unknown';
     }
@@ -215,20 +218,20 @@ class _TransactionPageState extends State<TransactionPage> {
                       )
                     : plain('Memo/IPFS', element('Memo/IPFS')),
             ] +
-            (transaction!.note == null || transaction!.note == ''
+            (transactionView!.note == null || transactionView!.note == ''
                 ? <Widget>[]
                 : <Widget>[plain('Note', element('Note'))]),
       );
 
-  int? getBlocksBetweenHelper({Transaction? tx, Block? current}) {
-    tx = tx ?? transaction!;
+  int? getBlocksBetweenHelper({Block? current}) {
     current = current ?? pros.blocks.latest;
-    return (current != null && tx.height != null)
-        ? current.height - tx.height!
+    return (current != null && transactionView!.height != null)
+        ? current.height - transactionView!.height
         : null;
   }
 
-  String getDateBetweenHelper() => 'Date: ${transaction!.formattedDatetime}';
+  String getDateBetweenHelper() =>
+      'Date: ${transactionView!.formattedDatetime}';
   //(getBlocksBetweenHelper() != null
   //    ? formatDate(
   //        DateTime.now().subtract(Duration(
@@ -239,7 +242,6 @@ class _TransactionPageState extends State<TransactionPage> {
   //        [MM, ' ', d, ', ', yyyy])
   //    : 'unknown');
 
-  String getConfirmationsBetweenHelper() => getBlocksBetweenHelper() != null
-      ? getBlocksBetweenHelper().toString()
-      : 'unknown';
+  String getConfirmationsBetweenHelper() =>
+      getBlocksBetweenHelper()?.toString() ?? 'unknown';
 }

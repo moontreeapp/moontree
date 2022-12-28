@@ -138,7 +138,7 @@ class _TransactionListState extends State<TransactionList> {
                   ]
                 ]
               : <Widget>[
-                  for (TransactionView transactionRecord
+                  for (TransactionView transactionView
                       in transactions) ...<Widget>[
                     ...<Widget>[
                       ListTile(
@@ -147,33 +147,33 @@ class _TransactionListState extends State<TransactionList> {
                         onTap: () => Navigator.pushNamed(
                             context, '/transaction/transaction',
                             arguments: <String, TransactionView>{
-                              'transactionRecord': transactionRecord
+                              'transactionView': transactionView
                             }),
                         //onLongPress: _toggleUSD,
                         //leading: Container(
                         //    height: 40,
                         //    width: 40,
                         //    child: components.icons
-                        //        .assetAvatar(transactionRecord.security.symbol)),
+                        //        .assetAvatar(transactionView.security.symbol)),
                         title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
                                   services.conversion.securityAsReadable(
-                                      transactionRecord.relativeValue,
-                                      security: transactionRecord.security,
+                                      transactionView.relativeValue,
+                                      security: transactionView.security,
                                       asUSD: showUSD),
                                   style: Theme.of(context).textTheme.bodyText1),
                               Text(
-                                  '${transactionRecord.formattedDatetime} ${transactionRecord.paddedType}',
+                                  '${transactionView.formattedDatetime} ${transactionView.paddedType}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!
                                       .copyWith(color: AppColors.black60)),
                             ]),
-                        trailing: transactionRecord.relativeValue == 0
+                        trailing: transactionView.relativeValue == 0
                             ? components.icons.fee(context)
-                            : (transactionRecord.outgoing
+                            : (transactionView.outgoing
                                 ? components.icons.out(context)
                                 : components.icons.income(context)),
                       ),

@@ -12,6 +12,9 @@ import 'maker.dart';
 
 // move to front
 extension TransactionViewMethods on TransactionView {
+  String? get note => pros.notes.primaryIndex.getOne(readableHash)?.note;
+  String get readableHash => hash.toHex();
+
   Security? get security => symbol == null
       ? pros.securities.currentCoin
       : pros.securities.byKey
