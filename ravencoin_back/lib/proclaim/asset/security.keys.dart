@@ -10,8 +10,11 @@ class _IdKey extends Key<Security> {
 extension ByIdMethodsForSecurity on Index<_IdKey, Security> {
   Security? getOneRaw(String? securityId) =>
       securityId == null ? null : getByKeyStr(securityId).firstOrNull;
-  Security? getOne(String? symbol, Chain? chain, Net? net) =>
-      <dynamic>[symbol, chain, net].contains(null)
+  Security? getOne(String? symbol, Chain? chain, Net? net) => (symbol == null &&
+          (chain == null || chain == pros.settings.chain) &&
+          (net == null || net == pros.settings.net))
+      ? pros.securities.currentCoin
+      : <dynamic>[chain, net].contains(null)
           ? null
           : getByKeyStr(Security.key(symbol!, chain!, net!)).firstOrNull;
 }

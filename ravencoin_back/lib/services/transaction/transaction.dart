@@ -1,11 +1,214 @@
+import 'dart:typed_data';
+
 import 'package:intl/intl.dart';
 import 'package:tuple/tuple.dart';
+import 'package:date_format/src/date_format_base.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart' as wallet_utils;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/spend.dart';
 
 import 'maker.dart';
+
+// move to front
+extension TransactionViewMethods on TransactionView {
+  Security? get security => symbol == null
+      ? pros.securities.currentCoin
+      : pros.securities.byKey
+          .getOne(symbol, pros.settings.chain, pros.settings.net);
+
+  Chaindata get chaindata => (String chainNet) {
+        switch (chainNet) {
+          case 'ravencoin_mainnet':
+            return ravencoinMainnetChaindata;
+          case 'ravencoin_testnet':
+            return ravencoinTestnetChaindata;
+          case 'evrmore_mainnet':
+            return evrmoreMainnetChaindata;
+          case 'evrmore_testnet':
+            return evrmoreTestnetChaindata;
+          default:
+            return ravencoinMainnetChaindata;
+        }
+      }(chain);
+
+  /// true is outgoing false is incoming
+  bool get outgoing => (iReceived - iProvided) <= 0;
+
+  double get amount => iValue.asCoin;
+
+  int get iValue => (iReceived - iProvided).abs();
+
+  bool get sentToSelf => iProvided == iReceived + txFee;
+
+  bool get isNormal => false;
+
+  /// always positive
+  int get txFee => totalIn - (iReceived + otherReceived + totalBurn);
+
+  /// always positive
+  bool get iPaidTxFee => otherProvided == 0;
+
+  int get totalIn => (iProvided + otherProvided);
+  int get totalOut => (iReceived + otherReceived) + txFee + totalBurn;
+  int get totalBurn =>
+      burnBurned +
+      issueMainBurned +
+      reissueBurned +
+      issueSubBurned +
+      issueUniqueBurned +
+      issueMessageBurned +
+      issueQualifierBurned +
+      issueSubQualifierBurned +
+      issueRestrictedBurned +
+      addTagBurned;
+
+  String typeToString(TransactionViewType transactionRecordType) {
+    switch (transactionRecordType) {
+      case TransactionViewType.self:
+        return 'Sent to Self';
+      case TransactionViewType.incoming:
+        return 'Received';
+      case TransactionViewType.outgoing:
+        return 'Sent';
+      case TransactionViewType.fee:
+        return 'Transaction Fee';
+      case TransactionViewType.create:
+        return 'Asset Creation';
+      case TransactionViewType.burn:
+        return 'Burn';
+      case TransactionViewType.reissue:
+        return 'Reissue';
+      case TransactionViewType.tag:
+        return 'Tag';
+      case TransactionViewType.claim:
+        return 'Claim';
+      case TransactionViewType.createAsset:
+        return 'Create';
+      case TransactionViewType.createSubAsset:
+        return 'Create';
+      case TransactionViewType.createNFT:
+        return 'Create';
+      case TransactionViewType.createMessage:
+        return 'Create';
+      case TransactionViewType.createQualifier:
+        return 'Create';
+      case TransactionViewType.createSubQualifier:
+        return 'Create';
+      case TransactionViewType.createRestricted:
+        return 'Create';
+    }
+  }
+
+  /// asset creation, reissue, send, etc.
+  /// did we sent to burn address? only sent to self?
+  TransactionViewType get type {
+    // For a more comprehensive check, we should make sure new assets vouts
+    // actually exist. also how would this work for assets?
+    TransactionViewType? burned() {
+      // Must be == not ge, if ge, normal burn since assets are exact
+      if (issueMainBurned == chaindata.burnAmounts.issueMain) {
+        return TransactionViewType.createAsset;
+      }
+      if (reissueBurned == chaindata.burnAmounts.reissue) {
+        return TransactionViewType.reissue;
+      }
+      if (issueSubBurned == chaindata.burnAmounts.issueSub) {
+        return TransactionViewType.createSubAsset;
+      }
+      if (issueUniqueBurned == chaindata.burnAmounts.issueUnique) {
+        return TransactionViewType.createNFT;
+      }
+      if (issueMessageBurned == chaindata.burnAmounts.issueMessage) {
+        return TransactionViewType.createMessage;
+      }
+      if (issueQualifierBurned == chaindata.burnAmounts.issueQualifier) {
+        return TransactionViewType.createQualifier;
+      }
+      if (issueSubQualifierBurned == chaindata.burnAmounts.issueSubQualifier) {
+        return TransactionViewType.createSubQualifier;
+      }
+      if (issueRestrictedBurned == chaindata.burnAmounts.issueRestricted) {
+        return TransactionViewType.createRestricted;
+      }
+      if (addTagBurned == chaindata.burnAmounts.addTag) {
+        return TransactionViewType.tag;
+      }
+      if (totalBurn > 0) {
+        return TransactionViewType.burn;
+      }
+      return null;
+    }
+
+    final regular = sentToSelf
+        ? TransactionViewType.self
+        : iValue > 0
+            ? TransactionViewType.incoming
+            : TransactionViewType.outgoing;
+    final burn = burned();
+    return burn ?? regular;
+  }
+
+  String get paddedType {
+    final TransactionViewType t = type;
+    if (t == TransactionViewType.incoming ||
+        t == TransactionViewType.outgoing) {
+      return '';
+    }
+    return '| ${typeToString(t)}';
+  }
+
+  int get fee => iPaidTxFee ? txFee : 0;
+  int get relativeValue =>
+      type == TransactionViewType.self ? iProvided : (iValue - fee);
+
+  String get formattedDatetime =>
+      formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);
+}
+
+class TransactionView {
+  TransactionView({
+    this.symbol,
+    required this.chain,
+    required this.hash,
+    required this.datetime,
+    required this.height,
+    required this.iProvided,
+    required this.otherProvided,
+    required this.iReceived,
+    required this.otherReceived,
+    required this.issueMainBurned,
+    required this.reissueBurned,
+    required this.issueSubBurned,
+    required this.issueUniqueBurned,
+    required this.issueMessageBurned,
+    required this.issueQualifierBurned,
+    required this.issueSubQualifierBurned,
+    required this.issueRestrictedBurned,
+    required this.addTagBurned,
+    required this.burnBurned,
+  });
+
+  String? symbol;
+  String chain;
+  ByteData hash;
+  DateTime datetime;
+  int height;
+  int iProvided;
+  int otherProvided;
+  int iReceived;
+  int otherReceived;
+  int issueMainBurned;
+  int reissueBurned;
+  int issueSubBurned;
+  int issueUniqueBurned;
+  int issueMessageBurned;
+  int issueQualifierBurned;
+  int issueSubQualifierBurned;
+  int issueRestrictedBurned;
+  int addTagBurned;
+  int burnBurned;
+}
 
 class TransactionService {
   final TransactionMaker make = TransactionMaker();
@@ -23,6 +226,123 @@ class TransactionService {
         (() => throw OneOfMultipleMissing(
             'transaction or hash required to identify record.'))();
     return transaction ?? pros.transactions.primaryIndex.getOne(hash ?? '');
+  }
+
+  List<TransactionView> getTransactionViewSpoof({
+    required Wallet wallet,
+    Set<Security>? securities,
+  }) {
+    final views = <TransactionView>[
+      TransactionView(
+          // send transaction
+          symbol: 'RVN',
+          chain: 'ravencoin_mainnet',
+          hash: ByteData(0),
+          datetime: DateTime.now(),
+          height: 0,
+          iProvided: 27 * wallet_utils.satsPerCoin,
+          otherProvided: 4 * wallet_utils.satsPerCoin,
+          iReceived: 20 * wallet_utils.satsPerCoin,
+          otherReceived: 10 * wallet_utils.satsPerCoin,
+          issueMainBurned: 0,
+          reissueBurned: 0,
+          issueSubBurned: 0,
+          issueUniqueBurned: 0,
+          issueMessageBurned: 0,
+          issueQualifierBurned: 0,
+          issueSubQualifierBurned: 0,
+          issueRestrictedBurned: 0,
+          addTagBurned: 0,
+          burnBurned: 0),
+      TransactionView(
+          // send transaction
+          symbol: 'RVN',
+          chain: 'ravencoin_mainnet',
+          hash: ByteData(0),
+          datetime: DateTime.now(),
+          height: 0,
+          iProvided: 27 * wallet_utils.satsPerCoin,
+          otherProvided: 0,
+          iReceived: 19 * wallet_utils.satsPerCoin,
+          otherReceived: 7 * wallet_utils.satsPerCoin,
+          issueMainBurned: 0,
+          reissueBurned: 0,
+          issueSubBurned: 0,
+          issueUniqueBurned: 0,
+          issueMessageBurned: 0,
+          issueQualifierBurned: 0,
+          issueSubQualifierBurned: 0,
+          issueRestrictedBurned: 0,
+          addTagBurned: 0,
+          burnBurned: 0),
+      TransactionView(
+          // receive
+          symbol: 'RVN',
+          chain: 'ravencoin_mainnet',
+          hash: ByteData(0),
+          datetime: DateTime.now(),
+          height: 0,
+          iProvided: 1 * wallet_utils.satsPerCoin,
+          otherProvided: 26 * wallet_utils.satsPerCoin,
+          iReceived: 26 * wallet_utils.satsPerCoin,
+          otherReceived: 0,
+          issueMainBurned: 0,
+          reissueBurned: 0,
+          issueSubBurned: 0,
+          issueUniqueBurned: 0,
+          issueMessageBurned: 0,
+          issueQualifierBurned: 0,
+          issueSubQualifierBurned: 0,
+          issueRestrictedBurned: 0,
+          addTagBurned: 0,
+          burnBurned: 0),
+      TransactionView(
+          // sent to self
+          symbol: 'RVN',
+          chain: 'ravencoin_mainnet',
+          hash: ByteData(0),
+          datetime: DateTime.now(),
+          height: 0,
+          iProvided: 27 * wallet_utils.satsPerCoin,
+          otherProvided: 0,
+          iReceived: 26 * wallet_utils.satsPerCoin,
+          otherReceived: 0,
+          issueMainBurned: 0,
+          reissueBurned: 0,
+          issueSubBurned: 0,
+          issueUniqueBurned: 0,
+          issueMessageBurned: 0,
+          issueQualifierBurned: 0,
+          issueSubQualifierBurned: 0,
+          issueRestrictedBurned: 0,
+          addTagBurned: 0,
+          burnBurned: 0),
+      TransactionView(
+          // asset creation
+          symbol: 'RVN',
+          chain: 'ravencoin_mainnet',
+          hash: ByteData(1),
+          datetime: DateTime.now(),
+          height: 1,
+          iProvided: 600 * wallet_utils.satsPerCoin,
+          otherProvided: 0,
+          iReceived: 99 * wallet_utils.satsPerCoin,
+          otherReceived: 0,
+          issueMainBurned: 500 * wallet_utils.satsPerCoin,
+          reissueBurned: 0,
+          issueSubBurned: 0,
+          issueUniqueBurned: 0,
+          issueMessageBurned: 0,
+          issueQualifierBurned: 0,
+          issueSubQualifierBurned: 0,
+          issueRestrictedBurned: 0,
+          addTagBurned: 0,
+          burnBurned: 0),
+    ];
+    for (final v in views) {
+      print('${v.iValue}...${v.txFee}');
+    }
+    return views;
   }
 
   /// for each transaction
@@ -111,7 +431,7 @@ class TransactionService {
 
             int totalInRVN = 0;
             int totalOutRVN = 0;
-            TransactionRecordType? ioType;
+            TransactionViewType? ioType;
             // Nothing too special about incoming...
             for (final Vin vin in transaction.vins) {
               /// #651 I wonder if at this point there isn't a vout associated
@@ -163,7 +483,7 @@ class TransactionService {
                 //  vinVout = txVouts.first;
                 //} else if (txVouts.isNotEmpty) {}
                 /// for now just not doing anyting, this only to deduce fee anyway.
-                ioType ??= TransactionRecordType.claim;
+                ioType ??= TransactionViewType.claim;
               }
               if (vinVout == null) {
                 /// unable to await so set flag
@@ -222,11 +542,11 @@ class TransactionService {
             if (tagIntersection.isNotEmpty) {
               for (final String address in tagIntersection) {
                 if (outgoingAddrs[address] == specialTag[address]) {
-                  ioType = TransactionRecordType.tag;
+                  ioType = TransactionViewType.tag;
                 }
               }
               // If not a tag, effectively a burn
-              ioType ??= TransactionRecordType.burn;
+              ioType ??= TransactionViewType.burn;
             }
 
             final Set<String> reissueIntersection = outgoingAddrs.keys
@@ -235,11 +555,11 @@ class TransactionService {
             if (reissueIntersection.isNotEmpty) {
               for (final String address in reissueIntersection) {
                 if (outgoingAddrs[address] == specialReissue[address]) {
-                  ioType = TransactionRecordType.reissue;
+                  ioType = TransactionViewType.reissue;
                 }
               }
               // If not a tag, effectively a burn
-              ioType ??= TransactionRecordType.burn;
+              ioType ??= TransactionViewType.burn;
             }
 
             final Set<String> createIntersection = outgoingAddrs.keys
@@ -249,11 +569,11 @@ class TransactionService {
             if (createIntersection.isNotEmpty) {
               for (final String address in createIntersection) {
                 if (outgoingAddrs[address] == specialCreate[address]) {
-                  ioType = TransactionRecordType.create;
+                  ioType = TransactionViewType.create;
                 }
               }
               // If not a tag, effectively a burns
-              ioType ??= TransactionRecordType.burn;
+              ioType ??= TransactionViewType.burn;
             }
 
             // Only call it "sent to self" if no RVN is coming from anywhere else
@@ -266,21 +586,21 @@ class TransactionService {
                 .map((Vout e) => !e.isAsset)
                 .every((bool e) => e)) {
               if (othersIn == 0 && othersOut == 0 && selfIn == selfOut + fee) {
-                if (ioType != TransactionRecordType.claim) {
-                  ioType = TransactionRecordType.self;
+                if (ioType != TransactionViewType.claim) {
+                  ioType = TransactionViewType.self;
                 }
               }
             } else {
-              ioType ??= TransactionRecordType.fee;
+              ioType ??= TransactionViewType.fee;
             }
             if (selfIn > 0 &&
                 outgoingAddrs.containsKey(net.burnAddresses.burn)) {
-              ioType = TransactionRecordType.burn;
+              ioType = TransactionViewType.burn;
             }
             // Defaults
             ioType ??= selfIn > selfOut
-                ? TransactionRecordType.outgoing
-                : TransactionRecordType.incoming;
+                ? TransactionViewType.outgoing
+                : TransactionViewType.incoming;
 
             //print('s $selfIn $selfOut o $othersIn $othersOut');
             transactionRecords.add(TransactionRecord(
@@ -288,9 +608,9 @@ class TransactionService {
               security: security!,
               totalIn: selfIn,
               totalOut: selfOut,
-              valueOverride: <TransactionRecordType>[
-                TransactionRecordType.self,
-                TransactionRecordType.claim
+              valueOverride: <TransactionViewType>[
+                TransactionViewType.self,
+                TransactionViewType.claim
               ].contains(ioType)
                   ? outIntentional
                   : null,
@@ -374,7 +694,7 @@ class TransactionService {
               }
             }
 
-            TransactionRecordType? ioType;
+            TransactionViewType? ioType;
 
             // Known burn addr for tagging
             // This goes first as tags can also be in creations
@@ -387,11 +707,11 @@ class TransactionService {
             if (tagIntersection.isNotEmpty) {
               for (final String address in tagIntersection) {
                 if (outgoingAddrs[address] == specialTag[address]) {
-                  ioType = TransactionRecordType.tag;
+                  ioType = TransactionViewType.tag;
                 }
               }
               // If not a tag, effectively a burn
-              ioType ??= TransactionRecordType.burn;
+              ioType ??= TransactionViewType.burn;
             }
 
             final Set<String> reissueIntersection = outgoingAddrs.keys
@@ -400,11 +720,11 @@ class TransactionService {
             if (reissueIntersection.isNotEmpty) {
               for (final String address in reissueIntersection) {
                 if (outgoingAddrs[address] == specialReissue[address]) {
-                  ioType = TransactionRecordType.reissue;
+                  ioType = TransactionViewType.reissue;
                 }
               }
               // If not a tag, effectively a burn
-              ioType ??= TransactionRecordType.burn;
+              ioType ??= TransactionViewType.burn;
             }
 
             final Set<String> createIntersection = outgoingAddrs.keys
@@ -414,33 +734,33 @@ class TransactionService {
             if (createIntersection.isNotEmpty) {
               for (final String address in createIntersection) {
                 if (outgoingAddrs[address] == specialCreate[address]) {
-                  ioType = TransactionRecordType.create;
+                  ioType = TransactionViewType.create;
                 }
               }
               // If not a tag, effectively a burns
-              ioType ??= TransactionRecordType.burn;
+              ioType ??= TransactionViewType.burn;
             }
 
             // Only call it "sent to self" if no RVN is coming from anywhere else
             if (othersIn == 0 && othersOut == 0 && selfIn == selfOut) {
-              ioType = TransactionRecordType.self;
+              ioType = TransactionViewType.self;
             }
             if (selfIn > 0 &&
                 outgoingAddrs.containsKey(net.burnAddresses.burn)) {
-              ioType = TransactionRecordType.burn;
+              ioType = TransactionViewType.burn;
             }
             // Defaults
             ioType ??= selfIn > selfOut
-                ? TransactionRecordType.outgoing
-                : TransactionRecordType.incoming;
+                ? TransactionViewType.outgoing
+                : TransactionViewType.incoming;
 
             transactionRecords.add(TransactionRecord(
               transaction: transaction,
               security: security!,
               totalIn: selfIn,
               totalOut: selfOut,
-              valueOverride: <TransactionRecordType>[
-                TransactionRecordType.self,
+              valueOverride: <TransactionViewType>[
+                TransactionViewType.self,
               ].contains(ioType)
                   ? outIntentional
                   : null,
@@ -837,7 +1157,7 @@ class TransactionService {
   }
 }
 
-enum TransactionRecordType {
+enum TransactionViewType {
   incoming,
   outgoing,
   fee,
@@ -847,6 +1167,13 @@ enum TransactionRecordType {
   burn,
   reissue,
   claim,
+  createAsset,
+  createSubAsset,
+  createNFT,
+  createMessage,
+  createQualifier,
+  createSubQualifier,
+  createRestricted,
 }
 
 class TransactionRecord {
@@ -867,7 +1194,7 @@ class TransactionRecord {
   int totalIn;
   int totalOut;
   int? height;
-  TransactionRecordType type;
+  TransactionViewType type;
   int fee;
   int? valueOverride;
   bool pulling = false;
@@ -892,31 +1219,33 @@ class TransactionRecord {
 
   String get typeToString {
     switch (type) {
-      case TransactionRecordType.fee:
+      case TransactionViewType.fee:
         return 'Transaction Fee';
-      case TransactionRecordType.create:
+      case TransactionViewType.create:
         return 'Asset Creation';
-      case TransactionRecordType.burn:
+      case TransactionViewType.burn:
         return 'Burn';
-      case TransactionRecordType.reissue:
+      case TransactionViewType.reissue:
         return 'Reissue';
-      case TransactionRecordType.tag:
+      case TransactionViewType.tag:
         return 'Tag';
-      case TransactionRecordType.self:
+      case TransactionViewType.self:
         return 'Sent to Self';
-      case TransactionRecordType.incoming:
+      case TransactionViewType.incoming:
         return 'Received';
-      case TransactionRecordType.outgoing:
+      case TransactionViewType.outgoing:
         return 'Sent';
-      case TransactionRecordType.claim:
+      case TransactionViewType.claim:
         return 'Claim';
+      default:
+        return 'Transaction';
     }
   }
 
-  bool get toSelf => type == TransactionRecordType.self;
-  bool get isNormal => <TransactionRecordType>[
-        TransactionRecordType.incoming,
-        TransactionRecordType.outgoing,
+  bool get toSelf => type == TransactionViewType.self;
+  bool get isNormal => <TransactionViewType>[
+        TransactionViewType.incoming,
+        TransactionViewType.outgoing,
       ].contains(type);
 
   Future<void> getVouts() async {

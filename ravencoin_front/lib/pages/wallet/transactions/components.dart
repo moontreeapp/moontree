@@ -86,8 +86,8 @@ class TransactionsContent extends StatelessWidget {
                   scrollController: scrollController,
                   symbol: transactionsBloc.security.symbol,
                   transactions: transactionsBloc.currentTxs.where(
-                      (TransactionRecord tx) =>
-                          tx.security.symbol ==
+                      (TransactionView tx) =>
+                          tx.security?.symbol ==
                           transactionsBloc.security.symbol),
                   msg:
                       '\nNo ${transactionsBloc.security.symbol} transactions.\n')

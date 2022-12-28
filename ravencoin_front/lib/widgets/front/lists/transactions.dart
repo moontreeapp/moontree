@@ -9,7 +9,7 @@ import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 
 class TransactionList extends StatefulWidget {
-  final Iterable<TransactionRecord>? transactions;
+  final Iterable<TransactionView>? transactions;
   final String? symbol;
   final String? msg;
   final ScrollController? scrollController;
@@ -29,7 +29,7 @@ class TransactionList extends StatefulWidget {
 class _TransactionListState extends State<TransactionList> {
   //widget.currentAccountId //  we don't rebuild on this, we're given it.
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
-  late Iterable<TransactionRecord> transactions;
+  late Iterable<TransactionView> transactions;
   bool showUSD = false;
   Rate? rateUSD;
   int transactionCount = 1;
@@ -84,7 +84,7 @@ class _TransactionListState extends State<TransactionList> {
   @override
   Widget build(BuildContext context) {
     transactions = widget.transactions ??
-        services.transaction.getTransactionRecords(wallet: Current.wallet);
+        services.transaction.getTransactionViewSpoof(wallet: Current.wallet);
     if (transactions.isEmpty) {
       transactionCount = pros.unspents.bySymbol
           .getAll(widget.symbol ?? pros.securities.currentCoin.symbol)
@@ -133,12 +133,12 @@ class _TransactionListState extends State<TransactionList> {
           (services.wallet.leader.newLeaderProcessRunning ||
                   services.client.subscribe.startupProcessRunning
               ? <Widget>[
-                  for (TransactionRecord _ in transactions) ...<Widget>[
+                  for (TransactionView _ in transactions) ...<Widget>[
                     components.empty.getTransactionsShimmer(context)
                   ]
                 ]
               : <Widget>[
-                  for (TransactionRecord transactionRecord
+                  for (TransactionView transactionRecord
                       in transactions) ...<Widget>[
                     ...<Widget>[
                       ListTile(
@@ -146,7 +146,7 @@ class _TransactionListState extends State<TransactionList> {
                         //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
                         onTap: () => Navigator.pushNamed(
                             context, '/transaction/transaction',
-                            arguments: <String, TransactionRecord>{
+                            arguments: <String, TransactionView>{
                               'transactionRecord': transactionRecord
                             }),
                         //onLongPress: _toggleUSD,
@@ -160,20 +160,20 @@ class _TransactionListState extends State<TransactionList> {
                             children: <Widget>[
                               Text(
                                   services.conversion.securityAsReadable(
-                                      transactionRecord.value,
+                                      transactionRecord.relativeValue,
                                       security: transactionRecord.security,
                                       asUSD: showUSD),
                                   style: Theme.of(context).textTheme.bodyText1),
                               Text(
-                                  '${transactionRecord.formattedDatetime}${!transactionRecord.isNormal ? ' | ${transactionRecord.typeToString}' : ''}',
+                                  '${transactionRecord.formattedDatetime} ${transactionRecord.paddedType}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!
                                       .copyWith(color: AppColors.black60)),
                             ]),
-                        trailing: transactionRecord.value == 0
+                        trailing: transactionRecord.relativeValue == 0
                             ? components.icons.fee(context)
-                            : (transactionRecord.out
+                            : (transactionRecord.outgoing
                                 ? components.icons.out(context)
                                 : components.icons.income(context)),
                       ),

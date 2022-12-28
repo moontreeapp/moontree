@@ -14,8 +14,7 @@ import 'package:ravencoin_front/components/components.dart';
 import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
 
 class TransactionPage extends StatefulWidget {
-  final dynamic data;
-  const TransactionPage({Key? key, this.data}) : super(key: key);
+  const TransactionPage({Key? key}) : super(key: key);
 
   @override
   _TransactionPageState createState() => _TransactionPageState();
@@ -48,7 +47,8 @@ class _TransactionPageState extends State<TransactionPage> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     transactionRecord = data['transactionRecord'] as TransactionRecord?;
-    transaction = transactionRecord!.transaction;
+    transaction =
+        transactionRecord!.transaction; // transactionRecord.hash.toHex();
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     return BackdropLayers(
       back: const BlankBack(),
@@ -64,26 +64,28 @@ class _TransactionPageState extends State<TransactionPage> {
         return getConfirmationsBetweenHelper();
       case 'Type':
         switch (transactionRecord!.type) {
-          case TransactionRecordType.self:
+          case TransactionViewType.self:
             return 'to Self';
-          case TransactionRecordType.fee:
+          case TransactionViewType.fee:
             return 'Asset Transfer Fee';
-          case TransactionRecordType.create:
+          case TransactionViewType.create:
             return 'Asset Creation';
-          case TransactionRecordType.burn:
+          case TransactionViewType.burn:
             return 'Burned';
-          case TransactionRecordType.reissue:
+          case TransactionViewType.reissue:
             return 'Reissue';
-          case TransactionRecordType.tag:
+          case TransactionViewType.tag:
             return 'Tag';
-          case TransactionRecordType.incoming:
+          case TransactionViewType.incoming:
             return 'In';
-          case TransactionRecordType.outgoing:
+          case TransactionViewType.outgoing:
             //default:
             return 'Out';
-          case TransactionRecordType.claim:
+          case TransactionViewType.claim:
             //default:
             return 'Claim';
+          default:
+            return 'Transaction';
         }
       case 'ID':
         return transaction!.id.cutOutMiddle();

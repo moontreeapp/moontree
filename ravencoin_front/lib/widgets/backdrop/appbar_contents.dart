@@ -117,6 +117,8 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
                   .derivePath("m/44'/175'/0'/1")
                   .base58);
               print(Current.wallet.roots);
+              print(pros.securities.byKey
+                  .getOne('RVN', pros.settings.chain, pros.settings.net));
             }
           },
           child: appBar,

@@ -24,7 +24,7 @@ class TransactionsBloc {
   BehaviorSubject<double> scrollObserver = BehaviorSubject<double>.seeded(.7);
   BehaviorSubject<String> currentTab =
       BehaviorSubject<String>.seeded('HISTORY');
-  List<TransactionRecord>? currentTxsCache;
+  List<TransactionView>? currentTxsCache;
 
   double getOpacityFromController(
     double controllerValue,
@@ -55,11 +55,21 @@ class TransactionsBloc {
   Security get security =>
       (data['holding'] as Balance?)?.security ?? pros.securities.currentCoin;
   List<Balance> get currentHolds => Current.holdings;
-  List<TransactionRecord> get currentTxs {
+
+  //List<TransactionRecord> get currentTxs {
+  //  if (Current.wallet.minerMode) {
+  //    return <TransactionRecord>[];
+  //  }
+  //  currentTxsCache ??= services.transaction.getTransactionRecords(
+  //      wallet: Current.wallet, securities: <Security>{security});
+  //  return currentTxsCache!;
+  //}
+
+  List<TransactionView> get currentTxs {
     if (Current.wallet.minerMode) {
-      return <TransactionRecord>[];
+      return <TransactionView>[];
     }
-    currentTxsCache ??= services.transaction.getTransactionRecords(
+    currentTxsCache ??= services.transaction.getTransactionViewSpoof(
         wallet: Current.wallet, securities: <Security>{security});
     return currentTxsCache!;
   }

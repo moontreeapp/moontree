@@ -35,7 +35,7 @@ class _WalletViewState extends State<WalletView> {
   //String addressBalance = '';
   Widget exposureAndIndex = Row();
   List<Balance>? holdings;
-  List<TransactionRecord>? transactions;
+  List<TransactionView>? transactions;
   bool isFabVisible = true;
   final ScrollController _scrollController = ScrollController();
 
