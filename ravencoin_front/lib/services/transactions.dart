@@ -7,19 +7,18 @@
 import 'dart:typed_data';
 
 import 'package:ravencoin_back/ravencoin_back.dart';
-import 'package:ravencoin_back/records/types/chain.dart' as typeChain;
-import 'package:ravencoin_back/server/serverv2_client.dart';
+import 'package:ravencoin_back/server/serverv2_client.dart' as server;
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 class TransactionHistory {
   static const String moontreeUrl =
       'https://24.199.68.139'; //'https://api.moontree.com';
-  final Client client;
+  final server.Client client;
 
-  TransactionHistory() : client = Client('$moontreeUrl/');
+  TransactionHistory() : client = server.Client('$moontreeUrl/');
 
-  Future<List<TransactionView>> transactionHistoryBy({
+  Future<List<server.TransactionView>> transactionHistoryBy({
     String? symbol,
     required Chaindata chain,
     required List<String> roots,
@@ -33,22 +32,18 @@ class TransactionHistory {
       );
 }
 
-Future<List<TransactionView>> discoverTransactionHistory({
+Future<List<server.TransactionView>> discoverTransactionHistory({
+  Wallet? wallet,
   String? symbol,
   Security? security,
 }) async {
   final TransactionHistory transactionHistory = TransactionHistory();
-  typeChain.Chain chain = Current.chain;
-  Net net = Current.net;
-  if (security != null) {
-    symbol ??= security.isCoin ? null : security.symbol;
-    chain = security.chain;
-    net = security.net;
-  } else {
-    symbol == pros.securities.coinOf(chain, net) ? null : symbol;
-  }
-  final roots = await Current.wallet.roots;
-  final List<TransactionView> history =
+  Chain chain = security?.chain ?? Current.chain;
+  Net net = security?.net ?? Current.net;
+  symbol ??= (security?.isCoin ?? true ? null : security?.symbol);
+  symbol == pros.securities.coinOf(chain, net) ? null : symbol;
+  final roots = await wallet?.roots ?? await Current.wallet.roots;
+  final List<server.TransactionView> history =
       await transactionHistory.transactionHistoryBy(
           symbol: symbol,
           chain: getChaindataFor(chain, net),
@@ -60,14 +55,14 @@ Future<List<TransactionView>> discoverTransactionHistory({
 }
 
 /// convert chain and net to Chaindata
-Chaindata getChaindataFor(typeChain.Chain chain, Net net) {
-  if (chain == typeChain.Chain.ravencoin) {
+Chaindata getChaindataFor(Chain chain, Net net) {
+  if (chain == Chain.ravencoin) {
     if (net == Net.main) {
       return ravencoinMainnetChaindata;
     } else if (net == Net.test) {
       return ravencoinTestnetChaindata;
     }
-  } else if (chain == typeChain.Chain.evrmore) {
+  } else if (chain == Chain.evrmore) {
     if (net == Net.main) {
       return evrmoreMainnetChaindata;
     } else if (net == Net.test) {

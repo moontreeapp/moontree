@@ -1,6 +1,7 @@
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/services/transactions.dart';
 import 'package:rxdart/rxdart.dart';
 
 TransactionsBloc get transactionsBloc => TransactionsBloc.instance();
@@ -76,7 +77,6 @@ class TransactionsBloc {
 
   /// we have to rework all of this bloc pattern in order to make this work,
   /// since this is now a future.
-  //import 'package:ravencoin_front/services/transactions.dart';
   //Future<List<TransactionView>> get currentTxs async {
   //  if (Current.wallet.minerMode) {
   //    return <TransactionView>[];

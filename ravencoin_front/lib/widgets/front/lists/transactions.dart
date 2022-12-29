@@ -6,6 +6,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';
+import 'package:ravencoin_front/services/transactions.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 
 class TransactionList extends StatefulWidget {
@@ -83,8 +84,8 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   Widget build(BuildContext context) {
-    transactions = widget.transactions ??
-        services.transaction.getTransactionViewSpoof(wallet: Current.wallet);
+    transactions = widget.transactions ?? [];
+    // ?? services.transaction.getTransactionViewSpoof(wallet: Current.wallet);
     if (transactions.isEmpty) {
       transactionCount = pros.unspents.bySymbol
           .getAll(widget.symbol ?? pros.securities.currentCoin.symbol)
