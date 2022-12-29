@@ -10,6 +10,7 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/server/serverv2_client.dart' as server;
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class TransactionHistory {
   static const String moontreeUrl =
@@ -44,13 +45,18 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   symbol == pros.securities.coinOf(chain, net) ? null : symbol;
   final roots = await wallet?.roots ?? await Current.wallet.roots;
   final List<server.TransactionView> history =
-      await transactionHistory.transactionHistoryBy(
-          symbol: symbol,
-          chain: getChaindataFor(chain, net),
-          roots: roots,
-          h160s: roots.isEmpty
-              ? Current.wallet.addresses.map((e) => e.h160).toList()
-              : []);
+
+      /// MOCK SERVER
+      await Future.delayed(Duration(seconds: 5), getTransactionView);
+
+  /// SERVER
+  //await transactionHistory.transactionHistoryBy(
+  //    symbol: symbol,
+  //    chain: getChaindataFor(chain, net),
+  //    roots: roots,
+  //    h160s: roots.isEmpty
+  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
+  //        : []);
   return history;
 }
 
@@ -70,4 +76,116 @@ Chaindata getChaindataFor(Chain chain, Net net) {
     }
   }
   return ravencoinMainnetChaindata;
+}
+
+List<server.TransactionView> getTransactionView() {
+  final views = <server.TransactionView>[
+    server.TransactionView(
+        // send transaction
+        symbol: 'RVN',
+        chain: 'ravencoin_mainnet',
+        hash: ByteData(0),
+        datetime: DateTime.now(),
+        height: 0,
+        iProvided: 27 * satsPerCoin,
+        otherProvided: 4 * satsPerCoin,
+        iReceived: 20 * satsPerCoin,
+        otherReceived: 10 * satsPerCoin,
+        issueMainBurned: 0,
+        reissueBurned: 0,
+        issueSubBurned: 0,
+        issueUniqueBurned: 0,
+        issueMessageBurned: 0,
+        issueQualifierBurned: 0,
+        issueSubQualifierBurned: 0,
+        issueRestrictedBurned: 0,
+        addTagBurned: 0,
+        burnBurned: 0),
+    server.TransactionView(
+        // send transaction
+        symbol: 'RVN',
+        chain: 'ravencoin_mainnet',
+        hash: ByteData(0),
+        datetime: DateTime.now(),
+        height: 0,
+        iProvided: 27 * satsPerCoin,
+        otherProvided: 0,
+        iReceived: 19 * satsPerCoin,
+        otherReceived: 7 * satsPerCoin,
+        issueMainBurned: 0,
+        reissueBurned: 0,
+        issueSubBurned: 0,
+        issueUniqueBurned: 0,
+        issueMessageBurned: 0,
+        issueQualifierBurned: 0,
+        issueSubQualifierBurned: 0,
+        issueRestrictedBurned: 0,
+        addTagBurned: 0,
+        burnBurned: 0),
+    server.TransactionView(
+        // receive
+        symbol: 'RVN',
+        chain: 'ravencoin_mainnet',
+        hash: ByteData(0),
+        datetime: DateTime.now(),
+        height: 0,
+        iProvided: 1 * satsPerCoin,
+        otherProvided: 26 * satsPerCoin,
+        iReceived: 26 * satsPerCoin,
+        otherReceived: 0,
+        issueMainBurned: 0,
+        reissueBurned: 0,
+        issueSubBurned: 0,
+        issueUniqueBurned: 0,
+        issueMessageBurned: 0,
+        issueQualifierBurned: 0,
+        issueSubQualifierBurned: 0,
+        issueRestrictedBurned: 0,
+        addTagBurned: 0,
+        burnBurned: 0),
+    server.TransactionView(
+        // sent to self
+        symbol: 'RVN',
+        chain: 'ravencoin_mainnet',
+        hash: ByteData(0),
+        datetime: DateTime.now(),
+        height: 0,
+        iProvided: 27 * satsPerCoin,
+        otherProvided: 0,
+        iReceived: 26 * satsPerCoin,
+        otherReceived: 0,
+        issueMainBurned: 0,
+        reissueBurned: 0,
+        issueSubBurned: 0,
+        issueUniqueBurned: 0,
+        issueMessageBurned: 0,
+        issueQualifierBurned: 0,
+        issueSubQualifierBurned: 0,
+        issueRestrictedBurned: 0,
+        addTagBurned: 0,
+        burnBurned: 0),
+    server.TransactionView(
+        // asset creation
+        symbol: 'RVN',
+        chain: 'ravencoin_mainnet',
+        hash: ByteData(1),
+        datetime: DateTime.now(),
+        height: 1,
+        iProvided: 600 * satsPerCoin,
+        otherProvided: 0,
+        iReceived: 99 * satsPerCoin,
+        otherReceived: 0,
+        issueMainBurned: 500 * satsPerCoin,
+        reissueBurned: 0,
+        issueSubBurned: 0,
+        issueUniqueBurned: 0,
+        issueMessageBurned: 0,
+        issueQualifierBurned: 0,
+        issueSubQualifierBurned: 0,
+        issueRestrictedBurned: 0,
+        addTagBurned: 0,
+        burnBurned: 0),
+  ];
+
+  return views;
 }
