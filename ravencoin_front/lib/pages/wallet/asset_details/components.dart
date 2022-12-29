@@ -62,10 +62,10 @@ class AssetDetailsContent extends StatelessWidget {
           final bool showTransactions = tab == CoinSpecTabs.tabIndex[0];
           return showTransactions
               ? TransactionList(
+                  cubit: cubit,
                   scrollController: scrollController,
                   symbol: cubit.state.security.symbol,
-                  transactions: cubit.state.transactionViews
-                      as Iterable<TransactionView>?,
+                  transactions: cubit.state.transactionViews,
                   msg: '\nNo ${cubit.state.security.symbol} transactions.\n')
               : MetaDataWidget(cachedMetadataView);
         });

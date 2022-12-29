@@ -48,17 +48,25 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     ));
   }
 
-  Future<void> setTransactionViews() async =>
-      state.wallet != state.ranWallet || state.security != state.ranSecurity
-          ? set(
-              transactionViews: await discoverTransactionHistory(
-                wallet: state.wallet,
-                security: state.security,
-              ),
-              ranWallet: state.wallet,
-              ranSecurity: state.security,
-            )
-          : () {}();
+  Future<void> setTransactionViews({bool force = false}) async => force ||
+          state.wallet != state.ranWallet ||
+          state.security != state.ranSecurity
+      ? () async {
+          set(
+            transactionViews: [],
+            isSubmitting: true,
+          );
+          set(
+            transactionViews: await discoverTransactionHistory(
+              wallet: state.wallet,
+              security: state.security,
+            ),
+            ranWallet: state.wallet,
+            ranSecurity: state.security,
+            isSubmitting: false,
+          );
+        }()
+      : () {}();
 
   bool get nullCacheView {
     final Asset? securityAsset = state.security.asset;

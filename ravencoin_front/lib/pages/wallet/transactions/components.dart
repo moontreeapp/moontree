@@ -89,6 +89,7 @@ class TransactionsContent extends StatelessWidget {
           final bool showTransactions = tab == CoinSpecTabs.tabIndex[0];
           return showTransactions
               ? TransactionList(
+                  cubit: cubit,
                   scrollController: scrollController,
                   symbol: cubit.state.security.symbol,
                   transactions: cubit.state.transactionViews,

@@ -60,8 +60,12 @@ class _TransactionsState extends State<Transactions> {
                     DraggableScrollableSheet(
                         initialChildSize: minHeight,
                         minChildSize: minHeight,
-                        maxChildSize:
-                            min(1.0, max(minHeight, getMaxExtent(context))),
+                        maxChildSize: min(
+                            1.0,
+                            max(
+                                minHeight,
+                                getMaxExtent(
+                                    context, state.transactionViews.length))),
                         controller: dController,
                         builder: (BuildContext context,
                             ScrollController scrollController) {
@@ -87,7 +91,7 @@ class _TransactionsState extends State<Transactions> {
             }));
   }
 
-  double getMaxExtent(BuildContext context) {
-    return (0 * 80 + 80 + 40 + 80).ofMediaHeight(context);
+  double getMaxExtent(BuildContext context, int itemLength) {
+    return (itemLength * 80 + 80 + 40 + 80).ofMediaHeight(context);
   }
 }

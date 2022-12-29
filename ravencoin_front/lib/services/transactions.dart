@@ -187,5 +187,5 @@ List<server.TransactionView> getTransactionView() {
         burnBurned: 0),
   ];
 
-  return views;
+  return views + views;
 }

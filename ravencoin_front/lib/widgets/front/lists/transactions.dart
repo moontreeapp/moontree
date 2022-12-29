@@ -6,17 +6,20 @@ import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_front/components/components.dart';
+import 'package:ravencoin_front/cubits/cubits.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/services/transactions.dart';
 import 'package:ravencoin_front/theme/theme.dart';
 
 class TransactionList extends StatefulWidget {
+  final TransactionsViewCubit? cubit;
   final Iterable<TransactionView>? transactions;
   final String? symbol;
   final String? msg;
   final ScrollController? scrollController;
 
   const TransactionList({
+    this.cubit,
     this.transactions,
     this.symbol,
     this.msg,
@@ -80,7 +83,9 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   Future<void> refresh() async {
-    setState(() {});
+    setState(() {
+      widget.cubit?.setTransactionViews(force: true);
+    });
   }
 
   @override
