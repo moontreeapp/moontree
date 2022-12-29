@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:ravencoin_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -129,7 +130,7 @@ class _WalletViewState extends State<WalletView> {
             onNotification: visibilityOfSendReceive,
             child: TransactionList(
                 transactions:
-                    transactions ?? Current.walletCompiledTransactions())),
+                    transactions /*?? Current.walletCompiledTransactions()*/)),
       ]);
 
   ListView detailsView() => ListView(
@@ -213,13 +214,13 @@ class _WalletViewState extends State<WalletView> {
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.fastOutSlowIn);
 
-                transactions = Current.walletCompiledTransactions()
-                    //.where((transactionRecord) =>
-                    //    transactionRecord.fromAddress ==
-                    //        walletAddress.address ||
-                    //    transactionRecord.toAddress ==
-                    //        walletAddress.address)
-                    .toList();
+                transactions = []; //Current.walletCompiledTransactions()
+                //.where((transactionRecord) =>
+                //    transactionRecord.fromAddress ==
+                //        walletAddress.address ||
+                //    transactionRecord.toAddress ==
+                //        walletAddress.address)
+                //.toList();
                 address = walletAddress.address;
                 //privateKey = (await services.wallet.leader
                 //        .getSubWalletFromAddress(walletAddress))

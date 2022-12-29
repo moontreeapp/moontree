@@ -9,10 +9,9 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
 import './comm_transaction_view.dart' as _i3;
-import 'package:moontree_utils/types/chains.dart' as _i4;
-import 'dart:typed_data' as _i5;
-import 'dart:io' as _i6;
-import 'protocol.dart' as _i7;
+import 'dart:typed_data' as _i4;
+import 'dart:io' as _i5;
+import 'protocol.dart' as _i6;
 
 class _EndpointExample extends _i1.EndpointRef {
   _EndpointExample(_i1.EndpointCaller caller) : super(caller);
@@ -35,9 +34,9 @@ class _EndpointTransactions extends _i1.EndpointRef {
 
   _i2.Future<List<_i3.TransactionView>> get({
     String? symbol,
-    required _i4.Chaindata chain,
+    required String chain,
     required List<String> xpubkeys,
-    required List<_i5.ByteData> h160s,
+    required List<_i4.ByteData> h160s,
   }) =>
       caller.callServerEndpoint<List<_i3.TransactionView>>(
         'transactions',
@@ -54,11 +53,11 @@ class _EndpointTransactions extends _i1.EndpointRef {
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i6.SecurityContext? context,
+    _i5.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i7.Protocol(),
+          _i6.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {

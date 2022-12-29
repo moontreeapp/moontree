@@ -4,7 +4,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ravencoin_front/cubits/send/cubit.dart';
+import 'package:ravencoin_front/cubits/cubits.dart';
 
 //import 'package:flutter/foundation.dart' show kDebugMode;
 // import 'package:firebase_core/firebase_core.dart';
@@ -98,6 +98,8 @@ class RavenMobileApp extends StatelessWidget {
               providers: [
                 BlocProvider<SimpleSendFormCubit>(
                     create: (BuildContext context) => SimpleSendFormCubit()),
+                BlocProvider<TransactionsViewCubit>(
+                    create: (BuildContext context) => TransactionsViewCubit()),
               ],
               child: child!,
             ),

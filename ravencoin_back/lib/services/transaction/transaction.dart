@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:intl/intl.dart';
+import 'package:ravencoin_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:tuple/tuple.dart';
 import 'package:date_format/src/date_format_base.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -10,7 +11,6 @@ import 'package:ravencoin_back/streams/spend.dart';
 
 import 'maker.dart';
 
-// move to front
 extension TransactionViewMethods on TransactionView {
   String? get note => pros.notes.primaryIndex.getOne(readableHash)?.note;
   String get readableHash => hash.toHex();
@@ -169,8 +169,8 @@ extension TransactionViewMethods on TransactionView {
       formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);
 }
 
-class TransactionView {
-  TransactionView({
+class TransactionViewSpoof {
+  TransactionViewSpoof({
     this.symbol,
     required this.chain,
     required this.hash,
@@ -231,12 +231,12 @@ class TransactionService {
     return transaction ?? pros.transactions.primaryIndex.getOne(hash ?? '');
   }
 
-  List<TransactionView> getTransactionViewSpoof({
+  List<TransactionViewSpoof> getTransactionViewSpoof({
     required Wallet wallet,
     Set<Security>? securities,
   }) {
-    final views = <TransactionView>[
-      TransactionView(
+    final views = <TransactionViewSpoof>[
+      TransactionViewSpoof(
           // send transaction
           symbol: 'RVN',
           chain: 'ravencoin_mainnet',
@@ -257,7 +257,7 @@ class TransactionService {
           issueRestrictedBurned: 0,
           addTagBurned: 0,
           burnBurned: 0),
-      TransactionView(
+      TransactionViewSpoof(
           // send transaction
           symbol: 'RVN',
           chain: 'ravencoin_mainnet',
@@ -278,7 +278,7 @@ class TransactionService {
           issueRestrictedBurned: 0,
           addTagBurned: 0,
           burnBurned: 0),
-      TransactionView(
+      TransactionViewSpoof(
           // receive
           symbol: 'RVN',
           chain: 'ravencoin_mainnet',
@@ -299,7 +299,7 @@ class TransactionService {
           issueRestrictedBurned: 0,
           addTagBurned: 0,
           burnBurned: 0),
-      TransactionView(
+      TransactionViewSpoof(
           // sent to self
           symbol: 'RVN',
           chain: 'ravencoin_mainnet',
@@ -320,7 +320,7 @@ class TransactionService {
           issueRestrictedBurned: 0,
           addTagBurned: 0,
           burnBurned: 0),
-      TransactionView(
+      TransactionViewSpoof(
           // asset creation
           symbol: 'RVN',
           chain: 'ravencoin_mainnet',
@@ -342,9 +342,6 @@ class TransactionService {
           addTagBurned: 0,
           burnBurned: 0),
     ];
-    for (final v in views) {
-      print('${v.iValue}...${v.txFee}');
-    }
     return views;
   }
 

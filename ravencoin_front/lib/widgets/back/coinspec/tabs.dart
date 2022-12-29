@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_front/theme/theme.dart';
-
-import '../../../pages/wallet/transactions/bloc.dart';
+import 'package:ravencoin_front/cubits/cubits.dart';
+//import '../../../pages/wallet/transactions/bloc.dart';
 
 class CoinSpecTabs extends StatefulWidget {
-  const CoinSpecTabs({Key? key}) : super(key: key);
+  const CoinSpecTabs({
+    Key? key,
+    required this.cubit,
+  }) : super(key: key);
+  final TransactionsViewCubit cubit;
 
   @override
   _CoinSpecTabsState createState() => _CoinSpecTabsState();
@@ -29,7 +33,7 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
     super.dispose();
   }
 
-  void changeContent() => transactionsBloc.currentTab
+  void changeContent() => widget.cubit.state.currentTab
       .add(CoinSpecTabs.tabIndex[tabController.index]);
 
   @override

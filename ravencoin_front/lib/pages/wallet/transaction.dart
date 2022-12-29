@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ravencoin_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';

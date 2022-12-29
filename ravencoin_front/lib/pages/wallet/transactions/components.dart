@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
+import 'package:ravencoin_front/cubits/cubits.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/streams/app.dart';
 import 'package:ravencoin_back/streams/client.dart';
 import 'package:ravencoin_front/components/components.dart';
-import 'package:ravencoin_front/pages/wallet/transactions/bloc.dart';
 import 'package:ravencoin_front/services/lookup.dart';
 import 'package:ravencoin_front/utils/extensions.dart';
 import 'package:ravencoin_front/services/storage.dart';
@@ -32,12 +32,14 @@ class MetaDataWidget extends StatelessWidget {
 }
 
 class AssetNavbar extends StatelessWidget {
-  const AssetNavbar({Key? key}) : super(key: key);
+  final TransactionsViewCubit cubit;
+  const AssetNavbar({Key? key, required this.cubit}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bool walletIsEmpty = Current.wallet.balances.isEmpty;
     final ConnectionStatus connectionStatus = streams.client.connected.value;
+
     return NavBar(
       includeSectors: false,
       actionButtons: <Widget>[
@@ -52,14 +54,14 @@ class AssetNavbar extends StatelessWidget {
               message: 'Unable to send, please try again later',
             ));
           },
-          arguments: <String, dynamic>{'security': transactionsBloc.security},
+          arguments: <String, dynamic>{'security': cubit.state.security},
         ),
         components.buttons.actionButton(
           context,
           label: 'receive',
           link: '/transaction/receive',
-          arguments: transactionsBloc.security != pros.securities.currentCoin
-              ? <String, dynamic>{'symbol': transactionsBloc.security.symbol}
+          arguments: cubit.state.security != pros.securities.currentCoin
+              ? <String, dynamic>{'symbol': cubit.state.security.symbol}
               : null,
         )
       ],
@@ -68,29 +70,29 @@ class AssetNavbar extends StatelessWidget {
 }
 
 class TransactionsContent extends StatelessWidget {
-  const TransactionsContent(this.cachedMetadataView, this.scrollController,
-      {Key? key})
-      : super(key: key);
+  const TransactionsContent(
+    this.cubit,
+    this.cachedMetadataView,
+    this.scrollController, {
+    Key? key,
+  }) : super(key: key);
+  final TransactionsViewCubit cubit;
   final Widget? cachedMetadataView;
   final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<String>(
-        stream: transactionsBloc.currentTab,
+        stream: cubit.state.currentTab,
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           final String tab = snapshot.data ?? 'HISTORY';
           final bool showTransactions = tab == CoinSpecTabs.tabIndex[0];
           return showTransactions
               ? TransactionList(
                   scrollController: scrollController,
-                  symbol: transactionsBloc.security.symbol,
-                  transactions: transactionsBloc.currentTxs.where(
-                      (TransactionView tx) =>
-                          tx.security?.symbol ==
-                          transactionsBloc.security.symbol),
-                  msg:
-                      '\nNo ${transactionsBloc.security.symbol} transactions.\n')
+                  symbol: cubit.state.security.symbol,
+                  transactions: cubit.state.transactionViews,
+                  msg: '\nNo ${cubit.state.security.symbol} transactions.\n')
               : MetaDataWidget(cachedMetadataView);
         });
   }
@@ -98,20 +100,21 @@ class TransactionsContent extends StatelessWidget {
 
 class CoinDetailsHeader extends StatelessWidget {
   const CoinDetailsHeader(
+    this.cubit,
     this.security,
     this.minHeight,
     this.emptyMetaDataCache, {
     Key? key,
   }) : super(key: key);
+  final TransactionsViewCubit cubit;
   final Security security;
   final bool emptyMetaDataCache;
   final double minHeight;
 
   @override
   Widget build(BuildContext context) {
-    final TransactionsBloc bloc = TransactionsBloc.instance();
     return StreamBuilder<double>(
-        stream: bloc.scrollObserver,
+        stream: cubit.state.scrollObserver,
         builder: (BuildContext context, AsyncSnapshot<Object?> snapshot) {
           return Transform.translate(
             offset: Offset(
@@ -121,7 +124,7 @@ class CoinDetailsHeader extends StatelessWidget {
                         100),
             child: Opacity(
               //angle: ((snapshot.data ?? 0.9) as double) * pi * 180,
-              opacity: bloc.getOpacityFromController(
+              opacity: getOpacityFromController(
                 (snapshot.data ?? .9) as double,
                 minHeight,
               ),
@@ -137,12 +140,14 @@ class CoinDetailsHeader extends StatelessWidget {
 }
 
 class CoinDetailsGlidingSheet extends StatefulWidget {
-  const CoinDetailsGlidingSheet(
+  const CoinDetailsGlidingSheet({
     this.cachedMetadataView,
-    this.dController,
-    this.scrollController, {
+    required this.cubit,
+    required this.dController,
+    required this.scrollController,
     Key? key,
   }) : super(key: key);
+  final TransactionsViewCubit cubit;
   final Widget? cachedMetadataView;
   final DraggableScrollableController dController;
   final ScrollController scrollController;
@@ -160,7 +165,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
 
   @override
   void dispose() {
-    transactionsBloc.reset();
+    widget.cubit.reset();
     super.dispose();
   }
 
@@ -169,13 +174,15 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
-        if (widget.cachedMetadataView != null) const CoinSpecTabs(),
+        if (widget.cachedMetadataView != null)
+          CoinSpecTabs(cubit: widget.cubit),
         Padding(
             padding: EdgeInsets.only(
                 top: widget.cachedMetadataView != null ? 48 : 0),
             child: FrontCurve(
               frontLayerBoxShadow: const <BoxShadow>[],
               child: TransactionsContent(
+                widget.cubit,
                 widget.cachedMetadataView,
                 widget.scrollController,
               ),
@@ -186,19 +193,19 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
 }
 
 class MetadataView extends StatelessWidget {
-  const MetadataView({Key? key}) : super(key: key);
+  final TransactionsViewCubit cubit;
+  const MetadataView({Key? key, required this.cubit}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final Asset securityAsset = transactionsBloc.security.asset!;
+    final Asset securityAsset = cubit.state.security.asset!;
 
     List<Widget> chilren = <Widget>[];
     if (securityAsset.primaryMetadata == null &&
         securityAsset.hasData &&
         securityAsset.data!.isIpfs) {
       final double height =
-          (transactionsBloc.scrollObserver.value.ofMediaHeight(context) + 32) /
-              2;
+          (cubit.state.scrollObserver.value.ofMediaHeight(context) + 32) / 2;
       return Container(
         alignment: Alignment.topCenter,
         height: height,
@@ -242,4 +249,25 @@ class MetadataView extends StatelessWidget {
     }
     return ListView(padding: const EdgeInsets.all(10.0), children: chilren);
   }
+}
+
+double getOpacityFromController(
+  double controllerValue,
+  double minHeightFactor,
+) {
+  double opacity = 1;
+  if (controllerValue >= 0.9) {
+    opacity = 0;
+  } else if (controllerValue <= minHeightFactor) {
+    opacity = 1;
+  } else {
+    opacity = (0.9 - controllerValue) * 5;
+  }
+  if (opacity > 1) {
+    return 1;
+  }
+  if (opacity < 0) {
+    return 0;
+  }
+  return opacity;
 }

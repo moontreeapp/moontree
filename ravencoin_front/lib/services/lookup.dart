@@ -29,7 +29,7 @@ class Current {
       .where((Balance balance) => balance.security.asset?.isQualifier ?? false)
       .map((Balance balance) => balance.security.symbol);
 
-  static List<TransactionView> walletCompiledTransactions() =>
+  static List<TransactionViewSpoof> walletCompiledTransactions() =>
       services.transaction.getTransactionViewSpoof(wallet: wallet);
 
   static Chain get chain => pros.settings.chain;

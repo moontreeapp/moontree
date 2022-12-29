@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/server/src/protocol/comm_transaction_view.dart';
+import 'package:ravencoin_front/services/transactions.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show AmountToSatsExtension, FeeRate, standardFee;
 import 'package:ravencoin_back/ravencoin_back.dart';
@@ -29,16 +31,39 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   @override
   void set({
     List<TransactionView>? transactionViews,
+    Wallet? wallet,
+    Security? security,
+    Wallet? ranWallet,
+    Security? ranSecurity,
     bool? isSubmitting,
   }) {
     emit(submitting());
     emit(state.load(
       transactionViews: transactionViews,
+      wallet: wallet,
+      security: security,
+      ranWallet: ranWallet,
+      ranSecurity: ranSecurity,
       isSubmitting: isSubmitting,
     ));
   }
 
-  //void submit() async {
-  //  emit(await submitSend());
-  //}
+  Future<void> setTransactionViews() async =>
+      state.wallet != state.ranWallet || state.security != state.ranSecurity
+          ? set(
+              transactionViews: await discoverTransactionHistory(
+                wallet: state.wallet,
+                security: state.security,
+              ),
+              ranWallet: state.wallet,
+              ranSecurity: state.security,
+            )
+          : () {}();
+
+  bool get nullCacheView {
+    final Asset? securityAsset = state.security.asset;
+    return securityAsset == null || securityAsset.hasMetadata == false;
+  }
+
+  void clearCache() => set(transactionViews: <TransactionView>[]);
 }

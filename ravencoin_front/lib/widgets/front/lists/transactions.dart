@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_front/components/components.dart';
 import 'package:ravencoin_front/services/lookup.dart';

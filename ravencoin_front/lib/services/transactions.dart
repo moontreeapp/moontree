@@ -26,7 +26,7 @@ class TransactionHistory {
   }) async =>
       await client.transactions.get(
         symbol: symbol,
-        chain: chain,
+        chain: chain.name,
         xpubkeys: roots,
         h160s: h160s,
       );

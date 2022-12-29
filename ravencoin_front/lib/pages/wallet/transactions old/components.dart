@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
@@ -243,3 +243,4 @@ class MetadataView extends StatelessWidget {
     return ListView(padding: const EdgeInsets.all(10.0), children: chilren);
   }
 }
+*/

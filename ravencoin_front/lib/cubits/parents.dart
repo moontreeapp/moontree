@@ -23,7 +23,7 @@ class CubitState with EquatableMixin {
   String toString() => 'CubitState(isSubmitting=$isSubmitting)';
 
   @override
-  List<Object> get props => <Object>[isSubmitting];
+  List<Object?> get props => <Object?>[isSubmitting];
 
   CubitState load({bool? isSubmitting}) =>
       CubitState.load(form: this, isSubmitting: isSubmitting);
