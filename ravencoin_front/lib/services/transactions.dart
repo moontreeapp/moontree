@@ -52,30 +52,12 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   /// SERVER
   //await transactionHistory.transactionHistoryBy(
   //    symbol: symbol,
-  //    chain: getChaindataFor(chain, net),
+  //    chain: ChainNet(chain,net).chaindata,
   //    roots: roots,
   //    h160s: roots.isEmpty
   //        ? Current.wallet.addresses.map((e) => e.h160).toList()
   //        : []);
   return history;
-}
-
-/// convert chain and net to Chaindata
-Chaindata getChaindataFor(Chain chain, Net net) {
-  if (chain == Chain.ravencoin) {
-    if (net == Net.main) {
-      return ravencoinMainnetChaindata;
-    } else if (net == Net.test) {
-      return ravencoinTestnetChaindata;
-    }
-  } else if (chain == Chain.evrmore) {
-    if (net == Net.main) {
-      return evrmoreMainnetChaindata;
-    } else if (net == Net.test) {
-      return evrmoreTestnetChaindata;
-    }
-  }
-  return ravencoinMainnetChaindata;
 }
 
 List<server.TransactionView> getTransactionView() {

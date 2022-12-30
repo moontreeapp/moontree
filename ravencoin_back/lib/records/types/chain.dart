@@ -73,10 +73,24 @@ String nameSymbol(String name) {
 }
 
 class ChainNet with EquatableMixin {
-  ChainNet(this.chain, this.net);
-
   final Chain chain;
   final Net net;
+
+  const ChainNet(this.chain, this.net);
+
+  factory ChainNet.from({Chaindata? chaindata, String? name}) {
+    switch (chaindata?.name ?? name) {
+      case 'ravencoin_mainnet':
+        return ChainNet(Chain.ravencoin, Net.main);
+      case 'ravencoin_testnet':
+        return ChainNet(Chain.ravencoin, Net.test);
+      case 'evrmore_mainnet':
+        return ChainNet(Chain.evrmore, Net.main);
+      case 'evrmore_testnet':
+        return ChainNet(Chain.evrmore, Net.test);
+    }
+    return ChainNet(Chain.ravencoin, Net.main);
+  }
 
   @override
   List<Object?> get props => <Object?>[chain, net];
@@ -135,4 +149,21 @@ class ChainNet with EquatableMixin {
   String get symbol => chain.symbol + net.symbolModifier;
 
   String get key => '${chain.key}:${net.key}';
+
+  Chaindata get chaindata {
+    if (chain == Chain.ravencoin) {
+      if (net == Net.main) {
+        return ravencoinMainnetChaindata;
+      } else if (net == Net.test) {
+        return ravencoinTestnetChaindata;
+      }
+    } else if (chain == Chain.evrmore) {
+      if (net == Net.main) {
+        return evrmoreMainnetChaindata;
+      } else if (net == Net.test) {
+        return evrmoreTestnetChaindata;
+      }
+    }
+    return ravencoinMainnetChaindata;
+  }
 }
