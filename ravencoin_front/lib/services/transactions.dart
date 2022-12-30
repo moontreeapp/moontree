@@ -47,7 +47,7 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   final List<server.TransactionView> history =
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 5), getTransactionView);
+      await Future.delayed(Duration(seconds: 5), spoofTransactionView);
 
   /// SERVER
   //await transactionHistory.transactionHistoryBy(
@@ -60,7 +60,7 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   return history;
 }
 
-List<server.TransactionView> getTransactionView() {
+List<server.TransactionView> spoofTransactionView() {
   final views = <server.TransactionView>[
     server.TransactionView(
         // send transaction
