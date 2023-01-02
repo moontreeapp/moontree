@@ -34,6 +34,9 @@ class BlockWaiter extends Trigger {
         await pros.blocks.save(Block.fromBlockHeader(blockHeader));
       },
       autoDeinit: true,
+      // key should be specified because different chains give different keys by
+      // default so autoDeinit never gets triggered
+      key: 'block height',
     );
 
     // update existing mempool transactions each block
@@ -48,6 +51,9 @@ class BlockWaiter extends Trigger {
         removed: (Removed<Block> removed) {},
       ),
       autoDeinit: true,
+      // key should be specified because different chains give different keys by
+      // default so autoDeinit never gets triggered
+      key: 'mempool getter',
     );
   }
 }

@@ -414,7 +414,9 @@ class SubscribeService {
               // Ideally we'd call this once rather than per wallet.
               //if (services.download.history.calledAllDoneProcess == 0) {
               if (!services.wallet.currentWallet.minerMode) {
-                await services.download.history.allDoneProcess();
+                // now that we show history JIT from the moontree server, we
+                // don't need to download any historic transactions:
+                //await services.download.history.allDoneProcess();
               }
             }
           }

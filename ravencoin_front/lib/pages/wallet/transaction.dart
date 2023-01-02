@@ -194,8 +194,6 @@ class _TransactionPageState extends State<TransactionPage> {
 
   int? getBlocksBetweenHelper({Block? current}) {
     current = current ?? pros.blocks.latest;
-    print('current: ${current}');
-    print('transactionView!.height: ${transactionView!.height}');
     return (current != null && transactionView!.height != null)
         ? current.height - transactionView!.height
         : null;
