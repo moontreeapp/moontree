@@ -20,7 +20,7 @@ extension TransactionViewMethods on TransactionView {
       : pros.securities.byKey
           .getOne(symbol, pros.settings.chain, pros.settings.net);
 
-  Chaindata get chaindata => (String chainNet) {
+  Chaindata get chaindata => (String? chainNet) {
         switch (chainNet) {
           case 'ravencoin_mainnet':
             return ravencoinMainnetChaindata;
@@ -37,23 +37,32 @@ extension TransactionViewMethods on TransactionView {
 
   /// true is outgoing false is incoming
   bool get outgoing => (iReceived - iProvided) <= 0;
-
   double get amount => iValue.asCoin;
-
   int get iValue => (iReceived - iProvided).abs();
-
-  bool get sentToSelf => iProvided == iReceived + txFee;
-
+  bool get sentToSelf => iProvided == iReceived + fee;
   bool get isNormal => false;
 
   /// always positive
-  int get txFee => totalIn - (iReceived + otherReceived + totalBurn);
+  /// replaced by fee
+  //int get txFee => totalIn - (iReceived + otherReceived + totalBurn);
+
+  double get feeRate => fee / vsize;
 
   /// always positive
-  bool get iPaidTxFee => otherProvided == 0;
+  //bool get iPaidTxFee => otherProvided == 0;
+  bool get iPaidFee => iProvided > 0;
 
-  int get totalIn => (iProvided + otherProvided);
-  int get totalOut => (iReceived + otherReceived) + txFee + totalBurn;
+  //int get totalIn => (iProvided + otherProvided);
+  //int get totalOut => (iReceived + otherReceived) + txFee + totalBurn;
+
+  //int get iFee => iPaidTxFee ? txFee : 0;
+  int get iFee => iPaidFee ? fee : 0;
+
+  //int get relativeValue =>
+  //    type == TransactionViewType.self ? iProvided : (iValue - iFee);
+  int get relativeValue =>
+      type == TransactionViewType.self ? iProvided : (iValue - fee);
+
   int get totalBurn =>
       burnBurned +
       issueMainBurned +
@@ -160,10 +169,6 @@ extension TransactionViewMethods on TransactionView {
     }
     return '| ${typeToString(t)}';
   }
-
-  int get fee => iPaidTxFee ? txFee : 0;
-  int get relativeValue =>
-      type == TransactionViewType.self ? iProvided : (iValue - fee);
 
   String get formattedDatetime =>
       formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);

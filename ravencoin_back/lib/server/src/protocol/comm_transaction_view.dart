@@ -12,15 +12,13 @@ import 'dart:typed_data' as _i2;
 class TransactionView extends _i1.SerializableEntity {
   TransactionView({
     this.id,
-    this.symbol,
-    required this.chain,
     required this.hash,
     required this.datetime,
+    required this.fee,
+    required this.vsize,
     required this.height,
     required this.iProvided,
-    required this.otherProvided,
     required this.iReceived,
-    required this.otherReceived,
     required this.issueMainBurned,
     required this.reissueBurned,
     required this.issueSubBurned,
@@ -31,6 +29,8 @@ class TransactionView extends _i1.SerializableEntity {
     required this.issueRestrictedBurned,
     required this.addTagBurned,
     required this.burnBurned,
+    this.chain,
+    this.symbol,
   });
 
   factory TransactionView.fromJson(
@@ -39,24 +39,18 @@ class TransactionView extends _i1.SerializableEntity {
   ) {
     return TransactionView(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
-      symbol: serializationManager
-          .deserialize<String?>(jsonSerialization['symbol']),
-      chain:
-          serializationManager.deserialize<String>(jsonSerialization['chain']),
       hash: serializationManager
           .deserialize<_i2.ByteData>(jsonSerialization['hash']),
       datetime: serializationManager
           .deserialize<DateTime>(jsonSerialization['datetime']),
+      fee: serializationManager.deserialize<int>(jsonSerialization['fee']),
+      vsize: serializationManager.deserialize<int>(jsonSerialization['vsize']),
       height:
           serializationManager.deserialize<int>(jsonSerialization['height']),
       iProvided:
           serializationManager.deserialize<int>(jsonSerialization['iProvided']),
-      otherProvided: serializationManager
-          .deserialize<int>(jsonSerialization['otherProvided']),
       iReceived:
           serializationManager.deserialize<int>(jsonSerialization['iReceived']),
-      otherReceived: serializationManager
-          .deserialize<int>(jsonSerialization['otherReceived']),
       issueMainBurned: serializationManager
           .deserialize<int>(jsonSerialization['issueMainBurned']),
       reissueBurned: serializationManager
@@ -77,28 +71,28 @@ class TransactionView extends _i1.SerializableEntity {
           .deserialize<int>(jsonSerialization['addTagBurned']),
       burnBurned: serializationManager
           .deserialize<int>(jsonSerialization['burnBurned']),
+      chain:
+          serializationManager.deserialize<String?>(jsonSerialization['chain']),
+      symbol: serializationManager
+          .deserialize<String?>(jsonSerialization['symbol']),
     );
   }
 
   int? id;
 
-  String? symbol;
-
-  String chain;
-
   _i2.ByteData hash;
 
   DateTime datetime;
+
+  int fee;
+
+  int vsize;
 
   int height;
 
   int iProvided;
 
-  int otherProvided;
-
   int iReceived;
-
-  int otherReceived;
 
   int issueMainBurned;
 
@@ -120,19 +114,21 @@ class TransactionView extends _i1.SerializableEntity {
 
   int burnBurned;
 
+  String? chain;
+
+  String? symbol;
+
   @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'symbol': symbol,
-      'chain': chain,
       'hash': hash,
       'datetime': datetime,
+      'fee': fee,
+      'vsize': vsize,
       'height': height,
       'iProvided': iProvided,
-      'otherProvided': otherProvided,
       'iReceived': iReceived,
-      'otherReceived': otherReceived,
       'issueMainBurned': issueMainBurned,
       'reissueBurned': reissueBurned,
       'issueSubBurned': issueSubBurned,
@@ -143,6 +139,8 @@ class TransactionView extends _i1.SerializableEntity {
       'issueRestrictedBurned': issueRestrictedBurned,
       'addTagBurned': addTagBurned,
       'burnBurned': burnBurned,
+      'chain': chain,
+      'symbol': symbol,
     };
   }
 }

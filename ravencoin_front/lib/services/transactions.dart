@@ -57,6 +57,11 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   //    h160s: roots.isEmpty
   //        ? Current.wallet.addresses.map((e) => e.h160).toList()
   //        : []);
+  //history = [
+  //  for (final txView in history)
+  //    txView.symbol = symbol
+  //    txView.chain = chain.name + '_' + net.name + 'net'
+  //]
   return history;
 }
 
@@ -69,10 +74,12 @@ List<server.TransactionView> spoofTransactionView() {
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
+        fee: 1,
+        vsize: 100,
         iProvided: 27 * satsPerCoin,
-        otherProvided: 4 * satsPerCoin,
+        //otherProvided: 4 * satsPerCoin,
         iReceived: 20 * satsPerCoin,
-        otherReceived: 10 * satsPerCoin,
+        //otherReceived: 10 * satsPerCoin,
         issueMainBurned: 0,
         reissueBurned: 0,
         issueSubBurned: 0,
@@ -90,10 +97,12 @@ List<server.TransactionView> spoofTransactionView() {
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
+        fee: 1,
+        vsize: 100,
         iProvided: 27 * satsPerCoin,
-        otherProvided: 0,
+        //otherProvided: 0,
         iReceived: 19 * satsPerCoin,
-        otherReceived: 7 * satsPerCoin,
+        //otherReceived: 7 * satsPerCoin,
         issueMainBurned: 0,
         reissueBurned: 0,
         issueSubBurned: 0,
@@ -111,10 +120,12 @@ List<server.TransactionView> spoofTransactionView() {
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
+        fee: 1,
+        vsize: 100,
         iProvided: 1 * satsPerCoin,
-        otherProvided: 26 * satsPerCoin,
+        //otherProvided: 26 * satsPerCoin,
         iReceived: 26 * satsPerCoin,
-        otherReceived: 0,
+        //otherReceived: 0,
         issueMainBurned: 0,
         reissueBurned: 0,
         issueSubBurned: 0,
@@ -132,10 +143,12 @@ List<server.TransactionView> spoofTransactionView() {
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
+        fee: 1,
+        vsize: 100,
         iProvided: 27 * satsPerCoin,
-        otherProvided: 0,
+        //otherProvided: 0,
         iReceived: 26 * satsPerCoin,
-        otherReceived: 0,
+        //otherReceived: 0,
         issueMainBurned: 0,
         reissueBurned: 0,
         issueSubBurned: 0,
@@ -153,10 +166,12 @@ List<server.TransactionView> spoofTransactionView() {
         hash: ByteData(1),
         datetime: DateTime.now(),
         height: 1,
+        fee: 1,
+        vsize: 100,
         iProvided: 600 * satsPerCoin,
-        otherProvided: 0,
+        //otherProvided: 0,
         iReceived: 99 * satsPerCoin,
-        otherReceived: 0,
+        //otherReceived: 0,
         issueMainBurned: 500 * satsPerCoin,
         reissueBurned: 0,
         issueSubBurned: 0,
