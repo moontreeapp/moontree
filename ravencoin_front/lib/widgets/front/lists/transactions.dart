@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:ravencoin_back/ravencoin_back.dart';
+import 'package:ravencoin_back/records/types/transaction_view.dart';
 import 'package:ravencoin_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';
 import 'package:ravencoin_front/components/components.dart';
@@ -172,7 +173,7 @@ class _TransactionListState extends State<TransactionList> {
                                       asUSD: showUSD),
                                   style: Theme.of(context).textTheme.bodyText1),
                               Text(
-                                  '${transactionView.formattedDatetime} ${transactionView.paddedType}',
+                                  '${transactionView.formattedDatetime} ${transactionView.type.paddedDisplay}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!

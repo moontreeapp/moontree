@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ravencoin_back/records/types/transaction_view.dart';
 import 'package:ravencoin_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -61,40 +62,7 @@ class _TransactionPageState extends State<TransactionPage> {
       case 'Confirmations':
         return getConfirmationsBetweenHelper();
       case 'Type':
-        switch (transactionView!.type) {
-          case TransactionViewType.incoming:
-            return 'In';
-          case TransactionViewType.outgoing:
-            return 'Out';
-          case TransactionViewType.self:
-            return 'to Self';
-          case TransactionViewType.fee:
-            return 'Asset Transfer Fee';
-          case TransactionViewType.create:
-            return 'Asset Creation';
-          case TransactionViewType.burn:
-            return 'Burned';
-          case TransactionViewType.reissue:
-            return 'Reissue';
-          case TransactionViewType.tag:
-            return 'Tag';
-          case TransactionViewType.claim:
-            return 'Claim';
-          case TransactionViewType.createAsset:
-            return 'Create Asset';
-          case TransactionViewType.createSubAsset:
-            return 'Create Sub Asset';
-          case TransactionViewType.createNFT:
-            return 'Create NFT';
-          case TransactionViewType.createMessage:
-            return 'Create Message';
-          case TransactionViewType.createQualifier:
-            return 'Create Qualifier';
-          case TransactionViewType.createSubQualifier:
-            return 'Create Sub Qualifier';
-          case TransactionViewType.createRestricted:
-            return 'Create Restricted';
-        }
+        return transactionView!.type.display;
       case 'ID':
         return transactionView!.readableHash.cutOutMiddle();
       case 'Memo/IPFS':
@@ -226,6 +194,8 @@ class _TransactionPageState extends State<TransactionPage> {
 
   int? getBlocksBetweenHelper({Block? current}) {
     current = current ?? pros.blocks.latest;
+    print('current: ${current}');
+    print('transactionView!.height: ${transactionView!.height}');
     return (current != null && transactionView!.height != null)
         ? current.height - transactionView!.height
         : null;

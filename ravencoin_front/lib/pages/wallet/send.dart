@@ -135,10 +135,29 @@ class _SendState extends State<Send> {
                         ? TextSelection.collapsed(offset: text.length)
                         : sendAmount.selection);
               }
-              sendAddress.text = state.address;
+              if (state.memo.length > 0) {
+                sendMemo.value = TextEditingValue(
+                    text: state.memo,
+                    selection: sendMemo.selection.baseOffset > state.memo.length
+                        ? TextSelection.collapsed(offset: state.memo.length)
+                        : sendMemo.selection);
+              }
+              if (state.note.length > 0) {
+                sendNote.value = TextEditingValue(
+                    text: state.note,
+                    selection: sendNote.selection.baseOffset > state.note.length
+                        ? TextSelection.collapsed(offset: state.note.length)
+                        : sendNote.selection);
+              }
+              if (state.address.length > 0) {
+                sendAddress.value = TextEditingValue(
+                    text: state.address,
+                    selection: sendAddress.selection.baseOffset >
+                            state.address.length
+                        ? TextSelection.collapsed(offset: state.address.length)
+                        : sendAddress.selection);
+              }
               sendFee.text = state.fee.name!;
-              sendMemo.text = state.memo;
-              sendNote.text = state.note;
               return BackdropLayers(
                 backAlignment: Alignment.bottomCenter,
                 frontAlignment: Alignment.topCenter,
@@ -366,7 +385,6 @@ class _SendState extends State<Send> {
                                   //cubit.set(fee: feeConcept.feeRate);
                                   FocusScope.of(context)
                                       .requestFocus(sendFeeFocusNode);
-                                  setState(() {});
                                 },
                               ),
                               TextFieldFormatted(

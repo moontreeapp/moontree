@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:ravencoin_back/records/types/transaction_view.dart';
 import 'package:wallet_utils/wallet_utils.dart' as wallet_utils;
 import 'package:ravencoin_back/ravencoin_back.dart';
 import 'package:ravencoin_back/services/transaction/transaction.dart';

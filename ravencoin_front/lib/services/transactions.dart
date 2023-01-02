@@ -14,7 +14,7 @@ import 'package:wallet_utils/wallet_utils.dart';
 
 class TransactionHistory {
   static const String moontreeUrl =
-      'https://24.199.68.139'; //'https://api.moontree.com';
+      'http://24.199.68.139:8080'; //'https://api.moontree.com';
   final server.Client client;
 
   TransactionHistory() : client = server.Client('$moontreeUrl/');
@@ -43,25 +43,32 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   Net net = security?.net ?? Current.net;
   symbol ??= (security?.isCoin ?? true ? null : security?.symbol);
   symbol == pros.securities.coinOf(chain, net) ? null : symbol;
-  final roots = await wallet?.roots ?? await Current.wallet.roots;
+  List<String>? roots;
+  if (wallet is LeaderWallet) {
+    roots = await wallet.roots;
+    //} else if (wallet is SingleWallet) {
+    //  roots = wallet.roots; ?? await Current.wallet.roots;
+  }
+  roots ??= await Current.wallet.roots;
   final List<server.TransactionView> history =
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 5), spoofTransactionView);
+      //await Future.delayed(Duration(seconds: 5), spoofTransactionView);
 
-  /// SERVER
-  //await transactionHistory.transactionHistoryBy(
-  //    symbol: symbol,
-  //    chain: ChainNet(chain,net).chaindata,
-  //    roots: roots,
-  //    h160s: roots.isEmpty
-  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
-  //        : []);
-  //history = [
-  //  for (final txView in history)
-  //    txView.symbol = symbol
-  //    txView.chain = chain.name + '_' + net.name + 'net'
-  //]
+      /// SERVER
+      await transactionHistory.transactionHistoryBy(
+          symbol: symbol,
+          chain: ChainNet(chain, net).chaindata,
+          roots: roots,
+          h160s: roots.isEmpty
+              ? Current.wallet.addresses.map((e) => e.h160).toList()
+              : []);
+
+  for (final txView in history) {
+    txView.chain = chain.name + '_' + net.name + 'net';
+    txView.symbol = symbol;
+  }
+
   return history;
 }
 
