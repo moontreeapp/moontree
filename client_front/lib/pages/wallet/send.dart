@@ -131,7 +131,12 @@ class _SendState extends State<Send> {
                 );
                 sendAmount.value = TextEditingValue(
                     text: text,
-                    selection: sendAmount.selection.baseOffset > text.length
+                    selection: sendAmount.selection.baseOffset > text.length ||
+                            (sendAmount.selection.baseOffset == 2 &&
+
+                                /// this is the case that they typed .x and it replaced it with 0.x
+                                text.length == 3 &&
+                                text.startsWith('0.'))
                         ? TextSelection.collapsed(offset: text.length)
                         : sendAmount.selection);
               }

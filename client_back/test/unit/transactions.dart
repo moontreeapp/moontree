@@ -72,6 +72,8 @@ extension TransactionViewMethods on TransactionViewSpoof {
         return 'Sent';
       case TransactionViewType.fee:
         return 'Transaction Fee';
+      case TransactionViewType.assetTransaction:
+        return 'Asset Transaction';
       case TransactionViewType.create:
         return 'Asset Creation';
       case TransactionViewType.burn:

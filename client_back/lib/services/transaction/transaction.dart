@@ -52,7 +52,15 @@ extension TransactionViewMethods on TransactionView {
   //    type == TransactionViewType.self ? iReceived : iValue;
   /// just the total that went away or came in
   int get totalValue => outgoing ? iProvided : iReceived;
-  int get iValueTotal => type == TransactionViewType.self ? iProvided : iValue;
+  //int get iValueTotal => type == TransactionViewType.self ? iReceived : iValue;
+
+  /// iValue and sent to self on assets always shows 0 since tx fees are in the base currency...
+  /// Using iReceived is not technically any better because it just reflects the
+  /// particular inputs we used, not what we specified to send, but at least
+  /// it's a number rather than 0, and this is an edge case where nobody but us
+  /// testers will be sending assets to addresses they already own...
+  int get iValueTotal =>
+      type == TransactionViewType.self && !isCoin ? iReceived : iValue;
 
   bool get sentToSelf => iProvided == iReceived + (isCoin ? fee : 0);
 
@@ -116,9 +124,9 @@ extension TransactionViewMethods on TransactionView {
     }
 
     final regular = sentToSelf
-        ? !isCoin
+        ? (isCoin && !containsAssets) || !isCoin
             ? TransactionViewType.self
-            : TransactionViewType.fee
+            : TransactionViewType.assetTransaction
         : iValue > 0
             ? TransactionViewType.incoming
             : TransactionViewType.outgoing;

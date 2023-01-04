@@ -17,6 +17,7 @@ class TransactionView extends _i1.SerializableEntity {
     required this.fee,
     required this.vsize,
     required this.height,
+    required this.containsAssets,
     required this.iProvided,
     required this.iReceived,
     required this.issueMainBurned,
@@ -47,6 +48,8 @@ class TransactionView extends _i1.SerializableEntity {
       vsize: serializationManager.deserialize<int>(jsonSerialization['vsize']),
       height:
           serializationManager.deserialize<int>(jsonSerialization['height']),
+      containsAssets: serializationManager
+          .deserialize<bool>(jsonSerialization['containsAssets']),
       iProvided:
           serializationManager.deserialize<int>(jsonSerialization['iProvided']),
       iReceived:
@@ -90,6 +93,8 @@ class TransactionView extends _i1.SerializableEntity {
 
   int height;
 
+  bool containsAssets;
+
   int iProvided;
 
   int iReceived;
@@ -127,6 +132,7 @@ class TransactionView extends _i1.SerializableEntity {
       'fee': fee,
       'vsize': vsize,
       'height': height,
+      'containsAssets': containsAssets,
       'iProvided': iProvided,
       'iReceived': iReceived,
       'issueMainBurned': issueMainBurned,

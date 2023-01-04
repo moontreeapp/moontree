@@ -10,6 +10,7 @@ enum TransactionViewType {
   burn,
   reissue,
   claim,
+  assetTransaction,
   createAsset,
   createSubAsset,
   createNFT,
@@ -30,6 +31,8 @@ extension TransactionViewTypeExtension on TransactionViewType {
         return 'Sent';
       case TransactionViewType.fee:
         return 'Transaction Fee';
+      case TransactionViewType.assetTransaction:
+        return 'Asset Transaction';
       case TransactionViewType.create:
         return 'Asset Creation';
       case TransactionViewType.burn:

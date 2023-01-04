@@ -87,6 +87,7 @@ List<server.TransactionView> spoofTransactionView() {
         // send transaction
         symbol: null,
         chain: null,
+        containsAssets: false,
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
@@ -110,6 +111,7 @@ List<server.TransactionView> spoofTransactionView() {
         // send transaction
         symbol: null,
         chain: null,
+        containsAssets: false,
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
@@ -133,6 +135,7 @@ List<server.TransactionView> spoofTransactionView() {
         // send transaction
         symbol: null,
         chain: null,
+        containsAssets: false,
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
@@ -157,6 +160,7 @@ List<server.TransactionView> spoofTransactionView() {
         // receive
         symbol: null,
         chain: null,
+        containsAssets: false,
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
@@ -180,6 +184,7 @@ List<server.TransactionView> spoofTransactionView() {
         // sent to self
         symbol: null,
         chain: null,
+        containsAssets: false,
         hash: ByteData(0),
         datetime: DateTime.now(),
         height: 0,
@@ -203,6 +208,7 @@ List<server.TransactionView> spoofTransactionView() {
         // asset creation
         symbol: null,
         chain: null,
+        containsAssets: false,
         hash: ByteData(1),
         datetime: DateTime.now(),
         height: 1,
