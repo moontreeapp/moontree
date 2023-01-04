@@ -94,9 +94,15 @@ class _TransactionPageState extends State<TransactionPage> {
         final burned = transactionView!.burnBurned;
         return burned > 0 ? '$burned' : '';
       case 'Incoming':
-        return '${transactionView!.iReceived.asCoin.toSatsCommaString()} ${transactionView!.symbol}';
+        final incoming = transactionView!.iReceived;
+        return incoming > 0
+            ? '${incoming.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Outgoing':
-        return '${transactionView!.iProvided.asCoin.toSatsCommaString()} ${transactionView!.symbol}';
+        final outgoing = transactionView!.iProvided;
+        return outgoing > 0
+            ? '${outgoing.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'ID':
         return transactionView!.readableHash.cutOutMiddle();
       case 'Memo/IPFS':
@@ -110,12 +116,28 @@ class _TransactionPageState extends State<TransactionPage> {
           }
           return txMemo;
         }(humanName);
+      case 'Memo':
+        return (String humanName) {
+          final String txMemo = transactionMemo ?? '';
+          if (txMemo.isIpfs) {
+            return txMemo.cutOutMiddle();
+          }
+          if (txMemo.length > 30) {
+            return txMemo.cutOutMiddle(length: 12);
+          }
+          return txMemo;
+        }(humanName);
       case 'Note':
         return transactionView!.note ?? '';
-      case 'Fee':
-        return transactionView!.fee > 0
+      case 'Transaction Fee':
+        // don't show tx fee if I didn't possibly pay it.
+        return transactionView!.fee > 0 && transactionView!.outgoing
             ? '${transactionView!.fee.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
-            : 'calculating...';
+            : '';
+      case 'Total':
+        return transactionView!.iValue > 0
+            ? '${transactionView!.iValue.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
+            : '${transactionView!.fee.asCoin.toSatsCommaString()} ${pros.securities.currentCoin.symbol}';
       default:
         return 'unknown';
     }
@@ -136,6 +158,8 @@ class _TransactionPageState extends State<TransactionPage> {
     switch (humanName) {
       case 'ID':
         return transactionView!.readableHash;
+      case 'Memo':
+        return transactionMemo ?? '';
       case 'Memo/IPFS':
         return transactionMemo ?? '';
       case 'Note':
@@ -192,50 +216,54 @@ class _TransactionPageState extends State<TransactionPage> {
               Text(element(text), style: Theme.of(context).textTheme.link));
 
   Widget detailsBody() => ListView(
-        padding: const EdgeInsets.only(top: 8, bottom: 112),
-        children: <Widget>[
-              for (String text in <String>[
-                'Date',
-                'Confirmations',
-                'Type',
-                'Fee',
-                'Incoming',
-                'Outgoing',
-                'Create Asset Fee',
-                'Reissue Fee',
-                'Create Sub-Asset Fee',
-                'Create NFT Fee',
-                'Create Message Fee',
-                'Create Qualifier Fee',
-                'Create Sub-Qualifier Fee',
-                'Create Restricted Fee',
-                'Tag Fee',
-                'Burned',
-              ])
-                if (element(text) != '' && element(text) != 'calculating...')
-                  plain(text, element(text))
-            ] +
-            <Widget>[
-              link(
-                title: 'Transaction Info',
-                text: 'ID',
-                url:
-                    'https://${pros.settings.chain.symbol}${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
-                description: 'info',
-              ),
-              if (transactionMemo != null)
-                transactionMemo!.isIpfs
-                    ? link(
-                        title: 'IPFS',
-                        text: 'Memo/IPFS',
-                        url: 'https://gateway.ipfs.io/ipfs/',
-                        description: 'data',
-                      )
-                    : plain('Memo/IPFS', element('Memo/IPFS')),
-            ] +
-            (transactionView!.note == null || transactionView!.note == ''
-                ? <Widget>[]
-                : <Widget>[plain('Note', element('Note'))]),
+      padding: const EdgeInsets.only(top: 8, bottom: 112),
+      children: <Widget>[
+            link(
+              title: 'Transaction Info',
+              text: 'ID',
+              url:
+                  'https://${pros.settings.chain.symbol}${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
+              description: 'info',
+            ),
+            if (transactionMemo != null)
+              transactionMemo!.isIpfs
+                  ? link(
+                      title: 'IPFS',
+                      text: 'Memo/IPFS',
+                      url: 'https://gateway.ipfs.io/ipfs/',
+                      description: 'data',
+                    )
+                  : plain('Memo/IPFS', element('Memo/IPFS')),
+          ] +
+          <Widget>[
+            for (String text in <String>[
+              'Date',
+              'Confirmations',
+              'Type',
+              'Note',
+              'Memo',
+              'Incoming',
+              'Outgoing',
+              'Transaction Fee',
+              'Create Asset Fee',
+              'Create Sub-Asset Fee',
+              'Create NFT Fee',
+              'Create Message Fee',
+              'Create Qualifier Fee',
+              'Create Sub-Qualifier Fee',
+              'Create Restricted Fee',
+              'Reissue Fee',
+              'Burned',
+              'Tag Fee',
+              'Total'
+            ])
+              if (element(text) != '' && element(text) != 'calculating...')
+                plain(text, element(text))
+          ]
+      // +
+      //(transactionView!.note == null || transactionView!.note == ''
+      //    ? <Widget>[]
+      //    : <Widget>[plain('Note', element('Note'))]),
       );
 
   int? getBlocksBetweenHelper({Block? current}) {

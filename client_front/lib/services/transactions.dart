@@ -60,16 +60,16 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   final List<server.TransactionView> history =
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofTransactionView);
+      //await Future.delayed(Duration(seconds: 1), spoofTransactionView);
 
-  /// SERVER
-  //await transactionHistory.transactionHistoryBy(
-  //    symbol: serverSymbol,
-  //    chain: ChainNet(chain, net).chaindata,
-  //    roots: roots,
-  //    h160s: roots.isEmpty
-  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
-  //        : []);
+      /// SERVER
+      await transactionHistory.transactionHistoryBy(
+          symbol: serverSymbol,
+          chain: ChainNet(chain, net).chaindata,
+          roots: roots,
+          h160s: roots.isEmpty
+              ? Current.wallet.addresses.map((e) => e.h160).toList()
+              : []);
 
   print(symbol);
   print(serverSymbol);
@@ -83,6 +83,29 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
 
 List<server.TransactionView> spoofTransactionView() {
   final views = <server.TransactionView>[
+    server.TransactionView(
+        // send transaction
+        symbol: null,
+        chain: null,
+        hash: ByteData(0),
+        datetime: DateTime.now(),
+        height: 0,
+        fee: 500000,
+        vsize: 100,
+        iProvided: 27 * satsPerCoin,
+        //otherProvided: 4 * satsPerCoin,
+        iReceived: 2699500000,
+        //otherReceived: 10 * satsPerCoin,
+        issueMainBurned: 0,
+        reissueBurned: 0,
+        issueSubBurned: 0,
+        issueUniqueBurned: 0,
+        issueMessageBurned: 0,
+        issueQualifierBurned: 0,
+        issueSubQualifierBurned: 0,
+        issueRestrictedBurned: 0,
+        addTagBurned: 0,
+        burnBurned: 0),
     server.TransactionView(
         // send transaction
         symbol: null,

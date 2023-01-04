@@ -48,8 +48,11 @@ extension TransactionViewMethods on TransactionView {
 
   //int get relativeValue =>
   //    type == TransactionViewType.self ? iProvided : (iValue - iFee);
-  int get relativeValue =>
-      type == TransactionViewType.self ? iReceived : iValue;
+  //int get relativeValue =>
+  //    type == TransactionViewType.self ? iReceived : iValue;
+  /// just the total that went away or came in
+  int get totalValue => outgoing ? iProvided : iReceived;
+  int get iValueTotal => type == TransactionViewType.self ? iProvided : iValue;
 
   bool get sentToSelf => iProvided == iReceived + (isCoin ? fee : 0);
 

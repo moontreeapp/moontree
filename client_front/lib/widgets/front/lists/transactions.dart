@@ -121,17 +121,18 @@ class _TransactionListState extends State<TransactionList> {
                   ),
                 const SizedBox(height: 80),
               ])
-        : transactions.isEmpty
-            //? components.empty.transactions(context, msg: widget.msg)
-            ? components.empty.getTransactionsPlaceholder(context,
-                scrollController: widget.scrollController!,
-                count: transactionCount == 0 ? 1 : min(10, transactionCount))
-            : Container(
-                alignment: Alignment.center,
-                child: RefreshIndicator(
-                  child: _transactionsView(context),
-                  onRefresh: () => refresh(),
-                ));
+        : RefreshIndicator(
+            onRefresh: () => refresh(),
+            child: transactions.isEmpty
+                //? components.empty.transactions(context, msg: widget.msg)
+                ? components.empty.getTransactionsPlaceholder(context,
+                    scrollController: widget.scrollController!,
+                    count:
+                        transactionCount == 0 ? 1 : min(10, transactionCount))
+                : Container(
+                    alignment: Alignment.center,
+                    child: _transactionsView(context),
+                  ));
   }
 
   ListView _transactionsView(BuildContext context) => ListView(
@@ -170,7 +171,7 @@ class _TransactionListState extends State<TransactionList> {
                               children: <Widget>[
                                 Text(
                                     services.conversion.securityAsReadable(
-                                        transactionView.relativeValue,
+                                        transactionView.iValueTotal,
                                         security: transactionView.security,
                                         asUSD: showUSD),
                                     style:
@@ -182,7 +183,7 @@ class _TransactionListState extends State<TransactionList> {
                                         .bodyText2!
                                         .copyWith(color: AppColors.black60)),
                               ]),
-                          trailing: transactionView.relativeValue == 0
+                          trailing: transactionView.onlyFee
                               ? components.icons.fee(context)
                               : (transactionView.outgoing
                                   ? components.icons.out(context)
