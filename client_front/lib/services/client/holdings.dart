@@ -38,7 +38,6 @@ Future<List<server.BalanceView>> discoverHoldingBalances({
   Chain? chain,
   Net? net,
 }) async {
-  final HoldingBalances holdingBalances = HoldingBalances();
   chain ??= Current.chain;
   net ??= Current.net;
   List<String>? roots;
@@ -54,7 +53,7 @@ Future<List<server.BalanceView>> discoverHoldingBalances({
       //await Future.delayed(Duration(seconds: 1), spoofBalanceView);
 
       /// SERVER
-      await holdingBalances.holdingBalancesBy(
+      await HoldingBalances().holdingBalancesBy(
           chain: ChainNet(chain, net).chaindata,
           roots: roots,
           h160s: roots.isEmpty

@@ -38,7 +38,6 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   String? symbol,
   Security? security,
 }) async {
-  final TransactionHistory transactionHistory = TransactionHistory();
   Chain chain = security?.chain ?? Current.chain;
   Net net = security?.net ?? Current.net;
   final String? serverSymbol = ((security?.isCoin ?? true) &&
@@ -63,7 +62,7 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
       //await Future.delayed(Duration(seconds: 1), spoofTransactionView);
 
       /// SERVER
-      await transactionHistory.transactionHistoryBy(
+      await TransactionHistory().transactionHistoryBy(
           symbol: serverSymbol,
           chain: ChainNet(chain, net).chaindata,
           roots: roots,

@@ -8,11 +8,41 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'comm_balance_view.dart' as _i3;
-import 'dart:typed_data' as _i4;
-import 'comm_transaction_view.dart' as _i5;
-import 'dart:io' as _i6;
-import 'protocol.dart' as _i7;
+import 'asset_metadata_class.dart' as _i3;
+import 'comm_balance_view.dart' as _i4;
+import 'dart:typed_data' as _i5;
+import 'comm_transaction_view.dart' as _i6;
+import 'dart:io' as _i7;
+import 'protocol.dart' as _i8;
+
+class _EndpointMetadata extends _i1.EndpointRef {
+  _EndpointMetadata(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'metadata';
+
+  /// generateMetadata returns a empty list or a list with one item in it so why
+  /// are we passing a list back here when we could just pass AssetMetadata or
+  /// null? Because of the height variable (which is basically ignored at the
+  /// moment). In the future we may want to the history of changes of asset
+  /// metadata, so we're set up to easily pivot to that scenario. Furthermore,
+  /// most the other endpoints return lists so the front end is used to it.
+  /// Of course maybe we'd just make a different endpoint for history, but idk.
+  _i2.Future<List<_i3.AssetMetadata>> get({
+    required String symbol,
+    required String chain,
+    int? height,
+  }) =>
+      caller.callServerEndpoint<List<_i3.AssetMetadata>>(
+        'metadata',
+        'get',
+        {
+          'symbol': symbol,
+          'chain': chain,
+          'height': height,
+        },
+      );
+}
 
 class _EndpointBalances extends _i1.EndpointRef {
   _EndpointBalances(_i1.EndpointCaller caller) : super(caller);
@@ -20,12 +50,12 @@ class _EndpointBalances extends _i1.EndpointRef {
   @override
   String get name => 'balances';
 
-  _i2.Future<List<_i3.BalanceView>> get({
+  _i2.Future<List<_i4.BalanceView>> get({
     required String chain,
     required List<String> xpubkeys,
-    required List<_i4.ByteData> h160s,
+    required List<_i5.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i3.BalanceView>>(
+      caller.callServerEndpoint<List<_i4.BalanceView>>(
         'balances',
         'get',
         {
@@ -117,13 +147,13 @@ class _EndpointTransactions extends _i1.EndpointRef {
   @override
   String get name => 'transactions';
 
-  _i2.Future<List<_i5.TransactionView>> get({
+  _i2.Future<List<_i6.TransactionView>> get({
     String? symbol,
     required String chain,
     required List<String> xpubkeys,
-    required List<_i4.ByteData> h160s,
+    required List<_i5.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i5.TransactionView>>(
+      caller.callServerEndpoint<List<_i6.TransactionView>>(
         'transactions',
         'get',
         {
@@ -138,14 +168,15 @@ class _EndpointTransactions extends _i1.EndpointRef {
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i6.SecurityContext? context,
+    _i7.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i7.Protocol(),
+          _i8.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {
+    metadata = _EndpointMetadata(this);
     balances = _EndpointBalances(this);
     consent = _EndpointConsent(this);
     hasGiven = _EndpointHasGiven(this);
@@ -153,6 +184,8 @@ class Client extends _i1.ServerpodClient {
     example = _EndpointExample(this);
     transactions = _EndpointTransactions(this);
   }
+
+  late final _EndpointMetadata metadata;
 
   late final _EndpointBalances balances;
 
@@ -168,6 +201,7 @@ class Client extends _i1.ServerpodClient {
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
+        'metadata': metadata,
         'balances': balances,
         'consent': consent,
         'hasGiven': hasGiven,
