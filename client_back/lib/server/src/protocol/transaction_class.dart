@@ -16,6 +16,7 @@ class BlockchainTransaction extends _i1.SerializableEntity {
     required this.height,
     required this.size,
     required this.vsize,
+    required this.fee,
     required this.chainId,
     this.opReturnId,
   });
@@ -32,6 +33,7 @@ class BlockchainTransaction extends _i1.SerializableEntity {
           serializationManager.deserialize<int>(jsonSerialization['height']),
       size: serializationManager.deserialize<int>(jsonSerialization['size']),
       vsize: serializationManager.deserialize<int>(jsonSerialization['vsize']),
+      fee: serializationManager.deserialize<int>(jsonSerialization['fee']),
       chainId:
           serializationManager.deserialize<int>(jsonSerialization['chainId']),
       opReturnId: serializationManager
@@ -49,6 +51,8 @@ class BlockchainTransaction extends _i1.SerializableEntity {
 
   int vsize;
 
+  int fee;
+
   int chainId;
 
   int? opReturnId;
@@ -61,6 +65,7 @@ class BlockchainTransaction extends _i1.SerializableEntity {
       'height': height,
       'size': size,
       'vsize': vsize,
+      'fee': fee,
       'chainId': chainId,
       'opReturnId': opReturnId,
     };

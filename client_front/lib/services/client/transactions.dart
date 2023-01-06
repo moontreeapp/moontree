@@ -71,8 +71,6 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
               ? Current.wallet.addresses.map((e) => e.h160).toList()
               : []);
 
-  print(symbol);
-  print(serverSymbol);
   for (final txView in history) {
     txView.chain = chain.name + '_' + net.name + 'net';
     txView.symbol = symbol;

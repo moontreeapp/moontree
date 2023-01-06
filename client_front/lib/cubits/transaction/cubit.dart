@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
-import 'package:client_front/services/transactions.dart';
+import 'package:client_front/services/client/transactions.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show AmountToSatsExtension, FeeRate, standardFee;

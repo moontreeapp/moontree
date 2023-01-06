@@ -9,7 +9,7 @@ import 'package:client_back/services/transaction/transaction.dart';
 import 'package:client_front/components/components.dart';
 import 'package:client_front/cubits/cubits.dart';
 import 'package:client_front/services/lookup.dart';
-import 'package:client_front/services/transactions.dart';
+import 'package:client_front/services/client/transactions.dart';
 import 'package:client_front/theme/theme.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';

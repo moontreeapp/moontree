@@ -13,6 +13,7 @@ class Vout extends _i1.SerializableEntity {
   Vout({
     this.id,
     required this.transactionId,
+    required this.chainId,
     this.assetId,
     this.h160Id,
     required this.idx,
@@ -33,6 +34,8 @@ class Vout extends _i1.SerializableEntity {
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
       transactionId: serializationManager
           .deserialize<int>(jsonSerialization['transactionId']),
+      chainId:
+          serializationManager.deserialize<int>(jsonSerialization['chainId']),
       assetId:
           serializationManager.deserialize<int?>(jsonSerialization['assetId']),
       h160Id:
@@ -57,6 +60,8 @@ class Vout extends _i1.SerializableEntity {
   int? id;
 
   int transactionId;
+
+  int chainId;
 
   int? assetId;
 
@@ -83,6 +88,7 @@ class Vout extends _i1.SerializableEntity {
     return {
       'id': id,
       'transactionId': transactionId,
+      'chainId': chainId,
       'assetId': assetId,
       'h160Id': h160Id,
       'idx': idx,
