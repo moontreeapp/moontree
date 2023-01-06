@@ -65,34 +65,54 @@ class _TransactionPageState extends State<TransactionPage> {
         return transactionView!.type.display;
       case 'Create Asset Fee':
         final burned = transactionView!.issueMainBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Reissue Fee':
         final burned = transactionView!.reissueBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Create Sub-Asset Fee':
         final burned = transactionView!.issueSubBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Create NFT Fee':
         final burned = transactionView!.issueUniqueBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Create Message Fee':
         final burned = transactionView!.issueMessageBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Create Qualifier Fee':
         final burned = transactionView!.issueQualifierBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Create Sub-Qualifier Fee':
         final burned = transactionView!.issueSubQualifierBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Create Restricted Fee':
         final burned = transactionView!.issueRestrictedBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Tag Fee':
         final burned = transactionView!.addTagBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Burned':
         final burned = transactionView!.burnBurned;
-        return burned > 0 ? '$burned' : '';
+        return burned > 0
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            : '';
       case 'Incoming':
         final incoming = transactionView!.iReceived;
         return incoming > 0
