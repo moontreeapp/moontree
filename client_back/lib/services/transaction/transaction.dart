@@ -59,8 +59,10 @@ extension TransactionViewMethods on TransactionView {
   /// particular inputs we used, not what we specified to send, but at least
   /// it's a number rather than 0, and this is an edge case where nobody but us
   /// testers will be sending assets to addresses they already own...
-  int get iValueTotal =>
-      type == TransactionViewType.self && !isCoin ? iReceived : iValue;
+  //int get iValueTotal =>
+  //    type == TransactionViewType.self && !isCoin ? iReceived : iValue;
+  /// actually, we should just show the total in any case to remain consistent.
+  int get iValueTotal => iValue;
 
   bool get sentToSelf => iProvided == iReceived + (isCoin ? fee : 0);
 

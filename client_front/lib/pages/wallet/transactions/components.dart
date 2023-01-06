@@ -1,6 +1,8 @@
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/services/transaction/transaction.dart';
 import 'package:client_front/cubits/cubits.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
@@ -15,6 +17,8 @@ import 'package:client_front/widgets/back/coinspec/tabs.dart';
 import 'package:client_front/widgets/backdrop/curve.dart';
 import 'package:client_front/widgets/bottom/navbar.dart';
 import 'package:client_front/widgets/front/lists/transactions.dart';
+import 'package:moontree_utils/extensions/bytedata.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class MetaDataWidget extends StatelessWidget {
   const MetaDataWidget(this.cacheView, {Key? key}) : super(key: key);
@@ -199,56 +203,91 @@ class MetadataView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Asset securityAsset = cubit.state.security.asset!;
+    //final Asset securityAsset = cubit.state.security.asset!;
+    final AssetMetadata? securityAsset = cubit.state.metadataView;
 
-    List<Widget> chilren = <Widget>[];
-    if (securityAsset.primaryMetadata == null &&
-        securityAsset.hasData &&
-        securityAsset.data!.isIpfs) {
-      final double height =
-          (cubit.state.scrollObserver.value.ofMediaHeight(context) + 32) / 2;
-      return Container(
-        alignment: Alignment.topCenter,
-        height: height,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: components.buttons.actionButtonSoft(
-            context,
-            label: 'View Data',
-            onPressed: () => components.message.giveChoices(
-              context,
-              title: 'View Data',
-              content: 'View data in external browser?',
-              behaviors: <String, void Function()>{
-                'CANCEL': Navigator.of(context).pop,
-                'BROWSER': () {
-                  Navigator.of(context).pop();
-                  launchUrl(Uri.parse(
-                      'https://ipfs.io/ipfs/${securityAsset.metadata}'));
-                },
-              },
+    List<Widget> children = <Widget>[];
+    //if (securityAsset.primaryMetadata == null &&
+    //    securityAsset.hasData &&
+    //    securityAsset.data!.isIpfs) {
+    if (securityAsset != null) {
+      if (securityAsset.associatedData != null) {
+        if (securityAsset.associatedData!.toHex().isIpfs) {
+          return Container(
+            alignment: Alignment.topCenter,
+            height:
+                (cubit.state.scrollObserver.value.ofMediaHeight(context) + 32) /
+                    2,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: components.buttons.actionButtonSoft(
+                context,
+                label: 'View Data',
+                onPressed: () => components.message.giveChoices(
+                  context,
+                  title: 'View Data',
+                  content: 'View data in external browser?',
+                  behaviors: <String, void Function()>{
+                    'CANCEL': Navigator.of(context).pop,
+                    'BROWSER': () {
+                      Navigator.of(context).pop();
+                      launchUrl(Uri.parse(
+                          'https://ipfs.io/ipfs/${securityAsset.associatedData!.toHex()}'));
+                    },
+                  },
+                ),
+              ),
             ),
+          );
+        } else {
+          // not ipfs - show whatever it is. todo: handle image etc here.
+          children = <Widget>[
+            SelectableText(securityAsset.associatedData!.toHex())
+          ];
+        }
+      } else {
+        // no associated data - show details
+        children = <Widget>[
+          ListTile(
+            title: Text('Total Supply:'),
+            trailing: SelectableText(securityAsset.totalSupply.toCommaString()),
           ),
-        ),
-      );
-    } else if (securityAsset.primaryMetadata == null) {
-      chilren = <Widget>[SelectableText(securityAsset.metadata)];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.imagePath) {
-      chilren = <Widget>[
-        Image.file(AssetLogos()
-            .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
-      ];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.jsonString) {
-      chilren = <Widget>[
-        SelectableText(securityAsset.primaryMetadata!.data ?? '')
-      ];
-    } else if (securityAsset.primaryMetadata!.kind == MetadataType.unknown) {
-      chilren = <Widget>[
-        SelectableText(securityAsset.primaryMetadata!.metadata),
-        SelectableText(securityAsset.primaryMetadata!.data ?? '')
-      ];
+          ListTile(
+            title: Text('Divisibility:'),
+            trailing: SelectableText('${securityAsset.divisibility}'),
+          ),
+          ListTile(
+            title: Text('Reissuable:'),
+            trailing:
+                SelectableText('${securityAsset.reissuable ? 'yes' : 'no'}'),
+          ),
+          ListTile(
+            title: Text('Frozen:'),
+            trailing: SelectableText('${securityAsset.frozen ? 'yes' : 'no'}'),
+          ),
+        ];
+      }
+    } else {
+      // asset metadata not found
     }
-    return ListView(padding: const EdgeInsets.all(10.0), children: chilren);
+    //} else if (securityAsset.primaryMetadata == null) {
+    //children = <Widget>[SelectableText(securityAsset.metadata)];
+    //} else if (securityAsset.primaryMetadata!.kind == MetadataType.imagePath) {
+    //  children = <Widget>[
+    //    Image.file(AssetLogos()
+    //        .readImageFileNow(securityAsset.primaryMetadata!.data ?? ''))
+    //  ];
+    //} else if (securityAsset.primaryMetadata!.kind == MetadataType.jsonString) {
+    //  children = <Widget>[
+    //    SelectableText(securityAsset.primaryMetadata!.data ?? '')
+    //  ];
+    //} else if (securityAsset.primaryMetadata!.kind == MetadataType.unknown) {
+    //  children = <Widget>[
+    //    SelectableText(securityAsset.primaryMetadata!.metadata),
+    //    SelectableText(securityAsset.primaryMetadata!.data ?? '')
+    //  ];
+    //}
+    return ListView(padding: const EdgeInsets.all(10.0), children: children);
   }
 }
 

@@ -8,11 +8,7 @@ import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:client_back/services/transaction/transaction.dart';
 import 'package:client_front/components/components.dart';
 import 'package:client_front/cubits/cubits.dart';
-import 'package:client_front/services/lookup.dart';
-import 'package:client_front/services/client/transactions.dart';
 import 'package:client_front/theme/theme.dart';
-import 'package:moontree_utils/moontree_utils.dart';
-import 'package:wallet_utils/wallet_utils.dart';
 
 class TransactionList extends StatefulWidget {
   final TransactionsViewCubit? cubit;
@@ -187,9 +183,12 @@ class _TransactionListState extends State<TransactionList> {
                               ]),
                           trailing: transactionView.onlyFee
                               ? components.icons.fee(context)
-                              : (transactionView.outgoing
-                                  ? components.icons.out(context)
-                                  : components.icons.income(context)),
+                              : (transactionView.sentToSelf &&
+                                      !transactionView.isCoin
+                                  ? components.icons.outIn(context)
+                                  : (transactionView.outgoing
+                                      ? components.icons.out(context)
+                                      : components.icons.income(context))),
                         ),
                         const Divider(indent: 16),
                       ]

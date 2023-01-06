@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_front/services/lookup.dart';
@@ -34,6 +32,31 @@ Future<List<server.AssetMetadata>> discoverAssetMetadataHistory({
   Chain chain = security?.chain ?? Current.chain;
   Net net = security?.net ?? Current.net;
   symbol ??= security?.symbol ?? pros.securities.coinOf(chain, net).symbol;
+  if (symbol == pros.securities.coinOf(chain, net).symbol) {
+    switch (symbol) {
+      case 'EVR':
+        return [
+          server.AssetMetadata(
+            reissuable: false,
+            totalSupply: coinsPerChain,
+            divisibility: 8,
+            frozen: false,
+            voutId: 0,
+          )
+        ];
+      default:
+        //case 'RVN':
+        return [
+          server.AssetMetadata(
+            reissuable: false,
+            totalSupply: coinsPerChain,
+            divisibility: 8,
+            frozen: false,
+            voutId: 0,
+          )
+        ];
+    }
+  }
   final List<server.AssetMetadata> history =
 
       /// MOCK SERVER

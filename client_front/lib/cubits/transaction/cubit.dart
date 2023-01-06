@@ -1,4 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
+import 'package:client_front/services/client/asset_metadata.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:client_front/services/client/transactions.dart';
@@ -7,7 +10,6 @@ import 'package:wallet_utils/wallet_utils.dart'
     show AmountToSatsExtension, FeeRate, standardFee;
 import 'package:client_back/client_back.dart';
 import 'package:client_front/cubits/parents.dart';
-
 part 'state.dart';
 
 /// show shimmer while retrieving list of transactions
@@ -31,6 +33,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   @override
   void set({
     List<TransactionView>? transactionViews,
+    AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
     Wallet? ranWallet,
@@ -40,6 +43,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     emit(submitting());
     emit(state.load(
       transactionViews: transactionViews,
+      metadataView: metadataView,
       wallet: wallet,
       security: security,
       ranWallet: ranWallet,
@@ -61,6 +65,11 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
               wallet: state.wallet,
               security: state.security,
             ),
+            metadataView: (await discoverAssetMetadataHistory(
+              wallet: state.wallet,
+              security: state.security,
+            ))
+                .firstOrNull,
             ranWallet: state.wallet,
             ranSecurity: state.security,
             isSubmitting: false,
@@ -69,9 +78,13 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       : () {}();
 
   bool get nullCacheView {
-    final Asset? securityAsset = state.security.asset;
-    return securityAsset == null || securityAsset.hasMetadata == false;
+    //final Asset? securityAsset = state.security.asset;
+    final AssetMetadata? securityAsset = state.metadataView;
+    return securityAsset == null;
   }
 
-  void clearCache() => set(transactionViews: <TransactionView>[]);
+  void clearCache() => set(
+        transactionViews: <TransactionView>[],
+        metadataView: null,
+      );
 }

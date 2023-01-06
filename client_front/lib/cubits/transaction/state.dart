@@ -3,9 +3,9 @@ part of 'cubit.dart';
 @immutable
 class TransactionsViewState extends CubitState {
   final List<TransactionView> transactionViews;
+  final AssetMetadata? metadataView;
   final Wallet wallet;
   final Security security;
-  // I don't think you can pub this here... it would recreate it every time...
   final BehaviorSubject<double> scrollObserver;
   final BehaviorSubject<String> currentTab;
   final bool isSubmitting;
@@ -18,6 +18,7 @@ class TransactionsViewState extends CubitState {
 
   const TransactionsViewState({
     required this.transactionViews,
+    required this.metadataView,
     required this.scrollObserver,
     required this.currentTab,
     required this.wallet,
@@ -34,13 +35,15 @@ class TransactionsViewState extends CubitState {
   }
 
   @override
-  String toString() => 'TransactionsView(transactionViews=$transactionViews, '
+  String toString() => 'TransactionsView( '
+      'transactionViews=$transactionViews, metadataView=$metadataView, '
       'wallet=$wallet, security=$security, ranWallet=$ranWallet, '
       'ranSecurity=$ranSecurity, isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
         transactionViews,
+        metadataView,
         wallet,
         security,
         ranWallet,
@@ -50,6 +53,7 @@ class TransactionsViewState extends CubitState {
 
   factory TransactionsViewState.initial() => TransactionsViewState(
       transactionViews: [],
+      metadataView: null,
       scrollObserver: BehaviorSubject<double>.seeded(.7),
       currentTab: BehaviorSubject<String>.seeded('HISTORY'),
       wallet: pros.wallets.currentWallet,
@@ -60,6 +64,7 @@ class TransactionsViewState extends CubitState {
 
   TransactionsViewState load({
     List<TransactionView>? transactionViews,
+    AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
     Wallet? ranWallet,
@@ -67,8 +72,9 @@ class TransactionsViewState extends CubitState {
     bool? isSubmitting,
   }) =>
       TransactionsViewState.load(
-        form: this,
+        state: this,
         transactionViews: transactionViews,
+        metadataView: metadataView,
         wallet: wallet,
         security: security,
         ranWallet: ranWallet,
@@ -77,8 +83,9 @@ class TransactionsViewState extends CubitState {
       );
 
   factory TransactionsViewState.load({
-    required TransactionsViewState form,
+    required TransactionsViewState state,
     List<TransactionView>? transactionViews,
+    AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
     Wallet? ranWallet,
@@ -86,13 +93,14 @@ class TransactionsViewState extends CubitState {
     bool? isSubmitting,
   }) =>
       TransactionsViewState(
-        transactionViews: transactionViews ?? form.transactionViews,
-        wallet: wallet ?? form.wallet,
-        security: security ?? form.security,
-        ranWallet: ranWallet ?? form.ranWallet,
-        ranSecurity: ranSecurity ?? form.ranSecurity,
-        isSubmitting: isSubmitting ?? form.isSubmitting,
-        scrollObserver: form.scrollObserver,
-        currentTab: form.currentTab,
+        transactionViews: transactionViews ?? state.transactionViews,
+        metadataView: metadataView ?? state.metadataView,
+        wallet: wallet ?? state.wallet,
+        security: security ?? state.security,
+        ranWallet: ranWallet ?? state.ranWallet,
+        ranSecurity: ranSecurity ?? state.ranSecurity,
+        isSubmitting: isSubmitting ?? state.isSubmitting,
+        scrollObserver: state.scrollObserver,
+        currentTab: state.currentTab,
       );
 }
