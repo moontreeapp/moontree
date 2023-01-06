@@ -36,6 +36,68 @@ class _EndpointBalances extends _i1.EndpointRef {
       );
 }
 
+class _EndpointConsent extends _i1.EndpointRef {
+  _EndpointConsent(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'consent';
+
+  _i2.Future<String> given(
+    String deviceId,
+    String documentName,
+  ) =>
+      caller.callServerEndpoint<String>(
+        'consent',
+        'given',
+        {
+          'deviceId': deviceId,
+          'documentName': documentName,
+        },
+      );
+}
+
+class _EndpointHasGiven extends _i1.EndpointRef {
+  _EndpointHasGiven(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'hasGiven';
+
+  _i2.Future<bool> consent(
+    String deviceId,
+    String documentName,
+  ) =>
+      caller.callServerEndpoint<bool>(
+        'hasGiven',
+        'consent',
+        {
+          'deviceId': deviceId,
+          'documentName': documentName,
+        },
+      );
+}
+
+class _EndpointDocument extends _i1.EndpointRef {
+  _EndpointDocument(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'document';
+
+  _i2.Future<String> upload(
+    String document,
+    String documentName,
+    String? documentVersion,
+  ) =>
+      caller.callServerEndpoint<String>(
+        'document',
+        'upload',
+        {
+          'document': document,
+          'documentName': documentName,
+          'documentVersion': documentVersion,
+        },
+      );
+}
+
 class _EndpointExample extends _i1.EndpointRef {
   _EndpointExample(_i1.EndpointCaller caller) : super(caller);
 
@@ -85,11 +147,20 @@ class Client extends _i1.ServerpodClient {
           authenticationKeyManager: authenticationKeyManager,
         ) {
     balances = _EndpointBalances(this);
+    consent = _EndpointConsent(this);
+    hasGiven = _EndpointHasGiven(this);
+    document = _EndpointDocument(this);
     example = _EndpointExample(this);
     transactions = _EndpointTransactions(this);
   }
 
   late final _EndpointBalances balances;
+
+  late final _EndpointConsent consent;
+
+  late final _EndpointHasGiven hasGiven;
+
+  late final _EndpointDocument document;
 
   late final _EndpointExample example;
 
@@ -98,6 +169,9 @@ class Client extends _i1.ServerpodClient {
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
         'balances': balances,
+        'consent': consent,
+        'hasGiven': hasGiven,
+        'document': document,
         'example': example,
         'transactions': transactions,
       };
