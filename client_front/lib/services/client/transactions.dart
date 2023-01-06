@@ -60,16 +60,16 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   final List<server.TransactionView> history =
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofTransactionView);
+      //await Future.delayed(Duration(seconds: 1), spoofTransactionView);
 
-  /// SERVER
-  //await transactionHistory.transactionHistoryBy(
-  //    symbol: serverSymbol,
-  //    chain: ChainNet(chain, net).chaindata,
-  //    roots: roots,
-  //    h160s: roots.isEmpty
-  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
-  //        : []);
+      /// SERVER
+      await transactionHistory.transactionHistoryBy(
+          symbol: serverSymbol,
+          chain: ChainNet(chain, net).chaindata,
+          roots: roots,
+          h160s: roots.isEmpty
+              ? Current.wallet.addresses.map((e) => e.h160).toList()
+              : []);
 
   for (final txView in history) {
     txView.chain = chain.name + '_' + net.name + 'net';
