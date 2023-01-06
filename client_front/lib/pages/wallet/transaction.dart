@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
+import 'package:client_front/cubits/cubits.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:client_back/records/types/transaction_view.dart';
@@ -19,14 +21,14 @@ class TransactionPage extends StatefulWidget {
   const TransactionPage({Key? key}) : super(key: key);
 
   @override
-  _TransactionPageState createState() => _TransactionPageState();
+  TransactionPageState createState() => TransactionPageState();
 }
 
-class _TransactionPageState extends State<TransactionPage> {
+class TransactionPageState extends State<TransactionPage> {
   Map<String, dynamic> data = <String, dynamic>{};
   Address? address;
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
-  TransactionView? transactionView;
+  late TransactionView transactionView;
 
   @override
   void initState() {
@@ -46,101 +48,144 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final TransactionViewCubit cubit =
+        flutter_bloc.BlocProvider.of<TransactionViewCubit>(context);
     data = populateData(context, data);
-    transactionView = data['transactionView'] as TransactionView?;
+    transactionView = data['transactionView']! as TransactionView;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
-    return BackdropLayers(
-      back: const BlankBack(),
-      front: FrontCurve(child: detailsBody()),
+    cubit.setTransactionViews(hash: transactionView.hash);
+    return TransactionPageContent(
+      cubit: cubit,
+      transactionView: transactionView,
+      parent: this,
     );
   }
 
-  String element(String humanName) {
+  void callSetState(VoidCallback f) {
+    setState(() {
+      f();
+    });
+  }
+}
+
+class TransactionPageContent extends StatelessWidget {
+  final TransactionViewCubit cubit;
+  final TransactionView transactionView;
+  final TransactionPageState parent;
+
+  const TransactionPageContent({
+    Key? key,
+    required this.cubit,
+    required this.transactionView,
+    required this.parent,
+  }) : super(key: key);
+
+  Future<void> refresh() async {
+    parent.callSetState(() {
+      cubit.setTransactionViews(hash: transactionView.hash, force: true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TransactionViewCubit cubit =
+        flutter_bloc.BlocProvider.of<TransactionViewCubit>(context);
+    //address = addresses.primaryIndex.getOne(transaction!.addresses);
+
+    cubit.setTransactionViews(hash: transactionView.hash);
+    return flutter_bloc.BlocBuilder<TransactionViewCubit, TransactionViewState>(
+        bloc: cubit..enter(),
+        builder: (BuildContext context, TransactionViewState state) {
+          return BackdropLayers(
+            back: const BlankBack(),
+            front: FrontCurve(child: detailsBody(cubit, context)),
+          );
+        });
+  }
+
+  String element(String humanName, TransactionViewCubit cubit) {
     switch (humanName) {
       case 'Date':
         return getDateBetweenHelper();
       case 'Confirmations':
         return getConfirmationsBetweenHelper();
       case 'Type':
-        return transactionView!.type.display;
+        return transactionView.type.display;
       case 'Create Asset Fee':
-        final burned = transactionView!.issueMainBurned;
+        final burned = transactionView.issueMainBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Reissue Fee':
-        final burned = transactionView!.reissueBurned;
+        final burned = transactionView.reissueBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Create Sub-Asset Fee':
-        final burned = transactionView!.issueSubBurned;
+        final burned = transactionView.issueSubBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Create NFT Fee':
-        final burned = transactionView!.issueUniqueBurned;
+        final burned = transactionView.issueUniqueBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Create Message Fee':
-        final burned = transactionView!.issueMessageBurned;
+        final burned = transactionView.issueMessageBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Create Qualifier Fee':
-        final burned = transactionView!.issueQualifierBurned;
+        final burned = transactionView.issueQualifierBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Create Sub-Qualifier Fee':
-        final burned = transactionView!.issueSubQualifierBurned;
+        final burned = transactionView.issueSubQualifierBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Create Restricted Fee':
-        final burned = transactionView!.issueRestrictedBurned;
+        final burned = transactionView.issueRestrictedBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Tag Fee':
-        final burned = transactionView!.addTagBurned;
+        final burned = transactionView.addTagBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Burned':
-        final burned = transactionView!.burnBurned;
+        final burned = transactionView.burnBurned;
         return burned > 0
-            ? '${burned.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${burned.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Incoming':
-        final incoming = transactionView!.iReceived;
+        final incoming = transactionView.iReceived;
         return incoming > 0
-            ? '${incoming.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${incoming.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'Outgoing':
-        final outgoing = transactionView!.iProvided;
+        final outgoing = transactionView.iProvided;
         return outgoing > 0
-            ? '${outgoing.asCoin.toSatsCommaString()} ${transactionView!.symbol}'
+            ? '${outgoing.asCoin.toSatsCommaString()} ${transactionView.symbol}'
             : '';
       case 'ID':
-        return transactionView!.readableHash.cutOutMiddle();
-      case 'Memo/IPFS':
+        return transactionView.readableHash.cutOutMiddle();
+      case 'IPFS':
         return (String humanName) {
-          final String txMemo = transactionMemo ?? '';
+          final String txMemo = transactionMemo(cubit) ?? '';
           if (txMemo.isIpfs) {
             return txMemo.cutOutMiddle();
           }
-          if (txMemo.length > 30) {
-            return txMemo.cutOutMiddle(length: 12);
-          }
-          return txMemo;
+          return '';
         }(humanName);
       case 'Memo':
         return (String humanName) {
-          final String txMemo = transactionMemo ?? '';
+          final String txMemo = transactionMemo(cubit) ?? '';
           if (txMemo.isIpfs) {
-            return txMemo.cutOutMiddle();
+            return '';
           }
           if (txMemo.length > 30) {
             return txMemo.cutOutMiddle(length: 12);
@@ -148,22 +193,22 @@ class _TransactionPageState extends State<TransactionPage> {
           return txMemo;
         }(humanName);
       case 'Note':
-        return transactionView!.note ?? '';
+        return transactionView.note ?? '';
       case 'Transaction Fee':
         // don't show tx fee if I didn't possibly pay it.
-        return transactionView!.fee > 0 && transactionView!.outgoing
-            ? '${transactionView!.fee.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
+        return transactionView.fee > 0 && transactionView.outgoing
+            ? '${transactionView.fee.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
             : '';
       case 'Total':
-        return transactionView!.iValue > 0
-            ? '${transactionView!.iValue.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
-            : '${transactionView!.fee.asCoin.toSatsCommaString()} ${pros.securities.currentCoin.symbol}';
+        return transactionView.iValue > 0
+            ? '${transactionView.iValue.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
+            : '${transactionView.fee.asCoin.toSatsCommaString()} ${pros.securities.currentCoin.symbol}';
       default:
         return 'unknown';
     }
   }
 
-  String? get transactionMemo {
+  String? transactionMemo(TransactionViewCubit cubit) {
     /// todo: might have to make a call for transaction memo.
     // should do this logic on the back / in the record
     //return transaction!.memos.isNotEmpty
@@ -171,45 +216,50 @@ class _TransactionPageState extends State<TransactionPage> {
     //    : transaction!.assetMemos.isNotEmpty
     //        ? transaction!.assetMemos.first /*.hexToAscii ?*/
     //        : null;
-    return null;
+    if (cubit.state.transactionView?.memo == null) {
+      return null;
+    }
+    return cubit.state.transactionView!.memo!.toBs58();
   }
 
-  String elementFull(String humanName) {
+  String elementFull(String humanName, TransactionViewCubit cubit) {
     switch (humanName) {
       case 'ID':
-        return transactionView!.readableHash;
-      case 'Memo':
-        return transactionMemo ?? '';
-      case 'Memo/IPFS':
-        return transactionMemo ?? '';
+        return transactionView.readableHash;
+      case 'IPFS':
+        return transactionMemo(cubit) ?? '';
       case 'Note':
-        return transactionView!.note ?? '';
+        return transactionView.note ?? '';
       default:
         return 'unknown';
     }
   }
 
-  Widget plain(String text, String value) => ListTile(
-        dense: true,
-        title: Text(text, style: Theme.of(context).textTheme.bodyText1),
-        trailing: GestureDetector(
-          onLongPress: () {
-            Clipboard.setData(ClipboardData(text: value));
-            streams.app.snack.add(Snack(message: 'copied to clipboard'));
-          },
-          child: Text(
-            value,
-            style: Theme.of(context).textTheme.bodyText1,
-            maxLines: text == 'Memo/IPFS' && !value.isIpfs ? 3 : null,
+  Widget plain(BuildContext context, String text, String value) => value == ''
+      ? SizedBox(height: 0)
+      : ListTile(
+          dense: true,
+          title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+          trailing: GestureDetector(
+            onLongPress: () {
+              Clipboard.setData(ClipboardData(text: value));
+              streams.app.snack.add(Snack(message: 'copied to clipboard'));
+            },
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.bodyText1,
+              maxLines: text == 'Memo' ? 3 : null,
+            ),
           ),
-        ),
-      );
+        );
 
-  Widget link({
+  Widget link(
+    BuildContext context, {
     required String title,
     required String text,
     required String url,
     required String description,
+    required TransactionViewCubit cubit,
   }) =>
       ListTile(
           dense: true,
@@ -224,77 +274,80 @@ class _TransactionPageState extends State<TransactionPage> {
                     Navigator.of(context).pop();
                     //launch(url + elementFull(text));
                     streams.app.browsing.add(true);
-                    launchUrl(Uri.parse(url + elementFull(text)));
+                    launchUrl(Uri.parse(url + elementFull(text, cubit)));
                   },
                 },
               ),
           onLongPress: () {
-            Clipboard.setData(ClipboardData(text: elementFull(text)));
+            Clipboard.setData(ClipboardData(text: elementFull(text, cubit)));
             streams.app.snack.add(Snack(message: 'copied to clipboard'));
           },
-          trailing:
-              Text(element(text), style: Theme.of(context).textTheme.link));
+          trailing: Text(element(text, cubit),
+              style: Theme.of(context).textTheme.link));
 
-  Widget detailsBody() => ListView(
-      padding: const EdgeInsets.only(top: 8, bottom: 112),
-      children: <Widget>[
-            link(
-              title: 'Transaction Info',
-              text: 'ID',
-              url:
-                  'https://${pros.settings.chain.symbol}${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
-              description: 'info',
-            ),
-            if (transactionMemo != null)
-              transactionMemo!.isIpfs
-                  ? link(
-                      title: 'IPFS',
-                      text: 'Memo/IPFS',
-                      url: 'https://gateway.ipfs.io/ipfs/',
-                      description: 'data',
-                    )
-                  : plain('Memo/IPFS', element('Memo/IPFS')),
-          ] +
-          <Widget>[
-            for (String text in <String>[
-              'Date',
-              'Confirmations',
-              'Type',
-              'Note',
-              'Memo',
-              'Incoming',
-              'Outgoing',
-              'Transaction Fee',
-              'Create Asset Fee',
-              'Create Sub-Asset Fee',
-              'Create NFT Fee',
-              'Create Message Fee',
-              'Create Qualifier Fee',
-              'Create Sub-Qualifier Fee',
-              'Create Restricted Fee',
-              'Reissue Fee',
-              'Burned',
-              'Tag Fee',
-              'Total'
-            ])
-              if (element(text) != '' && element(text) != 'calculating...')
-                plain(text, element(text))
-          ]
-      // +
-      //(transactionView!.note == null || transactionView!.note == ''
-      //    ? <Widget>[]
-      //    : <Widget>[plain('Note', element('Note'))]),
-      );
+  Widget detailsBody(TransactionViewCubit cubit, BuildContext context) =>
+      RefreshIndicator(
+          onRefresh: () => refresh(),
+          child: ListView(
+              padding: const EdgeInsets.only(top: 8, bottom: 112),
+              children: <Widget>[
+                    link(context,
+                        title: 'Transaction Info',
+                        text: 'ID',
+                        url:
+                            'https://${pros.settings.chain.symbol}${pros.settings.mainnet ? '' : 't'}.cryptoscope.io/tx/?txid=',
+                        description: 'info',
+                        cubit: cubit),
+                    if (transactionMemo(cubit) != null)
+                      transactionMemo(cubit)!.isIpfs
+                          ? link(
+                              context,
+                              title: 'IPFS',
+                              text: 'IPFS',
+                              url: 'https://gateway.ipfs.io/ipfs/',
+                              description: 'data',
+                              cubit: cubit,
+                            )
+                          : plain(context, 'IPFS', element('IPFS', cubit)),
+                  ] +
+                  <Widget>[
+                    for (String text in <String>[
+                      'Date',
+                      'Confirmations',
+                      'Type',
+                      'Note',
+                      'Memo', // non-ipfs memos
+                      'Incoming',
+                      'Outgoing',
+                      'Transaction Fee',
+                      'Create Asset Fee',
+                      'Create Sub-Asset Fee',
+                      'Create NFT Fee',
+                      'Create Message Fee',
+                      'Create Qualifier Fee',
+                      'Create Sub-Qualifier Fee',
+                      'Create Restricted Fee',
+                      'Reissue Fee',
+                      'Burned',
+                      'Tag Fee',
+                      'Total'
+                    ])
+                      plain(context, text, element(text, cubit))
+                  ]
+              // +
+              //(transactionView.note == null || transactionView.note == ''
+              //    ? <Widget>[]
+              //    : <Widget>[plain('Note', element('Note'))]),
+              ));
 
   int? getBlocksBetweenHelper({Block? current}) {
     current = current ?? pros.blocks.latest;
-    return (current != null && transactionView!.height != null)
-        ? current.height - transactionView!.height
+    return (current != null && transactionView.height != null)
+        ? current.height - transactionView.height
         : null;
   }
 
-  String getDateBetweenHelper() =>
-      'Date: ${transactionView!.formattedDatetime}';
+  String getDateBetweenHelper() => 'Date: ${transactionView.formattedDatetime}';
   //(getBlocksBetweenHelper() != null
   //    ? formatDate(
   //        DateTime.now().subtract(Duration(

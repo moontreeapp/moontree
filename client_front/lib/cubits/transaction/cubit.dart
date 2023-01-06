@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:client_back/server/serverv2_client.dart';
+import 'package:client_front/services/client/transaction.dart';
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
@@ -14,15 +18,15 @@ part 'state.dart';
 
 /// show shimmer while retrieving list of transactions
 /// show list of transactions
-class TransactionsViewCubit extends Cubit<TransactionsViewState>
+class TransactionViewCubit extends Cubit<TransactionViewState>
     with SetCubitMixin {
-  TransactionsViewCubit() : super(TransactionsViewState.initial());
+  TransactionViewCubit() : super(TransactionViewState.initial());
 
   @override
-  Future<void> reset() async => emit(TransactionsViewState.initial());
+  Future<void> reset() async => emit(TransactionViewState.initial());
 
   @override
-  TransactionsViewState submitting() => state.load(isSubmitting: true);
+  TransactionViewState submitting() => state.load(isSubmitting: true);
 
   @override
   Future<void> enter() async {
@@ -32,59 +36,27 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
 
   @override
   void set({
-    List<TransactionView>? transactionViews,
-    AssetMetadata? metadataView,
-    Wallet? wallet,
-    Security? security,
-    Wallet? ranWallet,
-    Security? ranSecurity,
+    TransactionDetailsView? transactionView,
     bool? isSubmitting,
   }) {
     emit(submitting());
     emit(state.load(
-      transactionViews: transactionViews,
-      metadataView: metadataView,
-      wallet: wallet,
-      security: security,
-      ranWallet: ranWallet,
-      ranSecurity: ranSecurity,
+      transactionView: transactionView,
       isSubmitting: isSubmitting,
     ));
   }
 
-  Future<void> setTransactionViews({bool force = false}) async => force ||
-          state.wallet != state.ranWallet ||
-          state.security != state.ranSecurity
-      ? () async {
-          set(
-            transactionViews: [],
-            isSubmitting: true,
-          );
-          set(
-            transactionViews: await discoverTransactionHistory(
-              wallet: state.wallet,
-              security: state.security,
-            ),
-            metadataView: (await discoverAssetMetadataHistory(
-              wallet: state.wallet,
-              security: state.security,
-            ))
-                .firstOrNull,
-            ranWallet: state.wallet,
-            ranSecurity: state.security,
-            isSubmitting: false,
-          );
-        }()
-      : () {}();
+  Future<void> setTransactionViews(
+          {required ByteData hash, bool force = false}) async =>
+      force || state.transactionView == null
+          ? () async {
+              set(transactionView: null, isSubmitting: true);
+              set(
+                transactionView: await discoverTransactionDetails(hash: hash),
+                isSubmitting: false,
+              );
+            }()
+          : () {}();
 
-  bool get nullCacheView {
-    //final Asset? securityAsset = state.security.asset;
-    final AssetMetadata? securityAsset = state.metadataView;
-    return securityAsset == null;
-  }
-
-  void clearCache() => set(
-        transactionViews: <TransactionView>[],
-        metadataView: null,
-      );
+  void clearCache() => set(transactionView: null);
 }

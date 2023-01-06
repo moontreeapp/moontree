@@ -1,106 +1,45 @@
 part of 'cubit.dart';
 
 @immutable
-class TransactionsViewState extends CubitState {
-  final List<TransactionView> transactionViews;
-  final AssetMetadata? metadataView;
-  final Wallet wallet;
-  final Security security;
-  final BehaviorSubject<double> scrollObserver;
-  final BehaviorSubject<String> currentTab;
+class TransactionViewState extends CubitState {
+  final TransactionDetailsView? transactionView;
   final bool isSubmitting;
-  // allows us to remember what the wallet and security was last time we called
-  // for transactionViews so that we never hit the endpoint multiple times with
-  // the same input as last time. This also allows us to set the wallet and
-  // security immediately, showing on coinspec while we wait for the views.
-  final Wallet? ranWallet;
-  final Security? ranSecurity;
 
-  const TransactionsViewState({
-    required this.transactionViews,
-    required this.metadataView,
-    required this.scrollObserver,
-    required this.currentTab,
-    required this.wallet,
-    required this.security,
+  const TransactionViewState({
+    this.transactionView,
     required this.isSubmitting,
-    required this.ranWallet,
-    required this.ranSecurity,
   });
 
-  TransactionsViewState reset() {
-    scrollObserver.close();
-    currentTab.close();
-    return this;
-  }
-
   @override
-  String toString() => 'TransactionsView( '
-      'transactionViews=$transactionViews, metadataView=$metadataView, '
-      'wallet=$wallet, security=$security, ranWallet=$ranWallet, '
-      'ranSecurity=$ranSecurity, isSubmitting=$isSubmitting)';
+  String toString() => 'TransactionView( '
+      'transactionView=$transactionView, isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
-        transactionViews,
-        metadataView,
-        wallet,
-        security,
-        ranWallet,
-        ranSecurity,
+        transactionView,
         isSubmitting,
       ];
 
-  factory TransactionsViewState.initial() => TransactionsViewState(
-      transactionViews: [],
-      metadataView: null,
-      scrollObserver: BehaviorSubject<double>.seeded(.7),
-      currentTab: BehaviorSubject<String>.seeded('HISTORY'),
-      wallet: pros.wallets.currentWallet,
-      security: pros.securities.currentCoin,
-      ranWallet: null,
-      ranSecurity: null,
-      isSubmitting: true);
+  factory TransactionViewState.initial() =>
+      TransactionViewState(transactionView: null, isSubmitting: true);
 
-  TransactionsViewState load({
-    List<TransactionView>? transactionViews,
-    AssetMetadata? metadataView,
-    Wallet? wallet,
-    Security? security,
-    Wallet? ranWallet,
-    Security? ranSecurity,
+  TransactionViewState load({
+    TransactionDetailsView? transactionView,
     bool? isSubmitting,
   }) =>
-      TransactionsViewState.load(
+      TransactionViewState.load(
         state: this,
-        transactionViews: transactionViews,
-        metadataView: metadataView,
-        wallet: wallet,
-        security: security,
-        ranWallet: ranWallet,
-        ranSecurity: ranSecurity,
+        transactionView: transactionView,
         isSubmitting: isSubmitting,
       );
 
-  factory TransactionsViewState.load({
-    required TransactionsViewState state,
-    List<TransactionView>? transactionViews,
-    AssetMetadata? metadataView,
-    Wallet? wallet,
-    Security? security,
-    Wallet? ranWallet,
-    Security? ranSecurity,
+  factory TransactionViewState.load({
+    required TransactionViewState state,
+    TransactionDetailsView? transactionView,
     bool? isSubmitting,
   }) =>
-      TransactionsViewState(
-        transactionViews: transactionViews ?? state.transactionViews,
-        metadataView: metadataView ?? state.metadataView,
-        wallet: wallet ?? state.wallet,
-        security: security ?? state.security,
-        ranWallet: ranWallet ?? state.ranWallet,
-        ranSecurity: ranSecurity ?? state.ranSecurity,
+      TransactionViewState(
+        transactionView: transactionView ?? state.transactionView,
         isSubmitting: isSubmitting ?? state.isSubmitting,
-        scrollObserver: state.scrollObserver,
-        currentTab: state.currentTab,
       );
 }

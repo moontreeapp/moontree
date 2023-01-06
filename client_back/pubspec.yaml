@@ -25,7 +25,7 @@ dependencies:
   electrum_adapter: ^2.0.4
   proclaim: ^4.0.3
   wallet_utils: ^3.0.9
-  moontree_utils: ^1.0.20
+  moontree_utils: ^1.0.22
   date_format: ^2.0.7
   bip39: ^1.0.6
   convert: ^3.0.2

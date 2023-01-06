@@ -11,9 +11,10 @@ import 'dart:async' as _i2;
 import 'asset_metadata_class.dart' as _i3;
 import 'comm_balance_view.dart' as _i4;
 import 'dart:typed_data' as _i5;
-import 'comm_transaction_view.dart' as _i6;
-import 'dart:io' as _i7;
-import 'protocol.dart' as _i8;
+import 'comm_transaction_details_view.dart' as _i6;
+import 'comm_transaction_view.dart' as _i7;
+import 'dart:io' as _i8;
+import 'protocol.dart' as _i9;
 
 class _EndpointMetadata extends _i1.EndpointRef {
   _EndpointMetadata(_i1.EndpointCaller caller) : super(caller);
@@ -141,19 +142,39 @@ class _EndpointExample extends _i1.EndpointRef {
       );
 }
 
+class _EndpointTransactionDetails extends _i1.EndpointRef {
+  _EndpointTransactionDetails(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'transactionDetails';
+
+  _i2.Future<_i6.TransactionDetailsView?> get({
+    required _i5.ByteData hash,
+    required String chain,
+  }) =>
+      caller.callServerEndpoint<_i6.TransactionDetailsView?>(
+        'transactionDetails',
+        'get',
+        {
+          'hash': hash,
+          'chain': chain,
+        },
+      );
+}
+
 class _EndpointTransactions extends _i1.EndpointRef {
   _EndpointTransactions(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'transactions';
 
-  _i2.Future<List<_i6.TransactionView>> get({
+  _i2.Future<List<_i7.TransactionView>> get({
     String? symbol,
     required String chain,
     required List<String> xpubkeys,
     required List<_i5.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i6.TransactionView>>(
+      caller.callServerEndpoint<List<_i7.TransactionView>>(
         'transactions',
         'get',
         {
@@ -168,11 +189,11 @@ class _EndpointTransactions extends _i1.EndpointRef {
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i7.SecurityContext? context,
+    _i8.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i8.Protocol(),
+          _i9.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {
@@ -182,6 +203,7 @@ class Client extends _i1.ServerpodClient {
     hasGiven = _EndpointHasGiven(this);
     document = _EndpointDocument(this);
     example = _EndpointExample(this);
+    transactionDetails = _EndpointTransactionDetails(this);
     transactions = _EndpointTransactions(this);
   }
 
@@ -197,6 +219,8 @@ class Client extends _i1.ServerpodClient {
 
   late final _EndpointExample example;
 
+  late final _EndpointTransactionDetails transactionDetails;
+
   late final _EndpointTransactions transactions;
 
   @override
@@ -207,6 +231,7 @@ class Client extends _i1.ServerpodClient {
         'hasGiven': hasGiven,
         'document': document,
         'example': example,
+        'transactionDetails': transactionDetails,
         'transactions': transactions,
       };
   @override

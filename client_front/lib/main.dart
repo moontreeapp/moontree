@@ -100,6 +100,8 @@ class RavenMobileApp extends StatelessWidget {
                     create: (BuildContext context) => SimpleSendFormCubit()),
                 BlocProvider<TransactionsViewCubit>(
                     create: (BuildContext context) => TransactionsViewCubit()),
+                BlocProvider<TransactionViewCubit>(
+                    create: (BuildContext context) => TransactionViewCubit()),
               ],
               child: child!,
             ),

@@ -249,21 +249,44 @@ class MetadataView extends StatelessWidget {
         // no associated data - show details
         children = <Widget>[
           ListTile(
-            title: Text('Total Supply:'),
-            trailing: SelectableText(securityAsset.totalSupply.toCommaString()),
+            title: Text(
+              'Total Supply:',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            trailing: SelectableText(
+              securityAsset.totalSupply.toCommaString(),
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           ),
           ListTile(
-            title: Text('Divisibility:'),
-            trailing: SelectableText('${securityAsset.divisibility}'),
+            title: Text(
+              'Divisibility:',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            trailing: SelectableText(
+              '${securityAsset.divisibility}',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           ),
           ListTile(
-            title: Text('Reissuable:'),
-            trailing:
-                SelectableText('${securityAsset.reissuable ? 'yes' : 'no'}'),
+            title: Text(
+              'Reissuable:',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            trailing: SelectableText(
+              '${securityAsset.reissuable ? 'yes' : 'no'}',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           ),
           ListTile(
-            title: Text('Frozen:'),
-            trailing: SelectableText('${securityAsset.frozen ? 'yes' : 'no'}'),
+            title: Text(
+              'Frozen:',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            trailing: SelectableText(
+              '${securityAsset.frozen ? 'yes' : 'no'}',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           ),
         ];
       }
