@@ -17,7 +17,7 @@ class TransactionDetails {
     required Chaindata chain,
     required ByteData hash,
   }) async =>
-      await client.transactionDetails.get(hash: hash, chain: chain.name);
+      await client.transactionDetails.get(hash: hash, chainName: chain.name);
 }
 
 Future<server.TransactionDetailsView?> discoverTransactionDetails({
