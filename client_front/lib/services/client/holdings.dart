@@ -27,7 +27,7 @@ class HoldingBalances {
     required List<ByteData> h160s,
   }) async =>
       await client.balances.get(
-        chain: chain.name,
+        chainName: chain.name,
         xpubkeys: roots,
         h160s: h160s,
       );

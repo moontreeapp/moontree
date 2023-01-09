@@ -41,6 +41,7 @@ class _TransactionsState extends State<Transactions> {
     // then get the transactions from the future endpoint call
     if (!pros.wallets.currentWallet.minerMode) {
       cubit.setTransactionViews();
+      cubit.setMetadataView();
     }
     minHeight = !Platform.isIOS
         ? 0.65.figmaAppHeight + (cubit.nullCacheView ? 0 : 48.ofAppHeight)

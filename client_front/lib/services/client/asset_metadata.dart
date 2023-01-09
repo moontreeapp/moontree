@@ -19,7 +19,7 @@ class AssetMetadataHistory {
   }) async =>
       await client.metadata.get(
         symbol: symbol,
-        chain: chain.name,
+        chainName: chain.name,
         height: null,
       );
 }
@@ -60,11 +60,11 @@ Future<List<server.AssetMetadata>> discoverAssetMetadataHistory({
   final List<server.AssetMetadata> history =
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofAssetMetadata);
+      //await Future.delayed(Duration(seconds: 1), spoofAssetMetadata);
 
-  /// SERVER
-  //await  AssetMetadataHistory().assetMetadataHistoryBy(
-  //    symbol: symbol, chain: ChainNet(chain, net).chaindata);
+      /// SERVER
+      await AssetMetadataHistory().assetMetadataHistoryBy(
+          symbol: symbol, chain: ChainNet(chain, net).chaindata);
 
   return history;
 }

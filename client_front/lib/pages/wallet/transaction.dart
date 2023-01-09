@@ -53,7 +53,7 @@ class TransactionPageState extends State<TransactionPage> {
     data = populateData(context, data);
     transactionView = data['transactionView']! as TransactionView;
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
-    cubit.setTransactionViews(hash: transactionView.hash);
+    cubit.setTransactionDetails(hash: transactionView.hash);
     return TransactionPageContent(
       cubit: cubit,
       transactionView: transactionView,
@@ -82,7 +82,7 @@ class TransactionPageContent extends StatelessWidget {
 
   Future<void> refresh() async {
     parent.callSetState(() {
-      cubit.setTransactionViews(hash: transactionView.hash, force: true);
+      cubit.setTransactionDetails(hash: transactionView.hash, force: true);
     });
   }
 
@@ -92,7 +92,7 @@ class TransactionPageContent extends StatelessWidget {
         flutter_bloc.BlocProvider.of<TransactionViewCubit>(context);
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
 
-    cubit.setTransactionViews(hash: transactionView.hash);
+    cubit.setTransactionDetails(hash: transactionView.hash);
     return flutter_bloc.BlocBuilder<TransactionViewCubit, TransactionViewState>(
         bloc: cubit..enter(),
         builder: (BuildContext context, TransactionViewState state) {

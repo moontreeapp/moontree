@@ -46,8 +46,10 @@ class TransactionViewCubit extends Cubit<TransactionViewState>
     ));
   }
 
-  Future<void> setTransactionViews(
-          {required ByteData hash, bool force = false}) async =>
+  Future<void> setTransactionDetails({
+    required ByteData hash,
+    bool force = false,
+  }) async =>
       force || state.transactionView == null
           ? () async {
               set(transactionView: null, isSubmitting: true);

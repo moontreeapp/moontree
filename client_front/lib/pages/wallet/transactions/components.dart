@@ -201,6 +201,12 @@ class MetadataView extends StatelessWidget {
   final TransactionsViewCubit cubit;
   const MetadataView({Key? key, required this.cubit}) : super(key: key);
 
+  Future<void> refresh() async {
+    //setState(() {
+    cubit.setMetadataView(force: true);
+    //});
+  }
+
   @override
   Widget build(BuildContext context) {
     //final Asset securityAsset = cubit.state.security.asset!;
@@ -310,7 +316,10 @@ class MetadataView extends StatelessWidget {
     //    SelectableText(securityAsset.primaryMetadata!.data ?? '')
     //  ];
     //}
-    return ListView(padding: const EdgeInsets.all(10.0), children: children);
+    return RefreshIndicator(
+        onRefresh: () => refresh(),
+        child:
+            ListView(padding: const EdgeInsets.all(10.0), children: children));
   }
 }
 

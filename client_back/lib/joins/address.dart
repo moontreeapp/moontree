@@ -18,4 +18,5 @@ extension AddressHasManyUnspents on Address {
 
 extension AddressHasAnH160Representation on Address {
   ByteData get h160 => address.addressToH160;
+  String get h160String => address.addressToH160String;
 }

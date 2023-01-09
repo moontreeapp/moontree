@@ -31,7 +31,7 @@ class _EndpointMetadata extends _i1.EndpointRef {
   /// Of course maybe we'd just make a different endpoint for history, but idk.
   _i2.Future<List<_i3.AssetMetadata>> get({
     required String symbol,
-    required String chain,
+    required String chainName,
     int? height,
   }) =>
       caller.callServerEndpoint<List<_i3.AssetMetadata>>(
@@ -39,7 +39,7 @@ class _EndpointMetadata extends _i1.EndpointRef {
         'get',
         {
           'symbol': symbol,
-          'chain': chain,
+          'chainName': chainName,
           'height': height,
         },
       );
@@ -52,7 +52,7 @@ class _EndpointBalances extends _i1.EndpointRef {
   String get name => 'balances';
 
   _i2.Future<List<_i4.BalanceView>> get({
-    required String chain,
+    required String chainName,
     required List<String> xpubkeys,
     required List<_i5.ByteData> h160s,
   }) =>
@@ -60,7 +60,7 @@ class _EndpointBalances extends _i1.EndpointRef {
         'balances',
         'get',
         {
-          'chain': chain,
+          'chainName': chainName,
           'xpubkeys': xpubkeys,
           'h160s': h160s,
         },
@@ -142,6 +142,13 @@ class _EndpointExample extends _i1.EndpointRef {
       );
 }
 
+class _EndpointSubscription extends _i1.EndpointRef {
+  _EndpointSubscription(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'subscription';
+}
+
 class _EndpointTransactionDetails extends _i1.EndpointRef {
   _EndpointTransactionDetails(_i1.EndpointCaller caller) : super(caller);
 
@@ -150,14 +157,14 @@ class _EndpointTransactionDetails extends _i1.EndpointRef {
 
   _i2.Future<_i6.TransactionDetailsView?> get({
     required _i5.ByteData hash,
-    required String chain,
+    required String chainName,
   }) =>
       caller.callServerEndpoint<_i6.TransactionDetailsView?>(
         'transactionDetails',
         'get',
         {
           'hash': hash,
-          'chain': chain,
+          'chainName': chainName,
         },
       );
 }
@@ -170,7 +177,7 @@ class _EndpointTransactions extends _i1.EndpointRef {
 
   _i2.Future<List<_i7.TransactionView>> get({
     String? symbol,
-    required String chain,
+    required String chainName,
     required List<String> xpubkeys,
     required List<_i5.ByteData> h160s,
   }) =>
@@ -179,7 +186,7 @@ class _EndpointTransactions extends _i1.EndpointRef {
         'get',
         {
           'symbol': symbol,
-          'chain': chain,
+          'chainName': chainName,
           'xpubkeys': xpubkeys,
           'h160s': h160s,
         },
@@ -203,6 +210,7 @@ class Client extends _i1.ServerpodClient {
     hasGiven = _EndpointHasGiven(this);
     document = _EndpointDocument(this);
     example = _EndpointExample(this);
+    subscription = _EndpointSubscription(this);
     transactionDetails = _EndpointTransactionDetails(this);
     transactions = _EndpointTransactions(this);
   }
@@ -219,6 +227,8 @@ class Client extends _i1.ServerpodClient {
 
   late final _EndpointExample example;
 
+  late final _EndpointSubscription subscription;
+
   late final _EndpointTransactionDetails transactionDetails;
 
   late final _EndpointTransactions transactions;
@@ -231,6 +241,7 @@ class Client extends _i1.ServerpodClient {
         'hasGiven': hasGiven,
         'document': document,
         'example': example,
+        'subscription': subscription,
         'transactionDetails': transactionDetails,
         'transactions': transactions,
       };
