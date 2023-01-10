@@ -75,8 +75,8 @@ class _AssetList extends State<AssetList> {
 
   @override
   Widget build(BuildContext context) {
-    assets =
-        filterToAdminAssets(utils.assetHoldings(Current.holdings)).toList();
+    assets = filterToAdminAssets(utils.assetHoldings([] /*Current.holdings*/))
+        .toList();
     return assets.isEmpty && pros.vouts.records.isEmpty // <-- on front tab...
         ? ComingSoonPlaceholder(
             scrollController: widget.scrollController,
@@ -190,9 +190,9 @@ class _AssetList extends State<AssetList> {
           if (asset.subAdmin != null)
             () => navigate(asset.symbol, wallet: wallet),
           if (asset.restricted != null)
-            () => navigate(asset.restricted!.security.symbol, wallet: wallet),
+            () => navigate(asset.restricted!.symbol, wallet: wallet),
           if (asset.qualifier != null)
-            () => navigate(asset.qualifier!.security.symbol, wallet: wallet),
+            () => navigate(asset.qualifier!.symbol, wallet: wallet),
         ],
         values: <String>[
           if (asset.admin != null)

@@ -63,9 +63,6 @@ void resetInMemoryState() {
   services.download.queue.updated = false;
   services.download.queue.address = null;
   services.download.queue.transactionSet = null;
-
-  /// CLAIM FEATURE -- actually don't clear it here, instead make it a map by walletId
-  //streams.claim.unclaimed.add(<Vout>{});
 }
 
 Future<void> deleteDatabase() async {

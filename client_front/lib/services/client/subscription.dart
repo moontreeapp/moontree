@@ -11,43 +11,52 @@ class SubscriptionGeneric {
   SubscriptionGeneric() : client = server.Client('$moontreeUrl/');
 
   Future<void> setupGenericSubscription({
-    required Set<String> chains,
-    required Set<String> roots,
-    required Set<String> h160s,
-  }) async =>
-      await client.subscription
-          .sendStreamMessage(protocol.ChainWalletH160Subscription(
-        chains: chains,
-        walletPubKeys: roots,
-        h160s: h160s,
-      ));
+    required List<String> chains,
+    required List<String> roots,
+    required List<String> h160s,
+    required server.ConnectivityMonitor monitor,
+  }) async {
+    client.connectivityMonitor = monitor;
+    await client.openStreamingConnection(
+        disconnectOnLostInternetConnection: true);
+    client.subscription.stream.listen((message) {
+      print(message);
+    });
+    client.subscription.sendStreamMessage(protocol.ChainWalletH160Subscription(
+      chains: chains,
+      walletPubKeys: roots,
+      h160s: h160s,
+    ));
+  }
 }
 
 Future<void> discoverSubscriptionGeneric({
   Wallet? wallet,
   Chain? chain,
   Net? net,
+  required server.ConnectivityMonitor monitor,
 }) async {
   wallet ??= Current.wallet;
   chain ??= Current.chain;
   net ??= Current.net;
   List<String> roots = [];
-  Set<String> h160s = {};
+  List<String> h160s = [];
   if (wallet is LeaderWallet) {
     roots = await wallet.roots;
   } else if (wallet is SingleWallet) {
-    h160s = Current.wallet.addresses.map((e) => e.h160String).toSet();
+    h160s = Current.wallet.addresses.map((e) => e.h160String).toList();
   }
   final subscriptionVoid =
 
       /// MOCK SERVER
-      //await Future.delayed(Duration(seconds: 1), spoofAssetMetadata);
+      //await Future.delayed(Duration(seconds: 1), spoofNothing);
 
       /// SERVER
       await SubscriptionGeneric().setupGenericSubscription(
-          chains: {ChainNet(chain, net).chaindata.name},
-          roots: roots.toSet(),
-          h160s: h160s);
+          chains: [ChainNet(chain, net).chaindata.name],
+          roots: roots,
+          h160s: h160s,
+          monitor: monitor);
 
   return subscriptionVoid;
 }

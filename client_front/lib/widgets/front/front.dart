@@ -7,7 +7,6 @@ export 'forms/network.dart';
 export 'choices/download_queue_count.dart';
 export 'choices/blockchain_choice.dart';
 export 'choices/clear_secure_storage.dart';
-export 'choices/claim_evr.dart';
 export 'choices/resync.dart';
 export 'choices/show_authentication_key.dart';
 export 'choices/switch_choice.dart';

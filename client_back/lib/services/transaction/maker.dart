@@ -1568,49 +1568,4 @@ class TransactionMaker {
     tx = txb.build();
     return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
   }
-
-  /// CLAIM FEATURE:
-  /// instead of getting the vouts as we normally would, we get them from stream
-  Future<Tuple2<wu.Transaction, SendEstimate>> claimAllEVR(
-    String toAddress,
-    SendEstimate estimate, {
-    required Wallet wallet,
-    wu.FeeRate? feeRate,
-    Set<int>? previousFees,
-    int? assetMemoExpiry,
-  }) async {
-    wu.TransactionBuilder makeTxBuilder(
-      List<Vout> utxos,
-      SendEstimate estimate,
-    ) {
-      final wu.TransactionBuilder txb = wu.TransactionBuilder(
-        network: pros.settings.network,
-        chainName: pros.settings.chain.name,
-      );
-      for (final Vout utxo in utxos) {
-        txb.addInput(utxo.transactionId, utxo.position);
-      }
-      txb.addOutput(
-        toAddress,
-        estimate.amount,
-        asset: estimate.security?.symbol,
-        memo: estimate.assetMemo,
-        expiry: assetMemoExpiry,
-      );
-      if (estimate.memo != null) {
-        txb.addMemo(estimate.memo);
-      }
-      return txb;
-    }
-
-    final List<Vout> utxos = estimate.utxos;
-    wu.TransactionBuilder txb = makeTxBuilder(utxos, estimate);
-    wu.Transaction tx = txb.buildSpoofedSigs();
-    estimate.setFees(tx.fee(goal: feeRate));
-    estimate.setAmount(estimate.amount - estimate.fees);
-    txb = makeTxBuilder(utxos, estimate);
-    await txb.signEachInput(utxos);
-    tx = txb.build();
-    return Tuple2<wu.Transaction, SendEstimate>(tx, estimate);
-  }
 }

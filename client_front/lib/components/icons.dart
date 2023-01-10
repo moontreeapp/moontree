@@ -58,6 +58,7 @@ class IconComponents {
     Color? foreground,
     Color? background,
     bool circled = true,
+    Chain? chain,
     Net? net,
   }) {
     height = height ?? size;
@@ -107,7 +108,8 @@ class IconComponents {
     //  return ret;
     //}
 
-    return assetFromCacheOrGenerate(asset: asset, height: height, width: width);
+    return assetFromCacheOrGenerate(
+        asset: asset, height: height, width: width, chain: chain, net: net);
   }
 
   Widget _assetAvatarRVN({double? height, double? width}) => Image.asset(
@@ -144,17 +146,27 @@ class IconComponents {
     return null;
   }
 
+  SymbolType getSymbolType(
+    String? asset, [
+    Chain? chain,
+    Net? net,
+  ]) =>
+      Symbol.generate(asset ?? '', chain ?? Chain.ravencoin, net ?? Net.main)
+          .symbolType;
+
   Widget assetFromCacheOrGenerate({
     String? asset,
-    AssetType? assetType,
+    SymbolType? assetType,
     double? height,
     double? width,
     ImageDetails? imageDetails,
     Color? foreground,
     Color? background,
+    Chain? chain,
+    Net? net,
   }) {
     asset = asset ?? '';
-    final AssetType assetType = Asset.assetTypeOf(asset);
+    final SymbolType assetType = getSymbolType(asset, chain, net);
     final IconCacheKey cacheKey = IconCacheKey(
       asset: asset,
       height: height ?? 40,
@@ -171,6 +183,8 @@ class IconComponents {
       foreground: foreground,
       background: background,
       cacheKey: cacheKey,
+      chain: chain,
+      net: net,
     );
   }
 
@@ -193,7 +207,7 @@ class IconComponents {
     double? height,
     double? width,
     ImageDetails? imageDetails,
-    AssetType? assetType,
+    SymbolType? assetType,
     Color? foreground,
     Color? background,
     IconCacheKey? cacheKey,
@@ -262,10 +276,12 @@ class IconComponents {
     double? height,
     double? width,
     ImageDetails? imageDetails,
-    AssetType? assetType,
+    SymbolType? assetType,
     Color? foreground,
     Color? background,
     IconCacheKey? cacheKey,
+    Chain? chain,
+    Net? net,
   }) {
     height = height ?? 40;
     width = width ?? 40;
@@ -325,13 +341,15 @@ class IconComponents {
     required ImageDetails imageDetails,
     double? height,
     double? width,
-    AssetType? assetType,
+    SymbolType? assetType,
+    Chain? chain,
+    Net? net,
   }) {
     height ??= 18;
     width ??= 18;
-    assetType =
-        assetType ?? (name != null ? Asset.assetTypeOf(name) : AssetType.main);
-    if (assetType != AssetType.main) {
+    assetType = assetType ??
+        (name != null ? getSymbolType(name, chain, net) : SymbolType.main);
+    if (assetType != SymbolType.main) {
       return Container(
           height: height,
           width: width,
@@ -365,28 +383,28 @@ class IconComponents {
           ? Colors.black
           : Colors.white;
 
-  IconData? assetTypeIcon({String? name, AssetType? assetType}) {
+  IconData? assetTypeIcon({String? name, SymbolType? assetType}) {
     if (assetType == null && name == null) {
       return null;
     }
-    switch (assetType ?? Asset.assetTypeOf(name!)) {
-      case AssetType.admin:
+    switch (assetType ?? getSymbolType(name!)) {
+      case SymbolType.admin:
         return MdiIcons.crown;
-      case AssetType.channel:
+      case SymbolType.channel:
         return MdiIcons.message;
-      case AssetType.unique:
+      case SymbolType.unique:
         return MdiIcons.diamond;
-      case AssetType.main:
+      case SymbolType.main:
         return Icons.circle_outlined;
-      case AssetType.qualifier:
+      case SymbolType.qualifier:
         return MdiIcons.pound;
-      case AssetType.qualifierSub:
+      case SymbolType.qualifierSub:
         return MdiIcons.pound;
-      case AssetType.restricted:
+      case SymbolType.restricted:
         return MdiIcons.lock;
-      case AssetType.sub:
+      case SymbolType.sub:
         return MdiIcons.slashForward;
-      case AssetType.subAdmin:
+      case SymbolType.subAdmin:
         return MdiIcons.crown;
     }
   }
@@ -508,7 +526,7 @@ class IconCacheKey with EquatableMixin {
     required this.width,
   });
   final String asset;
-  final AssetType assetType;
+  final SymbolType assetType;
   final double height;
   final double width;
   @override

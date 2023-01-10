@@ -109,17 +109,7 @@ class UnspentService {
         // make vout
         for (final Unspent utxo in utxos) {
           if (utxo.txHash == evrAirdropTx) {
-            // pass to stream
-            final Map<String, Set<Vout>> x = streams.claim.unclaimed.value;
-            if (!x.containsKey(wallet.id)) {
-              x[wallet.id] = <Vout>{};
-            }
-            x[wallet.id]!.add(Vout.fromUnspent(utxo,
-                toAddress: utxo.address?.address ??
-                    pros.addresses.primaryIndex
-                        .getOne(utxo.scripthash, utxo.chain, utxo.net)
-                        ?.address));
-            streams.claim.unclaimed.add(x);
+            // do nothing, those are burnt
           }
         }
       }

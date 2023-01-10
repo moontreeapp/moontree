@@ -13,13 +13,13 @@ extension ByIdMethodsForAsset on Index<_IdKey, Asset> {
       getByKeyStr(Asset.key(symbol, chain, net)).firstOrNull;
 }
 
-// byAssetType
+// bySymbolType
 
-class _AssetTypeKey extends Key<Asset> {
+class _SymbolTypeKey extends Key<Asset> {
   @override
-  String getKey(Asset asset) => asset.assetTypeName;
+  String getKey(Asset asset) => asset.symbolTypeName;
 }
 
-extension ByAssetTypeMethodsForAsset on Index<_AssetTypeKey, Asset> {
-  List<Asset> getAll(AssetType assetType) => getByKeyStr(assetType.name);
+extension BySymbolTypeMethodsForAsset on Index<_SymbolTypeKey, Asset> {
+  List<Asset> getAll(SymbolType assetType) => getByKeyStr(assetType.name);
 }

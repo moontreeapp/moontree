@@ -5,9 +5,9 @@ import 'package:client_back/client_back.dart';
 part 'asset.keys.dart';
 
 class AssetProclaim extends Proclaim<_IdKey, Asset> {
-  late IndexMultiple<_AssetTypeKey, Asset> byAssetType;
+  late IndexMultiple<_SymbolTypeKey, Asset> bySymbolType;
 
   AssetProclaim() : super(_IdKey()) {
-    byAssetType = addIndexMultiple('assetType', _AssetTypeKey());
+    bySymbolType = addIndexMultiple('assetType', _SymbolTypeKey());
   }
 }

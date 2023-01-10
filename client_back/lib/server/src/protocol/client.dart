@@ -177,6 +177,7 @@ class _EndpointTransactions extends _i1.EndpointRef {
 
   _i2.Future<List<_i7.TransactionView>> get({
     String? symbol,
+    int? backFromHeight,
     required String chainName,
     required List<String> xpubkeys,
     required List<_i5.ByteData> h160s,
@@ -186,6 +187,7 @@ class _EndpointTransactions extends _i1.EndpointRef {
         'get',
         {
           'symbol': symbol,
+          'backFromHeight': backFromHeight,
           'chainName': chainName,
           'xpubkeys': xpubkeys,
           'h160s': h160s,

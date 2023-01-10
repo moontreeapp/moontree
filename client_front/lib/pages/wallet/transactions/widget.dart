@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:io' show Platform;
+import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:client_back/client_back.dart';
@@ -37,7 +38,11 @@ class _TransactionsState extends State<Transactions> {
     // first set the wallet and security so we can set the coinspec
     cubit.set(
         wallet: pros.wallets.currentWallet,
-        security: (data['holding'] as Balance?)?.security);
+        security: Security(
+          symbol: (data['holding'] as BalanceView?)!.symbol,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        ));
     // then get the transactions from the future endpoint call
     if (!pros.wallets.currentWallet.minerMode) {
       cubit.setTransactionViews();

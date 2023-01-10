@@ -1,6 +1,8 @@
 import 'dart:io' show Platform;
+import 'package:client_front/services/client/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/services/lookup.dart';
@@ -91,34 +93,9 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
       ? GestureDetector(
           onTap: () async {
             if (services.developer.developerMode) {
-              //print(pros.addresses.byAddress
-              //    .getOne('RGysusDLhhrYEKrdPjw4xwXE8P7q5Hwtuf'));
-              //print(Current.wallet.addresses);
-              //print(pros.addresses.records);
-              //print(streams.claim.unclaimed.value);
-
-              //print((await services.wallet
-              //        .getAddressKeypair(pros.addresses.records.first))
-              //    .toWIF());
-              //print(pros.vouts.where((v) => v.isAsset).first);
-              print((await services.wallet.leader
-                      .getSeedWallet(Current.wallet as LeaderWallet))
-                  .wallet
-                  .base58);
-              //what we send the server
-              print((await services.wallet.leader
-                      .getSeedWallet(Current.wallet as LeaderWallet))
-                  .wallet
-                  .derivePath("m/44'/175'/0'/0")
-                  .base58);
-              print((await services.wallet.leader
-                      .getSeedWallet(Current.wallet as LeaderWallet))
-                  .wallet
-                  .derivePath("m/44'/175'/0'/1")
-                  .base58);
-              print(Current.wallet.roots);
-              print(pros.securities.byKey
-                  .getOne('RVN', pros.settings.chain, pros.settings.net));
+              await discoverSubscriptionGeneric(
+                  wallet: Current.wallet,
+                  monitor: FlutterConnectivityMonitor());
             }
           },
           child: appBar,

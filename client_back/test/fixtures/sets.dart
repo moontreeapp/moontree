@@ -69,7 +69,7 @@ class FixtureSet1 extends FixtureSet {
 
   @override
   Map<String, Asset> get assets => {
-        '0': const Asset(
+        '0': Asset(
             chain: Chain.ravencoin,
             net: Net.test,
             symbol: 'MOONTREE',
@@ -79,7 +79,7 @@ class FixtureSet1 extends FixtureSet {
             metadata: 'metadata',
             transactionId: '10',
             position: 2),
-        '1': const Asset(
+        '1': Asset(
             chain: Chain.ravencoin,
             net: Net.test,
             symbol: 'MOONTREE1',

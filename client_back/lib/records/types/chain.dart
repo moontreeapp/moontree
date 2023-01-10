@@ -40,6 +40,16 @@ extension ChainExtension on Chain {
   String get title => name.toTitleCase();
   String get key => name;
   String get readable => 'chain: $name';
+  static Chain from(String s) {
+    s = s.toLowerCase();
+    if (s.toLowerCase().startsWith('r')) {
+      return Chain.ravencoin;
+    } else if (s.toLowerCase().startsWith('e')) {
+      return Chain.evrmore;
+    } else {
+      return Chain.none;
+    }
+  }
 }
 
 String symbolName(String symbol) {

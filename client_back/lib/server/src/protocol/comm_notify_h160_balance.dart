@@ -13,6 +13,7 @@ class NotifyChainH160Balance extends _i1.SerializableEntity {
     this.id,
     required this.chainName,
     required this.h160,
+    this.symbol,
     required this.sats,
   });
 
@@ -25,6 +26,8 @@ class NotifyChainH160Balance extends _i1.SerializableEntity {
       chainName: serializationManager
           .deserialize<String>(jsonSerialization['chainName']),
       h160: serializationManager.deserialize<String>(jsonSerialization['h160']),
+      symbol: serializationManager
+          .deserialize<String?>(jsonSerialization['symbol']),
       sats: serializationManager.deserialize<int>(jsonSerialization['sats']),
     );
   }
@@ -35,6 +38,8 @@ class NotifyChainH160Balance extends _i1.SerializableEntity {
 
   String h160;
 
+  String? symbol;
+
   int sats;
 
   @override
@@ -43,6 +48,7 @@ class NotifyChainH160Balance extends _i1.SerializableEntity {
       'id': id,
       'chainName': chainName,
       'h160': h160,
+      'symbol': symbol,
       'sats': sats,
     };
   }

@@ -759,37 +759,6 @@ class TransactionService {
     return ret;
   }
 
-  /// CLAIM FEATURE
-  Future<void> claim({
-    required Wallet from,
-    required String toWalletId,
-    String? note,
-    String? memo,
-    String? msg,
-  }) async {
-    final String destinationAddress = services.wallet.getEmptyAddress(
-      pros.wallets.primaryIndex.getOne(toWalletId)!,
-      NodeExposure.external,
-    );
-    final Set<Vout> utxos =
-        streams.claim.unclaimed.value.getOr(from.id, <Vout>{});
-    final int claimAmount = utxos
-        .map((Vout e) => e.coinValue)
-        .reduce((int value, int element) => value + element);
-    final Tuple2<wallet_utils.Transaction, SendEstimate> txEstimate =
-        await services.transaction.make.claimAllEVR(
-      destinationAddress,
-      SendEstimate(claimAmount, memo: memo, utxos: utxos.toList()),
-      wallet: from,
-      feeRate: wallet_utils.FeeRates.standard,
-    );
-    streams.spend.send.add(TransactionNote(
-      txHex: txEstimate.item1.toHex(),
-      successMsg: msg ?? 'Successfully Claimed',
-      note: note,
-    ));
-  }
-
   /// sweep all assets and crypto from one wallet to another
   Future<Set<Vout>> sweep({
     required Wallet from,

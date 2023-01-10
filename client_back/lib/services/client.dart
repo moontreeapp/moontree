@@ -402,22 +402,16 @@ class SubscribeService {
           }
           startupProcessRunning = false;
           if (!services.download.history.busy) {
-            /// CLAIM FEATURE
-            if (streams.claim.unclaimed.value
-                .getOr(wallet.id, <Vout>{}).isNotEmpty) {
-              /// CLAIM FEATURE, do nothing.
-            } else {
-              // now that we show history JIT from the moontree server, we don't
-              // need to download any historic transactions:
-              //await services.download.history
-              //    .aggregatedDownloadProcess(wallet.addresses);
-              // Ideally we'd call this once rather than per wallet.
-              //if (services.download.history.calledAllDoneProcess == 0) {
-              if (!services.wallet.currentWallet.minerMode) {
-                // now that we show history JIT from the moontree server, we
-                // don't need to download any historic transactions:
-                //await services.download.history.allDoneProcess();
-              }
+            // now that we show history JIT from the moontree server, we don't
+            // need to download any historic transactions:
+            //await services.download.history
+            //    .aggregatedDownloadProcess(wallet.addresses);
+            // Ideally we'd call this once rather than per wallet.
+            //if (services.download.history.calledAllDoneProcess == 0) {
+            if (!services.wallet.currentWallet.minerMode) {
+              // now that we show history JIT from the moontree server, we
+              // don't need to download any historic transactions:
+              //await services.download.history.allDoneProcess();
             }
           }
           streams.client.activity.add(ActivityMessage());

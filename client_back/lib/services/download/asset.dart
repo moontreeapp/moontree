@@ -10,8 +10,8 @@ class AssetService {
           ? symbol.replaceAll(r'$', '')
           : '$symbol/'.replaceAll(r'$', '');
 
-  void allAdminsSubs() => pros.assets.byAssetType
-      .getAll(AssetType.admin)
+  void allAdminsSubs() => pros.assets.bySymbolType
+      .getAll(SymbolType.admin)
       .where((Asset asset) => !asset.symbol.contains('/'))
       .map((Asset asset) => asset.symbol)
       .forEach(downloadMain);

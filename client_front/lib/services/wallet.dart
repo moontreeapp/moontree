@@ -58,9 +58,6 @@ Future<void> setupWallets() async {
 }
 
 Future<void> switchWallet(String walletId) async {
-  /// CLAIM FEATURE -- actually don't clear it here, instead make it a map by walletId
-  //streams.claim.unclaimed.add(<Vout>{});
-
   if (streams.client.busy.value) {
     await services.client.disconnect();
     await services.client.createClient();

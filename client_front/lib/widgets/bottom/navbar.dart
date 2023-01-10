@@ -137,10 +137,8 @@ class _NavBarState extends State<NavBar> {
                       //                .where((u) => u.height == 0)
                       //                .length >
                       //            0)
-                      streams.claim.unclaimed.value
-                              .getOr(Current.walletId, <Vout>{}).isEmpty &&
-                          (!walletIsEmpty &&
-                              connectionStatus == ConnectionStatus.connected),
+                      !walletIsEmpty &&
+                          connectionStatus == ConnectionStatus.connected,
                   disabledOnPressed: () {
                     if (connectionStatus != ConnectionStatus.connected) {
                       streams.app.snack

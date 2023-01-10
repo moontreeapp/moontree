@@ -37,15 +37,15 @@ class _AssetPageState extends State<AssetPage> {
               placeholderManage: !services.developer.developerMode,
               includeSectors: false,
               actionButtons: <Widget>[
-                if (<AssetType>[AssetType.main, AssetType.sub]
-                    .contains(chosenAsset.assetType)) ...<Widget>[
+                if (<SymbolType>[SymbolType.main, SymbolType.sub]
+                    .contains(chosenAsset.symbolType)) ...<Widget>[
                   components.buttons.actionButton(context,
                       label: 'create', onPressed: _produceSubCreateModal),
                 ],
-                if (<AssetType>[
-                  AssetType.qualifier,
-                  AssetType.qualifierSub,
-                ].contains(chosenAsset.assetType)) ...<Widget>[
+                if (<SymbolType>[
+                  SymbolType.qualifier,
+                  SymbolType.qualifierSub,
+                ].contains(chosenAsset.symbolType)) ...<Widget>[
                   components.buttons.actionButton(context,
                       label: 'create',
                       onPressed: () => Navigator.pushNamed(
@@ -77,8 +77,8 @@ class _AssetPageState extends State<AssetPage> {
 
   Future<void> _produceMainManageModal(asset_record.Asset asset) async {
     if (asset.reissuable &&
-        <AssetType>[AssetType.main, AssetType.sub, AssetType.restricted]
-            .contains(asset.assetType)) {
+        <SymbolType>[SymbolType.main, SymbolType.sub, SymbolType.restricted]
+            .contains(asset.symbolType)) {
       await SelectionItems(
         context,
         //symbol: symbol,
@@ -87,14 +87,14 @@ class _AssetPageState extends State<AssetPage> {
           () {
             Navigator.pushNamed(
               context,
-              '/reissue/${asset.assetType.name.toLowerCase()}',
+              '/reissue/${asset.symbolType.name.toLowerCase()}',
               arguments: <String, String>{'symbol': asset.symbol},
             );
           },
           () {
             ///Navigator.pushNamed(
             ///  context,
-            ///  '/issue/dividend' + assetType.name.toLowerCase(),
+            ///  '/issue/dividend' + symbolType.name.toLowerCase(),
             ///  arguments: {'symbol': symbol},
             ///);
           },

@@ -1,3 +1,4 @@
+import 'package:client_back/client_back.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:client_back/records/types/chain.dart';
@@ -42,7 +43,7 @@ class Asset with EquatableMixin {
   ////late final int txPos; // the vout it originated?
   ////late final int height; // the block it originated? // not necessary
 
-  const Asset({
+  Asset({
     required this.symbol,
     required this.satsInCirculation,
     required this.divisibility,
@@ -52,7 +53,11 @@ class Asset with EquatableMixin {
     required this.position,
     required this.chain,
     required this.net,
-  });
+  }) {
+    symbolSymbol = Symbol(symbol)(chain, net);
+  }
+
+  late Symbol symbolSymbol;
 
   @override
   List<Object> get props => <Object>[
@@ -98,144 +103,31 @@ class Asset with EquatableMixin {
     );
   }
 
+  /// about asset
+  bool get hasData => metadata.isAssetData;
+  String? get data => hasData ? metadata : null;
+  bool get hasMetadata => metadata != '';
+  double get amount => satsInCirculation.asCoin;
+
+  /// key stuff
   static String key(String symbol, Chain chain, Net net) =>
       '$symbol:${ChainNet(chain, net).key}';
-
   String get id => key(symbol, chain, net);
-  String? get parentSymbol {
-    if (assetType == AssetType.sub) {
-      final List<String> splits = symbol.split('/');
-      return splits.sublist(0, splits.length - 1).join('/');
-    }
-    if (assetType == AssetType.subAdmin) {
-      final List<String> splits = symbol.split('/');
-      return splits.sublist(0, splits.length - 1).join('/');
-    }
-    if (assetType == AssetType.qualifierSub) {
-      final List<String> splits = symbol.split('/#');
-      return splits.sublist(0, splits.length - 1).join('/#');
-    }
-    if (assetType == AssetType.unique) {
-      final List<String> splits = symbol.split('#');
-      return splits.sublist(0, splits.length - 1).join('#');
-    }
-    if (assetType == AssetType.channel) {
-      final List<String> splits = symbol.split('~');
-      return splits.sublist(0, splits.length - 1).join('~');
-    }
-    return null;
-  }
+  String? get parentId => symbolSymbol.parentSymbol == null
+      ? null
+      : key(symbolSymbol.parentSymbol!, chain, net);
 
-  String? get parentId =>
-      parentSymbol == null ? null : key(parentSymbol!, chain, net);
-
-  String? get shortName {
-    if (assetType == AssetType.sub) {
-      final List<String> splits = symbol.split('/');
-      return splits[splits.length - 1];
-    }
-    if (assetType == AssetType.subAdmin) {
-      final List<String> splits = symbol.split('/');
-      return splits[splits.length - 1];
-    }
-    if (assetType == AssetType.qualifierSub) {
-      final List<String> splits = symbol.split('/#');
-      return splits[splits.length - 1];
-    }
-    if (assetType == AssetType.unique) {
-      final List<String> splits = symbol.split('#');
-      return splits[splits.length - 1];
-    }
-    if (assetType == AssetType.channel) {
-      final List<String> splits = symbol.split('~');
-      return splits[splits.length - 1];
-    }
-    return null;
-  }
-
-  bool get hasData => metadata.isAssetData;
-
-  String? get data => hasData ? metadata : null;
-
-  bool get hasMetadata => metadata != '';
-
-  bool get isAdmin =>
-      assetType == AssetType.admin || assetType == AssetType.subAdmin;
-
-  bool get isSubAdmin => assetType == AssetType.subAdmin;
-
-  bool get isQualifier =>
-      assetType == AssetType.qualifier || assetType == AssetType.qualifierSub;
-
-  bool get isAnySub =>
-      assetType == AssetType.qualifierSub ||
-      assetType == AssetType.subAdmin ||
-      assetType == AssetType.sub ||
-      assetType == AssetType.unique ||
-      assetType == AssetType.channel;
-
-  bool get isRestricted => assetType == AssetType.restricted;
-  bool get isMain => assetType == AssetType.main;
-  bool get isNFT => assetType == AssetType.unique;
-  bool get isChannel => assetType == AssetType.unique;
-
-  String get baseSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
-      ? symbol.substring(1, symbol.length)
-      : symbol.endsWith('!')
-          ? symbol.substring(0, symbol.length - 1)
-          : symbol;
-
-  String get baseSubSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
-      ? symbol.substring(1, symbol.length)
-      : symbol.endsWith('!')
-          ? symbol.substring(0, symbol.length - 1)
-          : symbol.replaceAll('#', '/');
-
-  String get adminSymbol => '$baseSymbol!';
-
-  AssetType get assetType => assetTypeOf(symbol);
-
-  static AssetType assetTypeOf(String symbol) {
-    if (symbol.startsWith('#') && symbol.contains('/')) {
-      return AssetType.qualifierSub;
-    }
-    if (symbol.startsWith('#')) {
-      return AssetType.qualifier;
-    }
-    if (symbol.startsWith(r'$')) {
-      return AssetType.restricted;
-    }
-    if (symbol.contains('#')) {
-      return AssetType.unique;
-    }
-    if (symbol.contains('~')) {
-      return AssetType.channel;
-    }
-    if (symbol.contains('/') && symbol.endsWith('!')) {
-      return AssetType.subAdmin;
-    }
-    if (symbol.contains('/')) {
-      return AssetType.sub;
-    }
-    if (symbol.endsWith('!')) {
-      return AssetType.admin;
-    }
-    return AssetType.main;
-  }
-
-  String get assetTypeName => assetType.name;
-
-  double get amount => satsInCirculation.asCoin;
-}
-
-enum AssetType {
-  main,
-  admin,
-  restricted,
-  unique,
-  channel,
-  sub,
-  subAdmin,
-  qualifier,
-  qualifierSub,
+  /// bringing symbol values to top level
+  SymbolType get symbolType => symbolSymbol.symbolType;
+  String get symbolTypeName => symbolSymbol.symbolTypeName;
+  String get baseSymbol => symbolSymbol.baseSymbol;
+  String get baseSubSymbol => symbolSymbol.baseSubSymbol;
+  bool get isAdmin => symbolSymbol.isAdmin;
+  bool get isSubAdmin => symbolSymbol.isSubAdmin;
+  bool get isQualifier => symbolSymbol.isQualifier;
+  bool get isAnySub => symbolSymbol.isAnySub;
+  bool get isRestricted => symbolSymbol.isRestricted;
+  bool get isMain => symbolSymbol.isMain;
+  bool get isNFT => symbolSymbol.isNFT;
+  bool get isChannel => symbolSymbol.isChannel;
 }

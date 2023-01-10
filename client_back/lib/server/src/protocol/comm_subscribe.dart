@@ -23,21 +23,21 @@ class ChainWalletH160Subscription extends _i1.SerializableEntity {
     return ChainWalletH160Subscription(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
       chains: serializationManager
-          .deserialize<Set<String>>(jsonSerialization['chains']),
+          .deserialize<List<String>>(jsonSerialization['chains']),
       walletPubKeys: serializationManager
-          .deserialize<Set<String>>(jsonSerialization['walletPubKeys']),
+          .deserialize<List<String>>(jsonSerialization['walletPubKeys']),
       h160s: serializationManager
-          .deserialize<Set<String>>(jsonSerialization['h160s']),
+          .deserialize<List<String>>(jsonSerialization['h160s']),
     );
   }
 
   int? id;
 
-  Set<String> chains;
+  List<String> chains;
 
-  Set<String> walletPubKeys;
+  List<String> walletPubKeys;
 
-  Set<String> h160s;
+  List<String> h160s;
 
   @override
   Map<String, dynamic> toJson() {
