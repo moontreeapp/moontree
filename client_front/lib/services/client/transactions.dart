@@ -21,12 +21,14 @@ class TransactionHistory {
 
   Future<List<server.TransactionView>> transactionHistoryBy({
     String? symbol,
+    int? height,
     required Chaindata chain,
     required List<String> roots,
     required List<ByteData> h160s,
   }) async =>
       await client.transactions.get(
         symbol: symbol,
+        backFromHeight: height,
         chainName: chain.name,
         xpubkeys: roots,
         h160s: h160s,
@@ -37,6 +39,7 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   Wallet? wallet,
   String? symbol,
   Security? security,
+  int? height,
 }) async {
   Chain chain = security?.chain ?? Current.chain;
   Net net = security?.net ?? Current.net;
@@ -64,6 +67,7 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
       /// SERVER
       await TransactionHistory().transactionHistoryBy(
           symbol: serverSymbol,
+          height: height,
           chain: ChainNet(chain, net).chaindata,
           roots: roots,
           h160s: roots.isEmpty

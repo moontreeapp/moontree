@@ -37,27 +37,10 @@ class _HoldingList extends State<HoldingList> {
   bool showSearchBar = false;
   Rate? rateUSD;
   TextEditingController searchController = TextEditingController();
-  late Security currentCrypto;
 
   @override
   void initState() {
     super.initState();
-
-    /// when the app becomes active again refresh the front end
-    listeners.add(streams.app.active.listen((bool active) async {
-      if (active) {
-        print('triggered by activity');
-        setState(() {});
-      }
-    }));
-
-    /// when the client isn't busy anymore, refresh
-    listeners.add(streams.client.busy.listen((bool busy) async {
-      if (!busy) {
-        print('triggered by client not busy');
-        setState(() {});
-      }
-    }));
   }
 
   @override
@@ -99,12 +82,10 @@ class _HoldingList extends State<HoldingList> {
     cubit.set(isSubmitting: false);
 
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
+        onTap: () => refresh(cubit), //FocusScope.of(context).unfocus(),
         child: flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
             bloc: cubit..enter(),
             builder: (BuildContext context, HoldingsViewState state) {
-              print(state.holdingsViews);
-              print(state.isSubmitting);
               if (state.isSubmitting == true) {
                 return RefreshIndicator(
                     onRefresh: () => refresh(cubit),
@@ -198,7 +179,7 @@ class _HoldingList extends State<HoldingList> {
           onTap: () async => onTap(wallet, holding),
           onLongPress: _togglePath,
           leading: leadingIcon(holding),
-          title: title(holding),
+          title: title(holding, currentCrypto),
           trailing: services.developer.developerMode == true
               ? ((holding.symbol == currentCrypto.symbol) && !isEmpty
                   ? GestureDetector(
@@ -271,11 +252,7 @@ class _HoldingList extends State<HoldingList> {
     //}
     return GestureDetector(
       onTap: () async {
-        await services.balance.recalculateAllBalances();
-        setState(() {
-          print('tapped');
-          FocusScope.of(context).unfocus;
-        });
+        refresh(cubit);
       },
       child: listView,
     );
@@ -477,7 +454,7 @@ class _HoldingList extends State<HoldingList> {
       //)
       ;
 
-  Widget title(AssetHolding holding) =>
+  Widget title(AssetHolding holding, Security currentCrypto) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(children: <Widget>[
           SizedBox(

@@ -50,15 +50,15 @@ Future<List<server.BalanceView>> discoverHoldingBalances({
   final List<server.BalanceView> history =
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofBalanceView);
+      //await Future.delayed(Duration(seconds: 1), spoofBalanceView);
 
-  /// SERVER
-  //await HoldingBalances().holdingBalancesBy(
-  //    chain: ChainNet(chain, net).chaindata,
-  //    roots: roots,
-  //    h160s: roots.isEmpty
-  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
-  //        : []);
+      /// SERVER
+      await HoldingBalances().holdingBalancesBy(
+          chain: ChainNet(chain, net).chaindata,
+          roots: roots,
+          h160s: roots.isEmpty
+              ? Current.wallet.addresses.map((e) => e.h160).toList()
+              : []);
 
   for (final txView in history) {
     txView.chain = chain.name + '_' + net.name + 'net';

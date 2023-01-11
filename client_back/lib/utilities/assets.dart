@@ -106,62 +106,59 @@ List<AssetHolding> assetHoldings(Iterable<BalanceView> holdings) {
   for (final BalanceView balance in holdings) {
     final symbol =
         Symbol(balance.symbol)(ChainExtension.from(balance.chain!), Net.main);
-    if (<SymbolType>[SymbolType.main, SymbolType.admin]
-        .contains(symbol.symbolType)) {
-      if (!balancesMain.containsKey(symbol.baseSymbol)) {
-        balancesMain[symbol.baseSymbol] = AssetHolding(
-          symbol: symbol.baseSymbol,
-          main: symbol.symbolType == SymbolType.main ? balance : null,
-          admin: symbol.symbolType == SymbolType.admin ? balance : null,
+    final baseSymbol = symbol.baseSymbol;
+    final symbolType = symbol.symbolType;
+    if (<SymbolType>[SymbolType.main, SymbolType.admin].contains(symbolType)) {
+      if (!balancesMain.containsKey(baseSymbol)) {
+        balancesMain[baseSymbol] = AssetHolding(
+          symbol: baseSymbol,
+          main: symbolType == SymbolType.main ? balance : null,
+          admin: symbolType == SymbolType.admin ? balance : null,
         );
       } else {
-        balancesMain[symbol.baseSymbol] = AssetHolding.fromAssetHolding(
-          balancesMain[symbol.baseSymbol]!,
-          main: symbol.symbolType == SymbolType.main ? balance : null,
-          admin: symbol.symbolType == SymbolType.admin ? balance : null,
+        balancesMain[baseSymbol] = AssetHolding.fromAssetHolding(
+          balancesMain[baseSymbol]!,
+          main: symbolType == SymbolType.main ? balance : null,
+          admin: symbolType == SymbolType.admin ? balance : null,
         );
       }
     } else if (<SymbolType>[SymbolType.sub, SymbolType.subAdmin]
-        .contains(symbol.symbolType)) {
-      if (!balancesSub.containsKey(symbol.baseSymbol)) {
-        balancesSub[symbol.baseSymbol] = AssetHolding(
-          symbol: symbol.baseSymbol,
-          sub: symbol.symbolType == SymbolType.sub ? balance : null,
-          subAdmin: symbol.symbolType == SymbolType.subAdmin ? balance : null,
+        .contains(symbolType)) {
+      if (!balancesSub.containsKey(baseSymbol)) {
+        balancesSub[baseSymbol] = AssetHolding(
+          symbol: baseSymbol,
+          sub: symbolType == SymbolType.sub ? balance : null,
+          subAdmin: symbolType == SymbolType.subAdmin ? balance : null,
         );
       } else {
-        balancesSub[symbol.baseSymbol] = AssetHolding.fromAssetHolding(
-          balancesSub[symbol.baseSymbol]!,
-          sub: symbol.symbolType == SymbolType.sub ? balance : null,
-          subAdmin: symbol.symbolType == SymbolType.subAdmin ? balance : null,
+        balancesSub[baseSymbol] = AssetHolding.fromAssetHolding(
+          balancesSub[baseSymbol]!,
+          sub: symbolType == SymbolType.sub ? balance : null,
+          subAdmin: symbolType == SymbolType.subAdmin ? balance : null,
         );
       }
     } else {
-      if (!balancesOther.containsKey(symbol.baseSymbol)) {
-        balancesOther[symbol.baseSymbol] = AssetHolding(
-          symbol: symbol.baseSymbol,
-          nft: symbol.symbolType == SymbolType.unique ? balance : null,
-          channel: symbol.symbolType == SymbolType.channel ? balance : null,
-          restricted:
-              symbol.symbolType == SymbolType.restricted ? balance : null,
-          qualifier: symbol.symbolType == SymbolType.qualifier ? balance : null,
-          qualifierSub:
-              symbol.symbolType == SymbolType.qualifierSub ? balance : null,
-          coin: symbol.symbolType == SecurityType.coin ? balance : null,
-          fiat: symbol.symbolType == SecurityType.fiat ? balance : null,
+      if (!balancesOther.containsKey(baseSymbol)) {
+        balancesOther[baseSymbol] = AssetHolding(
+          symbol: baseSymbol,
+          nft: symbolType == SymbolType.unique ? balance : null,
+          channel: symbolType == SymbolType.channel ? balance : null,
+          restricted: symbolType == SymbolType.restricted ? balance : null,
+          qualifier: symbolType == SymbolType.qualifier ? balance : null,
+          qualifierSub: symbolType == SymbolType.qualifierSub ? balance : null,
+          coin: symbolType == SecurityType.coin ? balance : null,
+          fiat: symbolType == SecurityType.fiat ? balance : null,
         );
       } else {
-        balancesOther[symbol.baseSymbol] = AssetHolding.fromAssetHolding(
-          balancesOther[symbol.baseSymbol]!,
-          nft: symbol.symbolType == SymbolType.unique ? balance : null,
-          channel: symbol.symbolType == SymbolType.channel ? balance : null,
-          restricted:
-              symbol.symbolType == SymbolType.restricted ? balance : null,
-          qualifier: symbol.symbolType == SymbolType.qualifier ? balance : null,
-          qualifierSub:
-              symbol.symbolType == SymbolType.qualifierSub ? balance : null,
-          coin: symbol.symbolType == SecurityType.coin ? balance : null,
-          fiat: symbol.symbolType == SecurityType.fiat ? balance : null,
+        balancesOther[baseSymbol] = AssetHolding.fromAssetHolding(
+          balancesOther[baseSymbol]!,
+          nft: symbolType == SymbolType.unique ? balance : null,
+          channel: symbolType == SymbolType.channel ? balance : null,
+          restricted: symbolType == SymbolType.restricted ? balance : null,
+          qualifier: symbolType == SymbolType.qualifier ? balance : null,
+          qualifierSub: symbolType == SymbolType.qualifierSub ? balance : null,
+          coin: symbolType == SecurityType.coin ? balance : null,
+          fiat: symbolType == SecurityType.fiat ? balance : null,
         );
       }
     }

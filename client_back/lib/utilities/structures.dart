@@ -236,6 +236,135 @@ class Symbol {
 
 class SymbolEVR extends Symbol {
   SymbolEVR(symbol) : super(symbol);
+
+  String? get toMainSymbol => symbol;
+  String? get toAdminSymbol => '$symbol!';
+  String? get toRestrictedSymbol => '\$$symbol';
+  String? get toRestrictedAdminSymbol => '\$$symbol!';
+  String? get toNftSymbol => '$symbol'; // # ?
+  String? get toChannelSymbol => '$symbol'; //~ ?
+  String? get toSubSymbol => '$symbol'; // / ?
+  String? get toSubAdminSymbol => '$symbol!';
+  String? get toQualifierSymbol => '#$symbol';
+  String? get toQualifierSubSymbol => '#$symbol';
+
+  @override
+  bool get isAdmin =>
+      symbolType == SymbolType.admin || symbolType == SymbolType.subAdmin;
+  @override
+  bool get isSubAdmin => symbolType == SymbolType.subAdmin;
+  @override
+  bool get isQualifier =>
+      symbolType == SymbolType.qualifier ||
+      symbolType == SymbolType.qualifierSub;
+  @override
+  bool get isAnySub =>
+      symbolType == SymbolType.qualifierSub ||
+      symbolType == SymbolType.subAdmin ||
+      symbolType == SymbolType.sub ||
+      symbolType == SymbolType.unique ||
+      symbolType == SymbolType.channel;
+  @override
+  bool get isRestricted => symbolType == SymbolType.restricted;
+  @override
+  bool get isMain => symbolType == SymbolType.main;
+  @override
+  bool get isNFT => symbolType == SymbolType.unique;
+  @override
+  bool get isChannel => symbolType == SymbolType.unique;
+
+  @override
+  String get baseSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
+      ? symbol.substring(1, symbol.length)
+      : symbol.endsWith('!')
+          ? symbol.substring(0, symbol.length - 1)
+          : symbol;
+
+  @override
+  String get baseSubSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
+      ? symbol.substring(1, symbol.length)
+      : symbol.endsWith('!')
+          ? symbol.substring(0, symbol.length - 1)
+          : symbol.replaceAll('#', '/');
+
+  String get adminSymbol => '$baseSymbol!';
+
+  @override
+  SymbolType get symbolType {
+    if (symbol.startsWith('#') && symbol.contains('/')) {
+      return SymbolType.qualifierSub;
+    }
+    if (symbol.startsWith('#')) {
+      return SymbolType.qualifier;
+    }
+    if (symbol.startsWith(r'$')) {
+      return SymbolType.restricted;
+    }
+    if (symbol.contains('#')) {
+      return SymbolType.unique;
+    }
+    if (symbol.contains('~')) {
+      return SymbolType.channel;
+    }
+    if (symbol.contains('/') && symbol.endsWith('!')) {
+      return SymbolType.subAdmin;
+    }
+    if (symbol.contains('/')) {
+      return SymbolType.sub;
+    }
+    if (symbol.endsWith('!')) {
+      return SymbolType.admin;
+    }
+    return SymbolType.main;
+  }
+
+  String? get shortName {
+    switch (symbolType) {
+      case SymbolType.sub:
+        final List<String> splits = symbol.split('/');
+        return splits[splits.length - 1];
+      case SymbolType.subAdmin:
+        final List<String> splits = symbol.split('/');
+        return splits[splits.length - 1];
+      case SymbolType.qualifierSub:
+        final List<String> splits = symbol.split('/#');
+        return splits[splits.length - 1];
+      case SymbolType.unique:
+        final List<String> splits = symbol.split('#');
+        return splits[splits.length - 1];
+      case SymbolType.channel:
+        final List<String> splits = symbol.split('~');
+        return splits[splits.length - 1];
+      default:
+        return null;
+    }
+  }
+
+  @override
+  String get symbolTypeName => symbolType.name;
+
+  @override
+  String? get parentSymbol {
+    switch (symbolType) {
+      case SymbolType.sub:
+        final List<String> splits = symbol.split('/');
+        return splits.sublist(0, splits.length - 1).join('/');
+      case SymbolType.subAdmin:
+        final List<String> splits = symbol.split('/');
+        return splits.sublist(0, splits.length - 1).join('/');
+      case SymbolType.qualifierSub:
+        final List<String> splits = symbol.split('/#');
+        return splits.sublist(0, splits.length - 1).join('/#');
+      case SymbolType.unique:
+        final List<String> splits = symbol.split('#');
+        return splits.sublist(0, splits.length - 1).join('#');
+      case SymbolType.channel:
+        final List<String> splits = symbol.split('~');
+        return splits.sublist(0, splits.length - 1).join('~');
+      default:
+        return null;
+    }
+  }
 }
 
 class SymbolRVN extends Symbol {

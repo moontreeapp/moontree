@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
@@ -5,6 +7,7 @@ import 'package:client_front/services/client/asset_metadata.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:client_front/services/client/transactions.dart';
+import 'package:moontree_utils/extensions/bytedata.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show AmountToSatsExtension, FeeRate, standardFee;
@@ -38,6 +41,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     Security? security,
     Wallet? ranWallet,
     Security? ranSecurity,
+    int? ranHeight,
     bool? isSubmitting,
   }) {
     emit(submitting());
@@ -48,47 +52,64 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       security: security,
       ranWallet: ranWallet,
       ranSecurity: ranSecurity,
+      ranHeight: ranHeight,
       isSubmitting: isSubmitting,
     ));
   }
 
-  Future<void> setTransactionViews({bool force = false}) async => force ||
-          state.wallet != state.ranWallet ||
-          state.security != state.ranSecurity
-      ? () async {
-          set(
-            transactionViews: [],
-            isSubmitting: true,
-          );
-          set(
-            transactionViews: await discoverTransactionHistory(
-              wallet: state.wallet,
-              security: state.security,
-            ),
-            ranWallet: state.wallet,
-            ranSecurity: state.security,
-            isSubmitting: false,
-          );
-        }()
-      : () {}();
+  Future<void> setTransactionViews({bool force = false}) async {
+    if (force ||
+        state.wallet != state.ranWallet ||
+        state.security != state.ranSecurity) {
+      set(
+        transactionViews: await discoverTransactionHistory(
+          wallet: state.wallet,
+          security: state.security,
+        ),
+        ranWallet: state.wallet,
+        ranSecurity: state.security,
+        isSubmitting: false,
+      );
+    }
+  }
 
-  Future<void> setMetadataView({bool force = false}) async =>
-      force || state.metadataView == null
-          ? () async {
-              set(
-                transactionViews: [],
-                isSubmitting: true,
-              );
-              set(
-                metadataView: (await discoverAssetMetadataHistory(
-                  wallet: state.wallet,
-                  security: state.security,
-                ))
-                    .firstOrNull,
-                isSubmitting: false,
-              );
-            }()
-          : () {}();
+  Future<void> addSetTransactionViews() async {
+    if (!state.isSubmitting &&
+        (state.ranHeight == null ||
+            state.lowestHeight == null ||
+            state.ranHeight! > state.lowestHeight!)) {
+      submitting();
+      final batch = await discoverTransactionHistory(
+          wallet: state.wallet,
+          security: state.security,
+          height: state.lowestHeight);
+      set(
+        transactionViews: state.transactionViews +
+            (batch.first.hash.toHex() ==
+                    state.transactionViews.last.hash.toHex()
+                ? batch.sublist(1)
+                : batch),
+        ranWallet: state.wallet,
+        ranSecurity: state.security,
+        ranHeight: state.lowestHeight,
+        isSubmitting: false,
+      );
+    }
+  }
+
+  Future<void> setMetadataView({bool force = false}) async {
+    if (force || state.metadataView == null) {
+      submitting();
+      set(
+        metadataView: (await discoverAssetMetadataHistory(
+          wallet: state.wallet,
+          security: state.security,
+        ))
+            .firstOrNull,
+        isSubmitting: false,
+      );
+    }
+  }
 
   bool get nullCacheView {
     //final Asset? securityAsset = state.security.asset;

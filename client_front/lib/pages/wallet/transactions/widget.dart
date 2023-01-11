@@ -24,6 +24,9 @@ class Transactions extends StatefulWidget {
 class _TransactionsState extends State<Transactions> {
   Map<String, dynamic> data = <String, dynamic>{};
   DraggableScrollableController dController = DraggableScrollableController();
+  int lengthOfLoadMore = 0;
+  double currentMaxScroll = 0;
+  double previousMaxScroll = 0;
 
   @override
   void dispose() {
@@ -80,6 +83,26 @@ class _TransactionsState extends State<Transactions> {
                             state.scrollObserver.add(dController.size);
                           }
 
+                          scrollController.addListener(() async {
+                            /// just call this as soon as we start scrolling
+                            /// actually thats not efficient for the server
+                            double maxScroll =
+                                scrollController.position.maxScrollExtent;
+                            if (currentMaxScroll < maxScroll) {
+                              previousMaxScroll = currentMaxScroll;
+                              currentMaxScroll = maxScroll;
+                            }
+                            double currentScroll =
+                                scrollController.position.pixels;
+                            if (currentScroll > previousMaxScroll) {
+                              if (lengthOfLoadMore <
+                                  state.transactionViews.length) {
+                                lengthOfLoadMore =
+                                    state.transactionViews.length;
+                                await cubit.addSetTransactionViews();
+                              }
+                            }
+                          });
                           dController.addListener(_scrollListener);
                           return CoinDetailsGlidingSheet(
                             cubit: cubit,

@@ -30,6 +30,7 @@ class _HomeState extends State<Home> {
             streams.app.wallet.asset.value != null) {
           streams.app.wallet.asset.add(null);
         }
+        print('told to Refresh1');
         setState(() {
           appContext = value;
         });
@@ -40,7 +41,7 @@ class _HomeState extends State<Home> {
     //}));
 
     listeners.add(streams.app.wallet.refresh.listen((bool value) {
-      print('told to Refresh');
+      print('told to Refresh2');
       setState(() {});
     }));
   }

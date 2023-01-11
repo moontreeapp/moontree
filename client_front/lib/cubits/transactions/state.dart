@@ -15,6 +15,7 @@ class TransactionsViewState extends CubitState {
   // security immediately, showing on coinspec while we wait for the views.
   final Wallet? ranWallet;
   final Security? ranSecurity;
+  final int? ranHeight;
 
   const TransactionsViewState({
     required this.transactionViews,
@@ -26,6 +27,7 @@ class TransactionsViewState extends CubitState {
     required this.isSubmitting,
     required this.ranWallet,
     required this.ranSecurity,
+    required this.ranHeight,
   });
 
   TransactionsViewState reset() {
@@ -38,7 +40,8 @@ class TransactionsViewState extends CubitState {
   String toString() => 'TransactionsView( '
       'transactionViews=$transactionViews, metadataView=$metadataView, '
       'wallet=$wallet, security=$security, ranWallet=$ranWallet, '
-      'ranSecurity=$ranSecurity, isSubmitting=$isSubmitting)';
+      'ranSecurity=$ranSecurity, ranHeight=$ranHeight, '
+      'isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
@@ -48,6 +51,7 @@ class TransactionsViewState extends CubitState {
         security,
         ranWallet,
         ranSecurity,
+        ranHeight,
         isSubmitting,
       ];
 
@@ -60,6 +64,7 @@ class TransactionsViewState extends CubitState {
       security: pros.securities.currentCoin,
       ranWallet: null,
       ranSecurity: null,
+      ranHeight: null,
       isSubmitting: true);
 
   TransactionsViewState load({
@@ -69,6 +74,7 @@ class TransactionsViewState extends CubitState {
     Security? security,
     Wallet? ranWallet,
     Security? ranSecurity,
+    int? ranHeight,
     bool? isSubmitting,
   }) =>
       TransactionsViewState.load(
@@ -79,6 +85,7 @@ class TransactionsViewState extends CubitState {
         security: security,
         ranWallet: ranWallet,
         ranSecurity: ranSecurity,
+        ranHeight: ranHeight,
         isSubmitting: isSubmitting,
       );
 
@@ -90,6 +97,7 @@ class TransactionsViewState extends CubitState {
     Security? security,
     Wallet? ranWallet,
     Security? ranSecurity,
+    int? ranHeight,
     bool? isSubmitting,
   }) =>
       TransactionsViewState(
@@ -99,8 +107,13 @@ class TransactionsViewState extends CubitState {
         security: security ?? state.security,
         ranWallet: ranWallet ?? state.ranWallet,
         ranSecurity: ranSecurity ?? state.ranSecurity,
+        ranHeight: ranHeight ?? state.ranHeight,
         isSubmitting: isSubmitting ?? state.isSubmitting,
         scrollObserver: state.scrollObserver,
         currentTab: state.currentTab,
       );
+
+  int? get lowestHeight => transactionViews.isEmpty
+      ? null
+      : transactionViews.map((e) => e.height).reduce(min);
 }
