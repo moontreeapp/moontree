@@ -102,6 +102,16 @@ class _TransactionsState extends State<Transactions> {
                                 await cubit.addSetTransactionViews();
                               }
                             }
+                            if (currentScroll == maxScroll) {
+                              print('max');
+                              if (lengthOfLoadMore <
+                                  state.transactionViews.length) {
+                                print('length');
+                                lengthOfLoadMore =
+                                    state.transactionViews.length;
+                                await cubit.addSetTransactionViews();
+                              }
+                            }
                           });
                           dController.addListener(_scrollListener);
                           return CoinDetailsGlidingSheet(

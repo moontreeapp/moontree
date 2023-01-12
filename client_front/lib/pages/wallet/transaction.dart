@@ -91,7 +91,7 @@ class TransactionPageContent extends StatelessWidget {
     final TransactionViewCubit cubit =
         flutter_bloc.BlocProvider.of<TransactionViewCubit>(context);
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
-
+    // why this get called twice?
     cubit.setTransactionDetails(hash: transactionView.hash);
     return flutter_bloc.BlocBuilder<TransactionViewCubit, TransactionViewState>(
         bloc: cubit..enter(),

@@ -31,11 +31,11 @@ Future<server.TransactionDetailsView?> discoverTransactionDetails({
   return
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofTransactionDetailsView);
+      //await Future.delayed(Duration(seconds: 1), spoofTransactionDetailsView);
 
-  /// SERVER
-  //await TransactionDetails().transactionDetailsBy(
-  //    hash: hash, chain: ChainNet(chain, net).chaindata);
+      /// SERVER
+      await TransactionDetails().transactionDetailsBy(
+          hash: hash, chain: ChainNet(chain, net).chaindata);
 }
 
 server.TransactionDetailsView spoofTransactionDetailsView() {

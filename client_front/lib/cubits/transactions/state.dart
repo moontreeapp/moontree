@@ -115,5 +115,5 @@ class TransactionsViewState extends CubitState {
 
   int? get lowestHeight => transactionViews.isEmpty
       ? null
-      : transactionViews.map((e) => e.height).reduce(min);
+      : transactionViews.map((e) => e.height).reduce(min) - 1;
 }

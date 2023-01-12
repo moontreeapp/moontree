@@ -83,17 +83,24 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
           wallet: state.wallet,
           security: state.security,
           height: state.lowestHeight);
-      set(
-        transactionViews: state.transactionViews +
-            (batch.first.hash.toHex() ==
-                    state.transactionViews.last.hash.toHex()
-                ? batch.sublist(1)
-                : batch),
-        ranWallet: state.wallet,
-        ranSecurity: state.security,
-        ranHeight: state.lowestHeight,
-        isSubmitting: false,
-      );
+      if (batch.isNotEmpty) {
+        set(
+          transactionViews: state.transactionViews + batch,
+          ranWallet: state.wallet,
+          ranSecurity: state.security,
+          ranHeight: state.lowestHeight,
+          isSubmitting: false,
+        );
+      } else {
+        // set something that it's done
+        set(
+          transactionViews: state.transactionViews,
+          ranWallet: state.wallet,
+          ranSecurity: state.security,
+          ranHeight: state.lowestHeight,
+          isSubmitting: false,
+        );
+      }
     }
   }
 
