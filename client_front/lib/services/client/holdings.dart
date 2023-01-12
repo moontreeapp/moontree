@@ -87,5 +87,12 @@ List<server.BalanceView> spoofBalanceView() {
     server.BalanceView(symbol: 'DEF', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'XYZ', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'Scam', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(symbol: '1RVN', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(
+        symbol: '1MOONTREE', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(symbol: '1ABC', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(symbol: '1DEF', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(symbol: '1XYZ', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(symbol: '1Scam', chain: null, sats: 10 * satsPerCoin),
   ];
 }

@@ -69,7 +69,13 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future<void> refresh(HoldingsViewCubit cubit) async {
-    await cubit.setHoldingViews(force: true);
+    cubit.set(isSubmitting: true);
+    setState(() {});
+    await cubit.setHoldingViews(
+      Current.wallet,
+      pros.settings.chainNet,
+      force: true,
+    );
     setState(() {});
   }
 
@@ -77,7 +83,11 @@ class _HoldingList extends State<HoldingList> {
   Widget build(BuildContext context) {
     final HoldingsViewCubit cubit =
         flutter_bloc.BlocProvider.of<HoldingsViewCubit>(context);
-    cubit.setHoldingViews();
+    if (cubit.state.ranWallet != Current.wallet ||
+        cubit.state.ranChainNet != pros.settings.chainNet) {
+      cubit.set(isSubmitting: true);
+    }
+    cubit.setHoldingViews(Current.wallet, pros.settings.chainNet);
 
     return GestureDetector(
         onTap: () => refresh(cubit), //FocusScope.of(context).unfocus(),

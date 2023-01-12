@@ -1,3 +1,5 @@
+import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
@@ -7,6 +9,8 @@ import 'package:client_front/services/dev.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:client_front/services/storage.dart' show SecureStorage;
 import 'package:bip32/bip32.dart';
+import 'package:client_front/cubits/cubits.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 
 Future<String> Function(String id) get getEntropy => _getSecret;
 Future<void> Function(Secret secret) get saveSecret => _saveSecret;
@@ -57,7 +61,7 @@ Future<void> setupWallets() async {
   }
 }
 
-Future<void> switchWallet(String walletId) async {
+Future<void> switchWallet(String walletId, BuildContext context) async {
   if (streams.client.busy.value) {
     await services.client.disconnect();
     await services.client.createClient();

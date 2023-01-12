@@ -62,13 +62,13 @@ class SubscriptionService {
     final subscriptionVoid =
 
         /// MOCK SERVER
-        //await Future.delayed(Duration(seconds: 1), spoofNothing);
+        await Future.delayed(Duration(seconds: 1), spoofNothing);
 
-        /// SERVER
-        await services.subscription.specifySubscription(
-            chains: [ChainNet(chain, net).chaindata.name],
-            roots: roots,
-            h160s: h160s);
+    /// SERVER
+    //await services.subscription.specifySubscription(
+    //    chains: [ChainNet(chain, net).chaindata.name],
+    //    roots: roots,
+    //    h160s: h160s);
 
     return subscriptionVoid;
   }

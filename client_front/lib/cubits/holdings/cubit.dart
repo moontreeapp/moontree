@@ -35,22 +35,28 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
   void set({
     List<BalanceView>? holdingsViews,
     List<AssetHolding>? assetHoldings,
-    Wallet? wallet,
+    Wallet? ranWallet,
+    ChainNet? ranChainNet,
     bool? isSubmitting,
   }) {
-    emit(submitting());
+    //emit(submitting());
     emit(state.load(
       holdingsViews: holdingsViews,
       assetHoldings: assetHoldings,
-      wallet: wallet,
+      ranWallet: ranWallet,
+      ranChainNet: ranChainNet,
       isSubmitting: isSubmitting,
     ));
   }
 
-  Future<void> setHoldingViews({bool force = false}) async {
-    if (force || state.holdingsViews.isEmpty) {
+  Future<void> setHoldingViews(Wallet wallet, ChainNet chainNet,
+      {bool force = false}) async {
+    if (force ||
+        state.holdingsViews.isEmpty ||
+        state.ranWallet != wallet ||
+        state.ranChainNet != chainNet) {
       List<BalanceView> holdingViews = await discoverHoldingBalances(
-        wallet: state.wallet,
+        wallet: wallet,
       );
       set(
         holdingsViews: [],
@@ -60,6 +66,8 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
       set(
         holdingsViews: holdingViews,
         assetHoldings: assetHoldings(holdingViews),
+        ranWallet: wallet,
+        ranChainNet: chainNet,
         isSubmitting: false,
       );
     }

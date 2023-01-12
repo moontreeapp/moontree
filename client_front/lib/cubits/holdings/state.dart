@@ -4,7 +4,8 @@ part of 'cubit.dart';
 class HoldingsViewState extends CubitState {
   final List<BalanceView> holdingsViews;
   final List<AssetHolding> assetHoldings;
-  final Wallet wallet;
+  final Wallet? ranWallet;
+  final ChainNet? ranChainNet;
   final bool isSubmitting;
   // for holdingsViews so that we never hit the endpoint multiple times with
   // the same input as last time. This also allows us to set the wallet and
@@ -12,7 +13,8 @@ class HoldingsViewState extends CubitState {
   const HoldingsViewState({
     required this.holdingsViews,
     required this.assetHoldings,
-    required this.wallet,
+    required this.ranWallet,
+    required this.ranChainNet,
     required this.isSubmitting,
   });
 
@@ -20,34 +22,39 @@ class HoldingsViewState extends CubitState {
   String toString() => 'HoldingsViewSate( '
       'holdingsViews=$holdingsViews, '
       'assetHoldings=$assetHoldings, '
-      'wallet=$wallet, '
+      'ranWallet=$ranWallet, '
+      'ranChainNet=$ranChainNet, '
       'isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
         holdingsViews,
         assetHoldings,
-        wallet,
+        ranWallet,
+        ranChainNet,
         isSubmitting,
       ];
 
   factory HoldingsViewState.initial() => HoldingsViewState(
       holdingsViews: [],
       assetHoldings: [],
-      wallet: pros.wallets.currentWallet,
+      ranWallet: null,
+      ranChainNet: null,
       isSubmitting: true);
 
   HoldingsViewState load({
     List<BalanceView>? holdingsViews,
     List<AssetHolding>? assetHoldings,
-    Wallet? wallet,
+    Wallet? ranWallet,
+    ChainNet? ranChainNet,
     bool? isSubmitting,
   }) =>
       HoldingsViewState.load(
         state: this,
         holdingsViews: holdingsViews,
         assetHoldings: assetHoldings,
-        wallet: wallet,
+        ranWallet: ranWallet,
+        ranChainNet: ranChainNet,
         isSubmitting: isSubmitting,
       );
 
@@ -55,13 +62,15 @@ class HoldingsViewState extends CubitState {
     required HoldingsViewState state,
     List<BalanceView>? holdingsViews,
     List<AssetHolding>? assetHoldings,
-    Wallet? wallet,
+    Wallet? ranWallet,
+    ChainNet? ranChainNet,
     bool? isSubmitting,
   }) =>
       HoldingsViewState(
         holdingsViews: holdingsViews ?? state.holdingsViews,
         assetHoldings: assetHoldings ?? state.assetHoldings,
-        wallet: wallet ?? state.wallet,
+        ranWallet: ranWallet ?? state.ranWallet,
+        ranChainNet: ranChainNet ?? state.ranChainNet,
         isSubmitting: isSubmitting ?? state.isSubmitting,
       );
 }

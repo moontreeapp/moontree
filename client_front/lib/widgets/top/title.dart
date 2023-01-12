@@ -323,7 +323,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   in pros.wallets.ordered + pros.wallets.ordered) {
                 // why twice?
                 if (next) {
-                  return switchWallet(wallet.id);
+                  return switchWallet(wallet.id, context);
                 }
                 if (Current.walletId == wallet.id) {
                   next = true;
@@ -387,7 +387,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     await components.loading
                         .screen(message: 'Creating Wallet', playCount: 3);
                     final String walletId = await generateWallet();
-                    await switchWallet(walletId);
+                    await switchWallet(walletId, context);
                   },
                   leading: Container(
                       width: indicatorWidth,
@@ -424,7 +424,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     Navigator.pop(components.navigator.routeContext!);
                     final String walletId =
                         await generateWallet(walletType: WalletType.single);
-                    await switchWallet(walletId);
+                    await switchWallet(walletId, context);
                   },
                   leading: Container(
                       width: indicatorWidth,
@@ -441,7 +441,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     onTap: () async {
                       Navigator.pop(components.navigator.routeContext!);
                       if (wallet.id != Current.walletId) {
-                        await switchWallet(wallet.id);
+                        await switchWallet(wallet.id, context);
                       }
                     },
                     leading: walletsSecurities[wallet] == null ||
@@ -575,15 +575,17 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                             if (wallet.id ==
                                                                 Current
                                                                     .walletId) {
-                                                              await switchWallet(pros
-                                                                  .wallets
-                                                                  .records
-                                                                  .where((Wallet
-                                                                          w) =>
-                                                                      w.id !=
-                                                                      wallet.id)
-                                                                  .first
-                                                                  .id);
+                                                              await switchWallet(
+                                                                  pros.wallets
+                                                                      .records
+                                                                      .where((Wallet
+                                                                              w) =>
+                                                                          w.id !=
+                                                                          wallet
+                                                                              .id)
+                                                                      .first
+                                                                      .id,
+                                                                  context);
                                                             }
                                                             await pros.wallets
                                                                 .remove(wallet);
