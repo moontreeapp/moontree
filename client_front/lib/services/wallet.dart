@@ -64,6 +64,10 @@ Future<void> switchWallet(String walletId) async {
   }
 
   await pros.settings.setCurrentWalletId(walletId);
+
+  // reset subscriptions for this wallet
+  await services.subscription.setupSubscription(wallet: Current.wallet);
+
   streams.app.fling.add(false);
   streams.app.setting.add(null);
   final Wallet? currentWallet = pros.wallets.primaryIndex.getOne(walletId);

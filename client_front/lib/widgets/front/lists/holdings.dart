@@ -77,9 +77,7 @@ class _HoldingList extends State<HoldingList> {
   Widget build(BuildContext context) {
     final HoldingsViewCubit cubit =
         flutter_bloc.BlocProvider.of<HoldingsViewCubit>(context);
-    cubit.set(wallet: pros.wallets.currentWallet);
     cubit.setHoldingViews();
-    cubit.set(isSubmitting: false);
 
     return GestureDetector(
         onTap: () => refresh(cubit), //FocusScope.of(context).unfocus(),

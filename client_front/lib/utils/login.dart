@@ -23,6 +23,11 @@ Future<void> login(
   streams.app.logout.add(false);
   streams.app.verify.add(true);
   //streams.app.lead.add(LeadIcon.menu);
+
+  // setup subscription on moontree client for this wallet
+  await services.subscription.setupSubscription(wallet: Current.wallet);
+
+  // go to home
   postLogin(context);
 
   /// here we can put logic to migrate database on new version or something:

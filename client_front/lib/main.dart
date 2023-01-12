@@ -4,19 +4,22 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_front/cubits/cubits.dart';
+import 'package:serverpod_flutter/serverpod_flutter.dart';
 
 //import 'package:flutter/foundation.dart' show kDebugMode;
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'package:client_front/cubits/cubits.dart';
 import 'package:client_front/pages/pages.dart';
 import 'package:client_front/components/components.dart';
 import 'package:client_front/services/dev.dart';
+import 'package:client_front/services/client/subscription.dart';
 import 'package:client_front/theme/theme.dart';
 import 'package:client_front/widgets/widgets.dart';
 import 'package:client_back/streams/streams.dart';
+import 'package:client_back/services/services.dart';
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp();
@@ -27,6 +30,12 @@ Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   devFlags.addAll(flags ?? []);
   // Catch errors without crashing the app:
   WidgetsFlutterBinding.ensureInitialized();
+
+  // setup moontree server client for subscriptions
+  await services.subscription.setupClient(
+    monitor: FlutterConnectivityMonitor(),
+  );
+
   runApp(RavenMobileApp());
 
   // runZonedGuarded<Future<void>>(() async {
