@@ -195,7 +195,8 @@ class _TransactionListState extends State<TransactionList> {
                     ]
                 ]) +
           <Widget>[
-            if (!(widget.cubit?.state.end ?? true)) ...[
+            if (transactions.length > 15 &&
+                !(widget.cubit?.state.end ?? true)) ...[
               components.empty.getTransactionsShimmer(context),
               const Divider(indent: 16),
             ],
