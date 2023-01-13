@@ -28,16 +28,17 @@ class BlockWaiter extends Trigger {
   }
 
   Future<void> subscribe() async {
-    await when(
-      thereIsA: await services.client.api.subscribeHeaders(),
-      doThis: (BlockHeader blockHeader) async {
-        await pros.blocks.save(Block.fromBlockHeader(blockHeader));
-      },
-      autoDeinit: true,
-      // key should be specified because different chains give different keys by
-      // default so autoDeinit never gets triggered
-      key: 'block height',
-    );
+    /// REMOVE replaced by subscription service.
+    //await when(
+    //  thereIsA: await services.client.api.subscribeHeaders(),
+    //  doThis: (BlockHeader blockHeader) async {
+    //    await pros.blocks.save(Block.fromBlockHeader(blockHeader));
+    //  },
+    //  autoDeinit: true,
+    //  // key should be specified because different chains give different keys by
+    //  // default so autoDeinit never gets triggered
+    //  key: 'block height',
+    //);
 
     // update existing mempool transactions each block
     await when<Change<Block>>(

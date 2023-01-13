@@ -93,8 +93,8 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
       ? GestureDetector(
           onTap: () async {
             if (services.developer.developerMode) {
-              //await setupSubscription(wallet: Current.wallet);
-              print(await (Current.wallet as LeaderWallet).roots);
+              await setupSubscription(wallet: Current.wallet);
+              //print(await (Current.wallet as LeaderWallet).roots);
             }
           },
           child: appBar,

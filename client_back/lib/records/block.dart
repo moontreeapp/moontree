@@ -1,3 +1,4 @@
+import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -17,8 +18,14 @@ class Block with EquatableMixin, ToStringMixin {
 
   const Block({this.height = 0});
 
+  /// from electurm
   factory Block.fromBlockHeader(BlockHeader blockHeader) =>
       Block(height: blockHeader.height);
+
+  /// from moontree server
+  factory Block.fromNotification(protocol.NotifyChainHeight message) =>
+      Block(height: message.height);
+
   @HiveField(0)
   @override
   List<Object?> get props => <Object?>[height];

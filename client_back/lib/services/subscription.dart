@@ -24,10 +24,26 @@ class SubscriptionService {
     // we might as well setup these listeners on login or something like that.
     // probably only needs to be set up once, not everytime we
     // specifySubscription.
-    client.subscription.stream.listen((message) {
-      /// if height do x
-      /// if balance update do y, etc.
+    client.subscription.stream.listen((message) async {
+      /// # status means the state of the synchronizer (2 means up to date)
+      /// examples:
+      ///   {"id":null,"chainName":"evrmore_mainnet","status":2}
+      ///   {"id":null,"chainName":"evrmore_mainnet","height":107222}
+      // if height do x
+      // if balance update do y, etc.
       print(message);
+      if (message is protocol.NotifyChainStatus) {
+        print('status!');
+      } else if (message is protocol.NotifyChainHeight) {
+        await pros.blocks.save(Block.fromNotification(message));
+        print('pros.blocks.records ${pros.blocks.records.first}');
+      } else if (message is protocol.NotifyChainH160Balance) {
+        print('H160 balance!');
+      } else if (message is protocol.NotifyChainWalletBalance) {
+        print('wallet balance!');
+      } else {
+        print(message.runtimeType);
+      }
     });
   }
 
@@ -35,14 +51,13 @@ class SubscriptionService {
     required List<String> chains,
     required List<String> roots,
     required List<String> h160s,
-  }) async {
-    await client.subscription
-        .sendStreamMessage(protocol.ChainWalletH160Subscription(
-      chains: chains,
-      walletPubKeys: roots,
-      h160s: h160s,
-    ));
-  }
+  }) async =>
+      await client.subscription
+          .sendStreamMessage(protocol.ChainWalletH160Subscription(
+        chains: chains,
+        walletPubKeys: roots,
+        h160s: h160s,
+      ));
 
   Future<void> setupSubscription({
     Wallet? wallet,
@@ -62,13 +77,13 @@ class SubscriptionService {
     final subscriptionVoid =
 
         /// MOCK SERVER
-        await Future.delayed(Duration(seconds: 1), spoofNothing);
+        //await Future.delayed(Duration(seconds: 1), spoofNothing);
 
-    /// SERVER
-    //await services.subscription.specifySubscription(
-    //    chains: [ChainNet(chain, net).chaindata.name],
-    //    roots: roots,
-    //    h160s: h160s);
+        /// SERVER
+        await services.subscription.specifySubscription(
+            chains: [ChainNet(chain, net).chaindata.name],
+            roots: roots,
+            h160s: h160s);
 
     return subscriptionVoid;
   }

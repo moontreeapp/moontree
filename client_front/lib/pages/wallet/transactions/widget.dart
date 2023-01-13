@@ -105,20 +105,18 @@ class _TransactionsState extends State<Transactions> {
                               }
                             }
                             if (currentScroll == maxScroll) {
-                              print('max $timedCalling');
-                              // first time we hit the bottom, set a timer - if max hasn't changed in 5 seconds call it again
-
+                              // first time we hit the bottom, set a timer
                               if (!timedCalling) {
                                 timedCalling = true;
-                                print('setting timer');
                                 await Future.delayed(
                                   Duration(seconds: 5),
                                   () async {
-                                    print('timer Done');
-                                    if (maxScroll ==
-                                        scrollController
-                                            .position.maxScrollExtent) {
-                                      print('calling again');
+                                    // if max hasn't changed after 5 seconds
+                                    if (mounted &&
+                                        maxScroll ==
+                                            scrollController
+                                                .position.maxScrollExtent) {
+                                      // call it again
                                       await cubit.addSetTransactionViews(
                                           force: true);
                                     }
