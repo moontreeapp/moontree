@@ -39,6 +39,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
+    bool? end,
     Wallet? ranWallet,
     Security? ranSecurity,
     int? ranHeight,
@@ -50,6 +51,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       metadataView: metadataView,
       wallet: wallet,
       security: security,
+      end: end,
       ranWallet: ranWallet,
       ranSecurity: ranSecurity,
       ranHeight: ranHeight,
@@ -73,19 +75,58 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     }
   }
 
-  Future<void> addSetTransactionViews() async {
-    if (!state.isSubmitting &&
-        (state.ranHeight == null ||
-            state.lowestHeight == null ||
-            state.ranHeight! > state.lowestHeight!)) {
+  Future<void> addSetTransactionViews({bool force = false}) async {
+    if (force ||
+        (!state.isSubmitting &&
+            (state.ranHeight == null ||
+                state.lowestHeight == null ||
+                state.ranHeight! > state.lowestHeight!))) {
       submitting();
       final batch = await discoverTransactionHistory(
           wallet: state.wallet,
           security: state.security,
           height: state.lowestHeight);
+      /*
+      kralverde — Today at 9:06 AM
+        if you look at the actual vins from https://evr.cryptoscope.io/api/getrawtransaction/?txid=df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188&decode=1 they will match 
+        the client side fix would just be to maintain a set of heights already seen
+        if the vouttransactionstructthingie's height is in that set, ignore it 
+      meta stack — Today at 9:08 AM
+        but couldn't we have multiple transactions at the same height?
+      kralverde — Today at 9:08 AM
+        yes, but the logic of the endpoint will return all values at the lowest height
+        so if you receive that lowest height, you can be sure that you recieved all of the txs from that lowest height
+      meta stack — Today at 9:09 AM
+        ah, so only compare against the list that was generated before the current batch?
+      kralverde — Today at 9:09 AM
+        it would have to be against the entire list, but yes
+        just keep a set<int>, if x.height in set, ignore, else insert x.height into the set + add to the ui 
+      */
+      /// by individual transaction solution - this clears up all the semi-duplicate erroneous inputs but I think it also removes potentially good transactions as we could have multiple unrelated transactions in the same height and this would filter those out too...
+      /// preferring this one as multiple transactions at the same height is a more rare occurance I think.
+      Set heights = <int>{};
+      final len = state.transactionViews.length;
+      int i = 0;
+      var newTransactionViews = <TransactionView>[];
+      newTransactionViews.addAll(state.transactionViews);
+      for (final x in state.transactionViews + batch) {
+        if (!heights.contains(x.height)) {
+          heights.add(x.height);
+          // add batch item
+          if (i > len) {
+            newTransactionViews.add(x);
+          }
+        }
+        i++;
+      }
+
+      /// by batch solution - this clears up the semi-duplicate erroneous inputs that did not happen in the same batch, but not the ones that do happen in the same batch:
+      //final priorHeights = state.transactionViews.map((e) => e.height).toSet();
+      //final limitedBatch = batch.where((e) => !priorHeights.contains(e.height));
+      //final newTransactionViews = state.transactionViews + limitedBatch.toList();
       if (batch.isNotEmpty) {
         set(
-          transactionViews: state.transactionViews + batch,
+          transactionViews: newTransactionViews,
           ranWallet: state.wallet,
           ranSecurity: state.security,
           ranHeight: state.lowestHeight,
@@ -95,6 +136,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
         // set something that it's done
         set(
           transactionViews: state.transactionViews,
+          end: true,
           ranWallet: state.wallet,
           ranSecurity: state.security,
           ranHeight: state.lowestHeight,

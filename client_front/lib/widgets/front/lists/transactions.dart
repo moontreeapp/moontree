@@ -195,11 +195,10 @@ class _TransactionListState extends State<TransactionList> {
                     ]
                 ]) +
           <Widget>[
-            /// has no effect because when this is built it is not submitting
-            //if (widget.cubit?.state.isSubmitting ?? false) ...[
-            //  components.empty.getTransactionsShimmer(context),
-            //  const Divider(indent: 16),
-            //],
+            if (!(widget.cubit?.state.end ?? true)) ...[
+              components.empty.getTransactionsShimmer(context),
+              const Divider(indent: 16),
+            ],
             Container(
               height: 80 * 1.5,
               color: Colors.white,

@@ -6,6 +6,7 @@ class TransactionsViewState extends CubitState {
   final AssetMetadata? metadataView;
   final Wallet wallet;
   final Security security;
+  final bool end;
   final BehaviorSubject<double> scrollObserver;
   final BehaviorSubject<String> currentTab;
   final bool isSubmitting;
@@ -24,6 +25,7 @@ class TransactionsViewState extends CubitState {
     required this.currentTab,
     required this.wallet,
     required this.security,
+    required this.end,
     required this.isSubmitting,
     required this.ranWallet,
     required this.ranSecurity,
@@ -39,7 +41,7 @@ class TransactionsViewState extends CubitState {
   @override
   String toString() => 'TransactionsView( '
       'transactionViews=$transactionViews, metadataView=$metadataView, '
-      'wallet=$wallet, security=$security, ranWallet=$ranWallet, '
+      'wallet=$wallet, security=$security, end=$end, ranWallet=$ranWallet, '
       'ranSecurity=$ranSecurity, ranHeight=$ranHeight, '
       'isSubmitting=$isSubmitting)';
 
@@ -49,6 +51,7 @@ class TransactionsViewState extends CubitState {
         metadataView,
         wallet,
         security,
+        end,
         ranWallet,
         ranSecurity,
         ranHeight,
@@ -62,6 +65,7 @@ class TransactionsViewState extends CubitState {
       currentTab: BehaviorSubject<String>.seeded('HISTORY'),
       wallet: pros.wallets.currentWallet,
       security: pros.securities.currentCoin,
+      end: false,
       ranWallet: null,
       ranSecurity: null,
       ranHeight: null,
@@ -72,6 +76,7 @@ class TransactionsViewState extends CubitState {
     AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
+    bool? end,
     Wallet? ranWallet,
     Security? ranSecurity,
     int? ranHeight,
@@ -83,6 +88,7 @@ class TransactionsViewState extends CubitState {
         metadataView: metadataView,
         wallet: wallet,
         security: security,
+        end: end,
         ranWallet: ranWallet,
         ranSecurity: ranSecurity,
         ranHeight: ranHeight,
@@ -95,6 +101,7 @@ class TransactionsViewState extends CubitState {
     AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
+    bool? end,
     Wallet? ranWallet,
     Security? ranSecurity,
     int? ranHeight,
@@ -105,6 +112,7 @@ class TransactionsViewState extends CubitState {
         metadataView: metadataView ?? state.metadataView,
         wallet: wallet ?? state.wallet,
         security: security ?? state.security,
+        end: end ?? state.end,
         ranWallet: ranWallet ?? state.ranWallet,
         ranSecurity: ranSecurity ?? state.ranSecurity,
         ranHeight: ranHeight ?? state.ranHeight,

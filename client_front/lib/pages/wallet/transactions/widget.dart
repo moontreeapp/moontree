@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:io' show Platform;
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
@@ -27,6 +28,7 @@ class _TransactionsState extends State<Transactions> {
   int lengthOfLoadMore = 0;
   double currentMaxScroll = 0;
   double previousMaxScroll = 0;
+  bool timedCalling = false;
 
   @override
   void dispose() {
@@ -103,14 +105,34 @@ class _TransactionsState extends State<Transactions> {
                               }
                             }
                             if (currentScroll == maxScroll) {
-                              print('max');
-                              if (lengthOfLoadMore <
-                                  state.transactionViews.length) {
-                                print('length');
-                                lengthOfLoadMore =
-                                    state.transactionViews.length;
-                                await cubit.addSetTransactionViews();
+                              print('max $timedCalling');
+                              // first time we hit the bottom, set a timer - if max hasn't changed in 5 seconds call it again
+
+                              if (!timedCalling) {
+                                timedCalling = true;
+                                print('setting timer');
+                                await Future.delayed(
+                                  Duration(seconds: 5),
+                                  () async {
+                                    print('timer Done');
+                                    if (maxScroll ==
+                                        scrollController
+                                            .position.maxScrollExtent) {
+                                      print('calling again');
+                                      await cubit.addSetTransactionViews(
+                                          force: true);
+                                    }
+                                  },
+                                ).then((value) => timedCalling = false);
                               }
+
+                              //if (lengthOfLoadMore <
+                              //    state.transactionViews.length) {
+                              //  print('length');
+                              //  lengthOfLoadMore =
+                              //      state.transactionViews.length;
+                              //  await cubit.addSetTransactionViews();
+                              //}
                             }
                           });
                           dController.addListener(_scrollListener);
