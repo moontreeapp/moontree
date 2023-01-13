@@ -200,7 +200,7 @@ class _TransactionListState extends State<TransactionList> {
               const Divider(indent: 16),
             ],
             Container(
-              height: 80 * 1.5,
+              height: 80 * ((!(widget.cubit?.state.end ?? true)) ? 1.5 : 1),
               color: Colors.white,
             )
           ]);
