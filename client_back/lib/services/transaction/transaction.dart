@@ -52,7 +52,12 @@ extension TransactionViewMethods on TransactionView {
   //    type == TransactionViewType.self ? iReceived : iValue;
   /// just the total that went away or came in
   int get totalValue => outgoing ? iProvided : iReceived;
-  //int get iValueTotal => type == TransactionViewType.self ? iReceived : iValue;
+  int get iValueTotal => [
+        TransactionViewType.self,
+        TransactionViewType.consolidation
+      ].contains(type)
+          ? iReceived
+          : iValue;
 
   /// iValue and sent to self on assets always shows 0 since tx fees are in the base currency...
   /// Using iReceived is not technically any better because it just reflects the
@@ -62,9 +67,15 @@ extension TransactionViewMethods on TransactionView {
   //int get iValueTotal =>
   //    type == TransactionViewType.self && !isCoin ? iReceived : iValue;
   /// actually, we should just show the total in any case to remain consistent.
-  int get iValueTotal => iValue;
+  //int get iValueTotal => iValue;
+  /// actually it feels more consistent to user if they see the total they sent
+  /// on a sent to self, with a special icon, so reverting
 
   bool get sentToSelf => iProvided == iReceived + (isCoin ? fee : 0);
+
+  bool get consolidationToSelf =>
+      sentToSelf &&
+      false; /*&& more than one vout of the same asset type went into this transaction */
 
   bool get onlyFee => isCoin && (iProvided - iReceived) == fee;
 
@@ -126,9 +137,11 @@ extension TransactionViewMethods on TransactionView {
     }
 
     final regular = sentToSelf
-        ? (isCoin && !containsAssets) || !isCoin
-            ? TransactionViewType.self
-            : TransactionViewType.assetTransaction
+        ? consolidationToSelf
+            ? TransactionViewType.consolidation
+            : (isCoin && !containsAssets) || !isCoin
+                ? TransactionViewType.self
+                : TransactionViewType.assetTransaction
         : iValue > 0
             ? TransactionViewType.incoming
             : TransactionViewType.outgoing;

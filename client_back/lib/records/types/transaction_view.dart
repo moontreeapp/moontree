@@ -5,6 +5,7 @@ enum TransactionViewType {
   outgoing,
   fee,
   self,
+  consolidation,
   create,
   tag,
   burn,
@@ -25,6 +26,8 @@ extension TransactionViewTypeExtension on TransactionViewType {
     switch (this) {
       case TransactionViewType.self:
         return 'Sent to Self';
+      case TransactionViewType.consolidation:
+        return 'Consolidation';
       case TransactionViewType.incoming:
         return 'Received';
       case TransactionViewType.outgoing:
