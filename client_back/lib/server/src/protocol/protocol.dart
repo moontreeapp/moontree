@@ -14,39 +14,41 @@ import 'asset_metadata_history_class.dart' as _i4;
 import 'block_class.dart' as _i5;
 import 'chain_class.dart' as _i6;
 import 'comm_balance_view.dart' as _i7;
-import 'comm_notify_h160_balance.dart' as _i8;
-import 'comm_notify_height.dart' as _i9;
-import 'comm_notify_status.dart' as _i10;
-import 'comm_notify_wallet_balance.dart' as _i11;
-import 'comm_subscribe.dart' as _i12;
-import 'comm_transaction_details_view.dart' as _i13;
-import 'comm_transaction_view.dart' as _i14;
-import 'consent_class.dart' as _i15;
-import 'consent_document_class.dart' as _i16;
-import 'h160_balance_current_class.dart' as _i17;
-import 'h160_balance_incremental_class.dart' as _i18;
-import 'h160_class.dart' as _i19;
-import 'restricted_h160_freeze_link_class.dart' as _i20;
-import 'restricted_h160_freeze_link_history_class.dart' as _i21;
-import 'restricted_h160_qualification_history_class.dart' as _i22;
-import 'restricted_h160_qualification_link_class.dart' as _i23;
-import 'transaction_asset_link.dart' as _i24;
-import 'transaction_class.dart' as _i25;
-import 'vout_class.dart' as _i26;
-import 'wallet_balance_current_class.dart' as _i27;
-import 'wallet_balance_incremental_class.dart' as _i28;
-import 'wallet_chain_link.dart' as _i29;
-import 'wallet_class.dart' as _i30;
-import 'asset_metadata_class.dart' as _i31;
-import 'comm_balance_view.dart' as _i32;
-import 'dart:typed_data' as _i33;
-import 'comm_transaction_view.dart' as _i34;
+import 'comm_error_class.dart' as _i8;
+import 'comm_notify_h160_balance.dart' as _i9;
+import 'comm_notify_height.dart' as _i10;
+import 'comm_notify_status.dart' as _i11;
+import 'comm_notify_wallet_balance.dart' as _i12;
+import 'comm_subscribe.dart' as _i13;
+import 'comm_transaction_details_view.dart' as _i14;
+import 'comm_transaction_view.dart' as _i15;
+import 'comm_unsigned_transaction_request_class.dart' as _i16;
+import 'comm_unsigned_transaction_result_class.dart' as _i17;
+import 'consent_class.dart' as _i18;
+import 'consent_document_class.dart' as _i19;
+import 'h160_balance_current_class.dart' as _i20;
+import 'h160_balance_incremental_class.dart' as _i21;
+import 'h160_class.dart' as _i22;
+import 'restricted_h160_freeze_link_class.dart' as _i23;
+import 'restricted_h160_freeze_link_history_class.dart' as _i24;
+import 'restricted_h160_qualification_history_class.dart' as _i25;
+import 'restricted_h160_qualification_link_class.dart' as _i26;
+import 'transaction_asset_link.dart' as _i27;
+import 'transaction_class.dart' as _i28;
+import 'vout_class.dart' as _i29;
+import 'wallet_balance_current_class.dart' as _i30;
+import 'wallet_balance_incremental_class.dart' as _i31;
+import 'wallet_chain_link.dart' as _i32;
+import 'wallet_class.dart' as _i33;
+import 'package:serverpod_serialization/src/serialization.dart' as _i34;
+import 'dart:typed_data' as _i35;
 export 'asset_class.dart';
 export 'asset_metadata_class.dart';
 export 'asset_metadata_history_class.dart';
 export 'block_class.dart';
 export 'chain_class.dart';
 export 'comm_balance_view.dart';
+export 'comm_error_class.dart';
 export 'comm_notify_h160_balance.dart';
 export 'comm_notify_height.dart';
 export 'comm_notify_status.dart';
@@ -54,6 +56,8 @@ export 'comm_notify_wallet_balance.dart';
 export 'comm_subscribe.dart';
 export 'comm_transaction_details_view.dart';
 export 'comm_transaction_view.dart';
+export 'comm_unsigned_transaction_request_class.dart';
+export 'comm_unsigned_transaction_result_class.dart';
 export 'consent_class.dart';
 export 'consent_document_class.dart';
 export 'h160_balance_current_class.dart';
@@ -108,75 +112,84 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i7.BalanceView) {
       return _i7.BalanceView.fromJson(data, this) as T;
     }
-    if (t == _i8.NotifyChainH160Balance) {
-      return _i8.NotifyChainH160Balance.fromJson(data, this) as T;
+    if (t == _i8.EndpointError) {
+      return _i8.EndpointError.fromJson(data, this) as T;
     }
-    if (t == _i9.NotifyChainHeight) {
-      return _i9.NotifyChainHeight.fromJson(data, this) as T;
+    if (t == _i9.NotifyChainH160Balance) {
+      return _i9.NotifyChainH160Balance.fromJson(data, this) as T;
     }
-    if (t == _i10.NotifyChainStatus) {
-      return _i10.NotifyChainStatus.fromJson(data, this) as T;
+    if (t == _i10.NotifyChainHeight) {
+      return _i10.NotifyChainHeight.fromJson(data, this) as T;
     }
-    if (t == _i11.NotifyChainWalletBalance) {
-      return _i11.NotifyChainWalletBalance.fromJson(data, this) as T;
+    if (t == _i11.NotifyChainStatus) {
+      return _i11.NotifyChainStatus.fromJson(data, this) as T;
     }
-    if (t == _i12.ChainWalletH160Subscription) {
-      return _i12.ChainWalletH160Subscription.fromJson(data, this) as T;
+    if (t == _i12.NotifyChainWalletBalance) {
+      return _i12.NotifyChainWalletBalance.fromJson(data, this) as T;
     }
-    if (t == _i13.TransactionDetailsView) {
-      return _i13.TransactionDetailsView.fromJson(data, this) as T;
+    if (t == _i13.ChainWalletH160Subscription) {
+      return _i13.ChainWalletH160Subscription.fromJson(data, this) as T;
     }
-    if (t == _i14.TransactionView) {
-      return _i14.TransactionView.fromJson(data, this) as T;
+    if (t == _i14.TransactionDetailsView) {
+      return _i14.TransactionDetailsView.fromJson(data, this) as T;
     }
-    if (t == _i15.Consent) {
-      return _i15.Consent.fromJson(data, this) as T;
+    if (t == _i15.TransactionView) {
+      return _i15.TransactionView.fromJson(data, this) as T;
     }
-    if (t == _i16.ConsentDocument) {
-      return _i16.ConsentDocument.fromJson(data, this) as T;
+    if (t == _i16.UnsignedTransactionRequest) {
+      return _i16.UnsignedTransactionRequest.fromJson(data, this) as T;
     }
-    if (t == _i17.AddressBalanceCurrent) {
-      return _i17.AddressBalanceCurrent.fromJson(data, this) as T;
+    if (t == _i17.UnsignedTransactionResult) {
+      return _i17.UnsignedTransactionResult.fromJson(data, this) as T;
     }
-    if (t == _i18.AddressBalanceIncremental) {
-      return _i18.AddressBalanceIncremental.fromJson(data, this) as T;
+    if (t == _i18.Consent) {
+      return _i18.Consent.fromJson(data, this) as T;
     }
-    if (t == _i19.H160) {
-      return _i19.H160.fromJson(data, this) as T;
+    if (t == _i19.ConsentDocument) {
+      return _i19.ConsentDocument.fromJson(data, this) as T;
     }
-    if (t == _i20.RestrictedH160FreezeLink) {
-      return _i20.RestrictedH160FreezeLink.fromJson(data, this) as T;
+    if (t == _i20.AddressBalanceCurrent) {
+      return _i20.AddressBalanceCurrent.fromJson(data, this) as T;
     }
-    if (t == _i21.RestrictedH160FreezeLinkHistory) {
-      return _i21.RestrictedH160FreezeLinkHistory.fromJson(data, this) as T;
+    if (t == _i21.AddressBalanceIncremental) {
+      return _i21.AddressBalanceIncremental.fromJson(data, this) as T;
     }
-    if (t == _i22.RestrictedH160QualificationLinkHistory) {
-      return _i22.RestrictedH160QualificationLinkHistory.fromJson(data, this)
+    if (t == _i22.H160) {
+      return _i22.H160.fromJson(data, this) as T;
+    }
+    if (t == _i23.RestrictedH160FreezeLink) {
+      return _i23.RestrictedH160FreezeLink.fromJson(data, this) as T;
+    }
+    if (t == _i24.RestrictedH160FreezeLinkHistory) {
+      return _i24.RestrictedH160FreezeLinkHistory.fromJson(data, this) as T;
+    }
+    if (t == _i25.RestrictedH160QualificationLinkHistory) {
+      return _i25.RestrictedH160QualificationLinkHistory.fromJson(data, this)
           as T;
     }
-    if (t == _i23.RestrictedH160QualificationLink) {
-      return _i23.RestrictedH160QualificationLink.fromJson(data, this) as T;
+    if (t == _i26.RestrictedH160QualificationLink) {
+      return _i26.RestrictedH160QualificationLink.fromJson(data, this) as T;
     }
-    if (t == _i24.TransctionAssetLink) {
-      return _i24.TransctionAssetLink.fromJson(data, this) as T;
+    if (t == _i27.TransctionAssetLink) {
+      return _i27.TransctionAssetLink.fromJson(data, this) as T;
     }
-    if (t == _i25.BlockchainTransaction) {
-      return _i25.BlockchainTransaction.fromJson(data, this) as T;
+    if (t == _i28.BlockchainTransaction) {
+      return _i28.BlockchainTransaction.fromJson(data, this) as T;
     }
-    if (t == _i26.Vout) {
-      return _i26.Vout.fromJson(data, this) as T;
+    if (t == _i29.Vout) {
+      return _i29.Vout.fromJson(data, this) as T;
     }
-    if (t == _i27.WalletBalanceCurrent) {
-      return _i27.WalletBalanceCurrent.fromJson(data, this) as T;
+    if (t == _i30.WalletBalanceCurrent) {
+      return _i30.WalletBalanceCurrent.fromJson(data, this) as T;
     }
-    if (t == _i28.WalletBalanceIncremental) {
-      return _i28.WalletBalanceIncremental.fromJson(data, this) as T;
+    if (t == _i31.WalletBalanceIncremental) {
+      return _i31.WalletBalanceIncremental.fromJson(data, this) as T;
     }
-    if (t == _i29.WalletChainLink) {
-      return _i29.WalletChainLink.fromJson(data, this) as T;
+    if (t == _i32.WalletChainLink) {
+      return _i32.WalletChainLink.fromJson(data, this) as T;
     }
-    if (t == _i30.Wallet) {
-      return _i30.Wallet.fromJson(data, this) as T;
+    if (t == _i33.Wallet) {
+      return _i33.Wallet.fromJson(data, this) as T;
     }
     if (t == _i1.getType<_i2.Asset?>()) {
       return (data != null ? _i2.Asset.fromJson(data, this) : null) as T;
@@ -200,134 +213,138 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i7.BalanceView?>()) {
       return (data != null ? _i7.BalanceView.fromJson(data, this) : null) as T;
     }
-    if (t == _i1.getType<_i8.NotifyChainH160Balance?>()) {
-      return (data != null
-          ? _i8.NotifyChainH160Balance.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i9.NotifyChainHeight?>()) {
-      return (data != null ? _i9.NotifyChainHeight.fromJson(data, this) : null)
+    if (t == _i1.getType<_i8.EndpointError?>()) {
+      return (data != null ? _i8.EndpointError.fromJson(data, this) : null)
           as T;
     }
-    if (t == _i1.getType<_i10.NotifyChainStatus?>()) {
-      return (data != null ? _i10.NotifyChainStatus.fromJson(data, this) : null)
+    if (t == _i1.getType<_i9.NotifyChainH160Balance?>()) {
+      return (data != null
+          ? _i9.NotifyChainH160Balance.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i10.NotifyChainHeight?>()) {
+      return (data != null ? _i10.NotifyChainHeight.fromJson(data, this) : null)
           as T;
     }
-    if (t == _i1.getType<_i11.NotifyChainWalletBalance?>()) {
-      return (data != null
-          ? _i11.NotifyChainWalletBalance.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i12.ChainWalletH160Subscription?>()) {
-      return (data != null
-          ? _i12.ChainWalletH160Subscription.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i13.TransactionDetailsView?>()) {
-      return (data != null
-          ? _i13.TransactionDetailsView.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i14.TransactionView?>()) {
-      return (data != null ? _i14.TransactionView.fromJson(data, this) : null)
+    if (t == _i1.getType<_i11.NotifyChainStatus?>()) {
+      return (data != null ? _i11.NotifyChainStatus.fromJson(data, this) : null)
           as T;
     }
-    if (t == _i1.getType<_i15.Consent?>()) {
-      return (data != null ? _i15.Consent.fromJson(data, this) : null) as T;
+    if (t == _i1.getType<_i12.NotifyChainWalletBalance?>()) {
+      return (data != null
+          ? _i12.NotifyChainWalletBalance.fromJson(data, this)
+          : null) as T;
     }
-    if (t == _i1.getType<_i16.ConsentDocument?>()) {
-      return (data != null ? _i16.ConsentDocument.fromJson(data, this) : null)
+    if (t == _i1.getType<_i13.ChainWalletH160Subscription?>()) {
+      return (data != null
+          ? _i13.ChainWalletH160Subscription.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i14.TransactionDetailsView?>()) {
+      return (data != null
+          ? _i14.TransactionDetailsView.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i15.TransactionView?>()) {
+      return (data != null ? _i15.TransactionView.fromJson(data, this) : null)
           as T;
     }
-    if (t == _i1.getType<_i17.AddressBalanceCurrent?>()) {
+    if (t == _i1.getType<_i16.UnsignedTransactionRequest?>()) {
       return (data != null
-          ? _i17.AddressBalanceCurrent.fromJson(data, this)
+          ? _i16.UnsignedTransactionRequest.fromJson(data, this)
           : null) as T;
     }
-    if (t == _i1.getType<_i18.AddressBalanceIncremental?>()) {
+    if (t == _i1.getType<_i17.UnsignedTransactionResult?>()) {
       return (data != null
-          ? _i18.AddressBalanceIncremental.fromJson(data, this)
+          ? _i17.UnsignedTransactionResult.fromJson(data, this)
           : null) as T;
     }
-    if (t == _i1.getType<_i19.H160?>()) {
-      return (data != null ? _i19.H160.fromJson(data, this) : null) as T;
+    if (t == _i1.getType<_i18.Consent?>()) {
+      return (data != null ? _i18.Consent.fromJson(data, this) : null) as T;
     }
-    if (t == _i1.getType<_i20.RestrictedH160FreezeLink?>()) {
-      return (data != null
-          ? _i20.RestrictedH160FreezeLink.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i21.RestrictedH160FreezeLinkHistory?>()) {
-      return (data != null
-          ? _i21.RestrictedH160FreezeLinkHistory.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i22.RestrictedH160QualificationLinkHistory?>()) {
-      return (data != null
-          ? _i22.RestrictedH160QualificationLinkHistory.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i23.RestrictedH160QualificationLink?>()) {
-      return (data != null
-          ? _i23.RestrictedH160QualificationLink.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i24.TransctionAssetLink?>()) {
-      return (data != null
-          ? _i24.TransctionAssetLink.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i25.BlockchainTransaction?>()) {
-      return (data != null
-          ? _i25.BlockchainTransaction.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i26.Vout?>()) {
-      return (data != null ? _i26.Vout.fromJson(data, this) : null) as T;
-    }
-    if (t == _i1.getType<_i27.WalletBalanceCurrent?>()) {
-      return (data != null
-          ? _i27.WalletBalanceCurrent.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i28.WalletBalanceIncremental?>()) {
-      return (data != null
-          ? _i28.WalletBalanceIncremental.fromJson(data, this)
-          : null) as T;
-    }
-    if (t == _i1.getType<_i29.WalletChainLink?>()) {
-      return (data != null ? _i29.WalletChainLink.fromJson(data, this) : null)
+    if (t == _i1.getType<_i19.ConsentDocument?>()) {
+      return (data != null ? _i19.ConsentDocument.fromJson(data, this) : null)
           as T;
     }
-    if (t == _i1.getType<_i30.Wallet?>()) {
-      return (data != null ? _i30.Wallet.fromJson(data, this) : null) as T;
+    if (t == _i1.getType<_i20.AddressBalanceCurrent?>()) {
+      return (data != null
+          ? _i20.AddressBalanceCurrent.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i21.AddressBalanceIncremental?>()) {
+      return (data != null
+          ? _i21.AddressBalanceIncremental.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i22.H160?>()) {
+      return (data != null ? _i22.H160.fromJson(data, this) : null) as T;
+    }
+    if (t == _i1.getType<_i23.RestrictedH160FreezeLink?>()) {
+      return (data != null
+          ? _i23.RestrictedH160FreezeLink.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i24.RestrictedH160FreezeLinkHistory?>()) {
+      return (data != null
+          ? _i24.RestrictedH160FreezeLinkHistory.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i25.RestrictedH160QualificationLinkHistory?>()) {
+      return (data != null
+          ? _i25.RestrictedH160QualificationLinkHistory.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i26.RestrictedH160QualificationLink?>()) {
+      return (data != null
+          ? _i26.RestrictedH160QualificationLink.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i27.TransctionAssetLink?>()) {
+      return (data != null
+          ? _i27.TransctionAssetLink.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i28.BlockchainTransaction?>()) {
+      return (data != null
+          ? _i28.BlockchainTransaction.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i29.Vout?>()) {
+      return (data != null ? _i29.Vout.fromJson(data, this) : null) as T;
+    }
+    if (t == _i1.getType<_i30.WalletBalanceCurrent?>()) {
+      return (data != null
+          ? _i30.WalletBalanceCurrent.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i31.WalletBalanceIncremental?>()) {
+      return (data != null
+          ? _i31.WalletBalanceIncremental.fromJson(data, this)
+          : null) as T;
+    }
+    if (t == _i1.getType<_i32.WalletChainLink?>()) {
+      return (data != null ? _i32.WalletChainLink.fromJson(data, this) : null)
+          as T;
+    }
+    if (t == _i1.getType<_i33.Wallet?>()) {
+      return (data != null ? _i33.Wallet.fromJson(data, this) : null) as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList()
           as dynamic;
     }
-    if (t == List<_i31.AssetMetadata>) {
+    if (t == List<_i34.SerializableEntity>) {
       return (data as List)
-          .map((e) => deserialize<_i31.AssetMetadata>(e))
-          .toList() as dynamic;
-    }
-    if (t == List<_i32.BalanceView>) {
-      return (data as List)
-          .map((e) => deserialize<_i32.BalanceView>(e))
+          .map((e) => deserialize<_i34.SerializableEntity>(e))
           .toList() as dynamic;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList()
           as dynamic;
     }
-    if (t == List<_i33.ByteData>) {
-      return (data as List).map((e) => deserialize<_i33.ByteData>(e)).toList()
+    if (t == List<_i35.ByteData>) {
+      return (data as List).map((e) => deserialize<_i35.ByteData>(e)).toList()
           as dynamic;
-    }
-    if (t == List<_i34.TransactionView>) {
-      return (data as List)
-          .map((e) => deserialize<_i34.TransactionView>(e))
-          .toList() as dynamic;
     }
     return super.deserialize<T>(data, t);
   }
@@ -352,73 +369,82 @@ class Protocol extends _i1.SerializationManager {
     if (data is _i7.BalanceView) {
       return 'BalanceView';
     }
-    if (data is _i8.NotifyChainH160Balance) {
+    if (data is _i8.EndpointError) {
+      return 'EndpointError';
+    }
+    if (data is _i9.NotifyChainH160Balance) {
       return 'NotifyChainH160Balance';
     }
-    if (data is _i9.NotifyChainHeight) {
+    if (data is _i10.NotifyChainHeight) {
       return 'NotifyChainHeight';
     }
-    if (data is _i10.NotifyChainStatus) {
+    if (data is _i11.NotifyChainStatus) {
       return 'NotifyChainStatus';
     }
-    if (data is _i11.NotifyChainWalletBalance) {
+    if (data is _i12.NotifyChainWalletBalance) {
       return 'NotifyChainWalletBalance';
     }
-    if (data is _i12.ChainWalletH160Subscription) {
+    if (data is _i13.ChainWalletH160Subscription) {
       return 'ChainWalletH160Subscription';
     }
-    if (data is _i13.TransactionDetailsView) {
+    if (data is _i14.TransactionDetailsView) {
       return 'TransactionDetailsView';
     }
-    if (data is _i14.TransactionView) {
+    if (data is _i15.TransactionView) {
       return 'TransactionView';
     }
-    if (data is _i15.Consent) {
+    if (data is _i16.UnsignedTransactionRequest) {
+      return 'UnsignedTransactionRequest';
+    }
+    if (data is _i17.UnsignedTransactionResult) {
+      return 'UnsignedTransactionResult';
+    }
+    if (data is _i18.Consent) {
       return 'Consent';
     }
-    if (data is _i16.ConsentDocument) {
+    if (data is _i19.ConsentDocument) {
       return 'ConsentDocument';
     }
-    if (data is _i17.AddressBalanceCurrent) {
+    if (data is _i20.AddressBalanceCurrent) {
       return 'AddressBalanceCurrent';
     }
-    if (data is _i18.AddressBalanceIncremental) {
+    if (data is _i21.AddressBalanceIncremental) {
       return 'AddressBalanceIncremental';
     }
-    if (data is _i19.H160) {
+    if (data is _i22.H160) {
       return 'H160';
     }
-    if (data is _i20.RestrictedH160FreezeLink) {
+    if (data is _i23.RestrictedH160FreezeLink) {
       return 'RestrictedH160FreezeLink';
     }
-    if (data is _i21.RestrictedH160FreezeLinkHistory) {
+    if (data is _i24.RestrictedH160FreezeLinkHistory) {
       return 'RestrictedH160FreezeLinkHistory';
     }
-    if (data is _i22.RestrictedH160QualificationLinkHistory) {
+    if (data is _i25.RestrictedH160QualificationLinkHistory) {
       return 'RestrictedH160QualificationLinkHistory';
     }
-    if (data is _i23.RestrictedH160QualificationLink) {
+    if (data is _i26.RestrictedH160QualificationLink) {
       return 'RestrictedH160QualificationLink';
     }
-    if (data is _i24.TransctionAssetLink) {
+    if (data is _i27.TransctionAssetLink) {
       return 'TransctionAssetLink';
     }
-    if (data is _i25.BlockchainTransaction) {
+    if (data is _i28.BlockchainTransaction) {
       return 'BlockchainTransaction';
     }
-    if (data is _i26.Vout) {
+    if (data is _i29.Vout) {
       return 'Vout';
     }
-    if (data is _i27.WalletBalanceCurrent) {
+    if (data is _i30.WalletBalanceCurrent) {
       return 'WalletBalanceCurrent';
     }
-    if (data is _i28.WalletBalanceIncremental) {
+    if (data is _i31.WalletBalanceIncremental) {
       return 'WalletBalanceIncremental';
     }
-    if (data is _i29.WalletChainLink) {
+    if (data is _i32.WalletChainLink) {
       return 'WalletChainLink';
     }
-    if (data is _i30.Wallet) {
+    if (data is _i33.Wallet) {
       return 'Wallet';
     }
     return super.getClassNameForObject(data);
@@ -444,75 +470,84 @@ class Protocol extends _i1.SerializationManager {
     if (data['className'] == 'BalanceView') {
       return deserialize<_i7.BalanceView>(data['data']);
     }
+    if (data['className'] == 'EndpointError') {
+      return deserialize<_i8.EndpointError>(data['data']);
+    }
     if (data['className'] == 'NotifyChainH160Balance') {
-      return deserialize<_i8.NotifyChainH160Balance>(data['data']);
+      return deserialize<_i9.NotifyChainH160Balance>(data['data']);
     }
     if (data['className'] == 'NotifyChainHeight') {
-      return deserialize<_i9.NotifyChainHeight>(data['data']);
+      return deserialize<_i10.NotifyChainHeight>(data['data']);
     }
     if (data['className'] == 'NotifyChainStatus') {
-      return deserialize<_i10.NotifyChainStatus>(data['data']);
+      return deserialize<_i11.NotifyChainStatus>(data['data']);
     }
     if (data['className'] == 'NotifyChainWalletBalance') {
-      return deserialize<_i11.NotifyChainWalletBalance>(data['data']);
+      return deserialize<_i12.NotifyChainWalletBalance>(data['data']);
     }
     if (data['className'] == 'ChainWalletH160Subscription') {
-      return deserialize<_i12.ChainWalletH160Subscription>(data['data']);
+      return deserialize<_i13.ChainWalletH160Subscription>(data['data']);
     }
     if (data['className'] == 'TransactionDetailsView') {
-      return deserialize<_i13.TransactionDetailsView>(data['data']);
+      return deserialize<_i14.TransactionDetailsView>(data['data']);
     }
     if (data['className'] == 'TransactionView') {
-      return deserialize<_i14.TransactionView>(data['data']);
+      return deserialize<_i15.TransactionView>(data['data']);
+    }
+    if (data['className'] == 'UnsignedTransactionRequest') {
+      return deserialize<_i16.UnsignedTransactionRequest>(data['data']);
+    }
+    if (data['className'] == 'UnsignedTransactionResult') {
+      return deserialize<_i17.UnsignedTransactionResult>(data['data']);
     }
     if (data['className'] == 'Consent') {
-      return deserialize<_i15.Consent>(data['data']);
+      return deserialize<_i18.Consent>(data['data']);
     }
     if (data['className'] == 'ConsentDocument') {
-      return deserialize<_i16.ConsentDocument>(data['data']);
+      return deserialize<_i19.ConsentDocument>(data['data']);
     }
     if (data['className'] == 'AddressBalanceCurrent') {
-      return deserialize<_i17.AddressBalanceCurrent>(data['data']);
+      return deserialize<_i20.AddressBalanceCurrent>(data['data']);
     }
     if (data['className'] == 'AddressBalanceIncremental') {
-      return deserialize<_i18.AddressBalanceIncremental>(data['data']);
+      return deserialize<_i21.AddressBalanceIncremental>(data['data']);
     }
     if (data['className'] == 'H160') {
-      return deserialize<_i19.H160>(data['data']);
+      return deserialize<_i22.H160>(data['data']);
     }
     if (data['className'] == 'RestrictedH160FreezeLink') {
-      return deserialize<_i20.RestrictedH160FreezeLink>(data['data']);
+      return deserialize<_i23.RestrictedH160FreezeLink>(data['data']);
     }
     if (data['className'] == 'RestrictedH160FreezeLinkHistory') {
-      return deserialize<_i21.RestrictedH160FreezeLinkHistory>(data['data']);
+      return deserialize<_i24.RestrictedH160FreezeLinkHistory>(data['data']);
     }
     if (data['className'] == 'RestrictedH160QualificationLinkHistory') {
-      return deserialize<_i22.RestrictedH160QualificationLinkHistory>(
+      return deserialize<_i25.RestrictedH160QualificationLinkHistory>(
           data['data']);
     }
     if (data['className'] == 'RestrictedH160QualificationLink') {
-      return deserialize<_i23.RestrictedH160QualificationLink>(data['data']);
+      return deserialize<_i26.RestrictedH160QualificationLink>(data['data']);
     }
     if (data['className'] == 'TransctionAssetLink') {
-      return deserialize<_i24.TransctionAssetLink>(data['data']);
+      return deserialize<_i27.TransctionAssetLink>(data['data']);
     }
     if (data['className'] == 'BlockchainTransaction') {
-      return deserialize<_i25.BlockchainTransaction>(data['data']);
+      return deserialize<_i28.BlockchainTransaction>(data['data']);
     }
     if (data['className'] == 'Vout') {
-      return deserialize<_i26.Vout>(data['data']);
+      return deserialize<_i29.Vout>(data['data']);
     }
     if (data['className'] == 'WalletBalanceCurrent') {
-      return deserialize<_i27.WalletBalanceCurrent>(data['data']);
+      return deserialize<_i30.WalletBalanceCurrent>(data['data']);
     }
     if (data['className'] == 'WalletBalanceIncremental') {
-      return deserialize<_i28.WalletBalanceIncremental>(data['data']);
+      return deserialize<_i31.WalletBalanceIncremental>(data['data']);
     }
     if (data['className'] == 'WalletChainLink') {
-      return deserialize<_i29.WalletChainLink>(data['data']);
+      return deserialize<_i32.WalletChainLink>(data['data']);
     }
     if (data['className'] == 'Wallet') {
-      return deserialize<_i30.Wallet>(data['data']);
+      return deserialize<_i33.Wallet>(data['data']);
     }
     return super.deserializeByClassName(data);
   }

@@ -13,7 +13,7 @@ class TransactionDetails {
 
   TransactionDetails() : client = server.Client('$moontreeUrl/');
 
-  Future<server.TransactionDetailsView?> transactionDetailsBy({
+  Future<server.SerializableEntity?> transactionDetailsBy({
     required Chaindata chain,
     required ByteData hash,
   }) async =>
@@ -28,7 +28,7 @@ Future<server.TransactionDetailsView?> discoverTransactionDetails({
 }) async {
   chain ??= Current.chain;
   net ??= Current.net;
-  return
+  final tx =
 
       /// MOCK SERVER
       //await Future.delayed(Duration(seconds: 1), spoofTransactionDetailsView);
@@ -36,6 +36,12 @@ Future<server.TransactionDetailsView?> discoverTransactionDetails({
       /// SERVER
       await TransactionDetails().transactionDetailsBy(
           hash: hash, chain: ChainNet(chain, net).chaindata);
+
+  if (tx is server.EndpointError || tx == null) {
+    // handle
+    return null;
+  }
+  return tx as server.TransactionDetailsView;
 }
 
 server.TransactionDetailsView spoofTransactionDetailsView() {

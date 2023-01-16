@@ -21,7 +21,8 @@ class HoldingBalances {
 
   HoldingBalances() : client = server.Client('$moontreeUrl/');
 
-  Future<List<server.BalanceView>> holdingBalancesBy({
+  Future<List<server.SerializableEntity>> holdingBalancesBy({
+    //server.BalanceView
     required Chaindata chain,
     required List<String> roots,
     required List<ByteData> h160s,
@@ -47,7 +48,7 @@ Future<List<server.BalanceView>> discoverHoldingBalances({
     //  roots = wallet.roots; ?? await Current.wallet.roots;
   }
   roots ??= await Current.wallet.roots;
-  final List<server.BalanceView> history =
+  final List<server.SerializableEntity> history =
 
       /// MOCK SERVER
       //await Future.delayed(Duration(seconds: 1), spoofBalanceView);
@@ -60,11 +61,18 @@ Future<List<server.BalanceView>> discoverHoldingBalances({
               ? Current.wallet.addresses.map((e) => e.h160).toList()
               : []);
 
-  for (final txView in history) {
+  if (history.length == 1 && history.first is server.EndpointError) {
+    // handle
+    return [];
+  }
+
+  final ret = [for (final hist in history) hist as server.BalanceView];
+
+  for (final txView in ret) {
     txView.chain = chain.name + '_' + net.name + 'net';
   }
 
-  return sortedHoldings(history, chain.symbol);
+  return sortedHoldings(ret, chain.symbol);
 }
 
 List<BalanceView> sortedHoldings(List<BalanceView> records, String coin) {

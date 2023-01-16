@@ -8,13 +8,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'asset_metadata_class.dart' as _i3;
-import 'comm_balance_view.dart' as _i4;
-import 'dart:typed_data' as _i5;
-import 'comm_transaction_details_view.dart' as _i6;
-import 'comm_transaction_view.dart' as _i7;
-import 'dart:io' as _i8;
-import 'protocol.dart' as _i9;
+import 'package:serverpod_serialization/src/serialization.dart' as _i3;
+import 'dart:typed_data' as _i4;
+import 'dart:io' as _i5;
+import 'protocol.dart' as _i6;
 
 class _EndpointMetadata extends _i1.EndpointRef {
   _EndpointMetadata(_i1.EndpointCaller caller) : super(caller);
@@ -29,12 +26,12 @@ class _EndpointMetadata extends _i1.EndpointRef {
   /// metadata, so we're set up to easily pivot to that scenario. Furthermore,
   /// most the other endpoints return lists so the front end is used to it.
   /// Of course maybe we'd just make a different endpoint for history, but idk.
-  _i2.Future<List<_i3.AssetMetadata>> get({
+  _i2.Future<List<_i3.SerializableEntity>> get({
     required String symbol,
     required String chainName,
     int? height,
   }) =>
-      caller.callServerEndpoint<List<_i3.AssetMetadata>>(
+      caller.callServerEndpoint<List<_i3.SerializableEntity>>(
         'metadata',
         'get',
         {
@@ -51,12 +48,12 @@ class _EndpointBalances extends _i1.EndpointRef {
   @override
   String get name => 'balances';
 
-  _i2.Future<List<_i4.BalanceView>> get({
+  _i2.Future<List<_i3.SerializableEntity>> get({
     required String chainName,
     required List<String> xpubkeys,
-    required List<_i5.ByteData> h160s,
+    required List<_i4.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i4.BalanceView>>(
+      caller.callServerEndpoint<List<_i3.SerializableEntity>>(
         'balances',
         'get',
         {
@@ -155,11 +152,11 @@ class _EndpointTransactionDetails extends _i1.EndpointRef {
   @override
   String get name => 'transactionDetails';
 
-  _i2.Future<_i6.TransactionDetailsView?> get({
-    required _i5.ByteData hash,
+  _i2.Future<_i3.SerializableEntity?> get({
+    required _i4.ByteData hash,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i6.TransactionDetailsView?>(
+      caller.callServerEndpoint<_i3.SerializableEntity?>(
         'transactionDetails',
         'get',
         {
@@ -175,14 +172,14 @@ class _EndpointTransactions extends _i1.EndpointRef {
   @override
   String get name => 'transactions';
 
-  _i2.Future<List<_i7.TransactionView>> get({
+  _i2.Future<List<_i3.SerializableEntity>> get({
     String? symbol,
     int? backFromHeight,
     required String chainName,
     required List<String> xpubkeys,
-    required List<_i5.ByteData> h160s,
+    required List<_i4.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i7.TransactionView>>(
+      caller.callServerEndpoint<List<_i3.SerializableEntity>>(
         'transactions',
         'get',
         {
@@ -198,11 +195,11 @@ class _EndpointTransactions extends _i1.EndpointRef {
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i8.SecurityContext? context,
+    _i5.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i9.Protocol(),
+          _i6.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {

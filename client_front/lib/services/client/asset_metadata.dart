@@ -13,7 +13,8 @@ class AssetMetadataHistory {
 
   AssetMetadataHistory() : client = server.Client('$moontreeUrl/');
 
-  Future<List<server.AssetMetadata>> assetMetadataHistoryBy({
+  Future<List<server.SerializableEntity>> assetMetadataHistoryBy({
+    //server.AssetMetadata
     required String symbol,
     required Chaindata chain,
   }) async =>
@@ -57,7 +58,7 @@ Future<List<server.AssetMetadata>> discoverAssetMetadataHistory({
         ];
     }
   }
-  final List<server.AssetMetadata> history =
+  final List<server.SerializableEntity> history =
 
       /// MOCK SERVER
       //await Future.delayed(Duration(seconds: 1), spoofAssetMetadata);
@@ -66,7 +67,11 @@ Future<List<server.AssetMetadata>> discoverAssetMetadataHistory({
       await AssetMetadataHistory().assetMetadataHistoryBy(
           symbol: symbol, chain: ChainNet(chain, net).chaindata);
 
-  return history;
+  if (history.length == 1 && history.first is server.EndpointError) {
+    // handle
+    return [];
+  }
+  return [for (final hist in history) hist as server.AssetMetadata];
 }
 
 List<server.AssetMetadata> spoofAssetMetadata() {

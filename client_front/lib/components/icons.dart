@@ -30,7 +30,7 @@ class IconComponents {
       );
   Widget fee(BuildContext context, {Color? color}) => Image.asset(
         'assets/icons/send/send_black.png',
-        color: AppColors.black38,
+        color: AppColors.error38,
       );
 
   Icon importDisabled(BuildContext context) =>

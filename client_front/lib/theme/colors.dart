@@ -45,6 +45,11 @@ class AppColors {
   static const Color black60 = Color(0x99000000);
   static const Color black87 = Color(0xDE000000);
   static const Color black = Color(0xFF000000);
+  static const Color error12 = Color(0x1FEF5350);
+  static const Color error38 = Color(0x61EF5350);
+  static const Color error60 = Color(0x99EF5350);
+  static const Color error87 = Color(0xDEEF5350);
+  static Color error38o = error.withOpacity(1 - .38);
   static const Color divider = black12;
   static const Color disabled = black38;
   static const Color offBlack = black87;

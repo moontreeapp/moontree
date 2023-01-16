@@ -19,7 +19,7 @@ class TransactionHistory {
 
   TransactionHistory() : client = server.Client('$moontreeUrl/');
 
-  Future<List<server.TransactionView>> transactionHistoryBy({
+  Future<List<server.SerializableEntity>> transactionHistoryBy({
     String? symbol,
     int? height,
     required Chaindata chain,
@@ -59,7 +59,7 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
     //  roots = wallet.roots; ?? await Current.wallet.roots;
   }
   roots ??= await Current.wallet.roots;
-  final List<server.TransactionView> history =
+  final List<server.SerializableEntity> history =
 
       /// MOCK SERVER
       //await Future.delayed(Duration(seconds: 1), spoofTransactionView);
@@ -74,12 +74,18 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
               ? Current.wallet.addresses.map((e) => e.h160).toList()
               : []);
 
-  for (final txView in history) {
+  if (history.length == 1 && history.first is server.EndpointError) {
+    // handle
+    return [];
+  }
+  final ret = [for (final hist in history) hist as server.TransactionView];
+
+  for (final txView in ret) {
     txView.chain = chain.name + '_' + net.name + 'net';
     txView.symbol = symbol;
   }
 
-  return history;
+  return ret;
 }
 
 List<server.TransactionView> spoofTransactionView() {
