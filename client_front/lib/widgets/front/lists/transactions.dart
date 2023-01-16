@@ -145,54 +145,65 @@ class _TransactionListState extends State<TransactionList> {
                   ]
                 ]
               : <Widget>[
-                  for (TransactionView transactionView in transactions)
-                    if ((pros.settings.hideFees &&
-                            transactionView.type != TransactionViewType.fee) ||
-                        true) ...<Widget>[
-                      ...<Widget>[
-                        ListTile(
-                          //contentPadding:
-                          //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
-                          onTap: () => Navigator.pushNamed(
-                              context, '/transaction/transaction',
-                              arguments: <String, TransactionView>{
-                                'transactionView': transactionView
-                              }),
-                          //onLongPress: _toggleUSD,
-                          //leading: Container(
-                          //    height: 40,
-                          //    width: 40,
-                          //    child: components.icons
-                          //        .assetAvatar(transactionView.security.symbol)),
-                          title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                    services.conversion.securityAsReadable(
-                                        transactionView.iValueTotal,
-                                        security: transactionView.security,
-                                        asUSD: showUSD),
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1),
-                                Text(
-                                    '${transactionView.formattedDatetime} ${transactionView.type.paddedDisplay}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2!
-                                        .copyWith(color: AppColors.black60)),
-                              ]),
-                          trailing: transactionView.onlyFee
-                              ? components.icons.fee(context)
-                              : (transactionView.sentToSelf &&
-                                      !transactionView.isCoin
-                                  ? components.icons.outIn(context)
-                                  : (transactionView.outgoing
-                                      ? components.icons.out(context)
-                                      : components.icons.income(context))),
-                        ),
-                        const Divider(indent: 16),
-                      ]
-                    ]
+                  ...() {
+                    var ret = [
+                      for (TransactionView transactionView in transactions)
+                        if ((pros.settings.hideFees &&
+                                transactionView.type !=
+                                    TransactionViewType.fee) ||
+                            true) ...<Widget>[
+                          ListTile(
+                            //contentPadding:
+                            //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
+                            onTap: () => Navigator.pushNamed(
+                                context, '/transaction/transaction',
+                                arguments: <String, TransactionView>{
+                                  'transactionView': transactionView
+                                }),
+                            //onLongPress: _toggleUSD,
+                            //leading: Container(
+                            //    height: 40,
+                            //    width: 40,
+                            //    child: components.icons
+                            //        .assetAvatar(transactionView.security.symbol)),
+                            title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                      services.conversion.securityAsReadable(
+                                          transactionView.iValueTotal,
+                                          security: transactionView.security,
+                                          asUSD: showUSD),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1),
+                                  Text(
+                                      '${transactionView.formattedDatetime} ${transactionView.type.paddedDisplay}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2!
+                                          .copyWith(color: AppColors.black60)),
+                                ]),
+                            trailing: transactionView.onlyFee
+                                ? components.icons.fee(context)
+                                : (transactionView.sentToSelf &&
+                                        !transactionView.isCoin
+                                    ? components.icons.outIn(context)
+                                    : (transactionView.outgoing
+                                        ? components.icons.out(context)
+                                        : components.icons.income(context))),
+                          ),
+                          const Divider(indent: 16),
+                        ]
+                    ];
+                    ret = ret.sublist(
+                        0,
+                        transactions.length <= 15 ||
+                                (widget.cubit?.state.end ?? true)
+                            ? ret.length - 1
+                            : ret.length);
+                    return ret;
+                  }()
                 ]) +
           <Widget>[
             if (transactions.length > 15 &&
@@ -200,6 +211,8 @@ class _TransactionListState extends State<TransactionList> {
               components.empty.getTransactionsShimmer(context),
               const Divider(indent: 16),
             ],
+            if (transactions.length <= 15 || (widget.cubit?.state.end ?? true))
+              const Divider(indent: 16, color: AppColors.black38),
             Container(
               height: 80 * ((!(widget.cubit?.state.end ?? true)) ? 1.5 : 1),
               color: Colors.white,
