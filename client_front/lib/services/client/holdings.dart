@@ -51,15 +51,15 @@ Future<List<server.BalanceView>> discoverHoldingBalances({
   final List<server.SerializableEntity> history =
 
       /// MOCK SERVER
-      //await Future.delayed(Duration(seconds: 1), spoofBalanceView);
+      await Future.delayed(Duration(seconds: 1), spoofBalanceView);
 
-      /// SERVER
-      await HoldingBalances().holdingBalancesBy(
-          chain: ChainNet(chain, net).chaindata,
-          roots: roots,
-          h160s: roots.isEmpty
-              ? Current.wallet.addresses.map((e) => e.h160).toList()
-              : []);
+  /// SERVER
+  //await HoldingBalances().holdingBalancesBy(
+  //    chain: ChainNet(chain, net).chaindata,
+  //    roots: roots,
+  //    h160s: roots.isEmpty
+  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
+  //        : []);
 
   if (history.length == 1 && history.first is server.EndpointError) {
     // handle
@@ -91,13 +91,12 @@ List<server.BalanceView> spoofBalanceView() {
   return <server.BalanceView>[
     server.BalanceView(symbol: 'RVN', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'MOONTREE', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: 'ABC', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(symbol: 'EVR', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'DEF', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'XYZ', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'Scam', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: '1RVN', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(
-        symbol: '1MOONTREE', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(symbol: '1MOON', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: '1ABC', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: '1DEF', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: '1XYZ', chain: null, sats: 10 * satsPerCoin),

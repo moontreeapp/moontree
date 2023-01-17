@@ -62,17 +62,17 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
   final List<server.SerializableEntity> history =
 
       /// MOCK SERVER
-      //await Future.delayed(Duration(seconds: 1), spoofTransactionView);
+      await Future.delayed(Duration(seconds: 1), spoofTransactionView);
 
-      /// SERVER
-      await TransactionHistory().transactionHistoryBy(
-          symbol: serverSymbol,
-          height: height,
-          chain: ChainNet(chain, net).chaindata,
-          roots: roots,
-          h160s: roots.isEmpty
-              ? Current.wallet.addresses.map((e) => e.h160).toList()
-              : []);
+  /// SERVER
+  //await TransactionHistory().transactionHistoryBy(
+  //    symbol: serverSymbol,
+  //    height: height,
+  //    chain: ChainNet(chain, net).chaindata,
+  //    roots: roots,
+  //    h160s: roots.isEmpty
+  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
+  //        : []);
 
   if (history.length == 1 && history.first is server.EndpointError) {
     // handle

@@ -61,11 +61,11 @@ Future<List<server.AssetMetadata>> discoverAssetMetadataHistory({
   final List<server.SerializableEntity> history =
 
       /// MOCK SERVER
-      //await Future.delayed(Duration(seconds: 1), spoofAssetMetadata);
+      await Future.delayed(Duration(seconds: 1), spoofAssetMetadata);
 
-      /// SERVER
-      await AssetMetadataHistory().assetMetadataHistoryBy(
-          symbol: symbol, chain: ChainNet(chain, net).chaindata);
+  /// SERVER
+  //await AssetMetadataHistory().assetMetadataHistoryBy(
+  //    symbol: symbol, chain: ChainNet(chain, net).chaindata);
 
   if (history.length == 1 && history.first is server.EndpointError) {
     // handle

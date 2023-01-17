@@ -214,7 +214,11 @@ class _TransactionListState extends State<TransactionList> {
             if (transactions.length <= 15 || (widget.cubit?.state.end ?? true))
               const Divider(indent: 16, color: AppColors.black38),
             Container(
-              height: 80 * ((!(widget.cubit?.state.end ?? true)) ? 1.5 : 1),
+              height: 80 *
+                  (transactions.length > 15 &&
+                          (!(widget.cubit?.state.end ?? true))
+                      ? 1.5
+                      : 1),
               color: Colors.white,
             )
           ]);
