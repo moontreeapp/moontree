@@ -200,9 +200,14 @@ class TransactionPageContent extends StatelessWidget {
             ? '${transactionView.fee.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
             : '';
       case 'Total':
-        return transactionView.iValue > 0
-            ? '${transactionView.iValue.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
-            : '${transactionView.fee.asCoin.toSatsCommaString()} ${pros.securities.currentCoin.symbol}';
+        if (transactionView.isCoin) {
+          return transactionView.iValue > 0
+              ? '${transactionView.iValue.asCoin.toSatsCommaString()} ${pros.settings.chain.symbol}'
+              : '${transactionView.fee.asCoin.toSatsCommaString()} ${pros.securities.currentCoin.symbol}';
+        }
+        return '${transactionView.iValue.asCoin.toSatsCommaString()} ${transactionView.symbol}'; // + ' +
+      //'${transactionView.fee.asCoin.toSatsCommaString()} ${pros.securities.currentCoin.symbol}';
+
       default:
         return 'unknown';
     }

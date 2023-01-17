@@ -47,19 +47,19 @@ extension TransactionViewTypeExtension on TransactionViewType {
       case TransactionViewType.claim:
         return 'Claim';
       case TransactionViewType.createAsset:
-        return 'Create Asset';
+        return 'Asset Creation';
       case TransactionViewType.createSubAsset:
-        return 'Create Sub Asset';
+        return 'Sub Asset Creation';
       case TransactionViewType.createNFT:
-        return 'Create NFT';
+        return 'NFT Creation';
       case TransactionViewType.createMessage:
-        return 'Create Message';
+        return 'Message Creation';
       case TransactionViewType.createQualifier:
-        return 'Create Qualifier';
+        return 'Qualifier Creation';
       case TransactionViewType.createSubQualifier:
-        return 'Create Sub Qualifier';
+        return 'Sub Qualifier Creation';
       case TransactionViewType.createRestricted:
-        return 'Create Restricted';
+        return 'Restricted Creation';
     }
   }
 
@@ -67,6 +67,15 @@ extension TransactionViewTypeExtension on TransactionViewType {
           this == TransactionViewType.outgoing)
       ? ''
       : '| $display';
+
+  /// here we turn sent to self into fee for fee only and isCoin
+  String specialPaddedDisplay([bool feeOnly = false]) =>
+      (this == TransactionViewType.incoming ||
+              this == TransactionViewType.outgoing)
+          ? ''
+          : feeOnly
+              ? '| Transaction Fee'
+              : '| $display';
 
   String get title => name.toTitleCase();
   String get key => name;

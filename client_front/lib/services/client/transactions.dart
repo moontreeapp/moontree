@@ -126,7 +126,7 @@ List<server.TransactionView> spoofTransactionView() {
         vsize: 100,
         iProvided: 27 * satsPerCoin,
         //otherProvided: 4 * satsPerCoin,
-        iReceived: 20 * satsPerCoin,
+        iReceived: 27 * satsPerCoin,
         //otherReceived: 10 * satsPerCoin,
         issueMainBurned: 0,
         reissueBurned: 0,

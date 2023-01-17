@@ -76,7 +76,7 @@ extension TransactionViewMethods on TransactionView {
       sentToSelf &&
       false; /*&& more than one vout of the same asset type went into this transaction */
 
-  bool get onlyFee => isCoin && (iProvided - iReceived) == fee;
+  bool get feeOnly => isCoin && (iProvided - iReceived) == fee;
 
   bool get isCoin => security?.isCoin ?? false;
 

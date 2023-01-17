@@ -92,7 +92,7 @@ List<server.BalanceView> spoofBalanceView() {
     server.BalanceView(symbol: 'RVN', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'MOONTREE', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'EVR', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: 'DEF', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(symbol: 'SATORI', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'XYZ', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: 'Scam', chain: null, sats: 10 * satsPerCoin),
     server.BalanceView(symbol: '1RVN', chain: null, sats: 10 * satsPerCoin),
