@@ -167,13 +167,18 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
 
   Future<void> setMetadataView({bool force = false}) async {
     if (force || state.metadataView == null) {
+      final checkCleared = state.ranWallet != null;
       submitting();
+      final metadataView = (await discoverAssetMetadataHistory(
+        wallet: state.wallet,
+        security: state.security,
+      ))
+          .firstOrNull;
+      if (checkCleared && cleared) {
+        return;
+      }
       set(
-        metadataView: (await discoverAssetMetadataHistory(
-          wallet: state.wallet,
-          security: state.security,
-        ))
-            .firstOrNull,
+        metadataView: metadataView,
         isSubmitting: false,
       );
     }
