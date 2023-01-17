@@ -7,6 +7,7 @@ import 'package:client_front/components/styles/decorations.dart';
 
 import 'buttons.dart';
 import 'containers.dart';
+import 'cubits.dart';
 import 'icons.dart';
 import 'empty.dart';
 import 'routes.dart';
@@ -32,6 +33,7 @@ class components {
   //    RouteObserver<PageRoute>();
   // handled by navigator
   static final RouteStack navigator = RouteStack();
+  static final GlobalCubits cubits = GlobalCubits();
   static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   static final LoadingComponents loading = LoadingComponents();
   static final MessageComponents message = MessageComponents();

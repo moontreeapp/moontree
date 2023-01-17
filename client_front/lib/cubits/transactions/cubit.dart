@@ -59,15 +59,28 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     ));
   }
 
+  /// Here we have logic to avoid populating transactionViews in the event
+  /// that we have navigated away from the page in the meantime (cleared the
+  /// contents of the cubit)
+  bool get cleared => state.ranWallet == null;
+
   Future<void> setTransactionViews({bool force = false}) async {
     if (force ||
         state.wallet != state.ranWallet ||
         state.security != state.ranSecurity) {
+      final checkCleared = state.ranWallet != null;
+
+      final transactionViews = await discoverTransactionHistory(
+        wallet: state.wallet,
+        security: state.security,
+      );
+
+      if (checkCleared && cleared) {
+        return;
+      }
+
       set(
-        transactionViews: await discoverTransactionHistory(
-          wallet: state.wallet,
-          security: state.security,
-        ),
+        transactionViews: transactionViews,
         ranWallet: state.wallet,
         ranSecurity: state.security,
         isSubmitting: false,
@@ -81,6 +94,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
             (state.ranHeight == null ||
                 state.lowestHeight == null ||
                 state.ranHeight! > state.lowestHeight!))) {
+      final checkCleared = state.ranWallet != null;
       submitting();
       final batch = await discoverTransactionHistory(
           wallet: state.wallet,
@@ -124,6 +138,12 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       //final priorHeights = state.transactionViews.map((e) => e.height).toSet();
       //final limitedBatch = batch.where((e) => !priorHeights.contains(e.height));
       //final newTransactionViews = state.transactionViews + limitedBatch.toList();
+
+      if (checkCleared && cleared) {
+        return;
+      }
+
+      /// finally we update the state
       if (batch.isNotEmpty) {
         set(
           transactionViews: newTransactionViews,
@@ -133,10 +153,9 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
           isSubmitting: false,
         );
       } else {
-        // set something that it's done
         set(
           transactionViews: state.transactionViews,
-          end: true,
+          end: true, // indicates end of transaction list for view
           ranWallet: state.wallet,
           ranSecurity: state.security,
           ranHeight: state.lowestHeight,

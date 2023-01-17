@@ -1,6 +1,8 @@
 import 'dart:io' show Platform;
+import 'package:client_front/cubits/cubits.dart';
 import 'package:client_front/services/client/subscription.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:flutter/services.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:client_back/client_back.dart';
@@ -93,7 +95,8 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
       ? GestureDetector(
           onTap: () async {
             if (services.developer.developerMode) {
-              await setupSubscription(wallet: Current.wallet);
+              //await setupSubscription(wallet: Current.wallet);
+              components.cubits.transactionsViewCubit.reset();
               //print(await (Current.wallet as LeaderWallet).roots);
             }
           },

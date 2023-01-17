@@ -106,13 +106,19 @@ class RavenMobileApp extends StatelessWidget {
             body: MultiBlocProvider(
               providers: [
                 BlocProvider<SimpleSendFormCubit>(
-                    create: (BuildContext context) => SimpleSendFormCubit()),
+                    create: (BuildContext context) =>
+                        components.cubits.simpleSendFormCubit),
+                //BlocProvider<TransactionsViewCubit>(
+                //    create: (BuildContext context) => TransactionsViewCubit()),
                 BlocProvider<TransactionsViewCubit>(
-                    create: (BuildContext context) => TransactionsViewCubit()),
+                    create: (BuildContext context) =>
+                        components.cubits.transactionsViewCubit),
                 BlocProvider<TransactionViewCubit>(
-                    create: (BuildContext context) => TransactionViewCubit()),
+                    create: (BuildContext context) =>
+                        components.cubits.transactionViewCubit),
                 BlocProvider<HoldingsViewCubit>(
-                    create: (BuildContext context) => HoldingsViewCubit()),
+                    create: (BuildContext context) =>
+                        components.cubits.holdingsViewCubit),
               ],
               child: child!,
             ),

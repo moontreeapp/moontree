@@ -1,7 +1,9 @@
 //import 'package:backdrop/backdrop.dart';
 import 'dart:async';
 
+import 'package:client_front/cubits/cubits.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -18,6 +20,7 @@ class _PageLead extends State<PageLead> {
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
   String? settingTitle;
+  String? priorPage;
   late LeadIcon xlead = LeadIcon.pass;
   late bool loading = false;
 
@@ -44,6 +47,13 @@ class _PageLead extends State<PageLead> {
           xlead = value;
         });
       }
+    }));
+    listeners.add(streams.app.page.listen((String value) {
+      if (value == 'Home' && priorPage == 'Transactions') {
+        components.cubits.transactionsViewCubit.reset();
+        print('RESETTING');
+      }
+      priorPage = value;
     }));
   }
 
