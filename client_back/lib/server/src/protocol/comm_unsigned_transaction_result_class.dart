@@ -11,6 +11,7 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 class UnsignedTransactionResult extends _i1.SerializableEntity {
   UnsignedTransactionResult({
     this.id,
+    this.error,
     required this.rawHex,
     required this.vinPreimageHex,
     required this.vinPrivateKeySource,
@@ -22,6 +23,8 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
   ) {
     return UnsignedTransactionResult(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
+      error:
+          serializationManager.deserialize<String?>(jsonSerialization['error']),
       rawHex:
           serializationManager.deserialize<String>(jsonSerialization['rawHex']),
       vinPreimageHex: serializationManager
@@ -33,6 +36,8 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
 
   int? id;
 
+  String? error;
+
   String rawHex;
 
   List<String> vinPreimageHex;
@@ -43,6 +48,7 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'error': error,
       'rawHex': rawHex,
       'vinPreimageHex': vinPreimageHex,
       'vinPrivateKeySource': vinPrivateKeySource,

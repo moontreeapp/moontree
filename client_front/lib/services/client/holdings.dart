@@ -9,6 +9,7 @@ import 'dart:typed_data';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
+import 'package:client_front/services/client/mock_flag.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:collection/collection.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -21,7 +22,7 @@ class HoldingBalances {
 
   HoldingBalances() : client = server.Client('$moontreeUrl/');
 
-  Future<List<server.SerializableEntity>> holdingBalancesBy({
+  Future<List<server.BalanceView>> holdingBalancesBy({
     //server.BalanceView
     required Chaindata chain,
     required List<String> roots,
@@ -48,31 +49,29 @@ Future<List<server.BalanceView>> discoverHoldingBalances({
     //  roots = wallet.roots; ?? await Current.wallet.roots;
   }
   roots ??= await Current.wallet.roots;
-  final List<server.SerializableEntity> history =
+  final List<server.BalanceView> history = mockFlag
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofBalanceView);
+      ? await Future.delayed(Duration(seconds: 1), spoofBalanceView)
 
-  /// SERVER
-  //await HoldingBalances().holdingBalancesBy(
-  //    chain: ChainNet(chain, net).chaindata,
-  //    roots: roots,
-  //    h160s: roots.isEmpty
-  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
-  //        : []);
+      /// SERVER
+      : await HoldingBalances().holdingBalancesBy(
+          chain: ChainNet(chain, net).chaindata,
+          roots: roots,
+          h160s: roots.isEmpty
+              ? Current.wallet.addresses.map((e) => e.h160).toList()
+              : []);
 
-  if (history.length == 1 && history.first is server.EndpointError) {
+  if (history.length == 1 && history.first.error != null) {
     // handle
     return [];
   }
 
-  final ret = [for (final hist in history) hist as server.BalanceView];
-
-  for (final txView in ret) {
+  for (final txView in history) {
     txView.chain = chain.name + '_' + net.name + 'net';
   }
 
-  return sortedHoldings(ret, chain.symbol);
+  return sortedHoldings(history, chain.symbol);
 }
 
 List<BalanceView> sortedHoldings(List<BalanceView> records, String coin) {

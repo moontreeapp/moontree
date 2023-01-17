@@ -92,7 +92,7 @@ class TransactionPageContent extends StatelessWidget {
         flutter_bloc.BlocProvider.of<TransactionViewCubit>(context);
     //address = addresses.primaryIndex.getOne(transaction!.addresses);
     // why this get called twice?
-    cubit.setTransactionDetails(hash: transactionView.hash);
+    //cubit.setTransactionDetails(hash: transactionView.hash);
     return flutter_bloc.BlocBuilder<TransactionViewCubit, TransactionViewState>(
         bloc: cubit..enter(),
         builder: (BuildContext context, TransactionViewState state) {
@@ -111,6 +111,21 @@ class TransactionPageContent extends StatelessWidget {
         return getConfirmationsBetweenHelper();
       case 'Type':
         return transactionView.type.display;
+      case 'Asset':
+        return transactionView.isCoin &&
+                transactionView.containsAssets &&
+                cubit.state.transactionView?.containsAssets != null &&
+                !(cubit.state.transactionView?.containsAssets ?? '')
+                    .contains(',')
+            ? cubit.state.transactionView?.containsAssets ?? ''
+            : '';
+      case 'Assets':
+        return transactionView.isCoin &&
+                transactionView.containsAssets &&
+                (cubit.state.transactionView?.containsAssets ?? '')
+                    .contains(',')
+            ? cubit.state.transactionView?.containsAssets ?? ''
+            : '';
       case 'Create Asset Fee':
         final burned = transactionView.issueMainBurned;
         return burned > 0
@@ -207,13 +222,26 @@ class TransactionPageContent extends StatelessWidget {
         }
         return '${transactionView.iValue.asCoin.toSatsCommaString()} ${transactionView.symbol}'; // + ' +
       //'${transactionView.fee.asCoin.toSatsCommaString()} ${pros.securities.currentCoin.symbol}';
-
       default:
         return 'unknown';
     }
   }
 
   String? transactionMemo(TransactionViewCubit cubit) {
+    /// todo: might have to make a call for transaction memo.
+    // should do this logic on the back / in the record
+    //return transaction!.memos.isNotEmpty
+    //    ? transaction!.memos.first.substring(2).hexToUTF8
+    //    : transaction!.assetMemos.isNotEmpty
+    //        ? transaction!.assetMemos.first /*.hexToAscii ?*/
+    //        : null;
+    if (cubit.state.transactionView?.memo == null) {
+      return null;
+    }
+    return cubit.state.transactionView!.memo!.toBs58();
+  }
+
+  String? transactionAssets(TransactionViewCubit cubit) {
     /// todo: might have to make a call for transaction memo.
     // should do this logic on the back / in the record
     //return transaction!.memos.isNotEmpty
@@ -240,23 +268,24 @@ class TransactionPageContent extends StatelessWidget {
     }
   }
 
-  Widget plain(BuildContext context, String text, String value) => value == ''
-      ? SizedBox(height: 0)
-      : ListTile(
-          dense: true,
-          title: Text(text, style: Theme.of(context).textTheme.bodyText1),
-          trailing: GestureDetector(
-            onLongPress: () {
-              Clipboard.setData(ClipboardData(text: value));
-              streams.app.snack.add(Snack(message: 'copied to clipboard'));
-            },
-            child: Text(
-              value,
-              style: Theme.of(context).textTheme.bodyText1,
-              maxLines: text == 'Memo' ? 3 : null,
-            ),
-          ),
-        );
+  Widget plain(BuildContext context, String text, String value) =>
+      value == '' || value == null
+          ? SizedBox(height: 0)
+          : ListTile(
+              dense: true,
+              title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+              trailing: GestureDetector(
+                onLongPress: () {
+                  Clipboard.setData(ClipboardData(text: value));
+                  streams.app.snack.add(Snack(message: 'copied to clipboard'));
+                },
+                child: Text(
+                  value,
+                  style: Theme.of(context).textTheme.bodyText1,
+                  maxLines: text == 'Memo' ? 3 : null,
+                ),
+              ),
+            );
 
   Widget link(
     BuildContext context, {
@@ -320,6 +349,8 @@ class TransactionPageContent extends StatelessWidget {
                       'Date',
                       'Confirmations',
                       'Type',
+                      'Asset',
+                      'Assets',
                       'Note',
                       'Memo', // non-ipfs memos
                       'Incoming',

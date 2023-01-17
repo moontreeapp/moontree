@@ -1,4 +1,5 @@
 import 'package:client_back/client_back.dart';
+import 'package:client_front/services/client/mock_flag.dart';
 
 /// only here because all the other client connections are also in this folder.
 Future<void> setupSubscription({
@@ -6,8 +7,10 @@ Future<void> setupSubscription({
   Chain? chain,
   Net? net,
 }) async =>
-    services.subscription.setupSubscription(
-      wallet: wallet,
-      chain: chain,
-      net: net,
-    );
+    mockFlag
+        ? () {}
+        : services.subscription.setupSubscription(
+            wallet: wallet,
+            chain: chain,
+            net: net,
+          );

@@ -8,6 +8,7 @@ import 'dart:typed_data';
 
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
+import 'package:client_front/services/client/mock_flag.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
@@ -19,7 +20,7 @@ class TransactionHistory {
 
   TransactionHistory() : client = server.Client('$moontreeUrl/');
 
-  Future<List<server.SerializableEntity>> transactionHistoryBy({
+  Future<List<server.TransactionView>> transactionHistoryBy({
     String? symbol,
     int? height,
     required Chaindata chain,
@@ -59,33 +60,32 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
     //  roots = wallet.roots; ?? await Current.wallet.roots;
   }
   roots ??= await Current.wallet.roots;
-  final List<server.SerializableEntity> history =
+  final List<server.TransactionView> history = mockFlag
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofTransactionView);
+      ? await Future.delayed(Duration(seconds: 1), spoofTransactionView)
 
-  /// SERVER
-  //await TransactionHistory().transactionHistoryBy(
-  //    symbol: serverSymbol,
-  //    height: height,
-  //    chain: ChainNet(chain, net).chaindata,
-  //    roots: roots,
-  //    h160s: roots.isEmpty
-  //        ? Current.wallet.addresses.map((e) => e.h160).toList()
-  //        : []);
+      /// SERVER
+      : await TransactionHistory().transactionHistoryBy(
+          symbol: serverSymbol,
+          height: height,
+          chain: ChainNet(chain, net).chaindata,
+          roots: roots,
+          h160s: roots.isEmpty
+              ? Current.wallet.addresses.map((e) => e.h160).toList()
+              : []);
 
-  if (history.length == 1 && history.first is server.EndpointError) {
+  if (history.length == 1 && history.first.error != null) {
     // handle
     return [];
   }
-  final ret = [for (final hist in history) hist as server.TransactionView];
 
-  for (final txView in ret) {
+  for (final txView in history) {
     txView.chain = chain.name + '_' + net.name + 'net';
     txView.symbol = symbol;
   }
 
-  return ret;
+  return history;
 }
 
 List<server.TransactionView> spoofTransactionView() {
@@ -215,7 +215,7 @@ List<server.TransactionView> spoofTransactionView() {
         // asset creation
         symbol: null,
         chain: null,
-        containsAssets: false,
+        containsAssets: true,
         hash: ByteData(1),
         datetime: DateTime.now(),
         height: 1,

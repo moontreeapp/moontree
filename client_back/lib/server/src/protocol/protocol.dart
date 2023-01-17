@@ -40,8 +40,11 @@ import 'wallet_balance_current_class.dart' as _i30;
 import 'wallet_balance_incremental_class.dart' as _i31;
 import 'wallet_chain_link.dart' as _i32;
 import 'wallet_class.dart' as _i33;
-import 'package:serverpod_serialization/src/serialization.dart' as _i34;
-import 'dart:typed_data' as _i35;
+import 'asset_metadata_class.dart' as _i34;
+import 'comm_balance_view.dart' as _i35;
+import 'dart:typed_data' as _i36;
+import 'comm_transaction_view.dart'
+    as _i37;
 export 'asset_class.dart';
 export 'asset_metadata_class.dart';
 export 'asset_metadata_history_class.dart';
@@ -333,18 +336,28 @@ class Protocol extends _i1.SerializationManager {
       return (data as List).map((e) => deserialize<String>(e)).toList()
           as dynamic;
     }
-    if (t == List<_i34.SerializableEntity>) {
+    if (t == List<_i34.AssetMetadata>) {
       return (data as List)
-          .map((e) => deserialize<_i34.SerializableEntity>(e))
+          .map((e) => deserialize<_i34.AssetMetadata>(e))
+          .toList() as dynamic;
+    }
+    if (t == List<_i35.BalanceView>) {
+      return (data as List)
+          .map((e) => deserialize<_i35.BalanceView>(e))
           .toList() as dynamic;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList()
           as dynamic;
     }
-    if (t == List<_i35.ByteData>) {
-      return (data as List).map((e) => deserialize<_i35.ByteData>(e)).toList()
+    if (t == List<_i36.ByteData>) {
+      return (data as List).map((e) => deserialize<_i36.ByteData>(e)).toList()
           as dynamic;
+    }
+    if (t == List<_i37.TransactionView>) {
+      return (data as List)
+          .map((e) => deserialize<_i37.TransactionView>(e))
+          .toList() as dynamic;
     }
     return super.deserialize<T>(data, t);
   }

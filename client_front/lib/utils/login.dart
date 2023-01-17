@@ -1,3 +1,4 @@
+import 'package:client_front/services/client/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -25,7 +26,7 @@ Future<void> login(
   //streams.app.lead.add(LeadIcon.menu);
 
   // setup subscription on moontree client for this wallet
-  await services.subscription.setupSubscription(wallet: Current.wallet);
+  await setupSubscription(wallet: Current.wallet);
 
   // go to home
   postLogin(context);

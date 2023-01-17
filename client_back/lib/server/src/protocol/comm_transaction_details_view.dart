@@ -12,8 +12,9 @@ import 'dart:typed_data' as _i2;
 class TransactionDetailsView extends _i1.SerializableEntity {
   TransactionDetailsView({
     this.id,
+    this.error,
     this.memo,
-    required this.containsAssets,
+    this.containsAssets,
   });
 
   factory TransactionDetailsView.fromJson(
@@ -22,23 +23,28 @@ class TransactionDetailsView extends _i1.SerializableEntity {
   ) {
     return TransactionDetailsView(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
+      error:
+          serializationManager.deserialize<String?>(jsonSerialization['error']),
       memo: serializationManager
           .deserialize<_i2.ByteData?>(jsonSerialization['memo']),
       containsAssets: serializationManager
-          .deserialize<bool>(jsonSerialization['containsAssets']),
+          .deserialize<String?>(jsonSerialization['containsAssets']),
     );
   }
 
   int? id;
 
+  String? error;
+
   _i2.ByteData? memo;
 
-  bool containsAssets;
+  String? containsAssets;
 
   @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'error': error,
       'memo': memo,
       'containsAssets': containsAssets,
     };

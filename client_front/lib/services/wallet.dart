@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:client_front/services/client/subscription.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
@@ -70,7 +71,7 @@ Future<void> switchWallet(String walletId, BuildContext context) async {
   await pros.settings.setCurrentWalletId(walletId);
 
   // reset subscriptions for this wallet
-  await services.subscription.setupSubscription(wallet: Current.wallet);
+  await setupSubscription(wallet: Current.wallet);
 
   streams.app.fling.add(false);
   streams.app.setting.add(null);

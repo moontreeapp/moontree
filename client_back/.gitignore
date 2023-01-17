@@ -13,3 +13,5 @@ database/
 testdb/
 
 *.exe
+
+lib/server/src/protocol/*.dart

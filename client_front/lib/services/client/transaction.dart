@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
+import 'package:client_front/services/client/mock_flag.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
@@ -13,7 +14,7 @@ class TransactionDetails {
 
   TransactionDetails() : client = server.Client('$moontreeUrl/');
 
-  Future<server.SerializableEntity?> transactionDetailsBy({
+  Future<server.TransactionDetailsView?> transactionDetailsBy({
     required Chaindata chain,
     required ByteData hash,
   }) async =>
@@ -28,16 +29,16 @@ Future<server.TransactionDetailsView?> discoverTransactionDetails({
 }) async {
   chain ??= Current.chain;
   net ??= Current.net;
-  final tx =
+  final server.TransactionDetailsView? tx = mockFlag
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofTransactionDetailsView);
+      ? await Future.delayed(Duration(seconds: 1), spoofTransactionDetailsView)
 
-  /// SERVER
-  //await TransactionDetails().transactionDetailsBy(
-  //    hash: hash, chain: ChainNet(chain, net).chaindata);
+      /// SERVER
+      : await TransactionDetails().transactionDetailsBy(
+          hash: hash, chain: ChainNet(chain, net).chaindata);
 
-  if (tx is server.EndpointError || tx == null) {
+  if (tx?.error != null) {
     // handle
     return null;
   }
@@ -48,6 +49,6 @@ server.TransactionDetailsView spoofTransactionDetailsView() {
   return server.TransactionDetailsView(
     //memo: null,
     memo: 'Qmb86hqUJNCUrpwukZtuWUqunL7GhrkwjZErmWNMbhf5HE'.base58ToByteData,
-    containsAssets: false,
+    containsAssets: 'ASSETNAME',
   );
 }

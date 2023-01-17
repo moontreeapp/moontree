@@ -11,6 +11,7 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 class BalanceView extends _i1.SerializableEntity {
   BalanceView({
     this.id,
+    this.error,
     required this.sats,
     required this.symbol,
     this.chain,
@@ -22,6 +23,8 @@ class BalanceView extends _i1.SerializableEntity {
   ) {
     return BalanceView(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
+      error:
+          serializationManager.deserialize<String?>(jsonSerialization['error']),
       sats: serializationManager.deserialize<int>(jsonSerialization['sats']),
       symbol:
           serializationManager.deserialize<String>(jsonSerialization['symbol']),
@@ -31,6 +34,8 @@ class BalanceView extends _i1.SerializableEntity {
   }
 
   int? id;
+
+  String? error;
 
   int sats;
 
@@ -42,6 +47,7 @@ class BalanceView extends _i1.SerializableEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'error': error,
       'sats': sats,
       'symbol': symbol,
       'chain': chain,

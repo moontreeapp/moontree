@@ -12,6 +12,7 @@ import 'dart:typed_data' as _i2;
 class TransactionView extends _i1.SerializableEntity {
   TransactionView({
     this.id,
+    this.error,
     required this.hash,
     required this.datetime,
     required this.fee,
@@ -40,6 +41,8 @@ class TransactionView extends _i1.SerializableEntity {
   ) {
     return TransactionView(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
+      error:
+          serializationManager.deserialize<String?>(jsonSerialization['error']),
       hash: serializationManager
           .deserialize<_i2.ByteData>(jsonSerialization['hash']),
       datetime: serializationManager
@@ -82,6 +85,8 @@ class TransactionView extends _i1.SerializableEntity {
   }
 
   int? id;
+
+  String? error;
 
   _i2.ByteData hash;
 
@@ -127,6 +132,7 @@ class TransactionView extends _i1.SerializableEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'error': error,
       'hash': hash,
       'datetime': datetime,
       'fee': fee,

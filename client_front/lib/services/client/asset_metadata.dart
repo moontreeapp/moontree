@@ -1,5 +1,6 @@
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
+import 'package:client_front/services/client/mock_flag.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
@@ -13,7 +14,7 @@ class AssetMetadataHistory {
 
   AssetMetadataHistory() : client = server.Client('$moontreeUrl/');
 
-  Future<List<server.SerializableEntity>> assetMetadataHistoryBy({
+  Future<List<server.AssetMetadata>> assetMetadataHistoryBy({
     //server.AssetMetadata
     required String symbol,
     required Chaindata chain,
@@ -58,20 +59,20 @@ Future<List<server.AssetMetadata>> discoverAssetMetadataHistory({
         ];
     }
   }
-  final List<server.SerializableEntity> history =
+  final List<server.AssetMetadata> history = mockFlag
 
       /// MOCK SERVER
-      await Future.delayed(Duration(seconds: 1), spoofAssetMetadata);
+      ? await Future.delayed(Duration(seconds: 1), spoofAssetMetadata)
 
-  /// SERVER
-  //await AssetMetadataHistory().assetMetadataHistoryBy(
-  //    symbol: symbol, chain: ChainNet(chain, net).chaindata);
+      /// SERVER
+      : await AssetMetadataHistory().assetMetadataHistoryBy(
+          symbol: symbol, chain: ChainNet(chain, net).chaindata);
 
-  if (history.length == 1 && history.first is server.EndpointError) {
-    // handle
-    return [];
-  }
-  return [for (final hist in history) hist as server.AssetMetadata];
+  //if (history.length == 1 /*&& history.first.error != null*/) {
+  //  // handle
+  //  return [];
+  //}
+  return history;
 }
 
 List<server.AssetMetadata> spoofAssetMetadata() {
