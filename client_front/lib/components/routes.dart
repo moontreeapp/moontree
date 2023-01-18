@@ -22,6 +22,7 @@ class RouteStack extends NavigatorObserver {
       ScaffoldMessenger.of(routeContext!).clearSnackBars();
     }
     streams.app.page.add(conformName(route.settings.name));
+    print('streams.app.page.value ${streams.app.page.value}');
   }
 
   @override

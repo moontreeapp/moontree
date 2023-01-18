@@ -126,8 +126,7 @@ class _CreateChoiceState extends State<CreateChoice> {
       child: RichText(
         textAlign: TextAlign.center,
         text: TextSpan(
-          style:
-              Theme.of(components.navigator.routeContext!).textTheme.bodyText2,
+          style: Theme.of(components.routes.routeContext!).textTheme.bodyText2,
           children: <TextSpan>[
             TextSpan(
                 text: 'Protect your wallet with:',

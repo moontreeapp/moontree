@@ -60,7 +60,7 @@ class _ActivityLightState extends State<ActivityLight>
         : connectionBusy
             ? GestureDetector(
                 onTap: () => components.message.giveChoices(
-                  components.navigator.routeContext!,
+                  components.routes.routeContext!,
                   title: activityMessage.title ?? 'Network Activity',
                   content: activityMessage.message,
                   child: activityMessage.message == '' ||
@@ -72,7 +72,7 @@ class _ActivityLightState extends State<ActivityLight>
                       : null,
                   behaviors: <String, void Function()>{
                     'ok': () {
-                      Navigator.of(components.navigator.routeContext!).pop();
+                      Navigator.of(components.routes.routeContext!).pop();
                     },
                   },
                 ),

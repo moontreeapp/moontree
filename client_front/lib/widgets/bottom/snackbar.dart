@@ -254,7 +254,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                       arguments: snack?.arguments ?? {})
                   // external site
                   : () => showDialog(
-                      context: components.navigator.routeContext!,
+                      context: components.routes.routeContext!,
                       builder: (BuildContext context) => AlertDialog(
                               //title: Text('External App'),
                               content: Text('Open external app (browser)?',
@@ -290,7 +290,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           action: SnackBarAction(
               label: snack?.label ?? 'details',
               onPressed: () => showDialog(
-                  context: components.navigator.routeContext!,
+                  context: components.routes.routeContext!,
                   builder: (BuildContext context) => AlertDialog(
                           title: Text('Details',
                               style: Theme.of(context).testTheme.body2),
@@ -305,6 +305,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     }
     */
     //Navigator.popUntil(
-    //    components.navigator.routeContext!, ModalRoute.withName('/home'));
+    //    components.routes.routeContext!, ModalRoute.withName('/home'));
   }
 }

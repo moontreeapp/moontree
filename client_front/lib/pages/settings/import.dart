@@ -132,7 +132,7 @@ class _ImportState extends State<Import> {
       child: TextFieldFormatted(
           focusNode: wordsFocus,
           selectionControls: CustomMaterialTextSelectionControls(
-              context: components.navigator.scaffoldContext,
+              context: components.routes.scaffoldContext,
               offset: const Offset(0, 20)),
           autocorrect: false,
           controller: words,

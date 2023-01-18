@@ -81,9 +81,9 @@ class TransactionPageContent extends StatelessWidget {
   }) : super(key: key);
 
   Future<void> refresh() async {
-    parent.callSetState(() {
-      cubit.setTransactionDetails(hash: transactionView.hash, force: true);
-    });
+    //parent.callSetState(() {
+    cubit.setTransactionDetails(hash: transactionView.hash, force: true);
+    //});
   }
 
   @override
@@ -112,7 +112,8 @@ class TransactionPageContent extends StatelessWidget {
       case 'Type':
         return transactionView.type.display;
       case 'Asset':
-        return transactionView.isCoin &&
+        return transactionView
+                    .isCoin && //9520c0f2727c4e94d87c86f66e362653c52e9972666ce76edde223c74a236cc6 df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188
                 transactionView.containsAssets &&
                 cubit.state.transactionView?.containsAssets != null &&
                 !(cubit.state.transactionView?.containsAssets ?? '')
@@ -124,7 +125,9 @@ class TransactionPageContent extends StatelessWidget {
                 transactionView.containsAssets &&
                 (cubit.state.transactionView?.containsAssets ?? '')
                     .contains(',')
-            ? cubit.state.transactionView?.containsAssets ?? ''
+            ? cubit.state.transactionView?.containsAssets
+                    ?.replaceAll(',', ', ') ??
+                ''
             : '';
       case 'Create Asset Fee':
         final burned = transactionView.issueMainBurned;

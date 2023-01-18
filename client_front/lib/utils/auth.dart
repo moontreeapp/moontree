@@ -10,7 +10,7 @@ Future<void> logout() async {
   streams.app.setting.add(null);
   //streams.app.logout.add(true); // notify the login page not to auto-ask
   Navigator.pushReplacementNamed(
-      components.navigator.routeContext!, getMethodPathLogin(),
+      components.routes.routeContext!, getMethodPathLogin(),
       arguments: <String, bool>{'autoInitiateUnlock': false});
   //streams.app.lead.add(LeadIcon.dismiss);
   streams.app.splash.add(false);

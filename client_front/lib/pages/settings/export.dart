@@ -109,7 +109,7 @@ class _ExportState extends State<Export> {
         enabled: walletController.text != '',
         focusNode: previewFocus,
         onPressed: () async {
-          Navigator.of(components.navigator.routeContext!).pushNamed(
+          Navigator.of(components.routes.routeContext!).pushNamed(
             '/settings/export/export',
             arguments: <String, dynamic>{
               'struct': CheckoutStruct(
@@ -145,7 +145,7 @@ class _ExportState extends State<Export> {
                   context,
                   behaviors: <String, VoidCallback>{
                     'I saved it':
-                        Navigator.of(components.navigator.routeContext!).pop
+                        Navigator.of(components.routes.routeContext!).pop
                   },
                   title: 'Encryption Key',
                   content:

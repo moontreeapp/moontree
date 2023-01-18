@@ -122,7 +122,7 @@ class _ScanQRState extends State<ScanQR> {
     controller.scannedDataStream.listen((Barcode scanData) {
       final QRData qrData = populateFromQR(code: scanData.code ?? '');
       controller.pauseCamera();
-      Navigator.of(components.navigator.routeContext!).pushReplacementNamed(
+      Navigator.of(components.routes.routeContext!).pushReplacementNamed(
           '/transaction/send',
           arguments: <String, Object?>{
             'address': qrData.address,

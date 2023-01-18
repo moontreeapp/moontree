@@ -118,7 +118,7 @@ class _AssetList extends State<AssetList> {
 
   void navigate(String symbol, {Wallet? wallet}) {
     streams.app.manage.asset.add(symbol);
-    Navigator.of(components.navigator.routeContext!).pushNamed(
+    Navigator.of(components.routes.routeContext!).pushNamed(
       '/manage/asset',
       arguments: <String, String?>{'symbol': symbol, 'walletId': wallet?.id},
     );

@@ -20,7 +20,6 @@ class _PageLead extends State<PageLead> {
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
   String? settingTitle;
-  String? priorPage;
   late LeadIcon xlead = LeadIcon.pass;
   late bool loading = false;
 
@@ -47,13 +46,6 @@ class _PageLead extends State<PageLead> {
           xlead = value;
         });
       }
-    }));
-    listeners.add(streams.app.page.listen((String value) {
-      if (value == 'Home' && priorPage == 'Transactions') {
-        components.cubits.transactionsViewCubit.reset();
-        print('RESETTING');
-      }
-      priorPage = value;
     }));
   }
 
@@ -84,10 +76,10 @@ class _PageLead extends State<PageLead> {
               return;
             }
             streams.app.setting.add('/settings');
-            //Navigator.pop(components.navigator.routeContext ?? context);
-            //Navigator.pop(components.navigator.routeContext ?? context);
+            //Navigator.pop(components.routes.routeContext ?? context);
+            //Navigator.pop(components.routes.routeContext ?? context);
             //Navigator.pushReplacementNamed(
-            //    components.navigator.routeContext ?? context, '/home',
+            //    components.routes.routeContext ?? context, '/home',
             //    arguments: {});
             //streams.app.setting.add(settingTitle);
           });
@@ -101,7 +93,7 @@ class _PageLead extends State<PageLead> {
             if (streams.app.scrim.value ?? false) {
               return;
             }
-            Navigator.pop(components.navigator.routeContext ?? context);
+            Navigator.pop(components.routes.routeContext ?? context);
             streams.app.setting.add(settingTitle);
           });
     }
@@ -140,7 +132,7 @@ class _PageLead extends State<PageLead> {
             if (xlead == LeadIcon.dismiss) {
               streams.app.lead.add(LeadIcon.pass);
             }
-            Navigator.pop(components.navigator.routeContext ?? context);
+            Navigator.pop(components.routes.routeContext ?? context);
           });
     }
     if (<String>[
@@ -162,7 +154,7 @@ class _PageLead extends State<PageLead> {
               return;
             }
             streams.app.fling.add(false);
-            Navigator.pop(components.navigator.routeContext ?? context);
+            Navigator.pop(components.routes.routeContext ?? context);
           });
     }
     if (<String>['Createlogin'].contains(streams.app.page.value)) {
@@ -174,7 +166,7 @@ class _PageLead extends State<PageLead> {
               return;
             }
             Navigator.pushReplacementNamed(
-              components.navigator.routeContext ?? context,
+              components.routes.routeContext ?? context,
               '/security/create/setup',
             );
             streams.app.splash.add(false);
@@ -200,9 +192,9 @@ class _PageLead extends State<PageLead> {
               return;
             }
             Navigator.popUntil(
-                components.navigator.routeContext ?? context,
+                components.routes.routeContext ?? context,
                 //ModalRoute.withName('/home') ||
-                ModalRoute.withName(components.navigator
+                ModalRoute.withName(components.routes
                         .nameIsInStack('/security/backup/backupintro')
                     ? '/security/backup/backupintro'
                     : '/home'));
@@ -218,7 +210,7 @@ class _PageLead extends State<PageLead> {
           if (streams.app.scrim.value ?? false) {
             return;
           }
-          Navigator.pop(components.navigator.routeContext ?? context);
+          Navigator.pop(components.routes.routeContext ?? context);
         });
   }
 }

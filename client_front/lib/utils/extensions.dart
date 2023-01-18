@@ -22,19 +22,19 @@ extension RelativeHeightDoble on num {
       size.relativeHeight(context, (this / 760));
 
   double get figmaH =>
-      size.relativeHeight(components.navigator.routeContext!, (this / 760));
+      size.relativeHeight(components.routes.routeContext!, (this / 760));
 
   double get figmaW =>
-      size.relativeWidth(components.navigator.routeContext!, this / 360);
+      size.relativeWidth(components.routes.routeContext!, this / 360);
 
   double get figmaSafeHeight => size.relativeHeight(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         (this / 680),
         minus: systemBarHeight,
       );
 
   double get figmaAppHeight => size.relativeHeight(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         (this / 680),
         minus: (systemBarHeight + appBarHeight),
       );
@@ -46,18 +46,18 @@ extension RelativeHeightDoble on num {
       size.relativeHeight(context, this, minus: tall ? 118 : 72);
 
   double get ofScreenHeight => size.relativeHeight(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         this,
       );
 
   double get ofSafeHeight => size.relativeHeight(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         this,
         minus: systemBarHeight,
       );
 
   double get ofAppHeight => size.relativeHeight(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         this,
         minus: (systemBarHeight + appBarHeight + optionalAndroidNav),
       );
@@ -66,7 +66,7 @@ extension RelativeHeightDoble on num {
       size.relativeWidth(context, this);
 
   double get ofScreenWidth =>
-      size.relativeWidth(components.navigator.routeContext!, this);
+      size.relativeWidth(components.routes.routeContext!, this);
 
   static double get appBarHeight => 56.0;
 

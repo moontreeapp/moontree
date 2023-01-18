@@ -139,7 +139,7 @@ class _HoldingList extends State<HoldingList> {
 
   void navigate(BalanceView balance, {Wallet? wallet}) {
     streams.app.wallet.asset.add(balance.symbol);
-    Navigator.of(components.navigator.routeContext!).pushNamed(
+    Navigator.of(components.routes.routeContext!).pushNamed(
       '/transactions',
       arguments: <String, Object?>{'holding': balance, 'walletId': wallet?.id},
     );

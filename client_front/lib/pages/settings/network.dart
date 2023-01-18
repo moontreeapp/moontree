@@ -204,12 +204,12 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
   Future<void> validateAndSave() async {
     pressed = true;
     await Navigator.pushNamed(
-      components.navigator.routeContext!,
+      components.routes.routeContext!,
       '/security/security',
       arguments: <String, Object>{
         'buttonLabel': 'Submit',
         'onSuccess': () async {
-          Navigator.pop(components.navigator.routeContext!);
+          Navigator.pop(components.routes.routeContext!);
           save();
         }
       },

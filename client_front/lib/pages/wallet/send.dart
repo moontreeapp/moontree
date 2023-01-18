@@ -248,8 +248,8 @@ class _SendState extends State<Send> {
                                 textInputAction: TextInputAction.next,
                                 selectionControls:
                                     CustomMaterialTextSelectionControls(
-                                        context: components
-                                            .navigator.scaffoldContext,
+                                        context:
+                                            components.routes.scaffoldContext,
                                         offset: Offset.zero),
                                 autocorrect: false,
                                 inputFormatters: <TextInputFormatter>[
@@ -585,7 +585,7 @@ class _SendState extends State<Send> {
 
   void _confirmSend(SendRequest sendRequest) {
     streams.spend.make.add(sendRequest);
-    Navigator.of(components.navigator.routeContext!).pushNamed(
+    Navigator.of(components.routes.routeContext!).pushNamed(
       '/transaction/checkout',
       arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(

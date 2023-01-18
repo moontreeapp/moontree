@@ -56,7 +56,7 @@ class ButtonComponents {
                       if (onPressed != null) {
                         onPressed();
                       }
-                      Navigator.of(components.navigator.routeContext!)
+                      Navigator.of(components.routes.routeContext!)
                           .pushNamed(link, arguments: arguments);
                     }
                   : onPressed ?? () {})
@@ -94,7 +94,7 @@ class ButtonComponents {
                       if (onPressed != null) {
                         onPressed();
                       }
-                      Navigator.of(components.navigator.routeContext!)
+                      Navigator.of(components.routes.routeContext!)
                           .pushNamed(link, arguments: arguments);
                     }
                   : onPressed ?? () {})

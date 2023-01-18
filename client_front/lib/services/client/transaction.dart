@@ -42,7 +42,7 @@ Future<server.TransactionDetailsView?> discoverTransactionDetails({
     // handle
     return null;
   }
-  return tx as server.TransactionDetailsView;
+  return tx;
 }
 
 server.TransactionDetailsView spoofTransactionDetailsView() {

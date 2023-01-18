@@ -73,7 +73,7 @@ class RavenMobileApp extends StatelessWidget {
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
   @override
   Widget build(BuildContext context) {
-    components.navigator.mainContext = context;
+    components.routes.mainContext = context;
     //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
     //    overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -94,9 +94,9 @@ class RavenMobileApp extends StatelessWidget {
       routes: pages.routes(context),
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
-      navigatorObservers: <NavigatorObserver>[components.navigator],
+      navigatorObservers: <NavigatorObserver>[components.routes],
       builder: (BuildContext context, Widget? child) {
-        components.navigator.scaffoldContext = context;
+        components.routes.scaffoldContext = context;
         final Stack scaffold =
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Scaffold(

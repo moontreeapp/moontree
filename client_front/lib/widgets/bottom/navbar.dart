@@ -121,7 +121,7 @@ class _NavBarState extends State<NavBar> {
                   context,
                   label: 'import',
                   onPressed: () async {
-                    Navigator.of(components.navigator.routeContext!)
+                    Navigator.of(components.routes.routeContext!)
                         .pushNamed('/settings/import');
                   },
                 )
@@ -151,16 +151,14 @@ class _NavBarState extends State<NavBar> {
                           .add(Snack(message: 'Claimed your EVR first.'));
                     }
                   },
-                  onPressed: () =>
-                      Navigator.of(components.navigator.routeContext!)
-                          .pushNamed('/transaction/send'),
+                  onPressed: () => Navigator.of(components.routes.routeContext!)
+                      .pushNamed('/transaction/send'),
                 ),
               components.buttons.actionButton(
                 context,
                 label: 'receive',
-                onPressed: () =>
-                    Navigator.of(components.navigator.routeContext!)
-                        .pushNamed('/transaction/receive'),
+                onPressed: () => Navigator.of(components.routes.routeContext!)
+                    .pushNamed('/transaction/receive'),
               )
             ]
           : widget.appContext == AppContext.manage
@@ -196,8 +194,8 @@ class _NavBarState extends State<NavBar> {
           streams.app.context.add(appContext);
           if (!<String>['Home', 'Manage', 'Swap']
               .contains(streams.app.page.value)) {
-            Navigator.popUntil(components.navigator.routeContext!,
-                ModalRoute.withName('/home'));
+            Navigator.popUntil(
+                components.routes.routeContext!, ModalRoute.withName('/home'));
           }
         },
         icon: Icon(<AppContext, IconData>{

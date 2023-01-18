@@ -376,14 +376,14 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       ));
 
   Future<void> walletSelection() async => SimpleSelectionItems(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         then: () => dropDownActive = false,
         items: <Widget>[
               if (services.developer.developerMode == true)
                 ListTile(
                   visualDensity: VisualDensity.compact,
                   onTap: () async {
-                    Navigator.pop(components.navigator.routeContext!);
+                    Navigator.pop(components.routes.routeContext!);
                     await components.loading
                         .screen(message: 'Creating Wallet', playCount: 3);
                     final String walletId = await generateWallet();
@@ -399,7 +399,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                       ? null
                       : TextButton(
                           onPressed: () async {
-                            Navigator.pop(components.navigator.routeContext!);
+                            Navigator.pop(components.routes.routeContext!);
                             setState(() {
                               dropDownActive = false;
                               wallets = pros.wallets.ordered;
@@ -421,7 +421,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                 ListTile(
                   visualDensity: VisualDensity.compact,
                   onTap: () async {
-                    Navigator.pop(components.navigator.routeContext!);
+                    Navigator.pop(components.routes.routeContext!);
                     final String walletId =
                         await generateWallet(walletType: WalletType.single);
                     await switchWallet(walletId, context);
@@ -439,7 +439,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                 ListTile(
                     visualDensity: VisualDensity.compact,
                     onTap: () async {
-                      Navigator.pop(components.navigator.routeContext!);
+                      Navigator.pop(components.routes.routeContext!);
                       if (wallet.id != Current.walletId) {
                         await switchWallet(wallet.id, context);
                       }
@@ -472,7 +472,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                 onPressed: () async {
                                   changeName.text = wallet.name;
                                   await components.message.giveChoices(
-                                      components.navigator.routeContext!,
+                                      components.routes.routeContext!,
                                       title: 'Change Name',
                                       content:
                                           'What should this wallet be called?',
@@ -485,7 +485,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                           )),
                                       behaviors: <String, void Function()>{
                                         'cancel': () => Navigator.pop(
-                                            components.navigator.routeContext!),
+                                            components.routes.routeContext!),
                                         'submit': () async {
                                           if (changeName.text != '') {
                                             if (wallet is LeaderWallet) {
@@ -506,10 +506,10 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                             initializeWalletSecurities();
                                             setWalletsSecurities();
                                           }
-                                          Navigator.pop(components
-                                              .navigator.routeContext!);
-                                          Navigator.pop(components
-                                              .navigator.routeContext!);
+                                          Navigator.pop(
+                                              components.routes.routeContext!);
+                                          Navigator.pop(
+                                              components.routes.routeContext!);
                                           setState(() {});
                                         }
                                       });
@@ -523,18 +523,16 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                   ),
                                   onPressed: () async {
                                     await components.message.giveChoices(
-                                        components.navigator.routeContext!,
+                                        components.routes.routeContext!,
                                         title: 'DANGER!',
                                         content:
                                             'WARNING: You are about to delete a wallet. This action cannot be undone! Are you sure you want to delete it?',
                                         behaviors: <String, void Function()>{
                                           'CANCEL': () => Navigator.pop(
-                                              components
-                                                  .navigator.routeContext!),
+                                              components.routes.routeContext!),
                                           'DELETE FOREVER': () async =>
                                               components.message.giveChoices(
-                                                components
-                                                    .navigator.routeContext!,
+                                                components.routes.routeContext!,
                                                 title: 'CONFIRM DELETE',
                                                 content:
                                                     'To delete ${wallet.name} you will need to authenticate.',
@@ -543,24 +541,19 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                     void Function()>{
                                                   'CANCEL': () {
                                                     Navigator.pop(components
-                                                        .navigator
-                                                        .routeContext!);
+                                                        .routes.routeContext!);
                                                     Navigator.pop(components
-                                                        .navigator
-                                                        .routeContext!);
+                                                        .routes.routeContext!);
                                                   },
                                                   'OK': () async {
                                                     Navigator.pop(components
-                                                        .navigator
-                                                        .routeContext!);
+                                                        .routes.routeContext!);
                                                     Navigator.pop(components
-                                                        .navigator
-                                                        .routeContext!);
+                                                        .routes.routeContext!);
                                                     Navigator.pop(components
-                                                        .navigator
-                                                        .routeContext!);
+                                                        .routes.routeContext!);
                                                     Navigator.pushNamed(
-                                                        components.navigator
+                                                        components.routes
                                                             .routeContext!,
                                                         '/security/security',
                                                         arguments: <String,
@@ -570,7 +563,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                           'onSuccess':
                                                               () async {
                                                             Navigator.pop(components
-                                                                .navigator
+                                                                .routes
                                                                 .routeContext!);
                                                             if (wallet.id ==
                                                                 Current

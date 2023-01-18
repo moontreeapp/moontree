@@ -19,7 +19,11 @@ part 'state.dart';
 /// show list of transactions
 class TransactionsViewCubit extends Cubit<TransactionsViewState>
     with SetCubitMixin {
-  TransactionsViewCubit() : super(TransactionsViewState.initial());
+  String? priorPage;
+
+  TransactionsViewCubit() : super(TransactionsViewState.initial()) {
+    init();
+  }
 
   @override
   Future<void> reset() async => emit(TransactionsViewState.initial());
@@ -57,6 +61,15 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       ranHeight: ranHeight,
       isSubmitting: isSubmitting,
     ));
+  }
+
+  void init() {
+    streams.app.page.listen((String value) {
+      if (value == 'Home' && priorPage == 'Transactions') {
+        reset();
+      }
+      priorPage = value;
+    });
   }
 
   /// Here we have logic to avoid populating transactionViews in the event

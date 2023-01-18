@@ -322,7 +322,7 @@ class IconComponents {
             }
             return x.substring(0, 1).toUpperCase();
           }(),
-              style: Theme.of(components.navigator.routeContext!)
+              style: Theme.of(components.routes.routeContext!)
                   .textTheme
                   .headline1!
                   .copyWith(

@@ -46,7 +46,7 @@ class _LoaderState extends State<Loader> {
       streams.app.fling.add(false);
       //await Future<void>.delayed(const Duration(milliseconds: 100)); // doesn't help
       Navigator.popUntil(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         ModalRoute.withName('/home'),
       );
     } else {

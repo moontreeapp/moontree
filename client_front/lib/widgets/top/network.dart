@@ -40,7 +40,7 @@ class _ChosenBlockchainState extends State<ChosenBlockchain> {
     return pageTitle == 'Login'
         ? Container()
         : GestureDetector(
-            onTap: () => Navigator.of(components.navigator.routeContext!)
+            onTap: () => Navigator.of(components.routes.routeContext!)
                 .pushNamed('/settings/network/blockchain'),
             child: Container(
                 width: 36,

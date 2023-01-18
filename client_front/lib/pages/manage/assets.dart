@@ -49,7 +49,7 @@ class _AssetPageState extends State<AssetPage> {
                   components.buttons.actionButton(context,
                       label: 'create',
                       onPressed: () => Navigator.pushNamed(
-                            components.navigator.routeContext!,
+                            components.routes.routeContext!,
                             '/create/qualifiersub',
                             arguments: <String, String>{
                               'symbol': 'QualifierSub'

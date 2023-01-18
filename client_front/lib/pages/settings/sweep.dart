@@ -235,13 +235,13 @@ class _SweepPageState extends State<SweepPage> {
     if (!dropDownActive) {
       dropDownActive = true;
       await SimpleSelectionItems(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         then: () => dropDownActive = false,
         items: <Widget>[
               ListTile(
                 visualDensity: VisualDensity.compact,
                 onTap: () async {
-                  Navigator.pop(components.navigator.routeContext!);
+                  Navigator.pop(components.routes.routeContext!);
                   walletId = await generateWallet();
                   toController.text =
                       pros.wallets.primaryIndex.getOne(walletId)!.name;
@@ -259,7 +259,7 @@ class _SweepPageState extends State<SweepPage> {
                     onTap: () async {
                       walletId = wallet.id;
                       toController.text = wallet.name;
-                      Navigator.pop(components.navigator.routeContext!);
+                      Navigator.pop(components.routes.routeContext!);
                     },
                     leading: const Icon(
                       Icons.account_balance_wallet_rounded,
@@ -279,13 +279,13 @@ class _SweepPageState extends State<SweepPage> {
     if (!dropDownActive) {
       dropDownActive = true;
       await SimpleSelectionItems(
-        components.navigator.routeContext!,
+        components.routes.routeContext!,
         then: () => dropDownActive = false,
         items: <Widget>[
           ListTile(
             visualDensity: VisualDensity.compact,
             onTap: () async {
-              Navigator.pop(components.navigator.routeContext!);
+              Navigator.pop(components.routes.routeContext!);
               fee = FeeRates.standard;
               feeController.text = 'Standard';
             },
@@ -297,7 +297,7 @@ class _SweepPageState extends State<SweepPage> {
           ListTile(
             visualDensity: VisualDensity.compact,
             onTap: () async {
-              Navigator.pop(components.navigator.routeContext!);
+              Navigator.pop(components.routes.routeContext!);
               fee = FeeRates.fast;
               feeController.text = 'Fast';
             },
@@ -329,7 +329,7 @@ class _SweepPageState extends State<SweepPage> {
       );
 
   void confirmSend() {
-    Navigator.of(components.navigator.routeContext!).pushNamed(
+    Navigator.of(components.routes.routeContext!).pushNamed(
       '/transaction/checkout',
       arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(

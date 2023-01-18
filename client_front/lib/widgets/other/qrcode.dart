@@ -32,9 +32,9 @@ class _QRCodeButtonState extends State<QRCodeButton> {
               onPressed: () async {
                 if (streams.app.scrim.value == true) return;
                 ScaffoldMessenger.of(context).clearSnackBars();
-                //Backdrop.of(components.navigator.routeContext!).concealBackLayer();
+                //Backdrop.of(components.routes.routeContext!).concealBackLayer();
                 //ScanResult result = await BarcodeScanner.scan();
-                //Navigator.of(components.navigator.routeContext!)
+                //Navigator.of(components.routes.routeContext!)
                 //    .pushNamed('/transaction/send', arguments: {
                 //  'qrcode': <ResultType, String>{
                 //        ResultType.Barcode: result.rawContent
@@ -42,11 +42,11 @@ class _QRCodeButtonState extends State<QRCodeButton> {
                 //      ''
                 //});
                 if (widget.pageTitle == 'Send-to') {
-                  Navigator.of(components.navigator.routeContext!)
+                  Navigator.of(components.routes.routeContext!)
                       .pushReplacementNamed('/scan',
                           arguments: <String, bool>{'addressOnly': true});
                 } else {
-                  Navigator.of(components.navigator.routeContext!)
+                  Navigator.of(components.routes.routeContext!)
                       .pushNamed('/scan');
                 }
               },

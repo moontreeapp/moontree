@@ -514,7 +514,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
     streams.reissue.request.add(reissueRequest);
 
     /// go to confirmation page
-    Navigator.of(components.navigator.routeContext!).pushNamed(
+    Navigator.of(components.routes.routeContext!).pushNamed(
       '/reissue/checkout',
       arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(

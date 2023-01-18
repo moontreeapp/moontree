@@ -104,12 +104,12 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               streams.app.verify.add(false); // require auth
               if (services.password.askCondition) {
                 await Navigator.pushNamed(
-                  components.navigator.routeContext!,
+                  components.routes.routeContext!,
                   '/security/security',
                   arguments: <String, Object>{
                     'buttonLabel': 'Submit',
                     'onSuccess': () async {
-                      Navigator.pop(components.navigator.routeContext!);
+                      Navigator.pop(components.routes.routeContext!);
                       await onSuccess();
                     }
                   },
@@ -155,7 +155,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               //);
               //if (!canceled) {
               streams.app.verify.add(false); // always require auth
-              Navigator.of(components.navigator.routeContext!).pushNamed(
+              Navigator.of(components.routes.routeContext!).pushNamed(
                 '/security/password/change',
                 arguments: <String, Object>{
                   'verification.ButtonLabel': 'Continue',

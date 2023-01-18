@@ -416,7 +416,7 @@ class SelectionItems {
   Widget createItem(SelectionOption name) => item(
         name,
         behavior: () => Navigator.pushNamed(
-          components.navigator.routeContext!,
+          components.routes.routeContext!,
           '/create/${asString(name).toLowerCase()}',
           arguments: {'symbol': asString(name)},
         ),
@@ -426,7 +426,7 @@ class SelectionItems {
   Widget assetItem(SelectionOption name) => item(
         name,
         behavior: () => Navigator.pushNamed(
-          components.navigator.routeContext!,
+          components.routes.routeContext!,
           '/create/${asString(name).toLowerCase()}',
           //{
           //  SelectionOption.Main: 'main',
@@ -440,7 +440,7 @@ class SelectionItems {
   Widget subAssetItem(SelectionOption name) => item(
         name,
         behavior: () => Navigator.pushNamed(
-          components.navigator.routeContext!,
+          components.routes.routeContext!,
           '/create/${{
             SelectionOption.Sub_Asset: 'main',
             SelectionOption.NFT: 'nft',
@@ -592,7 +592,7 @@ class SimpleSelectionItems {
 
   Future<void> build() async {
     await showModalBottomSheet<void>(
-        context: context, //components.navigator.mainContext!,
+        context: context, //components.routes.mainContext!,
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
@@ -651,7 +651,7 @@ class SimpleScrim {
 
   Future<void> build() async {
     await showModalBottomSheet<void>(
-        context: components.navigator.routeContext!,
+        context: components.routes.routeContext!,
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,

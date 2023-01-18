@@ -601,7 +601,7 @@ class _CreateAssetState extends State<CreateAsset> {
     streams.create.request.add(createRequest);
 
     /// go to confirmation page
-    Navigator.of(components.navigator.routeContext!).pushNamed(
+    Navigator.of(components.routes.routeContext!).pushNamed(
       '/create/checkout',
       arguments: <String, CheckoutStruct>{
         'struct': CheckoutStruct(

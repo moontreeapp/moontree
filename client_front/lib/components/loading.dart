@@ -12,7 +12,7 @@ class LoadingComponents {
     bool staticImage = false,
   }) async =>
       await showModalBottomSheet<void>(
-          context: context ?? components.navigator.routeContext!,
+          context: context ?? components.routes.routeContext!,
           enableDrag: false,
           elevation: 0,
           isScrollControlled: true,
@@ -40,7 +40,7 @@ class LoadingComponents {
     bool staticImage = false,
   }) async {
     showModalBottomSheet<void>(
-        context: context ?? components.navigator.routeContext!,
+        context: context ?? components.routes.routeContext!,
         enableDrag: false,
         elevation: 0,
         isScrollControlled: true,

@@ -32,7 +32,7 @@ class components {
   //static final RouteObserver<PageRoute> routeObserver =
   //    RouteObserver<PageRoute>();
   // handled by navigator
-  static final RouteStack navigator = RouteStack();
+  static final RouteStack routes = RouteStack();
   static final GlobalCubits cubits = GlobalCubits();
   static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   static final LoadingComponents loading = LoadingComponents();

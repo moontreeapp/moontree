@@ -173,14 +173,14 @@ class _CreateNativeState extends State<CreateNative> {
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: Theme.of(components.navigator.routeContext!)
+                  style: Theme.of(components.routes.routeContext!)
                       .textTheme
                       .bodyText2,
                   children: <TextSpan>[
                     const TextSpan(text: "I agree to Moontree's\n"),
                     TextSpan(
                         text: 'User Agreement',
-                        style: Theme.of(components.navigator.routeContext!)
+                        style: Theme.of(components.routes.routeContext!)
                             .textTheme
                             .underlinedLink,
                         recognizer: TapGestureRecognizer()
@@ -191,7 +191,7 @@ class _CreateNativeState extends State<CreateNative> {
                     const TextSpan(text: ', '),
                     TextSpan(
                         text: 'Privacy Policy',
-                        style: Theme.of(components.navigator.routeContext!)
+                        style: Theme.of(components.routes.routeContext!)
                             .textTheme
                             .underlinedLink,
                         recognizer: TapGestureRecognizer()
@@ -202,7 +202,7 @@ class _CreateNativeState extends State<CreateNative> {
                     const TextSpan(text: ',\n and '),
                     TextSpan(
                         text: 'Risk Disclosure',
-                        style: Theme.of(components.navigator.routeContext!)
+                        style: Theme.of(components.routes.routeContext!)
                             .textTheme
                             .underlinedLink,
                         recognizer: TapGestureRecognizer()

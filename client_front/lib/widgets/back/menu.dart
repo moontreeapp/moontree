@@ -8,6 +8,7 @@ import 'package:client_front/components/components.dart';
 import 'package:client_front/theme/theme.dart';
 import 'package:client_front/utils/auth.dart';
 import 'package:client_front/utils/extensions.dart';
+import 'package:client_front/services/services.dart';
 
 import 'package:client_front/services/lookup.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -67,7 +68,7 @@ class _NavMenuState extends State<NavMenu> {
                 }
                 if (!arrow) {
                   ScaffoldMessenger.of(context).clearSnackBars();
-                  Navigator.of(components.navigator.routeContext!).pushNamed(
+                  Navigator.of(components.routes.routeContext!).pushNamed(
                     link,
                     arguments: arguments,
                   );
@@ -235,6 +236,21 @@ class _NavMenuState extends State<NavMenu> {
             name: 'About',
             link: '/settings/about',
           ),
+          ListTile(
+            onTap: () => favors.nav.goTo('/settings/about'),
+            //() {
+            //  Navigator.of(components.routes.routeContext!).pushNamed(
+            //    '/settings/about',
+            //  );
+            //},
+            leading: Icon(Icons.info_rounded),
+            title: Text('About',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: AppColors.white)),
+          ),
+
           /*
           destination(
               icon: Icons.info_outline_rounded,
@@ -252,13 +268,12 @@ class _NavMenuState extends State<NavMenu> {
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: Theme.of(components.navigator.routeContext!)
-                  .textTheme
-                  .bodyText2,
+              style:
+                  Theme.of(components.routes.routeContext!).textTheme.bodyText2,
               children: <TextSpan>[
                 TextSpan(
                     text: 'User Agreement',
-                    style: Theme.of(components.navigator.routeContext!)
+                    style: Theme.of(components.routes.routeContext!)
                         .textTheme
                         .underlinedMenuLink,
                     recognizer: TapGestureRecognizer()
@@ -269,7 +284,7 @@ class _NavMenuState extends State<NavMenu> {
                 const TextSpan(text: '   '),
                 TextSpan(
                     text: 'Privacy Policy',
-                    style: Theme.of(components.navigator.routeContext!)
+                    style: Theme.of(components.routes.routeContext!)
                         .textTheme
                         .underlinedMenuLink,
                     recognizer: TapGestureRecognizer()
@@ -280,7 +295,7 @@ class _NavMenuState extends State<NavMenu> {
                 const TextSpan(text: '   '),
                 TextSpan(
                     text: 'Risk Disclosure',
-                    style: Theme.of(components.navigator.routeContext!)
+                    style: Theme.of(components.routes.routeContext!)
                         .textTheme
                         .underlinedMenuLink,
                     recognizer: TapGestureRecognizer()

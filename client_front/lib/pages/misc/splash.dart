@@ -202,11 +202,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
         /// testing out instant/custom page transitions
         /// https://stackoverflow.com/questions/52698340/animation-for-named-routes
-        //    Navigator.of(components.navigator.routeContext!)
+        //    Navigator.of(components.routes.routeContext!)
         //        .push(PageRouteBuilder(
         //  pageBuilder: (_, __, ___) => pages.routes(
-        //          components.navigator.routeContext!)['/security/login']!(
-        //      components.navigator.routeContext!),
+        //          components.routes.routeContext!)['/security/login']!(
+        //      components.routes.routeContext!),
         //  transitionsBuilder: (_, a, __, c) => c,
         //  transitionDuration: Duration(milliseconds: 0),
         //)));
@@ -220,11 +220,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //      Navigator.pushReplacementNamed(context, '/home', arguments: {}));
 
     /// testing out instant/custom page transitions
-    //Navigator.of(components.navigator.routeContext!)
+    //Navigator.of(components.routes.routeContext!)
     //    .push(PageRouteBuilder(
     //  pageBuilder: (_, __, ___) =>
-    //      pages.routes(components.navigator.routeContext!)['/home']!(
-    //          components.navigator.routeContext!),
+    //      pages.routes(components.routes.routeContext!)['/home']!(
+    //          components.routes.routeContext!),
     //  transitionsBuilder: (_, a, __, c) =>
     //      FadeTransition(opacity: a, child: c),
     //  transitionDuration: Duration(milliseconds: 2000),

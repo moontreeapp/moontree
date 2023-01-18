@@ -20,7 +20,11 @@ part 'state.dart';
 /// show list of transactions
 class TransactionViewCubit extends Cubit<TransactionViewState>
     with SetCubitMixin {
-  TransactionViewCubit() : super(TransactionViewState.initial());
+  String? priorPage;
+
+  TransactionViewCubit() : super(TransactionViewState.initial()) {
+    init();
+  }
 
   @override
   Future<void> reset() async => emit(TransactionViewState.initial());
@@ -30,35 +34,52 @@ class TransactionViewCubit extends Cubit<TransactionViewState>
 
   @override
   Future<void> enter() async {
-    emit(submitting());
+    //emit(submitting());
     emit(state);
   }
 
   @override
   void set({
     TransactionDetailsView? transactionView,
+    ByteData? ranHash,
     bool? isSubmitting,
   }) {
-    emit(submitting());
+    //emit(submitting());
     emit(state.load(
       transactionView: transactionView,
+      ranHash: ranHash,
       isSubmitting: isSubmitting,
     ));
+  }
+
+  void init() {
+    streams.app.page.listen((String value) {
+      if (value == 'Transactions' && priorPage == 'Transaction') {
+        reset();
+      }
+      priorPage = value;
+    });
   }
 
   Future<void> setTransactionDetails({
     required ByteData hash,
     bool force = false,
   }) async =>
-      force || state.transactionView == null
+      force || (state.ranHash != hash && !state.isSubmitting)
           ? () async {
+              print('calling');
               set(transactionView: null, isSubmitting: true);
               set(
                 transactionView: await discoverTransactionDetails(hash: hash),
+                ranHash: hash,
                 isSubmitting: false,
               );
             }()
-          : () {}();
+          : () {
+              print('state.ranHash != hash && !state.isSubmitting');
+              print('${state.ranHash != hash} && !${state.isSubmitting}');
+              print('not calling');
+            }();
 
   void clearCache() => set(transactionView: null);
 }
