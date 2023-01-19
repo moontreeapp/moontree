@@ -69,10 +69,13 @@ extension TransactionViewTypeExtension on TransactionViewType {
       : '| $display';
 
   /// here we turn sent to self into fee for fee only and isCoin
-  String specialPaddedDisplay([bool feeOnly = false]) =>
+  String specialPaddedDisplay(
+          [bool feeOnly = false, bool consolidation = false]) =>
       (this == TransactionViewType.incoming ||
               this == TransactionViewType.outgoing)
           ? ''
+          //: consolidation
+          //    ? '| Consolidation'
           : feeOnly
               ? '| Transaction Fee'
               : '| $display';

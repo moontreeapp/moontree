@@ -190,7 +190,7 @@ class _TransactionListState extends State<TransactionList> {
                                           .textTheme
                                           .bodyText1),
                                   Text(
-                                      '${transactionView.formattedDatetime} ${transactionView.type.specialPaddedDisplay(transactionView.feeOnly)}',
+                                      '${transactionView.formattedDatetime} ${transactionView.type.specialPaddedDisplay(transactionView.feeOnly, transactionView.consolidationToSelf)}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText2!

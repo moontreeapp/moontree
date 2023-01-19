@@ -72,9 +72,9 @@ extension TransactionViewMethods on TransactionView {
 
   bool get sentToSelf => iProvided == iReceived + (isCoin ? fee : 0);
 
-  bool get consolidationToSelf =>
-      sentToSelf &&
-      false; /*&& more than one vout of the same asset type went into this transaction */
+  /// more than 2 vout of the same asset type went into this transaction
+  /// and it was sent to self
+  bool get consolidationToSelf => sentToSelf && consolidation;
 
   bool get feeOnly => isCoin && (iProvided - iReceived) == fee;
 
