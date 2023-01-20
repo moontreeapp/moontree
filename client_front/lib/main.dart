@@ -91,7 +91,7 @@ class RavenMobileApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/splash',
       // look up flutter view model for sub app structure.
-      routes: pages.routes(context),
+      routes: pages.routes,
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
       navigatorObservers: <NavigatorObserver>[components.routes],
