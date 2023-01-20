@@ -249,57 +249,15 @@ class ClientService {
 }
 
 /// managing our address subscriptions
+/// this was for electrum. gutted the addresses portion, left assets. we'll
+/// remove this too when we are subscribing to assets on the new server.
 class SubscribeService {
-  // {wallet: {address: subscription}}
-  final Map<String, Map<String, StreamSubscription<dynamic>>>
-      subscriptionHandlesAddress =
-      <String, Map<String, StreamSubscription<dynamic>>>{};
+  // {wallet: {asset: subscription}}
   final Map<String, StreamSubscription<dynamic>> subscriptionHandlesAsset =
       <String, StreamSubscription<dynamic>>{};
-  bool startupProcessRunning = false;
-
-  Future<bool> toAllAddresses() async {
-    /// this is not a user action - do not show activity
-    startupProcessRunning = true;
-    streams.client.busy.add(true);
-    streams.client.activity.add(ActivityMessage(
-        active: true,
-        title: 'Syncing with the network',
-        message: 'Downloading your transactions...'));
-
-    /// if we kill the import process we can end up having addresses unassociated with a wallet so remove them first.
-    final Iterable<String> walletIds =
-        pros.wallets.records.map((Wallet e) => e.id);
-    await pros.addresses.removeAll(pros.addresses.records
-        .where((Address a) => !walletIds.contains(a.walletId)));
-
-    // we have to update these counts incase the user logins before the processes is over
-    final Set<Address> addresses = pros.addresses.toSet();
-    final Set<Address> currentAddresses = (pros.wallets.primaryIndex
-                .getOne(pros.settings.currentWalletId)
-                ?.addresses ??
-            <Address>[])
-        .toSet();
-    final Set<Address> otherAddresses = addresses.difference(currentAddresses);
-    for (final Address address in currentAddresses) {
-      await subscribeAddress(address);
-    }
-    for (final Address address in otherAddresses) {
-      await subscribeAddress(address);
-    }
-    //if (addresses.isNotEmpty) {
-    //  await services.download.history.allDoneProcess();
-    //}
-    return true;
-  }
 
   bool toAllAssets() {
     pros.assets.forEach(subscribeAsset);
-    return true;
-  }
-
-  Future<bool> toAddress(Address address) async {
-    await subscribeAddress(address);
     return true;
   }
 
@@ -308,168 +266,46 @@ class SubscribeService {
     return true;
   }
 
-  Future<void> maybeDerive(Address address) async {
-    // happens when you switch blockchains while the old process hasn't finished
-    // I think this might cause the occasional freezing I've seen on emulator
-    if ((address.address.startsWith('E') &&
-            pros.settings.chain == Chain.ravencoin) ||
-        (address.address.startsWith('R') &&
-            pros.settings.chain == Chain.evrmore)) {
-      return;
-    }
-    final Wallet? wallet = address.wallet;
-    if (wallet is LeaderWallet) {
-      if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
-        await services.wallet.leader.handleDeriveAddress(
-          leader: wallet,
-          exposure: address.exposure,
-        );
-      } else {
-        // remember that we don't have to check for this wallet.
-      }
-    }
-  }
+  /// good example of derivation trigger for on demand...
+  //Future<void> maybeDerive(Address address) async {
+  //  // happens when you switch blockchains while the old process hasn't finished
+  //  // I think this might cause the occasional freezing I've seen on emulator
+  //  if ((address.address.startsWith('E') &&
+  //          pros.settings.chain == Chain.ravencoin) ||
+  //      (address.address.startsWith('R') &&
+  //          pros.settings.chain == Chain.evrmore)) {
+  //    return;
+  //  }
+  //  final Wallet? wallet = address.wallet;
+  //  if (wallet is LeaderWallet) {
+  //    if (!services.wallet.leader.gapSatisfied(wallet, address.exposure)) {
+  //      await services.wallet.leader.handleDeriveAddress(
+  //        leader: wallet,
+  //        exposure: address.exposure,
+  //      );
+  //    } else {
+  //      // remember that we don't have to check for this wallet.
+  //    }
+  //  }
+  //}
 
-  Future<void> pullUnspents(Address address) async {
-    if ((address.address.startsWith('E') &&
-            pros.settings.chain == Chain.ravencoin) ||
-        (address.address.startsWith('R') &&
-            pros.settings.chain == Chain.evrmore)) {
-      return;
-    }
-    await services.download.unspents.pull(
-      scripthashes: <String>{address.scripthash},
-      wallet: address.wallet!,
-      chain: pros.settings.chain,
-      net: pros.settings.net,
-    );
-  }
+  //Future<void> pullUnspents(Address address) async {
+  //  if ((address.address.startsWith('E') &&
+  //          pros.settings.chain == Chain.ravencoin) ||
+  //      (address.address.startsWith('R') &&
+  //          pros.settings.chain == Chain.evrmore)) {
+  //    return;
+  //  }
+  //  await services.download.unspents.pull(
+  //    scripthashes: <String>{address.scripthash},
+  //    wallet: address.wallet!,
+  //    chain: pros.settings.chain,
+  //    net: pros.settings.net,
+  //  );
+  //}
 
   //void queueHistoryDownload(Address address) => null;
   //services.download.queue.update(address: address);
-
-  Future<void> saveStatusUpdate(Address address, String? status) async {
-    if ((address.address.startsWith('E') &&
-            pros.settings.chain == Chain.ravencoin) ||
-        (address.address.startsWith('R') &&
-            pros.settings.chain == Chain.evrmore)) {
-      return;
-    }
-    await pros.statuses.save(Status(
-      linkId: address.id,
-      statusType: StatusType.address,
-      status: status,
-    ));
-  }
-
-  Future<void> subscribeAddress(Address address) async {
-    if (!subscriptionHandlesAddress.keys.contains(address.walletId)) {
-      subscriptionHandlesAddress[address.walletId] =
-          <String, StreamSubscription<dynamic>>{};
-    }
-    if (!subscriptionHandlesAddress[address.walletId]!
-        .keys
-        .contains(address.id)) {
-      subscriptionHandlesAddress[address.walletId]![address.id] =
-          (await services.client.api.subscribeAddress(address))
-              .listen((String? status) async {
-        if (!streams.client.busy.value) {
-          streams.client.busy.add(true);
-        }
-        final Status? addressStatus = address.status;
-        await saveStatusUpdate(address, status);
-
-        /// process
-        if (addressStatus?.status == null && status == null) {
-          broadcastActivity(address: address.address, status: 'empty');
-          await maybeDerive(address);
-        } else if (addressStatus?.status == null && status != null) {
-          broadcastActivity(address: address.address, status: 'used');
-          await maybeDerive(address);
-          await pullUnspents(address);
-        } else if (addressStatus?.status != status) {
-          broadcastActivity(
-              address: address.address, status: 'new transaction for');
-          await pullUnspents(address);
-        } else if (addressStatus?.status == status) {
-          await pullUnspents(address); // just incase we don't have them...
-          // do nothing
-        }
-        final Wallet wallet = address.wallet!;
-
-        /// end of process
-        if (wallet is LeaderWallet &&
-            services.wallet.leader.gapSatisfied(wallet) &&
-            subscriptionHandlesAddress.containsKey(address.walletId) &&
-            subscriptionHandlesAddress[address.walletId]!.keys.length ==
-                wallet.addresses.length) {
-          await services.balance
-              .recalculateAllBalances(walletIds: <String>{address.walletId});
-          if (wallet.id == pros.settings.currentWalletId) {
-            streams.app.wallet.refresh.add(true);
-          }
-          startupProcessRunning = false;
-          if (!services.download.history.busy) {
-            // now that we show history JIT from the moontree server, we don't
-            // need to download any historic transactions:
-            //await services.download.history
-            //    .aggregatedDownloadProcess(wallet.addresses);
-            // Ideally we'd call this once rather than per wallet.
-            //if (services.download.history.calledAllDoneProcess == 0) {
-            if (!services.wallet.currentWallet.minerMode) {
-              // now that we show history JIT from the moontree server, we
-              // don't need to download any historic transactions:
-              //await services.download.history.allDoneProcess();
-            }
-          }
-          streams.client.activity.add(ActivityMessage());
-          if (services.wallet.leader.newLeaderProcessRunning) {
-            if (pros.balances.isNotEmpty) {
-              streams.app.snack.add(Snack(message: 'Import Successful'));
-            }
-            streams.client.activity.add(ActivityMessage(
-                active: true,
-                title: 'Syncing with the network',
-                message: 'Downloading your transaction history...'));
-
-            /// remove unnecessary vouts to minimize size of database and load time
-            //await pros.vouts.clearUnnecessaryVouts();
-
-            services.wallet.leader.newLeaderProcessRunning = false;
-          }
-          final Wallet currentWallet = services.wallet.currentWallet;
-          if (wallet.id == pros.settings.currentWalletId ||
-              (currentWallet is LeaderWallet &&
-                  services.wallet.leader.gapSatisfied(currentWallet) &&
-                  subscriptionHandlesAddress
-                      .containsKey(pros.settings.currentWalletId) &&
-                  subscriptionHandlesAddress[pros.settings.currentWalletId]!
-                          .keys
-                          .length ==
-                      currentWallet.addresses.length)) {
-            streams.client.busy.add(false);
-            streams.app.wallet.refresh.add(true);
-          }
-        }
-      });
-    }
-  }
-
-  void broadcastActivity({String? address, String? status}) {
-    if (address != null &&
-        ((address.startsWith('E') && pros.settings.chain == Chain.ravencoin) ||
-            (address.startsWith('R') &&
-                pros.settings.chain == Chain.evrmore))) {
-      print('trying to download transactions for the wrong chain...');
-    }
-    streams.client.download.add(ActivityMessage(
-        active: true,
-        title: 'Syncing with the network',
-        message: address == null
-            ? status ?? 'Downloading your transactions...'
-            : 'Discovered ${status == null ? '' : '$status '}address: $address'));
-    print('$status $address');
-  }
 
   Future<void> subscribeAsset(Asset asset) async {
     if (!subscriptionHandlesAsset.keys.contains(asset.symbol)) {
@@ -485,27 +321,6 @@ class SubscribeService {
           services.download.asset.get(asset.symbol);
         }
       });
-    }
-  }
-
-  void unsubscribeAddress(Address address) =>
-      unsubscribeAddressByIds(address.walletId, address.id);
-
-  void unsubscribeAddressByIds(String wallet, String address) =>
-      (subscriptionHandlesAddress[wallet] ??
-              <String, StreamSubscription<dynamic>>{})
-          .remove(address)
-          ?.cancel();
-
-  void unsubscribeAddressesAll() {
-    final List<List<String>> toRemove = <List<String>>[];
-    for (final String wallet in subscriptionHandlesAddress.keys) {
-      for (final String address in subscriptionHandlesAddress[wallet]!.keys) {
-        toRemove.add(<String>[wallet, address]);
-      }
-    }
-    for (final List<String> remove in toRemove) {
-      unsubscribeAddressByIds(remove[0], remove[1]);
     }
   }
 

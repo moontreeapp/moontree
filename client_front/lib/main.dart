@@ -32,9 +32,7 @@ Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // setup moontree server client for subscriptions
-  await services.subscription.setupClient(
-    monitor: FlutterConnectivityMonitor(),
-  );
+  await services.subscription.setupClient(FlutterConnectivityMonitor());
 
   runApp(RavenMobileApp());
 

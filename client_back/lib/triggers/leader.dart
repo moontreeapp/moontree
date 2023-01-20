@@ -100,8 +100,6 @@ class LeaderWaiter extends Trigger {
         removed: (Removed<Wallet> removed) {
           /// should only happen when replacing the initial blank wallet
           pros.addresses.removeAll(removed.record.addresses.toList());
-          services.client.subscribe.subscriptionHandlesAddress
-              .remove(removed.record.id);
         });
   }
 

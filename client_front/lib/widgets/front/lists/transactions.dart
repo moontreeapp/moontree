@@ -149,8 +149,7 @@ class _TransactionListState extends State<TransactionList> {
       //    : BouncingScrollPhysics(),
       controller: widget.scrollController,
       children: <Widget>[const SizedBox(height: 16)] +
-          (services.wallet.leader.newLeaderProcessRunning ||
-                  services.client.subscribe.startupProcessRunning
+          (services.wallet.leader.newLeaderProcessRunning
               ? <Widget>[
                   for (TransactionView _ in transactions) ...<Widget>[
                     components.empty.getTransactionsShimmer(context)

@@ -64,7 +64,6 @@ class QueueService {
     }
     if (transactionSet != null ||
         address != null ||
-        services.client.subscribe.startupProcessRunning ||
         services.wallet.leader.newLeaderProcessRunning ||
         services.download.history.busy) {
       retry();

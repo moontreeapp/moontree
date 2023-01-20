@@ -10,23 +10,21 @@ class SubscriptionWaiter extends Trigger {
       thereIsA: streams.client.connected.where((ConnectionStatus connected) =>
           connected == ConnectionStatus.connected),
       doThis: (ConnectionStatus connected) => pros.addresses.isNotEmpty
-          ? services.client.subscribe.toAllAddresses()
+          ? services.client.subscribe.toAllAssets()
           : deinitAllSubscriptions(),
     );
   }
 
   void deinitAllSubscriptions() {
-    for (final Map<String, StreamSubscription<dynamic>> addressMap
-        in services.client.subscribe.subscriptionHandlesAddress.values) {
-      for (final StreamSubscription<dynamic> listener in addressMap.values) {
-        listener.cancel();
-      }
+    for (final StreamSubscription<dynamic> listener
+        in services.client.subscribe.subscriptionHandlesAsset.values) {
+      listener.cancel();
     }
     for (final StreamSubscription<dynamic> listener
         in services.client.subscribe.subscriptionHandlesAsset.values) {
       listener.cancel();
     }
-    services.client.subscribe.subscriptionHandlesAddress.clear();
+    services.client.subscribe.subscriptionHandlesAsset.clear();
     services.client.subscribe.subscriptionHandlesAsset.clear();
 
     //services.download.history.clearDownloadState();

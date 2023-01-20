@@ -12,14 +12,10 @@ class AddressWaiter extends Trigger {
   void handleAddressChange(Change<Address> change) {
     change.when(
         loaded: (Loaded<Address> loaded) {},
-        added: (Added<Address> added) async =>
-            services.client.subscribe.toAddress(added.record),
-        updated: (Updated<Address> updated) async =>
-            services.client.subscribe.toAddress(updated.record),
+        added: (Added<Address> added) {},
+        updated: (Updated<Address> updated) {},
         removed: (Removed<Address> removed) async {
           final Address address = removed.record;
-          services.client.subscribe.unsubscribeAddress(address);
-          //removed.id as String);
 
           /// could be moved to waiter on transactions...
           await pros.vouts

@@ -19,8 +19,6 @@ void printFullState() {
   print('vouts ${pros.vouts.records.length}');
   print('wallets ${pros.wallets.records.length}');
   print(
-      'subscribe subscriptionHandlesAddress ${services.client.subscribe.subscriptionHandlesAddress}');
-  print(
       'subscribe subscriptionHandlesAsset ${services.client.subscribe.subscriptionHandlesAsset}');
   print(
       'services.download.history.calledAllDoneProcess ${services.download.history.calledAllDoneProcess}');

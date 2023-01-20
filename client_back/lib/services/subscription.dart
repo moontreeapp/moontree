@@ -1,18 +1,21 @@
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:serverpod_client/serverpod_client.dart';
 
 class SubscriptionService {
   static const String moontreeUrl =
       'http://24.199.68.139:8080'; //'https://api.moontree.com';
   final server.Client client;
+  late server.ConnectivityMonitor monitor;
 
   SubscriptionService() : client = server.Client('$moontreeUrl/');
 
-  Future<void> setupClient({
-    required server.ConnectivityMonitor monitor,
-  }) async {
-    client.connectivityMonitor = monitor;
+  Future<void> setupClient(
+    server.ConnectivityMonitor givenMonitor,
+  ) async {
+    monitor = givenMonitor;
+    client.connectivityMonitor = givenMonitor;
     await client.openStreamingConnection(
         disconnectOnLostInternetConnection: true);
     await setupListeners();
@@ -51,13 +54,24 @@ class SubscriptionService {
     required List<String> chains,
     required List<String> roots,
     required List<String> h160s,
-  }) async =>
+  }) async {
+    try {
       await client.subscription
           .sendStreamMessage(protocol.ChainWalletH160Subscription(
         chains: chains,
         walletPubKeys: roots,
         h160s: h160s,
       ));
+    } on ServerpodClientException {
+      /// (ServerpodClientException: WebSocket is not connected, statusCode = 0)
+      print(
+          'ServerpodClientException: WebSocket is not connected, trying again');
+      await setupClient(monitor);
+      await specifySubscription(chains: chains, roots: roots, h160s: h160s);
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Future<void> setupSubscription({
     Wallet? wallet,

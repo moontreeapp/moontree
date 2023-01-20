@@ -33,7 +33,6 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
 
   @override
   Future<void> enter() async {
-    emit(submitting());
     emit(state);
   }
 
@@ -49,7 +48,6 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     int? ranHeight,
     bool? isSubmitting,
   }) {
-    emit(submitting());
     emit(state.load(
       transactionViews: transactionViews,
       metadataView: metadataView,
@@ -81,6 +79,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     if (force ||
         state.wallet != state.ranWallet ||
         state.security != state.ranSecurity) {
+      submitting();
       final checkCleared = state.ranWallet != null;
 
       final transactionViews = await discoverTransactionHistory(

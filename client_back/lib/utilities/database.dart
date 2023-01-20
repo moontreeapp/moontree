@@ -51,9 +51,7 @@ Future<void> eraseAddressData({bool quick = false}) async {
 }
 
 void resetInMemoryState() {
-  services.client.subscribe.unsubscribeAddressesAll();
   services.client.subscribe.unsubscribeAssetsAll();
-  services.client.subscribe.subscriptionHandlesAddress.clear();
   services.client.subscribe.subscriptionHandlesAsset.clear();
   services.download.overrideGettingStarted = false;
   services.download.history.calledAllDoneProcess = 0;
