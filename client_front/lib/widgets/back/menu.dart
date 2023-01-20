@@ -236,21 +236,6 @@ class _NavMenuState extends State<NavMenu> {
             name: 'About',
             link: '/settings/about',
           ),
-          /// experiment with manually handling transition logic and animation
-          //ListTile(
-          //  onTap: () => favors.nav.goTo('/settings/about'),
-          //  //() {
-          //  //  Navigator.of(components.routes.routeContext!).pushNamed(
-          //  //    '/settings/about',
-          //  //  );
-          //  //},
-          //  leading: Icon(Icons.info_rounded),
-          //  title: Text('About',
-          //      style: Theme.of(context)
-          //          .textTheme
-          //          .bodyText1!
-          //          .copyWith(color: AppColors.white)),
-          //),
 
           /*
           destination(
