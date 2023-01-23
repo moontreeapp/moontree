@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:client_front/services/client/transactions.dart';
 import 'package:moontree_utils/extensions/bytedata.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show AmountToSatsExtension, FeeRate, standardFee;
