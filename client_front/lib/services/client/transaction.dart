@@ -4,15 +4,12 @@ import 'dart:typed_data';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_front/services/client/mock_flag.dart';
+import 'package:client_front/services/client/server_call.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
-class TransactionDetails {
-  static const String moontreeUrl =
-      'http://24.199.68.139:8080'; //'https://api.moontree.com';
-  final server.Client client;
-
-  TransactionDetails() : client = server.Client('$moontreeUrl/');
+class TransactionDetailsCall extends ServerCall {
+  TransactionDetailsCall() : super();
 
   Future<server.TransactionDetailsView?> transactionDetailsBy({
     required Chaindata chain,
@@ -35,7 +32,7 @@ Future<server.TransactionDetailsView?> discoverTransactionDetails({
       ? await Future.delayed(Duration(seconds: 1), spoofTransactionDetailsView)
 
       /// SERVER
-      : await TransactionDetails().transactionDetailsBy(
+      : await TransactionDetailsCall().transactionDetailsBy(
           hash: hash, chain: ChainNet(chain, net).chaindata);
 
   if (tx?.error != null) {

@@ -9,16 +9,13 @@ import 'dart:typed_data';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_front/services/client/mock_flag.dart';
+import 'package:client_front/services/client/server_call.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
-class TransactionHistory {
-  static const String moontreeUrl =
-      'http://24.199.68.139:8080'; //'https://api.moontree.com';
-  final server.Client client;
-
-  TransactionHistory() : client = server.Client('$moontreeUrl/');
+class TransactionHistoryCall extends ServerCall {
+  TransactionHistoryCall() : super();
 
   Future<List<server.TransactionView>> transactionHistoryBy({
     String? symbol,
@@ -66,7 +63,7 @@ Future<List<server.TransactionView>> discoverTransactionHistory({
       ? await Future.delayed(Duration(seconds: 1), spoofTransactionView)
 
       /// SERVER
-      : await TransactionHistory().transactionHistoryBy(
+      : await TransactionHistoryCall().transactionHistoryBy(
           symbol: serverSymbol,
           height: height,
           chain: ChainNet(chain, net).chaindata,

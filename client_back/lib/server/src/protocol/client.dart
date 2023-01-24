@@ -14,8 +14,12 @@ import 'dart:typed_data' as _i5;
 import 'comm_transaction_details_view.dart'
     as _i6;
 import 'comm_transaction_view.dart' as _i7;
-import 'dart:io' as _i8;
-import 'protocol.dart' as _i9;
+import 'comm_unsigned_transaction_result_class.dart'
+    as _i8;
+import 'comm_unsigned_transaction_request_class.dart'
+    as _i9;
+import 'dart:io' as _i10;
+import 'protocol.dart' as _i11;
 
 class _EndpointMetadata extends _i1.EndpointRef {
   _EndpointMetadata(_i1.EndpointCaller caller) : super(caller);
@@ -196,14 +200,34 @@ class _EndpointTransactions extends _i1.EndpointRef {
       );
 }
 
+class _EndpointUnsignedTransaction extends _i1.EndpointRef {
+  _EndpointUnsignedTransaction(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'unsignedTransaction';
+
+  _i2.Future<_i8.UnsignedTransactionResult> generateUnsignedTransaction({
+    required _i9.UnsignedTransactionRequest request,
+    required String chainName,
+  }) =>
+      caller.callServerEndpoint<_i8.UnsignedTransactionResult>(
+        'unsignedTransaction',
+        'generateUnsignedTransaction',
+        {
+          'request': request,
+          'chainName': chainName,
+        },
+      );
+}
+
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i8.SecurityContext? context,
+    _i10.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i9.Protocol(),
+          _i11.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {
@@ -216,6 +240,7 @@ class Client extends _i1.ServerpodClient {
     subscription = _EndpointSubscription(this);
     transactionDetails = _EndpointTransactionDetails(this);
     transactions = _EndpointTransactions(this);
+    unsignedTransaction = _EndpointUnsignedTransaction(this);
   }
 
   late final _EndpointMetadata metadata;
@@ -236,6 +261,8 @@ class Client extends _i1.ServerpodClient {
 
   late final _EndpointTransactions transactions;
 
+  late final _EndpointUnsignedTransaction unsignedTransaction;
+
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
         'metadata': metadata,
@@ -247,6 +274,7 @@ class Client extends _i1.ServerpodClient {
         'subscription': subscription,
         'transactionDetails': transactionDetails,
         'transactions': transactions,
+        'unsignedTransaction': unsignedTransaction,
       };
   @override
   Map<String, _i1.ModuleEndpointCaller> get moduleLookup => {};

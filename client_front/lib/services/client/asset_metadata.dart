@@ -1,18 +1,15 @@
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_front/services/client/mock_flag.dart';
+import 'package:client_front/services/client/server_call.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 /// even though this is called history, we only need current so it currently
 /// returns just the current data.
-class AssetMetadataHistory {
-  static const String moontreeUrl =
-      'http://24.199.68.139:8080'; //'https://api.moontree.com';
-  final server.Client client;
-
-  AssetMetadataHistory() : client = server.Client('$moontreeUrl/');
+class AssetMetadataHistoryCall extends ServerCall {
+  AssetMetadataHistoryCall() : super();
 
   Future<List<server.AssetMetadata>> assetMetadataHistoryBy({
     //server.AssetMetadata
@@ -65,7 +62,7 @@ Future<List<server.AssetMetadata>> discoverAssetMetadataHistory({
       ? await Future.delayed(Duration(seconds: 1), spoofAssetMetadata)
 
       /// SERVER
-      : await AssetMetadataHistory().assetMetadataHistoryBy(
+      : await AssetMetadataHistoryCall().assetMetadataHistoryBy(
           symbol: symbol, chain: ChainNet(chain, net).chaindata);
 
   //if (history.length == 1 /*&& history.first.error != null*/) {

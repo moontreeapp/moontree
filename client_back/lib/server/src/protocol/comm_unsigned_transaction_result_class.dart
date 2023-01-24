@@ -13,8 +13,8 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
     this.id,
     this.error,
     required this.rawHex,
-    required this.vinPreimageHex,
     required this.vinPrivateKeySource,
+    required this.vinLockingScriptType,
   });
 
   factory UnsignedTransactionResult.fromJson(
@@ -27,10 +27,10 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
           serializationManager.deserialize<String?>(jsonSerialization['error']),
       rawHex:
           serializationManager.deserialize<String>(jsonSerialization['rawHex']),
-      vinPreimageHex: serializationManager
-          .deserialize<List<String>>(jsonSerialization['vinPreimageHex']),
       vinPrivateKeySource: serializationManager
           .deserialize<List<String>>(jsonSerialization['vinPrivateKeySource']),
+      vinLockingScriptType: serializationManager
+          .deserialize<List<int>>(jsonSerialization['vinLockingScriptType']),
     );
   }
 
@@ -40,9 +40,9 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
 
   String rawHex;
 
-  List<String> vinPreimageHex;
-
   List<String> vinPrivateKeySource;
+
+  List<int> vinLockingScriptType;
 
   @override
   Map<String, dynamic> toJson() {
@@ -50,8 +50,8 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
       'id': id,
       'error': error,
       'rawHex': rawHex,
-      'vinPreimageHex': vinPreimageHex,
       'vinPrivateKeySource': vinPrivateKeySource,
+      'vinLockingScriptType': vinLockingScriptType,
     };
   }
 }

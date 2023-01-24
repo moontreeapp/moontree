@@ -10,17 +10,14 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_front/services/client/mock_flag.dart';
+import 'package:client_front/services/client/server_call.dart';
 import 'package:client_front/services/lookup.dart';
 import 'package:collection/collection.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
-class HoldingBalances {
-  static const String moontreeUrl =
-      'http://24.199.68.139:8080'; //'https://api.moontree.com';
-  final server.Client client;
-
-  HoldingBalances() : client = server.Client('$moontreeUrl/');
+class HoldingBalancesCall extends ServerCall {
+  HoldingBalancesCall() : super();
 
   Future<List<server.BalanceView>> holdingBalancesBy({
     //server.BalanceView
@@ -55,7 +52,7 @@ Future<List<server.BalanceView>> discoverHoldingBalances({
       ? await Future.delayed(Duration(seconds: 1), spoofBalanceView)
 
       /// SERVER
-      : await HoldingBalances().holdingBalancesBy(
+      : await HoldingBalancesCall().holdingBalancesBy(
           chain: ChainNet(chain, net).chaindata,
           roots: roots,
           h160s: roots.isEmpty
