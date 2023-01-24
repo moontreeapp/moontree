@@ -353,9 +353,13 @@ class _ReceiveState extends State<Receive> {
                                   controller: requestMessage,
                                   autocorrect: false,
                                   textInputAction: TextInputAction.next,
-                                  inputFormatters: <MainAssetNameTextFormatter>[
-                                    MainAssetNameTextFormatter(),
-                                  ],
+                                  // I don't think this formatter is right so
+                                  // I'm commenting it out. why should we limit
+                                  // the requests to only main assets? shouldn't
+                                  // users be able to request nfts and the like?
+                                  //inputFormatters: <MainAssetNameTextFormatter>[
+                                  //  MainAssetNameTextFormatter(),
+                                  //],
                                   //maxLength: 32,
                                   //maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                   labelText: 'Requested Asset',
