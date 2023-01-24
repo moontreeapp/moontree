@@ -45,18 +45,15 @@ class SendWaiter extends Trigger {
             streams.app.snack
                 .add(Snack(message: 'Send Failure: $e', positive: false));
             streams.spend.success.add(false);
+          } on Exception catch (e) {
+            print(e);
+            streams.app.snack.add(Snack(
+              message: 'Error Generating Transaction',
+              copy: '$e',
+              positive: false,
+            ));
+            streams.spend.success.add(false);
           }
-          // catch (e) {
-          //  print('Send:');
-          //  print(e);
-          //  streams.app.snack.add(Snack(
-          //    message: 'Error Generating Transaction: $e',
-          //    atBottom: true,
-          //    positive: false,
-          //    //details: 'Unable to create transaction: $e',
-          //  ));
-          //  streams.spend.success.add(false);
-          //}
         });
 
     when(
