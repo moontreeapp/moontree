@@ -27,27 +27,33 @@ class SubscriptionService {
     // we might as well setup these listeners on login or something like that.
     // probably only needs to be set up once, not everytime we
     // specifySubscription.
-    client.subscription.stream.listen((message) async {
-      /// # status means the state of the synchronizer (2 means up to date)
-      /// examples:
-      ///   {"id":null,"chainName":"evrmore_mainnet","status":2}
-      ///   {"id":null,"chainName":"evrmore_mainnet","height":107222}
-      // if height do x
-      // if balance update do y, etc.
-      print(message);
-      if (message is protocol.NotifyChainStatus) {
-        print('status!');
-      } else if (message is protocol.NotifyChainHeight) {
-        await pros.blocks.save(Block.fromNotification(message));
-        print('pros.blocks.records ${pros.blocks.records.first}');
-      } else if (message is protocol.NotifyChainH160Balance) {
-        print('H160 balance!');
-      } else if (message is protocol.NotifyChainWalletBalance) {
-        print('wallet balance!');
-      } else {
-        print(message.runtimeType);
-      }
-    });
+    try {
+      client.subscription.stream.listen((message) async {
+        /// # status means the state of the synchronizer (2 means up to date)
+        /// examples:
+        ///   {"id":null,"chainName":"evrmore_mainnet","status":2}
+        ///   {"id":null,"chainName":"evrmore_mainnet","height":107222}
+        // if height do x
+        // if balance update do y, etc.
+        print(message);
+        if (message is protocol.NotifyChainStatus) {
+          print('status!');
+        } else if (message is protocol.NotifyChainHeight) {
+          await pros.blocks.save(Block.fromNotification(message));
+          print('pros.blocks.records ${pros.blocks.records.first}');
+        } else if (message is protocol.NotifyChainH160Balance) {
+          print('H160 balance!');
+        } else if (message is protocol.NotifyChainWalletBalance) {
+          print('wallet balance!');
+        } else {
+          print(message.runtimeType);
+        }
+      });
+    } on StateError {
+      print('listeners already setup');
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> specifySubscription({

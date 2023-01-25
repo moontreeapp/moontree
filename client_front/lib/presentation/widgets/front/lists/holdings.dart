@@ -2,18 +2,17 @@
 
 import 'dart:async';
 import 'dart:math';
-import 'package:client_back/server/src/protocol/comm_balance_view.dart';
-import 'package:client_front/application/cubits.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:shimmer/shimmer.dart';
-import 'package:moontree_utils/extensions/map.dart';
+import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/presentation/components/components.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:client_front/application/cubits.dart';
+import 'package:client_front/presentation/components/components.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
@@ -102,8 +101,8 @@ class _HoldingList extends State<HoldingList> {
                         count: max(holdingCount, 1),
                         holding: true));
               } else {
-                //if (state.isSubmitting == false) {
-                if (state.holdingsViews.isEmpty) {
+                if (state.holdingsViews.length == 1 &&
+                    state.holdingsViews.first.sats == 0) {
                   // notice in new design used but empty wallet gets lumped in here too
                   if (pros.wallets.length == 1) {
                     return RefreshIndicator(
