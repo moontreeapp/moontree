@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:client_front/utils/params.dart';
+import 'package:client_front/domain/utils/params.dart';
 
 void main() {
   test('test parseReceiveParams', () {

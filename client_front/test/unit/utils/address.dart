@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:client_back/records/types/net.dart';
-import 'package:client_front/utils/address.dart';
+import 'package:client_front/domain/utils/address.dart';
 
 void main() {
   test('test verification of base58 addresses', () {

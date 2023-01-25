@@ -11,13 +11,13 @@ import 'package:serverpod_flutter/serverpod_flutter.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:client_front/cubits/cubits.dart';
-import 'package:client_front/pages/pages.dart';
-import 'package:client_front/components/components.dart';
-import 'package:client_front/services/dev.dart';
-import 'package:client_front/services/client/subscription.dart';
-import 'package:client_front/theme/theme.dart';
-import 'package:client_front/widgets/widgets.dart';
+import 'package:client_front/application/cubits.dart';
+import 'package:client_front/presentation/pages/pages.dart';
+import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/infrastructure/services/dev.dart';
+import 'package:client_front/infrastructure/services/client/subscription.dart';
+import 'package:client_front/presentation/theme/theme.dart';
+import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_back/streams/streams.dart';
 import 'package:client_back/services/services.dart';
 

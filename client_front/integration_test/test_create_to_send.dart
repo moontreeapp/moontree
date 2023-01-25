@@ -9,10 +9,11 @@ import 'package:integration_test/integration_test.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/main.dart' as app;
-import 'package:client_front/services/dev.dart';
-import 'package:client_front/services/lookup.dart';
-import 'package:client_front/services/wallet.dart' show getSecret;
-import 'package:client_front/widgets/widgets.dart';
+import 'package:client_front/infrastructure/services/dev.dart';
+import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:client_front/infrastructure/services/wallet.dart'
+    show getSecret;
+import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 void main() {

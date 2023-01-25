@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:client_front/utils/data.dart';
+import 'package:client_front/domain/utils/data.dart';
 
 class MockBuildContext extends Mock implements BuildContext {}
 
