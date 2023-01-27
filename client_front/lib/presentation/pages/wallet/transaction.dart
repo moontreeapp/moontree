@@ -379,10 +379,11 @@ class TransactionPageContent extends StatelessWidget {
               //    : <Widget>[plain('Note', element('Note'))]),
               ));
 
+  /// added to a block is 1 confirmation, mempool = 0 confirmations:
   int? getBlocksBetweenHelper({Block? current}) {
     current = current ?? pros.blocks.latest;
-    return (current != null && transactionView.height != null)
-        ? current.height - transactionView.height
+    return (current != null)
+        ? (current.height - transactionView.height) + 1
         : null;
   }
 
