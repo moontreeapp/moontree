@@ -131,9 +131,10 @@ class RavenMobileApp extends StatelessWidget {
                       children: <Widget>[
                         child!,
                         // include LoadingLayer here if you don't want it to cover the app bar
-                        LoadingLayer(),
+                        const LoadingLayer(),
                       ])),
               // covers scrim
+              //const LoadingLayer(),
               const TutorialLayer(),
             ],
           ),

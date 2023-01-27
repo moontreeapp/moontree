@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:client_front/application/cubits.dart';
+import 'package:client_front/presentation/widgets/backdrop/curve.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/theme/theme.dart';
@@ -9,6 +10,7 @@ import 'package:client_front/presentation/widgets/other/speech_bubble.dart';
 import 'package:client_front/presentation/widgets/other/other.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/presentation/components/components.dart';
+import 'package:lottie/lottie.dart';
 
 class LoadingLayer extends StatefulWidget {
   const LoadingLayer({Key? key}) : super(key: key);
@@ -39,6 +41,7 @@ class LoadingLayerState extends State<LoadingLayer> {
   Widget build(BuildContext context) {
     /// cubits aren't initialized until after login because they require access
     /// to the current wallet, etc. so we reference cubits after login.
+    /// we will have to add a listener to trigger this on login or sometihng.
     //print(streams.app.page.value);
     if (['Splash', 'Login'].contains(streams.app.page.value)) {
       return SizedBox.shrink();
@@ -46,35 +49,34 @@ class LoadingLayerState extends State<LoadingLayer> {
 
     final LoadingViewCubit cubit = BlocProvider.of<LoadingViewCubit>(context);
     //components.cubits.loadingViewCubit; //
-    if (cubit.state.status == LoadingStatus.busy) {
-      activateScrim();
-    }
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: BlocBuilder<LoadingViewCubit, LoadingViewState>(
             //bloc: cubit..enter(),
             builder: (BuildContext context, LoadingViewState state) {
           if (cubit.shouldShow) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 100),
-              onEnd: onEnd,
-              height: height,
-              color: scrimColor,
-              child: GestureDetector(
-                onTap: onTap,
-                behavior: behavior,
-                child: LoadingContent(title: 'Loading', msg: null),
-              ),
-            );
-          } else {
-            return const SizedBox.shrink();
+            activateScrim();
           }
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 100),
+            onEnd: onEnd,
+            height: height,
+            child: GestureDetector(
+              onTap: onTap,
+              behavior: behavior,
+              child: LoadingContent(
+                title: 'Loading',
+                msg: null,
+                scrim: scrimColor,
+              ),
+            ),
+          );
         }));
   }
 
   void activateScrim() {
     setState(() {
-      scrimColor = AppColors.scrim;
+      scrimColor = AppColors.scrimLight;
       behavior = HitTestBehavior.opaque;
       height = null;
       onEnd = null;
@@ -83,7 +85,7 @@ class LoadingLayerState extends State<LoadingLayer> {
   }
 
   void removeScrim() {
-    streams.app.tutorial.add(null);
+    components.cubits.loadingViewCubit.set(status: LoadingStatus.none);
     setState(() {
       scrimColor = Colors.transparent;
       behavior = null;
@@ -96,17 +98,56 @@ class LoadingLayerState extends State<LoadingLayer> {
 class LoadingContent extends StatelessWidget {
   final String title;
   final String? msg;
+  final Color? scrim;
   const LoadingContent({
     Key? key,
     required this.title,
     this.msg,
+    this.scrim,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-      Text('Tap to switch Blockchains',
-          style: Theme.of(context).textTheme.bodyText1),
-    ]);
+    return FrontCurve(
+        fuzzyTop: false,
+        frontLayerBoxShadow: const <BoxShadow>[],
+        color: scrim ?? AppColors.white87,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headline2,
+              ),
+              const SizedBox(height: 16),
+              if (msg != null)
+                Text(
+                  msg!,
+                  style: Theme.of(context).textTheme.headline2,
+                ),
+              const SizedBox(height: 16),
+              Lottie.asset(
+                'assets/spinner/moontree_spinner_v2_002_1_recolored.json',
+                animate: true,
+                repeat: true,
+                width: 100,
+                height: 58.6,
+                fit: BoxFit.fitWidth,
+              ),
+            ]));
+    Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Text(title, style: Theme.of(context).textTheme.headline1),
+            Text(msg ?? '', style: Theme.of(context).textTheme.bodyText1),
+          ],
+        )
+      ],
+    );
   }
 }
