@@ -20,9 +20,13 @@ class LoadingLayer extends StatefulWidget {
 }
 
 class LoadingLayerState extends State<LoadingLayer> {
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   Color scrimColor = Colors.transparent;
   HitTestBehavior? behavior = null;
   double? height = 0;
+  bool active = false;
+  bool hasBeenActivated = false;
   void Function()? onEnd = null;
   void Function()? onTap = null;
 
@@ -30,6 +34,23 @@ class LoadingLayerState extends State<LoadingLayer> {
   void initState() {
     super.initState();
     onEnd = () => setState(() => height = 0);
+
+    /// this listener is on this page because the cubit doesn't exist first.
+    listeners.add(streams.app.page.listen((String? value) async {
+      if (['Splash', 'Login'].contains(value)) {
+        if (active) {
+          setState(() {
+            height = 0;
+            active = false;
+          });
+        }
+      } else if (!active) {
+        setState(() {
+          active = true;
+          hasBeenActivated = true;
+        });
+      }
+    }));
   }
 
   @override
@@ -42,24 +63,31 @@ class LoadingLayerState extends State<LoadingLayer> {
     /// cubits aren't initialized until after login because they require access
     /// to the current wallet, etc. so we reference cubits after login.
     /// we will have to add a listener to trigger this on login or sometihng.
-    //print(streams.app.page.value);
-    if (['Splash', 'Login'].contains(streams.app.page.value)) {
+    if (!hasBeenActivated && !active) {
       return SizedBox.shrink();
     }
 
     final LoadingViewCubit cubit = BlocProvider.of<LoadingViewCubit>(context);
     //components.cubits.loadingViewCubit; //
+    //WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: BlocBuilder<LoadingViewCubit, LoadingViewState>(
             //bloc: cubit..enter(),
             builder: (BuildContext context, LoadingViewState state) {
           if (cubit.shouldShow) {
-            activateScrim();
+            // this conditions allows us to bring back loading after login
+            if (streams.app.page.value != 'Login') {
+              scrimColor = AppColors.scrimLight;
+              behavior = HitTestBehavior.opaque;
+              height = MediaQuery.of(context).size.height;
+              onTap = removeScrim;
+            }
+          } else {
+            removeScrim();
           }
           return AnimatedContainer(
             duration: const Duration(milliseconds: 100),
-            onEnd: onEnd,
             height: height,
             child: GestureDetector(
               onTap: onTap,
@@ -74,24 +102,12 @@ class LoadingLayerState extends State<LoadingLayer> {
         }));
   }
 
-  void activateScrim() {
-    setState(() {
-      scrimColor = AppColors.scrimLight;
-      behavior = HitTestBehavior.opaque;
-      height = null;
-      onEnd = null;
-      onTap = removeScrim;
-    });
-  }
-
   void removeScrim() {
     components.cubits.loadingViewCubit.set(status: LoadingStatus.none);
-    setState(() {
-      scrimColor = Colors.transparent;
-      behavior = null;
-      onEnd = () => setState(() => height = 0);
-      onTap = null;
-    });
+    scrimColor = Colors.transparent;
+    behavior = null;
+    height = 0;
+    onTap = null;
   }
 }
 
