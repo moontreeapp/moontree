@@ -108,7 +108,7 @@ class AppColors {
 
   static Color androidSystemBar = primary.withOpacity(1 - .12);
   static Color scrim = black.withOpacity(1 - .38);
-  static Color scrimLight = white.withOpacity(1 - .38);
+  static Color scrimLight = white.withOpacity(1 - .12);
 
   static List<Color> backgroundColors = palette
       .where((Color color) => !<Color>[lime, yellow, primary].contains(color))

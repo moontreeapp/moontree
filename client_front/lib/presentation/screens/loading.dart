@@ -23,12 +23,12 @@ class LoadingLayerState extends State<LoadingLayer> {
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
   Color scrimColor = Colors.transparent;
-  HitTestBehavior? behavior = null;
+  HitTestBehavior? behavior;
   double? height = 0;
   bool active = false;
   bool hasBeenActivated = false;
-  void Function()? onEnd = null;
-  void Function()? onTap = null;
+  void Function()? onEnd;
+  void Function()? onTap;
 
   @override
   void initState() {
@@ -151,19 +151,5 @@ class LoadingContent extends StatelessWidget {
                 fit: BoxFit.fitWidth,
               ),
             ]));
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Text(title, style: Theme.of(context).textTheme.headline1),
-            Text(msg ?? '', style: Theme.of(context).textTheme.bodyText1),
-          ],
-        )
-      ],
-    );
   }
 }
