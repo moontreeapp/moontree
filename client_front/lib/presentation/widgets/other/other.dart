@@ -6,4 +6,3 @@ export 'keyboard_delayed.dart';
 export 'locked.dart';
 export 'speech_bubble.dart';
 export 'textfield.dart';
-export 'tutorial.dart';

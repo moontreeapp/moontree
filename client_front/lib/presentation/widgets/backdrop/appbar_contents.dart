@@ -96,7 +96,8 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
           onTap: () async {
             if (services.developer.developerMode) {
               //await setupSubscription(wallet: Current.wallet);
-              components.cubits.transactionsViewCubit.reset();
+              components.cubits.loadingViewCubit
+                  .set(status: LoadingStatus.busy);
               //print(await (Current.wallet as LeaderWallet).roots);
             }
           },

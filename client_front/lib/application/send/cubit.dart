@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show AmountToSatsExtension, FeeRate, standardFee;
 import 'package:client_back/client_back.dart';
-import 'package:client_front/application/parents.dart';
+import 'package:client_front/application/common.dart';
 
 part 'state.dart';
 

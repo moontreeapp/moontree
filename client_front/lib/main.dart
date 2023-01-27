@@ -20,6 +20,7 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_back/streams/streams.dart';
 import 'package:client_back/services/services.dart';
+import 'package:client_front/presentation/screens/screens.dart';
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp();
@@ -95,34 +96,48 @@ class RavenMobileApp extends StatelessWidget {
       navigatorObservers: <NavigatorObserver>[components.routes],
       builder: (BuildContext context, Widget? child) {
         components.routes.scaffoldContext = context;
-        final Stack scaffold =
-            Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          Scaffold(
-            backgroundColor:
-                Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
-            appBar: const BackdropAppBar(),
-            body: MultiBlocProvider(
-              providers: [
-                BlocProvider<SimpleSendFormCubit>(
-                    create: (BuildContext context) =>
-                        components.cubits.simpleSendFormCubit),
-                //BlocProvider<TransactionsViewCubit>(
-                //    create: (BuildContext context) => TransactionsViewCubit()),
-                BlocProvider<TransactionsViewCubit>(
-                    create: (BuildContext context) =>
-                        components.cubits.transactionsViewCubit),
-                BlocProvider<TransactionViewCubit>(
-                    create: (BuildContext context) =>
-                        components.cubits.transactionViewCubit),
-                BlocProvider<HoldingsViewCubit>(
-                    create: (BuildContext context) =>
-                        components.cubits.holdingsViewCubit),
-              ],
-              child: child!,
-            ),
+        final MultiBlocProvider scaffold = MultiBlocProvider(
+          providers: [
+            /// transient cubits might be best implemented this way, but
+            /// when they originally were they still seemed global anyway:
+            //BlocProvider<TransactionsViewCubit>(
+            //    create: (BuildContext context) => TransactionsViewCubit()),
+            BlocProvider<SimpleSendFormCubit>(
+                create: (BuildContext context) =>
+                    components.cubits.simpleSendFormCubit),
+            BlocProvider<TransactionsViewCubit>(
+                create: (BuildContext context) =>
+                    components.cubits.transactionsViewCubit),
+            BlocProvider<TransactionViewCubit>(
+                create: (BuildContext context) =>
+                    components.cubits.transactionViewCubit),
+            BlocProvider<HoldingsViewCubit>(
+                create: (BuildContext context) =>
+                    components.cubits.holdingsViewCubit),
+            BlocProvider<LoadingViewCubit>(
+                create: (BuildContext context) =>
+                    components.cubits.loadingViewCubit),
+          ],
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              Scaffold(
+                  backgroundColor: Platform.isIOS
+                      ? AppColors.primary
+                      : AppColors.androidSystemBar,
+                  appBar: const BackdropAppBar(),
+                  body: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: <Widget>[
+                        child!,
+                        // include LoadingLayer here if you don't want it to cover the app bar
+                        LoadingLayer(),
+                      ])),
+              // covers scrim
+              const TutorialLayer(),
+            ],
           ),
-          const TutorialLayer(),
-        ]);
+        );
         return GestureDetector(
             onTap: () => streams.app.tap.add(null),
             behavior: HitTestBehavior.translucent,

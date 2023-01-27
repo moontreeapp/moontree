@@ -14,5 +14,6 @@ class GlobalCubits {
   final SimpleSendFormCubit simpleSendFormCubit = SimpleSendFormCubit();
   final TransactionViewCubit transactionViewCubit = TransactionViewCubit();
   final HoldingsViewCubit holdingsViewCubit = HoldingsViewCubit();
+  final LoadingViewCubit loadingViewCubit = LoadingViewCubit();
   GlobalCubits();
 }
