@@ -2,7 +2,7 @@ import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/utilities/assets.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:client_front/infrastructure/services/client/holdings.dart';
+import 'package:client_front/infrastructure/client/holdings.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/application/common.dart';
 part 'state.dart';
@@ -42,8 +42,11 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
     ));
   }
 
-  Future<void> setHoldingViews(Wallet wallet, ChainNet chainNet,
-      {bool force = false}) async {
+  Future<void> setHoldingViews(
+    Wallet wallet,
+    ChainNet chainNet, {
+    bool force = false,
+  }) async {
     if (force ||
         state.holdingsViews.isEmpty ||
         state.ranWallet != wallet ||

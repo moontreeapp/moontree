@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:client_back/server/serverv2_client.dart';
-import 'package:client_front/infrastructure/services/client/transaction.dart';
+import 'package:client_front/infrastructure/client/transaction.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';

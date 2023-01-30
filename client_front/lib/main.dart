@@ -15,7 +15,7 @@ import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/pages/pages.dart';
 import 'package:client_front/presentation/components/components.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
-import 'package:client_front/infrastructure/services/client/subscription.dart';
+import 'package:client_front/infrastructure/client/subscription.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_back/streams/streams.dart';

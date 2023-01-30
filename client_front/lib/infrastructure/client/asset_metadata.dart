@@ -1,7 +1,7 @@
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
-import 'package:client_front/infrastructure/services/client/mock_flag.dart';
-import 'package:client_front/infrastructure/services/client/server_call.dart';
+import 'package:client_front/infrastructure/client/mock_flag.dart';
+import 'package:client_front/infrastructure/client/server_call.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
