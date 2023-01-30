@@ -59,18 +59,11 @@ class TransactionViewCubit extends Cubit<TransactionViewState>
   }) async {
     if (force || (state.ranHash != hash && !state.isSubmitting)) {
       set(transactionView: null, isSubmitting: true);
-      print('calling discoverTransactionDetails');
-      final result = await discoverTransactionDetails(hash: hash);
-      print('transactionView: $result, ${result?.error}');
       set(
-        transactionView: result,
+        transactionView: await discoverTransactionDetails(hash: hash),
         ranHash: hash,
         isSubmitting: false,
       );
-    } else {
-      print('state.ranHash != hash && !state.isSubmitting');
-      print('${state.ranHash != hash} && !${state.isSubmitting}');
-      print('not calling');
     }
   }
 

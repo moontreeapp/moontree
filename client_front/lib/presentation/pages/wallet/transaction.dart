@@ -112,11 +112,8 @@ class TransactionPageContent extends StatelessWidget {
       case 'Type':
         return transactionView.type.display;
       case 'Asset':
-        return transactionView
-                    .isCoin && //9520c0f2727c4e94d87c86f66e362653c52e9972666ce76edde223c74a236cc6 df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188
-                true &&
-                //transactionView
-                //    .containsAssets && // fix this - is false on asset transfer.
+        return transactionView.isCoin &&
+                transactionView.containsAssets &&
                 cubit.state.transactionView?.containsAssets != null &&
                 !(cubit.state.transactionView?.containsAssets ?? '')
                     .contains(',')

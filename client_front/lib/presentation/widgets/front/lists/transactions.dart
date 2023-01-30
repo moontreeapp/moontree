@@ -185,6 +185,7 @@ class _TransactionListState extends State<TransactionList> {
                                           transactionView.iValueTotal,
                                           symbol: transactionView.symbol,
                                           security:
+                                              // shouldn't it always have a security?
                                               transactionView.symbol != null
                                                   ? transactionView.security
                                                   : null,
