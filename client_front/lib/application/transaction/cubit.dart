@@ -56,22 +56,23 @@ class TransactionViewCubit extends Cubit<TransactionViewState>
   Future<void> setTransactionDetails({
     required ByteData hash,
     bool force = false,
-  }) async =>
-      force || (state.ranHash != hash && !state.isSubmitting)
-          ? () async {
-              print('calling');
-              set(transactionView: null, isSubmitting: true);
-              set(
-                transactionView: await discoverTransactionDetails(hash: hash),
-                ranHash: hash,
-                isSubmitting: false,
-              );
-            }()
-          : () {
-              print('state.ranHash != hash && !state.isSubmitting');
-              print('${state.ranHash != hash} && !${state.isSubmitting}');
-              print('not calling');
-            }();
+  }) async {
+    if (force || (state.ranHash != hash && !state.isSubmitting)) {
+      set(transactionView: null, isSubmitting: true);
+      print('calling discoverTransactionDetails');
+      final result = await discoverTransactionDetails(hash: hash);
+      print('transactionView: $result, ${result?.error}');
+      set(
+        transactionView: result,
+        ranHash: hash,
+        isSubmitting: false,
+      );
+    } else {
+      print('state.ranHash != hash && !state.isSubmitting');
+      print('${state.ranHash != hash} && !${state.isSubmitting}');
+      print('not calling');
+    }
+  }
 
   void clearCache() => set(transactionView: null);
 }

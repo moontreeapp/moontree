@@ -36,6 +36,7 @@ Future<server.TransactionDetailsView?> discoverTransactionDetails({
           hash: hash, chain: ChainNet(chain, net).chaindata);
 
   if (tx?.error != null) {
+    print('discoverTransactionDetails error: ${tx?.error}');
     // handle
     return null;
   }

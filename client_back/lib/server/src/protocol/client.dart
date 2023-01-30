@@ -160,11 +160,11 @@ class _EndpointTransactionDetails extends _i1.EndpointRef {
   @override
   String get name => 'transactionDetails';
 
-  _i2.Future<_i6.TransactionDetailsView?> get({
+  _i2.Future<_i6.TransactionDetailsView> get({
     required _i5.ByteData hash,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i6.TransactionDetailsView?>(
+      caller.callServerEndpoint<_i6.TransactionDetailsView>(
         'transactionDetails',
         'get',
         {

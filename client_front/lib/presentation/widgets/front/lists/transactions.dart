@@ -183,7 +183,11 @@ class _TransactionListState extends State<TransactionList> {
                                   Text(
                                       services.conversion.securityAsReadable(
                                           transactionView.iValueTotal,
-                                          security: transactionView.security,
+                                          symbol: transactionView.symbol,
+                                          security:
+                                              transactionView.symbol != null
+                                                  ? transactionView.security
+                                                  : null,
                                           asUSD: showUSD),
                                       style: Theme.of(context)
                                           .textTheme
