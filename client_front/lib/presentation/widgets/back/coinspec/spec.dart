@@ -1,11 +1,16 @@
+import 'package:client_back/server/src/protocol/protocol.dart';
+import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
+import 'package:wallet_utils/wallet_utils.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/application/send/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:wallet_utils/wallet_utils.dart';
+import 'package:client_front/application/cubits.dart';
+import 'package:client_front/presentation/components/components.dart';
 
 class CoinSpec extends StatefulWidget {
   final String pageTitle;
@@ -13,11 +18,13 @@ class CoinSpec extends StatefulWidget {
   final Widget? bottom;
   final Color? color;
   final SimpleSendFormCubit? cubit;
+  final BalanceView balanceView;
 
   const CoinSpec({
     Key? key,
     required this.pageTitle,
     required this.security,
+    required this.balanceView,
     this.bottom,
     this.color,
     this.cubit,
@@ -48,7 +55,12 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     // TODO: we have to pull this from the server, not from balance.
-    final Balance? holdingBalance = widget.security.balance;
+    //final Balance? holdingBalance = widget.security.balance;
+    final Balance holdingBalance = Balance(
+        walletId: Current.walletId,
+        security: widget.security,
+        confirmed: widget.balanceView.sats,
+        unconfirmed: 0);
     int holdingSat = 0;
     if (holdingBalance != null) {
       holding = holdingBalance.amount;
@@ -66,6 +78,9 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     } catch (e) {
       visibleFiatAmount = '';
     }
+    //return flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
+    //   //bloc: cubit..enter(),
+    //    builder: (BuildContext context, HoldingsViewState state) {
     return Container(
       padding: EdgeInsets.only(top: .021.ofMediaHeight(context)),
       //height: widget.pageTitle == 'Send' ? 209 : 201,
@@ -92,6 +107,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
         ],
       ),
     );
+    //});
   }
 
   Widget specBottom(int holdingSat, int amountSat) {

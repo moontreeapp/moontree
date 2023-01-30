@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'dart:async';
+import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -170,6 +171,11 @@ class _SendState extends State<Send> {
                   alignment: Alignment.bottomCenter,
                   children: <Widget>[
                     CoinSpec(
+                        balanceView: BalanceView(
+                          sats: state.sats,
+                          symbol: state.security.symbol,
+                          chain: state.security.chain.name,
+                        ),
                         cubit: cubit,
                         pageTitle: 'Send',
                         security: state.security,

@@ -40,11 +40,12 @@ class _TransactionsState extends State<Transactions> {
     final TransactionsViewCubit cubit =
         flutter_bloc.BlocProvider.of<TransactionsViewCubit>(context);
     data = populateData(context, data);
+    final balanceView = (data['holding'] as BalanceView?)!;
     // first set the wallet and security so we can set the coinspec
     cubit.set(
         wallet: pros.wallets.currentWallet,
         security: Security(
-          symbol: (data['holding'] as BalanceView?)!.symbol,
+          symbol: balanceView.symbol,
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
@@ -68,6 +69,7 @@ class _TransactionsState extends State<Transactions> {
                   state.security,
                   minHeight,
                   cubit.nullCacheView,
+                  balanceView: balanceView,
                 ),
                 front: Stack(
                   alignment: Alignment.bottomCenter,

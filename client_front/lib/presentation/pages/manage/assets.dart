@@ -1,3 +1,4 @@
+import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:flutter/material.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
@@ -23,12 +24,17 @@ class _AssetPageState extends State<AssetPage> {
         .getOne(symbol, pros.settings.chain, pros.settings.net)!;
     return BackdropLayers(
       back: CoinSpec(
-          pageTitle: 'Asset',
-          security: pros.securities.primaryIndex.getOne(
-            symbol,
-            pros.settings.chain,
-            pros.settings.net,
-          )!),
+        pageTitle: 'Asset',
+        security: pros.securities.primaryIndex.getOne(
+          symbol,
+          pros.settings.chain,
+          pros.settings.net,
+        )!,
+        balanceView: BalanceView(
+            symbol: symbol,
+            sats:
+                0), // hack - refactor, CoinSpec shouldn't need this. we should save holdings on subscription and just look it up on page.
+      ),
       front: FrontCurve(
           height: MediaQuery.of(context).size.height * .64,
           child: Column(children: <Widget>[

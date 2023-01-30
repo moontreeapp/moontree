@@ -1,3 +1,4 @@
+import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';

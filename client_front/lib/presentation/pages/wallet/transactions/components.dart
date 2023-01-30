@@ -1,4 +1,5 @@
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
+import 'package:client_back/server/src/protocol/protocol.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/services/transaction/transaction.dart';
 import 'package:client_front/application/cubits.dart';
@@ -107,12 +108,14 @@ class CoinDetailsHeader extends StatelessWidget {
     this.security,
     this.minHeight,
     this.emptyMetaDataCache, {
+    required this.balanceView,
     Key? key,
   }) : super(key: key);
   final TransactionsViewCubit cubit;
   final Security security;
   final bool emptyMetaDataCache;
   final double minHeight;
+  final BalanceView balanceView;
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +138,7 @@ class CoinDetailsHeader extends StatelessWidget {
                 pageTitle: 'Transactions',
                 security: security,
                 bottom: emptyMetaDataCache ? null : Container(),
+                balanceView: balanceView,
               ),
             ),
           );
