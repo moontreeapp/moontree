@@ -47,6 +47,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: we have to pull this from the server, not from balance.
     final Balance? holdingBalance = widget.security.balance;
     int holdingSat = 0;
     if (holdingBalance != null) {

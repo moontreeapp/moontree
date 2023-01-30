@@ -149,12 +149,14 @@ class _NavMenuState extends State<NavMenu> {
             link: '/settings/network',
           ),
           */
-          if (services.developer.advancedDeveloperMode)
-            destination(
-              icon: Icons.format_list_bulleted_rounded,
-              name: 'Addresses',
-              link: '/addresses',
-            ),
+          /// we no longer derive all addresses on startup so... we have to
+          /// either derive once we go to this page, or remove it entirely.
+          //if (services.developer.advancedDeveloperMode)
+          //  destination(
+          //    icon: Icons.format_list_bulleted_rounded,
+          //    name: 'Addresses',
+          //    link: '/addresses',
+          //  ),
           destination(
             icon: MdiIcons.pickaxe,
             name: 'Mining',

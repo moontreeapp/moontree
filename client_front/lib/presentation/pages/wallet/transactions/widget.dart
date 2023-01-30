@@ -64,7 +64,11 @@ class _TransactionsState extends State<Transactions> {
             builder: (BuildContext context, TransactionsViewState state) {
               return BackdropLayers(
                 back: CoinDetailsHeader(
-                    cubit, state.security, minHeight, cubit.nullCacheView),
+                  cubit,
+                  state.security,
+                  minHeight,
+                  cubit.nullCacheView,
+                ),
                 front: Stack(
                   alignment: Alignment.bottomCenter,
                   children: <Widget>[
