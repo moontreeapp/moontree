@@ -1,11 +1,7 @@
-/// this is not fully fleshed out yet because at present we don't have a need to
-/// cache transactions. we'll get more into the details of how to save them in
-/// cache later. it's a little complex because we have to combine this data with
-/// the transaction details data. for now we did the minimal effort.
-
 import 'package:client_back/client_back.dart';
-import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
-import 'package:moontree_utils/extensions/bytedata.dart';
+import 'package:client_back/server/src/protocol/protocol.dart'
+    show TransactionView;
+import 'package:client_front/infrastructure/cache/cache.dart';
 
 class TransactionsCache {
   /// accepts a list of TransactionView objects and saves them as balances in cache
@@ -13,31 +9,43 @@ class TransactionsCache {
     required Wallet wallet,
     required Chain chain,
     required Net net,
-    required int? height,
-    required List<TransactionView> records,
+    required Iterable<TransactionView> records,
   }) async =>
-      // should we save it in the transactionView, specific format, or in the more
-      // generalized Transaction-Vout format in preparation for the future?
-      // probably we shouldn't prematurely optimize, and should instead make a
-      // TransactionViewRecord for hive boxes. then make it more general later if
-      // need be. but for now just save a tx object.
-      await pros.transactions.saveAll([
-        for (final TransactionView record in records)
-          Transaction(
-            id: record.hash.toHex(),
-            confirmed: record.height > 0,
-            time: record.datetime.millisecondsSinceEpoch ~/ 1000,
-            height: record.height,
-          )
-      ]);
+      Cache.save(
+        records,
+        'TransactionView',
+        walletId: wallet.id,
+        chain: chain,
+        net: net,
+        saveHeights: true,
+      );
 
-  /// accepts a list of TransactionView objects and saves them as balances in cache
-  static Future<List<TransactionView>?> get({
+  /// gets list of TransactionView objects from cache
+  static Iterable<TransactionView>? get({
     required Wallet wallet,
     required Chain chain,
     required Net net,
-    required int? height,
-  }) async =>
-      null;
-  //pros.transactions.get by something... ;
+    required String symbol,
+    int? height,
+  }) =>
+      /*
+      * notice height is ignored here. that is because filtering on pros is
+      * always directly equal to, not within a range, which is ok. we can grab
+      * them all and paginate later if we need to. but I don't think we'll
+      * need to. maybe. until then we just return all the transactions for
+      * this wallet-chain-net-symbol combination. Except there's an edge case
+      * we have to handle. if the user has already seen all the transactions
+      * we shouldn't return any. so we do need to check the height in that case.
+      //height == null
+      //    ? pros.cache.byTransactions
+      //        .getAll(symbol, wallet.id, chain, net)
+      //        .map((e) => Cache.read<TransactionView>(e))
+      //    : pros.cache.byTransactionsByHeight
+      //        .getAll(height, symbol, wallet.id, chain, net)
+      //        .map((e) => Cache.read<TransactionView>(e));
+      */
+      pros.cache.byTransactions
+          .getAll(symbol, wallet.id, chain, net)
+          .map((e) => Cache.read<TransactionView>(e))
+          .where((e) => e.height > (height ?? 0));
 }

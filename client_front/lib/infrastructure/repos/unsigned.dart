@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:client_back/records/records.dart';
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
 import 'package:client_front/infrastructure/calls/unsigned.dart';

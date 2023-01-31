@@ -89,7 +89,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       }
 
       set(
-        transactionViews: transactionViews,
+        transactionViews: transactionViews.toList(),
         ranWallet: state.wallet,
         ranSecurity: state.security,
         isSubmitting: false,
@@ -133,7 +133,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       int i = 0;
       var newTransactionViews = <TransactionView>[];
       newTransactionViews.addAll(state.transactionViews);
-      for (final x in state.transactionViews + batch) {
+      for (final x in state.transactionViews + batch.toList()) {
         if (!heights.contains(x.height)) {
           heights.add(x.height);
           // add batch item

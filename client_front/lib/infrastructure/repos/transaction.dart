@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:client_back/records/records.dart';
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_front/infrastructure/cache/transaction.dart';
 import 'package:client_front/infrastructure/calls/transaction.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
@@ -56,9 +57,20 @@ class TransactionDetailsRepo extends Repository {
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  protocol.TransactionDetailsView? fromLocal() => null;
+  protocol.TransactionDetailsView? fromLocal() => TransactionCache.get(
+        wallet: wallet,
+        chain: chain,
+        net: net,
+        txHash: hash,
+      );
 
   // not implement for transaction details yet.
   @override
-  Future<void> save() async => null;
+  Future<void> save() async => TransactionCache.put(
+        wallet: wallet,
+        chain: chain,
+        net: net,
+        txHash: hash,
+        record: results,
+      );
 }

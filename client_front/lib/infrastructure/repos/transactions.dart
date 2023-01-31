@@ -1,4 +1,4 @@
-import 'package:client_back/records/records.dart';
+import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
 import 'package:client_front/infrastructure/cache/transactions.dart';
 import 'package:client_front/infrastructure/calls/transactions.dart';
@@ -12,7 +12,7 @@ class TransactionHistoryRepo extends Repository {
   final int? height;
   late Chain chain;
   late Net net;
-  late List<protocol.TransactionView> results;
+  late Iterable<protocol.TransactionView> results;
   TransactionHistoryRepo({
     Wallet? wallet,
     this.symbol,
@@ -29,7 +29,7 @@ class TransactionHistoryRepo extends Repository {
   /// gets values from server; if that fails, from cache; saves results
   /// and any errors encountered to self. saves to cache automatically.
   @override
-  Future<List<protocol.TransactionView>> get() async {
+  Future<Iterable<protocol.TransactionView>> get() async {
     final resultServer = await fromServer();
     if (resultServer.length == 1 && resultServer.first.error != null) {
       errors[RepoSource.server] = resultServer.first.error!;
@@ -47,7 +47,7 @@ class TransactionHistoryRepo extends Repository {
   }
 
   @override
-  Future<List<protocol.TransactionView>> fromServer() async =>
+  Future<Iterable<protocol.TransactionView>> fromServer() async =>
       TransactionHistoryCall(
         wallet: wallet,
         chain: chain,
@@ -60,12 +60,17 @@ class TransactionHistoryRepo extends Repository {
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  List<protocol.TransactionView>? fromLocal() => null;
+  Iterable<protocol.TransactionView>? fromLocal() => TransactionsCache.get(
+        wallet: wallet,
+        chain: chain,
+        net: net,
+        symbol: (symbol ?? security?.symbol)!,
+        height: height ?? pros.blocks.latest?.height,
+      );
 
   @override
   Future<void> save() async => TransactionsCache.put(
         wallet: wallet,
-        height: height,
         chain: chain,
         net: net,
         records: results,

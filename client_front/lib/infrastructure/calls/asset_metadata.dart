@@ -9,23 +9,17 @@ import 'package:wallet_utils/wallet_utils.dart';
 /// even though this is called history, we only need current so it currently
 /// returns just the current data.
 class AssetMetadataHistoryCall extends ServerCall {
-  late Wallet wallet;
   late String symbol;
-  late Security security;
   late Chain chain;
   late Net net;
   AssetMetadataHistoryCall({
-    Wallet? wallet,
     String? symbol,
-    Security? security,
     Chain? chain,
     Net? net,
   }) : super() {
-    this.chain = chain ?? security?.chain ?? Current.chain;
-    this.net = net ?? security?.net ?? Current.net;
-    this.symbol = symbol ??
-        security?.symbol ??
-        pros.securities.coinOf(this.chain, this.net).symbol;
+    this.chain = chain ?? Current.chain;
+    this.net = net ?? Current.net;
+    this.symbol = symbol ?? pros.securities.coinOf(this.chain, this.net).symbol;
   }
 
   Future<List<server.AssetMetadata>> assetMetadataHistoryBy({

@@ -11,7 +11,7 @@ class AssetMetadataHistoryRepo extends Repository {
   late Security security;
   late Chain chain;
   late Net net;
-  late List<protocol.AssetMetadata> results;
+  late Iterable<protocol.AssetMetadata> results;
   AssetMetadataHistoryRepo({
     Wallet? wallet,
     String? symbol,
@@ -29,7 +29,7 @@ class AssetMetadataHistoryRepo extends Repository {
   /// gets values from server; if that fails, from cache; saves results
   /// and any errors encountered to self. saves to cache automatically.
   @override
-  Future<List<protocol.AssetMetadata>> get() async {
+  Future<Iterable<protocol.AssetMetadata>> get() async {
     final resultServer = await fromServer();
     if (resultServer.length == 0) {
       errors[RepoSource.server] = 'none';
@@ -47,22 +47,17 @@ class AssetMetadataHistoryRepo extends Repository {
   }
 
   @override
-  Future<List<protocol.AssetMetadata>> fromServer() async =>
-      AssetMetadataHistoryCall(
-        wallet: wallet,
-        chain: chain,
-        net: net,
-        symbol: symbol,
-        security: security,
-      )();
+  Future<Iterable<protocol.AssetMetadata>> fromServer() async =>
+      AssetMetadataHistoryCall(chain: chain, net: net, symbol: symbol)();
 
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  List<protocol.AssetMetadata>? fromLocal() => null;
+  Iterable<protocol.AssetMetadata>? fromLocal() =>
+      AssetsCache.get(chain: chain, net: net, symbol: symbol);
 
   @override
-  Future<void> save() async => AssetCache.put(
+  Future<void> save() async => AssetsCache.put(
         symbol: symbol,
         chain: chain,
         net: net,

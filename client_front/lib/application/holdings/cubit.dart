@@ -56,9 +56,9 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
         assetHoldings: [],
         isSubmitting: true,
       );
-      List<BalanceView> holdingViews = await HoldingsRepo(wallet: wallet).get();
+      final holdingViews = await HoldingsRepo(wallet: wallet).get();
       set(
-        holdingsViews: holdingViews,
+        holdingsViews: holdingViews.toList(),
         assetHoldings: assetHoldings(holdingViews),
         ranWallet: wallet,
         ranChainNet: chainNet,
