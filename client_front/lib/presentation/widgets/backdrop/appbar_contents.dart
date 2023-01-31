@@ -1,7 +1,7 @@
 import 'dart:io' show Platform;
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/domain/utils/auth.dart';
-import 'package:client_front/infrastructure/client/subscription.dart';
+import 'package:client_front/infrastructure/calls/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:flutter/services.dart';

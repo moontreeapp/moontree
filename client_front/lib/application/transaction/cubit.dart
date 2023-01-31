@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:client_back/server/serverv2_client.dart';
-import 'package:client_front/infrastructure/client/transaction.dart';
 import 'package:bloc/bloc.dart';
+import 'package:client_front/infrastructure/repos/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/application/common.dart';
@@ -60,7 +60,7 @@ class TransactionViewCubit extends Cubit<TransactionViewState>
     if (force || (state.ranHash != hash && !state.isSubmitting)) {
       set(transactionView: null, isSubmitting: true);
       set(
-        transactionView: await discoverTransactionDetails(hash: hash),
+        transactionView: await TransactionDetailsRepo(hash: hash).get(),
         ranHash: hash,
         isSubmitting: false,
       );

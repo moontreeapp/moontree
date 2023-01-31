@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
+import 'package:client_front/infrastructure/repos/unsigned.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show AmountToSatsExtension, FeeRate, standardFee;
@@ -46,6 +48,43 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       isSubmitting: isSubmitting,
     ));
   }
+
+  Future<void> setUnsignedTransaction({
+    bool force = false,
+    Wallet? wallet,
+    String? symbol,
+    Chain? chain,
+    Net? net,
+  }) async {
+    if (force) {
+      set(
+        isSubmitting: true,
+      );
+      UnsignedTransactionResult unsigned = await UnsignedTransactionRepo(
+        wallet: wallet,
+        symbol: symbol ?? state.security.symbol,
+        security: state.security,
+        feeRate: state.fee,
+        sats: state.sats,
+        address: state.address,
+        chain: chain,
+        net: net,
+
+        /// what should I do with these?
+        //String? memo,
+        //String? note,
+        //String? addressName,
+      ).get();
+      set(
+        //unsigned: unsigned,
+        isSubmitting: false,
+      );
+    }
+  }
+
+  //void clearCache() => set(
+  //      unsigned: null,
+  //    );
 
   //void submit() async {
   //  emit(await submitSend());

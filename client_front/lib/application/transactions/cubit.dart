@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:collection/collection.dart';
+import 'package:client_front/infrastructure/repos/transactions.dart';
+import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:bloc/bloc.dart';
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
-import 'package:client_front/infrastructure/client/asset_metadata.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
-import 'package:client_front/infrastructure/client/transactions.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/application/common.dart';
@@ -79,10 +79,10 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       submitting();
       final checkCleared = state.ranWallet != null;
 
-      final transactionViews = await discoverTransactionHistory(
+      final transactionViews = await TransactionHistoryRepo(
         wallet: state.wallet,
         security: state.security,
-      );
+      ).get();
 
       if (checkCleared && cleared) {
         return;
@@ -105,10 +105,11 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
                 state.ranHeight! > state.lowestHeight!))) {
       final checkCleared = state.ranWallet != null;
       submitting();
-      final batch = await discoverTransactionHistory(
-          wallet: state.wallet,
-          security: state.security,
-          height: state.lowestHeight);
+      final batch = await TransactionHistoryRepo(
+              wallet: state.wallet,
+              security: state.security,
+              height: state.lowestHeight)
+          .get();
       /*
       kralverde — Today at 9:06 AM
         if you look at the actual vins from https://evr.cryptoscope.io/api/getrawtransaction/?txid=df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188&decode=1 they will match 
@@ -178,10 +179,10 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
     if (force || state.metadataView == null) {
       final checkCleared = state.ranWallet != null;
       submitting();
-      final metadataView = (await discoverAssetMetadataHistory(
+      final metadataView = (await AssetMetadataHistoryRepo(
         wallet: state.wallet,
         security: state.security,
-      ))
+      ).get())
           .firstOrNull;
       if (checkCleared && cleared) {
         return;

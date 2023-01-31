@@ -8,14 +8,31 @@ import 'dart:typed_data';
 
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
-import 'package:client_front/infrastructure/client/mock_flag.dart';
-import 'package:client_front/infrastructure/client/server_call.dart';
+import 'package:client_front/infrastructure/calls/mock_flag.dart';
+import 'package:client_front/infrastructure/calls/server_call.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 class TransactionHistoryCall extends ServerCall {
-  TransactionHistoryCall() : super();
+  late Wallet wallet;
+  late String? symbol;
+  late Security? security;
+  final int? height;
+  late Chain chain;
+  late Net net;
+  TransactionHistoryCall({
+    Wallet? wallet,
+    this.symbol,
+    this.security,
+    this.height,
+    Chain? chain,
+    Net? net,
+  }) : super() {
+    this.wallet = wallet ?? Current.wallet;
+    this.chain = chain ?? security?.chain ?? Current.chain;
+    this.net = net ?? security?.net ?? Current.net;
+  }
 
   Future<List<server.TransactionView>> transactionHistoryBy({
     String? symbol,
@@ -31,61 +48,54 @@ class TransactionHistoryCall extends ServerCall {
         xpubkeys: roots,
         h160s: h160s,
       );
+
+  Future<List<server.TransactionView>> call() async {
+    final String? serverSymbol = ((security?.isCoin ?? true) &&
+            (symbol == null ||
+                symbol == pros.securities.coinOf(chain, net).symbol)
+        ? null
+        : security?.symbol ?? symbol);
+    symbol ??= serverSymbol == null
+        ? pros.securities.coinOf(chain, net).symbol
+        : security?.symbol ?? symbol;
+
+    List<String>? roots;
+    if (wallet is LeaderWallet) {
+      roots = await wallet.roots;
+      //} else if (wallet is SingleWallet) {
+      //  roots = wallet.roots; ?? await Current.wallet.roots;
+    }
+    roots ??= await Current.wallet.roots;
+    final List<server.TransactionView> history = mockFlag
+
+        /// MOCK SERVER
+        ? await Future.delayed(Duration(seconds: 1), spoof)
+
+        /// SERVER
+        : await transactionHistoryBy(
+            symbol: serverSymbol,
+            height: height,
+            chain: ChainNet(chain, net).chaindata,
+            roots: roots,
+            h160s: roots.isEmpty
+                ? Current.wallet.addresses.map((e) => e.h160).toList()
+                : []);
+
+    if (history.length == 1 && history.first.error != null) {
+      // handle
+      return [];
+    }
+
+    for (final txView in history) {
+      txView.chain = chain.name + '_' + net.name + 'net';
+      txView.symbol = symbol;
+    }
+
+    return history;
+  }
 }
 
-Future<List<server.TransactionView>> discoverTransactionHistory({
-  Wallet? wallet,
-  String? symbol,
-  Security? security,
-  int? height,
-}) async {
-  Chain chain = security?.chain ?? Current.chain;
-  Net net = security?.net ?? Current.net;
-  final String? serverSymbol = ((security?.isCoin ?? true) &&
-          (symbol == null ||
-              symbol == pros.securities.coinOf(chain, net).symbol)
-      ? null
-      : security?.symbol ?? symbol);
-  symbol ??= serverSymbol == null
-      ? pros.securities.coinOf(chain, net).symbol
-      : security?.symbol ?? symbol;
-
-  List<String>? roots;
-  if (wallet is LeaderWallet) {
-    roots = await wallet.roots;
-    //} else if (wallet is SingleWallet) {
-    //  roots = wallet.roots; ?? await Current.wallet.roots;
-  }
-  roots ??= await Current.wallet.roots;
-  final List<server.TransactionView> history = mockFlag
-
-      /// MOCK SERVER
-      ? await Future.delayed(Duration(seconds: 1), spoofTransactionView)
-
-      /// SERVER
-      : await TransactionHistoryCall().transactionHistoryBy(
-          symbol: serverSymbol,
-          height: height,
-          chain: ChainNet(chain, net).chaindata,
-          roots: roots,
-          h160s: roots.isEmpty
-              ? Current.wallet.addresses.map((e) => e.h160).toList()
-              : []);
-
-  if (history.length == 1 && history.first.error != null) {
-    // handle
-    return [];
-  }
-
-  for (final txView in history) {
-    txView.chain = chain.name + '_' + net.name + 'net';
-    txView.symbol = symbol;
-  }
-
-  return history;
-}
-
-List<server.TransactionView> spoofTransactionView() {
+List<server.TransactionView> spoof() {
   final views = <server.TransactionView>[
     server.TransactionView(
         // send transaction

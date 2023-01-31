@@ -87,7 +87,6 @@ class _HoldingList extends State<HoldingList> {
       cubit.set(isSubmitting: true);
     }
     cubit.setHoldingViews(Current.wallet, pros.settings.chainNet);
-
     return GestureDetector(
         onTap: () => refresh(cubit), //FocusScope.of(context).unfocus(),
         child: flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
