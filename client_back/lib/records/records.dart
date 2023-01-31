@@ -18,6 +18,7 @@ export 'types/net.dart';
 export 'unspent.dart';
 export 'vin.dart';
 export 'vout.dart';
+export 'server/cache.dart';
 export 'wallets/leader.dart';
 export 'wallets/single.dart';
 export 'wallets/wallet.dart';

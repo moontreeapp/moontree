@@ -87,6 +87,7 @@ class HiveInitializer {
     Hive.registerAdapter(UnspentAdapter());
     Hive.registerAdapter(FeatureLevelAdapter());
     Hive.registerAdapter(TutorialStatusAdapter());
+    Hive.registerAdapter(CachedServerObjectAdapter());
   }
 
   /// address must open before wallets because added in wallets waiter
@@ -98,6 +99,8 @@ class HiveInitializer {
       await Hive.openBox<Password>('passwords');
       await Hive.openBox<Setting>('settings');
       await Hive.openBox<Wallet>('wallets');
+      // should be here? not if it gets big.
+      await Hive.openBox<CachedServerObject>('cache');
     }
     if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
         .contains(step)) {
@@ -129,6 +132,7 @@ class HiveInitializer {
         defaults: SettingProclaim.defaults,
       ));
       pros.wallets.setSource(HiveSource<Wallet>('wallets'));
+      pros.cache.setSource(HiveSource<CachedServerObject>('cache'));
     }
     if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
         .contains(step)) {

@@ -1,7 +1,6 @@
 class TypeId {
   // Server
-  static const int AssetMetadata = 201;
-  static const int BalanceView = 202;
+  static const int CachedServerObject = 200;
 
   // Core
   static const int Address = 1;

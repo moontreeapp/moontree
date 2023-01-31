@@ -13,6 +13,7 @@ import 'core/wallet.dart';
 import 'security/cipher.dart';
 import 'security/password.dart';
 import 'security/secret.dart';
+import 'server/cache.dart';
 import 'transaction/note.dart';
 import 'transaction/transaction.dart';
 import 'transaction/unspent.dart';
@@ -32,6 +33,7 @@ export 'core/wallet.dart';
 export 'security/cipher.dart';
 export 'security/password.dart';
 export 'security/secret.dart';
+export 'server/cache.dart';
 export 'transaction/note.dart';
 export 'transaction/transaction.dart';
 export 'transaction/unspent.dart';
@@ -57,4 +59,5 @@ class pros {
   static final WalletProclaim wallets = WalletProclaim();
   static final VinProclaim vins = VinProclaim();
   static final VoutProclaim vouts = VoutProclaim();
+  static final CacheProclaim cache = CacheProclaim();
 }

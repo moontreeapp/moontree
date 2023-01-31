@@ -1,10 +1,7 @@
 import 'package:client_back/client_back.dart';
-import 'package:client_back/records/server/asset_metadata.dart';
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:client_back/records/types/chain.dart';
-import 'package:client_back/records/types/net.dart';
 import 'package:moontree_utils/extensions/bytedata.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
@@ -136,32 +133,6 @@ class Asset with EquatableMixin {
         chain: chain,
         net: net,
         frozen: frozen ?? asset.frozen,
-      );
-
-  factory Asset.fromCache(
-    AssetMetadataRecord record, {
-    int? totalSupply,
-    int? divisibility,
-    bool? reissuable,
-    String? metadata,
-    String? transactionId,
-    int? position,
-    String? symbol,
-    Chain? chain,
-    Net? net,
-    bool? frozen,
-  }) =>
-      Asset(
-        totalSupply: totalSupply ?? record.totalSupply,
-        divisibility: divisibility ?? record.divisibility,
-        reissuable: reissuable ?? record.reissuable,
-        metadata: metadata ?? record.metadata,
-        transactionId: transactionId ?? '',
-        position: position ?? -1,
-        symbol: symbol ?? chain?.symbol ?? record.symbol,
-        chain: chain ?? record.chain,
-        net: net ?? record.net,
-        frozen: frozen ?? record.frozen,
       );
 
   /// about asset
