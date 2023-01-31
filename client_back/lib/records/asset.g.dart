@@ -18,10 +18,10 @@ class AssetAdapter extends TypeAdapter<Asset> {
     };
     return Asset(
       symbol: fields[0] as String,
-      transactionId: fields[5] as String,
-      position: fields[6] as int,
       chain: fields[7] == null ? Chain.ravencoin : fields[7] as Chain,
       net: fields[8] == null ? Net.main : fields[8] as Net,
+      transactionId: fields[5] as String,
+      position: fields[6] as int,
       totalSupply: fields[1] as int,
       divisibility: fields[2] as int,
       reissuable: fields[3] as bool,

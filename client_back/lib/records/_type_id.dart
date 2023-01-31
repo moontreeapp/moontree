@@ -1,4 +1,8 @@
 class TypeId {
+  // Server
+  static const int AssetMetadata = 201;
+  static const int BalanceView = 202;
+
   // Core
   static const int Address = 1;
   static const int Balance = 2;

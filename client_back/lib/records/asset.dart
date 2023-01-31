@@ -1,8 +1,11 @@
 import 'package:client_back/client_back.dart';
+import 'package:client_back/records/server/asset_metadata.dart';
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:client_back/records/types/chain.dart';
 import 'package:client_back/records/types/net.dart';
+import 'package:moontree_utils/extensions/bytedata.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 import '_type_id.dart';
@@ -95,20 +98,71 @@ class Asset with EquatableMixin {
     Chain? chain,
     Net? net,
     bool? frozen,
-  }) {
-    return Asset(
-      totalSupply: totalSupply ?? asset.totalSupply,
-      divisibility: divisibility ?? asset.divisibility,
-      reissuable: reissuable ?? asset.reissuable,
-      metadata: metadata ?? asset.metadata,
-      transactionId: transactionId ?? asset.transactionId,
-      position: position ?? asset.position,
-      symbol: symbol ?? (chain != null ? chain.symbol : asset.symbol),
-      chain: chain ?? asset.chain,
-      net: net ?? asset.net,
-      frozen: frozen ?? asset.frozen,
-    );
-  }
+  }) =>
+      Asset(
+        totalSupply: totalSupply ?? asset.totalSupply,
+        divisibility: divisibility ?? asset.divisibility,
+        reissuable: reissuable ?? asset.reissuable,
+        metadata: metadata ?? asset.metadata,
+        transactionId: transactionId ?? asset.transactionId,
+        position: position ?? asset.position,
+        symbol: symbol ?? (chain != null ? chain.symbol : asset.symbol),
+        chain: chain ?? asset.chain,
+        net: net ?? asset.net,
+        frozen: frozen ?? asset.frozen,
+      );
+
+  factory Asset.fromServer(
+    AssetMetadata asset, {
+    int? totalSupply,
+    int? divisibility,
+    bool? reissuable,
+    String? metadata,
+    String? transactionId,
+    int? position,
+    String? symbol,
+    required Chain chain,
+    required Net net,
+    bool? frozen,
+  }) =>
+      Asset(
+        totalSupply: totalSupply ?? asset.totalSupply,
+        divisibility: divisibility ?? asset.divisibility,
+        reissuable: reissuable ?? asset.reissuable,
+        metadata: metadata ?? asset.associatedData!.toBs58(),
+        transactionId: transactionId ?? '',
+        position: position ?? -1,
+        symbol: symbol ?? chain.symbol,
+        chain: chain,
+        net: net,
+        frozen: frozen ?? asset.frozen,
+      );
+
+  factory Asset.fromCache(
+    AssetMetadataRecord record, {
+    int? totalSupply,
+    int? divisibility,
+    bool? reissuable,
+    String? metadata,
+    String? transactionId,
+    int? position,
+    String? symbol,
+    Chain? chain,
+    Net? net,
+    bool? frozen,
+  }) =>
+      Asset(
+        totalSupply: totalSupply ?? record.totalSupply,
+        divisibility: divisibility ?? record.divisibility,
+        reissuable: reissuable ?? record.reissuable,
+        metadata: metadata ?? record.metadata,
+        transactionId: transactionId ?? '',
+        position: position ?? -1,
+        symbol: symbol ?? chain?.symbol ?? record.symbol,
+        chain: chain ?? record.chain,
+        net: net ?? record.net,
+        frozen: frozen ?? record.frozen,
+      );
 
   /// about asset
   bool get hasData => metadata.isAssetData;
