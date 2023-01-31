@@ -58,7 +58,7 @@ class TransactionDetailsRepo extends Repository {
   @override
   protocol.TransactionDetailsView? fromLocal() => null;
 
+  // not implement for transaction details yet.
   @override
-  Future<void> save() async => // todo: add results to correct cache.
-      null;
+  Future<void> save() async => null;
 }

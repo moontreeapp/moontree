@@ -12,10 +12,10 @@ class Transaction with EquatableMixin {
   final String id;
 
   @HiveField(1)
-  final bool confirmed;
+  final bool confirmed; // why? this is height data.
 
   @HiveField(2)
-  final int? time;
+  final int? time; //seconds since epoch
 
   @HiveField(3)
   final int? height;

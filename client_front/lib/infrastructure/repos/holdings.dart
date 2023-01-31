@@ -1,6 +1,7 @@
 import 'package:client_back/records/records.dart';
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
 import 'package:client_front/infrastructure/calls/holdings.dart';
+import 'package:client_front/infrastructure/cache/holdings.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 
@@ -49,6 +50,10 @@ class HoldingsRepo extends Repository {
   List<protocol.BalanceView>? fromLocal() => null;
 
   @override
-  Future<void> save() async => // todo: add results to correct cache.
-      null;
+  Future<void> save() async => HoldingsCache.put(
+        wallet: wallet,
+        chain: chain,
+        net: net,
+        records: results,
+      );
 }

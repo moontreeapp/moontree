@@ -1,5 +1,6 @@
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_front/infrastructure/cache/asset_metadata.dart';
 import 'package:client_front/infrastructure/calls/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
@@ -61,6 +62,10 @@ class AssetMetadataHistoryRepo extends Repository {
   List<protocol.AssetMetadata>? fromLocal() => null;
 
   @override
-  Future<void> save() async => // todo: add results to correct cache.
-      null;
+  Future<void> save() async => AssetCache.put(
+        symbol: symbol,
+        chain: chain,
+        net: net,
+        records: results,
+      );
 }

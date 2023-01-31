@@ -32,10 +32,11 @@ class UnspentService {
             chain: chain,
             net: net,
             symbol: symbol,
-            satsInCirculation: 0,
+            totalSupply: 0,
             divisibility: 0,
             reissuable: false,
             metadata: '',
+            frozen: false,
             transactionId: '',
             position: 0));
       }

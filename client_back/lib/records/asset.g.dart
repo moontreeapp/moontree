@@ -18,25 +18,26 @@ class AssetAdapter extends TypeAdapter<Asset> {
     };
     return Asset(
       symbol: fields[0] as String,
-      satsInCirculation: fields[1] as int,
-      divisibility: fields[2] as int,
-      reissuable: fields[3] as bool,
-      metadata: fields[4] as String,
       transactionId: fields[5] as String,
       position: fields[6] as int,
       chain: fields[7] == null ? Chain.ravencoin : fields[7] as Chain,
       net: fields[8] == null ? Net.main : fields[8] as Net,
+      totalSupply: fields[1] as int,
+      divisibility: fields[2] as int,
+      reissuable: fields[3] as bool,
+      frozen: fields[9] == null ? false : fields[9] as bool,
+      metadata: fields[4] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Asset obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.symbol)
       ..writeByte(1)
-      ..write(obj.satsInCirculation)
+      ..write(obj.totalSupply)
       ..writeByte(2)
       ..write(obj.divisibility)
       ..writeByte(3)
@@ -50,7 +51,9 @@ class AssetAdapter extends TypeAdapter<Asset> {
       ..writeByte(7)
       ..write(obj.chain)
       ..writeByte(8)
-      ..write(obj.net);
+      ..write(obj.net)
+      ..writeByte(9)
+      ..write(obj.frozen);
   }
 
   @override

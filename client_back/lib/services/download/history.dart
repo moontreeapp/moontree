@@ -169,9 +169,10 @@ class HistoryService {
         symbol = vout.scriptPubKey.asset!;
         value = vout.scriptPubKey.amount.asSats;
         asset = Asset(
+          frozen: false,
           symbol: symbol,
           metadata: vout.scriptPubKey.ipfsHash ?? '',
-          satsInCirculation: value,
+          totalSupply: value,
           divisibility: vout.scriptPubKey.units ?? 0,
           reissuable: vout.scriptPubKey.reissuable == 1,
           transactionId: tx.txid,

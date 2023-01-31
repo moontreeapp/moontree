@@ -15,7 +15,7 @@ class Asset with EquatableMixin {
   final String symbol;
 
   @HiveField(1)
-  final int satsInCirculation;
+  final int totalSupply;
 
   @HiveField(2)
   final int divisibility;
@@ -38,6 +38,9 @@ class Asset with EquatableMixin {
   @HiveField(8, defaultValue: Net.main)
   final Net net;
 
+  @HiveField(9, defaultValue: false)
+  final bool frozen;
+
   //late final TxSource source;
   ////late final String txHash; // where it originated?
   ////late final int txPos; // the vout it originated?
@@ -45,14 +48,15 @@ class Asset with EquatableMixin {
 
   Asset({
     required this.symbol,
-    required this.satsInCirculation,
-    required this.divisibility,
-    required this.reissuable,
-    required this.metadata,
-    required this.transactionId,
-    required this.position,
     required this.chain,
     required this.net,
+    this.transactionId = '',
+    this.position = -1,
+    required this.totalSupply,
+    required this.divisibility,
+    required this.reissuable,
+    required this.frozen,
+    required this.metadata,
   }) {
     symbolSymbol = Symbol(symbol)(chain, net);
   }
@@ -62,7 +66,7 @@ class Asset with EquatableMixin {
   @override
   List<Object> get props => <Object>[
         symbol,
-        satsInCirculation,
+        totalSupply,
         divisibility,
         reissuable,
         metadata,
@@ -70,17 +74,18 @@ class Asset with EquatableMixin {
         position,
         chain,
         net,
+        frozen,
       ];
 
   @override
   String toString() => 'Asset(symbol: $symbol, '
-      'satsInCirculation: $satsInCirculation, divisibility: $divisibility, '
+      'totalSupply: $totalSupply, divisibility: $divisibility, '
       'reissuable: $reissuable, metadata: $metadata, transactionId: $transactionId, '
-      'position: $position, ${ChainNet(chain, net).readable})';
+      'position: $position, ${ChainNet(chain, net).readable}, frozen: $frozen)';
 
   factory Asset.from(
     Asset asset, {
-    int? satsInCirculation,
+    int? totalSupply,
     int? divisibility,
     bool? reissuable,
     String? metadata,
@@ -89,9 +94,10 @@ class Asset with EquatableMixin {
     String? symbol,
     Chain? chain,
     Net? net,
+    bool? frozen,
   }) {
     return Asset(
-      satsInCirculation: satsInCirculation ?? asset.satsInCirculation,
+      totalSupply: totalSupply ?? asset.totalSupply,
       divisibility: divisibility ?? asset.divisibility,
       reissuable: reissuable ?? asset.reissuable,
       metadata: metadata ?? asset.metadata,
@@ -100,6 +106,7 @@ class Asset with EquatableMixin {
       symbol: symbol ?? (chain != null ? chain.symbol : asset.symbol),
       chain: chain ?? asset.chain,
       net: net ?? asset.net,
+      frozen: frozen ?? asset.frozen,
     );
   }
 
@@ -107,7 +114,7 @@ class Asset with EquatableMixin {
   bool get hasData => metadata.isAssetData;
   String? get data => hasData ? metadata : null;
   bool get hasMetadata => metadata != '';
-  double get amount => satsInCirculation.asCoin;
+  double get amount => totalSupply.asCoin;
 
   /// key stuff
   static String key(String symbol, Chain chain, Net net) =>

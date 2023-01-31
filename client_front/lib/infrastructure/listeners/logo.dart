@@ -32,7 +32,7 @@ class AssetListener {
       //streams.asset.added.add(Asset(
       //    symbol: asset.baseSymbol,
       //    metadata: vout.scriptPubKey.ipfsHash ?? '',
-      //    satsInCirculation: value,
+      //    totalSupply: value,
       //    divisibility: vout.scriptPubKey.units ?? 0,
       //    reissuable: vout.scriptPubKey.reissuable == 1,
       //    txId: tx.txid,

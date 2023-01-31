@@ -1,5 +1,6 @@
 import 'package:client_back/records/records.dart';
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_front/infrastructure/cache/transactions.dart';
 import 'package:client_front/infrastructure/calls/transactions.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
@@ -62,6 +63,11 @@ class TransactionHistoryRepo extends Repository {
   List<protocol.TransactionView>? fromLocal() => null;
 
   @override
-  Future<void> save() async => // todo: add results to correct cache.
-      null;
+  Future<void> save() async => TransactionsCache.put(
+        wallet: wallet,
+        height: height,
+        chain: chain,
+        net: net,
+        records: results,
+      );
 }

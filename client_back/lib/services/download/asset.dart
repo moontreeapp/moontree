@@ -56,9 +56,10 @@ class AssetService {
                 .scriptPubKey
                 .ipfsHash ?? // This can also be a TXID
             '',
-        satsInCirculation: meta.satsInCirculation,
+        totalSupply: meta.satsInCirculation,
         divisibility: meta.divisions,
         reissuable: meta.reissuable,
+        frozen: false,
         transactionId: meta.source.txHash,
         position: meta.source.txPos,
       );
