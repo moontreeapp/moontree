@@ -7,6 +7,7 @@ import 'package:proclaim/proclaim.dart';
 part 'cache.keys.dart';
 
 class CacheProclaim extends Proclaim<_IdKey, CachedServerObject> {
+  late IndexMultiple<_TypeKey, CachedServerObject> byType;
   late IndexMultiple<_HoldingKey, CachedServerObject> byHolding;
   late IndexMultiple<_AssetMetadataKey, CachedServerObject> byAssetMetadata;
   late IndexMultiple<_TransactionDetailKey, CachedServerObject>
@@ -16,6 +17,7 @@ class CacheProclaim extends Proclaim<_IdKey, CachedServerObject> {
       byTransactionsByHeight;
 
   CacheProclaim() : super(_IdKey()) {
+    byType = addIndexMultiple('byType', _TypeKey());
     byHolding = addIndexMultiple('byHolding', _HoldingKey());
     byAssetMetadata = addIndexMultiple('byAssetMetadata', _AssetMetadataKey());
     byTransactionDetail =

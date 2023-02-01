@@ -91,8 +91,22 @@ class CachedServerObject with EquatableMixin {
         height: height,
       );
 
-  static String key(String type) => '$type';
-  String get id => key(type);
+  static String typeKey(String type) => '$type';
+  String get typeId => typeKey(type);
+
+  static String key(
+    String type,
+    int? serverId,
+    String? txHash,
+    int? height,
+    String? symbol,
+    String? walletId,
+    Chain? chain,
+    Net? net,
+  ) =>
+      '$type:$serverId:$txHash:$height:$symbol:$walletId:${ChainNet(chain ?? Chain.none, net ?? Net.main).key}';
+  String get id =>
+      key(type, serverId, txHash, height, symbol, walletId, chain, net);
 
   static String assetKey(String symbol, Chain chain, Net net) =>
       '$symbol:${ChainNet(chain, net).key}';

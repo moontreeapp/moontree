@@ -9,8 +9,39 @@ class _IdKey extends Key<CachedServerObject> {
 
 extension ByKeyMethodsForCachedServerObject
     on Index<_IdKey, CachedServerObject> {
+  CachedServerObject? getOne({
+    int? serverId,
+    String? hash,
+    int? height,
+    String? symbol,
+    String? walletId,
+    Chain? chain,
+    Net? net,
+    String? type,
+  }) =>
+      getByKeyStr(CachedServerObject.key(
+        type ?? 'TransactionView',
+        serverId,
+        hash,
+        height,
+        symbol,
+        walletId,
+        chain,
+        net,
+      )).firstOrNull;
+}
+
+/// byType
+
+class _TypeKey extends Key<CachedServerObject> {
+  @override
+  String getKey(CachedServerObject cache) => cache.typeId;
+}
+
+extension ByTypeKeyMethodsForCachedServerObject
+    on Index<_TypeKey, CachedServerObject> {
   List<CachedServerObject> getAll(String type) =>
-      getByKeyStr(CachedServerObject.key(type));
+      getByKeyStr(CachedServerObject.typeKey(type));
 }
 
 /// byHolding

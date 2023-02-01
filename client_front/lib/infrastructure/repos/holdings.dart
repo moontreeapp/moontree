@@ -28,7 +28,7 @@ class HoldingsRepo extends Repository {
 
   @override
   Future<Iterable<BalanceView>> fromServer() async =>
-      //[BalanceView(error: 'fake error', sats: 0, symbol: '')];// testing
+      //[BalanceView(error: 'fake error', sats: 0, symbol: '')]; // testing
       HoldingBalancesCall(wallet: wallet, chain: chain, net: net)();
 
   /// server does not give null, local does because local null always indicates
