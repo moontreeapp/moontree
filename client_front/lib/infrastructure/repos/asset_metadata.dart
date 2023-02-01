@@ -1,5 +1,6 @@
 import 'package:client_back/client_back.dart';
-import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_back/server/src/protocol/protocol.dart'
+    show AssetMetadata;
 import 'package:client_front/infrastructure/cache/asset_metadata.dart';
 import 'package:client_front/infrastructure/calls/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
@@ -11,14 +12,13 @@ class AssetMetadataHistoryRepo extends Repository {
   late Security security;
   late Chain chain;
   late Net net;
-  late Iterable<protocol.AssetMetadata> results;
   AssetMetadataHistoryRepo({
     Wallet? wallet,
     String? symbol,
     Security? security,
     Chain? chain,
     Net? net,
-  }) : super() {
+  }) : super(Iterable<AssetMetadata>) {
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
     this.symbol = symbol ??
@@ -26,34 +26,20 @@ class AssetMetadataHistoryRepo extends Repository {
         pros.securities.coinOf(this.chain, this.net).symbol;
   }
 
-  /// gets values from server; if that fails, from cache; saves results
-  /// and any errors encountered to self. saves to cache automatically.
   @override
-  Future<Iterable<protocol.AssetMetadata>> get() async {
-    final resultServer = await fromServer();
-    if (resultServer.length == 0) {
-      errors[RepoSource.server] = 'none';
-      final resultCache = fromLocal();
-      if (resultCache == null) {
-        errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
-      } else {
-        results = resultCache;
-      }
-    } else {
-      results = resultServer;
-      save();
-    }
-    return resultServer;
-  }
+  bool detectServerError(dynamic resultServer) => resultServer.length == 0;
 
   @override
-  Future<Iterable<protocol.AssetMetadata>> fromServer() async =>
+  String extractError(dynamic resultServer) => resultServer.first.error!;
+
+  @override
+  Future<Iterable<AssetMetadata>> fromServer() async =>
       AssetMetadataHistoryCall(chain: chain, net: net, symbol: symbol)();
 
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  Iterable<protocol.AssetMetadata>? fromLocal() =>
+  Iterable<AssetMetadata>? fromLocal() =>
       AssetsCache.get(chain: chain, net: net, symbol: symbol);
 
   @override

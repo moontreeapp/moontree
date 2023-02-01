@@ -1,5 +1,6 @@
 import 'package:client_back/client_back.dart';
-import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_back/server/src/protocol/protocol.dart'
+    show TransactionView;
 import 'package:client_front/infrastructure/cache/transactions.dart';
 import 'package:client_front/infrastructure/calls/transactions.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
@@ -12,7 +13,6 @@ class TransactionHistoryRepo extends Repository {
   final int? height;
   late Chain chain;
   late Net net;
-  late Iterable<protocol.TransactionView> results;
   TransactionHistoryRepo({
     Wallet? wallet,
     this.symbol,
@@ -20,34 +20,21 @@ class TransactionHistoryRepo extends Repository {
     this.height,
     Chain? chain,
     Net? net,
-  }) : super() {
+  }) : super(Iterable<TransactionView>) {
     this.wallet = wallet ?? Current.wallet;
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
   }
 
-  /// gets values from server; if that fails, from cache; saves results
-  /// and any errors encountered to self. saves to cache automatically.
   @override
-  Future<Iterable<protocol.TransactionView>> get() async {
-    final resultServer = await fromServer();
-    if (resultServer.length == 1 && resultServer.first.error != null) {
-      errors[RepoSource.server] = resultServer.first.error!;
-      final resultCache = fromLocal();
-      if (resultCache == null) {
-        errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
-      } else {
-        results = resultCache;
-      }
-    } else {
-      results = resultServer;
-      save();
-    }
-    return resultServer;
-  }
+  bool detectServerError(dynamic resultServer) =>
+      resultServer.length == 1 && resultServer.first.error != null;
 
   @override
-  Future<Iterable<protocol.TransactionView>> fromServer() async =>
+  String extractError(dynamic resultServer) => resultServer.first.error!;
+
+  @override
+  Future<Iterable<TransactionView>> fromServer() async =>
       TransactionHistoryCall(
         wallet: wallet,
         chain: chain,
@@ -60,7 +47,7 @@ class TransactionHistoryRepo extends Repository {
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  Iterable<protocol.TransactionView>? fromLocal() => TransactionsCache.get(
+  Iterable<TransactionView>? fromLocal() => TransactionsCache.get(
         wallet: wallet,
         chain: chain,
         net: net,

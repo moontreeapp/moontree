@@ -1,5 +1,5 @@
 import 'package:client_back/records/records.dart';
-import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_back/server/src/protocol/protocol.dart' show BalanceView;
 import 'package:client_front/infrastructure/calls/holdings.dart';
 import 'package:client_front/infrastructure/cache/holdings.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
@@ -9,45 +9,32 @@ class HoldingsRepo extends Repository {
   late Wallet wallet;
   late Chain chain;
   late Net net;
-  late Iterable<protocol.BalanceView> results;
   HoldingsRepo({
     Wallet? wallet,
     Chain? chain,
     Net? net,
-  }) : super() {
+  }) : super(Iterable<BalanceView>) {
     this.chain = chain ?? Current.chain;
     this.net = net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;
   }
 
-  /// gets values from server; if that fails, from cache; saves results
-  /// and any errors encountered to self. saves to cache automatically.
   @override
-  Future<Iterable<protocol.BalanceView>> get() async {
-    final resultServer = await fromServer();
-    if (resultServer.length == 1 && resultServer.first.error != null) {
-      errors[RepoSource.server] = resultServer.first.error!;
-      final resultCache = fromLocal();
-      if (resultCache == null) {
-        errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
-      } else {
-        results = resultCache;
-      }
-    } else {
-      results = resultServer;
-      save();
-    }
-    return resultServer;
-  }
+  bool detectServerError(dynamic resultServer) =>
+      resultServer.length == 1 && resultServer.first.error != null;
 
   @override
-  Future<Iterable<protocol.BalanceView>> fromServer() async =>
+  String extractError(dynamic resultServer) => resultServer.first.error!;
+
+  @override
+  Future<Iterable<BalanceView>> fromServer() async =>
+      //[BalanceView(error: 'fake error', sats: 0, symbol: '')];// testing
       HoldingBalancesCall(wallet: wallet, chain: chain, net: net)();
 
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  Iterable<protocol.BalanceView>? fromLocal() =>
+  Iterable<BalanceView>? fromLocal() =>
       HoldingsCache.get(wallet: wallet, chain: chain, net: net);
 
   @override

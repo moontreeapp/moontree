@@ -1,5 +1,6 @@
 import 'package:client_back/records/records.dart';
-import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_back/server/src/protocol/protocol.dart'
+    show UnsignedTransactionResult;
 import 'package:client_front/infrastructure/calls/unsigned.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
@@ -14,7 +15,6 @@ class UnsignedTransactionRepo extends Repository {
   final String address;
   late Chain chain;
   late Net net;
-  late protocol.UnsignedTransactionResult results;
   UnsignedTransactionRepo({
     Wallet? wallet,
     this.symbol,
@@ -24,35 +24,14 @@ class UnsignedTransactionRepo extends Repository {
     required this.address,
     Chain? chain,
     Net? net,
-  }) : super() {
+  }) : super(UnsignedTransactionResult) {
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;
   }
 
-  /// gets values from server; if that fails, from cache; saves results
-  /// and any errors encountered to self. saves to cache automatically.
   @override
-  Future<protocol.UnsignedTransactionResult> get() async {
-    final resultServer = await fromServer();
-    if (resultServer.error != null) {
-      print('UnsignedTransactionRepo error: ${resultServer.error}');
-      errors[RepoSource.server] = resultServer.error!;
-      final resultCache = fromLocal();
-      if (resultCache == null) {
-        errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
-      } else {
-        results = resultCache;
-      }
-    } else {
-      results = resultServer;
-      save();
-    }
-    return resultServer;
-  }
-
-  @override
-  Future<protocol.UnsignedTransactionResult> fromServer() async =>
+  Future<UnsignedTransactionResult> fromServer() async =>
       UnsignedTransactionCall(
         wallet: wallet,
         chain: chain,
@@ -67,7 +46,7 @@ class UnsignedTransactionRepo extends Repository {
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  protocol.UnsignedTransactionResult? fromLocal() => null;
+  UnsignedTransactionResult? fromLocal() => null;
 
   @override
   Future<void> save() async => // todo: add results to correct cache.
