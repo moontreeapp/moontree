@@ -10,7 +10,6 @@ import 'package:client_back/services/transaction/transaction.dart';
 import 'package:client_front/presentation/components/components.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:flutter/semantics.dart';
 
 class TransactionList extends StatefulWidget {
   final TransactionsViewCubit? cubit;

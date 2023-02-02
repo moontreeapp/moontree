@@ -12,6 +12,7 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart'
     show SerializableEntity;
 import 'package:client_back/server/src/protocol/protocol.dart' show Protocol;
+import 'package:moontree_utils/extensions/string.dart';
 
 class Cache {
   /// saves records to cache
@@ -39,6 +40,19 @@ class Cache {
           )
       ]);
 
-  static T read<T>(CachedServerObject x) =>
-      Protocol().deserialize(json.decode(x.json), T);
+  static T read<T>(CachedServerObject x) => Protocol().deserialize(
+      json.decode(
+        x.json,
+        reviver: (key, value) {
+          // convert String values back to their ByteData or DateTime by key
+          if (['memo', 'associatedData'].contains(key) && value is String) {
+            return value.hexToByteData;
+          }
+          if (['datetime'].contains(key) && value is String) {
+            return DateTime.parse(value);
+          }
+          return value;
+        },
+      ),
+      T);
 }

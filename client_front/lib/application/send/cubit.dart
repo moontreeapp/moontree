@@ -74,7 +74,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         //String? memo,
         //String? note,
         //String? addressName,
-      ).get();
+      ).fetch();
       set(
         //unsigned: unsigned,
         isSubmitting: false,

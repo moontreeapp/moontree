@@ -29,6 +29,14 @@ class IconComponents {
         color: color ?? AppColors.black38,
       );
   Widget fee(BuildContext context, {Color? color}) => Image.asset(
+        'assets/icons/send/send_red.png',
+        color: color,
+        //height: 16,
+        //width: 16,
+      );
+
+  // faded colors will be for mempool
+  Widget mempoolOut(BuildContext context, {Color? color}) => Image.asset(
         'assets/icons/send/send_black.png',
         color: AppColors.error38,
       );

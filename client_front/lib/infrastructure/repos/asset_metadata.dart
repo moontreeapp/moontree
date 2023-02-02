@@ -28,6 +28,9 @@ class AssetMetadataHistoryRepo extends Repository<Iterable<AssetMetadata>> {
   bool detectServerError(dynamic resultServer) => resultServer.length == 0;
 
   @override
+  bool detectLocalError(dynamic resultLocal) => resultLocal.length == 0;
+
+  @override
   String extractError(dynamic resultServer) => resultServer.first.error!;
 
   @override

@@ -1,9 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:client_back/client_back.dart';
+import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:client_back/records/_type_id.dart';
 import 'package:client_back/server/serverv2_client.dart'
     show SerializableEntity;
+import 'package:moontree_utils/extensions/bytedata.dart';
 import 'dart:convert' as convert;
 part 'cache.g.dart';
 
@@ -81,7 +85,18 @@ class CachedServerObject with EquatableMixin {
   }) =>
       CachedServerObject(
         type: type,
-        json: convert.json.encode(record.toJson()),
+        json: convert.json.encode(
+          record.toJson(),
+          toEncodable: (dynamic o) {
+            if (o is ByteData) {
+              return o.toHex();
+            }
+            if (o is DateTime) {
+              return o.toIso8601String();
+            }
+            return o;
+          },
+        ),
         serverId: (record as dynamic).id,
         walletId: walletId,
         chain: chain,

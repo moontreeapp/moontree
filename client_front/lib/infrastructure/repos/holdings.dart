@@ -24,6 +24,9 @@ class HoldingsRepo extends Repository<Iterable<BalanceView>> {
       resultServer.length == 1 && resultServer.first.error != null;
 
   @override
+  bool detectLocalError(dynamic resultLocal) => resultLocal.length == 0;
+
+  @override
   String extractError(dynamic resultServer) => resultServer.first.error!;
 
   @override
