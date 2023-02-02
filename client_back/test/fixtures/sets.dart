@@ -78,8 +78,10 @@ class FixtureSet1 extends FixtureSet {
             reissuable: true,
             metadata: 'metadata',
             transactionId: '10',
+            frozen: false,
             position: 2),
         '1': Asset(
+            frozen: false,
             chain: Chain.ravencoin,
             net: Net.test,
             symbol: 'MOONTREE1',

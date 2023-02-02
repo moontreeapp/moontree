@@ -15,6 +15,7 @@ void main() {
 
     test('asset amount with divisibilty', () async {
       await pros.assets.save(Asset(
+          frozen: false,
           chain: Chain.ravencoin,
           net: Net.test,
           symbol: 'MOONTREE',
@@ -41,6 +42,7 @@ void main() {
 
     test('asset to RVN then to USD with rate (and divisibility)', () async {
       await pros.assets.save(Asset(
+          frozen: false,
           chain: Chain.ravencoin,
           net: Net.test,
           symbol: 'MOONTREE',

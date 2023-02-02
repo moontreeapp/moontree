@@ -6,19 +6,17 @@ import 'package:client_front/infrastructure/calls/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 
-class AssetMetadataHistoryRepo extends Repository {
-  late Wallet wallet;
+class AssetMetadataHistoryRepo extends Repository<Iterable<AssetMetadata>> {
   late String symbol;
-  late Security security;
   late Chain chain;
   late Net net;
+
   AssetMetadataHistoryRepo({
-    Wallet? wallet,
     String? symbol,
     Security? security,
     Chain? chain,
     Net? net,
-  }) : super(Iterable<AssetMetadata>) {
+  }) : super([] as Iterable<AssetMetadata>) {
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
     this.symbol = symbol ??
