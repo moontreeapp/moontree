@@ -8,7 +8,7 @@ import 'package:client_front/infrastructure/calls/transaction.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 
-class TransactionDetailsRepo extends Repository {
+class TransactionDetailsRepo extends Repository<TransactionDetailsView> {
   late Wallet wallet;
   final ByteData hash;
   late Chain chain;
@@ -18,7 +18,7 @@ class TransactionDetailsRepo extends Repository {
     required this.hash,
     Chain? chain,
     Net? net,
-  }) : super(TransactionDetailsView) {
+  }) : super(TransactionDetailsView(error: 'fallback value')) {
     this.chain = chain ?? Current.chain;
     this.net = net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;

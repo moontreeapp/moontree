@@ -5,7 +5,7 @@ import 'package:client_front/infrastructure/cache/holdings.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 
-class HoldingsRepo extends Repository {
+class HoldingsRepo extends Repository<Iterable<BalanceView>> {
   late Wallet wallet;
   late Chain chain;
   late Net net;
@@ -13,7 +13,7 @@ class HoldingsRepo extends Repository {
     Wallet? wallet,
     Chain? chain,
     Net? net,
-  }) : super(Iterable<BalanceView>) {
+  }) : super(<BalanceView>[]) {
     this.chain = chain ?? Current.chain;
     this.net = net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;

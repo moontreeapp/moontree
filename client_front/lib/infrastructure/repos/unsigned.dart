@@ -6,7 +6,7 @@ import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
-class UnsignedTransactionRepo extends Repository {
+class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
   late Wallet wallet;
   late String? symbol;
   late Security? security;
@@ -24,7 +24,12 @@ class UnsignedTransactionRepo extends Repository {
     required this.address,
     Chain? chain,
     Net? net,
-  }) : super(UnsignedTransactionResult) {
+  }) : super(UnsignedTransactionResult(
+          error: 'fallback value',
+          rawHex: '',
+          vinPrivateKeySource: [],
+          vinLockingScriptType: [],
+        )) {
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;

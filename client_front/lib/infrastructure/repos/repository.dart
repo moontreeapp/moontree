@@ -1,11 +1,11 @@
 enum RepoSource { local, server, electrumx }
 
 class Repository<T> {
-  T type;
+  T fallback;
   late RepoSource source;
   late T results;
   late Map<RepoSource, String> errors;
-  Repository(this.type) {
+  Repository(this.fallback) {
     errors = <RepoSource, String>{};
   }
 
@@ -13,15 +13,16 @@ class Repository<T> {
   bool detectServerError(dynamic resultServer) => resultServer.error != null;
   bool detectLocalError(dynamic resultLocal) => resultLocal == null;
 
-  /// gets values from server; if that fails, from cache; saves results
+  /// fetches values from server; if that fails, from cache; saves results
   /// and any errors encountered to self. saves to cache automatically.
-  Future<T> get() async {
+  Future<T> fetch() async {
     final resultServer = await fromServer();
     if (detectServerError(resultServer)) {
       errors[RepoSource.server] = extractError(resultServer);
       final resultLocal = fromLocal();
       if (detectLocalError(resultLocal)) {
         errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
+        results = fallback;
       } else {
         source = RepoSource.local;
         results = resultLocal;
@@ -30,6 +31,28 @@ class Repository<T> {
       source = RepoSource.server;
       results = resultServer;
       save();
+    }
+    return results;
+  }
+
+  /// gets values from cache; if that fails, from server; saves results
+  /// and any errors encountered to self. saves to cache automatically.
+  Future<T> get() async {
+    final resultLocal = fromLocal();
+    if (detectLocalError(resultLocal)) {
+      errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
+      final resultServer = await fromServer();
+      if (detectServerError(resultServer)) {
+        errors[RepoSource.server] = extractError(resultServer);
+        results = fallback;
+      } else {
+        source = RepoSource.server;
+        results = resultServer;
+        save();
+      }
+    } else {
+      source = RepoSource.local;
+      results = resultLocal;
     }
     return results;
   }

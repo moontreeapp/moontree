@@ -6,7 +6,7 @@ import 'package:client_front/infrastructure/calls/transactions.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 
-class TransactionHistoryRepo extends Repository {
+class TransactionHistoryRepo extends Repository<Iterable<TransactionView>> {
   late Wallet wallet;
   late String? symbol;
   late Security? security;
@@ -20,7 +20,7 @@ class TransactionHistoryRepo extends Repository {
     this.height,
     Chain? chain,
     Net? net,
-  }) : super(Iterable<TransactionView>) {
+  }) : super(<TransactionView>[]) {
     this.wallet = wallet ?? Current.wallet;
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
