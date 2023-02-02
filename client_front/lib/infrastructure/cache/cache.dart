@@ -43,16 +43,16 @@ class Cache {
   static T read<T>(CachedServerObject x) => Protocol().deserialize(
       json.decode(
         x.json,
-        reviver: (key, value) {
-          // convert String values back to their ByteData or DateTime by key
-          if (['memo', 'associatedData'].contains(key) && value is String) {
-            return value.hexToByteData;
-          }
-          if (['datetime'].contains(key) && value is String) {
-            return DateTime.parse(value);
-          }
-          return value;
-        },
+        //reviver: (key, value) {
+        //  // convert String values back to their ByteData or DateTime by key
+        //  if (['memo', 'associatedData'].contains(key) && value is String) {
+        //    return value.hexToByteData;
+        //  }
+        //  if (['datetime'].contains(key) && value is String) {
+        //    return DateTime.parse(value);
+        //  }
+        //  return value;
+        //},
       ),
       T);
 }

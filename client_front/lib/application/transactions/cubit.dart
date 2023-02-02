@@ -82,7 +82,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       final transactionViews = await TransactionHistoryRepo(
         wallet: state.wallet,
         security: state.security,
-      ).get();
+      ).fetch(only: true);
 
       if (checkCleared && cleared) {
         return;
@@ -109,7 +109,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
               wallet: state.wallet,
               security: state.security,
               height: state.lowestHeight)
-          .get();
+          .fetch(only: true);
       /*
       kralverde — Today at 9:06 AM
         if you look at the actual vins from https://evr.cryptoscope.io/api/getrawtransaction/?txid=df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188&decode=1 they will match 
@@ -181,7 +181,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       submitting();
       final metadataView = (await AssetMetadataHistoryRepo(
         security: state.security,
-      ).get())
+      ).get(only: true))
           .firstOrNull;
       if (checkCleared && cleared) {
         return;

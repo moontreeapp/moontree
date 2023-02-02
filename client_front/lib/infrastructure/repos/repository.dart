@@ -15,14 +15,17 @@ class Repository<T> {
 
   /// fetches values from server; if that fails, from cache; saves results
   /// and any errors encountered to self. saves to cache automatically.
-  Future<T> fetch() async {
+  Future<T> fetch({bool only = false}) async {
+    results = fallback;
     final resultServer = await fromServer();
     if (detectServerError(resultServer)) {
       errors[RepoSource.server] = extractError(resultServer);
+      if (only) {
+        return results;
+      }
       final resultLocal = fromLocal();
       if (detectLocalError(resultLocal)) {
         errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
-        results = fallback;
       } else {
         source = RepoSource.local;
         results = resultLocal;
@@ -37,14 +40,17 @@ class Repository<T> {
 
   /// gets values from cache; if that fails, from server; saves results
   /// and any errors encountered to self. saves to cache automatically.
-  Future<T> get() async {
+  Future<T> get({bool only = false}) async {
+    results = fallback;
     final resultLocal = fromLocal();
     if (detectLocalError(resultLocal)) {
       errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
+      if (only) {
+        return results;
+      }
       final resultServer = await fromServer();
       if (detectServerError(resultServer)) {
         errors[RepoSource.server] = extractError(resultServer);
-        results = fallback;
       } else {
         source = RepoSource.server;
         results = resultServer;
