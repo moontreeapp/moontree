@@ -26,6 +26,7 @@ class Cache {
     Chain? chain,
     Net? net,
     String? txHash,
+    bool saveSymbols = false,
     bool saveTxHashes = false,
     bool saveHeights = false,
   }) async =>
@@ -37,7 +38,7 @@ class Cache {
             walletId: walletId,
             chain: chain,
             net: net,
-            symbol: symbol,
+            symbol: symbol ?? (saveSymbols ? (record as dynamic).symbol : null),
             txHash: txHash ??
                 (saveTxHashes
                     ? ((record as dynamic).hash as ByteData).toHex()

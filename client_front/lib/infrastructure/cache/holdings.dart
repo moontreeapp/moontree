@@ -16,6 +16,7 @@ class HoldingsCache {
         walletId: wallet.id,
         chain: chain,
         net: net,
+        saveSymbols: true,
       );
 
   /// gets list of BalanceView objects from cache
