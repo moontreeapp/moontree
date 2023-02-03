@@ -61,7 +61,7 @@ class TransactionHistoryCall extends ServerCall {
 
     List<String>? roots;
     if (wallet is LeaderWallet) {
-      roots = await wallet.roots;
+      roots = await (wallet as LeaderWallet).roots;
       //} else if (wallet is SingleWallet) {
       //  roots = wallet.roots; ?? await Current.wallet.roots;
     }

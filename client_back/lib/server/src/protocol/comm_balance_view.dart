@@ -12,7 +12,8 @@ class BalanceView extends _i1.SerializableEntity {
   BalanceView({
     this.id,
     this.error,
-    required this.sats,
+    required this.satsConfirmed,
+    required this.satsUnconfirmed,
     required this.symbol,
     this.chain,
   });
@@ -25,7 +26,10 @@ class BalanceView extends _i1.SerializableEntity {
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
       error:
           serializationManager.deserialize<String?>(jsonSerialization['error']),
-      sats: serializationManager.deserialize<int>(jsonSerialization['sats']),
+      satsConfirmed: serializationManager
+          .deserialize<int>(jsonSerialization['satsConfirmed']),
+      satsUnconfirmed: serializationManager
+          .deserialize<int>(jsonSerialization['satsUnconfirmed']),
       symbol:
           serializationManager.deserialize<String>(jsonSerialization['symbol']),
       chain:
@@ -37,7 +41,9 @@ class BalanceView extends _i1.SerializableEntity {
 
   String? error;
 
-  int sats;
+  int satsConfirmed;
+
+  int satsUnconfirmed;
 
   String symbol;
 
@@ -48,7 +54,8 @@ class BalanceView extends _i1.SerializableEntity {
     return {
       'id': id,
       'error': error,
-      'sats': sats,
+      'satsConfirmed': satsConfirmed,
+      'satsUnconfirmed': satsUnconfirmed,
       'symbol': symbol,
       'chain': chain,
     };

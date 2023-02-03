@@ -210,6 +210,7 @@ class ClientService {
     if (!keepAddresses) {
       await database.eraseAddressData(quick: true);
     }
+    await database.eraseCache(quick: true);
     if (keepBalances) {
       services.download.overrideGettingStarted = true;
     }

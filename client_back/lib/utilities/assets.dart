@@ -168,8 +168,8 @@ List<AssetHolding> assetHoldings(Iterable<BalanceView> holdings) {
       balancesOther.values.toList();
 }
 
-BalanceView blank(Asset asset) =>
-    BalanceView(sats: 0, symbol: '', chain: 'none');
+BalanceView blank(Asset asset) => BalanceView(
+    satsConfirmed: 0, satsUnconfirmed: 0, symbol: '', chain: 'none');
 
 Map<String, AssetHolding> assetHoldingsFromAssets(String parent) {
   final Map<String, AssetHolding> assets = <String, AssetHolding>{};

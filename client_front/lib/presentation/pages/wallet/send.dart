@@ -172,7 +172,8 @@ class _SendState extends State<Send> {
                   children: <Widget>[
                     CoinSpec(
                         balanceView: BalanceView(
-                          sats: state.sats,
+                          satsConfirmed: state.sats,
+                          satsUnconfirmed: 0,
                           symbol: state.security.symbol,
                           chain: state.security.chain.name,
                         ),

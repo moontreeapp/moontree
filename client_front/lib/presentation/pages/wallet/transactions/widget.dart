@@ -88,7 +88,11 @@ class _TransactionsState extends State<Transactions> {
                             ScrollController scrollController) {
                           //bloc.scrollObserver.add(dController.size);
                           _scrollListener() {
-                            state.scrollObserver.add(dController.size);
+                            try {
+                              state.scrollObserver.add(dController.size);
+                            } catch (e) {
+                              return;
+                            }
                           }
 
                           scrollController.addListener(() async {

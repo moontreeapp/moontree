@@ -181,7 +181,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       submitting();
       final metadataView = (await AssetMetadataHistoryRepo(
         security: state.security,
-      ).get(only: true))
+      ).get())
           .firstOrNull;
       if (checkCleared && cleared) {
         return;

@@ -14,7 +14,8 @@ class NotifyChainWalletBalance extends _i1.SerializableEntity {
     required this.chainName,
     required this.walletPubKey,
     this.symbol,
-    required this.sats,
+    required this.satsConfirmed,
+    required this.satsUnconfirmed,
   });
 
   factory NotifyChainWalletBalance.fromJson(
@@ -29,7 +30,10 @@ class NotifyChainWalletBalance extends _i1.SerializableEntity {
           .deserialize<String>(jsonSerialization['walletPubKey']),
       symbol: serializationManager
           .deserialize<String?>(jsonSerialization['symbol']),
-      sats: serializationManager.deserialize<int>(jsonSerialization['sats']),
+      satsConfirmed: serializationManager
+          .deserialize<int>(jsonSerialization['satsConfirmed']),
+      satsUnconfirmed: serializationManager
+          .deserialize<int>(jsonSerialization['satsUnconfirmed']),
     );
   }
 
@@ -41,7 +45,9 @@ class NotifyChainWalletBalance extends _i1.SerializableEntity {
 
   String? symbol;
 
-  int sats;
+  int satsConfirmed;
+
+  int satsUnconfirmed;
 
   @override
   Map<String, dynamic> toJson() {
@@ -50,7 +56,8 @@ class NotifyChainWalletBalance extends _i1.SerializableEntity {
       'chainName': chainName,
       'walletPubKey': walletPubKey,
       'symbol': symbol,
-      'sats': sats,
+      'satsConfirmed': satsConfirmed,
+      'satsUnconfirmed': satsUnconfirmed,
     };
   }
 }

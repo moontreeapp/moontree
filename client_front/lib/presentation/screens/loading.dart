@@ -37,7 +37,7 @@ class LoadingLayerState extends State<LoadingLayer> {
 
     /// this listener is on this page because the cubit doesn't exist first.
     listeners.add(streams.app.page.listen((String? value) async {
-      if (['Splash', 'Login'].contains(value)) {
+      if (['Splash', 'Login', 'Setup', 'Createlogin'].contains(value)) {
         if (active) {
           setState(() {
             height = 0;

@@ -42,6 +42,14 @@ Future<void> eraseUnspentData({
   }
 }
 
+Future<void> eraseCache({bool quick = false}) async {
+  if (quick) {
+    await pros.cache.delete();
+  } else {
+    await pros.cache.clear();
+  }
+}
+
 Future<void> eraseAddressData({bool quick = false}) async {
   if (quick) {
     await pros.addresses.delete();
@@ -70,6 +78,7 @@ Future<void> deleteDatabase() async {
     await pros.assets.clear();
     await pros.balances.clear();
     await pros.blocks.clear();
+    await pros.cache.clear();
     await pros.ciphers.clear();
     await pros.metadatas.clear();
     await pros.notes.clear();
@@ -91,6 +100,7 @@ Future<void> deleteDatabase() async {
     await (pros.assets.source as HiveSource<Asset>).box.clear();
     await (pros.balances.source as HiveSource<Balance>).box.clear();
     await (pros.blocks.source as HiveSource<Block>).box.clear();
+    await (pros.cache.source as HiveSource<CachedServerObject>).box.clear();
     await (pros.metadatas.source as HiveSource<Metadata>).box.clear();
     await (pros.notes.source as HiveSource<Note>).box.clear();
     await (pros.passwords.source as HiveSource<Password>).box.clear();

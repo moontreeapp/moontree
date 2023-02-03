@@ -14,7 +14,8 @@ class NotifyChainH160Balance extends _i1.SerializableEntity {
     required this.chainName,
     required this.h160,
     this.symbol,
-    required this.sats,
+    required this.satsConfirmed,
+    required this.satsUnconfirmed,
   });
 
   factory NotifyChainH160Balance.fromJson(
@@ -28,7 +29,10 @@ class NotifyChainH160Balance extends _i1.SerializableEntity {
       h160: serializationManager.deserialize<String>(jsonSerialization['h160']),
       symbol: serializationManager
           .deserialize<String?>(jsonSerialization['symbol']),
-      sats: serializationManager.deserialize<int>(jsonSerialization['sats']),
+      satsConfirmed: serializationManager
+          .deserialize<int>(jsonSerialization['satsConfirmed']),
+      satsUnconfirmed: serializationManager
+          .deserialize<int>(jsonSerialization['satsUnconfirmed']),
     );
   }
 
@@ -40,7 +44,9 @@ class NotifyChainH160Balance extends _i1.SerializableEntity {
 
   String? symbol;
 
-  int sats;
+  int satsConfirmed;
+
+  int satsUnconfirmed;
 
   @override
   Map<String, dynamic> toJson() {
@@ -49,7 +55,8 @@ class NotifyChainH160Balance extends _i1.SerializableEntity {
       'chainName': chainName,
       'h160': h160,
       'symbol': symbol,
-      'sats': sats,
+      'satsConfirmed': satsConfirmed,
+      'satsUnconfirmed': satsUnconfirmed,
     };
   }
 }

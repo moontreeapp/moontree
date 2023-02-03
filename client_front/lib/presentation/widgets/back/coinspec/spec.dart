@@ -59,8 +59,8 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     final Balance holdingBalance = Balance(
         walletId: Current.walletId,
         security: widget.security,
-        confirmed: widget.balanceView.sats,
-        unconfirmed: 0);
+        confirmed: widget.balanceView.satsConfirmed,
+        unconfirmed: widget.balanceView.satsUnconfirmed);
     int holdingSat = 0;
     if (holdingBalance != null) {
       holding = holdingBalance.amount;

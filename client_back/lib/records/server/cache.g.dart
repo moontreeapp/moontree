@@ -24,13 +24,15 @@ class CachedServerObjectAdapter extends TypeAdapter<CachedServerObject> {
       symbol: fields[4] as String?,
       chain: fields[5] as Chain?,
       net: fields[6] as Net?,
+      txHash: fields[7] as String?,
+      height: fields[8] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CachedServerObject obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -44,7 +46,11 @@ class CachedServerObjectAdapter extends TypeAdapter<CachedServerObject> {
       ..writeByte(5)
       ..write(obj.chain)
       ..writeByte(6)
-      ..write(obj.net);
+      ..write(obj.net)
+      ..writeByte(7)
+      ..write(obj.txHash)
+      ..writeByte(8)
+      ..write(obj.height);
   }
 
   @override

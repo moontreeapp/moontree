@@ -7,11 +7,13 @@
 /// instead of caching the domain as we did in v1 we are caching things in the
 /// same structure as the server data, then translate to the domain after we get
 /// the data from either cache or server.
+import 'dart:typed_data';
 import 'dart:convert';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart'
     show SerializableEntity;
 import 'package:client_back/server/src/protocol/protocol.dart' show Protocol;
+import 'package:moontree_utils/extensions/bytedata.dart';
 import 'package:moontree_utils/extensions/string.dart';
 
 class Cache {
@@ -24,6 +26,7 @@ class Cache {
     Chain? chain,
     Net? net,
     String? txHash,
+    bool saveTxHashes = false,
     bool saveHeights = false,
   }) async =>
       pros.cache.saveAll([
@@ -35,7 +38,10 @@ class Cache {
             chain: chain,
             net: net,
             symbol: symbol,
-            txHash: txHash,
+            txHash: txHash ??
+                (saveTxHashes
+                    ? ((record as dynamic).hash as ByteData).toHex()
+                    : null),
             height: saveHeights ? (record as dynamic).height : null,
           )
       ]);

@@ -196,7 +196,9 @@ class AssetHolding {
       ].where((BalanceView? element) => element != null).fold(
           0,
           (int previousValue, BalanceView? element) =>
-              (element?.sats ?? 0) + previousValue);
+              ((element?.satsConfirmed ?? 0) +
+                  (element?.satsUnconfirmed ?? 0)) +
+              previousValue);
 }
 
 class Symbol {

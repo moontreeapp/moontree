@@ -45,7 +45,7 @@ class HoldingBalancesCall extends ServerCall {
   Future<List<server.BalanceView>> call() async {
     List<String>? roots;
     if (wallet is LeaderWallet) {
-      roots = await wallet.roots;
+      roots = await (wallet as LeaderWallet).roots;
       //} else if (wallet is SingleWallet) {
       //  roots = wallet.roots; ?? await Current.wallet.roots;
     }
@@ -90,17 +90,65 @@ class HoldingBalancesCall extends ServerCall {
 
 List<server.BalanceView> spoof() {
   return <server.BalanceView>[
-    server.BalanceView(symbol: 'RVN', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: 'MOONTREE', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: 'EVR', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: 'SATORI', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: 'XYZ', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: 'Scam', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: '1RVN', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: '1MOON', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: '1ABC', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: '1DEF', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: '1XYZ', chain: null, sats: 10 * satsPerCoin),
-    server.BalanceView(symbol: '1Scam', chain: null, sats: 10 * satsPerCoin),
+    server.BalanceView(
+        symbol: 'RVN',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 1),
+    server.BalanceView(
+        symbol: 'MOONTREE',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: 'EVR',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: 'SATORI',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: 'XYZ',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: 'Scam',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: '1RVN',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: '1MOON',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: '1ABC',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: '1DEF',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: '1XYZ',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
+    server.BalanceView(
+        symbol: '1Scam',
+        chain: null,
+        satsConfirmed: 10 * satsPerCoin,
+        satsUnconfirmed: 0),
   ];
 }

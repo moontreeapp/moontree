@@ -45,6 +45,7 @@ class pros {
   static final AssetProclaim assets = AssetProclaim();
   static final BlockProclaim blocks = BlockProclaim();
   static final BalanceProclaim balances = BalanceProclaim();
+  static final CacheProclaim cache = CacheProclaim();
   static final CipherProclaim ciphers = CipherProclaim();
   static final SecretProclaim secrets = SecretProclaim();
   static final MetadataProclaim metadatas = MetadataProclaim();
@@ -59,5 +60,4 @@ class pros {
   static final WalletProclaim wallets = WalletProclaim();
   static final VinProclaim vins = VinProclaim();
   static final VoutProclaim vouts = VoutProclaim();
-  static final CacheProclaim cache = CacheProclaim();
 }

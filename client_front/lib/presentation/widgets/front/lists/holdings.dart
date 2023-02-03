@@ -14,6 +14,10 @@ import 'package:client_front/presentation/components/components.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 
+extension FunctionsForBalanceView on BalanceView {
+  int get sats => satsConfirmed + satsUnconfirmed;
+}
+
 class HoldingList extends StatefulWidget {
   final Iterable<Balance>? holdings;
   final ScrollController? scrollController;

@@ -54,7 +54,7 @@ class Repository<T> {
       } else {
         source = RepoSource.server;
         results = resultServer;
-        save();
+        await save();
       }
     } else {
       source = RepoSource.local;

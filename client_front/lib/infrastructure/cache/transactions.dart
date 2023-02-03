@@ -17,6 +17,7 @@ class TransactionsCache {
         walletId: wallet.id,
         chain: chain,
         net: net,
+        saveTxHashes: true,
         saveHeights: true,
       );
 
