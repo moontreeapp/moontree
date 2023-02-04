@@ -9,15 +9,24 @@ class HoldingsCache {
     required Chain chain,
     required Net net,
     required Iterable<BalanceView> records,
-  }) async =>
-      Cache.save(
-        records,
-        'BalanceView',
-        walletId: wallet.id,
-        chain: chain,
-        net: net,
-        saveSymbols: true,
-      );
+  }) async {
+    await Cache.save(
+      records,
+      'BalanceView',
+      walletId: wallet.id,
+      chain: chain,
+      net: net,
+      saveSymbols: true,
+    );
+    await pros.balances.saveAll([
+      for (final record in records)
+        Balance(
+            walletId: wallet.id,
+            confirmed: record.satsConfirmed,
+            unconfirmed: record.satsUnconfirmed,
+            security: Security(chain: chain, net: net, symbol: record.symbol))
+    ]);
+  }
 
   /// gets list of BalanceView objects from cache
   static Iterable<BalanceView>? get({

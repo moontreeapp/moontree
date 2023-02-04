@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:client_front/application/holdings/cubit.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
@@ -75,39 +77,45 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     walletHasTransactions = Current.wallet.transactions.isNotEmpty;
-    walletIsEmpty = Current.wallet.balances.isEmpty;
+    //walletIsEmpty = Current.wallet.balances.isEmpty;
     streams.app.navHeight.add(
         false /*widget.includeSectors*/ ? NavHeight.tall : NavHeight.short);
-    return components.containers.navBar(context /*widget.includeSectors*/,
-        child: SingleChildScrollView(
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              // we will need to make these buttons dependant upon the navigation
-              // of the front page through streams but for now, we'll show they
-              // can changed based upon whats selected:
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: actionButtons
-                    .intersperse(const SizedBox(width: 16))
-                    .toList(),
-              ),
-              if (false /*widget.includeSectors*/) ...<Widget>[
-                const SizedBox(height: 6),
-                Padding(
-                    padding: EdgeInsets.zero,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        sectorIcon(appContext: AppContext.wallet),
-                        sectorIcon(appContext: AppContext.manage),
-                        sectorIcon(appContext: AppContext.swap),
-                      ],
-                    ))
-              ]
-            ],
-          ),
-        ));
+    return flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
+        //bloc: holdingsViewCubit..enter(),
+        builder: (BuildContext context, HoldingsViewState state) {
+      walletIsEmpty = components.cubits.holdingsViewCubit.state.holdingsViews
+          .isEmpty; // Current.wallet.balances.isEmpty;
+      return components.containers.navBar(context /*widget.includeSectors*/,
+          child: SingleChildScrollView(
+            child: Column(
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                // we will need to make these buttons dependant upon the navigation
+                // of the front page through streams but for now, we'll show they
+                // can changed based upon whats selected:
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: actionButtons
+                      .intersperse(const SizedBox(width: 16))
+                      .toList(),
+                ),
+                if (false /*widget.includeSectors*/) ...<Widget>[
+                  const SizedBox(height: 6),
+                  Padding(
+                      padding: EdgeInsets.zero,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          sectorIcon(appContext: AppContext.wallet),
+                          sectorIcon(appContext: AppContext.manage),
+                          sectorIcon(appContext: AppContext.swap),
+                        ],
+                      ))
+                ]
+              ],
+            ),
+          ));
+    });
   }
 
   Iterable<Widget> get actionButtons =>
