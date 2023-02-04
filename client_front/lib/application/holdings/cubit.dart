@@ -2,6 +2,7 @@ import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/utilities/assets.dart';
 import 'package:bloc/bloc.dart';
 import 'package:client_front/infrastructure/repos/holdings.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/application/common.dart';
@@ -67,9 +68,10 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
     }
   }
 
-  void clearCache() => set(
-        holdingsViews: <BalanceView>[],
-      );
+  void clearCache() => set(holdingsViews: <BalanceView>[]);
+
+  BalanceView? holdingsViewFor(String symbol) =>
+      state.holdingsViews.where((e) => e.symbol == symbol).firstOrNull;
 
 // we want to group certain assets into one view so we arrange them into this:
 }

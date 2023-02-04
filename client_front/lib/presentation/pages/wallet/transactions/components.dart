@@ -138,7 +138,7 @@ class CoinDetailsHeader extends StatelessWidget {
                 pageTitle: 'Transactions',
                 security: security,
                 bottom: emptyMetaDataCache ? null : Container(),
-                balanceView: balanceView,
+                //balanceView: balanceView,
               ),
             ),
           );

@@ -18,13 +18,11 @@ class CoinSpec extends StatefulWidget {
   final Widget? bottom;
   final Color? color;
   final SimpleSendFormCubit? cubit;
-  final BalanceView balanceView;
 
   const CoinSpec({
     Key? key,
     required this.pageTitle,
     required this.security,
-    required this.balanceView,
     this.bottom,
     this.color,
     this.cubit,
@@ -56,11 +54,14 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     // TODO: we have to pull this from the server, not from balance.
     //final Balance? holdingBalance = widget.security.balance;
+    final holdingsCubit = components.cubits.holdingsViewCubit;
+    final BalanceView? holdingView =
+        holdingsCubit.holdingsViewFor(widget.security.symbol);
     final Balance holdingBalance = Balance(
         walletId: Current.walletId,
         security: widget.security,
-        confirmed: widget.balanceView.satsConfirmed,
-        unconfirmed: widget.balanceView.satsUnconfirmed);
+        confirmed: holdingView?.satsConfirmed ?? 0,
+        unconfirmed: holdingView?.satsUnconfirmed ?? 0);
     int holdingSat = 0;
     if (holdingBalance != null) {
       holding = holdingBalance.amount;

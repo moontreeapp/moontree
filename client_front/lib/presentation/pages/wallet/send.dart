@@ -171,12 +171,12 @@ class _SendState extends State<Send> {
                   alignment: Alignment.bottomCenter,
                   children: <Widget>[
                     CoinSpec(
-                        balanceView: BalanceView(
-                          satsConfirmed: state.sats,
-                          satsUnconfirmed: 0,
-                          symbol: state.security.symbol,
-                          chain: state.security.chain.name,
-                        ),
+                        //balanceView: BalanceView(
+                        //  satsConfirmed: state.sats,
+                        //  satsUnconfirmed: 0,
+                        //  symbol: state.security.symbol,
+                        //  chain: state.security.chain.name,
+                        //),
                         cubit: cubit,
                         pageTitle: 'Send',
                         security: state.security,

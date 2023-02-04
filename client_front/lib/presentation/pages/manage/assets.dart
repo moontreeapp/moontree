@@ -31,8 +31,8 @@ class _AssetPageState extends State<AssetPage> {
           pros.settings.net,
         )!,
         // hack - refactor, CoinSpec shouldn't need this. we should save holdings on subscription and just look it up on page.
-        balanceView:
-            BalanceView(symbol: symbol, satsConfirmed: 0, satsUnconfirmed: 0),
+        //balanceView:
+        //    BalanceView(symbol: symbol, satsConfirmed: 0, satsUnconfirmed: 0),
       ),
       front: FrontCurve(
           height: MediaQuery.of(context).size.height * .64,
