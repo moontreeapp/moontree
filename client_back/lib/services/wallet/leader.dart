@@ -74,6 +74,8 @@ class LeaderWalletService {
     required LeaderWallet wallet,
     required NodeExposure exposure,
     required int hdIndex,
+    Chain? chain,
+    Net? net,
   }) async {
     final HDWallet subwallet = await getSubWallet(wallet, hdIndex, exposure);
     return Address(
@@ -82,8 +84,8 @@ class LeaderWalletService {
         walletId: wallet.id,
         hdIndex: hdIndex,
         exposure: exposure,
-        chain: pros.settings.chain,
-        net: pros.settings.net);
+        chain: chain ?? pros.settings.chain,
+        net: net ?? pros.settings.net);
   }
 
   Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async => SeedWallet(

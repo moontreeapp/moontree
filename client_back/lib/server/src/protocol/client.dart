@@ -8,18 +8,39 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'asset_metadata_class.dart' as _i3;
-import 'comm_balance_view.dart' as _i4;
-import 'dart:typed_data' as _i5;
+import 'comm_int.dart' as _i3;
+import 'asset_metadata_class.dart' as _i4;
+import 'comm_balance_view.dart' as _i5;
+import 'dart:typed_data' as _i6;
 import 'comm_transaction_details_view.dart'
-    as _i6;
-import 'comm_transaction_view.dart' as _i7;
+    as _i7;
+import 'comm_transaction_view.dart' as _i8;
 import 'comm_unsigned_transaction_result_class.dart'
-    as _i8;
-import 'comm_unsigned_transaction_request_class.dart'
     as _i9;
-import 'dart:io' as _i10;
-import 'protocol.dart' as _i11;
+import 'comm_unsigned_transaction_request_class.dart'
+    as _i10;
+import 'dart:io' as _i11;
+import 'protocol.dart' as _i12;
+
+class _EndpointAddresses extends _i1.EndpointRef {
+  _EndpointAddresses(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'addresses';
+
+  _i2.Future<_i3.CommInt> nextEmptyIndex({
+    required String chainName,
+    required String xpubkey,
+  }) =>
+      caller.callServerEndpoint<_i3.CommInt>(
+        'addresses',
+        'nextEmptyIndex',
+        {
+          'chainName': chainName,
+          'xpubkey': xpubkey,
+        },
+      );
+}
 
 class _EndpointMetadata extends _i1.EndpointRef {
   _EndpointMetadata(_i1.EndpointCaller caller) : super(caller);
@@ -34,12 +55,12 @@ class _EndpointMetadata extends _i1.EndpointRef {
   /// metadata, so we're set up to easily pivot to that scenario. Furthermore,
   /// most the other endpoints return lists so the front end is used to it.
   /// Of course maybe we'd just make a different endpoint for history, but idk.
-  _i2.Future<List<_i3.AssetMetadata>> get({
+  _i2.Future<List<_i4.AssetMetadata>> get({
     required String symbol,
     required String chainName,
     int? height,
   }) =>
-      caller.callServerEndpoint<List<_i3.AssetMetadata>>(
+      caller.callServerEndpoint<List<_i4.AssetMetadata>>(
         'metadata',
         'get',
         {
@@ -56,12 +77,12 @@ class _EndpointBalances extends _i1.EndpointRef {
   @override
   String get name => 'balances';
 
-  _i2.Future<List<_i4.BalanceView>> get({
+  _i2.Future<List<_i5.BalanceView>> get({
     required String chainName,
     required List<String> xpubkeys,
-    required List<_i5.ByteData> h160s,
+    required List<_i6.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i4.BalanceView>>(
+      caller.callServerEndpoint<List<_i5.BalanceView>>(
         'balances',
         'get',
         {
@@ -160,11 +181,11 @@ class _EndpointTransactionDetails extends _i1.EndpointRef {
   @override
   String get name => 'transactionDetails';
 
-  _i2.Future<_i6.TransactionDetailsView> get({
-    required _i5.ByteData hash,
+  _i2.Future<_i7.TransactionDetailsView> get({
+    required _i6.ByteData hash,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i6.TransactionDetailsView>(
+      caller.callServerEndpoint<_i7.TransactionDetailsView>(
         'transactionDetails',
         'get',
         {
@@ -180,14 +201,14 @@ class _EndpointTransactions extends _i1.EndpointRef {
   @override
   String get name => 'transactions';
 
-  _i2.Future<List<_i7.TransactionView>> get({
+  _i2.Future<List<_i8.TransactionView>> get({
     String? symbol,
     int? backFromHeight,
     required String chainName,
     required List<String> xpubkeys,
-    required List<_i5.ByteData> h160s,
+    required List<_i6.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i7.TransactionView>>(
+      caller.callServerEndpoint<List<_i8.TransactionView>>(
         'transactions',
         'get',
         {
@@ -206,11 +227,11 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
   @override
   String get name => 'unsignedTransaction';
 
-  _i2.Future<_i8.UnsignedTransactionResult> generateUnsignedTransaction({
-    required _i9.UnsignedTransactionRequest request,
+  _i2.Future<_i9.UnsignedTransactionResult> generateUnsignedTransaction({
+    required _i10.UnsignedTransactionRequest request,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i8.UnsignedTransactionResult>(
+      caller.callServerEndpoint<_i9.UnsignedTransactionResult>(
         'unsignedTransaction',
         'generateUnsignedTransaction',
         {
@@ -223,14 +244,15 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i10.SecurityContext? context,
+    _i11.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i11.Protocol(),
+          _i12.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {
+    addresses = _EndpointAddresses(this);
     metadata = _EndpointMetadata(this);
     balances = _EndpointBalances(this);
     consent = _EndpointConsent(this);
@@ -242,6 +264,8 @@ class Client extends _i1.ServerpodClient {
     transactions = _EndpointTransactions(this);
     unsignedTransaction = _EndpointUnsignedTransaction(this);
   }
+
+  late final _EndpointAddresses addresses;
 
   late final _EndpointMetadata metadata;
 
@@ -265,6 +289,7 @@ class Client extends _i1.ServerpodClient {
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
+        'addresses': addresses,
         'metadata': metadata,
         'balances': balances,
         'consent': consent,

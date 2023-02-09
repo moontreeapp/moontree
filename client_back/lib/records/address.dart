@@ -68,4 +68,14 @@ class Address with EquatableMixin {
 
   static String key(String scripthash, Chain chain, Net net) =>
       '$scripthash:${ChainNet(chain, net).key}';
+
+  factory Address.empty() => Address(
+        scripthash: '',
+        address: '',
+        walletId: '',
+        hdIndex: 0,
+        exposure: NodeExposure.external,
+        net: Net.test,
+        chain: Chain.none,
+      );
 }

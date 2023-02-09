@@ -226,27 +226,37 @@ extension WalletMayHaveRoots on Wallet {
 
 extension LeaderWalletHasTwoRoots on LeaderWallet {
   Future<List<String>> get roots async => [
-        SeedWallet(
-          await seed,
-          pros.settings.chain,
-          pros.settings.net,
-        )
-            .wallet
-            .derivePath(
-                // "m/44'/175'/0'/0"
-                getDerivationPath(
-                    exposure: NodeExposure.external, net: pros.settings.net))
-            .base58!,
-        SeedWallet(
-          await seed,
-          pros.settings.chain,
-          pros.settings.net,
-        )
-            .wallet
-            .derivePath(
-                //"m/44'/175'/0'/1"
-                getDerivationPath(
-                    exposure: NodeExposure.internal, net: pros.settings.net))
-            .base58!
+        await externalRoot,
+        await internalRoot,
       ];
+
+  Future<String> get externalRoot async => SeedWallet(
+        await seed,
+        pros.settings.chain,
+        pros.settings.net,
+      )
+          .wallet
+          .derivePath(
+            // "m/44'/175'/0'/0"
+            getDerivationPath(
+              exposure: NodeExposure.external,
+              net: pros.settings.net,
+            ),
+          )
+          .base58!;
+
+  Future<String> get internalRoot async => SeedWallet(
+        await seed,
+        pros.settings.chain,
+        pros.settings.net,
+      )
+          .wallet
+          .derivePath(
+            //"m/44'/175'/0'/1"
+            getDerivationPath(
+              exposure: NodeExposure.internal,
+              net: pros.settings.net,
+            ),
+          )
+          .base58!;
 }

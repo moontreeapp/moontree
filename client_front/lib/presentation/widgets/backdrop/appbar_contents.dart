@@ -97,13 +97,40 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
           onTap: () async {
             if (services.developer.developerMode) {
               //await setupSubscription(wallet: Current.wallet);
-              components.cubits.loadingViewCubit
-                  .set(status: LoadingStatus.busy);
+              //components.cubits.loadingViewCubit
+              //    .set(status: LoadingStatus.busy);
               //Future.delayed(Duration(seconds: 3), logout);
-              for (final x in pros.cache.records) {
-                print(x);
-              }
+              //for (final x in pros.cache.records) {
+              //  print(x);
+              //}
               //print(await (Current.wallet as LeaderWallet).roots);
+              for (final x in [
+                // keep
+                //pros.ciphers,
+                //pros.passwords,
+                //pros.settings,
+                //pros.wallets,
+                //pros.cache,
+                //pros.notes,
+                //pros.blocks,
+
+                // might keep
+                //pros.statuses,
+                //pros.rates,
+                //pros.balances,
+                //pros.securities,
+
+                // might throw away
+                //pros.assets,
+                //pros.metadatas,
+                //pros.addresses,
+                pros.unspents,
+                pros.transactions,
+                pros.vins,
+                pros.vouts,
+              ]) {
+                print((x as dynamic).records.length);
+              }
             }
           },
           child: appBar,

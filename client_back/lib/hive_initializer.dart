@@ -136,20 +136,20 @@ class HiveInitializer {
     }
     if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
         .contains(step)) {
-      pros.unspents.setSource(HiveSource<Unspent>('unspents'));
-      pros.addresses.setSource(HiveSource<Address>('addresses'));
+      //pros.unspents.setSource(HiveSource<Unspent>('unspents'));
+      //pros.addresses.setSource(HiveSource<Address>('addresses'));
       pros.balances.setSource(HiveSource<Balance>('balances'));
       pros.blocks.setSource(HiveSource<Block>('blocks'));
-      pros.assets.setSource(HiveSource<Asset>('assets'));
-      pros.metadatas.setSource(HiveSource<Metadata>('metadatas'));
+      //pros.assets.setSource(HiveSource<Asset>('assets'));
+      //pros.metadatas.setSource(HiveSource<Metadata>('metadatas'));
       pros.notes.setSource(HiveSource<Note>('notes'));
       pros.securities.setSource(HiveSource<Security>(
         'securities',
         defaults: SecurityProclaim.defaults,
       ));
-      pros.transactions.setSource(HiveSource<Transaction>('transactions'));
-      pros.vins.setSource(HiveSource<Vin>('vins'));
-      pros.vouts.setSource(HiveSource<Vout>('vouts'));
+      //pros.transactions.setSource(HiveSource<Transaction>('transactions'));
+      //pros.vins.setSource(HiveSource<Vin>('vins'));
+      //pros.vouts.setSource(HiveSource<Vout>('vouts'));
       pros.statuses.setSource(HiveSource<Status>('statuses'));
     }
   }
