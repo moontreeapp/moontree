@@ -15,5 +15,6 @@ class GlobalCubits {
   final TransactionViewCubit transactionViewCubit = TransactionViewCubit();
   final HoldingsViewCubit holdingsViewCubit = HoldingsViewCubit();
   final LoadingViewCubit loadingViewCubit = LoadingViewCubit();
+  final ReceiveViewCubit receiveViewCubit = ReceiveViewCubit();
   GlobalCubits();
 }

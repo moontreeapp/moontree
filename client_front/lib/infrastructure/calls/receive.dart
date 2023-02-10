@@ -33,15 +33,20 @@ class ReceiveCall extends ServerCall {
           .nextEmptyIndex(chainName: chain.name, xpubkey: root);
 
   Future<CommInt> call() async {
-    final CommInt index = mockFlag
+    late CommInt index;
+    try {
+      index = mockFlag
 
-        /// MOCK SERVER
-        ? await Future.delayed(Duration(seconds: 1), spoof)
+          /// MOCK SERVER
+          ? await Future.delayed(Duration(seconds: 1), spoof)
 
-        /// SERVER
-        : await emptyAddressBy(
-            chain: ChainNet(chain, net).chaindata,
-            root: await wallet.externalRoot);
+          /// SERVER
+          : await emptyAddressBy(
+              chain: ChainNet(chain, net).chaindata,
+              root: await wallet.externalRoot);
+    } catch (e) {
+      index = CommInt(error: 'unable to contact server', value: -1);
+    }
 
     if (index.error != null) {
       // handle

@@ -37,8 +37,7 @@ class ReceiveViewCubit extends Cubit<ReceiveViewState> with SetCubitMixin {
   }
 
   Future<void> setAddress(
-    Wallet wallet,
-    ChainNet chainNet, {
+    Wallet wallet, {
     bool force = false,
   }) async {
     if (force || state.address == null) {
@@ -53,6 +52,8 @@ class ReceiveViewCubit extends Cubit<ReceiveViewState> with SetCubitMixin {
       );
     }
   }
+
+  String get address => state.address?.address ?? 'generating...';
 
   void clearCache() => set(address: null);
 }

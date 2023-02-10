@@ -1,4 +1,5 @@
 import 'package:client_back/client_back.dart';
+import 'package:collection/collection.dart';
 
 class ReceiveCache {
   /// accepts a list of BalanceView objects and saves them as balances in cache
@@ -24,8 +25,8 @@ class ReceiveCache {
     required Wallet wallet,
     required Chain chain,
     required Net net,
-  }) =>
+  }) => // addresses concept needs to change.
       pros.addresses.byWalletExposureChainNet
           .getAll(wallet.id, NodeExposure.external, chain, net)
-          .first;
+          .firstOrNull;
 }
