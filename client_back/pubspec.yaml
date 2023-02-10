@@ -25,7 +25,7 @@ dependencies:
   serverpod_client: ^0.9.20
   electrum_adapter: ^2.0.4
   proclaim: ^4.0.3
-  wallet_utils: ^3.0.10
+  wallet_utils: ^3.0.11
   moontree_utils: ^1.0.25
   date_format: ^2.0.7
   bip39: ^1.0.6
