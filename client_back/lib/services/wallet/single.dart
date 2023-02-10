@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:client_back/utilities/address.dart';
+import 'package:wallet_utils/src/utilities/address.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show KPWallet, NetworkType, ECPair;

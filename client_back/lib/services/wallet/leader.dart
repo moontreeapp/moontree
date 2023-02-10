@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:client_back/utilities/address.dart';
+import 'package:wallet_utils/src/utilities/address.dart';
 import 'package:equatable/equatable.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:moontree_utils/moontree_utils.dart';
