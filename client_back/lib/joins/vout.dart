@@ -21,8 +21,12 @@ extension VoutHasOneSecurity on Vout {
 }
 
 extension VoutBelongsToAddress on Vout {
-  Address? get address =>
-      toAddress != null ? pros.addresses.byAddress.getOne(toAddress!) : null;
+  Address? get address => toAddress != null
+      ? pros.addresses.byAddress(
+          toAddress!,
+          unspent?.chain ?? pros.settings.chain,
+          unspent?.net ?? pros.settings.net)
+      : null;
   // no address - we don't own this vout (we sent it to someone else)
 }
 

@@ -11,8 +11,6 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
 import 'package:bip32/bip32.dart';
-import 'package:client_front/application/cubits.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 
 Future<String> Function(String id) get getEntropy => _getSecret;
 Future<void> Function(Secret secret) get saveSecret => _saveSecret;
@@ -77,7 +75,7 @@ Future<void> switchWallet(String walletId, BuildContext context) async {
   streams.app.fling.add(false);
   streams.app.setting.add(null);
   final Wallet? currentWallet = pros.wallets.primaryIndex.getOne(walletId);
-  if (currentWallet is LeaderWallet && currentWallet.addressesFor().isEmpty) {
+  if (currentWallet is LeaderWallet && currentWallet.addresses.isEmpty) {
     await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
   }
 }

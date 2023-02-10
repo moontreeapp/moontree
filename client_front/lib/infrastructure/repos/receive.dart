@@ -15,8 +15,6 @@ extension GenerateAddressThruDeriviation on LeaderWallet {
         wallet: this,
         exposure: NodeExposure.external,
         hdIndex: index,
-        chain: chain,
-        net: net,
       );
 }
 

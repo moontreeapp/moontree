@@ -1,7 +1,9 @@
 // ignore_for_file: omit_local_variable_types
 
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:client_back/utilities/address.dart';
 import 'package:equatable/equatable.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:moontree_utils/moontree_utils.dart';
@@ -74,18 +76,17 @@ class LeaderWalletService {
     required LeaderWallet wallet,
     required NodeExposure exposure,
     required int hdIndex,
-    Chain? chain,
-    Net? net,
   }) async {
     final HDWallet subwallet = await getSubWallet(wallet, hdIndex, exposure);
+    print('subwallet.pubKey');
+    print(subwallet.pubKey);
+    print(utf8.decode(hash160(subwallet.pubKey)));
     return Address(
         scripthash: subwallet.scripthash,
-        address: subwallet.address!,
+        h160: utf8.decode(hash160(subwallet.pubKey)),
         walletId: wallet.id,
-        hdIndex: hdIndex,
-        exposure: exposure,
-        chain: chain ?? pros.settings.chain,
-        net: net ?? pros.settings.net);
+        index: hdIndex,
+        exposure: exposure);
   }
 
   Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async => SeedWallet(
@@ -103,7 +104,7 @@ class LeaderWalletService {
 
   Future<HDWallet> getSubWalletFromAddress(Address address) async =>
       (await getSeedWallet(address.wallet! as LeaderWallet))
-          .subwallet(address.hdIndex, exposure: address.exposure);
+          .subwallet(address.index, exposure: address.exposure);
 
   Future<LeaderWallet> generate() async {
     final CipherUpdate cipherUpdate = services.cipher.currentCipherUpdate;

@@ -1,5 +1,8 @@
+import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:moontree_utils/extensions/string.dart';
+import 'package:client_back/utilities/address.dart';
 import 'package:client_back/records/types/chain.dart';
 
 import '_type_id.dart';
@@ -14,68 +17,68 @@ class Address with EquatableMixin {
   final String scripthash;
 
   @HiveField(1)
-  final String address;
+  final String h160;
 
   @HiveField(2)
   final String walletId;
 
   @HiveField(3)
-  final int hdIndex;
+  final int index;
 
   @HiveField(4)
   final NodeExposure exposure;
 
-  @HiveField(5)
-  final Net net;
-
-  @HiveField(6, defaultValue: Chain.ravencoin)
-  final Chain chain;
-
   const Address({
-    required this.scripthash,
-    required this.address,
+    this.scripthash = '',
+    required this.h160,
     required this.walletId,
-    required this.hdIndex,
     required this.exposure,
-    required this.net,
-    required this.chain,
+    required this.index,
   });
 
   @override
   List<Object> get props => <Object>[
         scripthash,
-        address,
+        h160,
         walletId,
-        hdIndex,
         exposure,
-        net,
-        chain,
+        index,
       ];
 
   @override
-  String toString() =>
-      'Address(scripthash: $scripthash, address: $address, walletId: $walletId, '
-      'hdIndex: $hdIndex, exposure: $exposure, chain: $chain, net: $net)';
+  String toString() => 'Address(scripthash: $scripthash, h160: $h160, '
+      'walletId: $walletId,  exposure: $exposure, index: $index)';
 
   int compareTo(Address other) {
     if (exposure != other.exposure) {
       return exposure == NodeExposure.internal ? -1 : 1;
     }
-    return hdIndex < other.hdIndex ? -1 : 1;
+    return index < other.index ? -1 : 1;
   }
 
-  String get id => key(scripthash, chain, net);
+  String get id => key(walletId, exposure, index);
+  static String key(String walletId, NodeExposure exposure, int index) =>
+      '$walletId:$exposure:$index';
 
-  static String key(String scripthash, Chain chain, Net net) =>
-      '$scripthash:${ChainNet(chain, net).key}';
+  String get walletExposureId => walletExposureKey(walletId, exposure);
+  static String walletExposureKey(String walletId, NodeExposure exposure) =>
+      '$walletId:$exposure';
 
   factory Address.empty() => Address(
         scripthash: '',
-        address: '',
+        h160: '',
         walletId: '',
-        hdIndex: 0,
+        index: 0,
         exposure: NodeExposure.external,
-        net: Net.test,
-        chain: Chain.none,
       );
+
+  Uint8List get h160AsUint8List => h160.hexToUint8List;
+  ByteData get h160AsByteData => h160AsUint8List.buffer.asByteData();
+
+  /// returns the address representation according to chain and net
+  String address(Chain chain, Net net, {bool isP2sh = false}) => h160ToAddress(
+      h160: h160AsUint8List,
+      addressType: isP2sh
+          ? ChainNet(chain, net).chaindata.p2shPrefix
+          : ChainNet(chain, net).chaindata.p2pkhPrefix);
 }

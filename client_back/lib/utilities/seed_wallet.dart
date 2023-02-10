@@ -15,8 +15,10 @@ class SeedWallet {
   HDWallet get wallet =>
       HDWallet.fromSeed(seed, network: ChainNet(chain, net).network);
 
-  HDWallet subwallet(int hdIndex,
-          {NodeExposure exposure = NodeExposure.external}) =>
+  HDWallet subwallet(
+    int hdIndex, {
+    NodeExposure exposure = NodeExposure.external,
+  }) =>
       wallet.derivePath(getDerivationPath(
         index: hdIndex,
         exposure: exposure,

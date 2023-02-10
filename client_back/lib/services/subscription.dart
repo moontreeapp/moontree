@@ -92,7 +92,7 @@ class SubscriptionService {
     if (wallet is LeaderWallet) {
       roots = await (wallet as LeaderWallet).roots;
     } else if (wallet is SingleWallet) {
-      h160s = wallet.addresses.map((e) => e.h160String).toList();
+      h160s = wallet.addresses.map((e) => e.h160).toList();
     }
     final subscriptionVoid =
 

@@ -9,14 +9,11 @@ extension AddressBelongsToWallet on Address {
 }
 
 extension AddressHasManyVouts on Address {
-  List<Vout> get vouts => pros.vouts.byAddress.getAll(address);
+  List<Vout> get vouts => pros.vouts.byAddress
+      .getAll(address(pros.settings.chain, pros.settings.net));
 }
 
 extension AddressHasManyUnspents on Address {
-  List<Unspent> get unspents => pros.unspents.byAddress.getAll(address);
-}
-
-extension AddressHasAnH160Representation on Address {
-  ByteData get h160 => address.addressToH160;
-  String get h160String => address.addressToH160String;
+  List<Unspent> get unspents => pros.unspents.byAddress
+      .getAll(address(pros.settings.chain, pros.settings.net));
 }

@@ -26,7 +26,7 @@ class ReceiveCache {
     required Chain chain,
     required Net net,
   }) => // addresses concept needs to change.
-      pros.addresses.byWalletExposureChainNet
-          .getAll(wallet.id, NodeExposure.external, chain, net)
+      pros.addresses.byWalletExposure
+          .getAll(wallet.id, NodeExposure.external)
           .firstOrNull;
 }

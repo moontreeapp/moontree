@@ -18,33 +18,27 @@ class AddressAdapter extends TypeAdapter<Address> {
     };
     return Address(
       scripthash: fields[0] as String,
-      address: fields[1] as String,
+      h160: fields[1] as String,
       walletId: fields[2] as String,
-      hdIndex: fields[3] as int,
       exposure: fields[4] as NodeExposure,
-      net: fields[5] as Net,
-      chain: fields[6] == null ? Chain.ravencoin : fields[6] as Chain,
+      index: fields[3] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Address obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.scripthash)
       ..writeByte(1)
-      ..write(obj.address)
+      ..write(obj.h160)
       ..writeByte(2)
       ..write(obj.walletId)
       ..writeByte(3)
-      ..write(obj.hdIndex)
+      ..write(obj.index)
       ..writeByte(4)
-      ..write(obj.exposure)
-      ..writeByte(5)
-      ..write(obj.net)
-      ..writeByte(6)
-      ..write(obj.chain);
+      ..write(obj.exposure);
   }
 
   @override

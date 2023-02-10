@@ -127,7 +127,7 @@ class WalletService {
       final SeedWallet seedWallet =
           await services.wallet.leader.getSeedWallet(wallet);
       final HDWallet hdWallet =
-          seedWallet.subwallet(address.hdIndex, exposure: address.exposure);
+          seedWallet.subwallet(address.index, exposure: address.exposure);
       return hdWallet.keyPair;
     } else if (wallet is SingleWallet) {
       //final KPWallet kpWallet = services.wallet.single.getKPWallet(wallet);
@@ -144,7 +144,10 @@ class WalletService {
     NodeExposure exposure, {
     String? address,
   }) =>
-      address ?? wallet.minimumEmptyAddress(exposure).address; // all
+      address ??
+      wallet
+          .minimumEmptyAddress(exposure)
+          .address(pros.settings.chain, pros.settings.net); // all
   //address ?? wallet.firstEmptyInGap(exposure).address; // gap only
   /// actaully we should fill all the gaps first according to bip44 spec
 

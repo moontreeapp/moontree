@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:client_back/utilities/address.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show KPWallet, NetworkType, ECPair;
@@ -9,12 +12,10 @@ class SingleWalletService {
     final KPWallet kpWallet = await wallet.kpWallet; //getKPWallet(wallet);
     return Address(
         scripthash: kpWallet.scripthash,
-        address: kpWallet.address!,
+        h160: utf8.decode(hash160(kpWallet.pubKey!)),
         walletId: wallet.id,
-        hdIndex: 0,
-        exposure: NodeExposure.external,
-        chain: pros.settings.chain,
-        net: pros.settings.net);
+        index: 0,
+        exposure: NodeExposure.external);
   }
 
   bool gapSatisfied(SingleWallet wallet) => wallet.addresses.isNotEmpty;

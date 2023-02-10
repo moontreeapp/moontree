@@ -81,7 +81,8 @@ class _WalletViewState extends State<WalletView> {
       address ??= wallet is LeaderWallet
           ? services.wallet
               .getEmptyAddress(wallet as LeaderWallet, NodeExposure.external)
-          : wallet.addresses.first.address;
+          : wallet.addresses.first
+              .address(pros.settings.chain, pros.settings.net);
       //services.wallet.single.getKPWallet(wallet as SingleWallet).address;
     }
     disabled = Current.holdings.isEmpty;
@@ -199,7 +200,7 @@ class _WalletViewState extends State<WalletView> {
   List<Widget> addressesView() => wallet is LeaderWallet
       ? <Widget>[
           for (Address walletAddress
-              in wallet.addressesFor()
+              in wallet.addresses
                 ..sort((Address a, Address b) => a.compareTo(b)))
             ListTile(
               dense: true,
@@ -221,7 +222,8 @@ class _WalletViewState extends State<WalletView> {
                 //    transactionRecord.toAddress ==
                 //        walletAddress.address)
                 //.toList();
-                address = walletAddress.address;
+                address = walletAddress.address(
+                    pros.settings.chain, pros.settings.net);
                 //privateKey = (await services.wallet.leader
                 //        .getSubWalletFromAddress(walletAddress))
                 //    .wif; // .wif is the format that raven-Qt-testnet expects
@@ -232,7 +234,7 @@ class _WalletViewState extends State<WalletView> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
-                        'Index: ${walletAddress.hdIndex}',
+                        'Index: ${walletAddress.index}',
                       ),
                       Text(
                         walletAddress.exposure.name.toTitleCase(),
@@ -255,9 +257,12 @@ class _WalletViewState extends State<WalletView> {
                   : components.icons.income(context),
               title: FittedBox(
                   fit: BoxFit.fitWidth,
-                  child: Text(walletAddress.address,
+                  child: Text(
+                      walletAddress.address(
+                          pros.settings.chain, pros.settings.net),
                       style: pros.vouts.byAddress
-                              .getAll(walletAddress.address)
+                              .getAll(walletAddress.address(
+                                  pros.settings.chain, pros.settings.net))
                               .isNotEmpty
                           ? Theme.of(context)
                               .textTheme

@@ -5,20 +5,20 @@ import 'package:client_back/client_back.dart';
 part 'address.keys.dart';
 
 class AddressProclaim extends Proclaim<_IdKey, Address> {
-  late IndexMultiple<_AddressKey, Address> byAddress;
+  late IndexMultiple<_H160Key, Address> byH160;
   late IndexMultiple<_ScripthashKey, Address> byScripthash;
   late IndexMultiple<_WalletKey, Address> byWallet;
-  late IndexMultiple<_WalletChainNetKey, Address> byWalletChainNet;
-  late IndexMultiple<_WalletExposureChainNetKey, Address>
-      byWalletExposureChainNet;
+  late IndexMultiple<_WalletExposureKey, Address> byWalletExposure;
 
   AddressProclaim() : super(_IdKey()) {
-    byAddress = addIndexMultiple('byAddress', _AddressKey());
+    byH160 = addIndexMultiple('byH160', _H160Key());
     byScripthash = addIndexMultiple('byScripthash', _ScripthashKey());
     byWallet = addIndexMultiple('byWallet', _WalletKey());
-    byWalletChainNet =
-        addIndexMultiple('byWalletChainNet', _WalletChainNetKey());
-    byWalletExposureChainNet = addIndexMultiple(
-        'byWalletExposureChainNet', _WalletExposureChainNetKey());
+    byWalletExposure =
+        addIndexMultiple('byWalletExposure', _WalletExposureKey());
   }
+
+  /// this is slower because it can't be precomputed
+  Address? byAddress(String address, Chain chain, Net net) =>
+      records.where((e) => e.address(chain, net) == address).firstOrNull;
 }

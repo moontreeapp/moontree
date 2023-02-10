@@ -341,8 +341,10 @@ class TransactionService {
     //if (!services.download.history.transactionsDownloaded()) {
     //  return <TransactionRecord>[];
     //}
-    final Set<String> givenAddresses =
-        wallet.addressesFor().map((Address address) => address.address).toSet();
+    final Set<String> givenAddresses = wallet.addresses
+        .map((Address address) =>
+            address.address(pros.settings.chain, pros.settings.net))
+        .toSet();
     final List<TransactionRecord> transactionRecords = <TransactionRecord>[];
     final Security currentCrypto = pros.securities.currentCoin;
 

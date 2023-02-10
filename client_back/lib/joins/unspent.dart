@@ -18,7 +18,7 @@ extension UnspentHasOneSecurity on Unspent {
 }
 
 extension UnspentBelongsToAddress on Unspent {
-  Address? get address => pros.addresses.byAddress.getOne(addressId);
+  Address? get address => pros.addresses.byAddress(addressId, chain, net);
 }
 
 extension UnspentBelongsToWallet on Unspent {

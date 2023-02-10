@@ -86,10 +86,10 @@ class Vout with EquatableMixin, ToStringMixin {
       type: type ?? 'pubkeyhash',
       coinValue: coinValue ?? unspent.value,
       toAddress: toAddress ??
-          unspent.address?.address ??
-          pros.addresses.primaryIndex
-              .getOne(unspent.scripthash, unspent.chain, unspent.net)
-              ?.address,
+          unspent.address?.address(unspent.chain, unspent.net) ??
+          pros.addresses.byScripthash
+              .getOne(unspent.scripthash)
+              ?.address(unspent.chain, unspent.net),
       assetValue: assetValue,
       lockingScript: lockingScript,
       memo: memo,
