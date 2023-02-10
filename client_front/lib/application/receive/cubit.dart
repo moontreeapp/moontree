@@ -50,9 +50,14 @@ class ReceiveViewCubit extends Cubit<ReceiveViewState> with SetCubitMixin {
     }
   }
 
-  String get address =>
-      state.address?.address(pros.settings.chain, pros.settings.net) ??
-      'generating...';
+  String get address {
+    try {
+      return state.address?.address(pros.settings.chain, pros.settings.net) ??
+          'generating...';
+    } catch (e) {
+      return 'generating...';
+    }
+  }
 
   void clearCache() => set(address: null);
 }

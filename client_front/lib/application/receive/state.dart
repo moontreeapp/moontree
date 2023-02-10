@@ -78,41 +78,16 @@ class ReceiveViewState extends CubitState {
     //String? fetchedNames,
     bool? isSubmitting,
   }) =>
-      ReceiveViewState.load(
-        state: this,
-        address: address,
-        //message: message,
-        //amount: amount,
-        //label: label,
-        //uri: uri,
-        //username: username,
-        //error: error,
-        //fetchedNames: fetchedNames,
-        isSubmitting: isSubmitting,
-      );
-
-  factory ReceiveViewState.load({
-    required ReceiveViewState state,
-    Address? address,
-    //String? message,
-    //double? amount,
-    //String? label,
-    //String? uri,
-    //String? username,
-    //String? error,
-    //String? fetchedNames,
-    bool? isSubmitting,
-  }) =>
       ReceiveViewState(
-        address: address ?? state.address,
-        //message: message ?? state.message,
-        //amount: amount ?? state.amount,
-        //label: label ?? state.label,
-        //uri: uri ?? state.uri,
-        //username: username ?? state.username,
-        //error: error ?? state.error,
-        //fetchedNames: fetchedNames ?? state.fetchedNames,
-        isSubmitting: isSubmitting ?? state.isSubmitting,
+        address: address ?? this.address,
+        //message: message ?? this.message,
+        //amount: amount ?? this.amount,
+        //label: label ?? this.label,
+        //uri: uri ?? this.uri,
+        //username: username ?? this.username,
+        //error: error ?? this.error,
+        //fetchedNames: fetchedNames ?? this.fetchedNames,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
       );
 
   /** uri functionality, unused, copied directly from old receive screen.

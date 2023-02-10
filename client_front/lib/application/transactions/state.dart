@@ -82,43 +82,18 @@ class TransactionsViewState extends CubitState {
     int? ranHeight,
     bool? isSubmitting,
   }) =>
-      TransactionsViewState.load(
-        state: this,
-        transactionViews: transactionViews,
-        metadataView: metadataView,
-        wallet: wallet,
-        security: security,
-        end: end,
-        ranWallet: ranWallet,
-        ranSecurity: ranSecurity,
-        ranHeight: ranHeight,
-        isSubmitting: isSubmitting,
-      );
-
-  factory TransactionsViewState.load({
-    required TransactionsViewState state,
-    List<TransactionView>? transactionViews,
-    AssetMetadata? metadataView,
-    Wallet? wallet,
-    Security? security,
-    bool? end,
-    Wallet? ranWallet,
-    Security? ranSecurity,
-    int? ranHeight,
-    bool? isSubmitting,
-  }) =>
       TransactionsViewState(
-        transactionViews: transactionViews ?? state.transactionViews,
-        metadataView: metadataView ?? state.metadataView,
-        wallet: wallet ?? state.wallet,
-        security: security ?? state.security,
-        end: end ?? state.end,
-        ranWallet: ranWallet ?? state.ranWallet,
-        ranSecurity: ranSecurity ?? state.ranSecurity,
-        ranHeight: ranHeight ?? state.ranHeight,
-        isSubmitting: isSubmitting ?? state.isSubmitting,
-        scrollObserver: state.scrollObserver,
-        currentTab: state.currentTab,
+        transactionViews: transactionViews ?? this.transactionViews,
+        metadataView: metadataView ?? this.metadataView,
+        wallet: wallet ?? this.wallet,
+        security: security ?? this.security,
+        end: end ?? this.end,
+        ranWallet: ranWallet ?? this.ranWallet,
+        ranSecurity: ranSecurity ?? this.ranSecurity,
+        ranHeight: ranHeight ?? this.ranHeight,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
+        scrollObserver: this.scrollObserver,
+        currentTab: this.currentTab,
       );
 
   int? get lowestHeight => transactionViews.isEmpty

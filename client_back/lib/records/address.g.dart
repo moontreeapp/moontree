@@ -18,7 +18,7 @@ class AddressAdapter extends TypeAdapter<Address> {
     };
     return Address(
       scripthash: fields[0] as String,
-      h160: fields[1] as String,
+      pubkey: fields[1] as String,
       walletId: fields[2] as String,
       exposure: fields[4] as NodeExposure,
       index: fields[3] as int,
@@ -32,7 +32,7 @@ class AddressAdapter extends TypeAdapter<Address> {
       ..writeByte(0)
       ..write(obj.scripthash)
       ..writeByte(1)
-      ..write(obj.h160)
+      ..write(obj.pubkey)
       ..writeByte(2)
       ..write(obj.walletId)
       ..writeByte(3)

@@ -53,38 +53,15 @@ class SimpleSendFormState extends CubitState {
     String? addressName,
     bool? isSubmitting,
   }) =>
-      SimpleSendFormState.load(
-        form: this,
-        security: security,
-        address: address,
-        amount: amount,
-        fee: fee,
-        memo: memo,
-        note: note,
-        addressName: addressName,
-        isSubmitting: isSubmitting,
-      );
-
-  factory SimpleSendFormState.load({
-    required SimpleSendFormState form,
-    Security? security,
-    String? address,
-    double? amount,
-    FeeRate? fee,
-    String? memo,
-    String? note,
-    String? addressName,
-    bool? isSubmitting,
-  }) =>
       SimpleSendFormState(
-        security: security ?? form.security,
-        address: address ?? form.address,
-        amount: amount ?? form.amount,
-        fee: fee ?? form.fee,
-        memo: memo ?? form.memo,
-        note: note ?? form.note,
-        addressName: addressName ?? form.addressName,
-        isSubmitting: isSubmitting ?? form.isSubmitting,
+        security: security ?? this.security,
+        address: address ?? this.address,
+        amount: amount ?? this.amount,
+        fee: fee ?? this.fee,
+        memo: memo ?? this.memo,
+        note: note ?? this.note,
+        addressName: addressName ?? this.addressName,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
       );
 
   String get fiatRepresentation {

@@ -27,31 +27,31 @@ class FixtureSet1 extends FixtureSet {
   Map<String, Address> get addresses => {
         '0': const Address(
             scripthash: '0',
-            h160: 'address 0 address',
+            pubkey: 'address 0 address',
             walletId: '0',
             index: 0,
             exposure: NodeExposure.internal),
         '1': const Address(
             scripthash: '1',
-            h160: 'address 1 address',
+            pubkey: 'address 1 address',
             walletId: '0',
             index: 1,
             exposure: NodeExposure.external),
         '2': const Address(
             scripthash: '2',
-            h160: 'address 2 address',
+            pubkey: 'address 2 address',
             walletId: '0',
             index: 2,
             exposure: NodeExposure.external),
         '3': const Address(
             scripthash: '3',
-            h160: 'address 3 address',
+            pubkey: 'address 3 address',
             walletId: '0',
             index: 3,
             exposure: NodeExposure.external),
         '100': const Address(
             scripthash: '100',
-            h160: 'address 1 address',
+            pubkey: 'address 1 address',
             walletId: '0',
             index: 3,
             exposure: NodeExposure.external),

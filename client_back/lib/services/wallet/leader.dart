@@ -1,6 +1,4 @@
 // ignore_for_file: omit_local_variable_types
-
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:wallet_utils/src/utilities/address.dart';
@@ -76,34 +74,51 @@ class LeaderWalletService {
     required LeaderWallet wallet,
     required NodeExposure exposure,
     required int hdIndex,
+    Chain? chain,
+    Net? net,
   }) async {
-    final HDWallet subwallet = await getSubWallet(wallet, hdIndex, exposure);
+    final HDWallet subwallet =
+        await getSubWallet(wallet, hdIndex, exposure, chain, net);
     print('subwallet.pubKey');
     print(subwallet.pubKey);
-    print(utf8.decode(hash160(subwallet.pubKey)));
+    print(hash160(subwallet.pubKey));
+    print(Address.addressFrom(hash160(subwallet.pubKey),
+        chain ?? pros.settings.chain, net ?? pros.settings.net));
     return Address(
         scripthash: subwallet.scripthash,
-        h160: utf8.decode(hash160(subwallet.pubKey)),
+        pubkey: subwallet.pubKey,
         walletId: wallet.id,
         index: hdIndex,
         exposure: exposure);
   }
 
-  Future<SeedWallet> getSeedWallet(LeaderWallet wallet) async => SeedWallet(
+  Future<SeedWallet> getSeedWallet(
+    LeaderWallet wallet, [
+    Chain? chain,
+    Net? net,
+  ]) async =>
+      SeedWallet(
         await wallet.seed,
-        pros.settings.chain,
-        pros.settings.net,
+        chain ?? pros.settings.chain,
+        net ?? pros.settings.net,
       );
 
   Future<HDWallet> getSubWallet(
     LeaderWallet wallet,
     int hdIndex,
-    NodeExposure exposure,
-  ) async =>
-      (await getSeedWallet(wallet)).subwallet(hdIndex, exposure: exposure);
+    NodeExposure exposure, [
+    Chain? chain,
+    Net? net,
+  ]) async =>
+      (await getSeedWallet(wallet, chain, net))
+          .subwallet(hdIndex, exposure: exposure);
 
-  Future<HDWallet> getSubWalletFromAddress(Address address) async =>
-      (await getSeedWallet(address.wallet! as LeaderWallet))
+  Future<HDWallet> getSubWalletFromAddress(
+    Address address, [
+    Chain? chain,
+    Net? net,
+  ]) async =>
+      (await getSeedWallet(address.wallet! as LeaderWallet, chain, net))
           .subwallet(address.index, exposure: address.exposure);
 
   Future<LeaderWallet> generate() async {

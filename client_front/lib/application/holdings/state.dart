@@ -49,28 +49,11 @@ class HoldingsViewState extends CubitState {
     ChainNet? ranChainNet,
     bool? isSubmitting,
   }) =>
-      HoldingsViewState.load(
-        state: this,
-        holdingsViews: holdingsViews,
-        assetHoldings: assetHoldings,
-        ranWallet: ranWallet,
-        ranChainNet: ranChainNet,
-        isSubmitting: isSubmitting,
-      );
-
-  factory HoldingsViewState.load({
-    required HoldingsViewState state,
-    List<BalanceView>? holdingsViews,
-    List<AssetHolding>? assetHoldings,
-    Wallet? ranWallet,
-    ChainNet? ranChainNet,
-    bool? isSubmitting,
-  }) =>
       HoldingsViewState(
-        holdingsViews: holdingsViews ?? state.holdingsViews,
-        assetHoldings: assetHoldings ?? state.assetHoldings,
-        ranWallet: ranWallet ?? state.ranWallet,
-        ranChainNet: ranChainNet ?? state.ranChainNet,
-        isSubmitting: isSubmitting ?? state.isSubmitting,
+        holdingsViews: holdingsViews ?? this.holdingsViews,
+        assetHoldings: assetHoldings ?? this.assetHoldings,
+        ranWallet: ranWallet ?? this.ranWallet,
+        ranChainNet: ranChainNet ?? this.ranChainNet,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
       );
 }

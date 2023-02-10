@@ -15,7 +15,13 @@ extension GenerateAddressThruDeriviation on LeaderWallet {
         wallet: this,
         exposure: NodeExposure.external,
         hdIndex: index,
+        chain: chain,
+        net: net,
       );
+}
+
+extension GenerateAddressThruConversion on SingleWallet {
+  Future<Address> get address async => services.wallet.single.toAddress(this);
 }
 
 class ReceiveRepo extends Repository<Address> {
@@ -33,13 +39,7 @@ class ReceiveRepo extends Repository<Address> {
   }
 
   @override
-  bool detectServerError(dynamic resultServer) => resultServer == null;
-
-  @override
   bool detectLocalError(dynamic resultLocal) => resultLocal == null;
-
-  @override
-  String extractError(dynamic resultServer) => 'unknown error';
 
   @override
   Future<Address?> fromServer() async {
@@ -50,24 +50,33 @@ class ReceiveRepo extends Repository<Address> {
         net: net,
       )();
       if (index.error != null) {
-        return null; // losing error infomation here..
+        return Address.empty().create(error: index.error);
       }
-      // otherwise convert to address...
       return (wallet as LeaderWallet).generateExternalAddress(
         index: index.value,
         chain: chain,
         net: net,
       );
-    } else {
-      // TODO: how should we access single wallet's address?
-      // return wallet.addresses.first;
-      return Address.empty();
     }
+    // not from server, but thats ok.
+    return (wallet as SingleWallet).address;
   }
 
   @override
-  Address? fromLocal() =>
-      ReceiveCache.get(wallet: wallet, chain: chain, net: net);
+  Future<Address?> fromLocal() async =>
+      ReceiveCache.get(wallet: wallet, chain: chain, net: net) ??
+      await generateLocally();
+
+  Future<Address>? generateLocally() async {
+    if (wallet is LeaderWallet) {
+      return await (wallet as LeaderWallet).generateExternalAddress(
+        index: 0,
+        chain: chain,
+        net: net,
+      );
+    }
+    return (wallet as SingleWallet).address;
+  }
 
   @override
   Future<void> save() async => ReceiveCache.put(

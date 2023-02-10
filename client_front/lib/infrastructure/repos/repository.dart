@@ -23,7 +23,13 @@ class Repository<T> {
       if (only) {
         return results;
       }
-      final resultLocal = fromLocal();
+      var resultLocal;
+      print(fromLocal.runtimeType);
+      if (fromLocal.runtimeType.toString().contains('Future<')) {
+        resultLocal = await fromLocal();
+      } else {
+        resultLocal = fromLocal();
+      }
       if (detectLocalError(resultLocal)) {
         errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
       } else {

@@ -39,23 +39,9 @@ class LoadingViewState extends CubitState {
   factory LoadingViewState.initial() =>
       LoadingViewState(status: LoadingStatus.none, isSubmitting: true);
 
-  LoadingViewState load({
-    LoadingStatus? status,
-    bool? isSubmitting,
-  }) =>
-      LoadingViewState.load(
-        state: this,
-        status: status,
-        isSubmitting: isSubmitting,
-      );
-
-  factory LoadingViewState.load({
-    required LoadingViewState state,
-    LoadingStatus? status,
-    bool? isSubmitting,
-  }) =>
+  LoadingViewState load({LoadingStatus? status, bool? isSubmitting}) =>
       LoadingViewState(
-        status: status ?? state.status,
-        isSubmitting: isSubmitting ?? state.isSubmitting,
+        status: status ?? this.status,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
       );
 }

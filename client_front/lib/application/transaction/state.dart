@@ -35,22 +35,9 @@ class TransactionViewState extends CubitState {
     ByteData? ranHash,
     bool? isSubmitting,
   }) =>
-      TransactionViewState.load(
-        state: this,
-        transactionView: transactionView,
-        ranHash: ranHash,
-        isSubmitting: isSubmitting,
-      );
-
-  factory TransactionViewState.load({
-    required TransactionViewState state,
-    TransactionDetailsView? transactionView,
-    ByteData? ranHash,
-    bool? isSubmitting,
-  }) =>
       TransactionViewState(
-        transactionView: transactionView ?? state.transactionView,
-        ranHash: ranHash ?? state.ranHash,
-        isSubmitting: isSubmitting ?? state.isSubmitting,
+        transactionView: transactionView ?? this.transactionView,
+        ranHash: ranHash ?? this.ranHash,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
       );
 }
