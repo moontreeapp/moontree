@@ -128,7 +128,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                   duration: const Duration(milliseconds: 1000),
                   alignment: Alignment.center,
                   decoration:
-                      BoxDecoration(borderRadius: shape, color: Colors.white),
+                      BoxDecoration(borderRadius: shape, color: Colors.red),
                   child: FadeTransition(
                       opacity: _fadeAnimation,
                       child:
