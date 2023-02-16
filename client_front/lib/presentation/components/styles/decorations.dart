@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 
 class DecorationComponents {
-  DecorationComponents();
+  const DecorationComponents();
 
   /// superceded by TextFieldFormatted widget which has this built in.
   InputDecoration textField(

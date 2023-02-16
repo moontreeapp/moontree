@@ -3,7 +3,8 @@ import 'package:client_back/client_back.dart';
 // ignore: unused_import
 import 'package:client_back/services/consent.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 Future<void> logout() async {
   pros.ciphers.clear();

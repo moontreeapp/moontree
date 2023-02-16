@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class ChosenBlockchain extends StatefulWidget {
   const ChosenBlockchain({Key? key}) : super(key: key);

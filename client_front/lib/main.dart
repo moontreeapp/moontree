@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
+import 'package:client_front/presentation/containers/layers/loading.dart';
+import 'package:client_front/presentation/containers/layers/tutorial.dart';
+import 'package:client_front/presentation/pagesv1/misc/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,28 +15,85 @@ import 'package:serverpod_flutter/serverpod_flutter.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:client_front/application/cubits.dart';
-import 'package:client_front/presentation/pages/pages.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/pagesv1/pages.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/calls/subscription.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_back/streams/streams.dart';
 import 'package:client_back/services/services.dart';
-import 'package:client_front/presentation/screens/screens.dart';
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp();
 //   print('Handling a background message ${message.messageId}');
 // }
 
+import 'package:beamer/beamer.dart';
+// ignore: implementation_imports
+import 'package:flutter_bloc/src/bloc_provider.dart'
+    show BlocProviderSingleChildWidget;
+
+import 'package:client_front/presentation/containers/bottom/modal.dart';
+import 'package:client_front/presentation/containers/bottom/navbar.dart';
+import 'package:client_front/presentation/containers/content/extra.dart';
+import 'package:client_front/presentation/containers/content/content.dart';
+//import 'package:client_front/presentation/containers/loading_layer.dart';
+import 'package:client_front/presentation/services/sailor.dart' show Sailor;
+import 'package:client_front/presentation/services/services.dart' as uiservices;
+
+/// our override to activate our custom back functionality
+Future<void> backButtonPressed() async {
+  /// edgecase: if at home screen, minimize app
+  if (Platform.isAndroid && components.cubits.title.state.title == 'Holdings') {
+    sendToBackChannel.invokeMethod('sendToBackground');
+  } else if (uiservices.screenflags.active) {
+    /// deactivate the back button in these edge cases...
+    // if loading sheet is up do nothing
+    // if system dialogue box is up navigator pop
+    // if full bottom sheet is up navigator pop
+    // if custom bottom modalsheet always in front is up navigator pop
+    // instead of pop we should do nothing. the context isn't available and
+    // some of these we want to do nothing anyway.
+    // Navigator.of(context).pop();
+  } else {
+    await uiservices.sailor.gobackTrigger();
+  }
+}
+
+const backButtonChannel = MethodChannel('backButtonChannel');
+const sendToBackChannel = MethodChannel('sendToBackChannel');
+
 Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   devFlags.addAll(flags ?? []);
   // Catch errors without crashing the app:
   WidgetsFlutterBinding.ensureInitialized();
 
+  // wet up back button listener
+  backButtonChannel.setMethodCallHandler((call) async {
+    if (call.method == "backButtonPressed") {
+      return backButtonPressed();
+    }
+  });
+
   // setup moontree server client for subscriptions
   await services.subscription.setupClient(FlutterConnectivityMonitor());
+
+  // setup system ui stuff
+  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
+  //    overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
+  SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  if (!Platform.isIOS) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: AppColors.androidSystemBar,
+    ));
+  }
 
   runApp(RavenMobileApp());
 
@@ -69,127 +129,99 @@ Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
 }
 
 class RavenMobileApp extends StatelessWidget {
+  RavenMobileApp({Key? key}) : super(key: key);
+
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     components.routes.mainContext = context;
-    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
-    //    overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
-    SystemChrome.setPreferredOrientations(<DeviceOrientation>[
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    if (!Platform.isIOS) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: AppColors.androidSystemBar,
-      ));
-    }
-    return MaterialApp(
+    uiservices.beamer.rootDelegate = BeamerDelegate(
+      //initialPath: Sailor.initialPath,
+      initialPath: '/splash',
+      navigatorObservers: <NavigatorObserver>[components.routes],
+      locationBuilder: RoutesLocationBuilder(
+        routes: {
+          '/splash': (context, state, data) => const Splash(),
+          Sailor.initialPath: (context, state, data) {
+            print(state.uri.toString());
+            print(data);
+            return const HomePage();
+          },
+        },
+      ),
+    );
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/splash',
-      // look up flutter view model for sub app structure.
-      routes: pages.routes,
+      routerDelegate: uiservices.beamer.rootDelegate,
+      routeInformationParser: BeamerParser(),
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
-      navigatorObservers: <NavigatorObserver>[components.routes],
-      builder: (BuildContext context, Widget? child) {
-        components.routes.scaffoldContext = context;
-        final MultiBlocProvider scaffold = MultiBlocProvider(
-          providers: [
-            /// transient cubits might be best implemented this way, but
-            /// when they originally were they still seemed global anyway:
-            //BlocProvider<TransactionsViewCubit>(
-            //    create: (BuildContext context) => TransactionsViewCubit()),
-            BlocProvider<SimpleSendFormCubit>(
-                create: (BuildContext context) =>
-                    components.cubits.simpleSendFormCubit),
-            BlocProvider<TransactionsViewCubit>(
-                create: (BuildContext context) =>
-                    components.cubits.transactionsViewCubit),
-            BlocProvider<TransactionViewCubit>(
-                create: (BuildContext context) =>
-                    components.cubits.transactionViewCubit),
-            BlocProvider<HoldingsViewCubit>(
-                create: (BuildContext context) =>
-                    components.cubits.holdingsViewCubit),
-            BlocProvider<LoadingViewCubit>(
-                create: (BuildContext context) =>
-                    components.cubits.loadingViewCubit),
-          ],
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: <Widget>[
-              Scaffold(
-                  backgroundColor: Platform.isIOS
-                      ? AppColors.primary
-                      : AppColors.androidSystemBar,
-                  appBar: const BackdropAppBar(),
-                  body: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: <Widget>[
-                        child!,
-                        // include LoadingLayer here if you don't want it to cover the app bar
-                        //const LoadingLayer(),
-                      ])),
-              // covers scrim
-              const LoadingLayer(),
-              const TutorialLayer(),
-            ],
-          ),
-        );
-        return GestureDetector(
-            onTap: () => streams.app.tap.add(null),
-            behavior: HitTestBehavior.translucent,
-            child: Platform.isIOS ? scaffold : SafeArea(child: scaffold));
-      },
     );
   }
 }
 
-//class MyCustomRoute<T> extends MaterialPageRoute<T> {
-//  MyCustomRoute(
-//      {required WidgetBuilder builder, required RouteSettings settings})
-//      : super(builder: builder, settings: settings);
-//
-//  @override
-//  Widget buildTransitions(BuildContext context, Animation<double> animation,
-//      Animation<double> secondaryAnimation, Widget child) {
-//    return child;
-//    // Fades between routes. (If you don't want any animation,
-//    // just return child.)
-//    //return new FadeTransition(opacity: animation, child: child);
-//  }
-//
-//  /*
-//  onGenerateRoute: (RouteSettings settings) {
-//        switch (settings.name) {
-//          case '/': return new MyCustomRoute(
-//            builder: (_) => new MyHomePage(),
-//            settings: settings,
-//          );
-//          case '/somewhere': return new MyCustomRoute(
-//            builder: (_) => new Somewhere(),
-//            settings: settings,
-//          );
-//        }
-//        assert(false);
-//      }
-//  */
-//}
-//
-//
-///*
-//Route _createRoute() {
-//  return PageRouteBuilder(
-//    pageBuilder: (context, animation, secondaryAnimation) => Page2(),
-//    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-//      return child;
-//    },
-//  );
-//}
-//And if you want to transition instantly, you can do this:
-//
-//transitionDuration: Duration(seconds: 0)
-//*/
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    uiservices.init(
+      height: MediaQuery.of(context).size.height,
+      mainContext: context,
+    );
+    components.routes.scaffoldContext = context;
+    final scaffold = Scaffold(
+      backgroundColor: AppColors.primary,
+      resizeToAvoidBottomInset: false,
+      body: MultiBlocProvider(
+        providers: providers,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: const <Widget>[
+            ContentScaffold(),
+            ContentExtra(),
+            BottomNavigationBarWidget(),
+            BottomModalSheetWidget(),
+            //LoadingLayer(),  /// must merge both implementations
+            LoadingLayer(),
+            TutorialLayer(),
+          ],
+        ),
+      ),
+    );
+    return GestureDetector(
+        onTap: () => streams.app.tap.add(null),
+        behavior: HitTestBehavior.translucent,
+        child: Platform.isIOS ? scaffold : SafeArea(child: scaffold));
+  }
+}
+
+List<BlocProviderSingleChildWidget> get providers => [
+      BlocProvider<SimpleSendFormCubit>(
+          create: (context) => components.cubits.simpleSendForm),
+      BlocProvider<TransactionsViewCubit>(
+          create: (context) => components.cubits.transactionsView),
+      BlocProvider<TransactionViewCubit>(
+          create: (context) => components.cubits.transactionView),
+      BlocProvider<HoldingsViewCubit>(
+          create: (context) => components.cubits.holdingsView),
+      BlocProvider<LoadingViewCubit>(
+          create: (context) => components.cubits.loadingView),
+      // v2
+      BlocProvider<TitleCubit>(create: (context) => components.cubits.title),
+      BlocProvider<BackContainerHeightCubit>(
+          create: (context) => components.cubits.backContainerHeight),
+      BlocProvider<FrontContainerHeightCubit>(
+          create: (context) => components.cubits.frontContainerHeight),
+      BlocProvider<NavbarHeightCubit>(
+          create: (context) => components.cubits.navbarHeight),
+      BlocProvider<NavbarSectionCubit>(
+          create: (context) => components.cubits.navbarSection),
+      BlocProvider<BottomModalSheetCubit>(
+          create: (context) => components.cubits.bottomModalSheet),
+      BlocProvider<LoadingViewCubitv2>(
+          create: (context) => components.cubits.loadingViewv2),
+      BlocProvider<ContentExtraCubit>(
+          create: (context) => components.cubits.contentExtra),
+    ];

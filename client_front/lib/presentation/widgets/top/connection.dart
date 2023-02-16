@@ -5,7 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/front/choices/blockchain_choice.dart'
     show produceBlockchainModal;

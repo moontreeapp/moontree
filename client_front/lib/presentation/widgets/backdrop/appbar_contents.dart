@@ -11,7 +11,8 @@ import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {

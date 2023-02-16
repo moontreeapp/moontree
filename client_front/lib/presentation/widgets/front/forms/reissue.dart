@@ -12,8 +12,11 @@ import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:wallet_utils/src/utilities/validation.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/maker.dart';
-import 'package:client_front/presentation/components/components.dart';
-import 'package:client_front/presentation/pages/misc/checkout.dart';
+import 'package:client_front/presentation/components/styles/styles.dart'
+    as styles;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+import 'package:client_front/presentation/pagesv1/misc/checkout.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_back/streams/reissue.dart';
 import 'package:client_front/domain/utils/transformers.dart';
@@ -234,7 +237,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
       textInputAction: TextInputAction.done,
       keyboardType: isRestricted ? TextInputType.none : null,
       inputFormatters: <TextInputFormatter>[MainAssetNameTextFormatter()],
-      decoration: components.styles.decorations.textField(
+      decoration: styles.decorations.textField(
         context,
         labelText: (isSub ? 'Sub ' : '') + presetToTitle[widget.preset]!,
         hintText: 'MOONTREE.COM',
@@ -295,7 +298,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
       controller: verifierController,
       textInputAction: TextInputAction.done,
       inputFormatters: <TextInputFormatter>[VerifierStringTextFormatter()],
-      decoration: components.styles.decorations.textField(
+      decoration: styles.decorations.textField(
         context,
         labelText: 'Verifier String',
         hintText: '((#KYC & #ACCREDITED) | #EXEMPT) & !#IRS',

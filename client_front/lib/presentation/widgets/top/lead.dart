@@ -7,7 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class PageLead extends StatefulWidget {
   const PageLead({Key? key}) : super(key: key);

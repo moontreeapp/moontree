@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/infrastructure/services/storage.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/alphacon.dart';
@@ -11,8 +12,8 @@ import 'package:client_front/presentation/widgets/assets/assets.dart' as assets;
 //import 'package:client_front/utils/identicon.dart';
 
 class IconComponents {
-  Map<IconCacheKey, Widget> cache = <IconCacheKey, Widget>{};
-
+  IconComponents();
+  final Map<IconCacheKey, Widget> cache = <IconCacheKey, Widget>{};
   Icon get back => const Icon(Icons.chevron_left_rounded, color: Colors.white);
 
   Icon get close => const Icon(Icons.close, color: Colors.white);
@@ -527,7 +528,7 @@ import 'package:client_front/widgets/other/circle_gradient.dart';
 }
 
 class IconCacheKey with EquatableMixin {
-  IconCacheKey({
+  const IconCacheKey({
     required this.asset,
     required this.assetType,
     required this.height,

@@ -3,6 +3,7 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 
 class RouteStack extends NavigatorObserver {
+  RouteStack();
   List<Route<dynamic>> routeStack = <Route<dynamic>>[];
   BuildContext? routeContext;
   BuildContext? scaffoldContext;

@@ -2,7 +2,7 @@
 cd client_front
 flutter test integration_test/test_create_to_send.dart -d emulator-5554
  */
-import 'package:client_front/presentation/screens/screens.dart';
+import 'package:client_front/presentation/containers/layers/tutorial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';

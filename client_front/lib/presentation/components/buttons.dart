@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intersperse/src/intersperse_extensions.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/styles/styles.dart'
+    as styles;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 
+@immutable
 class ButtonComponents {
+  const ButtonComponents();
   IconButton back(BuildContext context) => IconButton(
       icon: components.icons.back, onPressed: () => Navigator.pop(context));
 
@@ -62,8 +67,8 @@ class ButtonComponents {
                   : onPressed ?? () {})
               : disabledOnPressed ?? () {},
           style: invert
-              ? components.styles.buttons.bottom(context, invert: true)
-              : components.styles.buttons.bottom(context, disabled: !enabled),
+              ? styles.buttons.bottom(context, invert: true)
+              : styles.buttons.bottom(context, disabled: !enabled),
           child: Text(_labelDefault(label),
               style: enabled
                   ? invert
@@ -101,7 +106,7 @@ class ButtonComponents {
               : disabledOnPressed ?? () {},
           // style: components.styles.buttons
           //     .bottom(context, disabled: !enabled, soft: true),
-          style: components.styles.buttons.wordBottom(context),
+          style: styles.buttons.wordBottom(context),
           child: Text(_labelDefault(label),
               style: enabled
                   ? Theme.of(context).textTheme.softButton
@@ -136,8 +141,8 @@ class ButtonComponents {
           child: OutlinedButton(
             onPressed: enabled ? onPressed ?? () {} : () {},
             style: chosen
-                ? components.styles.buttons.word(context, chosen: true)
-                : components.styles.buttons.word(context),
+                ? styles.buttons.word(context, chosen: true)
+                : styles.buttons.word(context),
             child: FittedBox(
                 fit: BoxFit.fitWidth,
                 child: Text(

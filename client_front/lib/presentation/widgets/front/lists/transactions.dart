@@ -7,7 +7,8 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/records/types/transaction_view.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:client_back/services/transaction/transaction.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 

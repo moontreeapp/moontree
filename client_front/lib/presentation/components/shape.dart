@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ShapeComponents {
+  const ShapeComponents();
   BorderRadius get topRoundedBorder8 => const BorderRadius.only(
         topLeft: Radius.circular(8),
         topRight: Radius.circular(8),

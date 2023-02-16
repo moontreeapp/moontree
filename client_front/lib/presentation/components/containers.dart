@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/other/keyboard_delayed.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class ContainerComponents {
+  const ContainerComponents();
   Widget navBar(
     BuildContext context, {
     required Widget child,

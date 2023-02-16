@@ -6,10 +6,12 @@
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/widgets/widgets.dart';
 
 class PageComponents {
+  const PageComponents();
   Widget form(
     BuildContext context, {
     List<Widget>? boxedWidgets,

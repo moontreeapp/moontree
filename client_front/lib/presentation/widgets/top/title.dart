@@ -9,7 +9,8 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show generateWallet, switchWallet;
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:client_front/presentation/widgets/other/textfield.dart';
 import 'package:client_front/presentation/widgets/assets/icons.dart';

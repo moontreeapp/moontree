@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/widgets/widgets.dart';
 
 class LoadingComponents {
+  const LoadingComponents();
   Future<void> screen({
     BuildContext? context,
     String? message,

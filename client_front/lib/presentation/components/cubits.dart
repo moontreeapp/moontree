@@ -10,11 +10,24 @@
 import 'package:client_front/application/cubits.dart';
 
 class GlobalCubits {
-  final TransactionsViewCubit transactionsViewCubit = TransactionsViewCubit();
-  final SimpleSendFormCubit simpleSendFormCubit = SimpleSendFormCubit();
-  final TransactionViewCubit transactionViewCubit = TransactionViewCubit();
-  final HoldingsViewCubit holdingsViewCubit = HoldingsViewCubit();
-  final LoadingViewCubit loadingViewCubit = LoadingViewCubit();
-  final ReceiveViewCubit receiveViewCubit = ReceiveViewCubit();
+  final TransactionsViewCubit transactionsView = TransactionsViewCubit();
+  final SimpleSendFormCubit simpleSendForm = SimpleSendFormCubit();
+  final TransactionViewCubit transactionView = TransactionViewCubit();
+  final HoldingsViewCubit holdingsView = HoldingsViewCubit();
+  final LoadingViewCubit loadingView = LoadingViewCubit();
+  final ReceiveViewCubit receiveView = ReceiveViewCubit();
+
+  // uiv2
+  final TitleCubit title = TitleCubit();
+  final BackContainerHeightCubit backContainerHeight =
+      BackContainerHeightCubit();
+  final FrontContainerHeightCubit frontContainerHeight =
+      FrontContainerHeightCubit();
+  final NavbarHeightCubit navbarHeight = NavbarHeightCubit();
+  final NavbarSectionCubit navbarSection = NavbarSectionCubit();
+  final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();
+  final LoadingViewCubitv2 loadingViewv2 = LoadingViewCubitv2();
+  final ContentExtraCubit contentExtra = ContentExtraCubit();
+
   GlobalCubits();
 }

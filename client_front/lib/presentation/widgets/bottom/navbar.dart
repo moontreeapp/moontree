@@ -8,7 +8,8 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
@@ -83,7 +84,7 @@ class _NavBarState extends State<NavBar> {
     return flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
         //bloc: holdingsViewCubit..enter(),
         builder: (BuildContext context, HoldingsViewState state) {
-      walletIsEmpty = components.cubits.holdingsViewCubit.state.holdingsViews
+      walletIsEmpty = components.cubits.holdingsView.state.holdingsViews
           .isEmpty; // Current.wallet.balances.isEmpty;
       return components.containers.navBar(context /*widget.includeSectors*/,
           child: SingleChildScrollView(

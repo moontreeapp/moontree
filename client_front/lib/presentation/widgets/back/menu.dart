@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/consent.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/domain/utils/extensions.dart';

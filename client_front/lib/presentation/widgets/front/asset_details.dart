@@ -4,7 +4,8 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/theme/extensions.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class AssetDetails extends StatefulWidget {
   final String symbol;

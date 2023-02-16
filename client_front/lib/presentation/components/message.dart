@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_back/client_back.dart';
 
 class MessageComponents {
+  const MessageComponents();
   Future<void> giveChoices(
     BuildContext context, {
     required Map<String, VoidCallback> behaviors,

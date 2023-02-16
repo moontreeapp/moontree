@@ -10,7 +10,8 @@ import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/application/cubits.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 

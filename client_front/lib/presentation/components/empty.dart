@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:moontree_utils/src/list.dart' show range;
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/domain/utils/extensions.dart';
 
 class EmptyComponents {
-  EmptyComponents();
+  const EmptyComponents();
 
   Container transactions(
     BuildContext context, {
