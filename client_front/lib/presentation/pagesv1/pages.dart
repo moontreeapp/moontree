@@ -13,7 +13,6 @@ import 'package:client_front/presentation/pagesv1/manage/create/restricted.dart'
 import 'package:client_front/presentation/pagesv1/manage/reissue/restricted.dart';
 import 'package:client_front/presentation/pagesv1/manage/reissue/main.dart';
 import 'package:client_front/presentation/pagesv1/manage/reissue/sub.dart';
-import 'package:client_front/presentation/pagesv1/misc/splash.dart';
 import 'package:client_front/presentation/pagesv1/misc/scan.dart';
 import 'package:client_front/presentation/pagesv1/misc/checkout.dart';
 import 'package:client_front/presentation/pagesv1/security/backup/keypair.dart';
@@ -55,7 +54,6 @@ import 'package:client_front/presentation/widgets/front/verify.dart';
 
 class pages {
   static final staticRoutes = <String, Widget Function(BuildContext)>{
-    '/splash': (BuildContext context) => const Splash(),
     '/home': (BuildContext context) => const Home(),
     '/manage/asset': (BuildContext context) => const AssetPage(),
     '/transactions': (BuildContext context) => const Transactions(),

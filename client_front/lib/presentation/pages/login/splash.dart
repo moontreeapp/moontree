@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
+
 import 'dart:async';
 import 'dart:io';
-import 'package:beamer/beamer.dart';
+
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
@@ -14,9 +16,30 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/infrastructure/services/services.dart';
 import 'package:client_back/services/consent.dart';
-import 'package:client_front/presentation/services/services.dart' show sailor;
-import 'package:client_front/presentation/services/sailor.dart' show Sailor;
-import 'package:client_front/presentation/services/services.dart' as uiservices;
+
+class FrontSplashScreen extends StatelessWidget {
+  const FrontSplashScreen({Key? key}) : super(key: key ?? defaultKey);
+  static const defaultKey = ValueKey('frontLoginSplash');
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.topRight,
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(left: 16),
+            height: 56,
+            child: const Text(
+              style: TextStyle(color: Colors.black),
+              'some example setting thing',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -53,7 +76,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   Future<void> _init() async {
-    await Future<void>.delayed(const Duration(milliseconds: 4000));
+    await Future<void>.delayed(const Duration(milliseconds: 3500));
     await HIVE_INIT.setupDatabaseStart();
     await HIVE_INIT.setupDatabase1();
 
@@ -93,17 +116,13 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //  _slideController.reset();
     //  showAppBar = true;
     //});
-
     await redirectToCreateOrLogin();
-
     streams.app.splash.add(false);
-
     //await HIVE_INIT.setupWaiters1(); // if you put on login screen
   }
 
   @override
   void dispose() {
-    print('disposed');
     _slideController.dispose();
     _fadeController.dispose();
     super.dispose();
@@ -128,7 +147,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                   duration: const Duration(milliseconds: 1000),
                   alignment: Alignment.center,
                   decoration:
-                      BoxDecoration(borderRadius: shape, color: Colors.red),
+                      BoxDecoration(borderRadius: shape, color: Colors.white),
                   child: FadeTransition(
                       opacity: _fadeAnimation,
                       child:
@@ -159,20 +178,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //}
 
     // make a password out of biokey
-    Future<void>.microtask(() => uiservices.beamer.rootDelegate
-        .beamToReplacementNamed(Sailor.initialPath));
-    return;
+
     // this is false on 1st startup -> create
     if (!services.password.required) {
       //streams.app.page.add('Setup');
-      /**/ //Future<void>.microtask(() => Navigator.pushReplacementNamed(
-      /**/ //      context,
-      /**/ //      '/security/create/setup',
-      /**/ //    ));
-      print('going0');
-      Future<void>.microtask(
-          () => sailor.sailTo(location: '/wallet/holdings', context: context));
-
+      Future<void>.microtask(() => Navigator.pushReplacementNamed(
+            context,
+            '/security/create/setup',
+          ));
       //if (pros.settings.authMethodIsNativeSecurity) {
       //  final localAuthApi = LocalAuthApi();
       //  if (await localAuthApi.readyToAuthenticate) {
@@ -186,38 +199,63 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       //  passwordFallback();
       //}
     } else {
-      print('going1');
-      Navigator.pop(context);
-      Future<void>.microtask(
-          () => sailor.sailTo(location: '/wallet/holdings', context: context));
-      /**/ //await maybeSwitchToPassword();
-      /**/ //if (services.password.interruptedPasswordChange()) {
-      /**/ //  showDialog(
-      /**/ //      context: context,
-      /**/ //      builder: (BuildContext context) => AlertDialog(
-      /**/ //              title: const Text('Issue detected'),
-      /**/ //              content: const Text(
-      /**/ //                  'Change Password process in progress, please submit your previous password...'),
-      /**/ //              actions: <Widget>[
-      /**/ //                TextButton(
-      /**/ //                    child: const Text('ok'),
-      /**/ //                    onPressed: () => Navigator.pushReplacementNamed(
-      /**/ //                        context, '/security/resume',
-      /**/ //                        arguments: <String, dynamic>{}))
-      /**/ //              ]));
-      /**/ //} else {
-      /**/ //  bool hasConsented = false;
-      /**/ //  try {
-      /**/ //    hasConsented = await discoverConsent(await getId());
-      /**/ //  } catch (e) {
-      /**/ //    streams.app.snack.add(Snack(
-      /**/ //      message: 'Unable to connect! Please check connectivity.',
-      /**/ //    ));
-      /**/ //  }
-      /**/ //  Future<void>.microtask(() => Navigator.pushReplacementNamed(
-      /**/ //      context, getMethodPathLogin(),
-      /**/ //      arguments: <String, bool>{'needsConsent': !hasConsented}));
-      /**/ //}
+      await maybeSwitchToPassword();
+      if (services.password.interruptedPasswordChange()) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Issue detected'),
+                    content: const Text(
+                        'Change Password process in progress, please submit your previous password...'),
+                    actions: <Widget>[
+                      TextButton(
+                          child: const Text('ok'),
+                          onPressed: () => Navigator.pushReplacementNamed(
+                              context, '/security/resume',
+                              arguments: <String, dynamic>{}))
+                    ]));
+      } else {
+        bool hasConsented = false;
+        try {
+          hasConsented = await discoverConsent(await getId());
+        } catch (e) {
+          streams.app.snack.add(Snack(
+            message: 'Unable to connect! Please check connectivity.',
+          ));
+        }
+        Future<void>.microtask(() => Navigator.pushReplacementNamed(
+            context, getMethodPathLogin(),
+            arguments: <String, bool>{'needsConsent': !hasConsented}));
+
+        /// testing out instant/custom page transitions
+        /// https://stackoverflow.com/questions/52698340/animation-for-named-routes
+        //    Navigator.of(components.routes.routeContext!)
+        //        .push(PageRouteBuilder(
+        //  pageBuilder: (_, __, ___) => pages.routes(
+        //          components.routes.routeContext!)['/security/login']!(
+        //      components.routes.routeContext!),
+        //  transitionsBuilder: (_, a, __, c) => c,
+        //  transitionDuration: Duration(milliseconds: 0),
+        //)));
+      }
     }
+
+    /// old: send to homescreen
+    //} else {
+    //Futuredelayed(const Duration(seconds: 60));
+    //  Future.microtask(() =>
+    //      Navigator.pushReplacementNamed(context, '/home', arguments: {}));
+
+    /// testing out instant/custom page transitions
+    //Navigator.of(components.routes.routeContext!)
+    //    .push(PageRouteBuilder(
+    //  pageBuilder: (_, __, ___) =>
+    //      pages.routes(components.routes.routeContext!)['/home']!(
+    //          components.routes.routeContext!),
+    //  transitionsBuilder: (_, a, __, c) =>
+    //      FadeTransition(opacity: a, child: c),
+    //  transitionDuration: Duration(milliseconds: 2000),
+    //)));
+    //}
   }
 }

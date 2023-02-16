@@ -3,7 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:client_front/presentation/containers/layers/loading.dart';
 import 'package:client_front/presentation/containers/layers/tutorial.dart';
-import 'package:client_front/presentation/pagesv1/misc/splash.dart';
+import 'package:client_front/presentation/pages/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +15,6 @@ import 'package:serverpod_flutter/serverpod_flutter.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:client_front/application/cubits.dart';
-import 'package:client_front/presentation/pagesv1/pages.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/infrastructure/services/dev.dart';
@@ -166,10 +165,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    uiservices.init(
-      height: MediaQuery.of(context).size.height,
-      mainContext: context,
-    );
+    //uiservices.init(
+    //  height: MediaQuery.of(context).size.height,
+    //  mainContext: context,
+    //);
     components.routes.scaffoldContext = context;
     final scaffold = Scaffold(
       backgroundColor: AppColors.primary,
