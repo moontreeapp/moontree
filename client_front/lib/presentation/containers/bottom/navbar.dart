@@ -127,8 +127,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                             children: [
                               GestureDetector(
                                   onTap: () async => await sailor.sailTo(
-                                      section: Section.wallet,
-                                      context: context),
+                                      section: Section.wallet),
                                   child: Container(
                                     alignment: Alignment.center,
                                     // decoration: BoxDecoration(color: Colors.green),
@@ -144,8 +143,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                             children: [
                               GestureDetector(
                                   onTap: () async => await sailor.sailTo(
-                                      section: Section.manage,
-                                      context: context),
+                                      section: Section.manage),
                                   child: Container(
                                     alignment: Alignment.center,
                                     // decoration: BoxDecoration(color: Colors.green),
@@ -161,7 +159,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                             children: [
                               GestureDetector(
                                   onTap: () async => await sailor.sailTo(
-                                      section: Section.swap, context: context),
+                                      section: Section.swap),
                                   child: Container(
                                     alignment: Alignment.center,
                                     // decoration: BoxDecoration(color: Colors.green),

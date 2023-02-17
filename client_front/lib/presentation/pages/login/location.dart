@@ -6,12 +6,10 @@ import 'package:client_front/presentation/pages/login/create_native.dart';
 import 'package:client_front/presentation/pages/login/create_password.dart';
 import 'package:client_front/presentation/pages/login/native.dart';
 import 'package:client_front/presentation/pages/login/password.dart';
-import 'package:client_front/presentation/pages/login/splash.dart';
 
 class FrontLoginLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathPatterns => [
-        '/login/splash',
         '/login/create',
         '/login/create/native',
         '/login/create/password',
@@ -21,8 +19,6 @@ class FrontLoginLocation extends BeamLocation<BeamState> {
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        if (state.uri.pathSegments.contains('splash'))
-          const FadeTransitionPage(child: FrontSplashScreen()),
         if (state.uri.toString() == '/login/create')
           const FadeTransitionPage(child: FrontCreateScreen()),
         if (state.uri.toString() == '/login/create/native')

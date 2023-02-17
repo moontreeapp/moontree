@@ -42,39 +42,10 @@ import 'package:client_front/presentation/containers/content/content.dart';
 import 'package:client_front/presentation/services/sailor.dart' show Sailor;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 
-/// our override to activate our custom back functionality
-Future<void> backButtonPressed() async {
-  /// edgecase: if at home screen, minimize app
-  if (Platform.isAndroid && components.cubits.title.state.title == 'Holdings') {
-    sendToBackChannel.invokeMethod('sendToBackground');
-  } else if (uiservices.screenflags.active) {
-    /// deactivate the back button in these edge cases...
-    // if loading sheet is up do nothing
-    // if system dialogue box is up navigator pop
-    // if full bottom sheet is up navigator pop
-    // if custom bottom modalsheet always in front is up navigator pop
-    // instead of pop we should do nothing. the context isn't available and
-    // some of these we want to do nothing anyway.
-    // Navigator.of(context).pop();
-  } else {
-    await uiservices.sailor.gobackTrigger();
-  }
-}
-
-const backButtonChannel = MethodChannel('backButtonChannel');
-const sendToBackChannel = MethodChannel('sendToBackChannel');
-
 Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   devFlags.addAll(flags ?? []);
   // Catch errors without crashing the app:
   WidgetsFlutterBinding.ensureInitialized();
-
-  // wet up back button listener
-  backButtonChannel.setMethodCallHandler((call) async {
-    if (call.method == "backButtonPressed") {
-      return backButtonPressed();
-    }
-  });
 
   // setup moontree server client for subscriptions
   await services.subscription.setupClient(FlutterConnectivityMonitor());
@@ -165,10 +136,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //uiservices.init(
-    //  height: MediaQuery.of(context).size.height,
-    //  mainContext: context,
-    //);
     components.routes.scaffoldContext = context;
     final scaffold = Scaffold(
       backgroundColor: AppColors.primary,

@@ -26,8 +26,8 @@ class BackMenuSettingsScreen extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: () async => await sailor.sailTo(
-                    location: '/settings/example', context: context),
+                onTap: () async =>
+                    await sailor.sailTo(location: '/settings/example'),
                 child: Container(
                   padding: const EdgeInsets.only(left: 16),
                   height: 56,

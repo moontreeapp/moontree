@@ -24,9 +24,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'WhaleStreet'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'WhaleStreet'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -39,9 +39,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Moontree'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Moontree'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -54,9 +54,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Ravencoin'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Ravencoin'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -69,9 +69,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Purple Asset'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Purple Asset'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -84,9 +84,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Yellow Asset'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Yellow Asset'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -99,9 +99,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Pink Holding'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Pink Holding'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -114,9 +114,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Orange Asset'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Orange Asset'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -131,9 +131,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'WhaleStreet'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'WhaleStreet'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -146,9 +146,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Moontree'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Moontree'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -161,9 +161,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Ravencoin'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Ravencoin'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -176,9 +176,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Purple Asset'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Purple Asset'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -191,9 +191,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Yellow Asset'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Yellow Asset'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -206,9 +206,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Pink Holding'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Pink Holding'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(
@@ -221,9 +221,9 @@ class FrontHoldingsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   sailor.sailTo(
-                      location: '/wallet/holding',
-                      params: {'chainSymbol': 'Orange Asset'},
-                      context: context);
+                    location: '/wallet/holding',
+                    params: {'chainSymbol': 'Orange Asset'},
+                  );
                 },
                 child: const ListTile(
                   leading: CircleAvatar(

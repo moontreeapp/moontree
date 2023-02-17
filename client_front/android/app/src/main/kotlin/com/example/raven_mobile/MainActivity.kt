@@ -136,6 +136,8 @@ package com.moontree.mobile
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.android.FlutterActivityLaunchConfigs.BackgroundMode
+//import io.flutter.embedding.engine.FlutterEngine
+//import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterFragmentActivity() {
     override fun getBackgroundMode(): BackgroundMode {
@@ -145,4 +147,22 @@ class MainActivity: FlutterFragmentActivity() {
             BackgroundMode.transparent
         }
     }
+//
+//	override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+//		MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sendToBackChannel").setMethodCallHandler { call, result ->
+//        	if (call.method == "sendToBackground") {
+//            	moveTaskToBack(true)
+//        	} else {
+//	            result.notImplemented()
+//    	    }
+//    	}
+//	}
+//
+//	override fun onBackPressed() {
+//		// send message to flutter that the system back button was pressed
+//		val flutterEngine = getFlutterEngine()
+//		if (flutterEngine != null) {
+//			MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, "backButtonChannel").invokeMethod("backButtonPressed", null)
+//		}
+//	}
 }

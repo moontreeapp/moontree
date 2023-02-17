@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-
-import 'dart:async';
 import 'dart:io';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
@@ -11,43 +8,18 @@ import 'package:client_front/presentation/components/components.dart'
 import 'package:client_front/infrastructure/services/services.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/domain/utils/auth.dart';
-import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 
-class FrontCreateScreen extends StatelessWidget {
+class FrontCreateScreen extends StatefulWidget {
   const FrontCreateScreen({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('frontLoginCreate');
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topRight,
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(left: 16),
-            height: 56,
-            child: const Text(
-              style: TextStyle(color: Colors.black),
-              'some example setting thing',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  _FrontCreateScreenState createState() => _FrontCreateScreenState();
 }
 
-class CreateChoice extends StatefulWidget {
-  const CreateChoice({Key? key}) : super(key: key);
-
-  @override
-  _CreateChoiceState createState() => _CreateChoiceState();
-}
-
-class _CreateChoiceState extends State<CreateChoice> {
-  Map<String, dynamic> data = <String, dynamic>{};
+class _FrontCreateScreenState extends State<FrontCreateScreen> {
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
 
@@ -90,13 +62,7 @@ class _CreateChoiceState extends State<CreateChoice> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    data = populateData(context, data);
-    return BackdropLayers(
-        back: const BlankBack(), front: FrontCurve(child: body()));
-  }
-
-  Widget body() => GestureDetector(
+  Widget build(BuildContext context) => GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Container(
           padding:
@@ -108,14 +74,23 @@ class _CreateChoiceState extends State<CreateChoice> {
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 128.figmaH,
-                child: moontree,
+                child: SizedBox(
+                  height: .1534.ofMediaHeight(context),
+                  child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+                ),
               ),
             ),
             SliverToBoxAdapter(
               child: Container(
                   alignment: Alignment.bottomCenter,
                   height: (16 + 24).figmaH,
-                  child: welcomeMessage),
+                  child: Text(
+                    'Moontree',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1
+                        ?.copyWith(color: AppColors.black60),
+                  )),
             ),
             SliverFillRemaining(
                 hasScrollBody: false,
@@ -125,70 +100,65 @@ class _CreateChoiceState extends State<CreateChoice> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          invite,
+                          Container(
+                              alignment: Alignment.center,
+                              width: .70.ofMediaWidth(context),
+                              child: RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  style:
+                                      Theme.of(components.routes.routeContext!)
+                                          .textTheme
+                                          .bodyText2,
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text: 'Protect your wallet with:',
+                                        //text: "Please set the wallet protection type",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1!
+                                            .copyWith(color: AppColors.black)),
+                                  ],
+                                ),
+                              )),
                           const SizedBox(height: 16),
-                          Row(children: <Widget>[nativeButton]),
+                          Row(children: <Widget>[
+                            components.buttons.actionButton(
+                              context,
+                              enabled: true,
+                              label:
+                                  '${Platform.isIOS ? 'iOS' : 'ANDROID'} PHONE SECURITY',
+                              onPressed: () async {
+                                await services.authentication.setMethod(
+                                    method: AuthMethod.nativeSecurity);
+                                streams.app.splash.add(false);
+                                Navigator.pushReplacementNamed(
+                                    context, getMethodPathCreate(),
+                                    arguments: <String, bool>{
+                                      'needsConsent': true
+                                    });
+                              },
+                            )
+                          ]),
                           const SizedBox(height: 16),
-                          Row(children: <Widget>[passwordButton]),
+                          Row(children: <Widget>[
+                            components.buttons.actionButton(
+                              context,
+                              enabled: true,
+                              label: 'MOONTREE PASSWORD',
+                              onPressed: () async {
+                                await services.authentication.setMethod(
+                                    method: AuthMethod.moontreePassword);
+                                streams.app.splash.add(false);
+                                Navigator.pushReplacementNamed(
+                                    context, getMethodPathCreate(),
+                                    arguments: <String, bool>{
+                                      'needsConsent': true
+                                    });
+                              },
+                            )
+                          ]),
                           const SizedBox(height: 40),
                         ]))),
           ])));
-
-  Widget get moontree => SizedBox(
-        height: .1534.ofMediaHeight(context),
-        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-      );
-
-  Widget get welcomeMessage => Text(
-        'Moontree',
-        style: Theme.of(context)
-            .textTheme
-            .headline1
-            ?.copyWith(color: AppColors.black60),
-      );
-
-  Widget get invite => Container(
-      alignment: Alignment.center,
-      width: .70.ofMediaWidth(context),
-      child: RichText(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          style: Theme.of(components.routes.routeContext!).textTheme.bodyText2,
-          children: <TextSpan>[
-            TextSpan(
-                text: 'Protect your wallet with:',
-                //text: "Please set the wallet protection type",
-                style: Theme.of(context)
-                    .textTheme
-                    .subtitle1!
-                    .copyWith(color: AppColors.black)),
-          ],
-        ),
-      ));
-
-  Widget get nativeButton => components.buttons.actionButton(
-        context,
-        enabled: true,
-        label: '${Platform.isIOS ? 'iOS' : 'ANDROID'} PHONE SECURITY',
-        onPressed: () async {
-          await services.authentication
-              .setMethod(method: AuthMethod.nativeSecurity);
-          streams.app.splash.add(false);
-          Navigator.pushReplacementNamed(context, getMethodPathCreate(),
-              arguments: <String, bool>{'needsConsent': true});
-        },
-      );
-
-  Widget get passwordButton => components.buttons.actionButton(
-        context,
-        enabled: true,
-        label: 'MOONTREE PASSWORD',
-        onPressed: () async {
-          await services.authentication
-              .setMethod(method: AuthMethod.moontreePassword);
-          streams.app.splash.add(false);
-          Navigator.pushReplacementNamed(context, getMethodPathCreate(),
-              arguments: <String, bool>{'needsConsent': true});
-        },
-      );
 }

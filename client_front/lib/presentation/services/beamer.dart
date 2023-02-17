@@ -1,6 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:client_front/presentation/pagesv2/empty/location.dart';
-import 'package:client_front/presentation/pagesv2/login/location.dart';
+import 'package:client_front/presentation/pages/login/location.dart';
 import 'package:client_front/presentation/pagesv2/manage/location.dart';
 import 'package:client_front/presentation/pagesv2/menu/location.dart';
 import 'package:client_front/presentation/pagesv2/settings/location.dart';

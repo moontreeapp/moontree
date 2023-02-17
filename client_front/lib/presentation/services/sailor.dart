@@ -172,10 +172,10 @@ class Sailor {
     };
   }
 
-  Future<void> gobackTrigger([BuildContext? context]) async {
+  Future<void> gobackTrigger() async {
     // Todo: key this off something else. like sailor current path or something
     if (['Holdings', 'Manage'].contains(components.cubits.title.state.title)) {
-      await sailTo(location: '/menu', context: context);
+      await sailTo(location: '/menu');
     } else {
       // any page that uses ContentExtra layer for draggable sheets
       if (['Holding'].contains(components.cubits.title.state.title)) {
@@ -183,7 +183,7 @@ class Sailor {
         components.cubits.frontContainerHeight.setHidden(false);
         components.cubits.contentExtra.reset();
       }
-      sailBack(context: context);
+      sailBack();
     }
   }
 
@@ -191,7 +191,6 @@ class Sailor {
     String? location,
     Section? section,
     Map<String, dynamic>? params,
-    BuildContext? context,
     bool beam = true,
     bool addToHistory = true,
   }) async {
@@ -238,10 +237,9 @@ class Sailor {
     );
   }
 
-  void sailBack({BuildContext? context}) {
+  void sailBack() {
     sailTo(
       location: _handleHistoryRemoval(),
-      context: context,
       beam: true,
       addToHistory: false,
     );

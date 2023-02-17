@@ -8,11 +8,11 @@ final BeamerService beamer = BeamerService();
 late Sailor sailor;
 late Screen screen;
 late ScreenFlags screenflags;
-//late SystemBackButton back; // found in main for now.
+late SystemBackButton back;
 
 void init({required double height, required BuildContext mainContext}) {
   screen = Screen.init(height);
   sailor = Sailor(mainContext: mainContext);
   screenflags = ScreenFlags();
-  //back = SystemBackButton();
+  back = SystemBackButton()..initListener();
 }

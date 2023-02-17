@@ -171,11 +171,10 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //        getMethodPathCreate(),
     //      ));
     //}
-
-    // make a password out of biokey
     Future<void>.microtask(() => uiservices.beamer.rootDelegate
         .beamToReplacementNamed(Sailor.initialPath));
     return;
+    // make a password out of biokey
     // this is false on 1st startup -> create
     if (!services.password.required) {
       //streams.app.page.add('Setup');
@@ -184,8 +183,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       /**/ //      '/security/create/setup',
       /**/ //    ));
       print('going0');
-      Future<void>.microtask(
-          () => sailor.sailTo(location: '/wallet/holdings', context: context));
+      Future<void>.microtask(() => sailor.sailTo(
+            location: '/wallet/holdings',
+          ));
 
       //if (pros.settings.authMethodIsNativeSecurity) {
       //  final localAuthApi = LocalAuthApi();
@@ -202,8 +202,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     } else {
       print('going1');
       Navigator.pop(context);
-      Future<void>.microtask(
-          () => sailor.sailTo(location: '/wallet/holdings', context: context));
+      Future<void>.microtask(() => sailor.sailTo(
+            location: '/wallet/holdings',
+          ));
       /**/ //await maybeSwitchToPassword();
       /**/ //if (services.password.interruptedPasswordChange()) {
       /**/ //  showDialog(
