@@ -14,14 +14,10 @@ class SystemBackButton {
   /// our override to activate our custom back functionality
   Future<void> backButtonPressed() async {
     /// edgecase: if at home screen, minimize app
-    print('detected!');
     if (Platform.isAndroid &&
         components.cubits.title.state.title == 'Holdings') {
-      print('detected!1');
       sendToBackChannel.invokeMethod('sendToBackground');
     } else if (services.screenflags.active) {
-      print('detected!2');
-
       /// deactivate the back button in these edge cases...
       // if loading sheet is up do nothing
       // if system dialogue box is up navigator pop
@@ -31,7 +27,6 @@ class SystemBackButton {
       // some of these we want to do nothing anyway.
       // Navigator.of(context).pop();
     } else {
-      print('detected!3');
       await services.sailor.gobackTrigger();
     }
   }
