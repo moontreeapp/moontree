@@ -134,10 +134,13 @@
 
 package com.moontree.mobile
 
+/* using FlutterFragmentActivity for local_auth */
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.android.FlutterActivityLaunchConfigs.BackgroundMode
-//import io.flutter.embedding.engine.FlutterEngine
-//import io.flutter.plugin.common.MethodChannel
+	/* override backbutton pressed */
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+	/* end */
 
 class MainActivity: FlutterFragmentActivity() {
     override fun getBackgroundMode(): BackgroundMode {
@@ -147,22 +150,29 @@ class MainActivity: FlutterFragmentActivity() {
             BackgroundMode.transparent
         }
     }
-//
-//	override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-//		MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sendToBackChannel").setMethodCallHandler { call, result ->
-//        	if (call.method == "sendToBackground") {
-//            	moveTaskToBack(true)
-//        	} else {
-//	            result.notImplemented()
-//    	    }
-//    	}
-//	}
-//
-//	override fun onBackPressed() {
-//		// send message to flutter that the system back button was pressed
-//		val flutterEngine = getFlutterEngine()
-//		if (flutterEngine != null) {
-//			MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, "backButtonChannel").invokeMethod("backButtonPressed", null)
-//		}
-//	}
+
+	/* override backbutton pressed */
+	override fun onBackPressed() {
+		// send message to flutter that the system back button was pressed
+		println("Flutter engine: $flutterEngine")
+		val flutterEngine = getFlutterEngine()
+		if (flutterEngine != null) {
+			MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, "backButtonChannel").invokeMethod("backButtonPressed", null)
+		}
+	}
+	/* end */
+
+	override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+		// must not remove FlutterFragmentActivity engine configuration
+		super.configureFlutterEngine(flutterEngine)
+		MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sendToBackChannel").setMethodCallHandler { call, result ->
+        	if (call.method == "sendToBackground") {
+            	moveTaskToBack(true)
+        	} else {
+	            result.notImplemented()
+    	    }
+    	}
+	}
 }
+/* end */
+
