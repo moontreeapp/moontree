@@ -9,7 +9,6 @@ import 'status.dart';
 import 'text.dart';
 import 'loading.dart';
 import 'message.dart';
-import 'shape.dart';
 import 'page.dart';
 
 const ButtonComponents buttons = ButtonComponents();
@@ -24,7 +23,7 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
 const LoadingComponents loading = LoadingComponents();
 const MessageComponents message = MessageComponents();
 const PageComponents page = PageComponents();
-const ShapeComponents shape = ShapeComponents();
+
 
 //static final RouteObserver<PageRoute> routeObserver =
 //    RouteObserver<PageRoute>();

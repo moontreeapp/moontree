@@ -9,6 +9,7 @@ import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
+import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/infrastructure/services/lookup.dart';
@@ -187,7 +188,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
             padding: EdgeInsets.only(
                 top: widget.cachedMetadataView != null ? 48 : 0),
             child: FrontCurve(
-              frontLayerBoxShadow: const <BoxShadow>[],
+              frontLayerBoxShadow: shadows.none,
               child: TransactionsContent(
                 widget.cubit,
                 widget.cachedMetadataView,

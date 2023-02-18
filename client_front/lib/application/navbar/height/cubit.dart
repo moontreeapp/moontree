@@ -16,9 +16,9 @@ class NavbarHeightCubit extends Cubit<NavbarHeightCubitState> {
   NavbarHeightCubit()
       : super(
           NavbarHeightState(
-              height: services.screen.navbar.maxHeight,
-              previousNavbarHeight: NavbarHeight.max,
-              currentNavbarHeight: NavbarHeight.max),
+              height: 0,
+              previousNavbarHeight: NavbarHeight.hidden,
+              currentNavbarHeight: NavbarHeight.hidden),
         );
 
   void setHeightTo({required NavbarHeight height}) {
@@ -34,8 +34,10 @@ class NavbarHeightCubit extends Cubit<NavbarHeightCubitState> {
     }
   }
 
+  /// we're currently hiding the context buttons until they're ready so,
+  /// max height is midd height for now.
   void max() => emit(NavbarHeightState(
-        height: services.screen.navbar.maxHeight,
+        height: services.screen.navbar.midHeight,
         previousNavbarHeight: state.currentNavbarHeight,
         currentNavbarHeight: NavbarHeight.max,
       ));

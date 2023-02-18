@@ -20,7 +20,6 @@ class Sailor {
   };
   static const Map<String, Map<dynamic, dynamic>> destinationMap = {
     '/login/create': {
-      'title': 'Create Login',
       Section: Section.login,
       PageContainer.front: {
         'beamerLocation': '/login/create',
@@ -30,7 +29,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.hidden,
     },
     '/login/create/native': {
-      'title': 'Create Login',
       Section: Section.login,
       PageContainer.front: {
         'beamerLocation': '/login/create/native',
@@ -40,7 +38,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.hidden,
     },
     '/login/create/password': {
-      'title': 'Create Login',
       Section: Section.login,
       PageContainer.front: {
         'beamerLocation': '/login/create/password',
@@ -50,7 +47,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.hidden,
     },
     '/login/native': {
-      'title': 'Login',
       Section: Section.login,
       PageContainer.front: {
         'beamerLocation': '/login/native',
@@ -60,7 +56,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.hidden,
     },
     '/login/password': {
-      'title': 'Login',
       Section: Section.login,
       PageContainer.front: {
         'beamerLocation': '/login/password',
@@ -70,7 +65,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.hidden,
     },
     '/wallet/holdings': {
-      'title': 'Holdings',
       Section: Section.wallet,
       PageContainer.front: {
         'beamerLocation': '/wallet/holdings',
@@ -80,7 +74,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.max,
     },
     '/wallet/holding': {
-      'title': 'Holding',
       Section: Section.wallet,
       PageContainer.front: {
         'beamerLocation': '/wallet/holding',
@@ -93,7 +86,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.mid,
     },
     '/wallet/holding/transaction': {
-      'title': 'Transaction',
       Section: Section.wallet,
       PageContainer.front: {
         'beamerLocation': '/wallet/holding/transaction',
@@ -103,7 +95,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.mid,
     },
     '/manage': {
-      'title': 'Manage',
       Section: Section.manage,
       PageContainer.front: {
         'beamerLocation': '/manage',
@@ -113,7 +104,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.max,
     },
     '/menu': {
-      'title': 'Menu',
       Section: Section.settings,
       PageContainer.front: {
         'beamerLocation': null,
@@ -126,7 +116,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.hidden,
     },
     '/menu/settings': {
-      'title': 'Settings',
       Section: Section.settings,
       PageContainer.front: {
         'beamerLocation': null,
@@ -139,7 +128,6 @@ class Sailor {
       NavbarHeight: NavbarHeight.hidden,
     },
     '/settings/example': {
-      'title': 'Example',
       Section: Section.settings,
       PageContainer.front: {
         'beamerLocation': '/settings/example',
@@ -216,7 +204,7 @@ class Sailor {
         addToDestinationHistory: addToDestinationHistory,
       );
     }
-    components.cubits.title.update(title: pageContainerMap['title']);
+    components.cubits.title.update(path: location);
     components.cubits.navbarHeight
         .setHeightTo(height: pageContainerMap[NavbarHeight]);
     _handleView(

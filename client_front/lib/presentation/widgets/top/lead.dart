@@ -1,6 +1,6 @@
 //import 'package:backdrop/backdrop.dart';
 import 'dart:async';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
@@ -9,10 +9,13 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/services/services.dart' as uiservices;
 
-class PageLead extends StatefulWidget {
-  const PageLead({Key? key}) : super(key: key);
+class PageLead extends StatelessWidget {
+  final String path;
+  const PageLead({Key? key, this.path = ''}) : super(key: key);
 
+/*
   @override
   _PageLead createState() => _PageLead();
 }
@@ -23,7 +26,6 @@ class _PageLead extends State<PageLead> {
   String? settingTitle;
   late LeadIcon xlead = LeadIcon.pass;
   late bool loading = false;
-
   @override
   void initState() {
     super.initState();
@@ -57,7 +59,6 @@ class _PageLead extends State<PageLead> {
     }
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return body();
@@ -214,4 +215,29 @@ class _PageLead extends State<PageLead> {
           Navigator.pop(components.routes.routeContext ?? context);
         });
   }
+
+
+*/
+  static const Set<String> menuLocations = {
+    '/wallet/holdings',
+    '/manage',
+    '/menu',
+    '/menu/settings',
+  };
+
+  static const Set<String> emptyLocations = {
+    '/login/create',
+  };
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () async => await uiservices.sailor.gobackTrigger(),
+        child: () {
+          print('path');
+          print(path);
+          return menuLocations.contains(path)
+              ? const Icon(Icons.menu, color: Colors.white)
+              : const Icon(Icons.arrow_back, color: Colors.white);
+        }(),
+      );
 }

@@ -5,7 +5,7 @@ import 'package:client_front/application/front/height/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' as services;
 import 'package:client_front/presentation/utilities/animation.dart'
     as animation;
-import 'package:client_front/presentation/widgets/front_drop.dart';
+import 'package:client_front/presentation/widgets/front_curve.dart';
 
 class FrontHoldingScreen extends StatefulWidget {
   const FrontHoldingScreen({Key? key}) : super(key: key ?? defaultKey);
@@ -91,7 +91,7 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
           maxChildSize: 1,
           controller: draggableScrollableController,
           builder: (BuildContext context, ScrollController scrollController) =>
-              FrontDropWithChild(
+              FrontCurve(
                   child: BlocBuilder<ContentExtraCubit, ContentExtraState>(
                       //bloc: cubit..enter(),
                       builder: (BuildContext context,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_front/presentation/widgets/front_drop.dart';
+import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/application/front/height/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' show beamer;
 import 'package:client_front/presentation/utilities/animation.dart'
@@ -22,7 +22,7 @@ class FrontContainer extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      FrontDrop(
+                      FrontCurve(
                           color:
                               state.hide ? Colors.transparent : Colors.white),
                       beamer.front()

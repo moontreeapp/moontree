@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/domain/utils/extensions.dart';
@@ -57,10 +58,15 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
               .withGreen(AppColors.error.green + 16)
               .withBlue(AppColors.error.blue + 16));
 
+  static const Set<String> emptyLocations = {
+    '/login/create',
+    '/login/native',
+    '/login/password',
+  };
+
   Future<void> show() async {
     /// don't show snackbars on login screen
-    if (<String>['Setup', 'Createlogin', 'Login']
-            .contains(streams.app.page.value) &&
+    if (emptyLocations.contains(components.cubits.title.state.path) &&
         !snack!.showOnLogin) {
       return;
     }
@@ -154,7 +160,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                   height: 64,
                   decoration: BoxDecoration(
                       color: AppColors.snackBar,
-                      borderRadius: components.shape.topRoundedBorder8),
+                      borderRadius: shapes.topRoundedBorder8),
                   child: Padding(
                       padding:
                           const EdgeInsets.only(left: 16, right: 16, top: 12),
@@ -164,7 +170,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
                     height: 16,
                     decoration: BoxDecoration(
                         color: Colors.transparent,
-                        borderRadius: components.shape.topRoundedBorder16,
+                        borderRadius: shapes.topRoundedBorder16,
                         boxShadow: const <BoxShadow>[
                           // this one is to hide the shadow put on snackbars by default
                           BoxShadow(color: Color(0xFFFFFFFF), spreadRadius: 1),
@@ -187,7 +193,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         elevation: 1,
         dismissDirection: DismissDirection.horizontal,
         backgroundColor: AppColors.snackBar,
-        shape: components.shape.topRounded8,
+        shape: shapes.topRounded8,
         content: msg,
         padding: EdgeInsets.zero,
       ));
@@ -196,7 +202,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         elevation: 0,
         dismissDirection: DismissDirection.none,
         backgroundColor: AppColors.white,
-        shape: components.shape.topRounded8,
+        shape: shapes.topRounded8,
         content: msg,
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(bottom: (Platform.isIOS ? 32 : 60).figmaH),
@@ -224,7 +230,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         elevation: 0,
         dismissDirection: DismissDirection.none,
         backgroundColor: AppColors.white,
-        shape: components.shape.topRounded8,
+        shape: shapes.topRounded8,
         content: msg,
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.only(bottom: (Platform.isIOS ? 77 : 106).figmaH),
@@ -239,7 +245,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 0,
           backgroundColor: AppColors.snackBar,
-          shape:components.shape.topRounded,
+          shape:shapes.topRounded,
           content: msg,
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(bottom: 102),
@@ -280,7 +286,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 0,
           backgroundColor: AppColors.snackBar,
-          shape:components.shape.topRounded,
+          shape:shapes.topRounded,
           content: msg,
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.only(bottom: 102),

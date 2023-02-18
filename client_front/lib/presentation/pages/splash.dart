@@ -11,8 +11,8 @@ import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/domain/utils/device.dart';
 import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
+import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/infrastructure/services/services.dart';
 import 'package:client_front/presentation/services/services.dart' show sailor;
 import 'package:client_front/presentation/services/sailor.dart' show Sailor;
@@ -27,6 +27,7 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> with TickerProviderStateMixin {
   BorderRadius? shape;
+  List<BoxShadow>? shadow;
   bool showAppBar = false;
 
   final Duration animationDuration = const Duration(milliseconds: 2000);
@@ -77,21 +78,29 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await Future<void>.delayed(const Duration(milliseconds: 1));
     uiservices.init(
       height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
       mainContext: context,
     );
     setState(() {
       _slideAnimation = Tween<Offset>(
         begin: Offset.zero,
+        //Offset(
+        //    0,
+        //    uiservices.screen.app.systemStatusBarHeight /
+        //        uiservices.screen.app.height),
         end: Offset(
             0,
             (uiservices.screen.app.systemStatusBarHeight +
-                    uiservices.screen.app.appBarHeight) /
+                    uiservices.screen.app.appBarHeight -
+                    3 // not sure why it's off by 3 pixels... rounding error
+                ) /
                 uiservices.screen.app.height),
       ).animate(CurvedAnimation(
         parent: _slideController,
         curve: Curves.easeInOutCubic,
       ));
-      shape = components.shape.topRoundedBorder16;
+      shape = shapes.topRoundedBorder16;
+      shadow = shadows.frontLayer;
     });
     _fadeController.forward();
     _slideController.forward();
@@ -126,23 +135,21 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.androidSystemBar,
-      appBar: showAppBar
-          ? BackdropAppBarContents(spoof: true, animate: false)
-          : null,
-      body:
-          /**/
-          Stack(
+      backgroundColor: AppColors.primary,
+      appBar: null,
+      body: Stack(
         alignment: Alignment.topCenter,
         children: <Widget>[
-          if (!showAppBar) BackdropAppBarContents(spoof: true),
+          //if (!showAppBar) BackdropAppBarContents(spoof: true),
           SlideTransition(
               position: _slideAnimation,
               child: AnimatedContainer(
                   duration: animationDuration,
                   alignment: Alignment.center,
-                  decoration:
-                      BoxDecoration(borderRadius: shape, color: Colors.white),
+                  decoration: BoxDecoration(
+                      borderRadius: shape,
+                      boxShadow: shadow,
+                      color: Colors.white),
                   child: FadeTransition(
                       opacity: _fadeAnimation,
                       child:
@@ -158,7 +165,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                               /**/
                               ))))
         ],
-        /**/
       ),
     );
   }

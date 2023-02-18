@@ -1,13 +1,28 @@
+import 'package:client_back/streams/app.dart';
 import 'package:client_front/presentation/theme/colors.dart';
+import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intersperse/intersperse.dart';
 import 'package:client_front/application/navbar/height/cubit.dart';
 import 'package:client_front/presentation/services/sailor.dart';
+import 'package:client_front/presentation/utilities/animation.dart'
+    as animation;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
+import 'package:client_front/presentation/components/shadows.dart' as shadows;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class BottomNavigationBarWidget extends StatefulWidget {
-  const BottomNavigationBarWidget({Key? key}) : super(key: key);
+  final Iterable<Widget>? actionButtons;
+  final AppContext? appContext;
+  const BottomNavigationBarWidget({
+    Key? key,
+    this.actionButtons,
+    this.appContext = AppContext.login,
+  }) : super(key: key);
 
   @override
   _BottomNavigationBarWidgetState createState() =>
@@ -23,7 +38,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
     super.initState();
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: animation.slideDuration,
     );
   }
 
@@ -61,24 +76,46 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                 alignment: Alignment.bottomCenter,
                 transform: Matrix4.identity()..translate(0.0, slide, 0.0),
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: uiservices.screen.navbar.maxHeight,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          color: AppColors.primary,
-                          offset: Offset(0, 3),
-                          spreadRadius: 3,
-                          blurRadius: 3)
-                    ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
+                    width: uiservices.screen.width,
+                    height: uiservices.screen.navbar.maxHeight,
+                    clipBehavior: Clip.antiAlias,
+                    padding: const EdgeInsets.only(
+                        left: 16, right: 16, top: 16, bottom: 0),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: shapes.topRoundedBorder16,
+                      boxShadow: shadows.navBar,
                     ),
-                  ),
-                  child: Column(
+                    child: Column(
+                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        // we will need to make these buttons dependant upon the navigation
+                        // of the front page through streams but for now, we'll show they
+                        // can changed based upon whats selected:
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: actionButtons
+                              .intersperse(const SizedBox(width: 16))
+                              .toList(),
+                        ),
+                        if (false /*widget.includeSectors*/) ...<Widget>[
+                          const SizedBox(height: 6),
+                          Padding(
+                              padding: EdgeInsets.zero,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  //sectorIcon(appContext: AppContext.wallet),
+                                  //sectorIcon(appContext: AppContext.manage),
+                                  //sectorIcon(appContext: AppContext.swap),
+                                ],
+                              ))
+                        ]
+                      ],
+                    )
+                    /* 
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
@@ -174,13 +211,85 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                         ],
                       ),
                     ],
-                  ),
-                ),
+                  ),*/
+                    ),
               );
             },
           );
         },
       );
+
+  Iterable<Widget> get actionButtons =>
+      widget.actionButtons ??
+      (widget.appContext == AppContext.wallet
+          ? <Widget>[
+              //if (walletIsEmpty &&
+              //    !walletHasTransactions &&
+              //    streams.import.result.value == null)
+              //  components.buttons.actionButton(
+              //    context,
+              //    label: 'import',
+              //    onPressed: () async {
+              //      Navigator.of(components.routes.routeContext!)
+              //          .pushNamed('/settings/import');
+              //    },
+              //  )
+              //else
+              components.buttons.actionButton(
+                context,
+                label: 'send',
+                enabled: false,
+                //!walletIsEmpty &&
+                //    connectionStatus == ConnectionStatus.connected,
+                //disabledOnPressed: () {
+                //  if (connectionStatus != ConnectionStatus.connected) {
+                //    streams.app.snack
+                //        .add(Snack(message: 'Not connected to network'));
+                //  } else if (walletIsEmpty) {
+                //    streams.app.snack.add(Snack(
+                //        message: 'This wallet has no coin, unable to send.'));
+                //  } else {
+                //    streams.app.snack
+                //        .add(Snack(message: 'Claimed your EVR first.'));
+                //  }
+                //},
+                onPressed: () => Navigator.of(components.routes.routeContext!)
+                    .pushNamed('/transaction/send'),
+              ),
+              components.buttons.actionButton(
+                context,
+                label: 'receive',
+                onPressed: () => Navigator.of(components.routes.routeContext!)
+                    .pushNamed('/transaction/receive'),
+              )
+            ]
+          : widget.appContext == AppContext.manage
+              ? <Widget>[
+                  components.buttons.actionButton(
+                    context,
+                    label: 'create',
+                    enabled: false,
+                    onPressed: () => _produceCreateModal(context),
+                  )
+                ]
+              : <Widget>[
+                  components.buttons.actionButton(
+                    context,
+                    label: 'buy',
+                    enabled: false,
+                    onPressed: () => _produceCreateModal(context),
+                  ),
+                  components.buttons.actionButton(
+                    context,
+                    label: 'sell',
+                    enabled: false,
+                    onPressed: () => _produceCreateModal(context),
+                  )
+                ]);
+
+  void _produceCreateModal(BuildContext context) {
+    SelectionItems(context, modalSet: SelectionSet.Create).build();
+  }
 }
 
 

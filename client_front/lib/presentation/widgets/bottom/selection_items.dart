@@ -9,6 +9,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_back/streams/create.dart';
@@ -17,7 +18,7 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
-import '../../../domain/utils/alphacon.dart';
+import 'package:client_front/domain/utils/alphacon.dart';
 
 enum SelectionSet {
   Fee,
@@ -457,7 +458,7 @@ class SelectionItems {
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
-        shape: components.shape.topRounded8,
+        shape: shapes.topRounded8,
         builder: (BuildContext context) {
           streams.app.scrim.add(true);
           final DraggableScrollableController draggableScrollController =
@@ -597,7 +598,7 @@ class SimpleSelectionItems {
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
-        shape: components.shape.topRounded8,
+        shape: shapes.topRounded8,
         builder: (BuildContext context) {
           if (streams.app.scrim.value == false) {
             streams.app.scrim.add(true);
@@ -656,7 +657,7 @@ class SimpleScrim {
         elevation: 1,
         isScrollControlled: true,
         barrierColor: AppColors.black38,
-        shape: components.shape.topRounded8,
+        shape: shapes.topRounded8,
         builder: (BuildContext context) {
           if (streams.app.scrim.value == false) {
             streams.app.scrim.add(true);

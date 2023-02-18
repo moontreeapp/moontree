@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:client_front/application/widgets/title/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
@@ -16,8 +17,7 @@ import 'package:client_front/presentation/widgets/other/textfield.dart';
 import 'package:client_front/presentation/widgets/assets/icons.dart';
 
 class PageTitle extends StatefulWidget {
-  final bool animate;
-  const PageTitle({Key? key, this.animate = true}) : super(key: key);
+  const PageTitle({Key? key}) : super(key: key);
 
   @override
   PageTitleState createState() => PageTitleState();
@@ -49,6 +49,7 @@ class PageTitle extends StatefulWidget {
 }
 
 class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
+  //SingleTickerProviderStateMixin
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
   bool loading = false;
@@ -66,17 +67,21 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   List<Wallet> wallets = <Wallet>[];
   late Map<Wallet, List<Security>> walletsSecurities;
   double indicatorWidth = 24;
+  late TitleCubit cubit;
 
   @override
   void initState() {
     super.initState();
-    initializeWalletSecurities();
-    setWalletsSecurities();
-    controller = AnimationController(vsync: this, duration: animationDuration);
+    cubit = components.cubits.title;
     slowController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
-    animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
     slowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(slowController);
+    slowController.forward();
+    /*
+    initializeWalletSecurities();
+    setWalletsSecurities();
+    // = AnimationController(vsync: this, duration: animationDuration);
+    animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
     listeners.add(streams.app.loading.listen((bool value) {
       if (value != loading) {
         setState(() {
@@ -119,11 +124,12 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     listeners.add(pros.settings.changes.listen((Change<Setting> change) {
       setState(() {});
     }));
+    */
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    //controller.dispose();
     slowController.dispose();
     for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
@@ -225,13 +231,27 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: slowAnimation,
+        builder: (context, child) {
+          return FadeTransition(
+              opacity: slowAnimation,
+              child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(cubit.title,
+                      style: Theme.of(context).textTheme.headline2!.copyWith(
+                            color: AppColors.white,
+                            fontWeight: cubit.title.length >= 25
+                                ? FontWeights.bold
+                                : FontWeights.semiBold,
+                          ))));
+        });
+
+/*
     if (streams.app.page.value == 'Splash') {
-      if (widget.animate) {
-        slowController.forward(from: 0.0);
-        return FadeTransition(
-            opacity: slowAnimation, child: const Text('Welcome'));
-      }
-      return const Text('Welcome');
+      slowController.forward(from: 0.0);
+      return FadeTransition(
+          opacity: slowAnimation, child: const Text('Welcome'));
     }
     if (loading || <String>['main', ''].contains(streams.app.page.value)) {
       return const Text('');
@@ -244,12 +264,12 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   fontWeight:
                       x.length >= 25 ? FontWeights.bold : FontWeights.semiBold,
                 )));
-    controller.forward();
+    //.forward();
     FittedBox assetWrap(String x) => FittedBox(
         fit: BoxFit.fitWidth,
         child: GestureDetector(
             onTap: () async {
-              controller.reverse();
+              //.reverse();
               await Future<void>.delayed(animationDuration);
               setState(() => fullname = !fullname);
             },
@@ -352,6 +372,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     }
 
     return null;
+    */
   }
 
   /// produces a snackbar with options - has to be a snackbar because the front
@@ -482,7 +503,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                               top: 16, bottom: 16),
                                           child: TextFieldFormatted(
                                             maxLength: 10,
-                                            controller: changeName,
+                                            //: changeName,
                                           )),
                                       behaviors: <String, void Function()>{
                                         'cancel': () => Navigator.pop(

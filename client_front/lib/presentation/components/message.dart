@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_back/client_back.dart';
 
@@ -22,7 +21,7 @@ class MessageComponents {
           streams.app.scrim.add(true);
           return AlertDialog(
               elevation: 0,
-              shape: components.shape.rounded8,
+              shape: shapes.rounded8,
               title: title == null
                   ? null
                   : Text(title, style: Theme.of(context).textTheme.headline2),

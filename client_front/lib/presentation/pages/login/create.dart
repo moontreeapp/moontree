@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
@@ -62,41 +63,37 @@ class _FrontCreateScreenState extends State<FrontCreateScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Container(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
-          child: CustomScrollView(slivers: <Widget>[
-            SliverToBoxAdapter(
-              child: SizedBox(height: 76.figmaH),
-            ),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 128.figmaH,
-                child: SizedBox(
-                  height: .1534.ofMediaHeight(context),
-                  child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                  alignment: Alignment.bottomCenter,
-                  height: (16 + 24).figmaH,
-                  child: Text(
-                    'Moontree',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1
-                        ?.copyWith(color: AppColors.black60),
-                  )),
-            ),
-            SliverFillRemaining(
-                hasScrollBody: false,
-                child: KeyboardHidesWidgetWithDelay(
-                    fade: true,
-                    child: Column(
+  Widget build(BuildContext context) => FadingWidget(
+      child: GestureDetector(
+          onTap: FocusScope.of(context).unfocus,
+          child: Container(
+              padding:
+                  const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Column(children: <Widget>[
+                      SizedBox(height: 76.figmaH),
+                      SizedBox(
+                        height: 128.figmaH,
+                        child: SizedBox(
+                          height: .1534.ofMediaHeight(context),
+                          child:
+                              SvgPicture.asset('assets/logo/moontree_logo.svg'),
+                        ),
+                      ),
+                      Container(
+                          alignment: Alignment.bottomCenter,
+                          height: (16 + 24).figmaH,
+                          child: Text(
+                            'Moontree',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1
+                                ?.copyWith(color: AppColors.black60),
+                          )),
+                    ]),
+                    Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
@@ -159,6 +156,6 @@ class _FrontCreateScreenState extends State<FrontCreateScreen> {
                             )
                           ]),
                           const SizedBox(height: 40),
-                        ]))),
-          ])));
+                        ]),
+                  ]))));
 }

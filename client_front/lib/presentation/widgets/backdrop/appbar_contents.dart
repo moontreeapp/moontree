@@ -11,6 +11,7 @@ import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
@@ -37,12 +38,12 @@ class BackdropAppBarContents extends StatelessWidget
               statusBarBrightness: Brightness.dark, // For iOS
             ),
             backgroundColor: Colors.transparent,
-            shape: components.shape.topRounded8,
+            shape: shapes.topRounded8,
           )
         : buildAppBar(
             context,
             backgroundColor: AppColors.primary,
-            shape: components.shape.topRounded8,
+            shape: shapes.topRounded8,
           );
     /*final Widget  alphaBar = Platform.isIOS
         ? Container(
@@ -159,7 +160,7 @@ Address(id: 501587a63f404e723b6486221b75dd84c75c3234ff6362bbaf48535cf5b724a2, ad
           return PageLead();
         }(),
         centerTitle: spoof,
-        title: PageTitle(animate: animate),
+        title: PageTitle(),
         actions: <Widget>[
           /// thought it might be nice to have an indicator of which blockchain
           /// is being used, but I think we can make better use of the real

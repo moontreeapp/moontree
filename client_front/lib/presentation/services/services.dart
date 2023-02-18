@@ -10,8 +10,12 @@ late Screen screen;
 late ScreenFlags screenflags;
 late SystemBackButton back;
 
-void init({required double height, required BuildContext mainContext}) {
-  screen = Screen.init(height);
+void init({
+  required double height,
+  required double width,
+  required BuildContext mainContext,
+}) {
+  screen = Screen.init(height, width);
   sailor = Sailor(mainContext: mainContext);
   screenflags = ScreenFlags();
   back = SystemBackButton()..initListener();

@@ -15,19 +15,21 @@ class ScreenFlags {
 }
 
 class Screen {
+  final double width;
   final App app;
   final Navbar navbar;
   final FrontPageContainer frontPageContainer;
   final BackPageContainer backPageContainer;
-
   const Screen({
+    required this.width,
     required this.app,
     required this.navbar,
     required this.frontPageContainer,
     required this.backPageContainer,
   });
 
-  factory Screen.init(double height) => Screen(
+  factory Screen.init(double height, double width) => Screen(
+        width: width,
         app: App.init(height),
         navbar: Navbar.init(height),
         frontPageContainer: FrontPageContainer.init(height),

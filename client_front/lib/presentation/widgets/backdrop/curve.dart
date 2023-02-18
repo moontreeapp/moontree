@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
+import 'package:client_front/presentation/components/shadows.dart' as shadows;
 
 class FrontCurve extends StatefulWidget {
   final Widget? child;
@@ -16,27 +18,8 @@ class FrontCurve extends StatefulWidget {
     this.alignment,
     this.color,
     this.fuzzyTop = true,
-    this.frontLayerBorderRadius = const BorderRadius.only(
-      topLeft: Radius.circular(8),
-      topRight: Radius.circular(8),
-    ),
-    this.frontLayerBoxShadow = const <BoxShadow>[
-      BoxShadow(
-        color: Color(0x33000000),
-        offset: Offset(0, 1),
-        blurRadius: 5,
-      ),
-      BoxShadow(
-        color: Color(0x1F000000),
-        offset: Offset(0, 3),
-        blurRadius: 1,
-      ),
-      BoxShadow(
-        color: Color(0x24000000),
-        offset: Offset(0, 2),
-        blurRadius: 2,
-      ),
-    ],
+    this.frontLayerBorderRadius = shapes.topRoundedBorder8,
+    this.frontLayerBoxShadow = shadows.frontLayer,
   }) : super(key: key);
 
   @override

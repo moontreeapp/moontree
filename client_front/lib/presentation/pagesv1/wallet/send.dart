@@ -10,6 +10,7 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/application/send/cubit.dart';
+import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/presentation/components/styles/styles.dart'
     as styles;
 import 'package:client_front/presentation/components/components.dart'
@@ -180,24 +181,7 @@ class _SendState extends State<Send> {
                     const FrontCurve(
                         fuzzyTop: false,
                         height: 8,
-                        frontLayerBoxShadow: <BoxShadow>[
-                          BoxShadow(
-                              color: Color(0x33000000),
-                              offset: Offset(0, -2),
-                              blurRadius: 3),
-                          BoxShadow(
-                              color: Color(0xFFFFFFFF),
-                              offset: Offset(0, 2),
-                              blurRadius: 1),
-                          BoxShadow(
-                              color: Color(0x1FFFFFFF),
-                              offset: Offset(0, 3),
-                              blurRadius: 2),
-                          BoxShadow(
-                              color: Color(0x3DFFFFFF),
-                              offset: Offset(0, 4),
-                              blurRadius: 4),
-                        ]),
+                        frontLayerBoxShadow: shadows.sendForm),
                   ],
                 ),
                 back: Container(
