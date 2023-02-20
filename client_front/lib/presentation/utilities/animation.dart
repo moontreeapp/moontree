@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:beamer/beamer.dart';
 
-const slideDuration = Duration(milliseconds: 300);
-const fadeDuration = Duration(milliseconds: 300);
+const slideDuration = Duration(milliseconds: 3000);
+const fadeDuration = Duration(milliseconds: 3000);
 
 class DelayedCurve extends Curve {
   const DelayedCurve() : super();

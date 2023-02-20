@@ -43,7 +43,7 @@ class AppBarLeft extends StatelessWidget {
                 //    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 //    height: uiservices.screen.app.appBarHeight,
                 //    child: GestureDetector(
-                //      onTap: () async => await uiservices.sailor.gobackTrigger(),
+                //      onTap: () async => await uiservices.sailor.goBack(),
                 //      // Todo: key this off something else. like sailor current path or something
                 //      child: ['Menu', 'Holdings', 'Manage']
                 //              .contains(state.title) // key off something else.

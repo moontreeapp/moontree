@@ -160,7 +160,7 @@ class Sailor {
     };
   }
 
-  Future<void> gobackTrigger() async {
+  Future<void> goBack() async {
     // Todo: key this off something else. like sailor current path or something
     if (['Holdings', 'Manage'].contains(components.cubits.title.state.title)) {
       await sailTo(location: '/menu');
@@ -181,6 +181,7 @@ class Sailor {
     Map<String, dynamic>? params,
     bool beam = true,
     bool addToHistory = true,
+    bool? replaceOverride,
   }) async {
     if (location == null && section == null) {
       throw Exception('must supply location or section');
@@ -212,6 +213,7 @@ class Sailor {
       pageContainerMap: pageContainerMap[PageContainer.back],
       beam: beam,
       replace: !addToHistory,
+      replaceOverride: replaceOverride,
       beamFunction: _beamToBack,
       params: params,
     );
@@ -220,6 +222,7 @@ class Sailor {
       pageContainerMap: pageContainerMap[PageContainer.front],
       beam: beam,
       replace: !addToHistory,
+      replaceOverride: replaceOverride,
       beamFunction: _beamToFront,
       params: params,
     );
@@ -275,6 +278,7 @@ class Sailor {
     required Map<dynamic, dynamic> pageContainerMap,
     required bool beam,
     required bool replace,
+    required bool? replaceOverride,
     required void Function(String, [bool]) beamFunction,
     required Map<String, dynamic>? params,
   }) {
@@ -288,7 +292,7 @@ class Sailor {
             ending == '' ? matchLoc : matchLoc.replaceFirst(matchParam, ending);
         print('location');
         print(location);
-        beamFunction(location, true);
+        beamFunction(location, replaceOverride ?? true);
       }
     }
   }

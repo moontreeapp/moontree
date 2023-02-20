@@ -27,7 +27,7 @@ class SystemBackButton {
       // some of these we want to do nothing anyway.
       // Navigator.of(context).pop();
     } else {
-      await services.sailor.gobackTrigger();
+      await services.sailor.goBack();
     }
   }
 

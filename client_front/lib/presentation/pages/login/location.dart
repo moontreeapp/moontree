@@ -18,16 +18,20 @@ class FrontLoginLocation extends BeamLocation<BeamState> {
       ];
 
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        if (state.uri.toString() == '/login/create')
-          const FadeTransitionPage(child: FrontCreateScreen()),
-        if (state.uri.toString() == '/login/create/native')
-          const FadeTransitionPage(child: FrontCreateNativeScreen()),
-        if (state.uri.toString() == '/login/create/password')
-          const FadeTransitionPage(child: FrontCreatePasswordScreen()),
-        if (state.uri.toString() == '/login/native')
-          const FadeTransitionPage(child: FrontNativeScreen()),
-        if (state.uri.toString() == '/login/password')
-          const FadeTransitionPage(child: FrontPasswordScreen()),
-      ];
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => () {
+        print(state.uri.path);
+        return [
+          if (state.uri.path == '/login/create')
+            const FadeTransitionPage(child: FrontCreateScreen()),
+          if (state.uri.path == '/login/create/native')
+            const BeamPage(child: FrontCreateNativeScreen()),
+          //const FadeTransitionPage(child: FrontCreateNativeScreen()),
+          if (state.uri.path == '/login/create/password')
+            const FadeTransitionPage(child: FrontCreatePasswordScreen()),
+          if (state.uri.path == '/login/native')
+            const FadeTransitionPage(child: FrontNativeScreen()),
+          if (state.uri.path == '/login/password')
+            const FadeTransitionPage(child: FrontPasswordScreen()),
+        ];
+      }();
 }

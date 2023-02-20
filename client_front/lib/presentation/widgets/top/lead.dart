@@ -231,7 +231,7 @@ class _PageLead extends State<PageLead> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () async => await uiservices.sailor.gobackTrigger(),
+        onTap: () async => await uiservices.sailor.goBack(),
         child: () {
           print('path');
           print(path);

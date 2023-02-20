@@ -11,6 +11,7 @@ import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/services/services.dart' show sailor;
 
 class FrontCreateScreen extends StatefulWidget {
   const FrontCreateScreen({Key? key}) : super(key: key ?? defaultKey);
@@ -120,6 +121,7 @@ class _FrontCreateScreenState extends State<FrontCreateScreen> {
                               )),
                           const SizedBox(height: 16),
                           Row(children: <Widget>[
+                            // todo: make buttons a widget, rather than a function that returns a widget.
                             components.buttons.actionButton(
                               context,
                               enabled: true,
@@ -129,11 +131,16 @@ class _FrontCreateScreenState extends State<FrontCreateScreen> {
                                 await services.authentication.setMethod(
                                     method: AuthMethod.nativeSecurity);
                                 streams.app.splash.add(false);
-                                Navigator.pushReplacementNamed(
-                                    context, getMethodPathCreate(),
-                                    arguments: <String, bool>{
-                                      'needsConsent': true
-                                    });
+                                //Navigator.pop(context);
+                                sailor.sailTo(
+                                  location: '/login/create/native',
+                                  //replaceOverride: false,
+                                );
+                                //Navigator.pushReplacementNamed(
+                                //    context, getMethodPathCreate(),
+                                //    arguments: <String, bool>{
+                                //      'needsConsent': true
+                                //    });
                               },
                             )
                           ]),
@@ -147,11 +154,16 @@ class _FrontCreateScreenState extends State<FrontCreateScreen> {
                                 await services.authentication.setMethod(
                                     method: AuthMethod.moontreePassword);
                                 streams.app.splash.add(false);
-                                Navigator.pushReplacementNamed(
-                                    context, getMethodPathCreate(),
-                                    arguments: <String, bool>{
-                                      'needsConsent': true
-                                    });
+                                //Navigator.pop(context);
+                                sailor.sailTo(
+                                  location: '/login/create/password',
+                                  //replaceOverride: false,
+                                );
+                                //Navigator.pushReplacementNamed(
+                                //    context, getMethodPathCreate(),
+                                //    arguments: <String, bool>{
+                                //      'needsConsent': true
+                                //    });
                               },
                             )
                           ]),

@@ -7,11 +7,14 @@ import 'package:client_front/presentation/services/services.dart' as uiservices;
 class ContentScaffold extends StatelessWidget {
   const ContentScaffold({Key? key}) : super(key: key);
 
+  /// SingleChildScrollView used because of render error when system bar active
   @override
-  Widget build(BuildContext context) => SizedBox(
+  Widget build(BuildContext context) => SingleChildScrollView(
+      controller: ScrollController(),
+      child: SizedBox(
         height: uiservices.screen.app.height,
         child: Column(children: const <Widget>[CustomAppBar(), ContentBulk()]),
-      );
+      ));
 }
 
 class ContentBulk extends StatelessWidget {
