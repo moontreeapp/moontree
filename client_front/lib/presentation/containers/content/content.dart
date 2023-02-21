@@ -5,7 +5,8 @@ import 'package:client_front/presentation/containers/content/back.dart';
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 
 class ContentScaffold extends StatelessWidget {
-  const ContentScaffold({Key? key}) : super(key: key);
+  final Widget? child;
+  const ContentScaffold({Key? key, this.child}) : super(key: key);
 
   /// SingleChildScrollView used because of render error when system bar active
   @override
@@ -13,12 +14,16 @@ class ContentScaffold extends StatelessWidget {
       controller: ScrollController(),
       child: SizedBox(
         height: uiservices.screen.app.height,
-        child: Column(children: const <Widget>[CustomAppBar(), ContentBulk()]),
+        child: Column(children: <Widget>[
+          const CustomAppBar(),
+          ContentBulk(child: child)
+        ]),
       ));
 }
 
 class ContentBulk extends StatelessWidget {
-  const ContentBulk({Key? key}) : super(key: key);
+  final Widget? child;
+  const ContentBulk({Key? key, this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Container(
@@ -26,9 +31,9 @@ class ContentBulk extends StatelessWidget {
         height: uiservices.screen.frontPageContainer.maxHeight,
         child: Stack(
           alignment: Alignment.topCenter,
-          children: const <Widget>[
-            BackContainer(),
-            FrontContainer(),
+          children: <Widget>[
+            const BackContainer(),
+            FrontContainer(child: child),
           ],
         ),
       );

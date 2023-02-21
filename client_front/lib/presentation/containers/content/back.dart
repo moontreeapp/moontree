@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/back/cubit.dart';
+import 'package:client_front/presentation/utilities/animation.dart'
+    as animation;
 
 class BackContainer extends StatelessWidget {
   const BackContainer({Key? key}) : super(key: key);
@@ -13,7 +15,7 @@ class BackContainer extends StatelessWidget {
             height: state.height,
             alignment: Alignment.topCenter,
             child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 500),
+              duration: animation.fadeDuration,
               transitionBuilder: (Widget child, Animation<double> animation) =>
                   FadeTransition(
                       opacity: animation.drive(Tween<double>(begin: 0, end: 1)

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:beamer/beamer.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
@@ -177,8 +176,10 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //        getMethodPathCreate(),
     //      ));
     //}
-    Future<void>.microtask(() => uiservices.beamer.rootDelegate
-        .beamToReplacementNamed(Sailor.initialPath));
+    Future<void>.microtask(() => Navigator.pushReplacementNamed(
+          context,
+          Sailor.initialPath,
+        ));
     return;
     // make a password out of biokey
     // this is false on 1st startup -> create

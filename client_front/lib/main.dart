@@ -29,7 +29,6 @@ import 'package:client_back/services/services.dart';
 //   print('Handling a background message ${message.messageId}');
 // }
 
-import 'package:beamer/beamer.dart';
 // ignore: implementation_imports
 import 'package:flutter_bloc/src/bloc_provider.dart'
     show BlocProviderSingleChildWidget;
@@ -41,6 +40,7 @@ import 'package:client_front/presentation/containers/content/content.dart';
 //import 'package:client_front/presentation/containers/loading_layer.dart';
 import 'package:client_front/presentation/services/sailor.dart' show Sailor;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
+import 'package:client_front/presentation/pages/pages.dart' as pages;
 
 Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   devFlags.addAll(flags ?? []);
@@ -106,54 +106,45 @@ class RavenMobileApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     components.routes.mainContext = context;
-    uiservices.beamer.rootDelegate = BeamerDelegate(
-      //initialPath: Sailor.initialPath,
-      initialPath: '/splash',
-      navigatorObservers: <NavigatorObserver>[components.routes],
-      locationBuilder: RoutesLocationBuilder(
-        routes: {
-          '/splash': (context, state, data) => const Splash(),
-          Sailor.initialPath: (context, state, data) {
-            print(state.uri.toString());
-            print(data);
-            return const HomePage();
-          },
-        },
-      ),
-    );
-    return MaterialApp.router(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      routerDelegate: uiservices.beamer.rootDelegate,
-      routeInformationParser: BeamerParser(),
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
+      initialRoute: '/splash',
+      routes: pages.routes,
+      navigatorObservers: <NavigatorObserver>[components.routes],
+      builder: (BuildContext context, Widget? child) =>
+          //components.routes.scaffoldContext = context;
+          MultiBlocProvider(
+              providers: providers, child: HomePage(child: child)),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final Widget? child;
+  const HomePage({Key? key, this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     components.routes.scaffoldContext = context;
     final scaffold = Scaffold(
-      backgroundColor: AppColors.primary,
       resizeToAvoidBottomInset: false,
-      body: MultiBlocProvider(
-        providers: providers,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: const <Widget>[
-            ContentScaffold(),
-            ContentExtra(),
-            BottomNavigationBarWidget(),
-            BottomModalSheetWidget(),
-            //LoadingLayer(),  /// must merge both implementations
-            LoadingLayer(),
-            TutorialLayer(),
-          ],
-        ),
+      backgroundColor:
+          Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+              ContentScaffold(child: child),
+            ] +
+            const <Widget>[
+              ContentExtra(),
+              BottomNavigationBarWidget(),
+              BottomModalSheetWidget(),
+              //LoadingLayer(),  /// must merge both implementations
+              LoadingLayer(),
+              TutorialLayer(),
+            ],
       ),
     );
     return GestureDetector(
@@ -178,8 +169,8 @@ List<BlocProviderSingleChildWidget> get providers => [
       BlocProvider<TitleCubit>(create: (context) => components.cubits.title),
       BlocProvider<BackContainerCubit>(
           create: (context) => components.cubits.backContainer),
-      BlocProvider<FrontContainerHeightCubit>(
-          create: (context) => components.cubits.frontContainerHeight),
+      BlocProvider<FrontContainerCubit>(
+          create: (context) => components.cubits.frontContainer),
       BlocProvider<NavbarHeightCubit>(
           create: (context) => components.cubits.navbarHeight),
       BlocProvider<NavbarSectionCubit>(

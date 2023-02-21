@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/extra/cubit.dart';
-import 'package:client_front/application/front/height/cubit.dart';
+import 'package:client_front/application/front/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' as services;
 import 'package:client_front/presentation/utilities/animation.dart'
     as animation;
@@ -50,14 +50,14 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
   final double minSize = services.screen.frontPageContainer.midHeightPercentage;
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
-  late FrontContainerHeightCubit heightCubit;
+  late FrontContainerCubit heightCubit;
   double draggableHeight =
       services.screen.frontPageContainer.midHeightPercentage;
 
   @override
   void initState() {
     super.initState();
-    heightCubit = BlocProvider.of<FrontContainerHeightCubit>(context);
+    heightCubit = BlocProvider.of<FrontContainerCubit>(context);
     heightCubit.setHidden(true);
     draggableScrollableController.addListener(scrollListener);
     _controller = AnimationController(

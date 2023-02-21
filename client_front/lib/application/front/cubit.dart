@@ -8,35 +8,34 @@ import 'package:client_front/presentation/services/services.dart' as services;
 
 part 'state.dart';
 
-class FrontContainerHeightCubit extends Cubit<FrontContainerHeightCubitState>
+class FrontContainerCubit extends Cubit<FrontContainerCubitState>
     with HeightCubitMixin {
-  FrontContainerHeightCubit()
-      : super(FrontContainerHeightState(
+  FrontContainerCubit()
+      : super(FrontContainerState(
             height: services.screen.frontPageContainer.maxHeight));
 
   void setHidden(bool hide) =>
-      emit(FrontContainerHeightState(height: state.height, hide: hide));
+      emit(FrontContainerState(height: state.height, hide: hide));
 
-  void setHeightToExactly({required double height}) =>
-      emit(FrontContainerHeightState(
-          height: math.max(services.screen.frontPageContainer.minHeight,
-              math.min(height, services.screen.frontPageContainer.maxHeight)),
-          hide: state.hide));
+  void setHeightToExactly({required double height}) => emit(FrontContainerState(
+      height: math.max(services.screen.frontPageContainer.minHeight,
+          math.min(height, services.screen.frontPageContainer.maxHeight)),
+      hide: state.hide));
 
   @override
-  void max() async => emit(FrontContainerHeightState(
+  void max() async => emit(FrontContainerState(
       height: services.screen.frontPageContainer.maxHeight, hide: state.hide));
 
   @override
-  void mid() async => emit(FrontContainerHeightState(
+  void mid() async => emit(FrontContainerState(
       height: services.screen.frontPageContainer.midHeight, hide: state.hide));
 
   @override
-  void min() async => emit(FrontContainerHeightState(
+  void min() async => emit(FrontContainerState(
       height: services.screen.frontPageContainer.minHeight, hide: state.hide));
 
   @override
-  void hidden() async => emit(FrontContainerHeightState(
+  void hidden() async => emit(FrontContainerState(
       height: services.screen.frontPageContainer.hiddenHeight,
       hide: state.hide));
 }

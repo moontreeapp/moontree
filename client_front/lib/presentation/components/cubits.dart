@@ -20,8 +20,7 @@ class GlobalCubits {
   // uiv2
   final TitleCubit title = TitleCubit();
   final BackContainerCubit backContainer = BackContainerCubit();
-  final FrontContainerHeightCubit frontContainerHeight =
-      FrontContainerHeightCubit();
+  final FrontContainerCubit frontContainer = FrontContainerCubit();
   final NavbarHeightCubit navbarHeight = NavbarHeightCubit();
   final NavbarSectionCubit navbarSection = NavbarSectionCubit();
   final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();

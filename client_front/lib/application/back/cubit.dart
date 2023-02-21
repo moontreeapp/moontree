@@ -14,7 +14,7 @@ class BackContainerCubit extends Cubit<BackContainerCubitState>
             height: services.screen.backPageContainer.maxHeight,
             child: SizedBox.shrink()));
 
-  void update(double? height, Widget? child) => emit(BackContainerState(
+  void update({double? height, Widget? child}) => emit(BackContainerState(
       height: height ?? state.height, child: child ?? state.child));
 
   @override
