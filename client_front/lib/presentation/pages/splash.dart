@@ -20,6 +20,18 @@ import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
+class SplashWindow extends StatelessWidget {
+  const SplashWindow({Key? key}) : super(key: key ?? defaultKey);
+  static const defaultKey = ValueKey('SplashWindow');
+
+  @override
+  Widget build(BuildContext context) => Container(
+        height: double.infinity,
+        width: double.infinity,
+        color: Colors.transparent,
+      );
+}
+
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('Splash');
@@ -130,10 +142,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     /// how to call a function of a stateless widget above you:
     //(context.findAncestorWidgetOfExactType<MoontreeApp>() as MoontreeApp)
     //    .reloadApp();
-    await Future.delayed(Duration(milliseconds: 1000));
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+    //await Future.delayed(Duration(milliseconds: 1000));
+    //Navigator.of(components.routes.routeContext!).pushReplacement(
+    //    MaterialPageRoute(builder: (BuildContext context) => MoontreeApp()));
     //Navigator.of(components.routes.routeContext!)
+    //    .pushReplacementNamed(Sailor.initialPath);
+    //Navigator.of(components.routes.navigatorKey.currentContext!)
+    //    .pushReplacementNamed(Sailor.initialPath);
+    //components.routes.navigatorKey.currentState!
     //    .pushReplacementNamed(Sailor.initialPath);
     // allow for rebuild of root app
     //await redirectToCreateOrLogin();

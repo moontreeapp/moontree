@@ -75,7 +75,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     cubit = components.cubits.title;
     slowController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
-    slowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(slowController);
+    slowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: slowController, curve: Curves.easeInOutCubic));
     slowController.forward();
     /*
     initializeWalletSecurities();

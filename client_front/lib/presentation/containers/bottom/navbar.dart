@@ -52,9 +52,14 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
   Widget build(BuildContext context) =>
       BlocBuilder<NavbarHeightCubit, NavbarHeightCubitState>(
         builder: (BuildContext context, NavbarHeightCubitState state) {
-          if (state.currentNavbarHeight == NavbarHeight.mid ||
-              state.currentNavbarHeight == NavbarHeight.hidden) {
+          if ((state.previousNavbarHeight == NavbarHeight.max &&
+                  state.currentNavbarHeight == NavbarHeight.mid) ||
+              (state.previousNavbarHeight != NavbarHeight.hidden &&
+                  state.currentNavbarHeight == NavbarHeight.hidden)) {
             animationController.forward();
+          } else if (state.previousNavbarHeight == NavbarHeight.hidden &&
+              state.currentNavbarHeight == NavbarHeight.hidden) {
+            animationController.value = 1.0;
           } else if (state.currentNavbarHeight == NavbarHeight.max) {
             animationController.reverse();
           }

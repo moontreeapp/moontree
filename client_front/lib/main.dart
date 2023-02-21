@@ -164,33 +164,34 @@ class MoontreeMobileApp extends StatelessWidget {
         darkTheme: CustomTheme.lightTheme,
         navigatorKey: components.routes.navigatorKey,
         navigatorObservers: <NavigatorObserver>[components.routes],
-        initialRoute: '/splash',
+        //initialRoute: '/splash',
+        //home: Splash(),
         routes: pages.routes,
-        onGenerateRoute: (RouteSettings settings) {
-          if (settings.name == '/splash') {
-            return PageRouteBuilder<dynamic>(
-              pageBuilder: (BuildContext context, Animation<double> animation,
-                      Animation<double> secondaryAnimation) =>
-                  Splash(),
-              transitionsBuilder: (
-                BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-                Widget child,
-              ) {
-                final Tween<Offset> offsetTween = Tween<Offset>(
-                    begin: Offset(0.0, 0.0), end: Offset(-1.0, 0.0));
-                final Animation<Offset> slideOutLeftAnimation =
-                    offsetTween.animate(secondaryAnimation);
-                return SlideTransition(
-                    position: slideOutLeftAnimation, child: child);
-              },
-            );
-          } else {
-            // handle other routes here
-            return null;
-          }
-        },
+        //onGenerateRoute: (RouteSettings settings) {
+        //  if (settings.name == '/splash') {
+        //    return PageRouteBuilder<dynamic>(
+        //      pageBuilder: (BuildContext context, Animation<double> animation,
+        //              Animation<double> secondaryAnimation) =>
+        //          Splash(),
+        //      transitionsBuilder: (
+        //        BuildContext context,
+        //        Animation<double> animation,
+        //        Animation<double> secondaryAnimation,
+        //        Widget child,
+        //      ) {
+        //        final Tween<Offset> offsetTween = Tween<Offset>(
+        //            begin: Offset(0.0, 0.0), end: Offset(-1.0, 0.0));
+        //        final Animation<Offset> slideOutLeftAnimation =
+        //            offsetTween.animate(secondaryAnimation);
+        //        return SlideTransition(
+        //            position: slideOutLeftAnimation, child: child);
+        //      },
+        //    );
+        //  } else {
+        //    // handle other routes here
+        //    return null;
+        //  }
+        //},
         builder: (BuildContext context, Widget? child) =>
             MoontreeApp(child: child));
   }
@@ -210,6 +211,7 @@ class MoontreeAppState extends State<MoontreeApp> {
   @override
   void initState() {
     super.initState();
+    components.routes.scaffoldContext = context;
     child = widget.child;
   }
 
@@ -231,26 +233,21 @@ class MoontreeAppState extends State<MoontreeApp> {
 
   @override
   Widget build(BuildContext context) {
-    //rebuildAllChildren(context);
-    print(streams.app.splash.value);
-    print(widget.child!.key.toString());
-
-    if (streams.app.splash.value == true) {
-      child = SizedBox.shrink();
-      return widget.child!;
-    }
-
-    return MultiBlocProvider(
-        providers: providers,
-        child: HomePage(
-            child: //streams.app.splash.value == false
-                //? () {
-                //    streams.app.splash.add(null);
-                //    setState(() {});
-                //    return Startup();
-                //  }()
-                //:
-                child));
+    return StreamBuilder<bool>(
+      stream: streams.app.splash.stream,
+      initialData: true,
+      builder: (context, snapshot) {
+        if (snapshot.data == true) {
+          return Splash();
+        } else {
+          print('This will print after the splash screen is dismissed');
+          return MultiBlocProvider(
+            providers: providers,
+            child: HomePage(child: child),
+          );
+        }
+      },
+    );
   }
 }
 

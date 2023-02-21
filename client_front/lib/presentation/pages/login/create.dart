@@ -64,7 +64,7 @@ class _FrontCreateScreenState extends State<FrontCreateScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => FadingWidget(
+  Widget build(BuildContext context) => FadeIn(
       child: GestureDetector(
           onTap: FocusScope.of(context).unfocus,
           child: Container(

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
-class FadingWidget extends StatefulWidget {
+class FadeIn extends StatefulWidget {
   final Widget child;
 
-  const FadingWidget({required this.child});
+  const FadeIn({required this.child});
 
   @override
-  _FadingWidgetState createState() => _FadingWidgetState();
+  _FadeInState createState() => _FadeInState();
 }
 
-class _FadingWidgetState extends State<FadingWidget>
-    with SingleTickerProviderStateMixin {
+class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 

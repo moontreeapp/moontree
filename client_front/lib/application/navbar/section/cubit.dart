@@ -6,7 +6,7 @@ import 'package:equatable/equatable.dart';
 part 'state.dart';
 
 class NavbarSectionCubit extends Cubit<NavbarSectionCubitState> {
-  NavbarSectionCubit() : super(const NavbarSectionState(show: true));
+  NavbarSectionCubit() : super(const NavbarSectionState(show: false));
 
   void show() => emit(const NavbarSectionState(show: true));
 

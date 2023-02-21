@@ -187,7 +187,9 @@ class Sailor {
     }
     // update app bar stuff
     components.cubits.title.update(path: location);
-    components.cubits.navbarHeight.setHeightTo(height: manifest.navbarHeight);
+
+    // update nav bar stuff
+    //components.cubits.navbarHeight.setHeightTo(height: manifest.navbarHeight);
 
     // update back stuff
     components.cubits.backContainer.update(child: manifest.backChild);

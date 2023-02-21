@@ -1,5 +1,6 @@
 //import 'package:backdrop/backdrop.dart';
 import 'dart:async';
+import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:flutter/material.dart';
@@ -230,7 +231,8 @@ class _PageLead extends State<PageLead> {
   };
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
+  Widget build(BuildContext context) => FadeIn(
+          child: GestureDetector(
         onTap: () async => await uiservices.sailor.goBack(),
         child: () {
           print('path');
@@ -239,5 +241,5 @@ class _PageLead extends State<PageLead> {
               ? const Icon(Icons.menu, color: Colors.white)
               : const Icon(Icons.arrow_back, color: Colors.white);
         }(),
-      );
+      ));
 }

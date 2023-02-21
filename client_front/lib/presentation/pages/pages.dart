@@ -56,7 +56,8 @@ import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
 
 final _staticRoutes = <String, Widget Function(BuildContext)>{
-  '/splash': (BuildContext context) => Splash(),
+  '/': (BuildContext context) => const FrontCreateScreen(), //SizedBox.shrink(),
+  '/splash': (BuildContext context) => SplashWindow(),
   '/home': (BuildContext context) => const Home(),
   '/manage/asset': (BuildContext context) => const AssetPage(),
   '/transactions': (BuildContext context) => const Transactions(),
