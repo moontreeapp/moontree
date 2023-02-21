@@ -176,8 +176,8 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.loadingView),
       // v2
       BlocProvider<TitleCubit>(create: (context) => components.cubits.title),
-      BlocProvider<BackContainerHeightCubit>(
-          create: (context) => components.cubits.backContainerHeight),
+      BlocProvider<BackContainerCubit>(
+          create: (context) => components.cubits.backContainer),
       BlocProvider<FrontContainerHeightCubit>(
           create: (context) => components.cubits.frontContainerHeight),
       BlocProvider<NavbarHeightCubit>(

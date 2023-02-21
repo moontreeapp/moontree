@@ -5,7 +5,7 @@ export 'package:client_front/application/holdings/cubit.dart';
 export 'package:client_front/application/loading/cubit.dart';
 export 'package:client_front/application/receive/cubit.dart';
 
-export 'package:client_front/application/back/height/cubit.dart';
+export 'package:client_front/application/back/cubit.dart';
 export 'package:client_front/application/bottom/modal/cubit.dart';
 export 'package:client_front/application/front/height/cubit.dart';
 export 'package:client_front/application/extra/cubit.dart';

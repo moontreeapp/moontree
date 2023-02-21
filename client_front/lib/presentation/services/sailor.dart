@@ -209,7 +209,7 @@ class Sailor {
     components.cubits.navbarHeight
         .setHeightTo(height: pageContainerMap[NavbarHeight]);
     _handleView(
-      heightCubit: components.cubits.backContainerHeight,
+      heightCubit: components.cubits.backContainer,
       pageContainerMap: pageContainerMap[PageContainer.back],
       beam: beam,
       replace: !addToHistory,

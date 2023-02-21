@@ -62,3 +62,20 @@ class FadeTransitionPage extends BeamPage {
     );
   }
 }
+
+class DelayedCurve2 extends Curve {
+  const DelayedCurve2() : super();
+
+  @override
+  double transformInternal(double t) {
+    if (t < 0.5) {
+      ///final x = (-2.0 * t) + 1;
+      final x = t * 2;
+      print('$t $x');
+      return x;
+    } else {
+      print('$t 1.0');
+      return 1.0;
+    }
+  }
+}

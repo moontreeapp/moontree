@@ -19,8 +19,7 @@ class GlobalCubits {
 
   // uiv2
   final TitleCubit title = TitleCubit();
-  final BackContainerHeightCubit backContainerHeight =
-      BackContainerHeightCubit();
+  final BackContainerCubit backContainer = BackContainerCubit();
   final FrontContainerHeightCubit frontContainerHeight =
       FrontContainerHeightCubit();
   final NavbarHeightCubit navbarHeight = NavbarHeightCubit();
