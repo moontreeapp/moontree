@@ -1,25 +1,25 @@
 part of 'cubit.dart';
 
 @immutable
-class ContentExtraState {
+class ExtraContainerState {
   final Widget child;
 
-  const ContentExtraState({required this.child});
+  const ExtraContainerState({required this.child});
 
   @override
-  String toString() => 'ContentExtra(child=$child)';
+  String toString() => 'ExtraContainer(child=$child)';
 
   List<Object?> get props => <Object?>[child];
 
-  factory ContentExtraState.initial() =>
-      const ContentExtraState(child: SizedBox.shrink());
+  factory ExtraContainerState.initial() =>
+      const ExtraContainerState(child: SizedBox.shrink());
 
-  ContentExtraState load({Widget? child}) =>
-      ContentExtraState.load(state: this, child: child);
+  ExtraContainerState load({Widget? child}) =>
+      ExtraContainerState.load(state: this, child: child);
 
-  factory ContentExtraState.load({
-    required ContentExtraState state,
+  factory ExtraContainerState.load({
+    required ExtraContainerState state,
     Widget? child,
   }) =>
-      ContentExtraState(child: child ?? state.child);
+      ExtraContainerState(child: child ?? state.child);
 }

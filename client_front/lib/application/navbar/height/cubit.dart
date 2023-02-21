@@ -10,6 +10,7 @@ enum NavbarHeight {
   max,
   mid,
   hidden,
+  same,
 }
 
 class NavbarHeightCubit extends Cubit<NavbarHeightCubitState> {
@@ -29,6 +30,8 @@ class NavbarHeightCubit extends Cubit<NavbarHeightCubitState> {
         return mid();
       case NavbarHeight.hidden:
         return hidden();
+      case NavbarHeight.same:
+        return;
       default:
         return max();
     }

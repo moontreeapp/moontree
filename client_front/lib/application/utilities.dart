@@ -9,6 +9,7 @@ enum PageContainerHeight {
 enum PageContainer {
   front,
   back,
+  extra,
 }
 
 abstract class ViewCubitMixin {

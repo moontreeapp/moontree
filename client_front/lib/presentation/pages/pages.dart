@@ -51,9 +51,12 @@ import 'package:client_front/presentation/pagesv1/wallet/transaction.dart';
 //import 'package:client_front/pages/wallet/transactions.dart';
 import 'package:client_front/presentation/pagesv1/wallet/transactions/widget.dart';
 import 'package:client_front/presentation/widgets/front/verify.dart';
+// v3
+import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
 
 final _staticRoutes = <String, Widget Function(BuildContext)>{
+  '/splash': (BuildContext context) => Splash(),
   '/home': (BuildContext context) => const Home(),
   '/manage/asset': (BuildContext context) => const AssetPage(),
   '/transactions': (BuildContext context) => const Transactions(),

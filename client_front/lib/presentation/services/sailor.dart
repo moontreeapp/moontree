@@ -1,4 +1,5 @@
 // import 'package:beamer/beamer.dart';
+import 'package:client_front/presentation/pages/splash.dart';
 import 'package:flutter/material.dart';
 
 import 'package:client_front/application/utilities.dart';
@@ -9,6 +10,24 @@ import 'package:client_front/presentation/services/services.dart' show beamer;
 
 enum Section { login, wallet, manage, swap, settings }
 
+class Manifest {
+  final Section? section;
+  final Widget? backChild;
+  final PageContainerHeight frontHeight;
+  final NavbarHeight navbarHeight;
+  final String? frontPath;
+  final Widget? extraChild;
+  final bool extraHideFront;
+  const Manifest(
+      {this.section,
+      this.backChild,
+      this.frontHeight = PageContainerHeight.same,
+      this.navbarHeight = NavbarHeight.same,
+      this.frontPath,
+      this.extraChild,
+      this.extraHideFront = false});
+}
+
 class Sailor {
   static const String initialPath = '/login/create';
   static const Map<Section, String> initialPaths = {
@@ -18,113 +37,87 @@ class Sailor {
     Section.swap: '/swap',
     Section.settings: '/menu',
   };
-  static const Map<String, Map<dynamic, dynamic>> destinationMap = {
-    '/login/create': {
-      Section: Section.login,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {},
-      NavbarHeight: NavbarHeight.hidden,
-    },
-    '/login/create/native': {
-      Section: Section.login,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {},
-      NavbarHeight: NavbarHeight.hidden,
-    },
-    '/login/create/password': {
-      Section: Section.login,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {},
-      NavbarHeight: NavbarHeight.hidden,
-    },
-    '/login/native': {
-      Section: Section.login,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {},
-      NavbarHeight: NavbarHeight.hidden,
-    },
-    '/login/password': {
-      Section: Section.login,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {},
-      NavbarHeight: NavbarHeight.hidden,
-    },
-    '/wallet/holdings': {
-      Section: Section.wallet,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {},
-      NavbarHeight: NavbarHeight.max,
-    },
-    '/wallet/holding': {
-      Section: Section.wallet,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.mid,
-      },
-      PageContainer.back: {
-        'containerHeight': PageContainerHeight.mid,
-      },
-      NavbarHeight: NavbarHeight.mid,
-    },
-    '/wallet/holding/transaction': {
-      Section: Section.wallet,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {},
-      NavbarHeight: NavbarHeight.mid,
-    },
-    '/manage': {
-      Section: Section.manage,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {},
-      NavbarHeight: NavbarHeight.max,
-    },
-    '/menu': {
-      Section: Section.settings,
-      PageContainer.front: {
-        'path': null,
-        'containerHeight': PageContainerHeight.min,
-      },
-      PageContainer.back: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      NavbarHeight: NavbarHeight.hidden,
-    },
-    '/menu/settings': {
-      Section: Section.settings,
-      PageContainer.front: {
-        'path': null,
-        'containerHeight': PageContainerHeight.min,
-      },
-      PageContainer.back: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      NavbarHeight: NavbarHeight.hidden,
-    },
-    '/settings/example': {
-      Section: Section.settings,
-      PageContainer.front: {
-        'containerHeight': PageContainerHeight.max,
-      },
-      PageContainer.back: {
-        'containerHeight': PageContainerHeight.same,
-      },
-      NavbarHeight: NavbarHeight.hidden,
-    },
+  static const Map<String, Manifest> destinationMap = {
+    //'/splash': Manifest(
+    //  section: Section.login,
+    //  frontHeight: PageContainerHeight.max,
+    //  navbarHeight: NavbarHeight.hidden,
+    //  frontPath: '/splash',
+    //  extraChild: Splash(),
+    //  extraHideFront: true,
+    //),
+    '/login/create': Manifest(
+      section: Section.login,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/login/create',
+    ),
+    '/login/create/native': Manifest(
+      section: Section.login,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/login/create/native',
+    ),
+    '/login/create/password': Manifest(
+      section: Section.login,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/login/create/password',
+    ),
+    '/login/native': Manifest(
+      section: Section.login,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/login/native',
+    ),
+    '/login/password': Manifest(
+      section: Section.login,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/login/password',
+    ),
+    '/wallet/holdings': Manifest(
+      section: Section.wallet,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.max,
+      frontPath: '/wallet/holdings',
+    ),
+    '/wallet/holding': Manifest(
+      section: Section.wallet,
+      frontHeight: PageContainerHeight.mid,
+      navbarHeight: NavbarHeight.mid,
+      frontPath: '/wallet/holding',
+    ),
+    '/wallet/holding/transaction': Manifest(
+      section: Section.wallet,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.mid,
+      frontPath: '/wallet/holding/transaction',
+    ),
+    '/manage': Manifest(
+      section: Section.manage,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.max,
+      frontPath: '/manage',
+    ),
+    '/menu': Manifest(
+      section: Section.settings,
+      frontHeight: PageContainerHeight.min,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: null,
+    ),
+    '/menu/settings': Manifest(
+      section: Section.settings,
+      frontHeight: PageContainerHeight.min,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: null,
+    ),
+    '/settings/example': Manifest(
+      section: Section.settings,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/settings/example',
+    ),
   };
 
   final BuildContext mainContext;
@@ -154,8 +147,9 @@ class Sailor {
       // any page that uses ContentExtra layer for draggable sheets
       if (['Holding'].contains(components.cubits.title.state.title)) {
         // show front layer and instantly remove extra content before anything else.
+        // todo make this dependant on the map.
         components.cubits.frontContainer.setHidden(false);
-        components.cubits.contentExtra.reset();
+        components.cubits.extraContainer.reset();
       }
       sailBack();
     }
@@ -163,9 +157,9 @@ class Sailor {
 
   Future<void> sailTo({
     String? location,
+    BuildContext? context,
     Section? section,
     Map<String, dynamic>? params,
-    bool beam = true,
     bool addToHistory = true,
     bool? replaceOverride,
   }) async {
@@ -179,45 +173,42 @@ class Sailor {
     } else {
       location ??= initialPaths[section]!;
     }
-    final pageContainerMap = destinationMap[location];
-    if (pageContainerMap == null) {
+    final manifest = destinationMap[location];
+    if (manifest == null) {
       throw Exception('Invalid location: $location');
     }
     if (addToHistory) {
       _handleHistoryAddition(
         location,
         currSection: sectionHistory.last,
-        destSection: pageContainerMap[Section]!,
+        destSection: manifest.section!,
         addToDestinationHistory: addToDestinationHistory,
       );
     }
     // update app bar stuff
     components.cubits.title.update(path: location);
-    components.cubits.navbarHeight
-        .setHeightTo(height: pageContainerMap[NavbarHeight]);
+    components.cubits.navbarHeight.setHeightTo(height: manifest.navbarHeight);
 
     // update back stuff
-    components.cubits.backContainer.update(
-        child: Container(
-      height: 150,
-      color: Colors.yellow,
-    ));
-    if (pageContainerMap.isNotEmpty) {
-      // update front height,
-      components.cubits.frontContainer
-          .setHeightTo(height: pageContainerMap['containerHeight']);
+    components.cubits.backContainer.update(child: manifest.backChild);
 
-      // fade out front
+    // update front height,
+    components.cubits.frontContainer.setHeightTo(height: manifest.frontHeight);
 
-      // go there
-      String? matchLoc = pageContainerMap['path'];
-      if (beam && matchLoc != null) {
-        final matchParam = matchLoc.split(':').last;
-        final ending = params?[matchLoc.split(':').last] ?? '';
-        final path =
-            ending == '' ? matchLoc : matchLoc.replaceFirst(matchParam, ending);
-        _navigate(path, replaceOverride ?? true);
-      }
+    // fade out front
+
+    // set the content on the extra layer
+    components.cubits.extraContainer.set(child: manifest.extraChild);
+
+    // go there
+    if (manifest.frontPath != null) {
+      // todo: get rid of this pattern, just pass args in if you want.
+      final matchParam = manifest.frontPath!.split(':').last;
+      final ending = params?[manifest.frontPath!.split(':').last] ?? '';
+      final path = ending == ''
+          ? manifest.frontPath!
+          : manifest.frontPath!.replaceFirst(matchParam, ending);
+      _navigate(path, replace: replaceOverride ?? true, context: context);
     }
   }
 
@@ -269,8 +260,10 @@ class Sailor {
     return _handleHistoryRemoval(true);
   }
 
-  void _navigate(String path, [bool replace = false]) => replace
-      ? Navigator.of(components.routes.scaffoldContext!)
-          .pushReplacementNamed(path)
-      : Navigator.of(components.routes.scaffoldContext!).pushNamed(path);
+  void _navigate(String path, {bool replace = false, BuildContext? context}) =>
+      replace
+          ? Navigator.of(context ?? components.routes.scaffoldContext!)
+              .pushReplacementNamed(path)
+          : Navigator.of(context ?? components.routes.scaffoldContext!)
+              .pushNamed(path);
 }

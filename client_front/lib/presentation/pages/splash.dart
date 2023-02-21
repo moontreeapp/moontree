@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:client_front/main.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
@@ -18,7 +19,8 @@ import 'package:client_front/presentation/services/sailor.dart' show Sailor;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 
 class Splash extends StatefulWidget {
-  const Splash({Key? key}) : super(key: key);
+  const Splash({Key? key}) : super(key: key ?? defaultKey);
+  static const defaultKey = ValueKey('Splash');
 
   @override
   _SplashState createState() => _SplashState();
@@ -120,6 +122,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await redirectToCreateOrLogin();
 
     streams.app.splash.add(false);
+    (context.findAncestorStateOfType<RavenMobileAppState>()
+            as RavenMobileAppState)
+        .hideSplash();
 
     //await HIVE_INIT.setupWaiters1(); // if you put on login screen
   }
@@ -176,10 +181,16 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //        getMethodPathCreate(),
     //      ));
     //}
-    Future<void>.microtask(() => Navigator.pushReplacementNamed(
-          context,
-          Sailor.initialPath,
-        ));
+    Future<void>.microtask(() =>
+        //Navigator.pushReplacementNamed(
+        //      context,
+        //      Sailor.initialPath,
+        //    )
+
+        sailor.sailTo(
+            location: Sailor.initialPath,
+            context: context,
+            replaceOverride: false));
     return;
     // make a password out of biokey
     // this is false on 1st startup -> create

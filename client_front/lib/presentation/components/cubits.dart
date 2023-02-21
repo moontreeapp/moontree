@@ -21,11 +21,11 @@ class GlobalCubits {
   final TitleCubit title = TitleCubit();
   final BackContainerCubit backContainer = BackContainerCubit();
   final FrontContainerCubit frontContainer = FrontContainerCubit();
+  final ExtraContainerCubit extraContainer = ExtraContainerCubit();
   final NavbarHeightCubit navbarHeight = NavbarHeightCubit();
   final NavbarSectionCubit navbarSection = NavbarSectionCubit();
   final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();
   final LoadingViewCubitv2 loadingViewv2 = LoadingViewCubitv2();
-  final ContentExtraCubit contentExtra = ContentExtraCubit();
 
   GlobalCubits();
 }

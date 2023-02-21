@@ -2,12 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 part 'state.dart';
 
-class ContentExtraCubit extends Cubit<ContentExtraState> {
+class ExtraContainerCubit extends Cubit<ExtraContainerState> {
   String? priorPage;
 
-  ContentExtraCubit() : super(ContentExtraState.initial());
+  ExtraContainerCubit() : super(ExtraContainerState.initial());
 
-  void reset() => emit(ContentExtraState.initial());
+  void reset() => emit(ExtraContainerState.initial());
 
   void enter() => emit(state);
 

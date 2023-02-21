@@ -1,3 +1,4 @@
+import 'package:client_front/application/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
@@ -12,25 +13,44 @@ class FrontContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<FrontContainerCubit, FrontContainerCubitState>(
-          builder: (context, state) => Container(
-                alignment: Alignment.bottomCenter,
-                child: AnimatedContainer(
-                  height: state.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: animation.fadeDuration,
-                  curve: Curves.easeInOut,
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      FrontCurve(
-                          color:
-                              state.hide ? Colors.transparent : Colors.white),
-                      AnimatedOpacity(
-                          duration: animation.fadeDuration,
-                          opacity: state.hideContent ? 0.0 : 1.0,
-                          child: child ?? SizedBox.shrink()),
-                    ],
-                  ),
-                ),
+          builder: (context, state) => FrontContainerView(
+                height: state.height,
+                hide: state.hide,
+                child: child,
               ));
+}
+
+class FrontContainerView extends StatelessWidget {
+  final Widget? child;
+  final double? height;
+  final bool hide;
+  const FrontContainerView({
+    Key? key,
+    this.height,
+    this.hide = false,
+    this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Container(
+        alignment: Alignment.bottomCenter,
+        child: AnimatedContainer(
+          height: height,
+          width: MediaQuery.of(context).size.width,
+          duration: animation.fadeDuration,
+          curve: Curves.easeInOut,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              FrontCurve(color: hide ? Colors.transparent : Colors.white),
+              //AnimatedOpacity(
+              //    duration: animation.fadeDuration,
+              //    opacity: state.hideContent ? 0.0 : 1.0,
+              //    child:
+              child ?? SizedBox.shrink()
+              //),
+            ],
+          ),
+        ),
+      );
 }

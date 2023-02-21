@@ -17,12 +17,12 @@ class FrontHoldingScreen extends StatefulWidget {
 
 class FrontHoldingScreenState extends State<FrontHoldingScreen>
     with SingleTickerProviderStateMixin {
-  late ContentExtraCubit cubit;
+  late ExtraContainerCubit cubit;
 
   @override
   void initState() {
     super.initState();
-    cubit = BlocProvider.of<ContentExtraCubit>(context);
+    cubit = BlocProvider.of<ExtraContainerCubit>(context);
     cubit.set(child: const FrontHoldingExtra());
   }
 
@@ -92,10 +92,10 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
           controller: draggableScrollableController,
           builder: (BuildContext context, ScrollController scrollController) =>
               FrontCurve(
-                  child: BlocBuilder<ContentExtraCubit, ContentExtraState>(
+                  child: BlocBuilder<ExtraContainerCubit, ExtraContainerState>(
                       //bloc: cubit..enter(),
                       builder: (BuildContext context,
-                              ContentExtraState state) =>
+                              ExtraContainerState state) =>
                           AnimatedContainer(
                               duration: animation.fadeDuration,
                               curve: Curves.easeInOut,

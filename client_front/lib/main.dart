@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
-import 'package:client_front/presentation/containers/layers/loading.dart';
-import 'package:client_front/presentation/containers/layers/tutorial.dart';
-import 'package:client_front/presentation/pages/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +34,13 @@ import 'package:client_front/presentation/containers/bottom/modal.dart';
 import 'package:client_front/presentation/containers/bottom/navbar.dart';
 import 'package:client_front/presentation/containers/content/extra.dart';
 import 'package:client_front/presentation/containers/content/content.dart';
+import 'package:client_front/presentation/containers/content/front.dart'
+    show FrontContainerView;
+import 'package:client_front/presentation/containers/content/back.dart'
+    show BackContainerView;
+import 'package:client_front/presentation/containers/layers/loading.dart';
+import 'package:client_front/presentation/containers/layers/tutorial.dart';
+import 'package:client_front/presentation/pages/splash.dart';
 //import 'package:client_front/presentation/containers/loading_layer.dart';
 import 'package:client_front/presentation/services/sailor.dart' show Sailor;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
@@ -98,25 +102,71 @@ Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   // }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
 
-class RavenMobileApp extends StatelessWidget {
-  RavenMobileApp({Key? key}) : super(key: key);
+class RavenMobileApp extends StatefulWidget {
+  const RavenMobileApp({Key? key}) : super(key: key);
+
+  @override
+  RavenMobileAppState createState() => RavenMobileAppState();
+}
+
+class RavenMobileAppState extends State<RavenMobileApp> {
+  bool _showSplash = true;
 
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
+  void hideSplash() {
+    setState(() {
+      _showSplash = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     components.routes.mainContext = context;
-    return MaterialApp(
+    //return MaterialApp(
+    //  debugShowCheckedModeBanner: false,
+    //  theme: CustomTheme.lightTheme,
+    //  darkTheme: CustomTheme.lightTheme,
+    //  initialRoute: '/splash',
+    //  routes: pages.routes,
+    //  navigatorObservers: <NavigatorObserver>[components.routes],
+    //  builder: (BuildContext context, Widget? child) => (context, child) {
+    //    print(_showSplash);
+    //    return _showSplash
+    //        ? Stack(
+    //            alignment: Alignment.topCenter,
+    //            children: <Widget>[
+    //              const BackContainerView(),
+    //              //FrontContainer(child: child),
+    //              FrontContainerView(),
+    //              child!
+    //            ],
+    //          )
+    //        : MultiBlocProvider(
+    //            providers: providers, child: HomePage(child: child));
+    //  }(context, child),
+    //);
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
-      initialRoute: '/splash',
-      routes: pages.routes,
+      //initialRoute: '/splash',
+      //routes: pages.routes,
       navigatorObservers: <NavigatorObserver>[components.routes],
-      builder: (BuildContext context, Widget? child) =>
-          //components.routes.scaffoldContext = context;
-          MultiBlocProvider(
-              providers: providers, child: HomePage(child: child)),
+      builder: (BuildContext context, Widget? child) => (context, child) {
+        print(_showSplash);
+        return _showSplash
+            ? Stack(
+                alignment: Alignment.topCenter,
+                children: <Widget>[
+                  const BackContainerView(),
+                  //FrontContainer(child: child),
+                  FrontContainerView(),
+                  child!
+                ],
+              )
+            : MultiBlocProvider(
+                providers: providers, child: HomePage(child: child));
+      }(context, child),
     );
   }
 }
@@ -128,17 +178,21 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     components.routes.scaffoldContext = context;
+    uiservices.init(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      mainContext: context,
+    );
     final scaffold = Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor:
-          Platform.isIOS ? AppColors.primary : AppColors.androidSystemBar,
+      backgroundColor: AppColors.primary,
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
               ContentScaffold(child: child),
             ] +
             const <Widget>[
-              ContentExtra(),
+              ExtraContainer(),
               BottomNavigationBarWidget(),
               BottomModalSheetWidget(),
               //LoadingLayer(),  /// must merge both implementations
@@ -171,6 +225,8 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.backContainer),
       BlocProvider<FrontContainerCubit>(
           create: (context) => components.cubits.frontContainer),
+      BlocProvider<ExtraContainerCubit>(
+          create: (context) => components.cubits.extraContainer),
       BlocProvider<NavbarHeightCubit>(
           create: (context) => components.cubits.navbarHeight),
       BlocProvider<NavbarSectionCubit>(
@@ -179,6 +235,4 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.bottomModalSheet),
       BlocProvider<LoadingViewCubitv2>(
           create: (context) => components.cubits.loadingViewv2),
-      BlocProvider<ContentExtraCubit>(
-          create: (context) => components.cubits.contentExtra),
     ];
