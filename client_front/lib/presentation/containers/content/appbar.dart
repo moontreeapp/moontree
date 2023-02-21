@@ -39,6 +39,10 @@ class AppBarLeft extends StatelessWidget {
           builder: (context, state) =>
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 if (!PageLead.emptyLocations.contains(state.path)) PageLead(),
+                if (!PageLead.emptyLocations.contains(state.path))
+                  SizedBox(
+                    width: 10,
+                  ),
                 //Container(
                 //    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 //    height: uiservices.screen.app.appBarHeight,

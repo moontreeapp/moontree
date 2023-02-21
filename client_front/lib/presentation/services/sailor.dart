@@ -264,16 +264,16 @@ class Sailor {
 
   void _navigate(String path, {bool replace = false, BuildContext? context}) =>
       replace
-          //? context == null
-          //    ? components.routes.navigatorKey.currentState!
-          //        .pushReplacementNamed(path)
-          //    : Navigator.of(context).pushReplacementNamed(path)
-          //: context == null
-          //    ? components.routes.navigatorKey.currentState!.pushNamed(path)
-          //    : Navigator.of(context).pushNamed(path);
-          ? Navigator.of(context ?? components.routes.routeContext!)
-              .pushReplacementNamed(path)
-          : Navigator.of(context ?? components.routes.routeContext!)
-              .pushNamed(path);
+          ? context == null
+              ? components.routes.navigatorKey.currentState!
+                  .pushReplacementNamed(path)
+              : Navigator.of(context).pushReplacementNamed(path)
+          : context == null
+              ? components.routes.navigatorKey.currentState!.pushNamed(path)
+              : Navigator.of(context).pushNamed(path);
+  //? Navigator.of(context ?? components.routes.routeContext!)
+  //    .pushReplacementNamed(path)
+  //: Navigator.of(context ?? components.routes.routeContext!)
+  //    .pushNamed(path);
   // !.push(MaterialPageRoute(builder: (context) => MyPage()),);
 }

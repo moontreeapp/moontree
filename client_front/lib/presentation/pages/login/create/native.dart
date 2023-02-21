@@ -12,10 +12,12 @@ class FrontCreateNativeScreen extends StatelessWidget {
     return Container(
       alignment: Alignment.topRight,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
               padding: const EdgeInsets.only(left: 16),
               height: 56,
+              width: 100,
               child: components.buttons.actionButton(
                 context,
                 enabled: true,

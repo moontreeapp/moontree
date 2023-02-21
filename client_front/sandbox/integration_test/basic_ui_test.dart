@@ -30,7 +30,7 @@ void main() {
     testWidgets('send page exists', (WidgetTester tester) async {
       //await binding.convertFlutterSurfaceToImage();
 
-      await tester.pumpWidget(RavenMobileApp());
+      await tester.pumpWidget(MoontreeMobileApp());
 
       //await binding.takeScreenshot('screenshot-1');
       // Verify the "Receive / Send" buttons exist
