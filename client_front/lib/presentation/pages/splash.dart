@@ -119,13 +119,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //  showAppBar = true;
     //});
 
-    await redirectToCreateOrLogin();
-
-    streams.app.splash.add(false);
     (context.findAncestorStateOfType<RavenMobileAppState>()
             as RavenMobileAppState)
         .hideSplash();
+    // allow for rebuild of root app
+    //await Future.delayed(Duration(milliseconds: 1000));
+    //await redirectToCreateOrLogin();
 
+    streams.app.splash.add(false);
     //await HIVE_INIT.setupWaiters1(); // if you put on login screen
   }
 
@@ -182,15 +183,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //      ));
     //}
     Future<void>.microtask(() =>
-        //Navigator.pushReplacementNamed(
-        //      context,
-        //      Sailor.initialPath,
-        //    )
-
-        sailor.sailTo(
-            location: Sailor.initialPath,
-            context: context,
-            replaceOverride: false));
+        //    //Navigator.pushReplacementNamed(
+        //    //          context,
+        //    //          Sailor.initialPath,
+        //    //        )
+        //
+        sailor.sailTo(location: Sailor.initialPath, replaceOverride: false));
     return;
     // make a password out of biokey
     // this is false on 1st startup -> create

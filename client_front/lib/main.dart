@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +46,7 @@ import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/services/sailor.dart' show Sailor;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/pages/pages.dart' as pages;
+import 'package:client_front/presentation/services/services.dart' show sailor;
 
 Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   devFlags.addAll(flags ?? []);
@@ -111,11 +113,18 @@ class RavenMobileApp extends StatefulWidget {
 
 class RavenMobileAppState extends State<RavenMobileApp> {
   bool _showSplash = true;
+  bool _showNothing = true;
 
   //static final GlobalKey<NavigatorState> navigatorKey = new GlobalKey();
   void hideSplash() {
     setState(() {
       _showSplash = false;
+    });
+  }
+
+  void showSomething() {
+    setState(() {
+      _showNothing = false;
     });
   }
 
@@ -145,27 +154,83 @@ class RavenMobileAppState extends State<RavenMobileApp> {
     //            providers: providers, child: HomePage(child: child));
     //  }(context, child),
     //);
-    return MaterialApp.router(
+    //Router(routerDelegate: routerDelegate)
+    //uiservices.beamer.rootDelegate = BeamerDelegate(
+    //  //initialPath: Sailor.initialPath,
+    //  initialPath: '/splash',
+    //  navigatorObservers: <NavigatorObserver>[components.routes],
+    //  locationBuilder: RoutesLocationBuilder(
+    //    routes: {
+    //      '/splash': (context, state, data) => const Splash(),
+    //      Sailor.initialPath: (context, state, data) {
+    //        print(state.uri.toString());
+    //        print(data);
+    //        return const HomePage();
+    //      },
+    //    },
+    //  ),
+    //);
+    //return MaterialApp.router(
+    //  debugShowCheckedModeBanner: false,
+    //  routerDelegate: uiservices.beamer.rootDelegate,
+    //  routeInformationParser: BeamerParser(),
+    //  theme: CustomTheme.lightTheme,
+    //  darkTheme: CustomTheme.lightTheme,
+    //);
+
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: CustomTheme.lightTheme,
       darkTheme: CustomTheme.lightTheme,
-      //initialRoute: '/splash',
-      //routes: pages.routes,
+      initialRoute: '/splash',
+      routes: pages.routes,
       //navigatorObservers: <NavigatorObserver>[components.routes],
+      //onGenerateRoute: (RouteSettings settings) {
+      //  if (settings.name == '/') {
+      //    return PageRouteBuilder<dynamic>(
+      //      pageBuilder: (BuildContext context, Animation<double> animation,
+      //              Animation<double> secondaryAnimation) =>
+      //          Page1(),
+      //      transitionsBuilder: (
+      //        BuildContext context,
+      //        Animation<double> animation,
+      //        Animation<double> secondaryAnimation,
+      //        Widget child,
+      //      ) {
+      //        final Tween<Offset> offsetTween = Tween<Offset>(
+      //            begin: Offset(0.0, 0.0), end: Offset(-1.0, 0.0));
+      //        final Animation<Offset> slideOutLeftAnimation =
+      //            offsetTween.animate(secondaryAnimation);
+      //        return SlideTransition(
+      //            position: slideOutLeftAnimation, child: child);
+      //      },
+      //    );
+      //  } else {
+      //    // handle other routes here
+      //    return null;
+      //  }
+      //},
       builder: (BuildContext context, Widget? child) => (context, child) {
         print(_showSplash);
         return _showSplash
-            ? Stack(
-                alignment: Alignment.topCenter,
-                children: <Widget>[
-                  const BackContainerView(),
-                  //FrontContainer(child: child),
-                  FrontContainerView(),
-                  child!
-                ],
-              )
+            ? child!
+            //?? Stack(
+            //    alignment: Alignment.topCenter,
+            //    children: <Widget>[
+            //      const BackContainerView(),
+            //      const FrontContainerView(),
+            //    ],
+            //  )
             : MultiBlocProvider(
-                providers: providers, child: HomePage(child: child));
+                providers: providers,
+                child: HomePage(
+                    child: _showNothing
+                        ? () {
+                            _showNothing = true;
+                            return Startup();
+                          }()
+                        : child),
+              );
       }(context, child),
     );
   }
@@ -205,6 +270,20 @@ class HomePage extends StatelessWidget {
         onTap: () => streams.app.tap.add(null),
         behavior: HitTestBehavior.translucent,
         child: Platform.isIOS ? scaffold : SafeArea(child: scaffold));
+  }
+}
+
+class Startup extends StatelessWidget {
+  const Startup({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    sailor.sailTo(
+      location: Sailor.initialPath,
+      replaceOverride: false,
+      //context: context,
+    );
+    return SizedBox.shrink();
   }
 }
 
