@@ -44,7 +44,7 @@ class AppStreams {
       BehaviorSubject<NavHeight>.seeded(NavHeight.none)..name = 'app.navHeight';
   final BehaviorSubject<bool?> fling = BehaviorSubject<bool?>.seeded(null)
     ..name = 'app.fling';
-  final BehaviorSubject<bool> splash = BehaviorSubject<bool>.seeded(true)
+  final BehaviorSubject<bool?> splash = BehaviorSubject<bool?>.seeded(true)
     ..name = 'app.splash';
   final BehaviorSubject<ThresholdTrigger?> triggers =
       BehaviorSubject<ThresholdTrigger?>.seeded(null)..name = 'app.triggers';

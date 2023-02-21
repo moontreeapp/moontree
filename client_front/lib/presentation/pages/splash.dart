@@ -17,6 +17,8 @@ import 'package:client_front/infrastructure/services/services.dart';
 import 'package:client_front/presentation/services/services.dart' show sailor;
 import 'package:client_front/presentation/services/sailor.dart' show Sailor;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key ?? defaultKey);
@@ -119,14 +121,23 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //  showAppBar = true;
     //});
 
-    (context.findAncestorStateOfType<RavenMobileAppState>()
-            as RavenMobileAppState)
-        .hideSplash();
+    streams.app.splash.add(false);
+
+    /// how to call a function on a statefulwidget above you:
+    //(context.findAncestorStateOfType<MoontreeAppState>() as MoontreeAppState)
+    //    .reload();
+
+    /// how to call a function of a stateless widget above you:
+    //(context.findAncestorWidgetOfExactType<MoontreeApp>() as MoontreeApp)
+    //    .reloadApp();
+    await Future.delayed(Duration(milliseconds: 1000));
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+    //Navigator.of(components.routes.routeContext!)
+    //    .pushReplacementNamed(Sailor.initialPath);
     // allow for rebuild of root app
-    //await Future.delayed(Duration(milliseconds: 1000));
     //await redirectToCreateOrLogin();
 
-    streams.app.splash.add(false);
     //await HIVE_INIT.setupWaiters1(); // if you put on login screen
   }
 

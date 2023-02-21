@@ -9,6 +9,8 @@ class RouteStack extends NavigatorObserver {
   BuildContext? scaffoldContext;
   BuildContext? mainContext;
   TabController? tabController;
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey appKey = GlobalKey();
 
   bool nameIsInStack(String name) =>
       routeStack.map((Route<dynamic> e) => e.settings.name).contains(name);
@@ -17,7 +19,7 @@ class RouteStack extends NavigatorObserver {
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     streams.app.tap.add(null); // track user is active
     routeStack.add(route);
-    routeContext = route.navigator?.context;
+    routeContext ??= route.navigator?.context;
     // dismiss the snackbar in case there is one.
     if (previousRoute?.settings.name == '/home') {
       ScaffoldMessenger.of(routeContext!).clearSnackBars();
