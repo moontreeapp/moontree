@@ -151,7 +151,7 @@ class RavenMobileAppState extends State<RavenMobileApp> {
       darkTheme: CustomTheme.lightTheme,
       //initialRoute: '/splash',
       //routes: pages.routes,
-      navigatorObservers: <NavigatorObserver>[components.routes],
+      //navigatorObservers: <NavigatorObserver>[components.routes],
       builder: (BuildContext context, Widget? child) => (context, child) {
         print(_showSplash);
         return _showSplash
