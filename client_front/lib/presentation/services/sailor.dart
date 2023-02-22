@@ -2,6 +2,7 @@
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:flutter/material.dart';
 
+import 'package:client_back/streams/streams.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:client_front/application/navbar/height/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
@@ -206,7 +207,12 @@ class Sailor {
     components.routes.navigatorKey.currentState!.pop();
   }
 
+  /// many things are keyed off the current location so we make it available.
+  void broadcast(String location) => streams.app.path.add(location);
+
   void updateCubits(String location, Manifest manifest) {
+    broadcast(location);
+
     // update app bar stuff
     components.cubits.title.update(path: location);
 

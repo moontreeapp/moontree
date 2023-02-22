@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 
 class RouteStack extends NavigatorObserver {
@@ -24,8 +23,9 @@ class RouteStack extends NavigatorObserver {
     if (previousRoute?.settings.name == '/home') {
       ScaffoldMessenger.of(routeContext!).clearSnackBars();
     }
-    streams.app.page.add(conformName(route.settings.name));
-    print('streams.app.page.value ${streams.app.page.value}');
+
+    /// moved to sailor
+    //streams.app.path.add(route.settings.name);
   }
 
   @override
@@ -34,8 +34,10 @@ class RouteStack extends NavigatorObserver {
     routeStack.removeLast();
     routeContext =
         routeStack.isEmpty ? null : routeStack.last.navigator?.context;
-    streams.app.page.add(
-        conformName(routeStack.isEmpty ? null : routeStack.last.settings.name));
+
+    /// moved to sailor
+    //streams.app.path
+    //    .add(routeStack.isEmpty ? null : routeStack.last.settings.name);
   }
 
   @override
@@ -44,8 +46,10 @@ class RouteStack extends NavigatorObserver {
     routeStack.removeLast();
     routeContext =
         routeStack.isEmpty ? null : routeStack.last.navigator?.context;
-    streams.app.page.add(
-        conformName(routeStack.isEmpty ? null : routeStack.last.settings.name));
+
+    /// moved to sailor
+    //streams.app.path
+    //    .add(routeStack.isEmpty ? null : routeStack.last.settings.name);
   }
 
   @override
@@ -58,12 +62,8 @@ class RouteStack extends NavigatorObserver {
     routeContext =
         routeStack.isEmpty ? null : routeStack.last.navigator?.context;
 
-    /// todo: put the whole path on it, rather than just the page name. this
-    /// requires some attention because lots of stuff is keyed off the page.
-    streams.app.page.add(
-        conformName(routeStack.isEmpty ? null : routeStack.last.settings.name));
+    /// moved to sailor
+    //streams.app.path
+    //    .add(routeStack.isEmpty ? null : routeStack.last.settings.name);
   }
-
-  String conformName(String? name) =>
-      name?.split('/').last.toTitleCase() ?? streams.app.page.value;
 }

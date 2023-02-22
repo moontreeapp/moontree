@@ -31,6 +31,8 @@ class AppStreams {
     ..name = 'app.verify';
   final BehaviorSubject<String> page = BehaviorSubject<String>.seeded('main')
     ..name = 'app.page';
+  final BehaviorSubject<String?> path = BehaviorSubject<String?>.seeded(null)
+    ..name = 'app.path';
   final BehaviorSubject<String?> setting = BehaviorSubject<String?>.seeded(null)
     ..name = 'app.setting';
   final BehaviorSubject<LeadIcon> lead =

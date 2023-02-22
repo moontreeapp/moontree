@@ -154,7 +154,7 @@ class MainActivity: FlutterFragmentActivity() {
 	/* override backbutton pressed */
 	override fun onBackPressed() {
 		// send message to flutter that the system back button was pressed
-		//println("Flutter engine: $flutterEngine")
+		println("Flutter engine: $flutterEngine")
 		val flutterEngine = getFlutterEngine()
 		if (flutterEngine != null) {
 			MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, "backButtonChannel").invokeMethod("backButtonPressed", null)
