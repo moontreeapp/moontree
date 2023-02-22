@@ -116,15 +116,15 @@ class _FrontCreatePasswordState extends State<FrontCreatePasswordScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       SizedBox(
-                        height: .063.ofMediaHeight(context),
+                        height: 16,
                       ),
                       ulaMessage,
                       SizedBox(
-                        height: .021.ofMediaHeight(context),
+                        height: 16,
                       ),
                       Row(children: <Widget>[unlockButton]),
                       SizedBox(
-                        height: .052.ofMediaHeight(context),
+                        height: 40,
                       ),
                     ]),
               ])));

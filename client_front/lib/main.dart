@@ -58,18 +58,18 @@ Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   await services.subscription.setupClient(FlutterConnectivityMonitor());
 
   // setup system ui stuff
-  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
+  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
   //    overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-      overlays: <SystemUiOverlay>[SystemUiOverlay.top]);
   SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
   if (!Platform.isIOS) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: AppColors.androidSystemBar,
-    ));
+        statusBarColor: AppColors.androidSystemBar,
+        systemNavigationBarColor: AppColors.androidNavigationBar,
+        systemNavigationBarIconBrightness: Brightness.light));
   }
 
   runApp(MoontreeMobileApp());
