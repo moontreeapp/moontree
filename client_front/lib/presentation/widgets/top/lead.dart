@@ -231,8 +231,7 @@ class _PageLead extends State<PageLead> {
   };
 
   @override
-  Widget build(BuildContext context) => FadeIn(
-          child: GestureDetector(
+  Widget build(BuildContext context) => GestureDetector(
         onTap: () async => await uiservices.sailor.goBack(),
         child: () {
           print('path');
@@ -241,5 +240,5 @@ class _PageLead extends State<PageLead> {
               ? const Icon(Icons.menu, color: Colors.white)
               : const Icon(Icons.arrow_back, color: Colors.white);
         }(),
-      ));
+      );
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
@@ -11,8 +10,6 @@ import 'package:client_front/presentation/components/components.dart'
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/front/choices/blockchain_choice.dart'
     show produceBlockchainModal;
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
 
 class ConnectionLight extends StatefulWidget {
   const ConnectionLight({Key? key}) : super(key: key);
@@ -145,35 +142,31 @@ class _ConnectionLightState extends State<ConnectionLight>
         borderRadius: BorderRadius.circular(20),
       ),
     );
-    return FadeIn(
-      duration: animation.slowFadeDuration,
-      child: GestureDetector(
-        onTap: navToBlockchain,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
-          alignment: Alignment.center,
-          padding: EdgeInsets.zero,
-          child: pros.settings.chain == Chain.none
-              ? IconButton(
-                  splashRadius: 26,
-                  padding: EdgeInsets.zero,
-                  icon: circleIcon,
-                  onPressed: navToBlockchain,
-                )
-              : Stack(alignment: Alignment.center, children: <Widget>[
-                  ColorFiltered(
-                      colorFilter:
-                          ColorFilter.mode(statusColor, BlendMode.srcIn),
-                      child: components.icons.assetAvatar(
-                        pros.settings.chain.symbol,
-                        net: pros.settings.net,
-                        height: 26,
-                        width: 26,
-                      )),
-                  components.icons.assetAvatar(pros.settings.chain.symbol,
-                      net: pros.settings.net, height: 24, width: 24),
-                ]),
-        ),
+    return GestureDetector(
+      onTap: navToBlockchain,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 400),
+        alignment: Alignment.center,
+        padding: EdgeInsets.zero,
+        child: pros.settings.chain == Chain.none
+            ? IconButton(
+                splashRadius: 26,
+                padding: EdgeInsets.zero,
+                icon: circleIcon,
+                onPressed: navToBlockchain,
+              )
+            : Stack(alignment: Alignment.center, children: <Widget>[
+                ColorFiltered(
+                    colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
+                    child: components.icons.assetAvatar(
+                      pros.settings.chain.symbol,
+                      net: pros.settings.net,
+                      height: 26,
+                      width: 26,
+                    )),
+                components.icons.assetAvatar(pros.settings.chain.symbol,
+                    net: pros.settings.net, height: 24, width: 24),
+              ]),
       ),
     );
   }

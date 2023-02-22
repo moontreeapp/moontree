@@ -95,7 +95,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     uiservices.init(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
-      mainContext: context,
     );
     setState(() {
       _slideAnimation = Tween<Offset>(

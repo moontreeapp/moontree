@@ -135,10 +135,7 @@ class _FrontCreateScreenState extends State<FrontCreateScreen> {
                                     method: AuthMethod.nativeSecurity);
                                 streams.app.splash.add(false);
                                 //Navigator.pop(context);
-                                sailor.sailTo(
-                                  location: '/login/create/native',
-                                  //replaceOverride: false,
-                                );
+                                sailor.sailTo(location: '/login/create/native');
                                 //Navigator.pushReplacementNamed(
                                 //    context, getMethodPathCreate(),
                                 //    arguments: <String, bool>{

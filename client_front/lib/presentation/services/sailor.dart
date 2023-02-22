@@ -120,11 +120,10 @@ class Sailor {
     ),
   };
 
-  final BuildContext mainContext;
   late List<Section> sectionHistory;
   late Map<Section, List<String>> destinationHistory;
 
-  Sailor({required this.mainContext}) {
+  Sailor() {
     initializeHistory();
   }
 
@@ -161,7 +160,7 @@ class Sailor {
     Section? section,
     Map<String, dynamic>? params,
     bool addToHistory = true,
-    bool? replaceOverride,
+    bool replaceOverride = false,
   }) async {
     if (location == null && section == null) {
       throw Exception('must supply location or section');
@@ -178,13 +177,43 @@ class Sailor {
       throw Exception('Invalid location: $location');
     }
     if (addToHistory) {
+      print('adding to history');
       _handleHistoryAddition(
         location,
         currSection: sectionHistory.last,
         destSection: manifest.section!,
         addToDestinationHistory: addToDestinationHistory,
       );
+      print(destinationHistory);
     }
+    updateCubits(location, manifest);
+
+    // go there
+    if (manifest.frontPath != null) {
+      // todo: get rid of this pattern, just pass args in if you want.
+      final matchParam = manifest.frontPath!.split(':').last;
+      final ending = params?[manifest.frontPath!.split(':').last] ?? '';
+      final path = ending == ''
+          ? manifest.frontPath!
+          : manifest.frontPath!.replaceFirst(matchParam, ending);
+      _navigate(path, replace: replaceOverride, context: context);
+    }
+  }
+
+  void sailBack() {
+    //sailTo(
+    //  location: _handleHistoryRemoval(),
+    //  beam: true,
+    //  addToHistory: false,
+    //);
+    String location = _handleHistoryRemoval();
+    final manifest = destinationMap[location]!;
+    updateCubits(location, manifest);
+    //Navigator.of(components.routes.scaffoldContext!).pop();
+    components.routes.navigatorKey.currentState!.pop();
+  }
+
+  void updateCubits(String location, Manifest manifest) {
     // update app bar stuff
     components.cubits.title.update(path: location);
 
@@ -201,31 +230,6 @@ class Sailor {
 
     // set the content on the extra layer
     components.cubits.extraContainer.set(child: manifest.extraChild);
-
-    // go there
-    if (manifest.frontPath != null) {
-      // todo: get rid of this pattern, just pass args in if you want.
-      final matchParam = manifest.frontPath!.split(':').last;
-      final ending = params?[manifest.frontPath!.split(':').last] ?? '';
-      final path = ending == ''
-          ? manifest.frontPath!
-          : manifest.frontPath!.replaceFirst(matchParam, ending);
-      _navigate(path, replace: replaceOverride ?? false, context: context);
-    }
-  }
-
-  void sailBack() {
-    //sailTo(
-    //  location: _handleHistoryRemoval(),
-    //  beam: true,
-    //  addToHistory: false,
-    //);
-    // handle app bar changes
-    // handle back changes
-    // handle front height
-    // fade out front
-    //Navigator.of(components.routes.scaffoldContext!).pop();
-    components.routes.navigatorKey.currentState!.pop();
   }
 
   /// mutates history state
