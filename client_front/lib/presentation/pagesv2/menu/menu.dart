@@ -145,7 +145,8 @@ class BackMenuScreen extends StatelessWidget {
                 onTap: () async {
                   services.screenflags.showModalBottomSheet = true;
                   return await showModalBottomSheet(
-                      context: sailor.mainContext,
+                      //context: sailor.mainContext, // here we should use the context of the highest widget
+                      context: context,
                       builder: (_) => Container(
                             height: 200,
                             color: Colors.black,

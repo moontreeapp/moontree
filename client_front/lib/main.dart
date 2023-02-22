@@ -238,10 +238,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //uiservices.init(
-    //  height: MediaQuery.of(context).size.height,
-    //  width: MediaQuery.of(context).size.width,
-    //);
     final scaffold = Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.primary,
