@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:beamer/beamer.dart';
+import 'package:client_front/presentation/pages/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -166,39 +167,51 @@ class MoontreeMobileApp extends StatelessWidget {
         navigatorObservers: <NavigatorObserver>[components.routes],
         //initialRoute: '/splash',
         //home: Splash(),
-        routes: pages.routes,
-        //onGenerateRoute: (RouteSettings settings) {
-        //  if (settings.name == '/splash') {
-        //    return PageRouteBuilder<dynamic>(
-        //      pageBuilder: (BuildContext context, Animation<double> animation,
-        //              Animation<double> secondaryAnimation) =>
-        //          Splash(),
-        //      transitionsBuilder: (
-        //        BuildContext context,
-        //        Animation<double> animation,
-        //        Animation<double> secondaryAnimation,
-        //        Widget child,
-        //      ) {
-        //        final Tween<Offset> offsetTween = Tween<Offset>(
-        //            begin: Offset(0.0, 0.0), end: Offset(-1.0, 0.0));
-        //        final Animation<Offset> slideOutLeftAnimation =
-        //            offsetTween.animate(secondaryAnimation);
-        //        return SlideTransition(
-        //            position: slideOutLeftAnimation, child: child);
-        //      },
-        //    );
-        //  } else {
-        //    // handle other routes here
-        //    return null;
-        //  }
-        //},
-        builder: (BuildContext context, Widget? child) => Splash()
-        //MoontreeApp(child: child)
-        );
+        //routes: pages.routes,
+        onGenerateRoute: (RouteSettings settings) {
+          switch (settings.name) {
+            case '/':
+              return PageRouteBuilder(
+                pageBuilder: (_, __, ___) => FrontCreateScreen(),
+                transitionsBuilder: (_, animation, __, child) => FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            case '/login/create':
+              return PageRouteBuilder(
+                pageBuilder: (_, __, ___) => FrontCreateScreen(),
+                transitionsBuilder: (_, animation, __, child) => FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            case '/login/create/native':
+              return PageRouteBuilder(
+                pageBuilder: (_, __, ___) => FrontCreateNativeScreen(),
+                transitionsBuilder: (_, animation, __, child) => FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            case '/login/native':
+              return PageRouteBuilder(
+                pageBuilder: (_, __, ___) => FrontNativeScreen(),
+                transitionsBuilder: (_, animation, __, child) => FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            default:
+              return null;
+          }
+        },
+        builder: (BuildContext context, Widget? child) =>
+            MoontreeApp(child: child));
   }
 }
 
-/// StreamBuilder solution to starting the app
+/// StreamBuilder solution to starting the app with splashscreen first
 class MoontreeApp extends StatefulWidget {
   final Widget? child;
   const MoontreeApp({Key? key, this.child}) : super(key: key);
@@ -222,8 +235,7 @@ class MoontreeAppState extends State<MoontreeApp> {
     super.dispose();
   }
 
-  void reload() => setState(() {});
-
+  /// how to rebuild entire tree
   void rebuildAllChildren(BuildContext context) {
     void rebuild(Element el) {
       el.markNeedsBuild();
@@ -234,23 +246,20 @@ class MoontreeAppState extends State<MoontreeApp> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<bool>(
-      stream: streams.app.splash.stream,
-      initialData: true,
-      builder: (context, snapshot) {
-        if (snapshot.data == true) {
-          return Splash();
-        } else {
-          print('This will print after the splash screen is dismissed');
-          return MultiBlocProvider(
-            providers: providers,
-            child: HomePage(child: child),
-          );
-        }
-      },
-    );
-  }
+  Widget build(BuildContext context) => StreamBuilder<bool>(
+        stream: streams.app.splash.stream,
+        initialData: true,
+        builder: (context, snapshot) {
+          if (snapshot.data == true) {
+            return Splash();
+          } else {
+            return MultiBlocProvider(
+              providers: providers,
+              child: HomePage(child: child),
+            );
+          }
+        },
+      );
 }
 
 class HomePage extends StatelessWidget {
@@ -286,19 +295,6 @@ class HomePage extends StatelessWidget {
         onTap: () => streams.app.tap.add(null),
         behavior: HitTestBehavior.translucent,
         child: Platform.isIOS ? scaffold : SafeArea(child: scaffold));
-  }
-}
-
-class Startup extends StatelessWidget {
-  const Startup({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    sailor.sailTo(
-      location: Sailor.initialPath,
-      replaceOverride: false,
-    );
-    return Text('hi');
   }
 }
 

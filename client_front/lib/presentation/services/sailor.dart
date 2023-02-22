@@ -210,7 +210,7 @@ class Sailor {
       final path = ending == ''
           ? manifest.frontPath!
           : manifest.frontPath!.replaceFirst(matchParam, ending);
-      _navigate(path, replace: replaceOverride ?? true, context: context);
+      _navigate(path, replace: replaceOverride ?? false, context: context);
     }
   }
 
@@ -224,7 +224,8 @@ class Sailor {
     // handle back changes
     // handle front height
     // fade out front
-    Navigator.of(components.routes.scaffoldContext!).pop();
+    //Navigator.of(components.routes.scaffoldContext!).pop();
+    components.routes.navigatorKey.currentState!.pop();
   }
 
   /// mutates history state

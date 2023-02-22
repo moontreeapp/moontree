@@ -18,11 +18,8 @@ class FrontCreateNativeScreen extends StatelessWidget {
               padding: const EdgeInsets.only(left: 16),
               height: 56,
               width: 100,
-              child: components.buttons.actionButton(
-                context,
-                enabled: true,
-                label: 'NATIVE',
-                onPressed: () async {
+              child: GestureDetector(
+                onTap: () async {
                   sailor.sailTo(location: '/login/native');
                   //Navigator.pushReplacementNamed(
                   //    context, getMethodPathCreate(),
@@ -30,6 +27,7 @@ class FrontCreateNativeScreen extends StatelessWidget {
                   //      'needsConsent': true
                   //    });
                 },
+                child: Text('NATIVE'),
               )),
         ],
       ),
