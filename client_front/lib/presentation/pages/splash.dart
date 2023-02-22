@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:client_front/main.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
@@ -134,6 +135,15 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //});
 
     streams.app.splash.add(false);
+
+    /// does not work
+    ///
+    //Navigator.of(components.routes.navigatorKey.currentContext!)
+    //    .pushReplacement(MaterialPageRoute(
+    //        builder: (c) => MultiBlocProvider(
+    //              providers: providers,
+    //              child: HomePage(child: Startup()),
+    //            )));
 
     /// how to call a function on a statefulwidget above you:
     //(context.findAncestorStateOfType<MoontreeAppState>() as MoontreeAppState)

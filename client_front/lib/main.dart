@@ -192,11 +192,13 @@ class MoontreeMobileApp extends StatelessWidget {
         //    return null;
         //  }
         //},
-        builder: (BuildContext context, Widget? child) =>
-            MoontreeApp(child: child));
+        builder: (BuildContext context, Widget? child) => Splash()
+        //MoontreeApp(child: child)
+        );
   }
 }
 
+/// StreamBuilder solution to starting the app
 class MoontreeApp extends StatefulWidget {
   final Widget? child;
   const MoontreeApp({Key? key, this.child}) : super(key: key);
@@ -292,11 +294,11 @@ class Startup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //sailor.sailTo(
-    //  location: Sailor.initialPath,
-    //  replaceOverride: false,
-    //);
-    return SizedBox.shrink();
+    sailor.sailTo(
+      location: Sailor.initialPath,
+      replaceOverride: false,
+    );
+    return Text('hi');
   }
 }
 
