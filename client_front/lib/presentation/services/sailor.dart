@@ -19,14 +19,15 @@ class Manifest {
   final String? frontPath;
   final Widget? extraChild;
   final bool extraHideFront;
-  const Manifest(
-      {this.section,
-      this.backChild,
-      this.frontHeight = PageContainerHeight.same,
-      this.navbarHeight = NavbarHeight.same,
-      this.frontPath,
-      this.extraChild,
-      this.extraHideFront = false});
+  const Manifest({
+    this.section,
+    this.backChild,
+    this.frontHeight = PageContainerHeight.same,
+    this.navbarHeight = NavbarHeight.same,
+    this.frontPath,
+    this.extraChild,
+    this.extraHideFront = false,
+  });
 }
 
 class Sailor {
@@ -114,23 +115,20 @@ class Sailor {
     ),
   };
 
-  late List<Section> sectionHistory;
-  late Map<Section, List<String>> destinationHistory;
+  final List<Section> sectionHistory;
+  final Map<Section, List<String>> destinationHistory;
 
-  Sailor() {
-    initializeHistory();
-  }
+  Sailor()
+      : sectionHistory = [Section.login],
+        destinationHistory = {
+          Section.login: [initialPath],
+          Section.wallet: [],
+          Section.manage: [],
+          Section.swap: [],
+          Section.settings: []
+        };
 
-  void initializeHistory() {
-    sectionHistory = [Section.login];
-    destinationHistory = {
-      Section.login: [initialPath],
-      Section.wallet: [],
-      Section.manage: [],
-      Section.swap: [],
-      Section.settings: []
-    };
-  }
+  String? latestLocation;
 
   Future<void> goBack() async {
     // Todo: key this off something else. like sailor current path or something
@@ -208,7 +206,10 @@ class Sailor {
   }
 
   /// many things are keyed off the current location so we make it available.
-  void broadcast(String location) => streams.app.path.add(location);
+  /// so far nothing has to react in realtime to the path so, it's just a var.
+  /// if/when we need it to notify things, we'll add it to a stream.
+  void broadcast(String location) =>
+      latestLocation = location; // streams.app.path.add(location);
 
   void updateCubits(String location, Manifest manifest) {
     broadcast(location);
@@ -249,7 +250,10 @@ class Sailor {
   /// mutates history state, returns previous destination
   String _handleHistoryRemoval([bool removed = false]) {
     if (sectionHistory.isEmpty) {
-      initializeHistory();
+      sectionHistory.add(Section.login);
+      if (destinationHistory[Section.login]!.isEmpty) {
+        destinationHistory[Section.login]!.add(initialPath);
+      }
       return initialPath;
     }
     if (destinationHistory[sectionHistory.last]!.isNotEmpty) {
