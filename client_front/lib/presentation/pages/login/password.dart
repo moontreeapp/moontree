@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class FrontPasswordScreen extends StatelessWidget {
-  const FrontPasswordScreen({Key? key}) : super(key: key ?? defaultKey);
+class LoginPassword extends StatelessWidget {
+  const LoginPassword({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('frontLoginPassword');
 
   @override

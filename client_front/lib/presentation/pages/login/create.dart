@@ -15,15 +15,15 @@ import 'package:client_front/presentation/services/services.dart' show sailor;
 import 'package:client_front/presentation/utilities/animation.dart'
     as animation;
 
-class FrontCreateScreen extends StatefulWidget {
-  const FrontCreateScreen({Key? key}) : super(key: key ?? defaultKey);
+class LoginCreate extends StatefulWidget {
+  const LoginCreate({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('frontLoginCreate');
 
   @override
-  _FrontCreateScreenState createState() => _FrontCreateScreenState();
+  _LoginCreateState createState() => _LoginCreateState();
 }
 
-class _FrontCreateScreenState extends State<FrontCreateScreen> {
+class _LoginCreateState extends State<LoginCreate> {
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
 

@@ -181,14 +181,16 @@ class Sailor {
     updateCubits(location, manifest);
 
     // go there
-    if (manifest.frontPath != null) {
+    if (manifest.frontPath != null &&
+        RegExp(r'^\/[a-z\/]*[a-z]$').hasMatch(manifest.frontPath!)) {
       // todo: get rid of this pattern, just pass args in if you want.
-      final matchParam = manifest.frontPath!.split(':').last;
-      final ending = arguments?[manifest.frontPath!.split(':').last] ?? '';
-      final path = ending == ''
-          ? manifest.frontPath!
-          : manifest.frontPath!.replaceFirst(matchParam, ending);
-      _navigate(path, replace: replaceOverride, context: context);
+      //final matchParam = manifest.frontPath!.split(':').last;
+      //final ending = arguments?[manifest.frontPath!.split(':').last] ?? '';
+      //final path = ending == ''
+      //    ? manifest.frontPath!
+      //    : manifest.frontPath!.replaceFirst(matchParam, ending);
+      _navigate(manifest.frontPath!,
+          replace: replaceOverride, context: context, arguments: arguments);
     }
   }
 
@@ -270,15 +272,22 @@ class Sailor {
     return _handleHistoryRemoval(true);
   }
 
-  void _navigate(String path, {bool replace = false, BuildContext? context}) =>
+  void _navigate(
+    String path, {
+    bool replace = false,
+    BuildContext? context,
+    Map? arguments,
+  }) =>
       replace
           ? context == null
               ? components.routes.navigatorKey.currentState!
-                  .pushReplacementNamed(path)
-              : Navigator.of(context).pushReplacementNamed(path)
+                  .pushReplacementNamed(path, arguments: arguments)
+              : Navigator.of(context)
+                  .pushReplacementNamed(path, arguments: arguments)
           : context == null
-              ? components.routes.navigatorKey.currentState!.pushNamed(path)
-              : Navigator.of(context).pushNamed(path);
+              ? components.routes.navigatorKey.currentState!
+                  .pushNamed(path, arguments: arguments)
+              : Navigator.of(context).pushNamed(path, arguments: arguments);
   //? Navigator.of(context ?? components.routes.routeContext!)
   //    .pushReplacementNamed(path)
   //: Navigator.of(context ?? components.routes.routeContext!)

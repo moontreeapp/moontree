@@ -33,14 +33,14 @@ import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/device.dart' show getId;
 import 'package:client_front/domain/utils/extensions.dart';
 
-class FrontCreateNativeScreen extends StatefulWidget {
-  const FrontCreateNativeScreen({Key? key}) : super(key: key ?? defaultKey);
+class LoginCreateNative extends StatefulWidget {
+  const LoginCreateNative({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('frontLoginCreateNative');
   @override
-  _FrontCreateNativeState createState() => _FrontCreateNativeState();
+  _LoginCreateNativeState createState() => _LoginCreateNativeState();
 }
 
-class _FrontCreateNativeState extends State<FrontCreateNativeScreen> {
+class _LoginCreateNativeState extends State<LoginCreateNative> {
   Map<String, dynamic> data = <String, dynamic>{};
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
@@ -73,7 +73,7 @@ class _FrontCreateNativeState extends State<FrontCreateNativeScreen> {
   @override
   Widget build(BuildContext context) {
     data = populateData(context, data);
-    needsConsent = data['needsConsent'] as bool? ?? false;
+    needsConsent = data['needsConsent'] as bool? ?? true;
     return BackdropLayers(
         back: const BlankBack(), front: FrontCurve(child: body()));
   }

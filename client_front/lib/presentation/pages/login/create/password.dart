@@ -21,14 +21,14 @@ import 'package:client_front/domain/utils/login.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class FrontCreatePasswordScreen extends StatefulWidget {
-  const FrontCreatePasswordScreen({Key? key}) : super(key: key ?? defaultKey);
+class LoginCreatePassword extends StatefulWidget {
+  const LoginCreatePassword({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('frontLoginCreatePassword');
   @override
-  _FrontCreatePasswordState createState() => _FrontCreatePasswordState();
+  _LoginCreatePasswordState createState() => _LoginCreatePasswordState();
 }
 
-class _FrontCreatePasswordState extends State<FrontCreatePasswordScreen> {
+class _LoginCreatePasswordState extends State<LoginCreatePassword> {
   //late List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   TextEditingController password = TextEditingController();
   TextEditingController confirm = TextEditingController();

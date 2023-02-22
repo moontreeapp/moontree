@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class FrontNativeScreen extends StatelessWidget {
-  const FrontNativeScreen({Key? key}) : super(key: key ?? defaultKey);
+class LoginNative extends StatelessWidget {
+  const LoginNative({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('frontLoginNative');
 
   @override

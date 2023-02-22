@@ -43,7 +43,7 @@ void postLogin(BuildContext context) {
       //streams.app.triggers.value == ThresholdTrigger.backup &&
       !Current.wallet.backedUp) {
     sailor.sailTo(
-        location: '/home',
+        location: '/wallet/holdings', //'/home',
         arguments: <String, dynamic>{},
         replaceOverride: true);
     sailor.sailTo(
@@ -51,7 +51,7 @@ void postLogin(BuildContext context) {
         arguments: <String, bool>{'fadeIn': true});
   } else {
     sailor.sailTo(
-        location: '/home',
+        location: '/wallet/holdings', //'/home',
         arguments: <String, dynamic>{},
         replaceOverride: true);
   }
