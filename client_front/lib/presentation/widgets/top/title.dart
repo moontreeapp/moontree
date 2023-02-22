@@ -15,6 +15,8 @@ import 'package:client_front/presentation/components/components.dart'
 import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:client_front/presentation/widgets/other/textfield.dart';
 import 'package:client_front/presentation/widgets/assets/icons.dart';
+import 'package:client_front/presentation/utilities/animation.dart'
+    as animation;
 
 class PageTitle extends StatefulWidget {
   const PageTitle({Key? key}) : super(key: key);
@@ -59,7 +61,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   AppContext appContext = AppContext.login;
   final TextEditingController changeName = TextEditingController();
   late AnimationController controller;
-  late Animation<double> animation;
+  late Animation<double> animate;
   late AnimationController slowController;
   late Animation<double> slowAnimation;
   final Duration animationDuration = const Duration(milliseconds: 160);
@@ -73,8 +75,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     cubit = components.cubits.title;
-    slowController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1000));
+    slowController =
+        AnimationController(vsync: this, duration: animation.slowFadeDuration);
     slowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(parent: slowController, curve: Curves.easeInOutCubic));
     slowController.forward();

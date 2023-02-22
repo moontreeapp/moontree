@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:client_front/presentation/utilities/animation.dart'
+    as animation;
 
 class FadeIn extends StatefulWidget {
   final Widget child;
+  final Duration duration;
 
-  const FadeIn({required this.child});
+  const FadeIn({
+    required this.child,
+    this.duration = animation.fadeDuration,
+  });
 
   @override
   _FadeInState createState() => _FadeInState();
