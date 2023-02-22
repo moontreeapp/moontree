@@ -167,45 +167,15 @@ class MoontreeMobileApp extends StatelessWidget {
         navigatorObservers: <NavigatorObserver>[components.routes],
         //initialRoute: '/splash',
         //home: Splash(),
-        //routes: pages.routes,
-        onGenerateRoute: (RouteSettings settings) {
-          switch (settings.name) {
-            case '/':
-              return PageRouteBuilder(
-                pageBuilder: (_, __, ___) => FrontCreateScreen(),
-                transitionsBuilder: (_, animation, __, child) => FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
-              );
-            case '/login/create':
-              return PageRouteBuilder(
-                pageBuilder: (_, __, ___) => FrontCreateScreen(),
-                transitionsBuilder: (_, animation, __, child) => FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
-              );
-            case '/login/create/native':
-              return PageRouteBuilder(
-                pageBuilder: (_, __, ___) => FrontCreateNativeScreen(),
-                transitionsBuilder: (_, animation, __, child) => FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
-              );
-            case '/login/native':
-              return PageRouteBuilder(
-                pageBuilder: (_, __, ___) => FrontNativeScreen(),
-                transitionsBuilder: (_, animation, __, child) => FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
-              );
-            default:
-              return null;
-          }
-        },
+        routes: pages.routes,
+
+        /* we can either have `routes` with `pageTransitionBuilder` in `theme`,
+           which has the drawback of not being able to control duration, or we
+           could have PageRouteBuilders using `onGenerateRoute`. Since we can
+           use named routes and get the transition we want we'll use that.
+        onGenerateRoute: pages.generatedRoutes,
+        */
+
         builder: (BuildContext context, Widget? child) =>
             MoontreeApp(child: child));
   }

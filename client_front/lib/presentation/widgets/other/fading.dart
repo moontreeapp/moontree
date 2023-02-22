@@ -19,7 +19,7 @@ class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 5000),
+      duration: const Duration(milliseconds: 4000),
     );
 
     _animation = Tween<double>(begin: 0, end: 1).animate(

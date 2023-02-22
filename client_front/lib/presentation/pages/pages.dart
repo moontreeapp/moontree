@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
+import 'package:client_front/presentation/utilities/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:client_front/presentation/pagesv1/home/home.dart';
 import 'package:client_front/presentation/pagesv1/manage/assets.dart';
@@ -134,3 +135,18 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
 };
 
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;
+
+Route<dynamic>? generatedRoutes(RouteSettings settings) {
+  switch (settings.name) {
+    case '/':
+      return FadeFirstTransition(child: FrontCreateScreen());
+    case '/login/create':
+      return FadeFirstTransition(child: FrontCreateScreen());
+    case '/login/create/native':
+      return FadeFirstTransition(child: FrontCreateNativeScreen());
+    case '/login/native':
+      return FadeFirstTransition(child: FrontNativeScreen());
+    default:
+      return null;
+  }
+}
