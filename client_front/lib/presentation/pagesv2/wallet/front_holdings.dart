@@ -25,7 +25,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'WhaleStreet'},
+                    arguments: {'chainSymbol': 'WhaleStreet'},
                   );
                 },
                 child: const ListTile(
@@ -40,7 +40,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Moontree'},
+                    arguments: {'chainSymbol': 'Moontree'},
                   );
                 },
                 child: const ListTile(
@@ -55,7 +55,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Ravencoin'},
+                    arguments: {'chainSymbol': 'Ravencoin'},
                   );
                 },
                 child: const ListTile(
@@ -70,7 +70,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Purple Asset'},
+                    arguments: {'chainSymbol': 'Purple Asset'},
                   );
                 },
                 child: const ListTile(
@@ -85,7 +85,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Yellow Asset'},
+                    arguments: {'chainSymbol': 'Yellow Asset'},
                   );
                 },
                 child: const ListTile(
@@ -100,7 +100,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Pink Holding'},
+                    arguments: {'chainSymbol': 'Pink Holding'},
                   );
                 },
                 child: const ListTile(
@@ -115,7 +115,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Orange Asset'},
+                    arguments: {'chainSymbol': 'Orange Asset'},
                   );
                 },
                 child: const ListTile(
@@ -132,7 +132,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'WhaleStreet'},
+                    arguments: {'chainSymbol': 'WhaleStreet'},
                   );
                 },
                 child: const ListTile(
@@ -147,7 +147,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Moontree'},
+                    arguments: {'chainSymbol': 'Moontree'},
                   );
                 },
                 child: const ListTile(
@@ -162,7 +162,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Ravencoin'},
+                    arguments: {'chainSymbol': 'Ravencoin'},
                   );
                 },
                 child: const ListTile(
@@ -177,7 +177,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Purple Asset'},
+                    arguments: {'chainSymbol': 'Purple Asset'},
                   );
                 },
                 child: const ListTile(
@@ -192,7 +192,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Yellow Asset'},
+                    arguments: {'chainSymbol': 'Yellow Asset'},
                   );
                 },
                 child: const ListTile(
@@ -207,7 +207,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Pink Holding'},
+                    arguments: {'chainSymbol': 'Pink Holding'},
                   );
                 },
                 child: const ListTile(
@@ -222,7 +222,7 @@ class FrontHoldingsScreen extends StatelessWidget {
                 onTap: () {
                   sailor.sailTo(
                     location: '/wallet/holding',
-                    params: {'chainSymbol': 'Orange Asset'},
+                    arguments: {'chainSymbol': 'Orange Asset'},
                   );
                 },
                 child: const ListTile(

@@ -37,15 +37,8 @@ class Sailor {
     Section.swap: '/swap',
     Section.settings: '/menu',
   };
+
   static const Map<String, Manifest> destinationMap = {
-    //'/splash': Manifest(
-    //  section: Section.login,
-    //  frontHeight: PageContainerHeight.max,
-    //  navbarHeight: NavbarHeight.hidden,
-    //  frontPath: '/splash',
-    //  extraChild: Splash(),
-    //  extraHideFront: true,
-    //),
     '/login/create': Manifest(
       section: Section.login,
       frontHeight: PageContainerHeight.max,
@@ -158,7 +151,7 @@ class Sailor {
     String? location,
     BuildContext? context,
     Section? section,
-    Map<String, dynamic>? params,
+    Map<String, dynamic>? arguments,
     bool addToHistory = true,
     bool replaceOverride = false,
   }) async {
@@ -192,7 +185,7 @@ class Sailor {
     if (manifest.frontPath != null) {
       // todo: get rid of this pattern, just pass args in if you want.
       final matchParam = manifest.frontPath!.split(':').last;
-      final ending = params?[manifest.frontPath!.split(':').last] ?? '';
+      final ending = arguments?[manifest.frontPath!.split(':').last] ?? '';
       final path = ending == ''
           ? manifest.frontPath!
           : manifest.frontPath!.replaceFirst(matchParam, ending);

@@ -306,10 +306,9 @@ class _FrontCreateNativeState extends State<FrontCreateNativeScreen> {
         streams.app.snack.add(Snack(
           message: 'No pin detected; please set a password.',
         ));
-        Future<Object?>.microtask(() => Navigator.pushReplacementNamed(
-              context,
-              getMethodPathCreate(nativeSecurity: false),
-            ));
+        Future<Object?>.microtask(() => sailor.sailTo(
+            location: getMethodPathCreate(nativeSecurity: false),
+            replaceOverride: true));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
         setState(() {
           failedAttempt = true;
