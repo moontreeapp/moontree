@@ -228,6 +228,9 @@ class _PageLead extends State<PageLead> {
 
   static const Set<String> emptyLocations = {
     '/login/create',
+    '/login/native',
+    '/login/password',
+    '/backup/intro',
   };
 
   @override

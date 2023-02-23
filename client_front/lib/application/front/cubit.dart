@@ -12,30 +12,29 @@ class FrontContainerCubit extends Cubit<FrontContainerCubitState>
     with HeightCubitMixin {
   FrontContainerCubit()
       : super(FrontContainerState(
-            height: services.screen.frontPageContainer.maxHeight));
+            height: services.screen.frontContainer.maxHeight));
 
   void setHidden(bool hide) =>
       emit(FrontContainerState(height: state.height, hide: hide));
 
   void setHeightToExactly({required double height}) => emit(FrontContainerState(
-      height: math.max(services.screen.frontPageContainer.minHeight,
-          math.min(height, services.screen.frontPageContainer.maxHeight)),
+      height: math.max(services.screen.frontContainer.minHeight,
+          math.min(height, services.screen.frontContainer.maxHeight)),
       hide: state.hide));
 
   @override
   void max() async => emit(FrontContainerState(
-      height: services.screen.frontPageContainer.maxHeight, hide: state.hide));
+      height: services.screen.frontContainer.maxHeight, hide: state.hide));
 
   @override
   void mid() async => emit(FrontContainerState(
-      height: services.screen.frontPageContainer.midHeight, hide: state.hide));
+      height: services.screen.frontContainer.midHeight, hide: state.hide));
 
   @override
   void min() async => emit(FrontContainerState(
-      height: services.screen.frontPageContainer.minHeight, hide: state.hide));
+      height: services.screen.frontContainer.minHeight, hide: state.hide));
 
   @override
   void hidden() async => emit(FrontContainerState(
-      height: services.screen.frontPageContainer.hiddenHeight,
-      hide: state.hide));
+      height: services.screen.frontContainer.hiddenHeight, hide: state.hide));
 }

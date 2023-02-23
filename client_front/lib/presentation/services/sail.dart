@@ -7,7 +7,6 @@ import 'package:client_front/application/utilities.dart';
 import 'package:client_front/application/navbar/height/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/services/services.dart' show beamer;
 
 enum Section { login, wallet, manage, swap, settings }
 
@@ -70,6 +69,30 @@ class Sail {
       frontHeight: PageContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/login/password',
+    ),
+    '/backup/intro': Manifest(
+      section: Section.settings,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/backup/intro',
+    ),
+    '/backup/seed': Manifest(
+      section: Section.settings,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/backup/seed',
+    ),
+    '/backup/keypair': Manifest(
+      section: Section.settings,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/backup/keypair',
+    ),
+    '/backup/verify': Manifest(
+      section: Section.settings,
+      frontHeight: PageContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/backup/verify',
     ),
     '/wallet/holdings': Manifest(
       section: Section.wallet,

@@ -28,7 +28,7 @@ class ContentBulk extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         alignment: Alignment.bottomCenter,
-        height: uiservices.screen.frontPageContainer.maxHeight,
+        height: uiservices.screen.frontContainer.maxHeight,
         child: Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[

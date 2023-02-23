@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/streams/app.dart';
@@ -15,7 +16,6 @@ import 'package:client_front/infrastructure/services/wallet.dart'
 import 'package:client_front/presentation/theme/extensions.dart';
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/domain/utils/login.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/theme/colors.dart';
@@ -97,131 +97,109 @@ class _LoginNativeState extends State<LoginNative> {
       });
       autoInitiateUnlock = false;
     }
-    return BackdropLayers(
-        back: const BlankBack(), front: FrontCurve(child: body()));
-  }
-
-  Widget body() => GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Container(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(height: 76.figmaH),
-                      Container(
-                        height: 128.figmaH,
-                        child: moontree,
-                      ),
-                      Container(
-                          alignment: Alignment.bottomCenter,
-                          height: (16 + 24).figmaH,
-                          child: welcomeMessage),
-                    ]),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      (needsConsent ? ulaMessage : const SizedBox(height: 100)),
-                      const SizedBox(height: 40),
-                      Row(children: <Widget>[bioButton]),
-                      const SizedBox(height: 40),
-                    ]),
-              ])));
-
-  Widget get moontree => Container(
-        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-        height: .1534.ofMediaHeight(context),
-      );
-
-  Widget get welcomeMessage => Text(
-        'Welcome Back',
-        style: Theme.of(context)
-            .textTheme
-            .headline1
-            ?.copyWith(color: AppColors.black60),
-      );
-
-  Widget get ulaMessage => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(
-              alignment: Alignment.center, width: 18, child: aggrementCheckbox),
-          Container(
-              alignment: Alignment.center,
-              width: .70.ofMediaWidth(context),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: Theme.of(components.routes.routeContext!)
-                      .textTheme
-                      .bodyText2,
-                  children: <TextSpan>[
-                    const TextSpan(text: "I agree to Moontree's\n"),
-                    TextSpan(
-                        text: 'User Agreement',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.user_agreement)));
-                          }),
-                    const TextSpan(text: ', '),
-                    TextSpan(
-                        text: 'Privacy Policy',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.privacy_policy)));
-                          }),
-                    const TextSpan(text: ',\n and '),
-                    TextSpan(
-                        text: 'Risk Disclosure',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.risk_disclosures)));
-                          }),
-                  ],
-                ),
-              )),
-          const SizedBox(
+    final Widget ulaMessage = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Container(
+            alignment: Alignment.center,
             width: 18,
+            child: Checkbox(
+              //checkColor: Colors.white,
+              value: isConsented,
+              onChanged: (bool? value) async {
+                setState(() {
+                  isConsented = value!;
+                });
+              },
+            )),
+        Container(
+            alignment: Alignment.center,
+            width: .70.ofMediaWidth(context),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: Theme.of(components.routes.routeContext!)
+                    .textTheme
+                    .bodyText2,
+                children: <TextSpan>[
+                  const TextSpan(text: "I agree to Moontree's\n"),
+                  TextSpan(
+                      text: 'User Agreement',
+                      style: Theme.of(components.routes.routeContext!)
+                          .textTheme
+                          .underlinedLink,
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(documentEndpoint(
+                              ConsentDocument.user_agreement)));
+                        }),
+                  const TextSpan(text: ', '),
+                  TextSpan(
+                      text: 'Privacy Policy',
+                      style: Theme.of(components.routes.routeContext!)
+                          .textTheme
+                          .underlinedLink,
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(documentEndpoint(
+                              ConsentDocument.privacy_policy)));
+                        }),
+                  const TextSpan(text: ',\n and '),
+                  TextSpan(
+                      text: 'Risk Disclosure',
+                      style: Theme.of(components.routes.routeContext!)
+                          .textTheme
+                          .underlinedLink,
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(documentEndpoint(
+                              ConsentDocument.risk_disclosures)));
+                        }),
+                ],
+              ),
+            )),
+        const SizedBox(
+          width: 18,
+        ),
+      ],
+    );
+    return PageStructure(
+      children: <Widget>[
+        SizedBox(height: 76.figmaH),
+        Container(
+          height: 128.figmaH,
+          child: Container(
+            child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+            height: .1534.ofMediaHeight(context),
           ),
-        ],
-      );
-
-  Widget get aggrementCheckbox => Checkbox(
-        //checkColor: Colors.white,
-        value: isConsented,
-        onChanged: (bool? value) async {
-          setState(() {
-            isConsented = value!;
-          });
-        },
-      );
-
-  Widget get bioButton => components.buttons.actionButton(
-        context,
-        focusNode: unlockFocus,
-        enabled: readyToUnlock(),
-        label: enabled ? 'Unlock' : 'Unlocking...',
-        onPressed: () async {
-          await submit();
-        },
-      );
+        ),
+        Container(
+            alignment: Alignment.bottomCenter,
+            height: (16 + 24).figmaH,
+            child: Text(
+              'Welcome Back',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1
+                  ?.copyWith(color: AppColors.black60),
+            )),
+      ],
+      firstLowerChildren: <Widget>[
+        (needsConsent ? ulaMessage : const SizedBox(height: 100)),
+        const SizedBox(height: 24),
+      ],
+      secondLowerChildren: <Widget>[
+        BottomButton(
+          focusNode: unlockFocus,
+          enabled: readyToUnlock(),
+          label: enabled ? 'Unlock' : 'Unlocking...',
+          onPressed: () async {
+            await submit();
+          },
+        ),
+      ],
+    );
+  }
 
   Future<void> submit() async {
     /// just in case

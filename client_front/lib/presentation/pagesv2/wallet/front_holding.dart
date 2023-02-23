@@ -47,12 +47,11 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
     with TickerProviderStateMixin {
   final DraggableScrollableController draggableScrollableController =
       DraggableScrollableController();
-  final double minSize = services.screen.frontPageContainer.midHeightPercentage;
+  final double minSize = services.screen.frontContainer.midHeightPercentage;
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
   late FrontContainerCubit heightCubit;
-  double draggableHeight =
-      services.screen.frontPageContainer.midHeightPercentage;
+  double draggableHeight = services.screen.frontContainer.midHeightPercentage;
 
   @override
   void initState() {
@@ -77,13 +76,13 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
   }
 
   void scrollListener() => heightCubit.setHeightToExactly(
-      height: services.screen.frontPageContainer.maxHeight *
+      height: services.screen.frontContainer.maxHeight *
           draggableScrollableController.size);
 
   @override
   Widget build(BuildContext context) => Container(
       color: Colors.transparent,
-      height: services.screen.frontPageContainer.maxHeight,
+      height: services.screen.frontContainer.maxHeight,
       width: MediaQuery.of(context).size.width,
       child: DraggableScrollableSheet(
           initialChildSize: minSize,

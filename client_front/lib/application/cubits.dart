@@ -12,5 +12,6 @@ export 'package:client_front/application/extra/cubit.dart';
 export 'package:client_front/application/holding/cubit.dart';
 export 'package:client_front/application/navbar/section/cubit.dart';
 export 'package:client_front/application/navbar/height/cubit.dart';
-export 'package:client_front/application/widgets/title/cubit.dart';
+export 'package:client_front/application/title/cubit.dart';
 export 'package:client_front/application/loadingv2/cubit.dart';
+export 'package:client_front/application/login/cubit.dart';

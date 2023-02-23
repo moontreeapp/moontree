@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
-import 'package:beamer/beamer.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

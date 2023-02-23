@@ -5,7 +5,7 @@ import 'package:client_front/presentation/widgets/bottom/snackbar.dart';
 import 'package:client_front/presentation/widgets/top/connection.dart';
 import 'package:client_front/presentation/widgets/top/lead.dart';
 import 'package:client_front/presentation/widgets/top/title.dart';
-import 'package:client_front/application/widgets/title/cubit.dart';
+import 'package:client_front/application/title/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/components/components.dart'
     as components;

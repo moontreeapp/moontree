@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:client_front/presentation/widgets/login/components.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -73,128 +76,52 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
         back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
-  Widget body() => GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Container(
-          padding: const EdgeInsets.only(left: 16, right: 16),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  children: [
-                    Container(
-                        alignment: Alignment.bottomCenter,
-                        height: .242.ofMediaHeight(context),
-                        child: moontree),
-                    SizedBox(height: .01.ofMediaHeight(context)),
-                    Container(
-                        alignment: Alignment.bottomCenter,
-                        height: .035.ofMediaHeight(context),
-                        child: welcomeMessage),
-                    SizedBox(
-                      height: .0789.ofMediaHeight(context),
-                    ),
-                    Container(
-                        alignment: Alignment.topCenter,
-                        // height: 76,
-                        height: .0947.ofMediaHeight(context),
-                        child: passwordField),
-                    Container(
-                        alignment: Alignment.topCenter,
-                        // height: 76 + 16,
-                        height: .0947.ofMediaHeight(context),
-                        child: confirmField),
-                    SizedBox(height: 16),
-                    Container(
-                      alignment: Alignment.topCenter,
-                      child: components.text.passwordWarning,
-                    ),
-                  ],
-                ),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 16,
-                      ),
-                      ulaMessage,
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Row(children: <Widget>[unlockButton]),
-                      SizedBox(
-                        height: 40,
-                      ),
-                    ]),
-              ])));
-
-  Widget get moontree => Container(
-        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-        height: .1534.ofMediaHeight(context),
-        // height: 110.figma(context),
-      );
-
-  Widget get welcomeMessage => Text('Moontree',
-      style: Theme.of(context)
-          .textTheme
-          .headline1
-          ?.copyWith(color: AppColors.black60));
-
-  Widget get ulaMessage => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
+  Widget body() => PageStructure(
+        children: [
           Container(
-              alignment: Alignment.center, width: 18, child: aggrementCheckbox),
+              alignment: Alignment.bottomCenter,
+              height: .242.ofMediaHeight(context),
+              child: MoontreeLogo()),
+          SizedBox(height: .01.ofMediaHeight(context)),
           Container(
-              alignment: Alignment.center,
-              width: .70.ofMediaWidth(context),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: Theme.of(components.routes.routeContext!)
-                      .textTheme
-                      .bodyText2,
-                  children: <TextSpan>[
-                    const TextSpan(text: "I agree to Moontree's\n"),
-                    TextSpan(
-                        text: 'User Agreement',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.user_agreement)));
-                          }),
-                    const TextSpan(text: ', '),
-                    TextSpan(
-                        text: 'Privacy Policy',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.privacy_policy)));
-                          }),
-                    const TextSpan(text: ',\n and '),
-                    TextSpan(
-                        text: 'Risk Disclosure',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.risk_disclosures)));
-                          }),
-                  ],
-                ),
-              )),
-          const SizedBox(
-            width: 18,
+              alignment: Alignment.bottomCenter,
+              height: .035.ofMediaHeight(context),
+              child: WelcomeMessage()),
+          SizedBox(
+            height: .0789.ofMediaHeight(context),
           ),
+          Container(
+              alignment: Alignment.topCenter,
+              // height: 76,
+              height: .0947.ofMediaHeight(context),
+              child: passwordField),
+          Container(
+              alignment: Alignment.topCenter,
+              // height: 76 + 16,
+              height: .0947.ofMediaHeight(context),
+              child: confirmField),
+          SizedBox(height: 16),
+          Container(
+            alignment: Alignment.topCenter,
+            child: components.text.passwordWarning,
+          ),
+        ],
+        firstLowerChildren: [UlaMessage()],
+        secondLowerChildren: [
+          BottomButton(
+              enabled: isConnected() && validate(),
+              focusNode: unlockFocus,
+              label:
+                  passwordText == null ? 'Create Wallet' : 'Creating Wallet...',
+              disabledOnPressed: () => setState(() {
+                    if (!isConnected()) {
+                      streams.app.snack.add(Snack(
+                        message:
+                            'Unable to connect! Please check connectivity.',
+                      ));
+                    }
+                  }),
+              onPressed: () async => submit())
         ],
       );
 
@@ -256,29 +183,6 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
 
   bool isConnected() =>
       streams.client.connected.value == ConnectionStatus.connected;
-
-  Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: isConnected() && validate(),
-      focusNode: unlockFocus,
-      label: passwordText == null ? 'Create Wallet' : 'Creating Wallet...',
-      disabledOnPressed: () => setState(() {
-            if (!isConnected()) {
-              streams.app.snack.add(Snack(
-                message: 'Unable to connect! Please check connectivity.',
-              ));
-            }
-          }),
-      onPressed: () async => submit());
-
-  Widget get aggrementCheckbox => Checkbox(
-        //checkColor: Colors.white,
-        value: isConsented,
-        onChanged: (bool? value) async {
-          setState(() {
-            isConsented = value!;
-          });
-        },
-      );
 
   bool validate() {
     return passwordText == null &&

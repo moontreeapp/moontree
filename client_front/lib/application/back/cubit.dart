@@ -11,7 +11,7 @@ class BackContainerCubit extends Cubit<BackContainerCubitState>
     with HeightCubitMixin {
   BackContainerCubit()
       : super(BackContainerState(
-            height: services.screen.backPageContainer.maxHeight,
+            height: services.screen.backContainer.maxHeight,
             child: SizedBox.shrink()));
 
   void update({double? height, Widget? child}) => emit(BackContainerState(
@@ -19,14 +19,13 @@ class BackContainerCubit extends Cubit<BackContainerCubitState>
 
   @override
   void max() => emit(BackContainerState(
-      height: services.screen.backPageContainer.maxHeight, child: state.child));
+      height: services.screen.backContainer.maxHeight, child: state.child));
 
   @override
   void mid() => emit(BackContainerState(
-      height: services.screen.backPageContainer.midHeight, child: state.child));
+      height: services.screen.backContainer.midHeight, child: state.child));
 
   @override
   void hidden() => emit(BackContainerState(
-      height: services.screen.backPageContainer.hiddenHeight,
-      child: state.child));
+      height: services.screen.backContainer.hiddenHeight, child: state.child));
 }

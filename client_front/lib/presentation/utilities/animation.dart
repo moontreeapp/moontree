@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:beamer/beamer.dart';
 
 const slideDuration = const Duration(milliseconds: 3000);
 const fadeDuration = const Duration(milliseconds: 3000);
@@ -27,56 +26,6 @@ class CurveDelayed extends Curve {
       return 1.0;
     } else {
       return t * 2;
-    }
-  }
-}
-
-class FadeTransitionPage extends BeamPage {
-  const FadeTransitionPage({
-    LocalKey? key,
-    required Widget child,
-    String? title,
-    bool keepQueryOnPop = false,
-  }) : super(
-            key: key,
-            child: child,
-            title: title,
-            keepQueryOnPop: keepQueryOnPop);
-
-  @override
-  Route createRoute(BuildContext context) {
-    return PageRouteBuilder(
-      settings: this,
-      opaque: true,
-      pageBuilder: (_, __, ___) => child,
-      transitionDuration: fadeDuration,
-      reverseTransitionDuration: fadeDuration,
-      transitionsBuilder: (_, animation, secondaryAnimation, child) =>
-          FadeTransition(
-        opacity: animation.drive(Tween<double>(begin: 0, end: 1)
-            .chain(CurveTween(curve: const DelayedCurve()))),
-        child: FadeTransition(
-            opacity: secondaryAnimation.drive(Tween<double>(begin: 1, end: 0)
-                .chain(CurveTween(curve: const CurveDelayed()))),
-            child: child),
-      ),
-    );
-  }
-}
-
-class DelayedCurve2 extends Curve {
-  const DelayedCurve2() : super();
-
-  @override
-  double transformInternal(double t) {
-    if (t < 0.5) {
-      ///final x = (-2.0 * t) + 1;
-      final x = t * 2;
-      print('$t $x');
-      return x;
-    } else {
-      print('$t 1.0');
-      return 1.0;
     }
   }
 }

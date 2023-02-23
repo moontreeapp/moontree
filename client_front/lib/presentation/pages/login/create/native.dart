@@ -1,3 +1,5 @@
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
@@ -74,61 +76,55 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     needsConsent = data['needsConsent'] as bool? ?? true;
-    return BackdropLayers(
-        back: const BlankBack(), front: FrontCurve(child: body()));
+    return FutureBuilder<bool>(
+        future: localAuthApi.entirelyReadyToAuthenticate,
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          return PageStructure(
+            children: [
+              SizedBox(height: 76.figmaH),
+              SizedBox(
+                height: 128.figmaH,
+                child: moontree,
+              ),
+              Container(
+                  alignment: Alignment.bottomCenter,
+                  height: (16 + 24).figmaH,
+                  child: welcomeMessage),
+              Container(
+                  alignment: Alignment.bottomCenter,
+                  height: (16 + 24).figmaH,
+                  child: labelMessage),
+              if (snapshot.hasData && !snapshot.data!)
+                Container(
+                    alignment: Alignment.center,
+                    height: (8 + 16 + 24).figmaH,
+                    child: setupMessage),
+            ],
+            firstLowerChildren: <Widget>[
+              if (needsConsent) ulaMessage else const SizedBox(height: 100),
+              const SizedBox(height: 40 - 16),
+            ],
+            secondLowerChildren: <Widget>[
+              if (snapshot.hasData)
+                snapshot.data!
+                    ? BottomButton(
+                        focusNode: unlockFocus,
+                        enabled: readyToUnlock(),
+                        label: enabled ? 'Create Wallet' : 'Creating Wallet...',
+                        onPressed: () async => submit(),
+                      )
+                    : BottomButton(
+                        focusNode: unlockFocus,
+                        enabled: readyToUnlock(),
+                        label: 'Setup',
+                        onPressed: () async => submitSetup(),
+                      )
+              else
+                const CircularProgressIndicator()
+            ],
+          );
+        });
   }
-
-  Widget body() => FutureBuilder<bool>(
-      future: localAuthApi.entirelyReadyToAuthenticate,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        return GestureDetector(
-            onTap: FocusScope.of(context).unfocus,
-            child: Container(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            SizedBox(height: 76.figmaH),
-                            SizedBox(
-                              height: 128.figmaH,
-                              child: moontree,
-                            ),
-                            Container(
-                                alignment: Alignment.bottomCenter,
-                                height: (16 + 24).figmaH,
-                                child: welcomeMessage),
-                            Container(
-                                alignment: Alignment.bottomCenter,
-                                height: (16 + 24).figmaH,
-                                child: labelMessage),
-                            if (snapshot.hasData && !snapshot.data!)
-                              Container(
-                                  alignment: Alignment.center,
-                                  height: (8 + 16 + 24).figmaH,
-                                  child: setupMessage),
-                          ]),
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            if (needsConsent)
-                              ulaMessage
-                            else
-                              const SizedBox(height: 100),
-                            const SizedBox(height: 40),
-                            Row(children: <Widget>[
-                              if (snapshot.hasData)
-                                snapshot.data! ? nativeButton : setupButton
-                              else
-                                const CircularProgressIndicator()
-                            ]),
-                            const SizedBox(height: 40),
-                          ]),
-                    ])));
-      });
 
   Widget get moontree => SizedBox(
         height: .1534.ofMediaHeight(context),
@@ -226,22 +222,6 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
             isConsented = value!;
           });
         },
-      );
-
-  Widget get setupButton => components.buttons.actionButton(
-        context,
-        focusNode: unlockFocus,
-        enabled: readyToUnlock(),
-        label: 'Setup',
-        onPressed: () async => submitSetup(),
-      );
-
-  Widget get nativeButton => components.buttons.actionButton(
-        context,
-        focusNode: unlockFocus,
-        enabled: readyToUnlock(),
-        label: enabled ? 'Create Wallet' : 'Creating Wallet...',
-        onPressed: () async => submit(),
       );
 
   Future<void> submitSetup() async {

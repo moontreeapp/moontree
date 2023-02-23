@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -109,183 +111,154 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
     needsConsent = data['needsConsent'] as bool? ?? false;
     bypass();
-    return BackdropLayers(
-        back: const BlankBack(), front: FrontCurve(child: body()));
-  }
-
-  Widget body() => GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Container(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
-          child: Column(children: <Widget>[
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: 76.figmaH),
-                  SizedBox(
-                    height: 128.figmaH,
-                    child: moontree,
-                  ),
-                  Container(
-                      alignment: Alignment.bottomCenter,
-                      height: (16 + 24).figmaH,
-                      child: welcomeMessage),
-                  Container(
-                      alignment: Alignment.bottomCenter,
-                      height: 40.figma(context),
-                      child: const LockedOutTime()),
-                  Container(
-                      alignment: Alignment.center,
-                      height: 120,
-                      child: loginField),
-                ]),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  ...needsConsent
-                      ? <Widget>[
-                          SizedBox(
-                            height: 16,
-                          ),
-                          ulaMessage,
-                          SizedBox(
-                            height: 16,
-                          ),
-                        ]
-                      : <Widget>[const SizedBox(height: 100)],
-                  Row(children: <Widget>[unlockButton]),
-                  const SizedBox(height: 40),
-                ]),
-          ])));
-
-  Widget get moontree => SizedBox(
-        height: .1534.ofMediaHeight(context),
-        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-      );
-
-  Widget get welcomeMessage => Text(
-        'Welcome Back',
-        style: Theme.of(context)
-            .textTheme
-            .headline1
-            ?.copyWith(color: AppColors.black60),
-      );
-
-  Widget get loginField => TextFieldFormatted(
-      focusNode: loginFocus,
-      autocorrect: false,
-      controller: password,
-      obscureText: !passwordVisible, // masked controller for immediate?
-      textInputAction: TextInputAction.done,
-      labelText: 'Password',
-      errorText: password.text == '' &&
-              pros.settings.loginAttempts.length > 0 &&
-              failedAttempt
-          ? 'Incorrect Password'
-          : null,
-      //suffixIcon: IconButton(
-      //  icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
-      //      color: AppColors.black60),
-      //  onPressed: () => setState(() {
-      //    passwordVisible = !passwordVisible;
-      //  }),
-      //),
-      onChanged: (_) {
-        // might interfere with fade, but thats ok we took fade out.
-        setState(() {});
-      },
-      onEditingComplete: () {
-        FocusScope.of(context).requestFocus(unlockFocus);
-        setState(() {});
-      });
-
-  Widget get ulaMessage => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(
-              alignment: Alignment.center, width: 18, child: aggrementCheckbox),
-          Container(
-              alignment: Alignment.center,
-              width: .70.ofMediaWidth(context),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: Theme.of(components.routes.routeContext!)
-                      .textTheme
-                      .bodyText2,
-                  children: <TextSpan>[
-                    const TextSpan(text: "I agree to Moontree's\n"),
-                    TextSpan(
-                        text: 'User Agreement',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.user_agreement)));
-                          }),
-                    const TextSpan(text: ', '),
-                    TextSpan(
-                        text: 'Privacy Policy',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.privacy_policy)));
-                          }),
-                    const TextSpan(text: ',\n and '),
-                    TextSpan(
-                        text: 'Risk Disclosure',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.risk_disclosures)));
-                          }),
-                  ],
-                ),
-              )),
-          const SizedBox(
-            width: 18,
-          ),
-        ],
-      );
-
-  Widget get aggrementCheckbox => Checkbox(
-        //checkColor: Colors.white,
-        value: isConsented,
-        onChanged: (bool? value) async {
-          setState(() {
-            isConsented = value!;
-          });
+    final Widget loginField = TextFieldFormatted(
+        focusNode: loginFocus,
+        autocorrect: false,
+        controller: password,
+        obscureText: !passwordVisible, // masked controller for immediate?
+        textInputAction: TextInputAction.done,
+        labelText: 'Password',
+        errorText: password.text == '' &&
+                pros.settings.loginAttempts.length > 0 &&
+                failedAttempt
+            ? 'Incorrect Password'
+            : null,
+        //suffixIcon: IconButton(
+        //  icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
+        //      color: AppColors.black60),
+        //  onPressed: () => setState(() {
+        //    passwordVisible = !passwordVisible;
+        //  }),
+        //),
+        onChanged: (_) {
+          // might interfere with fade, but thats ok we took fade out.
+          setState(() {});
         },
-      );
+        onEditingComplete: () {
+          FocusScope.of(context).requestFocus(unlockFocus);
+          setState(() {});
+        });
+    final Widget ulaMessage = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Container(
+            alignment: Alignment.center,
+            width: 18,
+            child: Checkbox(
+              //checkColor: Colors.white,
+              value: isConsented,
+              onChanged: (bool? value) async {
+                setState(() {
+                  isConsented = value!;
+                });
+              },
+            )),
+        Container(
+            alignment: Alignment.center,
+            width: .70.ofMediaWidth(context),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: Theme.of(components.routes.routeContext!)
+                    .textTheme
+                    .bodyText2,
+                children: <TextSpan>[
+                  const TextSpan(text: "I agree to Moontree's\n"),
+                  TextSpan(
+                      text: 'User Agreement',
+                      style: Theme.of(components.routes.routeContext!)
+                          .textTheme
+                          .underlinedLink,
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(documentEndpoint(
+                              ConsentDocument.user_agreement)));
+                        }),
+                  const TextSpan(text: ', '),
+                  TextSpan(
+                      text: 'Privacy Policy',
+                      style: Theme.of(components.routes.routeContext!)
+                          .textTheme
+                          .underlinedLink,
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(documentEndpoint(
+                              ConsentDocument.privacy_policy)));
+                        }),
+                  const TextSpan(text: ',\n and '),
+                  TextSpan(
+                      text: 'Risk Disclosure',
+                      style: Theme.of(components.routes.routeContext!)
+                          .textTheme
+                          .underlinedLink,
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(documentEndpoint(
+                              ConsentDocument.risk_disclosures)));
+                        }),
+                ],
+              ),
+            )),
+        const SizedBox(
+          width: 18,
+        ),
+      ],
+    );
+    return PageStructure(
+      children: [
+        SizedBox(height: 76.figmaH),
+        SizedBox(
+          height: 128.figmaH,
+          child: SizedBox(
+            height: .1534.ofMediaHeight(context),
+            child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
+          ),
+        ),
+        Container(
+            alignment: Alignment.bottomCenter,
+            height: (16 + 24).figmaH,
+            child: Text(
+              'Welcome Back',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1
+                  ?.copyWith(color: AppColors.black60),
+            )),
+        Container(
+            alignment: Alignment.bottomCenter,
+            height: 40.figma(context),
+            child: const LockedOutTime()),
+        Container(alignment: Alignment.center, height: 120, child: loginField),
+      ],
+      firstLowerChildren: [
+        ...needsConsent
+            ? <Widget>[
+                ulaMessage,
+              ]
+            : <Widget>[const SizedBox(height: 100 - 32)],
+      ],
+      secondLowerChildren: [
+        BottomButton(
+            enabled: password.text != '' &&
+                services.password.lockout.timePast() &&
+                passwordText == null &&
+                (isConsented || !needsConsent),
+            focusNode: unlockFocus,
+            label: passwordText == null ? 'Unlock' : 'Unlocking...',
+            disabledOnPressed: () => setState(() {
+                  if (!isConnected()) {
+                    streams.app.snack.add(Snack(
+                      message: 'Unable to connect! Please check connectivity.',
+                    ));
+                  }
+                }),
+            onPressed: () async => submit())
+      ],
+    );
+  }
 
   bool isConnected() =>
       streams.client.connected.value == ConnectionStatus.connected;
-
-  Widget get unlockButton => components.buttons.actionButton(context,
-      enabled: password.text != '' &&
-          services.password.lockout.timePast() &&
-          passwordText == null &&
-          (isConsented || !needsConsent),
-      focusNode: unlockFocus,
-      label: passwordText == null ? 'Unlock' : 'Unlocking...',
-      disabledOnPressed: () => setState(() {
-            if (!isConnected()) {
-              streams.app.snack.add(Snack(
-                message: 'Unable to connect! Please check connectivity.',
-              ));
-            }
-          }),
-      onPressed: () async => submit());
 
   Future<bool> validate() async => services.password.validate.password(
       password: password.text,
@@ -392,14 +365,3 @@ class _LoginPasswordState extends State<LoginPassword> {
     }
   }
 }
-
-/*
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-  final storage = new FlutterSecureStorage();
-
-  // Read value
-  String value = await storage.read(key: key);
-
-  // Write value
-  await storage.write(key: key, value: value);
-  */

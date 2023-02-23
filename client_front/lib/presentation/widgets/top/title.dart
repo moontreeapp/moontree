@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:client_front/application/widgets/title/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
@@ -9,6 +7,7 @@ import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show generateWallet, switchWallet;
+import 'package:client_front/application/title/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;

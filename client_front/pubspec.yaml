@@ -75,7 +75,6 @@ dependencies:
   wallet_utils: ^3.0.11
   moontree_utils: ^1.0.25
   serverpod_flutter: ^0.9.21
-  beamer: ^1.5.3
 
 dependency_overrides:
   client_back:

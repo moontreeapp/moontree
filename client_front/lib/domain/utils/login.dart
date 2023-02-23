@@ -20,7 +20,6 @@ Future<void> login(
   await services.cipher.updateWallets();
   services.cipher.cleanupCiphers();
   services.cipher.loginTime();
-  //streams.app.triggers.add(ThresholdTrigger.backup);
   streams.app.context.add(AppContext.wallet);
   streams.app.splash.add(false); // trigger to refresh app bar again
   streams.app.logout.add(false);
@@ -39,16 +38,10 @@ Future<void> login(
 }
 
 void postLogin(BuildContext context) {
-  if (Current.wallet is LeaderWallet &&
-      //streams.app.triggers.value == ThresholdTrigger.backup &&
-      !Current.wallet.backedUp) {
-    sail.to('/wallet/holdings', //'/home',
-        arguments: <String, dynamic>{},
-        replaceOverride: true);
+  if (Current.wallet is LeaderWallet && !Current.wallet.backedUp) {
+    sail.to('/wallet/holdings', replaceOverride: true);
     sail.to('/backup/intro', arguments: <String, bool>{'fadeIn': true});
   } else {
-    sail.to('/wallet/holdings', //'/home',
-        arguments: <String, dynamic>{},
-        replaceOverride: true);
+    sail.to('/wallet/holdings', replaceOverride: true);
   }
 }

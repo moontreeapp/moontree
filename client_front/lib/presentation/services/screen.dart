@@ -18,22 +18,25 @@ class Screen {
   final double width;
   final App app;
   final Navbar navbar;
-  final FrontPageContainer frontPageContainer;
-  final BackPageContainer backPageContainer;
+  final FrontPageContainer frontContainer;
+  final BackPageContainer backContainer;
+  final double buttonHeight;
   const Screen({
     required this.width,
     required this.app,
     required this.navbar,
-    required this.frontPageContainer,
-    required this.backPageContainer,
+    required this.frontContainer,
+    required this.backContainer,
+    required this.buttonHeight,
   });
 
   factory Screen.init(double height, double width) => Screen(
         width: width,
         app: App.init(height),
         navbar: Navbar.init(height),
-        frontPageContainer: FrontPageContainer.init(height),
-        backPageContainer: BackPageContainer.init(height),
+        frontContainer: FrontPageContainer.init(height),
+        backContainer: BackPageContainer.init(height),
+        buttonHeight: height * (40 / 760),
       );
 }
 

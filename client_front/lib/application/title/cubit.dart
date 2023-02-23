@@ -14,22 +14,28 @@ part 'state.dart';
 //       fill out it's featureset.
 
 class TitleCubit extends Cubit<TitleCubitState> {
-  TitleCubit() : super(const TitleState(path: '/login/create'));
+  TitleCubit() : super(const TitleState(path: '/'));
 
   static const Map<String, String> titles = {
+    '/': ' ',
     '/login/create': 'Welcome',
     '/login/create/native': 'Native Security',
     '/login/create/password': 'Create Password Login',
+    '/login/create/resume': 'Resume Password Setup',
     '/login/native': 'Locked',
     '/login/password': 'Locked',
-    '/wallet/holdings': 'Holdings',
-    '/wallet/holding': 'Holding',
+    '/wallet/holdings': 'Holdings', // should be wallet name
+    '/wallet/holding': 'Holding', // should be holding name
     '/wallet/holding/transaction': 'Transaction',
     '/manage': 'Manage',
     '/swap': 'Swap',
     '/menu': 'Menu',
     '/menu/settings': 'Settings',
     '/settings/example': 'Example',
+    '/backup/intro': 'Backup',
+    '/backup/keypair': 'Backup',
+    '/backup/seed': 'Backup',
+    '/backup/verify': 'Backup',
   };
 
   void update({String? path, String? title}) => emit(TitleState(
@@ -45,6 +51,6 @@ class TitleCubit extends Cubit<TitleCubitState> {
   /// returns override title, the title by location, or empty string.
   String get title => () {
         print(sail.latestLocation);
-        return state.title ?? titles[sail.latestLocation] ?? 'Welcome';
+        return state.title ?? titles[sail.latestLocation] ?? ' ';
       }();
 }

@@ -19,6 +19,7 @@ class GlobalCubits {
 
   // uiv2
   final TitleCubit title = TitleCubit();
+  final LoginCubit login = LoginCubit();
   final BackContainerCubit backContainer = BackContainerCubit();
   final FrontContainerCubit frontContainer = FrontContainerCubit();
   final ExtraContainerCubit extraContainer = ExtraContainerCubit();
