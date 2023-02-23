@@ -289,4 +289,5 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.bottomModalSheet),
       BlocProvider<LoadingViewCubitv2>(
           create: (context) => components.cubits.loadingViewv2),
+      BlocProvider<LoginCubit>(create: (context) => components.cubits.login),
     ];

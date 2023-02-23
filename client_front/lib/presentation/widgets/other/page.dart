@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:client_back/client_back.dart';
-import 'package:client_back/streams/app.dart';
 import 'package:intersperse/intersperse.dart';
 
 class PageStructure extends StatelessWidget {
@@ -73,3 +71,11 @@ class PageStructure extends StatelessWidget {
             )));
   }
 }
+/*
+PageStructure(
+  children: <Widget>[
+  ],
+  firstLowerChildren: <Widget>[
+  ],
+);
+*/

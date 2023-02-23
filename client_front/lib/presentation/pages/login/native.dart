@@ -1,29 +1,25 @@
 import 'dart:async';
-import 'package:client_front/presentation/widgets/other/buttons.dart';
-import 'package:client_front/presentation/widgets/other/page.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
 import 'package:client_back/services/consent.dart'
-    show ConsentDocument, documentEndpoint, consentToAgreements;
+    show consentToAgreements;
+import 'package:client_front/domain/utils/auth.dart';
+import 'package:client_front/domain/utils/login.dart';
+import 'package:client_front/domain/utils/data.dart';
+import 'package:client_front/domain/utils/device.dart' show getId;
+import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/infrastructure/services/auth.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show populateWalletsWithSensitives;
-import 'package:client_front/presentation/theme/extensions.dart';
-import 'package:client_front/domain/utils/auth.dart';
-import 'package:client_front/domain/utils/login.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:client_back/client_back.dart';
-import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/domain/utils/data.dart';
-import 'package:client_front/domain/utils/device.dart' show getId;
-import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/infrastructure/services/services.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/presentation/widgets/login/components.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 
 class LoginNative extends StatefulWidget {
   const LoginNative({Key? key}) : super(key: key ?? defaultKey);
@@ -97,108 +93,33 @@ class _LoginNativeState extends State<LoginNative> {
       });
       autoInitiateUnlock = false;
     }
-    final Widget ulaMessage = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Container(
-            alignment: Alignment.center,
-            width: 18,
-            child: Checkbox(
-              //checkColor: Colors.white,
-              value: isConsented,
-              onChanged: (bool? value) async {
-                setState(() {
-                  isConsented = value!;
-                });
-              },
-            )),
-        Container(
-            alignment: Alignment.center,
-            width: .70.ofMediaWidth(context),
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                style: Theme.of(components.routes.routeContext!)
-                    .textTheme
-                    .bodyText2,
-                children: <TextSpan>[
-                  const TextSpan(text: "I agree to Moontree's\n"),
-                  TextSpan(
-                      text: 'User Agreement',
-                      style: Theme.of(components.routes.routeContext!)
-                          .textTheme
-                          .underlinedLink,
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          launchUrl(Uri.parse(documentEndpoint(
-                              ConsentDocument.user_agreement)));
-                        }),
-                  const TextSpan(text: ', '),
-                  TextSpan(
-                      text: 'Privacy Policy',
-                      style: Theme.of(components.routes.routeContext!)
-                          .textTheme
-                          .underlinedLink,
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          launchUrl(Uri.parse(documentEndpoint(
-                              ConsentDocument.privacy_policy)));
-                        }),
-                  const TextSpan(text: ',\n and '),
-                  TextSpan(
-                      text: 'Risk Disclosure',
-                      style: Theme.of(components.routes.routeContext!)
-                          .textTheme
-                          .underlinedLink,
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          launchUrl(Uri.parse(documentEndpoint(
-                              ConsentDocument.risk_disclosures)));
-                        }),
-                ],
-              ),
-            )),
-        const SizedBox(
-          width: 18,
-        ),
-      ],
-    );
-    return PageStructure(
-      children: <Widget>[
-        SizedBox(height: 76.figmaH),
-        Container(
-          height: 128.figmaH,
-          child: Container(
-            child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-            height: .1534.ofMediaHeight(context),
+    return BlocBuilder<LoginCubit, LoginCubitState>(builder: (context, state) {
+      isConsented = state.isConsented;
+      return PageStructure(
+        children: <Widget>[
+          SizedBox(height: 76.figmaH),
+          Container(height: 128.figmaH, child: MoontreeLogo()),
+          Container(
+              alignment: Alignment.bottomCenter,
+              height: (16 + 24).figmaH,
+              child: WelcomeMessage(text: 'Welcome Back')),
+        ],
+        firstLowerChildren: <Widget>[
+          (needsConsent ? UlaMessage() : const SizedBox(height: 100)),
+          const SizedBox(height: 24),
+        ],
+        secondLowerChildren: <Widget>[
+          BottomButton(
+            focusNode: unlockFocus,
+            enabled: readyToUnlock(),
+            label: enabled ? 'Unlock' : 'Unlocking...',
+            onPressed: () async {
+              await submit();
+            },
           ),
-        ),
-        Container(
-            alignment: Alignment.bottomCenter,
-            height: (16 + 24).figmaH,
-            child: Text(
-              'Welcome Back',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline1
-                  ?.copyWith(color: AppColors.black60),
-            )),
-      ],
-      firstLowerChildren: <Widget>[
-        (needsConsent ? ulaMessage : const SizedBox(height: 100)),
-        const SizedBox(height: 24),
-      ],
-      secondLowerChildren: <Widget>[
-        BottomButton(
-          focusNode: unlockFocus,
-          enabled: readyToUnlock(),
-          label: enabled ? 'Unlock' : 'Unlocking...',
-          onPressed: () async {
-            await submit();
-          },
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Future<void> submit() async {

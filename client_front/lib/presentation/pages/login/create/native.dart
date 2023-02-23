@@ -1,39 +1,31 @@
-import 'package:client_front/presentation/widgets/other/buttons.dart';
-import 'package:client_front/presentation/widgets/other/page.dart';
-import 'package:flutter/material.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
-import 'package:client_front/presentation/services/services.dart' show sail;
-
 import 'dart:async';
 import 'dart:io';
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:client_front/infrastructure/services/dev.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_settings/app_settings.dart';
+import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
-import 'package:client_back/services/consent.dart'
-    show ConsentDocument, documentEndpoint, consentToAgreements;
+import 'package:client_back/services/consent.dart' show consentToAgreements;
+import 'package:client_front/domain/utils/auth.dart';
+import 'package:client_front/domain/utils/login.dart';
+import 'package:client_front/domain/utils/data.dart';
+import 'package:client_front/domain/utils/device.dart' show getId;
+import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/infrastructure/services/auth.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
 import 'package:client_front/infrastructure/services/wallet.dart'
     show saveSecret, setupWallets;
-import 'package:client_front/presentation/theme/extensions.dart';
-import 'package:client_front/domain/utils/auth.dart';
-import 'package:client_front/domain/utils/login.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:client_back/client_back.dart';
+import 'package:client_front/infrastructure/services/dev.dart';
+import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/domain/utils/data.dart';
-import 'package:client_front/domain/utils/device.dart' show getId;
-import 'package:client_front/domain/utils/extensions.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 class LoginCreateNative extends StatefulWidget {
   const LoginCreateNative({Key? key}) : super(key: key ?? defaultKey);
@@ -79,150 +71,68 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
     return FutureBuilder<bool>(
         future: localAuthApi.entirelyReadyToAuthenticate,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          return PageStructure(
-            children: [
-              SizedBox(height: 76.figmaH),
-              SizedBox(
-                height: 128.figmaH,
-                child: moontree,
-              ),
-              Container(
-                  alignment: Alignment.bottomCenter,
-                  height: (16 + 24).figmaH,
-                  child: welcomeMessage),
-              Container(
-                  alignment: Alignment.bottomCenter,
-                  height: (16 + 24).figmaH,
-                  child: labelMessage),
-              if (snapshot.hasData && !snapshot.data!)
+          return BlocBuilder<LoginCubit, LoginCubitState>(
+              builder: (context, state) {
+            // todo: move all state into cubit instead of replicating state
+            isConsented = state.isConsented;
+            return PageStructure(
+              children: [
+                SizedBox(height: 76.figmaH),
+                SizedBox(height: 128.figmaH, child: MoontreeLogo()),
                 Container(
-                    alignment: Alignment.center,
-                    height: (8 + 16 + 24).figmaH,
-                    child: setupMessage),
-            ],
-            firstLowerChildren: <Widget>[
-              if (needsConsent) ulaMessage else const SizedBox(height: 100),
-              const SizedBox(height: 40 - 16),
-            ],
-            secondLowerChildren: <Widget>[
-              if (snapshot.hasData)
-                snapshot.data!
-                    ? BottomButton(
-                        focusNode: unlockFocus,
-                        enabled: readyToUnlock(),
-                        label: enabled ? 'Create Wallet' : 'Creating Wallet...',
-                        onPressed: () async => submit(),
-                      )
-                    : BottomButton(
-                        focusNode: unlockFocus,
-                        enabled: readyToUnlock(),
-                        label: 'Setup',
-                        onPressed: () async => submitSetup(),
-                      )
-              else
-                const CircularProgressIndicator()
-            ],
-          );
+                    alignment: Alignment.bottomCenter,
+                    height: (16 + 24).figmaH,
+                    child: WelcomeMessage()),
+                Container(
+                    alignment: Alignment.bottomCenter,
+                    height: (16 + 24).figmaH,
+                    child: Text(
+                      "${Platform.isIOS ? 'iOS' : 'Android'} Phone Security",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1!
+                          .copyWith(color: AppColors.black),
+                    )),
+                if (snapshot.hasData && !snapshot.data!)
+                  Container(
+                      alignment: Alignment.center,
+                      height: (8 + 16 + 24).figmaH,
+                      child: Text(
+                        'Please setup Face, Fingerprints, Pattern, PIN, or Password',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                            color: AppColors.black,
+                            fontWeight: FontWeight.w600),
+                      )),
+              ],
+              firstLowerChildren: <Widget>[
+                if (needsConsent) UlaMessage() else const SizedBox(height: 100),
+                const SizedBox(height: 40 - 16),
+              ],
+              secondLowerChildren: <Widget>[
+                if (snapshot.hasData)
+                  snapshot.data!
+                      ? BottomButton(
+                          focusNode: unlockFocus,
+                          enabled: readyToUnlock(),
+                          label:
+                              enabled ? 'Create Wallet' : 'Creating Wallet...',
+                          onPressed: () async => submit(),
+                        )
+                      : BottomButton(
+                          focusNode: unlockFocus,
+                          enabled: readyToUnlock(),
+                          label: 'Setup',
+                          onPressed: () async => submitSetup(),
+                        )
+                else
+                  const CircularProgressIndicator()
+              ],
+            );
+          });
         });
   }
-
-  Widget get moontree => SizedBox(
-        height: .1534.ofMediaHeight(context),
-        child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
-      );
-
-  Widget get welcomeMessage => Text(
-        'Moontree',
-        style: Theme.of(context)
-            .textTheme
-            .headline1
-            ?.copyWith(color: AppColors.black60),
-      );
-
-  Widget get labelMessage => Text(
-        "${Platform.isIOS ? 'iOS' : 'Android'} Phone Security",
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.black),
-      );
-
-  Widget get setupMessage => Text(
-        'Please setup Face, Fingerprints, Pattern, PIN, or Password',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle2!
-            .copyWith(color: AppColors.black, fontWeight: FontWeight.w600),
-      );
-
-  Widget get ulaMessage => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(
-              alignment: Alignment.center, width: 18, child: aggrementCheckbox),
-          Container(
-              alignment: Alignment.center,
-              width: .70.ofMediaWidth(context),
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: Theme.of(components.routes.routeContext!)
-                      .textTheme
-                      .bodyText2,
-                  children: <TextSpan>[
-                    const TextSpan(text: "I agree to Moontree's\n"),
-                    TextSpan(
-                        text: 'User Agreement',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.user_agreement)));
-                          }),
-                    const TextSpan(text: ', '),
-                    TextSpan(
-                        text: 'Privacy Policy',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.privacy_policy)));
-                          }),
-                    const TextSpan(text: ',\n and '),
-                    TextSpan(
-                        text: 'Risk Disclosure',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.risk_disclosures)));
-                          }),
-                  ],
-                ),
-              )),
-          const SizedBox(
-            width: 18,
-          ),
-        ],
-      );
-
-  Widget get aggrementCheckbox => Checkbox(
-        //checkColor: Colors.white,
-        value: isConsented,
-        onChanged: (bool? value) async {
-          setState(() {
-            isConsented = value!;
-          });
-        },
-      );
 
   Future<void> submitSetup() async {
     if (Platform.isIOS) {

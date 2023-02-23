@@ -16,31 +16,30 @@ class MoontreeLogo extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         child: SvgPicture.asset('assets/logo/moontree_logo.svg'),
         height: .1534.ofMediaHeight(context),
-        // height: 110.figma(context),
       );
 }
 
 class WelcomeMessage extends StatelessWidget {
-  const WelcomeMessage({super.key});
+  final String text;
+  const WelcomeMessage({super.key, this.text = 'Moontree'});
   @override
-  Widget build(BuildContext context) => Text('Moontree',
+  Widget build(BuildContext context) => Text(text,
       style: Theme.of(context)
           .textTheme
           .headline1
           ?.copyWith(color: AppColors.black60));
 }
 
-/// this should be connected to a cubit.
 class AggrementCheckbox extends StatelessWidget {
   const AggrementCheckbox({super.key});
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<LoginCubit, LoginCubitState>(
-          builder: (context, bottomModalSheetState) => Checkbox(
+          builder: (context, state) => Checkbox(
                 //checkColor: Colors.white,
-                value: components.cubits.login.state.isConsented,
+                value: state.isConsented,
                 onChanged: (bool? value) async =>
-                    components.cubits.login.update(isConsented: true),
+                    context.read<LoginCubit>().update(isConsented: value),
               ));
 }
 

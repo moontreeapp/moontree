@@ -32,7 +32,16 @@ class BottomButton extends StatelessWidget {
         height: uiservices.screen.buttonHeight,
         child: OutlinedButton(
           focusNode: focusNode,
-          onPressed: enabled ? onPressed ?? () {} : disabledOnPressed ?? () {},
+          onPressed: enabled
+              ? (link != null
+                  ? () {
+                      if (onPressed != null) {
+                        onPressed!();
+                      }
+                      uiservices.sail.to(link, arguments: arguments);
+                    }
+                  : onPressed ?? () {})
+              : disabledOnPressed ?? () {},
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all(
                 Theme.of(context).textTheme.enabledButton),

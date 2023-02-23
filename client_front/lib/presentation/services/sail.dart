@@ -153,23 +153,43 @@ class Sail {
 
   String? latestLocation;
 
-  Future<void> back() async {
+  Future<String> back() async {
     // Todo: key this off something else. like sailor current path or something
-    if (['Holdings', 'Manage'].contains(components.cubits.title.state.title)) {
-      await to('/menu');
+    if (['/wallet/holdings', '/manage'].contains(latestLocation)) {
+      return await to('/menu') ?? '';
     } else {
       // any page that uses ContentExtra layer for draggable sheets
-      if (['Holding'].contains(components.cubits.title.state.title)) {
+      if (['/wallet/holdings'].contains(latestLocation)) {
         // show front layer and instantly remove extra content before anything else.
         // todo make this dependant on the map.
         components.cubits.frontContainer.setHidden(false);
         components.cubits.extraContainer.reset();
       }
-      sailBack();
+      return sailBack();
     }
   }
 
-  Future<void> to(
+  Future<void> home([String location = '/wallet/holdings']) async {
+    // if /wallet/holdings in DestinationHistory
+    if (destinationHistory[Section.wallet]!.contains(location)) {
+      while (await back() != location &&
+          destinationHistory[Section.wallet]!.length > 0) {
+        print('going back');
+      }
+    } else {
+      await to(location);
+    }
+  }
+  //Future<void> backTo(String location) async {
+  //  try {
+  //    Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+  //  } catch (e) {
+  //    print('home not found');
+  //    Navigator.of(context).pushReplacementNamed('/home');
+  //  }
+  //}
+
+  Future<String?> to(
     String? location, {
     BuildContext? context,
     Section? section,
@@ -215,9 +235,10 @@ class Sail {
       _navigate(manifest.frontPath!,
           replace: replaceOverride, context: context, arguments: arguments);
     }
+    return manifest.frontPath;
   }
 
-  void sailBack() {
+  String sailBack() {
     //sailTo(
     //  location: _handleHistoryRemoval(),
     //  beam: true,
@@ -228,6 +249,7 @@ class Sail {
     updateCubits(location, manifest);
     //Navigator.of(components.routes.scaffoldContext!).pop();
     components.routes.navigatorKey.currentState!.pop();
+    return location;
   }
 
   /// many things are keyed off the current location so we make it available.

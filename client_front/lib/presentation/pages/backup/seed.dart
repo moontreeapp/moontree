@@ -6,14 +6,15 @@ import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 //import 'package:screenshot_callback/screenshot_callback.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/pages/backup/types.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
+import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show getSecret;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/domain/utils/extensions.dart';
+import 'package:client_front/presentation/pages/backup/types.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 
 class BackupSeed extends StatefulWidget {
@@ -30,11 +31,6 @@ class _BackupSeedState extends State<BackupSeed>
   bool warn = true;
   late double buttonWidth;
   late List<String> secret;
-  TextEditingController password = TextEditingController();
-  FocusNode existingFocus = FocusNode();
-  FocusNode showFocus = FocusNode();
-  bool failedAttempt = false;
-  bool enabled = true;
   //ScreenshotCallback screenshotCallback = ScreenshotCallback();
 
   /// from exploring animations - want to return to
@@ -55,12 +51,6 @@ class _BackupSeedState extends State<BackupSeed>
       //  print('detect screenshot');
       //});
     }
-
-    /// from exploring animations - want to return to
-    //controller = AnimationController(
-    //    vsync: this, duration: const Duration(milliseconds: 2400));
-    //animation = Tween(begin: 0.0, end: 1.0).animate(controller);
-    //curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
   }
 
   @override
@@ -71,11 +61,6 @@ class _BackupSeedState extends State<BackupSeed>
       //screenshotCallback.dispose();
     }
 
-    /// from exploring animations - want to return to
-    //controller.dispose();
-    password.dispose();
-    existingFocus.dispose();
-    showFocus.dispose();
     super.dispose();
   }
 
@@ -85,87 +70,79 @@ class _BackupSeedState extends State<BackupSeed>
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
     //print(1 - (48 + 48 + 16 + 8 + 8 + 72 + 56).ofAppHeight);
-    return WillPopScope(
-        onWillPop: () async => false,
-        child: FutureBuilder<List<String>>(
-            future: getSecret,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-              if (snapshot.hasData) {
-                secret = snapshot.data!;
-                return services.password.askCondition
-                    ? VerifyAuthentication(
-                        parentState: this,
-                        buttonLabel: 'Show Seed',
-                        intro: intro,
-                        safe: safe,
-                        auto: true,
-                        asLoginTime: true,
-                      )
-                    : body();
-              } else {
-                return const CircularProgressIndicator();
-              }
-            }));
+
+    return FutureBuilder<List<String>>(
+        future: getSecret,
+        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+          if (snapshot.hasData) {
+            secret = snapshot.data!;
+            return services.password.askCondition
+                ? VerifyAuthentication(
+                    parentState: this,
+                    buttonLabel: 'Show Seed',
+                    intro: Container(
+                        //height: 48,
+                        alignment: Alignment.topCenter,
+                        child: Text(
+                          'Your wallet is valuable.\nPlease create a backup!',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(color: AppColors.black),
+                        )),
+                    safe: Container(
+                        //height: 48,
+                        alignment: Alignment.topCenter,
+                        child: Text(
+                          'You are about to backup your seed words.\nKeep it secret, keep it safe.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(color: AppColors.error),
+                        )),
+                    auto: true,
+                    asLoginTime: true,
+                  )
+                : Stack(children: [
+                    PageStructure(
+                      children: <Widget>[
+                        BackupInstructions(),
+                        BackupWarning(),
+                        if (smallScreen) words
+                      ],
+                      firstLowerChildren: <Widget>[
+                        BottomButton(
+                          label: 'Verify Backup',
+                          link: '/backup/verify',
+                          arguments: () {
+                            //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
+                            final List<SecretWord> shuffled = <SecretWord>[
+                              for (Tuple2<int, String> s
+                                  in secret.enumeratedTuple())
+                                SecretWord(word: s.item2, order: s.item1)
+                            ];
+                            shuffled.shuffle();
+                            return <String, dynamic>{
+                              'secret': secret,
+                              'shuffled': shuffled,
+                            };
+                          }(),
+                        )
+                      ],
+                    ),
+                    if (!smallScreen)
+                      Container(
+                          height: (1 - 72.ofAppHeight).ofAppHeight,
+                          alignment: Alignment.center,
+                          child: words)
+                  ]);
+          } else {
+            return const CircularProgressIndicator();
+          }
+        });
   }
-
-  Widget body() => BackdropLayers(
-      back: const BlankBack(),
-      front: FrontCurve(
-          child: Stack(children: <Widget>[
-        components.page.form(
-          context,
-          columnWidgets: <Widget>[
-            _instructions,
-            _warning,
-            if (smallScreen) words,
-          ],
-          buttons: <Widget>[submitButton],
-        ),
-        if (!smallScreen) wordsInStack
-      ])));
-
-  /// from exploring animations - want to return to
-  /// animate()
-  //Widget animate(child) => SlideTransition(
-  //    position: Tween<Offset>(
-  //      begin: offset,
-  //      end: Offset.zero,
-  //    ).animate(curve),
-  //    child: FadeTransition(opacity: animation, child: child));
-
-  Widget get intro => Container(
-      //height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'Your wallet is valuable.\nPlease create a backup!',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.black),
-      ));
-
-  Widget get safe => Container(
-      //height: 48,
-      alignment: Alignment.topCenter,
-      child: Text(
-        'You are about to backup your seed words.\nKeep it secret, keep it safe.',
-        textAlign: TextAlign.center,
-        style: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: AppColors.error),
-      ));
-
-  Widget get _instructions => instructions(context);
-
-  Widget get _warning => warning(context);
-
-  Widget get wordsInStack => Container(
-      height: (1 - 72.ofAppHeight).ofAppHeight,
-      alignment: Alignment.center,
-      child: words);
 
   Widget get words => Container(
       height: 272 * (smallScreen ? .8 : 1),
@@ -185,41 +162,6 @@ class _BackupSeedState extends State<BackupSeed>
                           number: i + x)
                   ]),
           ]));
-
-  Widget get submitButton => components.buttons.actionButton(
-        context,
-        label: 'Verify Backup',
-        link: '/security/backupConfirm',
-        arguments: () {
-          //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
-          final List<SecretWord> shuffledList = <SecretWord>[
-            for (Tuple2<int, String> s in secret.enumeratedTuple())
-              SecretWord(word: s.item2, order: s.item1)
-          ];
-          shuffledList.shuffle();
-          final Map<int, SecretWord> shuffled = <int, SecretWord>{
-            for (Tuple2<int, SecretWord> s in shuffledList.enumeratedTuple())
-              s.item1: s.item2
-          };
-          streams.app.lead.add(LeadIcon.back);
-          return <String, dynamic>{
-            'secret': secret,
-            'shuffled': shuffled,
-          };
-        }(),
-
-        /// from exploring animations - want to return to
-        //onPressed: () async {
-        //  // change animation...
-        //  animation = Tween(begin: 1.0, end: 0.0).animate(controller);
-        //  curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
-        //  offset = Offset(0.0, 0.5);
-        //  controller.reset();
-        //  controller.forward();
-        //  // wait the approapriate amount of time for the animation to play
-        //  await Future<void>.delayed(const Duration(milliseconds: 2400));
-        //},
-      );
 }
 
 typedef void OnWidgetSizeChange(Size size);
@@ -259,26 +201,34 @@ class MeasureSize extends SingleChildRenderObjectWidget {
   }
 }
 
-Widget instructions(BuildContext context) => Container(
-    //height: 48,
-    alignment: Alignment.topCenter,
-    child: Text(
-      'Please backup your wallet by writing down these words on a piece of paper.',
-      textAlign: TextAlign.center,
-      style: Theme.of(context)
-          .textTheme
-          .subtitle1!
-          .copyWith(color: AppColors.black),
-    ));
+class BackupInstructions extends StatelessWidget {
+  const BackupInstructions({super.key});
+  @override
+  Widget build(BuildContext context) => Container(
+      //height: 48,
+      alignment: Alignment.topCenter,
+      child: Text(
+        'Please backup your wallet by writing down these words on a piece of paper.',
+        textAlign: TextAlign.center,
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.black),
+      ));
+}
 
-Widget warning(BuildContext context) => Container(
-    //height: 48,
-    alignment: Alignment.topCenter,
-    child: Text(
-      'You will need these words for recovery.',
-      textAlign: TextAlign.center,
-      style: Theme.of(context)
-          .textTheme
-          .subtitle1!
-          .copyWith(color: AppColors.error),
-    ));
+class BackupWarning extends StatelessWidget {
+  const BackupWarning({super.key});
+  @override
+  Widget build(BuildContext context) => Container(
+      //height: 48,
+      alignment: Alignment.topCenter,
+      child: Text(
+        'You will need these words for recovery.',
+        textAlign: TextAlign.center,
+        style: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: AppColors.error),
+      ));
+}

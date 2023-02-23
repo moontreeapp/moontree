@@ -1,28 +1,25 @@
 import 'dart:async';
-
-import 'package:client_front/presentation/widgets/login/components.dart';
-import 'package:client_front/presentation/widgets/other/buttons.dart';
-import 'package:client_front/presentation/widgets/other/page.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/infrastructure/services/wallet.dart'
-    show populateWalletsWithSensitives, saveSecret, setupWallets;
 import 'package:client_back/services/consent.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
-import 'package:client_front/infrastructure/services/storage.dart'
-    show SecureStorage;
-import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/presentation/theme/extensions.dart';
 import 'package:client_front/domain/utils/device.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/domain/utils/login.dart';
+import 'package:client_front/infrastructure/services/wallet.dart'
+    show populateWalletsWithSensitives, saveSecret, setupWallets;
+import 'package:client_front/infrastructure/services/storage.dart'
+    show SecureStorage;
+import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/presentation/widgets/login/components.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LoginCreatePassword extends StatefulWidget {
   const LoginCreatePassword({Key? key}) : super(key: key ?? defaultKey);
@@ -72,35 +69,97 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropLayers(
-        back: const BlankBack(), front: FrontCurve(child: body()));
-  }
-
-  Widget body() => PageStructure(
+    return BlocBuilder<LoginCubit, LoginCubitState>(builder: (context, state) {
+      isConsented = state.isConsented;
+      return PageStructure(
         children: [
+          SizedBox(height: 16),
           Container(
               alignment: Alignment.bottomCenter,
-              height: .242.ofMediaHeight(context),
+              //height: .242.ofMediaHeight(context),
               child: MoontreeLogo()),
-          SizedBox(height: .01.ofMediaHeight(context)),
+          //SizedBox(height: .01.ofMediaHeight(context)),
           Container(
               alignment: Alignment.bottomCenter,
-              height: .035.ofMediaHeight(context),
+              //height: .035.ofMediaHeight(context),
               child: WelcomeMessage()),
-          SizedBox(
-            height: .0789.ofMediaHeight(context),
-          ),
+          //SizedBox(
+          //  height: .0789.ofMediaHeight(context),
+          //),
+          SizedBox(height: 0),
           Container(
               alignment: Alignment.topCenter,
-              // height: 76,
-              height: .0947.ofMediaHeight(context),
-              child: passwordField),
+              //height: 76,
+              //height: .0947.ofMediaHeight(context),
+              child: TextFieldFormatted(
+                  onTap: () => setState(() {}),
+                  focusNode: passwordFocus,
+                  autocorrect: false,
+                  controller: password,
+                  obscureText: !passwordVisible,
+                  textInputAction: TextInputAction.next,
+                  labelText: 'Password',
+                  errorText: password.text != '' &&
+                          password.text.length < minimumLength
+                      ? 'password must be at least $minimumLength characters long'
+                      : null,
+                  helperText: !(password.text != '' &&
+                          password.text.length < minimumLength)
+                      ? ''
+                      : null,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: AppColors.black60),
+                    onPressed: () => setState(() {
+                      passwordVisible = !passwordVisible;
+                    }),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                  onEditingComplete: () {
+                    setState(() {});
+                    if (password.text != '' &&
+                        password.text.length >= minimumLength) {
+                      FocusScope.of(context).requestFocus(confirmFocus);
+                    }
+                  })),
           Container(
               alignment: Alignment.topCenter,
               // height: 76 + 16,
               height: .0947.ofMediaHeight(context),
-              child: confirmField),
-          SizedBox(height: 16),
+              child: TextFieldFormatted(
+                  onTap: () => setState(() {}),
+                  focusNode: confirmFocus,
+                  autocorrect: false,
+                  controller: confirm,
+                  obscureText:
+                      !confirmVisible, // masked controller for immediate?
+                  textInputAction: TextInputAction.done,
+                  labelText: 'Confirm Password',
+                  errorText: confirm.text != '' && confirm.text != password.text
+                      ? 'does not match password'
+                      : null,
+                  helperText: confirm.text == password.text ? 'match' : null,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        confirmVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: AppColors.black60),
+                    onPressed: () => setState(() {
+                      confirmVisible = !confirmVisible;
+                    }),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                  onEditingComplete: () {
+                    setState(() {});
+                    if (confirm.text == password.text) {
+                      FocusScope.of(context).requestFocus(unlockFocus);
+                    }
+                  })),
+          //SizedBox(height: 16),
           Container(
             alignment: Alignment.topCenter,
             child: components.text.passwordWarning,
@@ -124,62 +183,8 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
               onPressed: () async => submit())
         ],
       );
-
-  Widget get passwordField => TextFieldFormatted(
-      onTap: () => setState(() {}),
-      focusNode: passwordFocus,
-      autocorrect: false,
-      controller: password,
-      obscureText: !passwordVisible,
-      textInputAction: TextInputAction.next,
-      labelText: 'Password',
-      errorText: password.text != '' && password.text.length < minimumLength
-          ? 'password must be at least $minimumLength characters long'
-          : null,
-      helperText: !(password.text != '' && password.text.length < minimumLength)
-          ? ''
-          : null,
-      suffixIcon: IconButton(
-        icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off,
-            color: AppColors.black60),
-        onPressed: () => setState(() {
-          passwordVisible = !passwordVisible;
-        }),
-      ),
-      onChanged: (_) => setState(() {}),
-      onEditingComplete: () {
-        setState(() {});
-        if (password.text != '' && password.text.length >= minimumLength) {
-          FocusScope.of(context).requestFocus(confirmFocus);
-        }
-      });
-
-  Widget get confirmField => TextFieldFormatted(
-      onTap: () => setState(() {}),
-      focusNode: confirmFocus,
-      autocorrect: false,
-      controller: confirm,
-      obscureText: !confirmVisible, // masked controller for immediate?
-      textInputAction: TextInputAction.done,
-      labelText: 'Confirm Password',
-      errorText: confirm.text != '' && confirm.text != password.text
-          ? 'does not match password'
-          : null,
-      helperText: confirm.text == password.text ? 'match' : null,
-      suffixIcon: IconButton(
-        icon: Icon(confirmVisible ? Icons.visibility : Icons.visibility_off,
-            color: AppColors.black60),
-        onPressed: () => setState(() {
-          confirmVisible = !confirmVisible;
-        }),
-      ),
-      onChanged: (_) => setState(() {}),
-      onEditingComplete: () {
-        setState(() {});
-        if (confirm.text == password.text) {
-          FocusScope.of(context).requestFocus(unlockFocus);
-        }
-      });
+    });
+  }
 
   bool isConnected() =>
       streams.client.connected.value == ConnectionStatus.connected;
