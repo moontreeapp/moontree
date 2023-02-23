@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 import 'dart:async';
 import 'dart:io';
@@ -35,7 +35,7 @@ import 'package:client_front/domain/utils/extensions.dart';
 
 class LoginCreateNative extends StatefulWidget {
   const LoginCreateNative({Key? key}) : super(key: key ?? defaultKey);
-  static const defaultKey = ValueKey('frontLoginCreateNative');
+  static const defaultKey = ValueKey('LoginCreateNative');
   @override
   _LoginCreateNativeState createState() => _LoginCreateNativeState();
 }
@@ -306,8 +306,8 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
         streams.app.snack.add(Snack(
           message: 'No pin detected; please set a password.',
         ));
-        Future<Object?>.microtask(() => sailor.sailTo(
-            location: getMethodPathCreate(nativeSecurity: false),
+        Future<Object?>.microtask(() => sail.to(
+            getMethodPathCreate(nativeSecurity: false),
             replaceOverride: true));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
         setState(() {

@@ -5,7 +5,7 @@ import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 Future<void> login(
   BuildContext context, {
@@ -42,16 +42,12 @@ void postLogin(BuildContext context) {
   if (Current.wallet is LeaderWallet &&
       //streams.app.triggers.value == ThresholdTrigger.backup &&
       !Current.wallet.backedUp) {
-    sailor.sailTo(
-        location: '/wallet/holdings', //'/home',
+    sail.to('/wallet/holdings', //'/home',
         arguments: <String, dynamic>{},
         replaceOverride: true);
-    sailor.sailTo(
-        location: '/security/backup/backupintro',
-        arguments: <String, bool>{'fadeIn': true});
+    sail.to('/backup/intro', arguments: <String, bool>{'fadeIn': true});
   } else {
-    sailor.sailTo(
-        location: '/wallet/holdings', //'/home',
+    sail.to('/wallet/holdings', //'/home',
         arguments: <String, dynamic>{},
         replaceOverride: true);
   }

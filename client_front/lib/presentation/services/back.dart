@@ -5,7 +5,7 @@ import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/services/services.dart' as services;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 class SystemBackButton {
   static const MethodChannel backButtonChannel =
@@ -18,7 +18,7 @@ class SystemBackButton {
   Future<void> backButtonPressed() async {
     if (Platform.isAndroid &&
         ['/', '/login/create', '/wallet/holdings']
-            .contains(/*streams.app.path.value*/ sailor.latestLocation)) {
+            .contains(/*streams.app.path.value*/ sail.latestLocation)) {
       // edgecase: if at home screen, minimize app
       sendToBackChannel.invokeMethod('sendToBackground');
     } else if (services.screenflags.active) {
@@ -31,7 +31,7 @@ class SystemBackButton {
       // some of these we want to do nothing anyway.
       print('back button disabled in this case');
     } else {
-      await services.sailor.goBack();
+      await services.sail.back();
     }
   }
 

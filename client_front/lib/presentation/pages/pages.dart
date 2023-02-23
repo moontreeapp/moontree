@@ -55,6 +55,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
 import 'package:client_front/presentation/pages/wallet/wallet.dart';
+import 'package:client_front/presentation/pages/backup/backup.dart';
 
 final _staticRoutes = <String, Widget Function(BuildContext)>{
   //'/home': (BuildContext context) => const Home(),
@@ -124,15 +125,20 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   //    const AdvancedDeveloperOptions(),
   //'/settings/sweep': (BuildContext context) => SweepPage(),
   //v3
-  '/': (BuildContext context) => const LoginCreate(), //SizedBox.shrink(),
-  '/splash': (BuildContext context) => const SplashWindow(),
+  '/': (BuildContext context) => const PreLogin(),
+  '/splash': (BuildContext context) => const Splash(),
   '/login/create': (BuildContext context) => const LoginCreate(),
   '/login/create/native': (BuildContext context) => const LoginCreateNative(),
+  '/login/create/resume': (BuildContext context) => const CreateResume(),
   '/login/create/password': (BuildContext context) =>
       const LoginCreatePassword(),
   '/login/native': (BuildContext context) => const LoginNative(),
   '/login/password': (BuildContext context) => const LoginPassword(),
-  '/wallet/holding': (BuildContext context) => const WalletHoldings(),
+  '/wallet/holdings': (BuildContext context) => const WalletHoldings(),
+  '/backup/intro': (BuildContext context) => const BackupIntro(),
+  '/backup/keypair': (BuildContext context) => const ShowKeypair(),
+  '/backup/seed': (BuildContext context) => const BackupSeed(),
+  '/backup/verify': (BuildContext context) => const VerifySeed(),
 };
 
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;

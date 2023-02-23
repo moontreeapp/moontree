@@ -23,7 +23,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class LoginCreatePassword extends StatefulWidget {
   const LoginCreatePassword({Key? key}) : super(key: key ?? defaultKey);
-  static const defaultKey = ValueKey('frontLoginCreatePassword');
+  static const defaultKey = ValueKey('LoginCreatePassword');
   @override
   _LoginCreatePasswordState createState() => _LoginCreatePasswordState();
 }

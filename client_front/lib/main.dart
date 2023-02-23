@@ -44,10 +44,10 @@ import 'package:client_front/presentation/containers/layers/loading.dart';
 import 'package:client_front/presentation/containers/layers/tutorial.dart';
 import 'package:client_front/presentation/pages/splash.dart';
 //import 'package:client_front/presentation/containers/loading_layer.dart';
-import 'package:client_front/presentation/services/sailor.dart' show Sailor;
+import 'package:client_front/presentation/services/sail.dart' show Sailor;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/pages/pages.dart' as pages;
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   devFlags.addAll(flags ?? []);
@@ -291,54 +291,3 @@ List<BlocProviderSingleChildWidget> get providers => [
       BlocProvider<LoadingViewCubitv2>(
           create: (context) => components.cubits.loadingViewv2),
     ];
-
-/*
-/// this needs to be logic put into the default path: go to login screen or go to create login screen
-Future<void> whatishomepage() async {
-  // make a password out of biokey
-    // this is false on 1st startup -> create
-    if (!services.password.required) {
-      //streams.app.page.add('Setup');
-      /**/ //Future<void>.microtask(() => Navigator.pushReplacementNamed(
-      /**/ //      context,
-      /**/ //      '/security/create/setup',
-      /**/ //    ));
-      print('going0');
-      Future<void>.microtask(() => sailor.sailTo(
-            location: '/wallet/holdings',
-            arguments:{'needsConsent': true}
-          ));
-
-    } else {
-
-      await maybeSwitchToPassword();
-      if (services.password.interruptedPasswordChange()) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                    title: const Text('Issue detected'),
-                    content: const Text(
-                        'Change Password process in progress, please submit your previous password...'),
-                    actions: <Widget>[
-                      TextButton(
-                          child: const Text('ok'),
-                          onPressed: () => Navigator.pushReplacementNamed(
-                              context, '/security/resume',
-                              arguments: <String, dynamic>{}))
-                    ]));
-      } else {
-        bool hasConsented = false;
-        try {
-          hasConsented = await discoverConsent(await getId());
-        } catch (e) {
-          streams.app.snack.add(Snack(
-            message: 'Unable to connect! Please check connectivity.',
-          ));
-        }
-        Future<void>.microtask(() => Navigator.pushReplacementNamed(
-            context, getMethodPathLogin(),
-            arguments: <String, bool>{'needsConsent': !hasConsented}));
-      }
-    }
-}
-    */

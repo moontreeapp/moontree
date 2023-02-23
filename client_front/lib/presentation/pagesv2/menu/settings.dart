@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 class BackMenuSettingsScreen extends StatelessWidget {
   const BackMenuSettingsScreen({Key? key}) : super(key: key ?? defaultKey);
@@ -26,8 +26,7 @@ class BackMenuSettingsScreen extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: () async =>
-                    await sailor.sailTo(location: '/settings/example'),
+                onTap: () async => await sail.to('/settings/example'),
                 child: Container(
                   padding: const EdgeInsets.only(left: 16),
                   height: 56,

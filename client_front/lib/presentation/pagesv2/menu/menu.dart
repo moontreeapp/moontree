@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/bottom/modal/cubit.dart';
 import 'package:client_front/application/loadingv2/cubit.dart';
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/services/services.dart' as services;
 
 class BackMenuScreen extends StatelessWidget {
@@ -56,8 +56,7 @@ class BackMenuScreen extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: () async =>
-                    await sailor.sailTo(location: '/menu/settings'),
+                onTap: () async => await sail.to('/menu/settings'),
                 child: Container(
                   padding: const EdgeInsets.only(left: 16),
                   height: 56,
@@ -72,8 +71,7 @@ class BackMenuScreen extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: () async =>
-                    await sailor.sailTo(location: '/settings/example'),
+                onTap: () async => await sail.to('/settings/example'),
                 child: Container(
                   padding: const EdgeInsets.only(left: 16),
                   height: 56,

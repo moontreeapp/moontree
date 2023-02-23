@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:client_front/application/navbar/height/cubit.dart';
-import 'package:client_front/presentation/services/sailor.dart';
+import 'package:client_front/presentation/services/sail.dart';
 import 'package:client_front/presentation/utilities/animation.dart'
     as animation;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/presentation/components/components.dart'
@@ -168,7 +168,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                           Column(
                             children: [
                               GestureDetector(
-                                  onTap: () async => await sailor.sailTo(
+                                  onTap: () async => await sail.sailTo(
                                       section: Section.wallet),
                                   child: Container(
                                     alignment: Alignment.center,
@@ -184,7 +184,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                           Column(
                             children: [
                               GestureDetector(
-                                  onTap: () async => await sailor.sailTo(
+                                  onTap: () async => await sail.sailTo(
                                       section: Section.manage),
                                   child: Container(
                                     alignment: Alignment.center,
@@ -200,7 +200,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                           Column(
                             children: [
                               GestureDetector(
-                                  onTap: () async => await sailor.sailTo(
+                                  onTap: () async => await sail.sailTo(
                                       section: Section.swap),
                                   child: Container(
                                     alignment: Alignment.center,
@@ -316,7 +316,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 // class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 //   final int _currentIndex = 0;
 //   final int _tappedIndex = 0;
-//   final Sailor _sailor = const Sailor();
+//   final Sailor _sail = const Sailor();
 
 //   void updateState() => setState(() {
 //         // _currentIndex = _tappedIndex;

@@ -30,7 +30,7 @@ class Manifest {
   });
 }
 
-class Sailor {
+class Sail {
   static const String initialPath = '/login/create';
   static const Map<Section, String> initialPaths = {
     Section.login: initialPath,
@@ -118,7 +118,7 @@ class Sailor {
   final List<Section> sectionHistory;
   final Map<Section, List<String>> destinationHistory;
 
-  Sailor()
+  Sail()
       : sectionHistory = [Section.login],
         destinationHistory = {
           Section.login: [initialPath],
@@ -130,10 +130,10 @@ class Sailor {
 
   String? latestLocation;
 
-  Future<void> goBack() async {
+  Future<void> back() async {
     // Todo: key this off something else. like sailor current path or something
     if (['Holdings', 'Manage'].contains(components.cubits.title.state.title)) {
-      await sailTo(location: '/menu');
+      await to('/menu');
     } else {
       // any page that uses ContentExtra layer for draggable sheets
       if (['Holding'].contains(components.cubits.title.state.title)) {
@@ -146,8 +146,8 @@ class Sailor {
     }
   }
 
-  Future<void> sailTo({
-    String? location,
+  Future<void> to(
+    String? location, {
     BuildContext? context,
     Section? section,
     Map<String, dynamic>? arguments,

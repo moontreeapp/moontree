@@ -11,13 +11,13 @@ import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/utilities/animation.dart'
     as animation;
 
 class LoginCreate extends StatefulWidget {
   const LoginCreate({Key? key}) : super(key: key ?? defaultKey);
-  static const defaultKey = ValueKey('frontLoginCreate');
+  static const defaultKey = ValueKey('LoginCreate');
 
   @override
   _LoginCreateState createState() => _LoginCreateState();
@@ -135,7 +135,7 @@ class _LoginCreateState extends State<LoginCreate> {
                                     method: AuthMethod.nativeSecurity);
                                 streams.app.splash.add(false);
                                 //Navigator.pop(context);
-                                sailor.sailTo(location: '/login/create/native');
+                                sail.to('/login/create/native');
                                 //Navigator.pushReplacementNamed(
                                 //    context, getMethodPathCreate(),
                                 //    arguments: <String, bool>{
@@ -155,8 +155,8 @@ class _LoginCreateState extends State<LoginCreate> {
                                     method: AuthMethod.moontreePassword);
                                 streams.app.splash.add(false);
                                 //Navigator.pop(context);
-                                sailor.sailTo(
-                                  location: '/login/create/password',
+                                sail.to(
+                                  '/login/create/password',
                                   //replaceOverride: false,
                                 );
                                 //Navigator.pushReplacementNamed(

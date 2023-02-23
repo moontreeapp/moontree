@@ -15,23 +15,11 @@ import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/infrastructure/services/services.dart';
-import 'package:client_front/presentation/services/services.dart' show sailor;
-import 'package:client_front/presentation/services/sailor.dart' show Sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/services/sail.dart' show Sail;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-
-class SplashWindow extends StatelessWidget {
-  const SplashWindow({Key? key}) : super(key: key ?? defaultKey);
-  static const defaultKey = ValueKey('SplashWindow');
-
-  @override
-  Widget build(BuildContext context) => Container(
-        height: double.infinity,
-        width: double.infinity,
-        color: Colors.transparent,
-      );
-}
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key ?? defaultKey);
@@ -155,11 +143,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //Navigator.of(components.routes.routeContext!).pushReplacement(
     //    MaterialPageRoute(builder: (BuildContext context) => MoontreeApp()));
     //Navigator.of(components.routes.routeContext!)
-    //    .pushReplacementNamed(Sailor.initialPath);
+    //    .pushReplacementNamed(Sail.initialPath);
     //Navigator.of(components.routes.navigatorKey.currentContext!)
-    //    .pushReplacementNamed(Sailor.initialPath);
+    //    .pushReplacementNamed(Sail.initialPath);
     //components.routes.navigatorKey.currentState!
-    //    .pushReplacementNamed(Sailor.initialPath);
+    //    .pushReplacementNamed(Sail.initialPath);
     // allow for rebuild of root app
     //await redirectToCreateOrLogin();
 
@@ -208,83 +196,5 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         ],
       ),
     );
-  }
-
-  Future<void> redirectToCreateOrLogin() async {
-    //Future passwordFallback() async {
-    //  services.authentication.setMethod(method: AuthMethod.moontreePassword);
-    //  Future.microtask(() => Navigator.pushReplacementNamed(
-    //        context,
-    //        getMethodPathCreate(),
-    //      ));
-    //}
-    Future<void>.microtask(() =>
-        //    //Navigator.pushReplacementNamed(
-        //    //          context,
-        //    //          Sailor.initialPath,
-        //    //        )
-        //
-        sailor.sailTo(location: Sailor.initialPath, replaceOverride: false));
-    return;
-    // make a password out of biokey
-    // this is false on 1st startup -> create
-    if (!services.password.required) {
-      //streams.app.page.add('Setup');
-      /**/ //Future<void>.microtask(() => Navigator.pushReplacementNamed(
-      /**/ //      context,
-      /**/ //      '/security/create/setup',
-      /**/ //    ));
-      print('going0');
-      Future<void>.microtask(() => sailor.sailTo(
-            location: '/wallet/holdings',
-          ));
-
-      //if (pros.settings.authMethodIsNativeSecurity) {
-      //  final localAuthApi = LocalAuthApi();
-      //  if (await localAuthApi.readyToAuthenticate) {
-      //    Future.microtask(() => Navigator.pushReplacementNamed(
-      //        context, getMethodPathCreate(),
-      //        arguments: {'needsConsent': true}));
-      //  } else {
-      //    passwordFallback();
-      //  }
-      //} else {
-      //  passwordFallback();
-      //}
-    } else {
-      print('going1');
-      Navigator.pop(context);
-      Future<void>.microtask(() => sailor.sailTo(
-            location: '/wallet/holdings',
-          ));
-      /**/ //await maybeSwitchToPassword();
-      /**/ //if (services.password.interruptedPasswordChange()) {
-      /**/ //  showDialog(
-      /**/ //      context: context,
-      /**/ //      builder: (BuildContext context) => AlertDialog(
-      /**/ //              title: const Text('Issue detected'),
-      /**/ //              content: const Text(
-      /**/ //                  'Change Password process in progress, please submit your previous password...'),
-      /**/ //              actions: <Widget>[
-      /**/ //                TextButton(
-      /**/ //                    child: const Text('ok'),
-      /**/ //                    onPressed: () => Navigator.pushReplacementNamed(
-      /**/ //                        context, '/security/resume',
-      /**/ //                        arguments: <String, dynamic>{}))
-      /**/ //              ]));
-      /**/ //} else {
-      /**/ //  bool hasConsented = false;
-      /**/ //  try {
-      /**/ //    hasConsented = await discoverConsent(await getId());
-      /**/ //  } catch (e) {
-      /**/ //    streams.app.snack.add(Snack(
-      /**/ //      message: 'Unable to connect! Please check connectivity.',
-      /**/ //    ));
-      /**/ //  }
-      /**/ //  Future<void>.microtask(() => Navigator.pushReplacementNamed(
-      /**/ //      context, getMethodPathLogin(),
-      /**/ //      arguments: <String, bool>{'needsConsent': !hasConsented}));
-      /**/ //}
-    }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 //import 'package:client_back/streams/streams.dart'; // streams.app.path
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 part 'state.dart';
 // todo: the title doesn't need path, we should put something else there.
@@ -44,7 +44,7 @@ class TitleCubit extends Cubit<TitleCubitState> {
 
   /// returns override title, the title by location, or empty string.
   String get title => () {
-        print(sailor.latestLocation);
-        return state.title ?? titles[sailor.latestLocation] ?? 'Welcome';
+        print(sail.latestLocation);
+        return state.title ?? titles[sail.latestLocation] ?? 'Welcome';
       }();
 }

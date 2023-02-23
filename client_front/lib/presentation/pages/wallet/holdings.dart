@@ -1,10 +1,10 @@
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/services/services.dart' show sailor;
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 class WalletHoldings extends StatelessWidget {
   const WalletHoldings({Key? key}) : super(key: key ?? defaultKey);
-  static const defaultKey = ValueKey('frontHoldings');
+  static const defaultKey = ValueKey('WalletHoldings');
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +23,8 @@ class WalletHoldings extends StatelessWidget {
         children: [
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'WhaleStreet'},
                   );
                 },
@@ -38,8 +38,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Moontree'},
                   );
                 },
@@ -53,8 +53,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Ravencoin'},
                   );
                 },
@@ -68,8 +68,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Purple Asset'},
                   );
                 },
@@ -83,8 +83,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Yellow Asset'},
                   );
                 },
@@ -98,8 +98,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Pink Holding'},
                   );
                 },
@@ -113,8 +113,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Orange Asset'},
                   );
                 },
@@ -130,8 +130,8 @@ class WalletHoldings extends StatelessWidget {
             [
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'WhaleStreet'},
                   );
                 },
@@ -145,8 +145,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Moontree'},
                   );
                 },
@@ -160,8 +160,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Ravencoin'},
                   );
                 },
@@ -175,8 +175,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Purple Asset'},
                   );
                 },
@@ -190,8 +190,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Yellow Asset'},
                   );
                 },
@@ -205,8 +205,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Pink Holding'},
                   );
                 },
@@ -220,8 +220,8 @@ class WalletHoldings extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  sailor.sailTo(
-                    location: '/wallet/holding',
+                  sail.to(
+                    '/wallet/holding',
                     arguments: {'chainSymbol': 'Orange Asset'},
                   );
                 },
