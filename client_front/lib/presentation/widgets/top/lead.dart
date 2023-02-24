@@ -227,6 +227,7 @@ class _PageLead extends State<PageLead> {
   };
 
   static const Set<String> emptyLocations = {
+    '/',
     '/login/create',
     '/login/native',
     '/login/password',
@@ -236,12 +237,8 @@ class _PageLead extends State<PageLead> {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () async => await uiservices.sail.back(),
-        child: () {
-          print('path');
-          print(path);
-          return menuLocations.contains(path)
-              ? const Icon(Icons.menu, color: Colors.white)
-              : const Icon(Icons.arrow_back, color: Colors.white);
-        }(),
+        child: menuLocations.contains(uiservices.sail.latestLocation)
+            ? const Icon(Icons.menu, color: Colors.white)
+            : const Icon(Icons.arrow_back, color: Colors.white),
       );
 }

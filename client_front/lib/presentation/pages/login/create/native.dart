@@ -108,7 +108,6 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
               ],
               firstLowerChildren: <Widget>[
                 if (needsConsent) UlaMessage() else const SizedBox(height: 100),
-                const SizedBox(height: 40 - 16),
               ],
               secondLowerChildren: <Widget>[
                 if (snapshot.hasData)

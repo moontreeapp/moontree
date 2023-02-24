@@ -1,12 +1,16 @@
 import 'dart:async';
 
+import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/utilities/animation.dart'
+    as animation;
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/front/choices/blockchain_choice.dart'
     show produceBlockchainModal;
@@ -33,51 +37,18 @@ class _ConnectionLightState extends State<ConnectionLight>
   /* blinking animations */
   //bool busy = false;
 
-  /* fancy movement animations
-  bool connectionBusy = false;
-  late DateTime startTime;
-  final int durationV = 1236;
-  final int durationH = 2000;
-
-  late AnimationController _controllerH;
-  late AnimationController _controllerV;
-  late Animation<Offset> _offsetAnimationH;
-  late Animation<Offset> _offsetAnimationV;
-
-  Map<ConnectionStatus, Color> connectionColor = {
-    ConnectionStatus.connected: AppColors.success,
-    ConnectionStatus.connecting: AppColors.yellow,
-    ConnectionStatus.disconnected: AppColors.error,
+  static const Set<String> disabledLocations = {
+    '/',
+    '/login/create',
+    '/login/native',
+    '/login/password',
+    '/login/create/native',
+    '/login/create/password',
+    '/backup/intro',
+    '/backup/seed',
+    '/backup/verify',
+    '/backup/keypair',
   };
-
-  void createAnimations() {
-    _controllerH = AnimationController(
-      duration: const Duration(milliseconds: durationH),
-      vsync: this,
-    );
-    _controllerH.value = .5;
-    _controllerH.repeat(reverse: true);
-    _controllerV = AnimationController(
-      duration: const Duration(milliseconds: durationV),
-      vsync: this,
-    );
-    _controllerV.value = .5;
-    _controllerV.repeat(reverse: true);
-    _offsetAnimationH = Tween<Offset>(
-      begin: const Offset(-1, 0),
-      end: const Offset(0, 0),
-    ).animate(CurvedAnimation(
-      parent: _controllerH,
-      curve: Curves.easeInOut,
-    ));
-    _offsetAnimationV = Tween<Offset>(
-      begin: const Offset(0, -.1),
-      end: const Offset(0, .1),
-    ).animate(CurvedAnimation(
-      parent: _controllerV,
-      curve: Curves.easeInOut,
-    ));
-  }*/
 
   @override
   void initState() {
@@ -94,15 +65,6 @@ class _ConnectionLightState extends State<ConnectionLight>
       if (value != connectionBusy) {
         setState(() => connectionBusy = value);
       }
-
-      /* blinking animations */
-      //if (value && !connectionBusy) {
-      //  setState(() => connectionBusy = value);
-      //  //rebuildMe();
-      //}
-      //if (!value && connectionBusy) {
-      //  setState(() => connectionBusy = value);
-      //}
     }));
   }
 
@@ -113,23 +75,6 @@ class _ConnectionLightState extends State<ConnectionLight>
     }
     super.dispose();
   }
-
-  /* blinking animations */
-  //Future<void> rebuildMe() async {
-  //  await Future<void>.delayed(const Duration(milliseconds: 600));
-  //  if (connectionBusy) {
-  //    // don't blink when spinner runs... separate into different streams?
-  //    if (!['Login', 'Createlogin'].contains(streams.app.page.value) &&
-  //        !services.wallet.leader.newLeaderProcessRunning) {
-  //      setState(() => busy = !busy);
-  //    }
-  //    rebuildMe();
-  //  } else {
-  //    if (busy) {
-  //      setState(() => busy = !busy);
-  //    }
-  //  }
-  //}
 
   @override
   Widget build(BuildContext context) {
@@ -142,33 +87,36 @@ class _ConnectionLightState extends State<ConnectionLight>
         borderRadius: BorderRadius.circular(20),
       ),
     );
-    return GestureDetector(
-      onTap: navToBlockchain,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 400),
-        alignment: Alignment.center,
-        padding: EdgeInsets.zero,
-        child: pros.settings.chain == Chain.none
-            ? IconButton(
-                splashRadius: 26,
-                padding: EdgeInsets.zero,
-                icon: circleIcon,
-                onPressed: navToBlockchain,
-              )
-            : Stack(alignment: Alignment.center, children: <Widget>[
-                ColorFiltered(
-                    colorFilter: ColorFilter.mode(statusColor, BlendMode.srcIn),
-                    child: components.icons.assetAvatar(
-                      pros.settings.chain.symbol,
-                      net: pros.settings.net,
-                      height: 26,
-                      width: 26,
-                    )),
-                components.icons.assetAvatar(pros.settings.chain.symbol,
-                    net: pros.settings.net, height: 24, width: 24),
-              ]),
-      ),
-    );
+    return FadeIn(
+        duration: animation.slowFadeDuration,
+        child: GestureDetector(
+          onTap: navToBlockchain,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 400),
+            alignment: Alignment.center,
+            padding: EdgeInsets.zero,
+            child: pros.settings.chain == Chain.none
+                ? IconButton(
+                    splashRadius: 26,
+                    padding: EdgeInsets.zero,
+                    icon: circleIcon,
+                    onPressed: navToBlockchain,
+                  )
+                : Stack(alignment: Alignment.center, children: <Widget>[
+                    ColorFiltered(
+                        colorFilter:
+                            ColorFilter.mode(statusColor, BlendMode.srcIn),
+                        child: components.icons.assetAvatar(
+                          pros.settings.chain.symbol,
+                          net: pros.settings.net,
+                          height: 28,
+                          width: 28,
+                        )),
+                    components.icons.assetAvatar(pros.settings.chain.symbol,
+                        net: pros.settings.net, height: 24, width: 24),
+                  ]),
+          ),
+        ));
   }
 
   Color get statusColor => connectionStatus == ConnectionStatus.connected &&
@@ -183,16 +131,7 @@ class _ConnectionLightState extends State<ConnectionLight>
     if (streams.app.loading.value == true) {
       return;
     }
-    if (!<String>[
-      'Login',
-      'Createlogin',
-      'Network',
-      'Scan',
-      'Setup',
-      'Backupintro',
-      'Backupconfirm',
-      'Backup',
-    ].contains(streams.app.page.value)) {
+    if (!disabledLocations.contains(sail.latestLocation)) {
       ScaffoldMessenger.of(context).clearSnackBars();
       streams.app.lead.add(LeadIcon.dismiss);
       produceBlockchainModal(components.routes.routeContext!);

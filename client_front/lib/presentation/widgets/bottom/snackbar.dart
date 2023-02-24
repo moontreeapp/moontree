@@ -21,10 +21,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
   Snack? snack;
   late List<StreamSubscription<dynamic>> listeners =
       <StreamSubscription<dynamic>>[];
-  final BorderRadius shape = const BorderRadius.only(
-    topLeft: Radius.circular(8.0),
-    topRight: Radius.circular(8.0),
-  );
 
   @override
   void initState() {
@@ -59,6 +55,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
               .withBlue(AppColors.error.blue + 16));
 
   static const Set<String> emptyLocations = {
+    '/',
     '/login/create',
     '/login/native',
     '/login/password',
