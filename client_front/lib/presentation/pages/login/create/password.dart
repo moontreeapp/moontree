@@ -237,12 +237,15 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
   }
 
   Future<void> exitProcess() async {
-    await components.loading.screen(
-      message: 'Creating Wallet',
-      returnHome: false,
-      playCount: 4,
-    );
+    components.cubits.loadingView
+        .show(title: 'Creating Wallet', msg: 'one moment please');
+    //await components.loading.screen(
+    //  message: 'Creating Wallet',
+    //  returnHome: false,
+    //  playCount: 4,
+    //);
     await setupWallets();
     login(context, password: password.text);
+    components.cubits.loadingView.hide();
   }
 }
