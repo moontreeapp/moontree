@@ -14,7 +14,7 @@ class GlobalCubits {
   final SimpleSendFormCubit simpleSendForm = SimpleSendFormCubit();
   final TransactionViewCubit transactionView = TransactionViewCubit();
   final HoldingsViewCubit holdingsView = HoldingsViewCubit();
-  final LoadingViewCubit loadingView = LoadingViewCubit();
+  //final LoadingViewCubit loadingView = LoadingViewCubit();
   final ReceiveViewCubit receiveView = ReceiveViewCubit();
 
   // uiv2
@@ -26,7 +26,7 @@ class GlobalCubits {
   final NavbarHeightCubit navbarHeight = NavbarHeightCubit();
   final NavbarSectionCubit navbarSection = NavbarSectionCubit();
   final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();
-  final LoadingViewCubitv2 loadingViewv2 = LoadingViewCubitv2();
+  final LoadingViewCubit loadingView = LoadingViewCubit();
 
   GlobalCubits();
 }

@@ -37,16 +37,12 @@ class HiveInitializer {
   }
 
   Future<void> setUp(HiveLoadingStep step) async {
-    final Stopwatch s = Stopwatch()..start();
     await openBoxes(step);
-    print('openAllBoxes: ${s.elapsed}');
     if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.lock]
         .contains(step)) {
       beforeLoad();
     }
-    print('beforeLoad: ${s.elapsed}');
     load(step);
-    print('after load: ${s.elapsed}');
   }
 
   Future<void> tearDown() async {

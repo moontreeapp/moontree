@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 import 'package:client_front/main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -20,6 +21,7 @@ import 'package:client_front/presentation/services/sail.dart' show Sail;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:path_provider/path_provider.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key ?? defaultKey);
@@ -30,10 +32,6 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> with TickerProviderStateMixin {
-  BorderRadius? shape;
-  List<BoxShadow>? shadow;
-  bool showAppBar = false;
-
   final Duration animationDuration = const Duration(milliseconds: 2000);
   late AnimationController _slideController;
   late AnimationController _fadeController;
@@ -57,8 +55,16 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     _init();
   }
 
-  Future<void> _init() async {
-    await Future<void>.delayed(const Duration(milliseconds: 4000));
+  /*
+  /// example of spawning an isolate and passing data back, used because it 
+  /// fails and because hive init has side effects, it's not pure.
+  Future<void> _openHiveBoxInBackground() async {
+    final receivePort = ReceivePort();
+    await Isolate.spawn(_hiveInit, receivePort.sendPort);
+    final hiveBox = await receivePort.first;
+  }
+  */
+  Future<void> _hiveInit([SendPort? sendPort]) async {
     await HIVE_INIT.setupDatabaseStart();
     await HIVE_INIT.setupDatabase1();
 
@@ -76,14 +82,23 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await services.client.createClient();
     await HIVE_INIT.setupDatabase2();
     await HIVE_INIT.setupWaiters2();
-
-    //}, null);
-
-    await Future<void>.delayed(const Duration(milliseconds: 1));
+    //sendPort.send(hiveBox);
+    if (sendPort != null) {
+      sendPort.send(true);
+    }
     uiservices.init(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
     );
+  }
+
+  Future<void> _init() async {
+    final Stopwatch s = Stopwatch()..start();
+    print('setup ${s.elapsed}');
+    await _hiveInit();
+    print('after setup: ${s.elapsed}');
+    await Future<void>.delayed(const Duration(milliseconds: 1000));
+    await Future<void>.delayed(const Duration(milliseconds: 1));
     setState(() {
       _slideAnimation = Tween<Offset>(
         begin: Offset.zero,
@@ -102,12 +117,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         parent: _slideController,
         curve: Curves.easeInOutCubic,
       ));
-      shape = shapes.topRoundedBorder16;
-      shadow = shadows.frontLayer;
     });
     _fadeController.forward();
     _slideController.forward();
     await Future<void>.delayed(animationDuration);
+
     //await Future<void>.delayed(const Duration(milliseconds: 1000));
     //// hack to trigger animate Welcome
     //streams.app.loading.add(false);
@@ -118,7 +132,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //await Future<void>.delayed(const Duration(milliseconds: 1000));
     //setState(() {
     //  _slideController.reset();
-    //  showAppBar = true;
     //});
 
     streams.app.splash.add(false);
@@ -169,30 +182,29 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       body: Stack(
         alignment: Alignment.topCenter,
         children: <Widget>[
-          //if (!showAppBar) BackdropAppBarContents(spoof: true),
           SlideTransition(
               position: _slideAnimation,
               child: AnimatedContainer(
-                  duration: animationDuration,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: shape,
-                      boxShadow: shadow,
-                      color: Colors.white),
-                  child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child:
-                          /**/
-                          Lottie.asset(
-                              'assets/splash/moontree_v2_001_recolored.json',
-                              animate: true,
-                              repeat: false,
-                              alignment: Alignment.center,
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.cover
-                              /**/
-                              ))))
+                duration: animationDuration,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    borderRadius: shapes.topRoundedBorder16,
+                    boxShadow: shadows.frontLayer,
+                    color: Colors.white),
+              )),
+          FadeTransition(
+              opacity: _fadeAnimation,
+              child:
+                  /**/
+                  Lottie.asset('assets/splash/moontree_v2_001_recolored.json',
+                      animate: true,
+                      repeat: false,
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover
+                      /**/
+                      ))
         ],
       ),
     );

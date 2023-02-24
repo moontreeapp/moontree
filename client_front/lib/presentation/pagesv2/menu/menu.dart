@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/bottom/modal/cubit.dart';
-import 'package:client_front/application/loadingv2/cubit.dart';
+import 'package:client_front/application/loading/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/services/services.dart' as services;
 
@@ -41,7 +41,7 @@ class BackMenuScreen extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: () => context.read<LoadingViewCubitv2>().show(),
+                onTap: () => context.read<LoadingViewCubit>().show(),
                 child: Container(
                   padding: const EdgeInsets.only(left: 16),
                   height: 56,

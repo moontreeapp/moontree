@@ -151,26 +151,24 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
         skip: devFlags.contains(DevFlag.skipPin));
     streams.app.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
+      /// v2 solution for loading screen: limitation: must remember to hide later
+      components.cubits.loadingView
+          .show(title: 'Creating Wallet', msg: 'one moment please');
+      //components.cubits.loadingView.showDuring(() async {
       final String key = await SecureStorage.authenticationKey;
 
-      /// actually don't show this, not necessary
-      //components.message.giveChoices(context,
-      //    title: 'Default Password',
-      //    content:
-      //        "Moontree has generated a default password for you. If you're ever unable to use your nativeSecurity or pin to login you can use this password instead. Please write it down for your records: $key",
-      //    behaviors: {
-      //      'ok': () => Navigator.of(context).pop(),
-      //    });
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
-      await components.loading.screen(
-        message: 'Creating Wallet',
-        returnHome: false,
-        playCount: 4,
-      );
+
+      /// V1 solution for loading screen (still works): limitation:time dependant
+      //await components.loading.screen(
+      //  message: 'Creating Wallet',
+      //  returnHome: false,
+      //  playCount: 4,
+      //);
+
       if (pros.passwords.records.isEmpty) {
-        //services.cipher.initCiphers(altPassword: key, altSalt: key);
         await services.authentication.setPassword(
           password: key,
           salt: key,
@@ -178,15 +176,10 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
         );
         await setupWallets();
       }
-      //await components.message.giveChoices(context,
-      //    title: 'Default Password',
-      //    content:
-      //        "Moontree has generated a default password for you. If you're ever unable to use your nativeSecurity or pin to login you can use this password instead. Please write it down for your records: \n\n$key",
-      //    behaviors: {
-      //      'ok': () => Navigator.of(context).pop(),
-      //    });
-
       login(context);
+      //}, title: 'Creating Wallet', msg: 'one moment please');
+
+      components.cubits.loadingView.hide();
     } else {
       if (localAuthApi.reason == AuthenticationResult.error) {
         setState(() {

@@ -10,7 +10,7 @@ class ScreenFlags {
   bool get active =>
       showDialog ||
       showModalBottomSheet ||
-      components.cubits.loadingViewv2.state.status == LoadingStatus.busy ||
+      components.cubits.loadingView.state.status == LoadingStatus.busy ||
       components.cubits.bottomModalSheet.state.display;
 }
 

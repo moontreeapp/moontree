@@ -55,7 +55,19 @@ class _LoginCreateState extends State<LoginCreate> {
       await finishLoadingDatabase();
       await services.authentication.setMethod(method: null);
     }();
+//    loading();
   }
+
+//  Future<void> loading() async {
+//    components.cubits.loadingView
+//        .show(title: 'something', msg: 'creating wallet');
+//    await Future.delayed(Duration(seconds: 15));
+//    components.cubits.loadingView.hide();
+//    await Future.delayed(Duration(seconds: 1));
+//    components.cubits.loadingView.show(msg: 'msg');
+//    await Future.delayed(Duration(seconds: 15));
+//    components.cubits.loadingView.hide();
+//  }
 
   @override
   void dispose() {
