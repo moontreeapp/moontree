@@ -153,20 +153,18 @@ class Sail {
 
   String? latestLocation;
 
+  void menu() async =>
+      components.cubits.frontContainer.menuToggle(); //await to('/menu') ?? '';
+
   Future<String> back() async {
-    // Todo: key this off something else. like sailor current path or something
-    if (['/wallet/holdings', '/manage'].contains(latestLocation)) {
-      return await to('/menu') ?? '';
-    } else {
-      // any page that uses ContentExtra layer for draggable sheets
-      if (['/wallet/holdings'].contains(latestLocation)) {
-        // show front layer and instantly remove extra content before anything else.
-        // todo make this dependant on the map.
-        components.cubits.frontContainer.setHidden(false);
-        components.cubits.extraContainer.reset();
-      }
-      return sailBack();
+    // any page that uses ContentExtra layer for draggable sheets
+    if (['/wallet/holdings'].contains(latestLocation)) {
+      // show front layer and instantly remove extra content before anything else.
+      // todo make this dependant on the map.
+      components.cubits.frontContainer.setHidden(false);
+      components.cubits.extraContainer.reset();
     }
+    return sailBack();
   }
 
   Future<void> home([String location = '/wallet/holdings']) async {

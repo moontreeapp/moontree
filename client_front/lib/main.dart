@@ -252,7 +252,7 @@ class HomePage extends StatelessWidget {
               LoadingLayer(),
 
               /// must merge both implementations
-              //LoadingLayer(),
+              //LoadingLayerV1(),
               TutorialLayer(),
             ],
       ),

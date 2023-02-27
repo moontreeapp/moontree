@@ -14,6 +14,5 @@ abstract class TitleCubitState extends Equatable {
 }
 
 class TitleState extends TitleCubitState {
-  const TitleState({required String path, String? title})
-      : super(path: path, title: title);
+  const TitleState({required super.path, super.title});
 }

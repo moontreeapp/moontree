@@ -20,12 +20,10 @@ extension FunctionsForBalanceView on BalanceView {
 }
 
 class HoldingList extends StatefulWidget {
-  final Iterable<Balance>? holdings;
   final ScrollController? scrollController;
 
   const HoldingList({
     this.scrollController,
-    this.holdings,
     Key? key,
   }) : super(key: key);
 
@@ -73,7 +71,7 @@ class _HoldingList extends State<HoldingList> {
   }
 
   Future<void> refresh(HoldingsViewCubit cubit) async {
-    cubit.set(isSubmitting: true);
+    cubit.update(isSubmitting: true);
     setState(() {});
     await cubit.setHoldingViews(
       Current.wallet,
@@ -89,7 +87,7 @@ class _HoldingList extends State<HoldingList> {
         flutter_bloc.BlocProvider.of<HoldingsViewCubit>(context);
     if (cubit.state.ranWallet != Current.wallet ||
         cubit.state.ranChainNet != pros.settings.chainNet) {
-      cubit.set(isSubmitting: true);
+      cubit.update(isSubmitting: true);
     }
     cubit.setHoldingViews(Current.wallet, pros.settings.chainNet);
     return GestureDetector(

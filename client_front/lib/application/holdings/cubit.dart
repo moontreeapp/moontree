@@ -10,36 +10,44 @@ part 'state.dart';
 
 /// show shimmer while retrieving list of transactions
 /// show list of transactions
-class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
-  HoldingsViewCubit() : super(HoldingsViewState.initial());
+class HoldingsViewCubit extends Cubit<HoldingsViewState> {
+  HoldingsViewCubit()
+      : super(HoldingsViewState(
+            holdingsViews: [],
+            assetHoldings: [],
+            ranWallet: null,
+            ranChainNet: null,
+            search: '',
+            showUSD: false,
+            showPath: false,
+            showSearchBar: false,
+            isSubmitting: true));
 
-  @override
-  Future<void> reset() async => emit(HoldingsViewState.initial());
-
-  @override
-  HoldingsViewState submitting() => state.load(isSubmitting: true);
-
-  @override
   Future<void> enter() async {
-    //emit(submitting());
     emit(state);
   }
 
-  @override
-  void set({
+  void update({
     List<BalanceView>? holdingsViews,
     List<AssetHolding>? assetHoldings,
     Wallet? ranWallet,
     ChainNet? ranChainNet,
+    String? search,
+    bool? showUSD,
+    bool? showPath,
+    bool? showSearchBar,
     bool? isSubmitting,
   }) {
-    //emit(submitting());
-    emit(state.load(
-      holdingsViews: holdingsViews,
-      assetHoldings: assetHoldings,
-      ranWallet: ranWallet,
-      ranChainNet: ranChainNet,
-      isSubmitting: isSubmitting,
+    emit(HoldingsViewState(
+      holdingsViews: holdingsViews ?? state.holdingsViews,
+      assetHoldings: assetHoldings ?? state.assetHoldings,
+      ranWallet: ranWallet ?? state.ranWallet,
+      ranChainNet: ranChainNet ?? state.ranChainNet,
+      search: search ?? state.search,
+      showUSD: showUSD ?? state.showUSD,
+      showPath: showPath ?? state.showPath,
+      showSearchBar: showSearchBar ?? state.showSearchBar,
+      isSubmitting: isSubmitting ?? state.isSubmitting,
     ));
   }
 
@@ -52,13 +60,13 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
         state.holdingsViews.isEmpty ||
         state.ranWallet != wallet ||
         state.ranChainNet != chainNet) {
-      set(
+      update(
         holdingsViews: [],
         assetHoldings: [],
         isSubmitting: true,
       );
       final holdingViews = await HoldingsRepo(wallet: wallet).fetch();
-      set(
+      update(
         holdingsViews: holdingViews.toList(),
         assetHoldings: assetHoldings(holdingViews),
         ranWallet: wallet,
@@ -68,7 +76,7 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
     }
   }
 
-  void clearCache() => set(holdingsViews: <BalanceView>[]);
+  void clearCache() => update(holdingsViews: <BalanceView>[]);
 
   BalanceView? holdingsViewFor(String symbol) =>
       state.holdingsViews.where((e) => e.symbol == symbol).firstOrNull;

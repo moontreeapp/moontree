@@ -37,8 +37,8 @@ class FrontContainerView extends StatelessWidget {
         child: AnimatedContainer(
           height: height,
           width: MediaQuery.of(context).size.width,
-          duration: animation.fadeDuration,
-          curve: Curves.easeInOut,
+          duration: animation.slideDuration,
+          curve: Curves.easeInOutCubic,
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [

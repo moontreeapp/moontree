@@ -219,7 +219,14 @@ class _PageLead extends State<PageLead> {
 
 
 */
-  static const Set<String> menuLocations = {
+  static const Set<String> menuViewLocations = {
+    '/wallet/holdings',
+    '/manage',
+    '/menu',
+    '/menu/settings',
+  };
+
+  static const Set<String> menuDoLocations = {
     '/wallet/holdings',
     '/manage',
     '/menu',
@@ -236,8 +243,10 @@ class _PageLead extends State<PageLead> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () async => await uiservices.sail.back(),
-        child: menuLocations.contains(uiservices.sail.latestLocation)
+        onTap: menuDoLocations.contains(uiservices.sail.latestLocation)
+            ? () => uiservices.sail.menu()
+            : () async => await uiservices.sail.back(),
+        child: menuViewLocations.contains(uiservices.sail.latestLocation)
             ? const Icon(Icons.menu, color: Colors.white)
             : const Icon(Icons.arrow_back, color: Colors.white),
       );
