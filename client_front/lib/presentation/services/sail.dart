@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:client_back/streams/streams.dart'; // streams.app.path
 import 'package:client_front/application/utilities.dart';
 import 'package:client_front/application/navbar/height/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
@@ -8,6 +9,7 @@ enum Section { login, wallet, manage, swap, settings }
 
 class Manifest {
   final Section? section;
+  final String? title;
   final String? backPath;
   final FrontContainerHeight frontHeight;
   final NavbarHeight navbarHeight;
@@ -16,6 +18,7 @@ class Manifest {
   final bool extraHideFront;
   const Manifest({
     this.section,
+    this.title,
     this.backPath,
     this.frontHeight = FrontContainerHeight.same,
     this.navbarHeight = NavbarHeight.same,
@@ -37,60 +40,77 @@ class Sail {
 
   static const Map<String, Manifest> destinationMap = {
     '/login/create': Manifest(
+      title: 'Welcome',
       section: Section.login,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/login/create',
     ),
     '/login/create/native': Manifest(
+      title: 'Native Security',
       section: Section.login,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/login/create/native',
     ),
     '/login/create/password': Manifest(
+      title: 'Create Password Login',
       section: Section.login,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/login/create/password',
     ),
+    '/login/create/resume': Manifest(
+      title: 'Resume Password Setup',
+      section: Section.login,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/login/create/resume',
+    ),
     '/login/native': Manifest(
+      title: 'Locked',
       section: Section.login,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/login/native',
     ),
     '/login/password': Manifest(
+      title: 'Locked',
       section: Section.login,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/login/password',
     ),
     '/backup/intro': Manifest(
+      title: 'Backup',
       section: Section.settings,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/backup/intro',
     ),
     '/backup/seed': Manifest(
+      title: 'Backup',
       section: Section.settings,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/backup/seed',
     ),
     '/backup/keypair': Manifest(
+      title: 'Backup',
       section: Section.settings,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/backup/keypair',
     ),
     '/backup/verify': Manifest(
+      title: 'Backup',
       section: Section.settings,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/backup/verify',
     ),
     '/wallet/holdings': Manifest(
+      title: 'Holdings', // should be wallet name
       section: Section.wallet,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.max,
@@ -98,29 +118,41 @@ class Sail {
       backPath: '/menu',
     ),
     '/wallet/holding': Manifest(
+      title: 'Holding', // should be holding name
       section: Section.wallet,
       frontHeight: FrontContainerHeight.mid,
       navbarHeight: NavbarHeight.mid,
       frontPath: '/wallet/holding',
     ),
     '/wallet/holding/transaction': Manifest(
+      title: 'Transaction',
       section: Section.wallet,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.mid,
       frontPath: '/wallet/holding/transaction',
     ),
     '/manage': Manifest(
+      title: 'Manage',
       section: Section.manage,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.max,
       frontPath: '/manage',
       backPath: '/menu',
     ),
-    '/settings/example': Manifest(
+    '/swap': Manifest(
+      title: 'Swap',
+      section: Section.swap,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.max,
+      frontPath: '/swap',
+      backPath: '/menu',
+    ),
+    '/restore/import': Manifest(
+      title: 'Import',
       section: Section.settings,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
-      frontPath: '/settings/example',
+      frontPath: '/restore/import',
     ),
   };
 
@@ -224,7 +256,7 @@ class Sail {
 
   void updateCubits(String location, Manifest manifest, {bool back = false}) {
     broadcast(location);
-    components.cubits.title.update(path: location);
+    components.cubits.title.update(title: manifest.title);
     //components.cubits.navbarHeight.setHeightTo(height: manifest.navbarHeight);
     components.cubits.backContainer.update(path: manifest.backPath);
     // if we're going back home and we came from the menu then show the menu

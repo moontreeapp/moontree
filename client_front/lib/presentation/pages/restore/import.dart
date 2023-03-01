@@ -28,19 +28,16 @@ class Import extends StatefulWidget {
 }
 
 class _ImportState extends State<Import> {
-  Map<String, dynamic> data = <String, dynamic>{};
   FocusNode wordsFocus = FocusNode();
   FocusNode submitFocus = FocusNode();
   TextEditingController words = TextEditingController();
   bool importEnabled = false;
-  late Wallet wallet;
   String importFormatDetected = '';
   final Backup storage = Backup();
   final TextEditingController password = TextEditingController();
   final TextEditingController salt = TextEditingController();
   FileDetails? file;
   String? finalText;
-  String? finalAccountId;
   bool importVisible = true;
   bool submittedAttempt = false;
   ImportFormat detection = ImportFormat.invalid;
@@ -74,13 +71,6 @@ class _ImportState extends State<Import> {
 
   @override
   Widget build(BuildContext context) {
-    data = populateData(context, data);
-    if (data['walletId'] == 'current' || data['walletId'] == null) {
-      wallet = Current.wallet;
-    } else {
-      wallet = pros.wallets.primaryIndex.getOne(data['walletId'] as String?) ??
-          Current.wallet;
-    }
     return BackdropLayers(
         back: const BlankBack(),
         front: GestureDetector(

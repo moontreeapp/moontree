@@ -5,7 +5,8 @@ import 'package:client_front/presentation/widgets/bottom/snackbar.dart';
 import 'package:client_front/presentation/pages/appbar/connection.dart';
 import 'package:client_front/presentation/pages/appbar/lead.dart';
 import 'package:client_front/presentation/pages/appbar/title.dart';
-import 'package:client_front/presentation/services/services.dart' as uiservices;
+import 'package:client_front/presentation/services/services.dart'
+    show screen, sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
@@ -15,7 +16,7 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-      height: uiservices.screen.app.appBarHeight,
+      height: screen.app.appBarHeight,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -52,7 +53,7 @@ class AppBarLeft extends StatelessWidget {
       BlocBuilder<TitleCubit, TitleCubitState>(
           builder: (context, state) =>
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                if (PageLead.show(state.path)) PageLead(),
+                if (PageLead.show(sail.latestLocation ?? '')) PageLead(),
                 //Container(
                 //    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 //    height: uiservices.screen.app.appBarHeight,

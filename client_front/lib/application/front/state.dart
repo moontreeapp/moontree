@@ -6,8 +6,12 @@ abstract class FrontContainerCubitState extends Equatable {
   final double height;
   final bool hide; // hides the entire front layer.
   final bool hideContent; // hides, rather, fades out the content.
-  const FrontContainerCubitState(this.containerHeight, this.height,
-      [this.hide = false, this.hideContent = false]);
+  const FrontContainerCubitState(
+    this.containerHeight,
+    this.height, [
+    this.hide = false,
+    this.hideContent = false,
+  ]);
 
   @override
   List<Object?> get props => [height, hide, hideContent];

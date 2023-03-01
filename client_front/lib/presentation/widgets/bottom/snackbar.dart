@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:client_front/presentation/theme/theme.dart';
@@ -56,6 +57,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   static const Set<String> emptyLocations = {
     '/',
+    '/splash',
     '/login/create',
     '/login/native',
     '/login/password',
@@ -63,8 +65,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   Future<void> show() async {
     /// don't show snackbars on login screen
-    if (emptyLocations.contains(components.cubits.title.state.path) &&
-        !snack!.showOnLogin) {
+    if (emptyLocations.contains(sail.latestLocation) && !snack!.showOnLogin) {
       return;
     }
 
