@@ -1,5 +1,3 @@
-import 'package:client_front/presentation/widgets/other/fading.dart';
-import 'package:client_front/presentation/widgets/other/sliding.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -9,10 +7,9 @@ import 'package:client_back/services/consent.dart';
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/sliding.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
@@ -26,13 +23,12 @@ class MenuRouter extends StatelessWidget {
   Widget build(BuildContext context) {
     if (path == '/menu' && prior == '/') {
       return MainMenu();
-    } else if (path == '/menu' && prior == '/menu/import_export') {
-      return SlideOutIn(
-          left: MainMenu(), right: ImportExportMenu(), enter: false);
+    } else if (path == '/menu' && prior == '/menu/restore') {
+      return SlideOutIn(left: MainMenu(), right: RestoreMenu(), enter: false);
     } else if (path == '/menu' && prior == '/menu/settings') {
       return SlideOutIn(left: MainMenu(), right: SettingsMenu(), enter: false);
-    } else if (path == '/menu/import_export') {
-      return SlideOutIn(left: MainMenu(), right: ImportExportMenu());
+    } else if (path == '/menu/restore') {
+      return SlideOutIn(left: MainMenu(), right: RestoreMenu());
     } else if (path == '/menu/settings') {
       return SlideOutIn(left: MainMenu(), right: SettingsMenu());
     } else {
@@ -153,22 +149,24 @@ class MainMenu extends StatelessWidget {
           MenuLink(
             icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant,
             name: 'Blockchain',
-            link: '/menu/network/blockchain',
+            link: '/network/blockchain',
           ),
           if (!services.developer.developerMode)
             MenuLink(
-                icon: MdiIcons.shieldKey, name: 'Import', link: '/menu/import'),
+                icon: MdiIcons.shieldKey,
+                name: 'Import',
+                link: '/restore/import'),
           if (!services.developer.developerMode && Current.balanceRVN.value > 0)
             MenuLink(
               icon: MdiIcons.broom,
               name: 'Sweep',
-              link: '/menu/sweep',
+              link: '/sweep',
             ),
           if (services.developer.developerMode)
             MenuLink(
               icon: MdiIcons.shieldKey,
               name: 'Import & Export',
-              link: '/menu/import_export',
+              link: '/menu/restore',
               arrow: true,
             ),
           MenuLink(
@@ -194,12 +192,12 @@ class MainMenu extends StatelessWidget {
           MenuLink(
             icon: Icons.help,
             name: 'Support',
-            link: '/menu/support',
+            link: '/support',
           ),
           MenuLink(
             icon: Icons.info_rounded,
             name: 'About',
-            link: '/menu/about',
+            link: '/about',
           ),
 
           /*
@@ -261,9 +259,9 @@ class MainMenu extends StatelessWidget {
       );
 }
 
-//'/menu/import_export': ,
-class ImportExportMenu extends StatelessWidget {
-  const ImportExportMenu({Key? key}) : super(key: key);
+//'/menu/restore': ,
+class RestoreMenu extends StatelessWidget {
+  const RestoreMenu({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => ListView(
@@ -271,18 +269,18 @@ class ImportExportMenu extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           MenuLink(
-              icon: MdiIcons.keyPlus, name: 'Import', link: '/menu/import'),
+              icon: MdiIcons.keyPlus, name: 'Import', link: '/restore/import'),
           MenuLink(
               icon: MdiIcons.keyMinus,
               name: 'Export',
-              link: '/menu/export',
+              link: '/restore/export',
               disabled: !services.developer.advancedDeveloperMode),
           if (services.developer.developerMode &&
               (pros.securities.currentCoin.balance?.value ?? 0) > 0)
             MenuLink(
               icon: MdiIcons.broom,
               name: 'Sweep',
-              link: '/menu/sweep',
+              link: '/sweep',
             ),
         ],
       );
@@ -333,24 +331,24 @@ class SettingsMenu extends StatelessWidget {
           MenuLink(
             icon: MdiIcons.pickaxe,
             name: 'Mining',
-            link: '/menu/network/mining',
+            link: '/network/mining',
           ),
           if (services.developer.developerMode)
             MenuLink(
               icon: MdiIcons.database,
               name: 'Database',
-              link: '/menu/database',
+              link: '/database',
             ),
           if (services.developer.advancedDeveloperMode == true)
             MenuLink(
               icon: MdiIcons.rocketLaunchOutline,
               name: 'Advanced',
-              link: '/menu/advanced',
+              link: '/mode/advanced',
             ),
           MenuLink(
             icon: MdiIcons.devTo,
             name: 'Developer',
-            link: '/menu/developer',
+            link: '/mode/developer',
           ),
         ],
       );

@@ -12,11 +12,11 @@ class FrontContainerCubit extends Cubit<FrontContainerCubitState>
     with HeightCubitMixin {
   FrontContainerCubit()
       : super(FrontContainerState(
-            containerHeight: PageContainerHeight.max,
+            containerHeight: FrontContainerHeight.max,
             height: services.screen.frontContainer.maxHeight));
 
   void setHidden(bool hide) => emit(FrontContainerState(
-        containerHeight: hide ? PageContainerHeight.hidden : null,
+        containerHeight: hide ? FrontContainerHeight.hidden : null,
         height: state.height,
         hide: hide,
       ));
@@ -29,7 +29,7 @@ class FrontContainerCubit extends Cubit<FrontContainerCubitState>
 
   void menuToggle() {
     switch (state.containerHeight) {
-      case PageContainerHeight.min:
+      case FrontContainerHeight.min:
         return max();
       default:
         return min();
@@ -38,25 +38,25 @@ class FrontContainerCubit extends Cubit<FrontContainerCubitState>
 
   @override
   void max() async => emit(FrontContainerState(
-      containerHeight: PageContainerHeight.max,
+      containerHeight: FrontContainerHeight.max,
       height: services.screen.frontContainer.maxHeight,
       hide: state.hide));
 
   @override
   void mid() async => emit(FrontContainerState(
-      containerHeight: PageContainerHeight.mid,
+      containerHeight: FrontContainerHeight.mid,
       height: services.screen.frontContainer.midHeight,
       hide: state.hide));
 
   @override
   void min() async => emit(FrontContainerState(
-      containerHeight: PageContainerHeight.min,
+      containerHeight: FrontContainerHeight.min,
       height: services.screen.frontContainer.minHeight,
       hide: state.hide));
 
   @override
   void hidden() async => emit(FrontContainerState(
-      containerHeight: PageContainerHeight.hidden,
+      containerHeight: FrontContainerHeight.hidden,
       height: services.screen.frontContainer.hiddenHeight,
       hide: state.hide));
 }

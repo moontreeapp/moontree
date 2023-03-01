@@ -1,11 +1,10 @@
-import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_front/application/title/cubit.dart';
 import 'package:client_front/presentation/widgets/bottom/snackbar.dart';
 import 'package:client_front/presentation/pages/appbar/connection.dart';
 import 'package:client_front/presentation/pages/appbar/lead.dart';
 import 'package:client_front/presentation/pages/appbar/title.dart';
-import 'package:client_front/application/title/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/components/components.dart'
     as components;

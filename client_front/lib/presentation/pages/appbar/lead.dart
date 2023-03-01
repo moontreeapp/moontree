@@ -264,7 +264,6 @@ class MenuLead extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
       onTap: () {
-        print(path);
         if (path.startsWith('/menu/')) {
           components.cubits.backContainer.previousMenu();
         } else {

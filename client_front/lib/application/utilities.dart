@@ -1,4 +1,4 @@
-enum PageContainerHeight {
+enum FrontContainerHeight {
   max,
   mid,
   min,
@@ -18,17 +18,17 @@ abstract class ViewCubitMixin {
 }
 
 abstract class HeightCubitMixin {
-  void setHeightTo({required PageContainerHeight height}) {
+  void setHeightTo({required FrontContainerHeight height}) {
     switch (height) {
-      case PageContainerHeight.same:
+      case FrontContainerHeight.same:
         return;
-      case PageContainerHeight.max:
+      case FrontContainerHeight.max:
         return max();
-      case PageContainerHeight.mid:
+      case FrontContainerHeight.mid:
         return mid();
-      case PageContainerHeight.min:
+      case FrontContainerHeight.min:
         return min();
-      case PageContainerHeight.hidden:
+      case FrontContainerHeight.hidden:
         return hidden();
       default:
         return mid();

@@ -56,6 +56,7 @@ import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
 import 'package:client_front/presentation/pages/wallet/wallet.dart';
 import 'package:client_front/presentation/pages/backup/backup.dart';
+import 'package:client_front/presentation/pages/restore/restore.dart';
 
 final _staticRoutes = <String, Widget Function(BuildContext)>{
   //'/home': (BuildContext context) => const Home(),
@@ -139,6 +140,8 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/backup/keypair': (BuildContext context) => const ShowKeypair(),
   '/backup/seed': (BuildContext context) => const BackupSeed(),
   '/backup/verify': (BuildContext context) => const VerifySeed(),
+  '/restore/import': (BuildContext context) => const Import(),
+  //'/restore/export': (BuildContext context) => const Export(),
 };
 
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;

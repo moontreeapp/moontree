@@ -2,7 +2,7 @@ part of 'cubit.dart';
 
 @immutable
 abstract class FrontContainerCubitState extends Equatable {
-  final PageContainerHeight? containerHeight;
+  final FrontContainerHeight? containerHeight;
   final double height;
   final bool hide; // hides the entire front layer.
   final bool hideContent; // hides, rather, fades out the content.
@@ -18,7 +18,7 @@ abstract class FrontContainerCubitState extends Equatable {
 
 class FrontContainerState extends FrontContainerCubitState {
   const FrontContainerState({
-    PageContainerHeight? containerHeight,
+    FrontContainerHeight? containerHeight,
     required double height,
     bool hide = false,
     bool hideContent = false,
