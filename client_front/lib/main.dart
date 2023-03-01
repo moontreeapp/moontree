@@ -1,52 +1,35 @@
 import 'dart:async';
 import 'dart:io' show Platform;
-
-import 'package:client_front/presentation/pages/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/src/bloc_provider.dart'
+    show BlocProviderSingleChildWidget;
 import 'package:serverpod_flutter/serverpod_flutter.dart';
-
+import 'package:client_back/streams/streams.dart';
+import 'package:client_back/services/services.dart';
+import 'package:client_front/application/cubits.dart';
+import 'package:client_front/infrastructure/services/dev.dart';
+import 'package:client_front/presentation/theme/theme.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+import 'package:client_front/presentation/pages/splash.dart';
+import 'package:client_front/presentation/pages/pages.dart' as pages;
+import 'package:client_front/presentation/containers/bottom/modal.dart';
+import 'package:client_front/presentation/containers/bottom/navbar.dart';
+import 'package:client_front/presentation/containers/content/extra.dart';
+import 'package:client_front/presentation/containers/content/content.dart';
+import 'package:client_front/presentation/containers/layers/loading.dart';
+import 'package:client_front/presentation/containers/layers/tutorial.dart';
 //import 'package:flutter/foundation.dart' show kDebugMode;
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:client_front/application/cubits.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
-import 'package:client_front/infrastructure/services/dev.dart';
-import 'package:client_front/infrastructure/calls/subscription.dart';
-import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:client_back/streams/streams.dart';
-import 'package:client_back/services/services.dart';
-
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp();
 //   print('Handling a background message ${message.messageId}');
 // }
-
-// ignore: implementation_imports
-import 'package:flutter_bloc/src/bloc_provider.dart'
-    show BlocProviderSingleChildWidget;
-
-import 'package:client_front/presentation/containers/bottom/modal.dart';
-import 'package:client_front/presentation/containers/bottom/navbar.dart';
-import 'package:client_front/presentation/containers/content/extra.dart';
-import 'package:client_front/presentation/containers/content/content.dart';
-import 'package:client_front/presentation/containers/content/front.dart'
-    show FrontContainerView;
-import 'package:client_front/presentation/containers/content/back.dart'
-    show BackContainerView;
-import 'package:client_front/presentation/containers/layers/loading.dart';
-import 'package:client_front/presentation/containers/layers/tutorial.dart';
-import 'package:client_front/presentation/pages/splash.dart';
-//import 'package:client_front/presentation/containers/loading_layer.dart';
-import 'package:client_front/presentation/services/sail.dart' show Sailor;
-import 'package:client_front/presentation/services/services.dart' as uiservices;
-import 'package:client_front/presentation/pages/pages.dart' as pages;
-import 'package:client_front/presentation/services/services.dart' show sail;
 
 Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   devFlags.addAll(flags ?? []);
@@ -110,53 +93,6 @@ class MoontreeMobileApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     components.routes.mainContext = context;
-    //return MaterialApp(
-    //  debugShowCheckedModeBanner: false,
-    //  theme: CustomTheme.lightTheme,
-    //  darkTheme: CustomTheme.lightTheme,
-    //  initialRoute: '/splash',
-    //  routes: pages.routes,
-    //  navigatorObservers: <NavigatorObserver>[components.routes],
-    //  builder: (BuildContext context, Widget? child) => (context, child) {
-    //    print(_showSplash);
-    //    return _showSplash
-    //        ? Stack(
-    //            alignment: Alignment.topCenter,
-    //            children: <Widget>[
-    //              const BackContainerView(),
-    //              //FrontContainer(child: child),
-    //              FrontContainerView(),
-    //              child!
-    //            ],
-    //          )
-    //        : MultiBlocProvider(
-    //            providers: providers, child: HomePage(child: child));
-    //  }(context, child),
-    //);
-    //Router(routerDelegate: routerDelegate)
-    //uiservices.beamer.rootDelegate = BeamerDelegate(
-    //  //initialPath: Sailor.initialPath,
-    //  initialPath: '/splash',
-    //  navigatorObservers: <NavigatorObserver>[components.routes],
-    //  locationBuilder: RoutesLocationBuilder(
-    //    routes: {
-    //      '/splash': (context, state, data) => const Splash(),
-    //      Sailor.initialPath: (context, state, data) {
-    //        print(state.uri.toString());
-    //        print(data);
-    //        return const HomePage();
-    //      },
-    //    },
-    //  ),
-    //);
-    //return MaterialApp.router(
-    //  debugShowCheckedModeBanner: false,
-    //  routerDelegate: uiservices.beamer.rootDelegate,
-    //  routeInformationParser: BeamerParser(),
-    //  theme: CustomTheme.lightTheme,
-    //  darkTheme: CustomTheme.lightTheme,
-    //);
-
     return MaterialApp(
         key: components.routes.appKey,
         debugShowCheckedModeBanner: false,

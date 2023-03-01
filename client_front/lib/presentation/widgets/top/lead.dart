@@ -219,18 +219,13 @@ class _PageLead extends State<PageLead> {
 
 
 */
-  static const Set<String> menuViewLocations = {
+  static const Set<String> menuLocations = {
     '/wallet/holdings',
     '/manage',
-    '/menu',
-    '/menu/settings',
-  };
 
-  static const Set<String> menuDoLocations = {
-    '/wallet/holdings',
-    '/manage',
-    '/menu',
-    '/menu/settings',
+    /// not a route.
+    //'/menu',
+    //'/menu/settings',
   };
 
   static const Set<String> emptyLocations = {
@@ -242,12 +237,39 @@ class _PageLead extends State<PageLead> {
   };
 
   @override
+  Widget build(BuildContext context) =>
+      BlocBuilder<BackContainerCubit, BackContainerCubitState>(
+          builder: (context, state) =>
+              menuLocations.contains(uiservices.sail.latestLocation)
+                  ? MenuLead(path: state.path)
+                  : BackLead());
+}
+
+class MenuLead extends StatelessWidget {
+  final String path;
+  const MenuLead({Key? key, this.path = ''}) : super(key: key);
+
+  @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: menuDoLocations.contains(uiservices.sail.latestLocation)
-            ? () => uiservices.sail.menu()
-            : () async => await uiservices.sail.back(),
-        child: menuViewLocations.contains(uiservices.sail.latestLocation)
-            ? const Icon(Icons.menu, color: Colors.white)
-            : const Icon(Icons.arrow_back, color: Colors.white),
+      onTap: () {
+        print(path);
+        if (path.startsWith('/menu/')) {
+          components.cubits.backContainer.previousMenu();
+        } else {
+          uiservices.sail.menu();
+        }
+      },
+      child: path.startsWith('/menu/')
+          ? const Icon(Icons.arrow_back, color: Colors.white)
+          : const Icon(Icons.menu, color: Colors.white));
+}
+
+class BackLead extends StatelessWidget {
+  const BackLead({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () async => uiservices.sail.back(),
+        child: const Icon(Icons.arrow_back, color: Colors.white),
       );
 }

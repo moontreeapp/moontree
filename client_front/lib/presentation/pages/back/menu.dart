@@ -1,0 +1,415 @@
+import 'package:client_front/presentation/widgets/other/fading.dart';
+import 'package:client_front/presentation/widgets/other/sliding.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:client_back/client_back.dart';
+import 'package:client_back/services/consent.dart';
+import 'package:client_front/domain/utils/auth.dart';
+import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/theme/theme.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/utilities/animation.dart'
+    as animation;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+
+class MenuRouter extends StatelessWidget {
+  final String path;
+  final String prior;
+  const MenuRouter({Key? key, required this.path, required this.prior})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (path == '/menu' && prior == '/') {
+      return MainMenu();
+    } else if (path == '/menu' && prior == '/menu/import_export') {
+      return SlideOutIn(
+          left: MainMenu(), right: ImportExportMenu(), enter: false);
+    } else if (path == '/menu' && prior == '/menu/settings') {
+      return SlideOutIn(left: MainMenu(), right: SettingsMenu(), enter: false);
+    } else if (path == '/menu/import_export') {
+      return SlideOutIn(left: MainMenu(), right: ImportExportMenu());
+    } else if (path == '/menu/settings') {
+      return SlideOutIn(left: MainMenu(), right: SettingsMenu());
+    } else {
+      return MainMenu();
+    }
+  }
+}
+
+class Menu extends StatelessWidget {
+  final String path;
+  final String prior;
+  const Menu({Key? key, required this.path, required this.prior})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+
+      //todo: use animated switcher to make nice transitions slide to the right.
+      //      requires putting the various sets of settings into their own
+      //      widgets and might require us keep memory of last one on the cubit.
+      //AnimatedSwitcher(
+      //  duration: animation.fadeDuration,
+      //  transitionBuilder: (Widget child, Animation<double> animation) =>
+      //      FadeTransition(
+      //          opacity: animation.drive(Tween<double>(begin: 0, end: 1)
+      //              .chain(CurveTween(curve: Curves.easeInOutCubic))),
+      //          child: child),
+      //  child: state.child,
+      //)),
+      //(options[components.cubits.backContainer.state.path] ??
+      //    options['/menu'])!
+      Container(
+          color: Theme.of(context).backgroundColor,
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(children: <Widget>[
+                  if (pros.wallets.length > 1)
+                    const Divider(indent: 0, color: AppColors.white12),
+                  MenuRouter(path: path, prior: prior),
+                ]),
+                if (services.password.required)
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Padding(
+                            padding: const EdgeInsets.only(left: 16, right: 16),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                    child: BottomButton(
+                                  enabled: true,
+                                  invert: true,
+                                  onPressed: logout,
+                                  label: 'Logout',
+                                ))
+                              ],
+                            )),
+                        //SizedBox(height: .065.ofMediaHeight(context) + 16)
+                        SizedBox(height: 40 * 2)
+                      ])
+                else
+                  Container(),
+              ]));
+}
+
+/// unused, made to facilitate animatedswitcher, but haven't been able to get
+/// that to work yet. MenuContainer(child: SettingsMenu) for example
+class MenuContainer extends StatelessWidget {
+  final Widget child;
+  const MenuContainer({Key? key, required this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Container(
+      color: Theme.of(context).backgroundColor,
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(children: <Widget>[
+              if (pros.wallets.length > 1)
+                const Divider(indent: 0, color: AppColors.white12),
+              child,
+            ]),
+            if (services.password.required)
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                                child: BottomButton(
+                              enabled: true,
+                              invert: true,
+                              onPressed: logout,
+                              label: 'Logout',
+                            ))
+                          ],
+                        )),
+                    //SizedBox(height: .065.ofMediaHeight(context) + 16)
+                    SizedBox(height: 40 * 2)
+                  ])
+            else
+              Container(),
+          ]));
+}
+
+//'/menu': ,
+class MainMenu extends StatelessWidget {
+  const MainMenu({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          MenuLink(
+            icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant,
+            name: 'Blockchain',
+            link: '/menu/network/blockchain',
+          ),
+          if (!services.developer.developerMode)
+            MenuLink(
+                icon: MdiIcons.shieldKey, name: 'Import', link: '/menu/import'),
+          if (!services.developer.developerMode && Current.balanceRVN.value > 0)
+            MenuLink(
+              icon: MdiIcons.broom,
+              name: 'Sweep',
+              link: '/menu/sweep',
+            ),
+          if (services.developer.developerMode)
+            MenuLink(
+              icon: MdiIcons.shieldKey,
+              name: 'Import & Export',
+              link: '/menu/import_export',
+              arrow: true,
+            ),
+          MenuLink(
+            icon: MdiIcons.drawPen,
+            name: 'Backup',
+            link: Current.wallet is LeaderWallet
+                ? '/security/backup'
+                : '/security/backupKeypair',
+          ),
+          MenuLink(
+            icon: Icons.settings,
+            name: 'Settings',
+            link: '/menu/settings',
+            arrow: true,
+          ),
+          /*
+          MenuLink(
+            icon: Icons.feedback,
+            name: 'Feedback',
+            link: '/menu/feedback',
+          ),
+          */
+          MenuLink(
+            icon: Icons.help,
+            name: 'Support',
+            link: '/menu/support',
+          ),
+          MenuLink(
+            icon: Icons.info_rounded,
+            name: 'About',
+            link: '/menu/about',
+          ),
+
+          /*
+          MenuLink(
+              icon: Icons.info_outline_rounded,
+              name: 'Clear Database',
+              link: '/home',
+              execute: ravenDatabase.deleteDatabase),
+          ListTile(
+              title: Text('test'),
+              leading: Icon(Icons.info_outline_rounded),
+              onTap: () async {
+                
+              }),
+          */
+          const SizedBox(height: 16),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style:
+                  Theme.of(components.routes.routeContext!).textTheme.bodyText2,
+              children: <TextSpan>[
+                TextSpan(
+                    text: 'User Agreement',
+                    style: Theme.of(components.routes.routeContext!)
+                        .textTheme
+                        .underlinedMenuLink,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl(Uri.parse(
+                            documentEndpoint(ConsentDocument.user_agreement)));
+                      }),
+                const TextSpan(text: '   '),
+                TextSpan(
+                    text: 'Privacy Policy',
+                    style: Theme.of(components.routes.routeContext!)
+                        .textTheme
+                        .underlinedMenuLink,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl(Uri.parse(
+                            documentEndpoint(ConsentDocument.privacy_policy)));
+                      }),
+                const TextSpan(text: '   '),
+                TextSpan(
+                    text: 'Risk Disclosure',
+                    style: Theme.of(components.routes.routeContext!)
+                        .textTheme
+                        .underlinedMenuLink,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        launchUrl(Uri.parse(documentEndpoint(
+                            ConsentDocument.risk_disclosures)));
+                      }),
+              ],
+            ),
+          )
+        ],
+      );
+}
+
+//'/menu/import_export': ,
+class ImportExportMenu extends StatelessWidget {
+  const ImportExportMenu({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          MenuLink(
+              icon: MdiIcons.keyPlus, name: 'Import', link: '/menu/import'),
+          MenuLink(
+              icon: MdiIcons.keyMinus,
+              name: 'Export',
+              link: '/menu/export',
+              disabled: !services.developer.advancedDeveloperMode),
+          if (services.developer.developerMode &&
+              (pros.securities.currentCoin.balance?.value ?? 0) > 0)
+            MenuLink(
+              icon: MdiIcons.broom,
+              name: 'Sweep',
+              link: '/menu/sweep',
+            ),
+        ],
+      );
+}
+
+///'/menu/settings'
+class SettingsMenu extends StatelessWidget {
+  const SettingsMenu({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          MenuLink(
+            icon: Icons.lock_rounded,
+            name: 'Security',
+            link: '/security/method/change',
+          ),
+          /*
+          if (!pros.settings.authMethodIsNativeSecurity)
+            MenuLink(
+              icon: Icons.lock_rounded,
+              name: 'Password',
+              link: '/security/password/change',
+            ),
+            */
+          /*
+          MenuLink(
+              icon: MdiIcons.accountCog,
+              name: 'User Level',
+              link: '/menu/level'),
+          
+          MenuLink( // has been combined with blockchain
+            icon: MdiIcons.network,
+            name: 'Network',
+            link: '/menu/network',
+          ),
+          */
+          /// we no longer derive all addresses on startup so... we have to
+          /// either derive once we go to this page, or remove it entirely.
+          //if (services.developer.advancedDeveloperMode)
+          //  MenuLink(
+          //    icon: Icons.format_list_bulleted_rounded,
+          //    name: 'Addresses',
+          //    link: '/addresses',
+          //  ),
+          MenuLink(
+            icon: MdiIcons.pickaxe,
+            name: 'Mining',
+            link: '/menu/network/mining',
+          ),
+          if (services.developer.developerMode)
+            MenuLink(
+              icon: MdiIcons.database,
+              name: 'Database',
+              link: '/menu/database',
+            ),
+          if (services.developer.advancedDeveloperMode == true)
+            MenuLink(
+              icon: MdiIcons.rocketLaunchOutline,
+              name: 'Advanced',
+              link: '/menu/advanced',
+            ),
+          MenuLink(
+            icon: MdiIcons.devTo,
+            name: 'Developer',
+            link: '/menu/developer',
+          ),
+        ],
+      );
+}
+
+class MenuLink extends StatelessWidget {
+  final String name;
+  final String link;
+  final IconData? icon;
+  final Image? image;
+  final bool arrow;
+  final Map<String, dynamic>? arguments;
+  final Function? execute;
+  final Function? executeAfter;
+  final bool disabled;
+  const MenuLink({
+    super.key,
+    required this.name,
+    required this.link,
+    this.icon,
+    this.image,
+    this.arguments,
+    this.execute,
+    this.executeAfter,
+    this.arrow = false,
+    this.disabled = false,
+  });
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+        onTap: disabled
+            ? () {}
+            : () {
+                if (execute != null) {
+                  execute!();
+                }
+                if (!arrow) {
+                  // todo: should snackbars be managed here or in sail? why is
+                  //       this here?
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  sail.to(link, arguments: arguments);
+                } else {
+                  // todo: stream unused. maybe this needs to talk to the cubit?
+                  //streams.app.setting.add(link);
+                  components.cubits.backContainer.update(path: link);
+                }
+                if (executeAfter != null) {
+                  executeAfter!();
+                }
+              },
+        leading: icon != null
+            ? Icon(icon, color: disabled ? AppColors.white60 : Colors.white)
+            : image!,
+        title: Text(name,
+            style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                color: disabled ? AppColors.white60 : AppColors.white)),
+        trailing: arrow
+            ? Icon(Icons.chevron_right,
+                color: disabled ? AppColors.white60 : Colors.white)
+            : null,
+      );
+}

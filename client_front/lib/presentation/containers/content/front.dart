@@ -20,6 +20,7 @@ class FrontContainer extends StatelessWidget {
               ));
 }
 
+/// broken out so it can be used elsewhere as well
 class FrontContainerView extends StatelessWidget {
   final Widget? child;
   final double? height;

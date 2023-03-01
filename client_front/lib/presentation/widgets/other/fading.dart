@@ -16,8 +16,8 @@ class FadeIn extends StatefulWidget {
 }
 
 class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
   @override
   void initState() {
@@ -25,13 +25,13 @@ class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 4000),
+      duration: widget.duration,
     );
 
     _animation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic))
       ..addListener(() {
-        setState(() {});
+        setState(() {}); // why is this here?
       });
 
     _controller.forward();

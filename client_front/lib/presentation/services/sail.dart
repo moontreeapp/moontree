@@ -1,5 +1,6 @@
 // import 'package:beamer/beamer.dart';
 import 'package:client_front/presentation/pages/splash.dart';
+import 'package:client_front/presentation/widgets/back/menu.dart';
 import 'package:flutter/material.dart';
 
 import 'package:client_back/streams/streams.dart';
@@ -12,7 +13,7 @@ enum Section { login, wallet, manage, swap, settings }
 
 class Manifest {
   final Section? section;
-  final Widget? backChild;
+  final String? backPath;
   final PageContainerHeight frontHeight;
   final NavbarHeight navbarHeight;
   final String? frontPath;
@@ -20,7 +21,7 @@ class Manifest {
   final bool extraHideFront;
   const Manifest({
     this.section,
-    this.backChild,
+    this.backPath,
     this.frontHeight = PageContainerHeight.same,
     this.navbarHeight = NavbarHeight.same,
     this.frontPath,
@@ -99,6 +100,7 @@ class Sail {
       frontHeight: PageContainerHeight.max,
       navbarHeight: NavbarHeight.max,
       frontPath: '/wallet/holdings',
+      backPath: '/menu',
     ),
     '/wallet/holding': Manifest(
       section: Section.wallet,
@@ -117,19 +119,22 @@ class Sail {
       frontHeight: PageContainerHeight.max,
       navbarHeight: NavbarHeight.max,
       frontPath: '/manage',
+      backPath: '/menu',
     ),
-    '/menu': Manifest(
-      section: Section.settings,
-      frontHeight: PageContainerHeight.min,
-      navbarHeight: NavbarHeight.hidden,
-      frontPath: null,
-    ),
-    '/menu/settings': Manifest(
-      section: Section.settings,
-      frontHeight: PageContainerHeight.min,
-      navbarHeight: NavbarHeight.hidden,
-      frontPath: null,
-    ),
+
+    /// removed as a route. simplified a lot.
+    //'/menu': Manifest(
+    //  section: Section.settings,
+    //  frontHeight: PageContainerHeight.min,
+    //  navbarHeight: NavbarHeight.hidden,
+    //  frontPath: null,
+    //),
+    //'/menu/settings': Manifest(
+    //  section: Section.settings,
+    //  frontHeight: PageContainerHeight.min,
+    //  navbarHeight: NavbarHeight.hidden,
+    //  frontPath: null,
+    //),
     '/settings/example': Manifest(
       section: Section.settings,
       frontHeight: PageContainerHeight.max,
@@ -153,10 +158,14 @@ class Sail {
 
   String? latestLocation;
 
-  void menu() async =>
-      components.cubits.frontContainer.menuToggle(); //await to('/menu') ?? '';
+  void menu() async => components.cubits.frontContainer.menuToggle();
 
   Future<String> back() async {
+    /// todo: extra content is only used on transactions history page right now,
+    ///       but we might use it elsewhere of course, so this shouldn't be
+    ///       'when navigating back to /wallet/holdings' it should be based on
+    ///       if that container/ cubits have anything in them. do it when
+    ///       conforming the transaction history page so you can test it easily.
     // any page that uses ContentExtra layer for draggable sheets
     if (['/wallet/holdings'].contains(latestLocation)) {
       // show front layer and instantly remove extra content before anything else.
@@ -266,7 +275,7 @@ class Sail {
     //components.cubits.navbarHeight.setHeightTo(height: manifest.navbarHeight);
 
     // update back stuff
-    components.cubits.backContainer.update(child: manifest.backChild);
+    components.cubits.backContainer.update(path: manifest.backPath);
 
     // update front height,
     components.cubits.frontContainer.setHeightTo(height: manifest.frontHeight);

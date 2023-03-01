@@ -11,21 +11,46 @@ class BackContainerCubit extends Cubit<BackContainerCubitState>
     with HeightCubitMixin {
   BackContainerCubit()
       : super(BackContainerState(
-            height: services.screen.backContainer.maxHeight,
-            child: SizedBox.shrink()));
+          height: services.screen.backContainer.maxHeight,
+          path: '/',
+          priorPath: '/',
+        ));
 
-  void update({double? height, Widget? child}) => emit(BackContainerState(
-      height: height ?? state.height, child: child ?? state.child));
+  void previousMenu() {
+    if (state.path.startsWith('/menu/')) {
+      final x = state.path.split('/');
+      return emit(BackContainerState(
+        height: state.height,
+        path: x.sublist(0, x.length - 1).join('/'),
+        priorPath: state.path,
+      ));
+    }
+  }
+
+  void update({double? height, String? path}) => emit(BackContainerState(
+        height: height ?? state.height,
+        path: path ?? state.path,
+        priorPath: path == state.path ? state.priorPath : state.path,
+      ));
 
   @override
   void max() => emit(BackContainerState(
-      height: services.screen.backContainer.maxHeight, child: state.child));
+        height: services.screen.backContainer.maxHeight,
+        path: state.path,
+        priorPath: state.priorPath,
+      ));
 
   @override
   void mid() => emit(BackContainerState(
-      height: services.screen.backContainer.midHeight, child: state.child));
+        height: services.screen.backContainer.midHeight,
+        path: state.path,
+        priorPath: state.priorPath,
+      ));
 
   @override
   void hidden() => emit(BackContainerState(
-      height: services.screen.backContainer.hiddenHeight, child: state.child));
+        height: services.screen.backContainer.hiddenHeight,
+        path: state.path,
+        priorPath: state.priorPath,
+      ));
 }
