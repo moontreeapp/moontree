@@ -2,9 +2,9 @@ import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/presentation/widgets/bottom/snackbar.dart';
-import 'package:client_front/presentation/widgets/top/connection.dart';
-import 'package:client_front/presentation/widgets/top/lead.dart';
-import 'package:client_front/presentation/widgets/top/title.dart';
+import 'package:client_front/presentation/pages/appbar/connection.dart';
+import 'package:client_front/presentation/pages/appbar/lead.dart';
+import 'package:client_front/presentation/pages/appbar/title.dart';
 import 'package:client_front/application/title/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/components/components.dart'
@@ -53,9 +53,7 @@ class AppBarLeft extends StatelessWidget {
       BlocBuilder<TitleCubit, TitleCubitState>(
           builder: (context, state) =>
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                if (!PageLead.emptyLocations.contains(state.path)) PageLead(),
-                if (!PageLead.emptyLocations.contains(state.path))
-                  SizedBox(width: 10),
+                if (PageLead.show(state.path)) PageLead(),
                 //Container(
                 //    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 //    height: uiservices.screen.app.appBarHeight,

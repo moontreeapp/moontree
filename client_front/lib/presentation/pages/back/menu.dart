@@ -175,8 +175,8 @@ class MainMenu extends StatelessWidget {
             icon: MdiIcons.drawPen,
             name: 'Backup',
             link: Current.wallet is LeaderWallet
-                ? '/security/backup'
-                : '/security/backupKeypair',
+                ? '/backup/intro'
+                : '/backup/keypair',
           ),
           MenuLink(
             icon: Icons.settings,

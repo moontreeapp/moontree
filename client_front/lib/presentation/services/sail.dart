@@ -253,7 +253,7 @@ class Sail {
     //);
     String location = _handleHistoryRemoval();
     final manifest = destinationMap[location]!;
-    updateCubits(location, manifest);
+    updateCubits(location, manifest, back: true);
     //Navigator.of(components.routes.scaffoldContext!).pop();
     components.routes.navigatorKey.currentState!.pop();
     return location;
@@ -265,7 +265,7 @@ class Sail {
   void broadcast(String location) =>
       latestLocation = location; // streams.app.path.add(location);
 
-  void updateCubits(String location, Manifest manifest) {
+  void updateCubits(String location, Manifest manifest, {bool back = false}) {
     broadcast(location);
 
     // update app bar stuff
@@ -277,8 +277,21 @@ class Sail {
     // update back stuff
     components.cubits.backContainer.update(path: manifest.backPath);
 
-    // update front height,
-    components.cubits.frontContainer.setHeightTo(height: manifest.frontHeight);
+    // update front height
+    if (back) {
+      // we might want to show the menu...
+      if (
+          // (if we're going home and ...)
+          ['/wallet/holdings', '/manage', '/swap'].contains(location) &&
+              // (if we came from the menu)
+              components.cubits.backContainer.state.path.startsWith('/menu')) {
+        components.cubits.frontContainer
+            .setHeightTo(height: PageContainerHeight.min);
+      }
+    } else {
+      components.cubits.frontContainer
+          .setHeightTo(height: manifest.frontHeight);
+    }
 
     // fade out front
 
