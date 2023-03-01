@@ -140,7 +140,7 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/backup/keypair': (BuildContext context) => const ShowKeypair(),
   '/backup/seed': (BuildContext context) => const BackupSeed(),
   '/backup/verify': (BuildContext context) => const VerifySeed(),
-  '/restore/import': (BuildContext context) => const Import(),
+  '/restore/import': (BuildContext context) => const ImportPage(),
   //'/restore/export': (BuildContext context) => const Export(),
 };
 

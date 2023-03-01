@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:client_back/client_back.dart';
@@ -13,55 +14,37 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show getEntropy, saveSecret;
+import 'package:client_front/application/import/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
-class Import extends StatefulWidget {
-  final dynamic data;
-  const Import({Key? key, this.data}) : super(key: key);
+class ImportPage extends StatelessWidget {
+  const ImportPage({Key? key}) : super(key: key);
 
   @override
-  _ImportState createState() => _ImportState();
+  Widget build(BuildContext context) => Import();
 }
 
-class _ImportState extends State<Import> {
-  FocusNode wordsFocus = FocusNode();
-  FocusNode submitFocus = FocusNode();
-  TextEditingController words = TextEditingController();
-  bool importEnabled = false;
-  String importFormatDetected = '';
-  final Backup storage = Backup();
+class Import extends StatelessWidget {
+  Import({Key? key}) : super(key: key);
+
+  final FocusNode wordsFocus = FocusNode();
+  final FocusNode submitFocus = FocusNode();
+  final TextEditingController words = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController salt = TextEditingController();
-  FileDetails? file;
-  String? finalText;
-  bool importVisible = true;
-  bool submittedAttempt = false;
-  ImportFormat detection = ImportFormat.invalid;
-
-  @override
-  void initState() {
-    super.initState();
-    //wordsFocus.addListener(_handleFocusChange);
-  }
-
-  //void _handleFocusChange() {
-  //  setState(() {});
-  //}
-
-  @override
-  void dispose() {
-    //wordsFocus.removeListener(_handleFocusChange);
-    words.dispose();
-    wordsFocus.dispose();
-    submitFocus.dispose();
-    super.dispose();
-  }
+  late BuildContext buildContext;
 
   Future<String> getClip() async {
+    if (Platform.isIOS) {
+      return '';
+    }
     final ClipboardData? clip = await Clipboard.getData('text/plain');
     if (clip != null) {
       return clip.text ?? '';
@@ -69,210 +52,53 @@ class _ImportState extends State<Import> {
     return '';
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BackdropLayers(
-        back: const BlankBack(),
-        front: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-              enableImport();
-            },
-            child: FrontCurve(
-              fuzzyTop: false,
-              child: Platform.isIOS
-                  ? body()
-                  : FutureBuilder<String>(
-                      future: getClip(),
-                      builder: (BuildContext context,
-                              AsyncSnapshot<Object?> snapshot) =>
-                          body(snapshot.data as String?)),
-            )));
+  void focusSubmit() async {
+    FocusScope.of(buildContext).requestFocus(submitFocus);
   }
 
-  Widget body([String? clip]) => Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          if (file == null) textInputField(clip) else filePicked,
-          components.containers.navBar(
-            context,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: file == null
-                    ? <Widget>[
-                        if (services.developer.advancedDeveloperMode &&
-                            !Platform.isIOS &&
-                            words.text == '') ...<Widget>[
-                          fileButton,
-                          const SizedBox(width: 16)
-                        ],
-                        submitButton(),
-                      ]
-                    : <Widget>[submitButton('Import File')]),
-          )
-        ],
-      );
-
-  Widget textInputField([String? clip]) => Container(
-      height: 200,
-      padding: const EdgeInsets.only(
-        top: 16,
-        left: 16.0,
-        right: 16.0,
-      ),
-      child: TextFieldFormatted(
-          focusNode: wordsFocus,
-          selectionControls: CustomMaterialTextSelectionControls(
-              context: components.routes.scaffoldContext,
-              offset: const Offset(0, 20)),
-          autocorrect: false,
-          controller: words,
-          obscureText: !importVisible,
-          keyboardType: TextInputType.multiline,
-          maxLines: importVisible ? 12 : 1,
-          textInputAction: TextInputAction.done,
-          // interferes with voice - one word at a time:
-          //inputFormatters: <TextInputFormatter>[LowerCaseTextFormatter()],
-          labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
-          hintText: 'Please enter seed words, a WIF, or a private key.',
-          helperText:
-              importFormatDetected == 'Unknown' ? null : importFormatDetected,
-          errorText: submittedAttempt
-              ? importFormatDetected == 'Unknown'
-                  ? importFormatDetected
-                  : null
-              : null,
-          suffixIcon: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                      importVisible ? Icons.visibility : Icons.visibility_off,
-                      color: AppColors.black60),
-                  onPressed: () => setState(() {
-                    importVisible = !importVisible;
-                  }),
-                ),
-                if (clip != null && validateValue(clip))
-                  IconButton(
-                      icon: const Icon(Icons.paste_rounded,
-                          color: AppColors.black60),
-                      onPressed: () => setState(() {
-                            words.text = clip;
-                            enableImport();
-                          })),
-                if (clip == null)
-                  IconButton(
-                      icon: const Icon(Icons.paste_rounded,
-                          color: AppColors.black60),
-                      onPressed: () async {
-                        final String clip = await getClip();
-                        setState(() {
-                          words.text = clip;
-                          enableImport();
-                        });
-                      }),
-                IconButton(
-                    icon: Icon(Icons.clear_rounded,
-                        color: words.text != ''
-                            ? AppColors.black60
-                            : AppColors.black12),
-                    onPressed: () => setState(() {
-                          importFormatDetected = '';
-                          words.text = '';
-                        })),
-              ]),
-          onChanged: (String value) {
-            submittedAttempt = false;
-            enableImport();
-          },
-          onEditingComplete: () {
-            enableImport();
-            FocusScope.of(context).requestFocus(submitFocus);
-          }));
-
-  Widget get filePicked => Column(children: <Widget>[
-        Padding(
-            //padding: const EdgeInsets.only(left: 8, top: 16.0),
-            padding: const EdgeInsets.only(left: 16, top: 16),
-            child: ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              leading:
-                  const Icon(Icons.attachment_rounded, color: Colors.black),
-              title: Text(file!.filename,
-                  style: Theme.of(context).textTheme.bodyText1),
-              subtitle: Text('${file!.size.toString()} KB',
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      height: 1,
-                      fontWeight: FontWeights.semiBold,
-                      color: AppColors.black38)),
-              trailing: IconButton(
-                  icon:
-                      const Icon(Icons.close_rounded, color: Color(0xDE000000)),
-                  onPressed: () => setState(() => file = null)),
-            )),
-        const Divider(),
-      ]);
-
-  Widget submitButton([String? label]) =>
-      components.buttons.actionButton(context,
-          enabled: true, // importEnabled,
-          focusNode: submitFocus,
-          label: (label ?? 'Import').toUpperCase(),
-          disabledIcon: components.icons.importDisabled(context),
-          onPressed: () async {
-        setState(() {
-          submittedAttempt = true;
-        });
-        if (importEnabled) {
-          await attemptImport(file?.content ?? words.text);
-        } else {
-          enableImport();
-          if (importEnabled) {
-            await attemptImport(file?.content ?? words.text);
-          }
-        }
-      });
-
-  Widget get fileButton => components.buttons.actionButton(
-        context,
-        label: 'File',
-        onPressed: () async {
-          file = await storage.readFromFilePickerSize();
-          enableImport(given: file?.content ?? '');
-          setState(() {});
-        },
-      );
-
-  bool validateValue(String? given) =>
-      services.wallet.import.detectImportType((given ?? words.text).trim()) !=
-      ImportFormat.invalid;
-
-  void enableImport({String? given}) {
-    final String oldImportFormatDetected = importFormatDetected;
-    detection =
-        services.wallet.import.detectImportType((given ?? words.text).trim());
-    importEnabled = detection != ImportFormat.invalid;
-    if (detection == ImportFormat.mnemonic) {
-      words.text = words.text.toLowerCase();
-    }
-    if (importEnabled) {
-      importFormatDetected =
-          'format recognized as ${detection.toString().split('.')[1]}';
-    } else {
-      importFormatDetected = '';
-    }
-    if (detection == ImportFormat.invalid) {
-      importFormatDetected = 'Unknown';
-    }
-    if (oldImportFormatDetected != importFormatDetected) {
-      setState(() {});
-    }
+  @override
+  Widget build(BuildContext context) {
+    buildContext = context;
+    return FutureBuilder<String>(
+        future: getClip(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) =>
+            BlocBuilder<ImportFormCubit, ImportFormState>(
+                builder: (context, state) {
+              words.text = state.words;
+              return PageStructure(
+                  children: <Widget>[
+                    if (state.file == null)
+                      WordInput(
+                        clip: snapshot.data,
+                        state: state,
+                        words: words,
+                        wordsFocus: wordsFocus,
+                      )
+                    else
+                      FilePicked(state: state),
+                  ],
+                  firstLowerChildren: state.file == null
+                      ? <Widget>[
+                          if (services.developer.advancedDeveloperMode &&
+                              !Platform.isIOS &&
+                              words.text == '') ...<Widget>[
+                            FileButton(),
+                            const SizedBox(width: 16)
+                          ],
+                          SubmitButton(state: state, submitFocus: submitFocus),
+                        ]
+                      : <Widget>[
+                          SubmitButton(
+                              label: 'Import File',
+                              state: state,
+                              submitFocus: submitFocus)
+                        ]);
+            }));
+    //body(snapshot.data as String?)),
   }
 
   Future<void> requestPassword() async => showDialog(
-      context: context,
+      context: buildContext,
       builder: (BuildContext context) {
         streams.app.scrim.add(true);
         return AlertDialog(
@@ -302,7 +128,7 @@ class _ImportState extends State<Import> {
       }).then((dynamic value) => streams.app.scrim.add(false));
 
   Future<void> requestSalt() async => showDialog(
-      context: context,
+      context: buildContext,
       builder: (BuildContext context) {
         streams.app.scrim.add(true);
         return AlertDialog(
@@ -331,13 +157,13 @@ class _ImportState extends State<Import> {
       }).then((dynamic value) => streams.app.scrim.add(false));
 
   Future<void> attemptImport([String? importData]) async {
-    FocusScope.of(context).unfocus();
+    FocusScope.of(buildContext).unfocus();
     String text = (importData ?? words.text).trim();
     String resp = text;
     bool encrypted = true;
     Map<String, dynamic> textJson;
 
-    if (detection == ImportFormat.json) {
+    if (components.cubits.import.state.detection == ImportFormat.json) {
       /// decrypt if you must...
       if (importData != null) {
         try {
@@ -371,11 +197,9 @@ class _ImportState extends State<Import> {
             if (password.text == '' && salt.text == '') {
               break;
             }
-            await components.loading.screen(
-              message: 'Decrypting',
-              staticImage: true,
-              playCount: 2,
-            );
+            components.cubits.loadingView
+                .show(title: 'Decrypting', msg: 'one moment please');
+
             try {
               final Map<String, dynamic> wallets =
                   textJson['wallets']! as Map<String, dynamic>;
@@ -404,13 +228,14 @@ class _ImportState extends State<Import> {
             } catch (e) {
               log(e);
             }
+            components.cubits.loadingView.hide();
             if (resp != text) {
               break;
             }
           }
           if (resp == text && encrypted) {
             showDialog(
-                context: context,
+                context: buildContext,
                 builder: (BuildContext context) {
                   streams.app.scrim.add(true);
                   return const AlertDialog(
@@ -424,22 +249,202 @@ class _ImportState extends State<Import> {
         text = resp;
       }
     }
-    /* will fix decryption later
-    */
 
     /// save the key
-
     /// save the wallet
-    components.loading.screen(
-      message: 'Importing',
-      staticImage: true,
-      playCount: 2,
-      then: () async => streams.import.attempt.add(ImportRequest(
-        text: text,
-        /*onSuccess: populateWalletsWithSensitives*/
-        getEntropy: getEntropy,
-        saveSecret: saveSecret,
-      )),
-    );
+    ///
+    components.cubits.loadingView
+        .show(title: 'Importing', msg: 'one moment please');
+    streams.import.attempt.add(ImportRequest(
+      text: text,
+      /*onSuccess: populateWalletsWithSensitives*/
+      getEntropy: getEntropy,
+      saveSecret: saveSecret,
+    ));
+    await Future<void>.delayed(Duration(milliseconds: 1330 * 2));
+    //components.loading.screen(
+    //  message: 'Importing',
+    //  staticImage: true,
+    //  playCount: 2,
+    //  then: () async => streams.import.attempt.add(ImportRequest(
+    //    text: text,
+    //    /*onSuccess: populateWalletsWithSensitives*/
+    //    getEntropy: getEntropy,
+    //    saveSecret: saveSecret,
+    //  )),
+    //);
+    components.cubits.loadingView.hide();
+    components.cubits.import.reset();
+    sail.home();
   }
+}
+
+class WordInput extends StatelessWidget {
+  final String? clip;
+  final ImportFormState state;
+  final FocusNode wordsFocus;
+  final TextEditingController words;
+
+  const WordInput({
+    super.key,
+    required this.clip,
+    required this.state,
+    required this.wordsFocus,
+    required this.words,
+  });
+
+  @override
+  Widget build(BuildContext context) => Container(
+      height: 200,
+      child: TextFieldFormatted(
+          focusNode: wordsFocus,
+          selectionControls: CustomMaterialTextSelectionControls(
+              context: components.routes.scaffoldContext,
+              offset: const Offset(0, 20)),
+          autocorrect: false,
+          controller: words,
+          obscureText: !state.importVisible,
+          keyboardType: TextInputType.multiline,
+          maxLines: state.importVisible ? 12 : 1,
+          textInputAction: TextInputAction.done,
+          // interferes with voice - one word at a time:
+          //inputFormatters: <TextInputFormatter>[LowerCaseTextFormatter()],
+          labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
+          hintText: 'Please enter seed words, a WIF, or a private key.',
+          helperText: state.importFormatDetected == 'Unknown'
+              ? null
+              : state.importFormatDetected,
+          errorText: state.submittedAttempt
+              ? state.importFormatDetected == 'Unknown'
+                  ? state.importFormatDetected
+                  : null
+              : null,
+          suffixIcon:
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: <
+                  Widget>[
+            IconButton(
+              icon: Icon(
+                  state.importVisible ? Icons.visibility : Icons.visibility_off,
+                  color: AppColors.black60),
+              onPressed: () => components.cubits.import
+                  .set(importVisible: !state.importVisible),
+            ),
+            if (clip != null && components.cubits.import.validateValue(clip))
+              IconButton(
+                  icon:
+                      const Icon(Icons.paste_rounded, color: AppColors.black60),
+                  onPressed: () {
+                    components.cubits.import.set(words: clip);
+                    components.cubits.import.enableImport();
+                  }),
+            if (clip == null)
+              IconButton(
+                  icon:
+                      const Icon(Icons.paste_rounded, color: AppColors.black60),
+                  onPressed: () async {
+                    final String clip = await (context
+                            .findAncestorWidgetOfExactType<Import>() as Import)
+                        .getClip();
+                    components.cubits.import.set(words: clip);
+                    components.cubits.import.enableImport();
+                  }),
+            IconButton(
+                icon: Icon(Icons.clear_rounded,
+                    color: words.text != ''
+                        ? AppColors.black60
+                        : AppColors.black12),
+                onPressed: () => components.cubits.import
+                    .set(words: '', importFormatDetected: '')),
+          ]),
+          onChanged: (String value) {
+            components.cubits.import.set(submittedAttempt: false, words: value);
+            components.cubits.import.enableImport();
+          },
+          onEditingComplete: () {
+            components.cubits.import.enableImport();
+            (context.findAncestorWidgetOfExactType<Import>() as Import)
+                .focusSubmit();
+          }));
+}
+
+class SubmitButton extends StatelessWidget {
+  final FocusNode submitFocus;
+  final String? label;
+  final ImportFormState state;
+  const SubmitButton({
+    super.key,
+    required this.submitFocus,
+    required this.state,
+    this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) => BottomButton(
+      enabled: state.importEnabled,
+      focusNode: submitFocus,
+      label: (label ?? 'Import').toUpperCase(),
+      disabledIcon: components.icons.importDisabled(context),
+      onPressed: () async {
+        components.cubits.import.set(submittedAttempt: true);
+        if (state.importEnabled) {
+          await (context.findAncestorWidgetOfExactType<Import>() as Import)
+              .attemptImport(components.cubits.import.state.file?.content ??
+                  components.cubits.import.state.words);
+        } else {
+          components.cubits.import.enableImport();
+          if (components.cubits.import.state.importEnabled) {
+            await (context.findAncestorWidgetOfExactType<Import>() as Import)
+                .attemptImport(components.cubits.import.state.file?.content ??
+                    components.cubits.import.state.words);
+          }
+        }
+      });
+}
+
+class FilePicked extends StatelessWidget {
+  final ImportFormState state;
+  const FilePicked({
+    super.key,
+    required this.state,
+  });
+
+  @override
+  Widget build(BuildContext context) => Column(children: <Widget>[
+        Padding(
+            //padding: const EdgeInsets.only(left: 8, top: 16.0),
+            padding: const EdgeInsets.only(left: 16, top: 16),
+            child: ListTile(
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              leading:
+                  const Icon(Icons.attachment_rounded, color: Colors.black),
+              title: Text(state.file!.filename,
+                  style: Theme.of(context).textTheme.bodyText1),
+              subtitle: Text('${state.file!.size.toString()} KB',
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      height: 1,
+                      fontWeight: FontWeights.semiBold,
+                      color: AppColors.black38)),
+              trailing: IconButton(
+                  icon:
+                      const Icon(Icons.close_rounded, color: Color(0xDE000000)),
+                  onPressed: () => components.cubits.import.set(file: null)),
+            )),
+        const Divider(),
+      ]);
+}
+
+class FileButton extends StatelessWidget {
+  const FileButton({super.key});
+
+  @override
+  Widget build(BuildContext context) => BottomButton(
+        label: 'File',
+        onPressed: () async {
+          components.cubits.import
+              .set(file: await Backup().readFromFilePickerSize());
+          components.cubits.import.enableImport(
+              given: components.cubits.import.state.file?.content ?? '');
+        },
+      );
 }

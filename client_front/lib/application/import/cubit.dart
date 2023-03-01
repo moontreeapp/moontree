@@ -1,3 +1,5 @@
+//todo: merge the streams and listener into this.
+
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
@@ -55,5 +57,33 @@ class ImportFormCubit extends Cubit<ImportFormState> with SetCubitMixin {
       finalAccountId: finalAccountId,
       isSubmitting: isSubmitting,
     ));
+  }
+
+  bool validateValue(String? given) =>
+      services.wallet.import.detectImportType((given ?? state.words).trim()) !=
+      ImportFormat.invalid;
+
+  void enableImport({String? given}) {
+    String words = (given ?? state.words);
+    final detection = services.wallet.import.detectImportType(words.trim());
+    final importEnabled = detection != ImportFormat.invalid;
+    late String? importFormatDetected;
+    if (importEnabled) {
+      importFormatDetected =
+          'format recognized as ${detection.toString().split('.')[1]}';
+    } else {
+      importFormatDetected = '';
+    }
+    if (detection == ImportFormat.mnemonic) {
+      words = state.words.toLowerCase();
+    } else if (detection == ImportFormat.invalid) {
+      importFormatDetected = 'Unknown';
+    }
+    set(
+      detection: detection,
+      importEnabled: importEnabled,
+      importFormatDetected: importFormatDetected,
+      words: words,
+    );
   }
 }

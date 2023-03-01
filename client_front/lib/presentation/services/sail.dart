@@ -197,7 +197,10 @@ class Sail {
     return location;
   }
 
-  Future<void> home([String location = '/wallet/holdings']) async {
+  Future<void> home({
+    String location = '/wallet/holdings',
+    bool forceFullScreen = true,
+  }) async {
     // if /wallet/holdings in DestinationHistory
     if (destinationHistory[Section.wallet]!.contains(location)) {
       while (await back() != location &&
@@ -206,6 +209,10 @@ class Sail {
       }
     } else {
       await to(location);
+    }
+    if (forceFullScreen) {
+      components.cubits.frontContainer
+          .setHeightTo(height: FrontContainerHeight.max);
     }
   }
 
