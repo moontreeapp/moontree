@@ -24,7 +24,6 @@ class Repository<T> {
         return results;
       }
       var resultLocal;
-      print(fromLocal.runtimeType);
       if (fromLocal.runtimeType.toString().contains('Future<')) {
         resultLocal = await fromLocal();
       } else {

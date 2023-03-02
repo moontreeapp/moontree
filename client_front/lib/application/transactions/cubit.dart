@@ -1,4 +1,6 @@
 import 'dart:math';
+
+
 import 'package:collection/src/iterable_extensions.dart' show IterableExtension;
 import 'package:rxdart/rxdart.dart';
 import 'package:bloc/bloc.dart';
@@ -6,7 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_front/infrastructure/repos/transactions.dart';
+import 'package:client_front/infrastructure/repos/mempool_transactions.dart';
+import 'package:client_front/infrastructure/repos/transactions.dart';
+import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:client_front/application/common.dart';
 
@@ -36,6 +42,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   @override
   void set({
     List<TransactionView>? transactionViews,
+    List<TransactionView>? mempoolViews,
     AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
@@ -47,6 +54,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   }) {
     emit(state.load(
       transactionViews: transactionViews,
+      mempoolViews: mempoolViews,
       metadataView: metadataView,
       wallet: wallet,
       security: security,
@@ -72,22 +80,57 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   /// contents of the cubit)
   bool get cleared => state.ranWallet == null;
 
+  Future<void> setInitial({bool force = false}) async {
+    setMempoolTransactionViews(force: force);
+    setTransactionViews(force: force);
+    setMetadataView(force: force);
+  }
+
+  Future<void> setMetadataView({bool force = false}) async {
+    if (force || state.metadataView == null) {
+      final checkCleared = state.ranWallet != null;
+      submitting();
+      final metadataView = (await AssetMetadataHistoryRepo(
+        security: state.security,
+      ).get())
+          .firstOrNull;
+      if (checkCleared && cleared) {
+        return;
+      }
+      set(
+        metadataView: metadataView,
+        isSubmitting: false,
+      );
+    }
+  }
+
+  Future<void> setMempoolTransactionViews({bool force = false}) async {
+    if (force || state.mempoolViews.isEmpty) {
+      submitting();
+      final mempoolViews = await MempoolTransactionHistoryRepo(
+        wallet: state.wallet,
+        security: state.security,
+      ).fetch(only: true);
+      set(
+        mempoolViews: mempoolViews.toList(),
+        isSubmitting: false,
+      );
+    }
+  }
+
   Future<void> setTransactionViews({bool force = false}) async {
     if (force ||
         state.wallet != state.ranWallet ||
         state.security != state.ranSecurity) {
       submitting();
       final checkCleared = state.ranWallet != null;
-
       final transactionViews = await TransactionHistoryRepo(
         wallet: state.wallet,
         security: state.security,
       ).fetch(only: true);
-
       if (checkCleared && cleared) {
         return;
       }
-
       set(
         transactionViews: transactionViews.toList(),
         ranWallet: state.wallet,
@@ -112,9 +155,9 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
           .fetch(only: true);
       /*
       kralverde — Today at 9:06 AM
-        if you look at the actual vins from https://evr.cryptoscope.io/api/getrawtransaction/?txid=df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188&decode=1 they will match 
+        if you look at the actual vins from https://evr.cryptoscope.io/api/getrawtransaction/?txid=df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188&decode=1 they will match
         the client side fix would just be to maintain a set of heights already seen
-        if the vouttransactionstructthingie's height is in that set, ignore it 
+        if the vouttransactionstructthingie's height is in that set, ignore it
       meta stack — Today at 9:08 AM
         but couldn't we have multiple transactions at the same height?
       kralverde — Today at 9:08 AM
@@ -124,7 +167,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
         ah, so only compare against the list that was generated before the current batch?
       kralverde — Today at 9:09 AM
         it would have to be against the entire list, but yes
-        just keep a set<int>, if x.height in set, ignore, else insert x.height into the set + add to the ui 
+        just keep a set<int>, if x.height in set, ignore, else insert x.height into the set + add to the ui
       */
       /// by individual transaction solution - this clears up all the semi-duplicate erroneous inputs but I think it also removes potentially good transactions as we could have multiple unrelated transactions in the same height and this would filter those out too...
       /// preferring this one as multiple transactions at the same height is a more rare occurance I think.
@@ -172,24 +215,6 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
           isSubmitting: false,
         );
       }
-    }
-  }
-
-  Future<void> setMetadataView({bool force = false}) async {
-    if (force || state.metadataView == null) {
-      final checkCleared = state.ranWallet != null;
-      submitting();
-      final metadataView = (await AssetMetadataHistoryRepo(
-        security: state.security,
-      ).get())
-          .firstOrNull;
-      if (checkCleared && cleared) {
-        return;
-      }
-      set(
-        metadataView: metadataView,
-        isSubmitting: false,
-      );
     }
   }
 

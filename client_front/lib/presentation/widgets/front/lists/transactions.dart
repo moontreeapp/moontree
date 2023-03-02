@@ -14,6 +14,7 @@ import 'package:client_front/presentation/theme/theme.dart';
 
 class TransactionList extends StatefulWidget {
   final TransactionsViewCubit? cubit;
+  final Iterable<TransactionView>? mempool;
   final Iterable<TransactionView>? transactions;
   final String? symbol;
   final String? msg;
@@ -21,6 +22,7 @@ class TransactionList extends StatefulWidget {
 
   const TransactionList({
     this.cubit,
+    this.mempool,
     this.transactions,
     this.symbol,
     this.msg,
@@ -92,13 +94,15 @@ class _TransactionListState extends State<TransactionList> {
 
   Future<void> refresh() async {
     setState(() {
+      widget.cubit?.setMempoolTransactionViews(force: true);
       widget.cubit?.setTransactionViews(force: true);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    transactions = widget.transactions ?? [];
+    transactions = (widget.mempool?.toList() ?? []) +
+        (widget.transactions?.toList() ?? []);
     // ?? services.transaction.getTransactionViewSpoof(wallet: Current.wallet);
     if (transactions.isEmpty) {
       transactionCount = pros.unspents.bySymbol
@@ -190,9 +194,16 @@ class _TransactionListState extends State<TransactionList> {
                                                   ? transactionView.security
                                                   : null,
                                           asUSD: showUSD),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1),
+                                      style: // example logic for mempool differentiation
+                                          transactionView.height <= 0
+                                              ? Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1!
+                                                  .copyWith(
+                                                      color: AppColors.disabled)
+                                              : Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1),
                                   Text(
                                       '${transactionView.formattedDatetime} ${transactionView.type.specialPaddedDisplay(transactionView.feeOnly, transactionView.consolidationToSelf)}',
                                       style: Theme.of(context)

@@ -97,6 +97,7 @@ class TransactionsContent extends StatelessWidget {
                   cubit: cubit,
                   scrollController: scrollController,
                   symbol: cubit.state.security.symbol,
+                  mempool: cubit.state.mempoolViews,
                   transactions: cubit.state.transactionViews,
                   msg: '\nNo ${cubit.state.security.symbol} transactions.\n')
               : MetaDataWidget(cachedMetadataView);

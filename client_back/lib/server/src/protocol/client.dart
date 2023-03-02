@@ -12,9 +12,9 @@ import 'comm_int.dart' as _i3;
 import 'asset_metadata_class.dart' as _i4;
 import 'comm_balance_view.dart' as _i5;
 import 'dart:typed_data' as _i6;
+import 'comm_transaction_view.dart' as _i7;
 import 'comm_transaction_details_view.dart'
-    as _i7;
-import 'comm_transaction_view.dart' as _i8;
+    as _i8;
 import 'comm_unsigned_transaction_result_class.dart'
     as _i9;
 import 'comm_unsigned_transaction_request_class.dart'
@@ -168,6 +168,32 @@ class _EndpointExample extends _i1.EndpointRef {
       );
 }
 
+class _EndpointMempoolTransactions extends _i1.EndpointRef {
+  _EndpointMempoolTransactions(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'mempoolTransactions';
+
+  _i2.Future<List<_i7.TransactionView>> get({
+    String? symbol,
+    int? backFromHeight,
+    required String chainName,
+    required List<String> xpubkeys,
+    required List<_i6.ByteData> h160s,
+  }) =>
+      caller.callServerEndpoint<List<_i7.TransactionView>>(
+        'mempoolTransactions',
+        'get',
+        {
+          'symbol': symbol,
+          'backFromHeight': backFromHeight,
+          'chainName': chainName,
+          'xpubkeys': xpubkeys,
+          'h160s': h160s,
+        },
+      );
+}
+
 class _EndpointSubscription extends _i1.EndpointRef {
   _EndpointSubscription(_i1.EndpointCaller caller) : super(caller);
 
@@ -181,11 +207,11 @@ class _EndpointTransactionDetails extends _i1.EndpointRef {
   @override
   String get name => 'transactionDetails';
 
-  _i2.Future<_i7.TransactionDetailsView> get({
+  _i2.Future<_i8.TransactionDetailsView> get({
     required _i6.ByteData hash,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i7.TransactionDetailsView>(
+      caller.callServerEndpoint<_i8.TransactionDetailsView>(
         'transactionDetails',
         'get',
         {
@@ -201,14 +227,14 @@ class _EndpointTransactions extends _i1.EndpointRef {
   @override
   String get name => 'transactions';
 
-  _i2.Future<List<_i8.TransactionView>> get({
+  _i2.Future<List<_i7.TransactionView>> get({
     String? symbol,
     int? backFromHeight,
     required String chainName,
     required List<String> xpubkeys,
     required List<_i6.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i8.TransactionView>>(
+      caller.callServerEndpoint<List<_i7.TransactionView>>(
         'transactions',
         'get',
         {
@@ -259,6 +285,7 @@ class Client extends _i1.ServerpodClient {
     hasGiven = _EndpointHasGiven(this);
     document = _EndpointDocument(this);
     example = _EndpointExample(this);
+    mempoolTransactions = _EndpointMempoolTransactions(this);
     subscription = _EndpointSubscription(this);
     transactionDetails = _EndpointTransactionDetails(this);
     transactions = _EndpointTransactions(this);
@@ -279,6 +306,8 @@ class Client extends _i1.ServerpodClient {
 
   late final _EndpointExample example;
 
+  late final _EndpointMempoolTransactions mempoolTransactions;
+
   late final _EndpointSubscription subscription;
 
   late final _EndpointTransactionDetails transactionDetails;
@@ -296,6 +325,7 @@ class Client extends _i1.ServerpodClient {
         'hasGiven': hasGiven,
         'document': document,
         'example': example,
+        'mempoolTransactions': mempoolTransactions,
         'subscription': subscription,
         'transactionDetails': transactionDetails,
         'transactions': transactions,

@@ -11,14 +11,14 @@ Future<void> eraseTransactionData({
 }) async {
   await pros.blocks.removeAll(pros.blocks.records);
   if (quick) {
-    await pros.vouts.delete();
-    await pros.vins.delete();
-    await pros.transactions.delete();
+    //await pros.vouts.delete();
+    //await pros.vins.delete();
+    //await pros.transactions.delete();
     //await pros.blocks.delete();
   } else {
-    await pros.vouts.clear();
-    await pros.vins.clear();
-    await pros.transactions.clear();
+    //await pros.vouts.clear();
+    //await pros.vins.clear();
+    //await pros.transactions.clear();
     //await pros.blocks.clear();
   }
 }
@@ -29,7 +29,7 @@ Future<void> eraseUnspentData({
 }) async {
   if (quick) {
     await pros.statuses.delete();
-    await pros.unspents.delete();
+    //await pros.unspents.delete();
     if (!keepBalances) {
       await pros.balances.delete();
     }
