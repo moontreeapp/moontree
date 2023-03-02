@@ -8,45 +8,52 @@
 /// windows since it spews errors in the logs. we see no such errors on android.
 /// ios untested.
 
+import 'package:client_front/presentation/theme/colors.dart';
+import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/bottom/modal/cubit.dart';
 
-class BottomModalSheetWidget extends StatefulWidget {
+class BottomModalSheetWidget extends StatelessWidget {
   const BottomModalSheetWidget({Key? key}) : super(key: key);
-
-  @override
-  _BottomModalSheetWidgetState createState() => _BottomModalSheetWidgetState();
-}
-
-class _BottomModalSheetWidgetState extends State<BottomModalSheetWidget> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<BottomModalSheetCubit, BottomModalSheetCubitState>(
         builder: (context, bottomModalSheetState) {
           if (bottomModalSheetState.display) {
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) async {
-                await showModalBottomSheet(
-                  context: context,
-                  builder: (_) => ListView(
-                    shrinkWrap: true,
-                    children: [
-                      Row(children: const [Text('data')]),
-                      Row(children: const [Text('data')]),
-                      Row(children: const [Text('data')]),
-                    ],
-                  ),
-                ).then((value) => context.read<BottomModalSheetCubit>().hide());
-              },
+            return Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Scrim(),
+                FrontCurve(
+                    color: Colors.white,
+                    fuzzyTop: false,
+                    height: 200,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        Row(children: const [Text('data')]),
+                        Row(children: const [Text('data')]),
+                        Row(children: const [Text('data')]),
+                      ],
+                    )),
+              ],
             );
           }
-          return Container();
+          return SizedBox.shrink();
         },
       );
+}
+
+class Scrim extends StatelessWidget {
+  const Scrim({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+      onTap: () => context.read<BottomModalSheetCubit>().hide(),
+      child: Container(
+          height: double.infinity,
+          width: double.infinity,
+          color: AppColors.scrim));
 }

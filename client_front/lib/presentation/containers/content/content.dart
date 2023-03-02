@@ -8,17 +8,18 @@ class ContentScaffold extends StatelessWidget {
   final Widget? child;
   const ContentScaffold({Key? key, this.child}) : super(key: key);
 
-  /// SingleChildScrollView used because of render error when system bar active
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-      controller: ScrollController(),
-      child: SizedBox(
-        height: uiservices.screen.app.height,
-        child: Column(children: <Widget>[
-          const CustomAppBar(),
-          ContentBulk(child: child)
-        ]),
-      ));
+  Widget build(BuildContext context) =>
+      // SingleChildScrollView used because render error when system bar active
+      SingleChildScrollView(
+          controller: ScrollController(),
+          child: SizedBox(
+            height: uiservices.screen.app.height,
+            child: Column(children: <Widget>[
+              const CustomAppBar(),
+              ContentBulk(child: child)
+            ]),
+          ));
 }
 
 class ContentBulk extends StatelessWidget {

@@ -251,7 +251,7 @@ class _PageLead extends State<PageLead> {
   Widget build(BuildContext context) =>
       BlocBuilder<BackContainerCubit, BackContainerCubitState>(
           builder: (context, state) => Padding(
-              padding: EdgeInsets.only(right: 10),
+              padding: EdgeInsets.only(right: 16, left: 0),
               child: menuLocations.contains(uiservices.sail.latestLocation)
                   ? MenuLead(path: state.path)
                   : BackLead()));
@@ -270,9 +270,17 @@ class MenuLead extends StatelessWidget {
           uiservices.sail.menu();
         }
       },
-      child: path.startsWith('/menu/')
-          ? const Icon(Icons.arrow_back, color: Colors.white)
-          : const Icon(Icons.menu, color: Colors.white));
+      child: Container(
+          height: 40,
+          width: 40,
+          alignment: Alignment.centerLeft,
+          child: path.startsWith('/menu/')
+              ? const Icon(Icons.chevron_left_rounded,
+                  color: Colors.white, size: 30)
+              : SvgPicture.asset(
+                  'assets/icons/menu/menu.svg',
+                )));
+  //: const Icon(Icons.menu, color: Colors.white));
 }
 
 class BackLead extends StatelessWidget {
@@ -281,6 +289,13 @@ class BackLead extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () async => uiservices.sail.back(),
-        child: const Icon(Icons.arrow_back, color: Colors.white),
+        child: Container(
+            height: 40,
+            width: 40,
+            alignment: Alignment.centerLeft,
+            child: const Icon(Icons.chevron_left_rounded,
+                color: Colors.white, size: 30)),
       );
 }
+
+//Icons.close_rounded

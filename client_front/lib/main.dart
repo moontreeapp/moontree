@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:client_front/presentation/containers/bottom/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +16,7 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/pages.dart' as pages;
-import 'package:client_front/presentation/containers/bottom/modal.dart';
+import 'package:client_front/presentation/containers/bottom/innermodal.dart';
 import 'package:client_front/presentation/containers/bottom/navbar.dart';
 import 'package:client_front/presentation/containers/content/extra.dart';
 import 'package:client_front/presentation/containers/content/content.dart';
@@ -91,29 +92,26 @@ class MoontreeMobileApp extends StatelessWidget {
   const MoontreeMobileApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    components.routes.mainContext = context;
-    return MaterialApp(
-        key: components.routes.appKey,
-        debugShowCheckedModeBanner: false,
-        theme: CustomTheme.lightTheme,
-        darkTheme: CustomTheme.lightTheme,
-        navigatorKey: components.routes.navigatorKey,
-        navigatorObservers: <NavigatorObserver>[components.routes],
-        //initialRoute: '/splash',
-        //home: Splash(),
-        routes: pages.routes,
+  Widget build(BuildContext context) => MaterialApp(
+      key: components.routes.appKey,
+      debugShowCheckedModeBanner: false,
+      theme: CustomTheme.lightTheme,
+      darkTheme: CustomTheme.lightTheme,
+      navigatorKey: components.routes.navigatorKey,
+      navigatorObservers: <NavigatorObserver>[components.routes],
+      //initialRoute: '/splash',
+      //home: Splash(),
+      routes: pages.routes,
 
-        /* we can either have `routes` with `pageTransitionBuilder` in `theme`,
+      /* we can either have `routes` with `pageTransitionBuilder` in `theme`,
            which has the drawback of not being able to control duration, or we
            could have PageRouteBuilders using `onGenerateRoute`. Since we can
            use named routes and get the transition we want we'll use that.
         onGenerateRoute: pages.generatedRoutes,
         */
 
-        builder: (BuildContext context, Widget? child) =>
-            MoontreeApp(child: child));
-  }
+      builder: (BuildContext context, Widget? child) =>
+          MoontreeApp(child: child));
 }
 
 /// StreamBuilder solution to starting the app with splashscreen first
@@ -131,7 +129,6 @@ class MoontreeAppState extends State<MoontreeApp> {
   @override
   void initState() {
     super.initState();
-    components.routes.scaffoldContext = context;
     child = widget.child;
   }
 
@@ -184,6 +181,7 @@ class HomePage extends StatelessWidget {
             const <Widget>[
               ExtraContainer(),
               BottomNavigationBarWidget(),
+              //InnerBottomModalSheetWidget(), //pointelss
               BottomModalSheetWidget(),
               LoadingLayer(),
 

@@ -233,8 +233,7 @@ class _SendState extends State<Send> {
                                 textInputAction: TextInputAction.next,
                                 selectionControls:
                                     CustomMaterialTextSelectionControls(
-                                        context:
-                                            components.routes.scaffoldContext,
+                                        context: components.routes.routeContext,
                                         offset: Offset.zero),
                                 autocorrect: false,
                                 inputFormatters: <TextInputFormatter>[
