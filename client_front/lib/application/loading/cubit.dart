@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:client_front/presentation/utilities/animation.dart'
+    as animation;
 
 part 'state.dart';
 
@@ -45,12 +47,13 @@ class LoadingViewCubit extends Cubit<LoadingViewState> {
     ));
   }
 
-  void show({String? title, String? msg}) {
+  Future<void> show({String? title, String? msg}) async {
     set(
         status: LoadingStatus.busy,
         priorStatus: state.status,
         title: title ?? state.title,
         msg: msg ?? state.msg);
+    await Future.delayed(animation.slideDuration); // smooth loading slide
   }
 
   void hide() {

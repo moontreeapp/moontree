@@ -8,7 +8,6 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/services/import.dart';
 import 'package:client_back/services/wallet/constants.dart';
 import 'package:client_back/streams/import.dart';
-import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/log.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart';
@@ -249,30 +248,17 @@ class Import extends StatelessWidget {
         text = resp;
       }
     }
-
-    /// save the key
-    /// save the wallet
-    ///
-    components.cubits.loadingView
+    await components.cubits.loadingView
         .show(title: 'Importing', msg: 'one moment please');
-    streams.import.attempt.add(ImportRequest(
+    await components.cubits.import.initiateImportProcess(ImportRequest(
       text: text,
       /*onSuccess: populateWalletsWithSensitives*/
       getEntropy: getEntropy,
       saveSecret: saveSecret,
     ));
-    await Future<void>.delayed(Duration(milliseconds: 1330 * 2));
-    //components.loading.screen(
-    //  message: 'Importing',
-    //  staticImage: true,
-    //  playCount: 2,
-    //  then: () async => streams.import.attempt.add(ImportRequest(
-    //    text: text,
-    //    /*onSuccess: populateWalletsWithSensitives*/
-    //    getEntropy: getEntropy,
-    //    saveSecret: saveSecret,
-    //  )),
-    //);
+    components.cubits.holdingsView
+        .setHoldingViews(Current.wallet, Current.chainNet, force: true);
+    await Future.delayed(const Duration(milliseconds: 1330));
     components.cubits.loadingView.hide();
     components.cubits.import.reset();
     sail.home();
@@ -329,15 +315,8 @@ class WordInput extends StatelessWidget {
               onPressed: () => components.cubits.import
                   .set(importVisible: !state.importVisible),
             ),
-            if (clip != null && components.cubits.import.validateValue(clip))
-              IconButton(
-                  icon:
-                      const Icon(Icons.paste_rounded, color: AppColors.black60),
-                  onPressed: () {
-                    components.cubits.import.set(words: clip);
-                    components.cubits.import.enableImport();
-                  }),
-            if (clip == null)
+            if (clip !=
+                null /*&& components.cubits.import.validateValue(clip) we're just going to get it again anyway*/)
               IconButton(
                   icon:
                       const Icon(Icons.paste_rounded, color: AppColors.black60),
@@ -348,6 +327,17 @@ class WordInput extends StatelessWidget {
                     components.cubits.import.set(words: clip);
                     components.cubits.import.enableImport();
                   }),
+            //if (clip == null)
+            //  IconButton(
+            //      icon:
+            //          const Icon(Icons.paste_rounded, color: AppColors.black60),
+            //      onPressed: () async {
+            //        final String clip = await (context
+            //                .findAncestorWidgetOfExactType<Import>() as Import)
+            //            .getClip();
+            //        components.cubits.import.set(words: clip);
+            //        components.cubits.import.enableImport();
+            //      }),
             IconButton(
                 icon: Icon(Icons.clear_rounded,
                     color: words.text != ''

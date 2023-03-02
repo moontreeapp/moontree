@@ -27,6 +27,12 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
     emit(state);
   }
 
+  Future<void> refresh() async {
+    update(
+      isSubmitting: true,
+    );
+  }
+
   void update({
     List<BalanceView>? holdingsViews,
     List<AssetHolding>? assetHoldings,

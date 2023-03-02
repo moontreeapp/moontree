@@ -8,6 +8,8 @@ class Current {
 
   static Wallet get wallet => pros.wallets.primaryIndex.getOne(walletId)!;
 
+  static ChainNet get chainNet => pros.settings.chainNet;
+
   static Balance get balanceRVN =>
       services.balance.walletBalance(wallet, pros.securities.RVN);
 

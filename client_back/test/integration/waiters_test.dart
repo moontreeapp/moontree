@@ -23,7 +23,6 @@ void main() async {
     triggers.subscription.init();
     triggers.block.init();
     triggers.send.init();
-    triggers.import.init();
     triggers.rate.init(RVNtoFiat());
   });
 

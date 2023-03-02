@@ -156,9 +156,6 @@ class _VerifySeedState extends State<VerifySeed> {
       await services.wallet.leader.backedUp(Current.wallet as LeaderWallet);
       await populateWalletsWithSensitives();
     }
-    streams.app.setting.add(null);
-    streams.app.fling.add(false);
-    streams.app.lead.add(LeadIcon.pass);
     sail.home();
     if (services.tutorial.missing.isEmpty) {
       if (skipped) {

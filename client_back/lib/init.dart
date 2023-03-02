@@ -18,7 +18,6 @@ void initTriggers(HiveLoadingStep step) {
     //triggers.subscription.init();
     triggers.block.init();
     triggers.send.init();
-    triggers.import.init();
     triggers.create.init();
     triggers.reissue.init();
     //triggers.unspent.init();

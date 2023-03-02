@@ -445,12 +445,12 @@ class _ImportState extends State<Import> {
       message: 'Importing',
       staticImage: true,
       playCount: 2,
-      then: () async => streams.import.attempt.add(ImportRequest(
-        text: text,
-        /*onSuccess: populateWalletsWithSensitives*/
-        getEntropy: getEntropy,
-        saveSecret: saveSecret,
-      )),
+      //then: () async => streams.import.attempt.add(ImportRequest(
+      //  text: text,
+      //  /*onSuccess: populateWalletsWithSensitives*/
+      //  getEntropy: getEntropy,
+      //  saveSecret: saveSecret,
+      //)),
     );
   }
 }
