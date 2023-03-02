@@ -3,6 +3,7 @@ part of 'cubit.dart';
 @immutable
 class TransactionsViewState extends CubitState {
   final List<TransactionView> transactionViews;
+  final List<TransactionView> mempoolViews;
   final AssetMetadata? metadataView;
   final Wallet wallet;
   final Security security;
@@ -20,6 +21,7 @@ class TransactionsViewState extends CubitState {
 
   const TransactionsViewState({
     required this.transactionViews,
+    required this.mempoolViews,
     required this.metadataView,
     required this.scrollObserver,
     required this.currentTab,
@@ -40,14 +42,15 @@ class TransactionsViewState extends CubitState {
 
   @override
   String toString() => 'TransactionsView( '
-      'transactionViews=$transactionViews, metadataView=$metadataView, '
-      'wallet=$wallet, security=$security, end=$end, ranWallet=$ranWallet, '
-      'ranSecurity=$ranSecurity, ranHeight=$ranHeight, '
+      'transactionViews=$transactionViews, mempoolViews=$mempoolViews, '
+      'metadataView=$metadataView, wallet=$wallet, security=$security, end=$end, '
+      'ranWallet=$ranWallet, ranSecurity=$ranSecurity, ranHeight=$ranHeight, '
       'isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
         transactionViews,
+        mempoolViews,
         metadataView,
         wallet,
         security,
@@ -60,6 +63,7 @@ class TransactionsViewState extends CubitState {
 
   factory TransactionsViewState.initial() => TransactionsViewState(
       transactionViews: [],
+      mempoolViews: [],
       metadataView: null,
       scrollObserver: BehaviorSubject<double>.seeded(.7),
       currentTab: BehaviorSubject<String>.seeded('HISTORY'),
@@ -73,6 +77,7 @@ class TransactionsViewState extends CubitState {
 
   TransactionsViewState load({
     List<TransactionView>? transactionViews,
+    List<TransactionView>? mempoolViews,
     AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
@@ -84,6 +89,7 @@ class TransactionsViewState extends CubitState {
   }) =>
       TransactionsViewState(
         transactionViews: transactionViews ?? this.transactionViews,
+        mempoolViews: mempoolViews ?? this.mempoolViews,
         metadataView: metadataView ?? this.metadataView,
         wallet: wallet ?? this.wallet,
         security: security ?? this.security,

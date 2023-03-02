@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:client_front/infrastructure/repos/mempool_transactions.dart';
 import 'package:client_front/infrastructure/repos/transactions.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:bloc/bloc.dart';
@@ -36,6 +37,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   @override
   void set({
     List<TransactionView>? transactionViews,
+    List<TransactionView>? mempoolViews,
     AssetMetadata? metadataView,
     Wallet? wallet,
     Security? security,
@@ -47,6 +49,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   }) {
     emit(state.load(
       transactionViews: transactionViews,
+      mempoolViews: mempoolViews,
       metadataView: metadataView,
       wallet: wallet,
       security: security,
@@ -72,22 +75,57 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   /// contents of the cubit)
   bool get cleared => state.ranWallet == null;
 
+  Future<void> setInitial({bool force = false}) async {
+    setMempoolTransactionViews(force: force);
+    setTransactionViews(force: force);
+    setMetadataView(force: force);
+  }
+
+  Future<void> setMetadataView({bool force = false}) async {
+    if (force || state.metadataView == null) {
+      final checkCleared = state.ranWallet != null;
+      submitting();
+      final metadataView = (await AssetMetadataHistoryRepo(
+        security: state.security,
+      ).get())
+          .firstOrNull;
+      if (checkCleared && cleared) {
+        return;
+      }
+      set(
+        metadataView: metadataView,
+        isSubmitting: false,
+      );
+    }
+  }
+
+  Future<void> setMempoolTransactionViews({bool force = false}) async {
+    if (force || state.mempoolViews.isEmpty) {
+      submitting();
+      final mempoolViews = await MempoolTransactionHistoryRepo(
+        wallet: state.wallet,
+        security: state.security,
+      ).fetch(only: true);
+      set(
+        mempoolViews: mempoolViews.toList(),
+        isSubmitting: false,
+      );
+    }
+  }
+
   Future<void> setTransactionViews({bool force = false}) async {
     if (force ||
         state.wallet != state.ranWallet ||
         state.security != state.ranSecurity) {
       submitting();
       final checkCleared = state.ranWallet != null;
-
       final transactionViews = await TransactionHistoryRepo(
         wallet: state.wallet,
         security: state.security,
       ).fetch(only: true);
-
       if (checkCleared && cleared) {
         return;
       }
-
       set(
         transactionViews: transactionViews.toList(),
         ranWallet: state.wallet,
@@ -172,24 +210,6 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
           isSubmitting: false,
         );
       }
-    }
-  }
-
-  Future<void> setMetadataView({bool force = false}) async {
-    if (force || state.metadataView == null) {
-      final checkCleared = state.ranWallet != null;
-      submitting();
-      final metadataView = (await AssetMetadataHistoryRepo(
-        security: state.security,
-      ).get())
-          .firstOrNull;
-      if (checkCleared && cleared) {
-        return;
-      }
-      set(
-        metadataView: metadataView,
-        isSubmitting: false,
-      );
     }
   }
 
