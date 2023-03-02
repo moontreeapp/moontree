@@ -39,7 +39,9 @@ class TransactionDetailsCall extends ServerCall {
 
         /// SERVER
         : await transactionDetailsBy(
-            hash: hash, chain: ChainNet(chain, net).chaindata);
+            hash: hash,
+            chain: ChainNet(chain, net).chaindata,
+          );
 
     if (tx.error != null) {
       return tx;

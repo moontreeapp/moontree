@@ -137,7 +137,7 @@ class HiveInitializer {
     if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
         .contains(step)) {
       //pros.unspents.setSource(HiveSource<Unspent>('unspents'));
-      //pros.addresses.setSource(HiveSource<Address>('addresses'));
+      pros.addresses.setSource(HiveSource<Address>('addresses'));
       pros.balances.setSource(HiveSource<Balance>('balances'));
       pros.blocks.setSource(HiveSource<Block>('blocks'));
       //pros.assets.setSource(HiveSource<Asset>('assets'));
