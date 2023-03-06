@@ -1,4 +1,5 @@
 import 'package:client_back/records/records.dart';
+import 'package:client_back/proclaim/proclaim.dart';
 import 'package:client_back/server/src/protocol/protocol.dart' show BalanceView;
 import 'package:client_front/infrastructure/calls/holdings.dart';
 import 'package:client_front/infrastructure/cache/holdings.dart';
@@ -41,10 +42,15 @@ class HoldingsRepo extends Repository<Iterable<BalanceView>> {
       HoldingsCache.get(wallet: wallet, chain: chain, net: net);
 
   @override
-  Future<void> save() async => HoldingsCache.put(
-        wallet: wallet,
-        chain: chain,
-        net: net,
-        records: results,
-      );
+  Future<void> save() async {
+    HoldingsCache.put(
+      wallet: wallet,
+      chain: chain,
+      net: net,
+      records: results,
+    );
+    // here we save securities since we have so much logic that uses them.
+    pros.securities.saveAll(
+        results.map((e) => Security(symbol: e.symbol, chain: chain, net: net)));
+  }
 }
