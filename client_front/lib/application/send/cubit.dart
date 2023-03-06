@@ -34,6 +34,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     String? memo,
     String? note,
     String? addressName,
+    UnsignedTransactionResult? unsigned,
     bool? isSubmitting,
   }) {
     emit(submitting());
@@ -45,41 +46,39 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       memo: memo,
       note: note,
       addressName: addressName,
+      unsigned: unsigned,
       isSubmitting: isSubmitting,
     ));
   }
 
   Future<void> setUnsignedTransaction({
-    bool force = false,
     Wallet? wallet,
     String? symbol,
     Chain? chain,
     Net? net,
   }) async {
-    if (force) {
-      set(
-        isSubmitting: true,
-      );
-      UnsignedTransactionResult unsigned = await UnsignedTransactionRepo(
-        wallet: wallet,
-        symbol: symbol ?? state.security.symbol,
-        security: state.security,
-        feeRate: state.fee,
-        sats: state.sats,
-        address: state.address,
-        chain: chain,
-        net: net,
+    set(
+      isSubmitting: true,
+    );
+    UnsignedTransactionResult unsigned = await UnsignedTransactionRepo(
+      wallet: wallet,
+      symbol: symbol ?? state.security.symbol,
+      security: state.security,
+      feeRate: state.fee,
+      sats: state.sats,
+      address: state.address,
+      chain: chain,
+      net: net,
 
-        /// what should I do with these?
-        //String? memo,
-        //String? note,
-        //String? addressName,
-      ).fetch();
-      set(
-        //unsigned: unsigned,
-        isSubmitting: false,
-      );
-    }
+      /// what should I do with these?
+      //String? memo,
+      //String? note,
+      //String? addressName,
+    ).fetch(only:true);
+    set(
+      unsigned: unsigned,
+      isSubmitting: false,
+    );
   }
 
   //void clearCache() => set(

@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
+import 'package:client_back/streams/spend.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -473,7 +474,7 @@ class _SendState extends State<Send> {
                                 setState(() {
                                   clicked = true;
                                 });
-                                _startSend(state);
+                                _startSend(cubit, state);
                               },
                               disabledOnPressed: () {
                                 if (!_coinValidation()) {
@@ -544,7 +545,7 @@ class _SendState extends State<Send> {
     return _coinValidation() && _fieldValidation() && _holdingValidation(state);
   }
 
-  void _startSend(SimpleSendFormState state) {
+  void _startSend(SimpleSendFormCubit cubit, SimpleSendFormState state) {
     final bool vAddress = sendAddress.text != '' && _validateAddress();
     final bool vMemo = _verifyMemo();
     if (vAddress && vMemo) {
@@ -573,7 +574,7 @@ class _SendState extends State<Send> {
               : null,
           note: state.note != '' ? state.note : null,
         );
-        _confirmSend(sendRequest);
+        _confirmSend(sendRequest, cubit);
       }
     }
   }
@@ -584,8 +585,30 @@ class _SendState extends State<Send> {
   /// should notes be in a separate proclaim? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
 
-  void _confirmSend(SendRequest sendRequest) {
-    streams.spend.make.add(sendRequest);
+  void _confirmSend(SendRequest sendRequest, SimpleSendFormCubit cubit) async {
+    //streams.spend.make.add(sendRequest); // using cubit instead, poorly
+    await cubit.setUnsignedTransaction(
+      symbol: cubit.state.security.symbol,
+      wallet: Current.wallet,
+      chain: Current.chain,
+      net: Current.net,
+    );
+    streams.spend.made.add(TransactionNote(
+      txHex: cubit.state.unsigned!.rawHex,
+      note: sendRequest.note,
+    ));
+    streams.spend.estimate.add(SendEstimate(
+      sendRequest.sendAmountAsSats,
+      sendAll: sendRequest.sendAll,
+      fees: 412000, // estimate. server doesn't tell us yet
+      utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
+      security: cubit.state.security,
+      //assetMemo: Uint8List.fromList(cubit.state.memo
+      //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
+      memo: cubit.state.memo, // todo: correct?memo,
+      creation: false,
+    ));
+
     Navigator.of(components.routes.routeContext!).pushNamed(
       '/transaction/checkout',
       arguments: <String, CheckoutStruct>{

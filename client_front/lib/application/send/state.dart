@@ -9,6 +9,7 @@ class SimpleSendFormState extends CubitState {
   final String memo;
   final String note;
   final String addressName;
+  final UnsignedTransactionResult? unsigned;
   final bool isSubmitting;
 
   const SimpleSendFormState({
@@ -19,17 +20,18 @@ class SimpleSendFormState extends CubitState {
     this.memo = '',
     this.note = '',
     this.addressName = '',
+    this.unsigned,
     this.isSubmitting = false,
   });
 
   @override
   String toString() =>
       'SpendForm(security=$security, address=$address, amount=$amount, '
-      'fee=$fee, note=$note, addressName=$addressName, '
+      'fee=$fee, note=$note, addressName=$addressName, unsigned=$unsigned, '
       'isSubmitting=$isSubmitting)';
 
   @override
-  List<Object> get props => <Object>[
+  List<Object?> get props => <Object?>[
         security,
         address,
         amount,
@@ -37,6 +39,7 @@ class SimpleSendFormState extends CubitState {
         memo,
         note,
         addressName,
+        unsigned,
         isSubmitting,
       ];
 
@@ -51,6 +54,7 @@ class SimpleSendFormState extends CubitState {
     String? memo,
     String? note,
     String? addressName,
+    UnsignedTransactionResult? unsigned,
     bool? isSubmitting,
   }) =>
       SimpleSendFormState(
@@ -61,6 +65,7 @@ class SimpleSendFormState extends CubitState {
         memo: memo ?? this.memo,
         note: note ?? this.note,
         addressName: addressName ?? this.addressName,
+        unsigned: unsigned ?? this.unsigned,
         isSubmitting: isSubmitting ?? this.isSubmitting,
       );
 
