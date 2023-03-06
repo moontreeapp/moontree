@@ -230,7 +230,9 @@ class _PageLead extends State<PageLead> {
   };
 
   static const Set<String> emptyLocations = {
+    '',
     '/',
+    '/splash',
     '/login/create',
     '/login/native',
     '/login/password',
@@ -238,6 +240,7 @@ class _PageLead extends State<PageLead> {
   };
 
   static bool show(String path) {
+    print(path);
     if (!PageLead.emptyLocations.contains(path)) {
       return true;
     }
