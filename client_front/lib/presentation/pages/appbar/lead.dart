@@ -240,7 +240,6 @@ class _PageLead extends State<PageLead> {
   };
 
   static bool show(String path) {
-    print(path);
     if (!PageLead.emptyLocations.contains(path)) {
       return true;
     }
