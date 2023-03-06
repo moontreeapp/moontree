@@ -2,6 +2,7 @@
 
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/transaction.dart';
+import 'package:client_front/presentation/components/components.dart';
 
 class Current {
   static String get walletId => pros.settings.currentWalletId;
@@ -19,7 +20,10 @@ class Current {
   static List<Balance> get holdings => services.balance.walletBalances(wallet);
 
   static List<String> get holdingNames =>
-      <String>[for (Balance balance in holdings) balance.security.symbol];
+      components.cubits.holdingsViewCubit.state.holdingsViews
+          .map((e) => e.symbol)
+          .toList();
+  //<String>[for (Balance balance in holdings) balance.security.symbol];
 
   static Iterable<String> get adminNames => holdings
       .where((Balance balance) => balance.security.asset?.isAdmin ?? false)
