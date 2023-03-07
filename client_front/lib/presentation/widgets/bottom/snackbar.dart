@@ -34,9 +34,6 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
         }
       }
     }));
-    streams.app.snack.add(Snack(
-        message:
-            'this is a very long message, one that should cause overflow but since we added a fittedbox it wont. so thats nice.'));
   }
 
   @override
@@ -59,12 +56,12 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
               .withBlue(AppColors.error.blue + 16));
 
   static const Set<String> emptyLocations = {
-    //'',
-    //'/',
-    //'/splash',
-    //'/login/create',
-    //'/login/native',
-    //'/login/password',
+    '',
+    '/',
+    '/splash',
+    '/login/create',
+    '/login/native',
+    '/login/password',
   };
 
   Future<void> show() async {
@@ -120,14 +117,12 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           if (copy)
             SizedBox(
                 width: (MediaQuery.of(context).size.width - 32) * 0.75,
-                child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      snack!.message,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: style(),
-                    )))
+                child: Text(
+                  snack!.message,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: style(),
+                ))
           else
             SizedBox(
                 width: (MediaQuery.of(context).size.width - 32),
@@ -140,15 +135,13 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           if (copy)
             SizedBox(
                 width: (MediaQuery.of(context).size.width - 32) * 0.25,
-                child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      snack!.label ?? snack!.copy ?? 'copy',
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: style(),
-                    )))
+                child: Text(
+                  snack!.label ?? snack!.copy ?? 'copy',
+                  textAlign: TextAlign.right,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: style(),
+                ))
         ]);
     GestureDetector msg = GestureDetector(
         onTap: () {
