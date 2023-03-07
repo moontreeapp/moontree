@@ -56,6 +56,7 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
               .withBlue(AppColors.error.blue + 16));
 
   static const Set<String> emptyLocations = {
+    '',
     '/',
     '/splash',
     '/login/create',
@@ -116,29 +117,37 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
           if (copy)
             SizedBox(
                 width: (MediaQuery.of(context).size.width - 32) * 0.75,
-                child: Text(
-                  snack!.message,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: style(),
-                ))
+                child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snack!.message,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: style(),
+                    )))
           else
-            Text(
-              snack!.message,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: style(),
-            ),
+            SizedBox(
+                width: (MediaQuery.of(context).size.width - 32),
+                child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snack!.message,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: style(),
+                    ))),
           if (copy)
             SizedBox(
                 width: (MediaQuery.of(context).size.width - 32) * 0.25,
-                child: Text(
-                  snack!.label ?? snack!.copy ?? 'copy',
-                  textAlign: TextAlign.right,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: style(),
-                ))
+                child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snack!.label ?? snack!.copy ?? 'copy',
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: style(),
+                    )))
         ]);
     GestureDetector msg = GestureDetector(
         onTap: () {
