@@ -40,7 +40,9 @@ class AssetNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool walletIsEmpty = Current.wallet.balances.isEmpty;
+    //final bool walletIsEmpty = Current.wallet.balances.isEmpty;
+    final bool walletIsEmpty =
+        components.cubits.holdingsViewCubit.state.holdingsViews.isEmpty;
     final ConnectionStatus connectionStatus = streams.client.connected.value;
 
     return NavBar(
