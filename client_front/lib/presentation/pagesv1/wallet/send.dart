@@ -299,8 +299,8 @@ class _SendState extends State<Send> {
                                   }
                                   if (_asDouble(x) >
                                       (state.security.balance?.amount ??
-                                          components.cubits.holdingsViewCubit
-                                              .state.holdingsViews
+                                          components.cubits.holdingsView.state
+                                              .holdingsViews
                                               .where((e) =>
                                                   e.symbol ==
                                                       state.security.symbol &&
