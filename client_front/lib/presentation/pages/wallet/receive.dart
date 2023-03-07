@@ -66,14 +66,16 @@ class ReceiveContent extends StatelessWidget {
                               //));
                             },
                             child: Center(
-                                child: QrImage(
-                                    backgroundColor: Colors.white,
-                                    data: cubit.address,
-                                    foregroundColor: AppColors.primary,
-                                    //embeddedImage: Image.asset(
-                                    //        'assets/logo/moontree_logo.png')
-                                    //    .image,
-                                    size: smallScreen ? 150 : 300.0)))),
+                                child: cubit.notGenerating
+                                    ? QrImage(
+                                        backgroundColor: Colors.white,
+                                        data: cubit.address,
+                                        foregroundColor: AppColors.primary,
+                                        //embeddedImage: Image.asset(
+                                        //        'assets/logo/moontree_logo.png')
+                                        //    .image,
+                                        size: smallScreen ? 150 : 300.0)
+                                    : Container(height: 0)))),
                     SelectableText(
                       cubit.address,
                       style: Theme.of(context)
@@ -87,22 +89,23 @@ class ReceiveContent extends StatelessWidget {
                     if (!smallScreen) SizedBox(height: 72.figmaH)
                   ],
                 ))),
-        Stack(
-          alignment: Alignment.bottomCenter,
-          children: <Widget>[
-            Container(height: height + 48),
-            KeyboardHidesWidgetWithDelay(
-                child: components.containers.navBar(context,
-                    child: Row(children: <Widget>[
-                      components.buttons.actionButton(
-                        context,
-                        label: 'Share',
-                        focusNode: FocusNode(),
-                        onPressed: () => Share.share(cubit.address),
-                      )
-                    ]))),
-          ],
-        ),
+        if (cubit.notGenerating)
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              Container(height: height + 48),
+              KeyboardHidesWidgetWithDelay(
+                  child: components.containers.navBar(context,
+                      child: Row(children: <Widget>[
+                        components.buttons.actionButton(
+                          context,
+                          label: 'Share',
+                          focusNode: FocusNode(),
+                          onPressed: () => Share.share(cubit.address),
+                        )
+                      ]))),
+            ],
+          ),
       ],
     );
   }

@@ -59,5 +59,9 @@ class ReceiveViewCubit extends Cubit<ReceiveViewState> with SetCubitMixin {
     }
   }
 
+  bool get notGenerating {
+    return address != 'generating...';
+  }
+
   void clearCache() => set(address: null);
 }
