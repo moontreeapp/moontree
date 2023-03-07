@@ -61,23 +61,20 @@ Future<void> setupWallets() async {
   }
 }
 
-Future<void> switchWallet(String walletId, BuildContext context) async {
-  if (streams.client.busy.value) {
-    await services.client.disconnect();
-    await services.client.createClient();
-  }
-
+Future<void> switchWallet(String walletId) async {
+  /// probably not necessary
+  //if (streams.client.busy.value) {
+  //  await services.client.disconnect();
+  //  await services.client.createClient();
+  //}
   await pros.settings.setCurrentWalletId(walletId);
-
-  // reset subscriptions for this wallet
   await setupSubscription(wallet: Current.wallet);
 
-  streams.app.fling.add(false);
-  streams.app.setting.add(null);
-  final Wallet? currentWallet = pros.wallets.primaryIndex.getOne(walletId);
-  if (currentWallet is LeaderWallet && currentWallet.addresses.isEmpty) {
-    await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
-  }
+  /// probably not necessary
+  //final Wallet? currentWallet = pros.wallets.primaryIndex.getOne(walletId);
+  //if (currentWallet is LeaderWallet && currentWallet.addresses.isEmpty) {
+  //  await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+  //}
 }
 
 Future<void> populateWalletsWithSensitives() async {

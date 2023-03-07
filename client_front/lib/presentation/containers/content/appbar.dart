@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_front/application/title/cubit.dart';
+import 'package:client_front/application/location/cubit.dart';
 import 'package:client_front/presentation/widgets/bottom/snackbar.dart';
 import 'package:client_front/presentation/pages/appbar/connection.dart';
 import 'package:client_front/presentation/pages/appbar/lead.dart';
@@ -50,7 +50,7 @@ class AppBarLeft extends StatelessWidget {
       /// maybe we'll determin that the back doesn't need to know where they are
       /// so we'll make a PathCubit. I suppose we could put the path on multiple
       /// cubits too.
-      BlocBuilder<TitleCubit, TitleCubitState>(
+      BlocBuilder<LocationCubit, LocationCubitState>(
           builder: (context, state) =>
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 if (PageLead.show(sail.latestLocation ?? '')) PageLead(),

@@ -16,7 +16,11 @@ class TitleCubit extends Cubit<TitleCubitState> {
 
   /// returns override title, the title by location, or empty string.
   String get title {
-    if (sail.latestLocation == '/wallet/holdings') {
+    if ([
+      '/wallet/holdings',
+      '/manage',
+      '/swap',
+    ].contains(sail.latestLocation)) {
       return Current.wallet.name;
     }
     if (sail.latestLocation == '/wallet/holding') {

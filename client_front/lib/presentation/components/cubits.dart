@@ -28,6 +28,7 @@ class GlobalCubits {
   final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();
   final LoadingViewCubit loadingView = LoadingViewCubit();
   final ImportFormCubit import = ImportFormCubit();
+  final LocationCubit location = LocationCubit();
 
   GlobalCubits();
 }

@@ -256,8 +256,7 @@ class Import extends StatelessWidget {
       getEntropy: getEntropy,
       saveSecret: saveSecret,
     ));
-    components.cubits.holdingsView
-        .setHoldingViews(Current.wallet, Current.chainNet, force: true);
+    components.cubits.holdingsView.setHoldingViews(force: true);
     await Future.delayed(const Duration(milliseconds: 1330));
     components.cubits.loadingView.hide();
     components.cubits.import.reset();

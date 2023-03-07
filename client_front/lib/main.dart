@@ -228,4 +228,6 @@ List<BlocProviderSingleChildWidget> get providers => [
       BlocProvider<LoginCubit>(create: (context) => components.cubits.login),
       BlocProvider<ImportFormCubit>(
           create: (context) => components.cubits.import),
+      BlocProvider<LocationCubit>(
+          create: (context) => components.cubits.location),
     ];

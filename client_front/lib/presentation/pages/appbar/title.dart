@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/wallet/constants.dart';
@@ -62,7 +63,6 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   late Animation<double> animate;
   late AnimationController slowController;
   late Animation<double> slowAnimation;
-  final Duration animationDuration = const Duration(milliseconds: 160);
   bool dropDownActive = false;
   List<Wallet> wallets = <Wallet>[];
   late Map<Wallet, List<Security>> walletsSecurities;
@@ -78,10 +78,15 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     slowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(parent: slowController, curve: Curves.easeInOutCubic));
     slowController.forward();
+    controller =
+        AnimationController(vsync: this, duration: animation.fadeDuration);
+    animate = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic));
+
     /*
     initializeWalletSecurities();
     setWalletsSecurities();
-    // = AnimationController(vsync: this, duration: animationDuration);
+    //controller = AnimationController(vsync: this, duration: animationDuration);
     animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
     listeners.add(streams.app.loading.listen((bool value) {
       if (value != loading) {
@@ -130,7 +135,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    //controller.dispose();
+    controller.dispose();
     slowController.dispose();
     for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
@@ -232,21 +237,50 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-        animation: slowAnimation,
-        builder: (context, child) {
-          return FadeTransition(
-              opacity: slowAnimation,
-              child: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Text(cubit.title,
-                      style: Theme.of(context).textTheme.headline2!.copyWith(
-                            color: AppColors.white,
-                            fontWeight: cubit.title.length >= 25
-                                ? FontWeights.bold
-                                : FontWeights.semiBold,
-                          ))));
-        });
+    Animation<double> anima;
+    if (slowController.isCompleted) {
+      anima = animate;
+      controller.reset();
+      controller.forward();
+    } else {
+      anima = slowAnimation;
+    }
+    return BlocBuilder<TitleCubit, TitleCubitState>(
+        builder: (context, state) => AnimatedBuilder(
+            animation: anima,
+            builder: (context, child) {
+              return GestureDetector(
+                  onDoubleTap: () async {
+                    bool next = false;
+                    for (final Wallet wallet
+                        in pros.wallets.ordered + pros.wallets.ordered) {
+                      if (next) {
+                        components.cubits.holdingsView
+                            .setHoldingViews(wallet: wallet, force: true);
+                        await switchWallet(wallet.id);
+                        break;
+                      }
+                      if (Current.walletId == wallet.id) {
+                        next = true;
+                      }
+                    }
+                    setState(() {}); // recalculates the name of the wallet.
+                  },
+                  child: FadeTransition(
+                      opacity: anima,
+                      child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(cubit.title,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                    color: AppColors.white,
+                                    fontWeight: cubit.title.length >= 25
+                                        ? FontWeights.bold
+                                        : FontWeights.semiBold,
+                                  )))));
+            }));
 
 /*
     if (streams.app.page.value == 'Splash') {
@@ -410,7 +444,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     await components.loading
                         .screen(message: 'Creating Wallet', playCount: 3);
                     final String walletId = await generateWallet();
-                    await switchWallet(walletId, context);
+                    await switchWallet(walletId);
                   },
                   leading: Container(
                       width: indicatorWidth,
@@ -447,7 +481,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     Navigator.pop(components.routes.routeContext!);
                     final String walletId =
                         await generateWallet(walletType: WalletType.single);
-                    await switchWallet(walletId, context);
+                    await switchWallet(walletId);
                   },
                   leading: Container(
                       width: indicatorWidth,
@@ -464,7 +498,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     onTap: () async {
                       Navigator.pop(components.routes.routeContext!);
                       if (wallet.id != Current.walletId) {
-                        await switchWallet(wallet.id, context);
+                        await switchWallet(wallet.id);
                       }
                     },
                     leading: walletsSecurities[wallet] == null ||
@@ -591,17 +625,15 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                             if (wallet.id ==
                                                                 Current
                                                                     .walletId) {
-                                                              await switchWallet(
-                                                                  pros.wallets
-                                                                      .records
-                                                                      .where((Wallet
-                                                                              w) =>
-                                                                          w.id !=
-                                                                          wallet
-                                                                              .id)
-                                                                      .first
-                                                                      .id,
-                                                                  context);
+                                                              await switchWallet(pros
+                                                                  .wallets
+                                                                  .records
+                                                                  .where((Wallet
+                                                                          w) =>
+                                                                      w.id !=
+                                                                      wallet.id)
+                                                                  .first
+                                                                  .id);
                                                             }
                                                             await pros.wallets
                                                                 .remove(wallet);

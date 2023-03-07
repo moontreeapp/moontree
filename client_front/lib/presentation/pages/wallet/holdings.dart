@@ -39,11 +39,7 @@ class WalletHoldings extends StatelessWidget {
   //),
   Future<void> refresh(HoldingsViewCubit cubit) async {
     //cubit.update(isSubmitting: true);
-    await cubit.setHoldingViews(
-      Current.wallet,
-      pros.settings.chainNet,
-      force: true,
-    );
+    await cubit.setHoldingViews(force: true);
   }
 
   @override
@@ -53,7 +49,7 @@ class WalletHoldings extends StatelessWidget {
         cubit.state.ranChainNet != pros.settings.chainNet) {
       cubit.update(isSubmitting: true);
     }
-    cubit.setHoldingViews(Current.wallet, pros.settings.chainNet);
+    cubit.setHoldingViews();
     return GestureDetector(
         onTap: () => refresh(cubit), //FocusScope.of(context).unfocus(),
         child: flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
@@ -126,8 +122,6 @@ class _HoldingsView extends State<HoldingsView> {
     //widget.cubit.update(isSubmitting: true);
     //setState(() {});
     await cubit.setHoldingViews(
-      Current.wallet,
-      pros.settings.chainNet,
       force: true,
     );
     setState(() {});

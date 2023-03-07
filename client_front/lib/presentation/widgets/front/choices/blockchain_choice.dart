@@ -174,8 +174,7 @@ Future<void> changeChainNet(
   streams.client.busy.add(true);
   await services.client.switchNetworks(chain: value.chain, net: value.net);
   streams.app.snack.add(Snack(message: 'Successfully connected'));
-  await components.cubits.holdingsView
-      .setHoldingViews(Current.wallet, Current.chainNet, force: true);
+  await components.cubits.holdingsView.setHoldingViews(force: true);
   components.cubits.loadingView.hide();
   (second ?? () {})();
 }

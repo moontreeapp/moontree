@@ -169,8 +169,6 @@ class Sail {
           Section.settings: []
         };
 
-  String? latestLocation;
-
   void menu() async => components.cubits.frontContainer.menuToggle();
 
   Future<String> back() async {
@@ -259,7 +257,10 @@ class Sail {
   /// so far nothing has to react in realtime to the path so, it's just a var.
   /// if/when we need it to notify things, we'll add it to a stream.
   void broadcast(String location) =>
-      latestLocation = location; // streams.app.path.add(location);
+      components.cubits.location.update(path: location);
+  //latestLocation = location; // streams.app.path.add(location);
+
+  String? get latestLocation => components.cubits.location.state.path;
 
   void updateCubits(String location, Manifest manifest, {bool back = false}) {
     broadcast(location);
