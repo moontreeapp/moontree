@@ -9,6 +9,8 @@ class RouteStack extends NavigatorObserver {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final GlobalKey appKey = GlobalKey();
 
+  BuildContext? get context => routeContext ?? navigatorKey.currentContext;
+
   bool nameIsInStack(String name) =>
       routeStack.map((Route<dynamic> e) => e.settings.name).contains(name);
 

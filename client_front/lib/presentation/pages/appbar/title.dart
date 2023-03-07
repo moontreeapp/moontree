@@ -14,8 +14,7 @@ import 'package:client_front/presentation/components/components.dart'
 import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:client_front/presentation/widgets/other/textfield.dart';
 import 'package:client_front/presentation/widgets/assets/icons.dart';
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
+import 'package:client_front/presentation/utils/animation.dart' as animation;
 
 class PageTitle extends StatefulWidget {
   const PageTitle({Key? key}) : super(key: key);

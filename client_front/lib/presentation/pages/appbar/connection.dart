@@ -9,11 +9,10 @@ import 'package:client_back/streams/client.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
+import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/front/choices/blockchain_choice.dart'
-    show produceBlockchainModal;
+    show blockchainOptions;
 
 class ConnectionLight extends StatefulWidget {
   const ConnectionLight({Key? key}) : super(key: key);
@@ -134,8 +133,11 @@ class _ConnectionLightState extends State<ConnectionLight>
     if (!disabledLocations.contains(sail.latestLocation)) {
       ScaffoldMessenger.of(context).clearSnackBars();
       streams.app.lead.add(LeadIcon.dismiss);
-      //produceBlockchainModal(components.routes.routeContext!);
-      components.cubits.bottomModalSheet.show();
+      //produceBlockchainModal(context: components.routes.routeContext!);
+      components.cubits.bottomModalSheet.show(
+          children: blockchainOptions(onTap: () {
+        components.cubits.bottomModalSheet.hide();
+      }));
       //Navigator.of(components.routes.routeContext!)
       //    .pushNamed('/settings/network/blockchain');
     }

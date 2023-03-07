@@ -147,7 +147,7 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;
 
 /// unused solution in preference to named routes
-//import 'package:client_front/presentation/utilities/animation.dart';
+//import 'package:client_front/presentation/utils/animation.dart';
 //Route<dynamic>? generatedRoutes(RouteSettings settings) {
 //  switch (settings.name) {
 //    case '/':

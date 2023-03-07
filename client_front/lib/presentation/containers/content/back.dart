@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/back/cubit.dart';
 import 'package:client_front/presentation/theme/colors.dart';
-//import 'package:client_front/presentation/utilities/animation.dart'
+//import 'package:client_front/presentation/utils/animation.dart'
 //    as animation;
 
 class BackContainer extends StatelessWidget {

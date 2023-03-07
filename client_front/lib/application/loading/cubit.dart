@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
+import 'package:client_front/presentation/utils/animation.dart' as animation;
 
 part 'state.dart';
 

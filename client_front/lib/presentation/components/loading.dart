@@ -15,7 +15,7 @@ class LoadingComponents {
     bool staticImage = false,
   }) async =>
       await showModalBottomSheet<void>(
-          context: context ?? components.routes.routeContext!,
+          context: context ?? components.routes.context!,
           enableDrag: false,
           elevation: 0,
           isScrollControlled: true,

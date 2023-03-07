@@ -1,3 +1,4 @@
+import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
@@ -82,7 +83,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
   }
 
   void _produceBlockchainModal() => produceBlockchainModal(
-        context,
+        context: context,
         first: (ChainNet value) => setState(() {
           chainChoice = value.chain;
           netChoice = value.net;
@@ -99,12 +100,23 @@ bool isSelected(Chain chain, Net net) =>
 bool isConnected() =>
     streams.client.connected.value == ConnectionStatus.connected;
 
-void produceBlockchainModal(
-  BuildContext context, {
+void produceBlockchainModal({
+  BuildContext? context,
   Function(ChainNet)? first,
   Function? second,
 }) =>
-    SimpleSelectionItems(context, items: <Widget>[
+    SimpleSelectionItems(
+      context ?? components.routes.routeContext!,
+      items: blockchainOptions(),
+    ).build();
+
+List<Widget> blockchainOptions({
+  BuildContext? context,
+  Function? onTap,
+  Function(ChainNet)? first,
+  Function? second,
+}) =>
+    <Widget>[
       for (ChainBundle x in <ChainBundle>[
         ChainBundle(icons.evrmore, 'Evrmore', Chain.evrmore, Net.main),
         ChainBundle(icons.ravencoin, 'Ravencoin', Chain.ravencoin, Net.main),
@@ -119,22 +131,27 @@ void produceBlockchainModal(
           ListTile(
               leading: x.icon(height: 24, width: 24, circled: true),
               title: Text(x.name,
-                  style: Theme.of(context)
+                  style: Theme.of(context ?? components.routes.context!)
                       .textTheme
                       .bodyText1!
                       .copyWith(color: AppColors.black87)),
               trailing: isSelected(x.chain, x.net) && isConnected()
                   ? const Icon(Icons.check_rounded, color: AppColors.primary)
                   : null,
-              onTap: () => !(isSelected(x.chain, x.net) && isConnected())
-                  ? changeChainNet(
-                      context,
-                      x.chainNet,
-                      first: first,
-                      second: second,
-                    )
-                  : null),
-    ]).build();
+              onTap: () {
+                if (onTap != null) {
+                  onTap();
+                }
+                !(isSelected(x.chain, x.net) && isConnected())
+                    ? changeChainNet(
+                        context ?? components.routes.routeContext!,
+                        x.chainNet,
+                        first: first,
+                        second: second,
+                      )
+                    : null;
+              }),
+    ];
 
 Future<void> changeChainNet(
   BuildContext context,
@@ -142,17 +159,24 @@ Future<void> changeChainNet(
   Function(ChainNet)? first,
   Function? second,
 }) async {
-  Navigator.of(context).pop();
+  //Navigator.of(context).pop();
   // streams.client.busy.add(true); // we want this here?
   (first ?? (_) {})(value);
-  components.loading.screen(
-    message:
-        'Connecting to ${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}',
-    returnHome: false,
-  );
+  components.cubits.loadingView.show(
+      title: 'Connecting',
+      msg:
+          '${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}');
+  //components.loading.screen(
+  //  message:
+  //      'Connecting to ${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}',
+  //  returnHome: false,
+  //);
   streams.client.busy.add(true);
   await services.client.switchNetworks(chain: value.chain, net: value.net);
   streams.app.snack.add(Snack(message: 'Successfully connected'));
+  await components.cubits.holdingsView
+      .setHoldingViews(Current.wallet, Current.chainNet, force: true);
+  components.cubits.loadingView.hide();
   (second ?? () {})();
 }
 

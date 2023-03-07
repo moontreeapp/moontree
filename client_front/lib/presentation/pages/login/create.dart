@@ -12,8 +12,7 @@ import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
+import 'package:client_front/presentation/utils/animation.dart' as animation;
 
 class LoginCreate extends StatefulWidget {
   const LoginCreate({Key? key}) : super(key: key ?? defaultKey);

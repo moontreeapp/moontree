@@ -1,4 +1,4 @@
-import 'package:client_front/presentation/utilities/animation.dart';
+import 'package:client_front/presentation/utils/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 

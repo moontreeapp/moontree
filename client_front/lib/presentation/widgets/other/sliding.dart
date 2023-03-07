@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
+import 'package:client_front/presentation/utils/animation.dart' as animation;
 
 class SlideOutIn extends StatefulWidget {
   final Widget left;
@@ -24,8 +23,6 @@ class _SlideOutInState extends State<SlideOutIn>
   late final AnimationController _controller;
   late final Animation<Offset> _animationRight;
   late final Animation<Offset> _animationLeft;
-  late final Tween<Offset> _tweenRight;
-  late final Tween<Offset> _tweenLeft;
 
   @override
   void initState() {
@@ -74,6 +71,67 @@ class _SlideOutInState extends State<SlideOutIn>
         SlideTransition(
           position: _animationRight,
           child: widget.right,
+        ),
+      ],
+    );
+  }
+}
+
+class SlideUp extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+  final bool enter;
+
+  const SlideUp({
+    required this.child,
+    this.duration = animation.slideDuration,
+    this.enter = true,
+  });
+
+  @override
+  _SlideUpState createState() => _SlideUpState();
+}
+
+class _SlideUpState extends State<SlideUp> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<Offset> _animationUp;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+
+    _animationUp = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOutCubic,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.enter) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+    return Stack(
+      children: [
+        SlideTransition(
+          position: _animationUp,
+          child: widget.child,
         ),
       ],
     );

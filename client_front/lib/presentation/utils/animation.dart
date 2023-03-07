@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const slideDuration = const Duration(milliseconds: 300);
-const fadeDuration = const Duration(milliseconds: 3000);
+const fadeDuration = const Duration(milliseconds: 300);
 const slowFadeDuration = const Duration(milliseconds: 4000);
 
 class DelayedCurve extends Curve {

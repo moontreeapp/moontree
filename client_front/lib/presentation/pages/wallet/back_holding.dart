@@ -1,6 +1,6 @@
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/utilities/ext.dart';
+import 'package:client_front/presentation/utils/ext.dart';
 
 class BackHoldingScreen extends StatelessWidget {
   final String chainSymbol;

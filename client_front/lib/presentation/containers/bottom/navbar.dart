@@ -6,8 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:client_front/application/navbar/height/cubit.dart';
 import 'package:client_front/presentation/services/sail.dart';
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
+import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/shapes.dart' as shapes;

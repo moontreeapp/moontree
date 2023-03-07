@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/extra/cubit.dart';
 import 'package:client_front/application/front/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' as services;
-import 'package:client_front/presentation/utilities/animation.dart'
-    as animation;
+import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/widgets/front_curve.dart';
 
 class FrontHoldingScreen extends StatefulWidget {
