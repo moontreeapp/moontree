@@ -175,10 +175,13 @@ class _CheckoutState extends State<Checkout> {
                 net: pros.settings.net),
         title: Row(children: <Widget>[
           const SizedBox(width: 5),
-          FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Text(struct.displaySymbol,
-                  style: Theme.of(context).textTheme.bodyText1))
+          Container(
+              width:
+                  MediaQuery.of(context).size.width - (16 + 40 + 16 + 5 + 16),
+              child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(struct.displaySymbol,
+                      style: Theme.of(context).textTheme.bodyText1)))
         ]),
         //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         //  const SizedBox(width: 5),

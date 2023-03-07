@@ -53,7 +53,7 @@ class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
   @override
   UnsignedTransactionResult? fromLocal() => null;
 
+  /// don't save or retrieve unsigned tx, make them anew everytime
   @override
-  Future<void> save() async => // todo: add results to correct cache.
-      null;
+  Future<void> save() async => null;
 }
