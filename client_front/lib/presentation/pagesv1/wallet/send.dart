@@ -2,11 +2,13 @@ import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/streams/spend.dart';
+import 'package:collection/collection.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_utils/wallet_utils.dart' show FeeRate;
+import 'package:wallet_utils/wallet_utils.dart'
+    show FeeRate, SatsToAmountExtension;
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/maker.dart';
@@ -25,6 +27,11 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/pagesv1/misc/checkout.dart';
 import 'package:client_front/domain/utils/params.dart';
 import 'package:client_front/domain/utils/data.dart';
+
+extension FunctionsForBalanceView on BalanceView {
+  int get sats => satsConfirmed + satsUnconfirmed;
+  double get amount => (satsConfirmed + satsUnconfirmed).asCoin;
+}
 
 class Send extends StatefulWidget {
   final dynamic data;
@@ -291,7 +298,21 @@ class _SendState extends State<Send> {
                                     return 'must be greater than 0';
                                   }
                                   if (_asDouble(x) >
-                                      (state.security.balance?.amount ?? 0)) {
+                                      (state.security.balance?.amount ??
+                                          components.cubits.holdingsViewCubit
+                                              .state.holdingsViews
+                                              .where((e) =>
+                                                  e.symbol ==
+                                                      state.security.symbol &&
+                                                  ChainNet.from(name: e.chain)
+                                                          .chain ==
+                                                      state.security.chain &&
+                                                  ChainNet.from(name: e.chain)
+                                                          .net ==
+                                                      state.security.net)
+                                              .firstOrNull
+                                              ?.amount ??
+                                          0)) {
                                     return 'too large';
                                   }
                                   if (x.isNumeric) {
