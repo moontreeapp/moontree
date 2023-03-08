@@ -29,7 +29,7 @@ abstract class LocationCubitState extends Equatable {
   /// for the rest of the front end. Todo: convert frontend to reference this.
   Wallet get wallet => Current.wallet;
   ChainNet get chainNet => Current.chainNet;
-  String get settingsPath => components.cubits.backContainer.state.path;
+  //String get menuPath => components.cubits.backContainer.state.path;
 }
 
 class LocationState extends LocationCubitState {

@@ -13,6 +13,8 @@ abstract class BackContainerCubitState extends Equatable {
 
   @override
   List<Object?> get props => [height, path];
+
+  bool get menuExpanded => path.startsWith('/menu/');
 }
 
 class BackContainerState extends BackContainerCubitState {

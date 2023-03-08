@@ -18,6 +18,9 @@ abstract class FrontContainerCubitState extends Equatable {
 
   @override
   String toString() => '$props';
+
+  /// assumes the only time we put front container to min is when we're showing menu
+  bool get menuOpen => containerHeight == FrontContainerHeight.min;
 }
 
 class FrontContainerState extends FrontContainerCubitState {

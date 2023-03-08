@@ -16,8 +16,10 @@ class BackContainerCubit extends Cubit<BackContainerCubitState>
           priorPath: '/',
         ));
 
+  bool get menuExpanded => state.menuExpanded;
+
   void previousMenu() {
-    if (state.path.startsWith('/menu/')) {
+    if (menuExpanded) {
       final x = state.path.split('/');
       return emit(BackContainerState(
         height: state.height,

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:client_front/application/front/cubit.dart';
+import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -18,7 +20,8 @@ import 'package:client_front/presentation/widgets/assets/icons.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
 
 class PageTitle extends StatefulWidget {
-  const PageTitle({Key? key}) : super(key: key);
+  final bool showWalletChange;
+  const PageTitle({Key? key, this.showWalletChange = false}) : super(key: key);
 
   @override
   PageTitleState createState() => PageTitleState();
@@ -268,18 +271,36 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   },
                   child: FadeTransition(
                       opacity: anima,
-                      child: FittedBox(
-                          fit: BoxFit.fitWidth,
-                          child: Text(cubit.title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline2!
-                                  .copyWith(
-                                    color: AppColors.white,
-                                    fontWeight: cubit.title.length >= 25
-                                        ? FontWeights.bold
-                                        : FontWeights.semiBold,
-                                  )))));
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            FittedBox(
+                                fit: BoxFit.fitWidth,
+                                child: Text(cubit.title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline2!
+                                        .copyWith(
+                                          color: AppColors.white,
+                                          fontWeight: cubit.title.length >= 25
+                                              ? FontWeights.bold
+                                              : FontWeights.semiBold,
+                                        ))),
+                            BlocBuilder<FrontContainerCubit,
+                                    FrontContainerCubitState>(
+                                builder: (context, state) {
+                              if (state.menuOpen) {
+                                return FadeIn(
+                                    child: IconButton(
+                                        onPressed: () => print('pressed'),
+                                        icon: const Icon(
+                                            Icons.expand_more_rounded,
+                                            color: Colors.white,
+                                            size: 30)));
+                              }
+                              return SizedBox.shrink();
+                            })
+                          ])));
             }));
 
 /*

@@ -1,3 +1,5 @@
+import 'package:client_front/application/back/cubit.dart';
+import 'package:client_front/application/front/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/location/cubit.dart';
