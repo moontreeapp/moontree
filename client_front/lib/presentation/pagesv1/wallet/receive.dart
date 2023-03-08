@@ -18,19 +18,18 @@ class Receive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    components.cubits.receiveView.setAddress(Current.wallet, force: true);
     return flutter_bloc.BlocBuilder<ReceiveViewCubit, ReceiveViewState>(
-        bloc: components.cubits.receiveView
-          ..setAddress(Current.wallet), // go get an address
         builder: (BuildContext context, ReceiveViewState state) {
-          return FrontCurve(
-              alignment: Alignment.topCenter,
-              child: GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: ReceiveContent(
-                  cubit: components.cubits.receiveView,
-                ),
-              ));
-        });
+      return FrontCurve(
+          alignment: Alignment.topCenter,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: ReceiveContent(
+              cubit: components.cubits.receiveView,
+            ),
+          ));
+    });
   }
 }
 

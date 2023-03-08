@@ -230,4 +230,6 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.import),
       BlocProvider<LocationCubit>(
           create: (context) => components.cubits.location),
+      BlocProvider<ReceiveViewCubit>(
+          create: (BuildContext context) => components.cubits.receiveView),
     ];
