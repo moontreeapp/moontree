@@ -129,6 +129,7 @@ class _ConnectionLightState extends State<ConnectionLight>
     //if (streams.app.loading.value == true) {
     //  return;
     //}
+
     if (!disabledLocations.contains(sail.latestLocation)) {
       ScaffoldMessenger.of(context).clearSnackBars();
       //produceBlockchainModal(context: components.routes.routeContext!);
@@ -138,6 +139,8 @@ class _ConnectionLightState extends State<ConnectionLight>
       }));
       //Navigator.of(components.routes.routeContext!)
       //    .pushNamed('/settings/network/blockchain');
+      // we'd really like to trigger this whenever we lose focus of it...
+      components.cubits.title.update(editable: false);
     }
   }
 }

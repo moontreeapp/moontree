@@ -169,7 +169,11 @@ class Sail {
           Section.settings: []
         };
 
-  void menu() async => components.cubits.frontContainer.menuToggle();
+  void menu() async {
+    components.cubits.frontContainer.menuToggle();
+    // we'd really like to trigger this whenever we lose focus of it...
+    components.cubits.title.update(editable: false);
+  }
 
   Future<String> back() async {
     /// todo: extra content is only used on transactions history page right now,

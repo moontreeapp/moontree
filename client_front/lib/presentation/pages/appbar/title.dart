@@ -388,15 +388,18 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                   if (state.menuOpen) {
                                     return FadeIn(
                                         child: IconButton(
-                                            onPressed: () => components
+                                            onPressed: () {
+                                              components.cubits.bottomModalSheet
+                                                  .show(children:
+                                                      walletOptions(onTap: () {
+                                                components
                                                     .cubits.bottomModalSheet
-                                                    .show(children:
-                                                        walletOptions(
-                                                            onTap: () {
-                                                  components
-                                                      .cubits.bottomModalSheet
-                                                      .hide();
-                                                })),
+                                                    .hide();
+                                              }));
+                                              // we'd really like to trigger this whenever we lose focus of it...
+                                              components.cubits.title
+                                                  .update(editable: false);
+                                            },
                                             icon: const Icon(
                                               Icons.expand_more_rounded,
                                               color: Colors.white,
@@ -818,19 +821,28 @@ class WalletNameTextField extends StatefulWidget {
 
 class WalletNameTextFieldState extends State<WalletNameTextField> {
   final TextEditingController changeName = TextEditingController();
+  final FocusNode focus = FocusNode();
   void initState() {
     super.initState();
     changeName.text = widget.text;
+    focus.addListener(() {
+      print(focus.hasFocus);
+      if (!focus.hasFocus) {
+        components.cubits.title.update(editable: false);
+      }
+    });
   }
 
   @override
   void dispose() {
     changeName.dispose();
+    focus.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    focus.requestFocus();
     return Container(
         width: screen.width -
             ((16 + 40 + 16) + //left lead
@@ -841,6 +853,7 @@ class WalletNameTextFieldState extends State<WalletNameTextField> {
           OverlayEntry(
               builder: (BuildContext context) => TextField(
                   controller: changeName,
+                  focusNode: focus,
                   onSubmitted: (value) async {
                     if (changeName.text != '') {
                       if (Current.wallet is LeaderWallet) {
