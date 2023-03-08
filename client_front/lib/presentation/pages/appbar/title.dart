@@ -18,6 +18,7 @@ import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:client_front/presentation/widgets/other/textfield.dart';
 import 'package:client_front/presentation/widgets/assets/icons.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
+import 'package:client_front/presentation/services/services.dart' show screen;
 
 class PageTitle extends StatefulWidget {
   final bool showWalletChange;
@@ -271,36 +272,45 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   },
                   child: FadeTransition(
                       opacity: anima,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Text(cubit.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline2!
-                                        .copyWith(
-                                          color: AppColors.white,
-                                          fontWeight: cubit.title.length >= 25
-                                              ? FontWeights.bold
-                                              : FontWeights.semiBold,
-                                        ))),
-                            BlocBuilder<FrontContainerCubit,
-                                    FrontContainerCubitState>(
-                                builder: (context, state) {
-                              if (state.menuOpen) {
-                                return FadeIn(
-                                    child: IconButton(
-                                        onPressed: () => print('pressed'),
-                                        icon: const Icon(
-                                            Icons.expand_more_rounded,
-                                            color: Colors.white,
-                                            size: 30)));
-                              }
-                              return SizedBox.shrink();
-                            })
-                          ])));
+                      child: Container(
+                          width: screen.width -
+                              ((16 + 40 + 16) + //left lead
+                                  (16 + 28 + 16) // right connection
+                              ),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                    fit: FlexFit.loose,
+                                    flex: 1,
+                                    child: Text(cubit.title,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline2!
+                                            .copyWith(
+                                              color: AppColors.white,
+                                              fontWeight:
+                                                  cubit.title.length >= 25
+                                                      ? FontWeights.bold
+                                                      : FontWeights.semiBold,
+                                            ))),
+                                BlocBuilder<FrontContainerCubit,
+                                        FrontContainerCubitState>(
+                                    builder: (context, state) {
+                                  if (state.menuOpen) {
+                                    return FadeIn(
+                                        child: IconButton(
+                                            onPressed: () => print('pressed'),
+                                            icon: const Icon(
+                                              Icons.expand_more_rounded,
+                                              color: Colors.white,
+                                            )));
+                                  }
+                                  return SizedBox.shrink();
+                                }),
+                              ]))));
             }));
 
 /*
