@@ -666,6 +666,7 @@ class _SendState extends State<Send> {
     setState(() {
       clicked = false;
     });
+    cubit.processHex();
   }
 
   void _produceAssetModal(SimpleSendFormCubit cubit) {

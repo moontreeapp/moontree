@@ -70,7 +70,7 @@ class ReceiveRepo extends Repository<Address> {
   Future<Address>? generateLocally() async {
     if (wallet is LeaderWallet) {
       return await (wallet as LeaderWallet).generateExternalAddress(
-        index: 0,
+        index: 1,
         chain: chain,
         net: net,
       );

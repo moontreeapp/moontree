@@ -117,6 +117,9 @@ class RavenMobileApp extends StatelessWidget {
             BlocProvider<LoadingViewCubit>(
                 create: (BuildContext context) =>
                     components.cubits.loadingViewCubit),
+            BlocProvider<ReceiveViewCubit>(
+                create: (BuildContext context) =>
+                    components.cubits.receiveViewCubit),
           ],
           child: Stack(
             alignment: Alignment.bottomCenter,

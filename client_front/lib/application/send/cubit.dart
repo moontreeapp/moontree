@@ -143,14 +143,19 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         cryptoAssetSatsByVinTxPos,
         state.unsigned!.rawHex.hexDecode,
       );
+      // todo also check item1 against state.
       if (result.item2 > 2 * satsPerCoin) {
         throw FeeGuardException('Parsed fee too large.');
       }
       return true;
     }
 
-    return parsed();
+    //return parsed();
+
+    /// gives type error
     //final txb = TransactionBuilder.fromTransaction(
     //    wutx.Transaction.fromBuffer(state.unsigned!.rawHex.hexBytes));
+    //print(txb.chainName);
+    return false;
   }
 }
