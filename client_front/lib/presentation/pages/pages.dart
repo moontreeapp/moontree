@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 //import 'package:client_front/presentation/pagesv1/home/home.dart';
 //import 'package:client_front/presentation/pagesv1/manage/assets.dart';
 //import 'package:client_front/presentation/pagesv1/manage/create/nft.dart';

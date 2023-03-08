@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:client_front/presentation/containers/bottom/modal.dart';
+import 'package:client_front/presentation/containers/layers/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,6 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/pages.dart' as pages;
-import 'package:client_front/presentation/containers/bottom/innermodal.dart';
 import 'package:client_front/presentation/containers/bottom/navbar.dart';
 import 'package:client_front/presentation/containers/content/extra.dart';
 import 'package:client_front/presentation/containers/content/content.dart';
@@ -183,6 +183,7 @@ class HomePage extends StatelessWidget {
               BottomNavigationBarWidget(),
               //InnerBottomModalSheetWidget(), //pointelss
               BottomModalSheetWidget(),
+              MessageModalLayer(),
               LoadingLayer(),
 
               /// must merge both implementations
@@ -223,6 +224,8 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.navbarSection),
       BlocProvider<BottomModalSheetCubit>(
           create: (context) => components.cubits.bottomModalSheet),
+      BlocProvider<MessageModalCubit>(
+          create: (context) => components.cubits.messageModal),
       BlocProvider<LoadingViewCubit>(
           create: (context) => components.cubits.loadingView),
       BlocProvider<LoginCubit>(create: (context) => components.cubits.login),

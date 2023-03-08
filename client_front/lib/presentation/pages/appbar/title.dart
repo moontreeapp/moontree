@@ -239,6 +239,107 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     }
   }
 
+  List<Widget> walletOptions({
+    BuildContext? context,
+    Function? onTap,
+    Function(ChainNet)? first,
+    Function? second,
+  }) =>
+      <Widget>[
+        for (final Wallet wallet in pros.wallets.ordered)
+          ListTile(
+            onTap: () async {
+              if (onTap != null) {
+                onTap();
+              }
+              return await switchWallet(wallet.id);
+            },
+            // todo: show chain icons for what blockchains this wallet has assets on here
+            leading: Icon(Icons.wallet_rounded,
+                color: wallet == Current.wallet ? AppColors.primary : null),
+            title: Text(wallet.name,
+                style: Theme.of(context ?? components.routes.context!)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: AppColors.black87)),
+            trailing: wallet == Current.wallet
+                ? const Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+
+            // todo: allow edit wallet, delete wallet here
+            /*trailing: !services.developer.developerMode
+                  ? null
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        if (pros.wallets.records.length > 1)
+                          IconButton(
+                            icon: Icon(Icons.delete_forever_rounded,
+                                color: wallet == Current.wallet
+                                    ? AppColors.primary
+                                    : null),
+                            onPressed: () async {
+                              components.cubits.messageModal.update(
+                                  title: 'DANGER!',
+                                  content:
+                                      'WARNING: You are about to delete a wallet. This action cannot be undone! Are you sure you want to delete it?',
+                                  behaviors: <String, void Function()>{
+                                    'CANCEL':
+                                        components.cubits.messageModal.reset,
+                                    'DELETE FOREVER': () async =>
+                                        components.cubits.messageModal.update(
+                                          title: 'CONFIRM DELETE',
+                                          content:
+                                              'To delete ${wallet.name} you will need to authenticate.',
+                                          //child:
+                                          behaviors: <String, void Function()>{
+                                            'CANCEL': components
+                                                .cubits.messageModal.reset,
+                                            'OK': () async {
+                                              print('not implemented yet');
+                                              /*// todo convert to sail
+                                              Navigator.pushNamed(
+                                                  components
+                                                      .routes.routeContext!,
+                                                  '/security/security',
+                                                  arguments: <String, Object>{
+                                                    'buttonLabel':
+                                                        'Delete ${wallet.name} Forever',
+                                                    'onSuccess': () async {
+                                                      Navigator.pop(components
+                                                          .routes
+                                                          .routeContext!);
+                                                      if (wallet.id ==
+                                                          Current.walletId) {
+                                                        await switchWallet(pros
+                                                            .wallets.records
+                                                            .where((Wallet w) =>
+                                                                w.id !=
+                                                                wallet.id)
+                                                            .first
+                                                            .id);
+                                                      }
+                                                      await pros.wallets
+                                                          .remove(wallet);
+                                                      wallets =
+                                                          pros.wallets.ordered;
+                                                      initializeWalletSecurities();
+                                                      setWalletsSecurities();
+                                                    }
+                                                  });*/
+                                            }
+                                          },
+                                        )
+                                  });
+                            },
+                          ),
+                      ],
+                    )*/
+          ),
+      ];
+
   @override
   Widget build(BuildContext context) {
     Animation<double> anima;
@@ -259,8 +360,6 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     for (final Wallet wallet
                         in pros.wallets.ordered + pros.wallets.ordered) {
                       if (next) {
-                        components.cubits.holdingsView
-                            .setHoldingViews(wallet: wallet, force: true);
                         await switchWallet(wallet.id);
                         break;
                       }
@@ -280,29 +379,24 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Flexible(
-                                    fit: FlexFit.loose,
-                                    flex: 1,
-                                    child: Text(cubit.title,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline2!
-                                            .copyWith(
-                                              color: AppColors.white,
-                                              fontWeight:
-                                                  cubit.title.length >= 25
-                                                      ? FontWeights.bold
-                                                      : FontWeights.semiBold,
-                                            ))),
+                                WalletNameText(
+                                    title: cubit.title,
+                                    editable: state.editable),
                                 BlocBuilder<FrontContainerCubit,
                                         FrontContainerCubitState>(
                                     builder: (context, state) {
                                   if (state.menuOpen) {
                                     return FadeIn(
                                         child: IconButton(
-                                            onPressed: () => print('pressed'),
+                                            onPressed: () => components
+                                                    .cubits.bottomModalSheet
+                                                    .show(children:
+                                                        walletOptions(
+                                                            onTap: () {
+                                                  components
+                                                      .cubits.bottomModalSheet
+                                                      .hide();
+                                                })),
                                             icon: const Icon(
                                               Icons.expand_more_rounded,
                                               color: Colors.white,
@@ -685,4 +779,95 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                           ))
             ],
       ).build();
+}
+
+class WalletNameText extends StatelessWidget {
+  final String title;
+  final bool editable;
+  const WalletNameText({Key? key, required this.title, required this.editable})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    if (!editable) {
+      return Flexible(
+          fit: FlexFit.loose,
+          flex: 1,
+          child: GestureDetector(
+              onLongPress: () => components.cubits.title.update(editable: true),
+              child: Text(title,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.headline2!.copyWith(
+                        color: AppColors.white,
+                        fontWeight: title.length >= 25
+                            ? FontWeights.bold
+                            : FontWeights.semiBold,
+                      ))));
+    }
+    return WalletNameTextField(text: title);
+  }
+}
+
+class WalletNameTextField extends StatefulWidget {
+  final String text;
+  const WalletNameTextField({Key? key, required this.text}) : super(key: key);
+
+  @override
+  WalletNameTextFieldState createState() => WalletNameTextFieldState();
+}
+
+class WalletNameTextFieldState extends State<WalletNameTextField> {
+  final TextEditingController changeName = TextEditingController();
+  void initState() {
+    super.initState();
+    changeName.text = widget.text;
+  }
+
+  @override
+  void dispose() {
+    changeName.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: screen.width -
+            ((16 + 40 + 16) + //left lead
+                (16 + 24 + 16) +
+                (16 + 28 + 16) // right connection
+            ),
+        child: Overlay(initialEntries: [
+          OverlayEntry(
+              builder: (BuildContext context) => TextField(
+                  controller: changeName,
+                  onSubmitted: (value) async {
+                    if (changeName.text != '') {
+                      if (Current.wallet is LeaderWallet) {
+                        await pros.wallets.save(LeaderWallet.from(
+                          Current.wallet as LeaderWallet,
+                          name: changeName.text,
+                          seed: await (Current.wallet as LeaderWallet).seed,
+                        ));
+                      } else if (Current.wallet is SingleWallet) {
+                        await pros.wallets.save(SingleWallet.from(
+                          Current.wallet as SingleWallet,
+                          name: changeName.text,
+                          //getWif: await wallet.getWif,
+                        ));
+                      }
+                      //initializeWalletSecurities();
+                      //setWalletsSecurities();
+                      components.cubits.title.update(editable: false);
+                    }
+                  },
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.headline2!.copyWith(
+                        color: AppColors.white,
+                        fontWeight: widget.text.length >= 25
+                            ? FontWeights.bold
+                            : FontWeights.semiBold,
+                      )))
+        ]));
+  }
 }

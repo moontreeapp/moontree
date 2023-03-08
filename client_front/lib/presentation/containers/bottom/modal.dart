@@ -1,7 +1,7 @@
 import 'dart:math';
+import 'package:client_front/application/modal/bottom/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_front/application/bottom/modal/cubit.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/other/sliding.dart';

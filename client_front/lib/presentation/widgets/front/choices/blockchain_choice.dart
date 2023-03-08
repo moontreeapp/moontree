@@ -129,28 +129,29 @@ List<Widget> blockchainOptions({
             .developer.featureLevelBlockchainMap[services.developer.userLevel]!
             .contains(x.chainNet))
           ListTile(
-              leading: x.icon(height: 24, width: 24, circled: true),
-              title: Text(x.name,
-                  style: Theme.of(context ?? components.routes.context!)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(color: AppColors.black87)),
-              trailing: isSelected(x.chain, x.net) && isConnected()
-                  ? const Icon(Icons.check_rounded, color: AppColors.primary)
-                  : null,
-              onTap: () {
-                if (onTap != null) {
-                  onTap();
-                }
-                !(isSelected(x.chain, x.net) && isConnected())
-                    ? changeChainNet(
-                        context ?? components.routes.routeContext!,
-                        x.chainNet,
-                        first: first,
-                        second: second,
-                      )
-                    : null;
-              }),
+            onTap: () {
+              if (onTap != null) {
+                onTap();
+              }
+              !(isSelected(x.chain, x.net) && isConnected())
+                  ? changeChainNet(
+                      context ?? components.routes.routeContext!,
+                      x.chainNet,
+                      first: first,
+                      second: second,
+                    )
+                  : null;
+            },
+            leading: x.icon(height: 24, width: 24, circled: true),
+            title: Text(x.name,
+                style: Theme.of(context ?? components.routes.context!)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: AppColors.black87)),
+            trailing: isSelected(x.chain, x.net) && isConnected()
+                ? const Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+          ),
     ];
 
 Future<void> changeChainNet(

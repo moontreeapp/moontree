@@ -123,15 +123,14 @@ class _ConnectionLightState extends State<ConnectionLight>
       : connectionStatusColor;
 
   void navToBlockchain() {
-    if (streams.app.scrim.value ?? false) {
-      return;
-    }
-    if (streams.app.loading.value == true) {
-      return;
-    }
+    //if (streams.app.scrim.value ?? false) {
+    //  return;
+    //}
+    //if (streams.app.loading.value == true) {
+    //  return;
+    //}
     if (!disabledLocations.contains(sail.latestLocation)) {
       ScaffoldMessenger.of(context).clearSnackBars();
-      streams.app.lead.add(LeadIcon.dismiss);
       //produceBlockchainModal(context: components.routes.routeContext!);
       components.cubits.bottomModalSheet.show(
           children: blockchainOptions(onTap: () {

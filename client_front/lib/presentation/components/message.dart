@@ -15,6 +15,8 @@ class MessageComponents {
     // add scrim to appbar with stream here?
     await showDialog(
         context: context,
+        barrierDismissible: true,
+        useRootNavigator: true,
         barrierColor: AppColors.black38,
         useSafeArea: false,
         builder: (BuildContext context) {

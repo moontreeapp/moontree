@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_front/application/bottom/modal/cubit.dart';
+import 'package:client_front/application/modal/bottom/cubit.dart';
 import 'package:client_front/application/loading/cubit.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/services/services.dart' as services;

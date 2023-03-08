@@ -175,38 +175,36 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primary,
-      appBar: null,
-      body: Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[
-          SlideTransition(
-              position: _slideAnimation,
-              child: AnimatedContainer(
-                duration: animationDuration,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    borderRadius: shapes.topRoundedBorder16,
-                    boxShadow: shadows.frontLayer,
-                    color: Colors.white),
-              )),
-          FadeTransition(
-              opacity: _fadeAnimation,
-              child:
-                  /**/
-                  Lottie.asset('assets/splash/moontree_v2_001_recolored.json',
-                      animate: true,
-                      repeat: false,
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover
-                      /**/
-                      ))
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: AppColors.primary,
+        appBar: null,
+        body: Stack(
+          alignment: Alignment.topCenter,
+          children: <Widget>[
+            SlideTransition(
+                position: _slideAnimation,
+                child: AnimatedContainer(
+                  duration: animationDuration,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: shapes.topRoundedBorder16,
+                      boxShadow: shadows.frontLayer,
+                      color: Colors.white),
+                )),
+            FadeTransition(
+                opacity: _fadeAnimation,
+                child:
+                    /**/
+                    Lottie.asset('assets/splash/moontree_v2_001_recolored.json',
+                        animate: true,
+                        repeat: false,
+                        alignment: Alignment.center,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover
+                        /**/
+                        ))
+          ],
+        ),
+      );
 }

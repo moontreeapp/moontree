@@ -8,11 +8,12 @@ part 'state.dart';
 class TitleCubit extends Cubit<TitleCubitState> {
   TitleCubit() : super(const TitleState());
 
-  void update({String? title}) => emit(TitleState(
+  void update({String? title, bool? editable}) => emit(TitleState(
         title: title ?? state.title,
+        editable: editable ?? state.editable,
       ));
 
-  void reset() => emit(TitleState(title: null));
+  void reset() => emit(TitleState(title: null, editable: false));
 
   /// returns override title, the title by location, or empty string.
   String get title {

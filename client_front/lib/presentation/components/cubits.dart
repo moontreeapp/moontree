@@ -26,6 +26,7 @@ class GlobalCubits {
   final NavbarHeightCubit navbarHeight = NavbarHeightCubit();
   final NavbarSectionCubit navbarSection = NavbarSectionCubit();
   final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();
+  final MessageModalCubit messageModal = MessageModalCubit();
   final LoadingViewCubit loadingView = LoadingViewCubit();
   final ImportFormCubit import = ImportFormCubit();
   final LocationCubit location = LocationCubit();
