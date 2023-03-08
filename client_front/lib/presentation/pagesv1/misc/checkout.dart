@@ -179,7 +179,8 @@ class _CheckoutState extends State<Checkout> {
               width:
                   MediaQuery.of(context).size.width - (16 + 40 + 16 + 5 + 16),
               child: FittedBox(
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
                   child: Text(struct.displaySymbol,
                       style: Theme.of(context).textTheme.bodyText1)))
         ]),
