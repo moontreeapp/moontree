@@ -74,7 +74,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       //String? memo,
       //String? note,
       //String? addressName,
-    ).fetch(only:true);
+    ).fetch(only: true);
     set(
       unsigned: unsigned,
       isSubmitting: false,
@@ -88,4 +88,20 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
   //void submit() async {
   //  emit(await submitSend());
   //}
+
+  /*
+  TODO:
+  // convertion to txb so we can sign it
+  transactionBuilder.fromTransaction(Transaction.fromBuffer(our hex.toUint8List())) -> txb object 
+  hex -> get addresses, amounts, etc we're sending too (details)
+  hex + other -> sign -> signed tx -> endpoint
+  
+  // will call on each value:
+  signRaw({
+    required int vin, // from unsigned tx
+    required ECPair keyPair, // from unsigned tx
+    int? hashType,
+    Uint8List? prevOutScriptOverride, // from unsigned tx
+  })
+  */
 }
