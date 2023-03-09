@@ -105,17 +105,6 @@ class _BlockchainChoice extends State<BlockchainChoice> {
   }
 
   void refresh() => setState(init);
-
-  void _produceBlockchainModal() => produceBlockchainModal(
-        context: context,
-        first: (ChainNet value) => setState(() {
-          chainChoice = value.chain;
-          netChoice = value.net;
-          chainNet = value;
-          showHelper = false;
-        }),
-        second: () => setState(() => showHelper = true),
-      );
 }
 
 bool isSelected(Chain chain, Net net) =>
