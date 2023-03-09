@@ -1,5 +1,11 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
+import 'package:client_front/presentation/pages/settings/database.dart';
+import 'package:client_front/presentation/pages/settings/mining.dart';
+import 'package:client_front/presentation/pages/settings/mode/advanced.dart';
+import 'package:client_front/presentation/pages/settings/mode/developer.dart';
+import 'package:client_front/presentation/pages/settings/network/blockchain.dart';
+import 'package:client_front/presentation/pages/settings/security.dart';
 import 'package:client_front/presentation/pages/support/about.dart';
 import 'package:client_front/presentation/pages/support/support.dart';
 import 'package:client_front/presentation/pages/wallet/receive.dart';
@@ -148,6 +154,12 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   //'/restore/export': (BuildContext context) => const Export(),
   '/support/about': (BuildContext context) => const About(),
   '/support/support': (BuildContext context) => const SupportPage(),
+  '/mode/developer': (BuildContext context) => const DeveloperMode(),
+  '/mode/advanced': (BuildContext context) => const AdvancedDeveloperMode(),
+  '/setting/database': (BuildContext context) => const DatabaseSettings(),
+  '/setting/mining': (BuildContext context) => const MiningSetting(),
+  '/setting/security': (BuildContext context) => const SecuritySettings(),
+  '/network/blockchain': (BuildContext context) => const BlockchainSettings(),
 };
 
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;

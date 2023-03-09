@@ -156,7 +156,9 @@ class MainMenu extends StatelessWidget {
                 icon: MdiIcons.shieldKey,
                 name: 'Import',
                 link: '/restore/import'),
-          if (!services.developer.developerMode && Current.balanceRVN.value > 0)
+          if (false && // not yet supported
+              !services.developer.developerMode &&
+              Current.balanceRVN.value > 0)
             MenuLink(
               icon: MdiIcons.broom,
               name: 'Sweep',
@@ -270,12 +272,15 @@ class RestoreMenu extends StatelessWidget {
         children: <Widget>[
           MenuLink(
               icon: MdiIcons.keyPlus, name: 'Import', link: '/restore/import'),
-          MenuLink(
-              icon: MdiIcons.keyMinus,
-              name: 'Export',
-              link: '/restore/export',
-              disabled: !services.developer.advancedDeveloperMode),
-          if (services.developer.developerMode &&
+          if (false // not yet supported
+          )
+            MenuLink(
+                icon: MdiIcons.keyMinus,
+                name: 'Export',
+                link: '/restore/export',
+                disabled: !services.developer.advancedDeveloperMode),
+          if (false && // not yet supported
+              services.developer.developerMode &&
               (pros.securities.currentCoin.balance?.value ?? 0) > 0)
             MenuLink(
               icon: MdiIcons.broom,
@@ -298,14 +303,14 @@ class SettingsMenu extends StatelessWidget {
           MenuLink(
             icon: Icons.lock_rounded,
             name: 'Security',
-            link: '/security/method/change',
+            link: '/setting/security',
           ),
           /*
           if (!pros.settings.authMethodIsNativeSecurity)
             MenuLink(
               icon: Icons.lock_rounded,
               name: 'Password',
-              link: '/security/password/change',
+              link: '/settings/password/change',
             ),
             */
           /*
@@ -328,16 +333,17 @@ class SettingsMenu extends StatelessWidget {
           //    name: 'Addresses',
           //    link: '/addresses',
           //  ),
-          MenuLink(
-            icon: MdiIcons.pickaxe,
-            name: 'Mining',
-            link: '/network/mining',
-          ),
+          if (false) // not necessary anymore with new serverside backend
+            MenuLink(
+              icon: MdiIcons.pickaxe,
+              name: 'Mining',
+              link: '/setting/mining',
+            ),
           if (services.developer.developerMode)
             MenuLink(
               icon: MdiIcons.database,
               name: 'Database',
-              link: '/database',
+              link: '/setting/database',
             ),
           if (services.developer.advancedDeveloperMode == true)
             MenuLink(

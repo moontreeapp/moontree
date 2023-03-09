@@ -174,6 +174,48 @@ class Sail {
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/support/support',
     ),
+    '/mode/developer': Manifest(
+      title: 'Developer Mode',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/mode/developer',
+    ),
+    '/mode/advanced': Manifest(
+      title: 'Advanced Developer Mode',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/mode/advanced',
+    ),
+    '/setting/mining': Manifest(
+      title: 'Mining Settings',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/setting/mining',
+    ),
+    '/setting/database': Manifest(
+      title: 'Database Settings',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/setting/database',
+    ),
+    '/setting/security': Manifest(
+      title: 'Security Settings',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/setting/security',
+    ),
+    '/network/blockchain': Manifest(
+      title: 'Blockchain Settings',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/network/blockchain',
+    ),
   };
 
   final List<Section> sectionHistory;
