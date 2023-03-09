@@ -249,12 +249,12 @@ class NavbarActions extends StatelessWidget {
                               //        .add(Snack(message: 'Claimed your EVR first.'));
                               //  }
                               //},
-                              onPressed: () => sail.to('/transaction/send'),
+                              onPressed: () => sail.to('/wallet/send'),
                             )),
                             Expanded(
                                 child: BottomButton(
                               label: 'receive',
-                              onPressed: () => sail.to('/transaction/receive'),
+                              onPressed: () => sail.to('/wallet/receive'),
                             ))
                           ]
                         : state.section == Section.manage

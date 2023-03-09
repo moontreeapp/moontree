@@ -130,6 +130,13 @@ class Sail {
       navbarHeight: NavbarHeight.mid,
       frontPath: '/wallet/holding/transaction',
     ),
+    '/wallet/receive': Manifest(
+      title: 'Receive',
+      section: Section.wallet,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/wallet/receive',
+    ),
     '/manage': Manifest(
       title: 'Manage',
       section: Section.manage,
@@ -152,6 +159,20 @@ class Sail {
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/restore/import',
+    ),
+    '/support/about': Manifest(
+      title: 'About',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/support/about',
+    ),
+    '/support/support': Manifest(
+      title: 'Support',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/support/support',
     ),
   };
 

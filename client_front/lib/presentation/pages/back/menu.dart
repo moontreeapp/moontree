@@ -192,12 +192,12 @@ class MainMenu extends StatelessWidget {
           MenuLink(
             icon: Icons.help,
             name: 'Support',
-            link: '/support',
+            link: '/support/support',
           ),
           MenuLink(
             icon: Icons.info_rounded,
             name: 'About',
-            link: '/about',
+            link: '/support/about',
           ),
 
           /*

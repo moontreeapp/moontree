@@ -1,4 +1,3 @@
-import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
 
@@ -7,6 +6,8 @@ class PageStructure extends StatelessWidget {
   final List<Widget> firstLowerChildren;
   final List<Widget>? secondLowerChildren;
   final List<Widget>? thirdLowerChildren;
+  final MainAxisAlignment? mainAxisAlignment;
+  final CrossAxisAlignment? crossAxisAlignment;
   final Widget? heightSpacer;
   final Widget? widthSpacer;
   const PageStructure({
@@ -15,6 +16,8 @@ class PageStructure extends StatelessWidget {
     required this.firstLowerChildren,
     this.secondLowerChildren,
     this.thirdLowerChildren,
+    this.mainAxisAlignment,
+    this.crossAxisAlignment,
     this.heightSpacer = const SizedBox(height: 16),
     this.widthSpacer = const SizedBox(width: 16),
   });
@@ -31,14 +34,18 @@ class PageStructure extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
+                Expanded(
+                    child: Column(
+                        mainAxisAlignment:
+                            mainAxisAlignment ?? MainAxisAlignment.start,
+                        crossAxisAlignment:
+                            crossAxisAlignment ?? CrossAxisAlignment.center,
+                        children: <Widget>[
                       for (final child in (heightSpacer == null
                           ? children
                           : children.intersperse(heightSpacer!)))
                         child
-                    ]),
+                    ])),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.stretch,

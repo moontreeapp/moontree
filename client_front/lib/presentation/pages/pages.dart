@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
+import 'package:client_front/presentation/pages/support/about.dart';
+import 'package:client_front/presentation/pages/support/support.dart';
+import 'package:client_front/presentation/pages/wallet/receive.dart';
 import 'package:flutter/material.dart';
 //import 'package:client_front/presentation/pagesv1/home/home.dart';
 //import 'package:client_front/presentation/pagesv1/manage/assets.dart';
@@ -136,12 +139,15 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/login/native': (BuildContext context) => const LoginNative(),
   '/login/password': (BuildContext context) => const LoginPassword(),
   '/wallet/holdings': (BuildContext context) => const WalletHoldings(),
+  '/wallet/receive': (BuildContext context) => const Receive(),
   '/backup/intro': (BuildContext context) => const BackupIntro(),
   '/backup/keypair': (BuildContext context) => const ShowKeypair(),
   '/backup/seed': (BuildContext context) => const BackupSeed(),
   '/backup/verify': (BuildContext context) => const VerifySeed(),
   '/restore/import': (BuildContext context) => const ImportPage(),
   //'/restore/export': (BuildContext context) => const Export(),
+  '/support/about': (BuildContext context) => const About(),
+  '/support/support': (BuildContext context) => const SupportPage(),
 };
 
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;
