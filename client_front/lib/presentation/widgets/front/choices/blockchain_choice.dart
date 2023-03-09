@@ -4,6 +4,7 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/theme/colors.dart';
@@ -17,6 +18,19 @@ class BlockchainChoice extends StatefulWidget {
 
   @override
   _BlockchainChoice createState() => _BlockchainChoice();
+
+  static const Set<String> disabledLocations = {
+    '/',
+    '/login/create',
+    '/login/native',
+    '/login/password',
+    '/login/create/native',
+    '/login/create/password',
+    '/backup/intro',
+    '/backup/seed',
+    '/backup/verify',
+    '/backup/keypair',
+  };
 }
 
 class _BlockchainChoice extends State<BlockchainChoice> {
@@ -30,14 +44,18 @@ class _BlockchainChoice extends State<BlockchainChoice> {
   @override
   void initState() {
     super.initState();
-    chainChoice = pros.settings.chain;
-    netChoice = pros.settings.net;
-    chainNet = ChainNet(chainChoice, netChoice);
+    init();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void init() {
+    chainChoice = pros.settings.chain;
+    netChoice = pros.settings.net;
+    chainNet = ChainNet(chainChoice, netChoice);
   }
 
   @override
@@ -71,9 +89,13 @@ class _BlockchainChoice extends State<BlockchainChoice> {
                     padding: const EdgeInsets.only(right: 14),
                     child: Icon(Icons.expand_more_rounded,
                         color: Color(0xDE000000))),
-                onPressed: _produceBlockchainModal,
+                onPressed: () async {
+                  navToBlockchain(context, refresh);
+                },
               ),
-              onTap: _produceBlockchainModal,
+              onTap: () async {
+                navToBlockchain(context, refresh);
+              },
               onEditingComplete: () async {
                 FocusScope.of(context).requestFocus(choiceFocus);
               },
@@ -81,6 +103,8 @@ class _BlockchainChoice extends State<BlockchainChoice> {
       ],
     );
   }
+
+  void refresh() => setState(init);
 
   void _produceBlockchainModal() => produceBlockchainModal(
         context: context,
@@ -191,4 +215,30 @@ class ChainBundle {
   final Chain chain;
   final Net net;
   ChainNet get chainNet => ChainNet(chain, net);
+}
+
+void navToBlockchain([BuildContext? context, Function? then]) {
+  //if (streams.app.scrim.value ?? false) {
+  //  return;
+  //}
+  //if (streams.app.loading.value == true) {
+  //  return;
+  //}
+
+  if (!BlockchainChoice.disabledLocations.contains(sail.latestLocation)) {
+    ScaffoldMessenger.of(context ?? components.routes.context!)
+        .clearSnackBars();
+    //produceBlockchainModal(context: components.routes.routeContext!);
+    components.cubits.bottomModalSheet.show(
+        children: blockchainOptions(
+      onTap: () {
+        components.cubits.bottomModalSheet.hide();
+      },
+      second: then ?? () {},
+    ));
+    //Navigator.of(components.routes.routeContext!)
+    //    .pushNamed('/settings/network/blockchain');
+    // we'd really like to trigger this whenever we lose focus of it...
+    components.cubits.title.update(editable: false);
+  }
 }

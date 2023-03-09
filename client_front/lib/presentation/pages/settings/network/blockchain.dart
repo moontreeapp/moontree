@@ -13,7 +13,7 @@ class BlockchainSettings extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         const BlockchainChoice(),
-        const ElectrumNetwork(),
+        //const ElectrumNetwork(), // no longer use electrum...
       ],
     );
   }
