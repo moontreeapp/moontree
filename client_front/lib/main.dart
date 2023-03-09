@@ -180,9 +180,8 @@ class HomePage extends StatelessWidget {
             ] +
             const <Widget>[
               ExtraContainer(),
-              BottomNavigationBarWidget(),
-              //InnerBottomModalSheetWidget(), //pointelss
-              BottomModalSheetWidget(),
+              Navbar(),
+              BottomModalSheet(),
               MessageModalLayer(),
               LoadingLayer(),
 
@@ -218,10 +217,7 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.frontContainer),
       BlocProvider<ExtraContainerCubit>(
           create: (context) => components.cubits.extraContainer),
-      BlocProvider<NavbarHeightCubit>(
-          create: (context) => components.cubits.navbarHeight),
-      BlocProvider<NavbarSectionCubit>(
-          create: (context) => components.cubits.navbarSection),
+      BlocProvider<NavbarCubit>(create: (context) => components.cubits.navbar),
       BlocProvider<BottomModalSheetCubit>(
           create: (context) => components.cubits.bottomModalSheet),
       BlocProvider<MessageModalCubit>(

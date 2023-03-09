@@ -13,14 +13,32 @@ enum NavbarHeight {
   same,
 }
 
-class NavbarHeightCubit extends Cubit<NavbarHeightCubitState> {
-  NavbarHeightCubit()
+class NavbarCubit extends Cubit<NavbarCubitState> {
+  NavbarCubit()
       : super(
-          NavbarHeightState(
+          NavbarState(
+              showSections: false,
               height: 0,
               previousNavbarHeight: NavbarHeight.hidden,
               currentNavbarHeight: NavbarHeight.hidden),
         );
+
+  void update({
+    bool? showSections,
+    double? height,
+    NavbarHeight? previousNavbarHeight,
+    NavbarHeight? currentNavbarHeight,
+  }) {
+    emit(NavbarState(
+      showSections: showSections ?? state.showSections,
+      height: height ?? state.height,
+      previousNavbarHeight: previousNavbarHeight ?? state.previousNavbarHeight,
+      currentNavbarHeight: currentNavbarHeight ?? state.currentNavbarHeight,
+    ));
+  }
+
+  void showSections() => update(showSections: true);
+  void hideSections() => update(showSections: false);
 
   void setHeightTo({required NavbarHeight height}) {
     switch (height) {
@@ -39,21 +57,32 @@ class NavbarHeightCubit extends Cubit<NavbarHeightCubitState> {
 
   /// we're currently hiding the context buttons until they're ready so,
   /// max height is midd height for now.
-  void max() => emit(NavbarHeightState(
-        height: services.screen.navbar.midHeight,
+  void max() => update(
+        height: state.showSections
+            ? services.screen.navbar.maxHeight
+            : services.screen.navbar.midHeight,
         previousNavbarHeight: state.currentNavbarHeight,
         currentNavbarHeight: NavbarHeight.max,
-      ));
+      );
 
-  void mid() => emit(NavbarHeightState(
+  void mid() => update(
         height: services.screen.navbar.midHeight,
         previousNavbarHeight: state.currentNavbarHeight,
         currentNavbarHeight: NavbarHeight.mid,
-      ));
+      );
 
-  void hidden() => emit(NavbarHeightState(
+  void hidden() => update(
         height: 0,
         previousNavbarHeight: state.currentNavbarHeight,
         currentNavbarHeight: NavbarHeight.hidden,
-      ));
+      );
+
+  void menuToggle() {
+    switch (state.currentNavbarHeight) {
+      case NavbarHeight.hidden:
+        return max();
+      default:
+        return hidden();
+    }
+  }
 }

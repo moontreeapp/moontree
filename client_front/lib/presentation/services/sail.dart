@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 //import 'package:client_back/streams/streams.dart'; // streams.app.path
 import 'package:client_front/application/utilities.dart';
-import 'package:client_front/application/navbar/height/cubit.dart';
+import 'package:client_front/application/navbar/cubit.dart';
+import 'package:client_front/application/location/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
-enum Section { login, wallet, manage, swap, settings }
-
 class Manifest {
-  final Section? section;
+  final Section section;
   final String? title;
   final String? backPath;
   final FrontContainerHeight frontHeight;
@@ -17,7 +16,7 @@ class Manifest {
   final Widget? extraChild;
   final bool extraHideFront;
   const Manifest({
-    this.section,
+    required this.section,
     this.title,
     this.backPath,
     this.frontHeight = FrontContainerHeight.same,
@@ -170,6 +169,7 @@ class Sail {
         };
 
   void menu() async {
+    components.cubits.navbar.menuToggle();
     components.cubits.frontContainer.menuToggle();
     // we'd really like to trigger this whenever we lose focus of it...
     components.cubits.title.update(editable: false);
@@ -260,16 +260,16 @@ class Sail {
   /// many things are keyed off the current location so we make it available.
   /// so far nothing has to react in realtime to the path so, it's just a var.
   /// if/when we need it to notify things, we'll add it to a stream.
-  void broadcast(String location) =>
-      components.cubits.location.update(path: location);
+  void broadcast(String location, Manifest manifest) =>
+      components.cubits.location
+          .update(path: location, section: manifest.section);
   //latestLocation = location; // streams.app.path.add(location);
 
   String? get latestLocation => components.cubits.location.state.path;
 
   void updateCubits(String location, Manifest manifest, {bool back = false}) {
-    broadcast(location);
+    broadcast(location, manifest);
     components.cubits.title.update(title: manifest.title);
-    //components.cubits.navbarHeight.setHeightTo(height: manifest.navbarHeight);
     components.cubits.backContainer.update(path: manifest.backPath);
     // if we're going back home and we came from the menu then show the menu
     if (back &&
@@ -277,9 +277,11 @@ class Sail {
         components.cubits.backContainer.state.path.startsWith('/menu')) {
       components.cubits.frontContainer
           .setHeightTo(height: FrontContainerHeight.min);
+      components.cubits.navbar.setHeightTo(height: NavbarHeight.hidden);
     } else {
       components.cubits.frontContainer
           .setHeightTo(height: manifest.frontHeight);
+      components.cubits.navbar.setHeightTo(height: manifest.navbarHeight);
     }
     components.cubits.extraContainer.set(child: manifest.extraChild);
   }

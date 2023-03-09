@@ -10,8 +10,8 @@ import 'package:client_front/presentation/services/services.dart' show screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
-class BottomModalSheetWidget extends StatelessWidget {
-  const BottomModalSheetWidget({Key? key}) : super(key: key);
+class BottomModalSheet extends StatelessWidget {
+  const BottomModalSheet({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) =>

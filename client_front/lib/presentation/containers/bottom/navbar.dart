@@ -1,35 +1,27 @@
-import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
-import 'package:client_front/application/navbar/height/cubit.dart';
-import 'package:client_front/presentation/services/sail.dart';
+import 'package:client_back/streams/app.dart';
+import 'package:client_front/application/navbar/cubit.dart';
+import 'package:client_front/application/location/cubit.dart';
+import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
-import 'package:client_front/presentation/services/services.dart' as uiservices;
-import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/services/services.dart'
+    show sail, screen;
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
-class BottomNavigationBarWidget extends StatefulWidget {
-  final Iterable<Widget>? actionButtons;
-  final AppContext? appContext;
-  const BottomNavigationBarWidget({
-    Key? key,
-    this.actionButtons,
-    this.appContext = AppContext.login,
-  }) : super(key: key);
+class Navbar extends StatefulWidget {
+  const Navbar({Key? key}) : super(key: key);
 
   @override
-  _BottomNavigationBarWidgetState createState() =>
-      _BottomNavigationBarWidgetState();
+  _NavbarState createState() => _NavbarState();
 }
 
-class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
-    with SingleTickerProviderStateMixin {
+class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
 
   @override
@@ -49,8 +41,8 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<NavbarHeightCubit, NavbarHeightCubitState>(
-        builder: (BuildContext context, NavbarHeightCubitState state) {
+      BlocBuilder<NavbarCubit, NavbarCubitState>(
+        builder: (BuildContext context, NavbarCubitState state) {
           if ((state.previousNavbarHeight == NavbarHeight.max &&
                   state.currentNavbarHeight == NavbarHeight.mid) ||
               (state.previousNavbarHeight != NavbarHeight.hidden &&
@@ -62,7 +54,9 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
           } else if (state.currentNavbarHeight == NavbarHeight.max) {
             animationController.reverse();
           }
-
+          final maxHeight = state.showSections
+              ? screen.navbar.maxHeight
+              : screen.navbar.midHeight;
           return AnimatedBuilder(
             animation: animationController,
             builder: (BuildContext context, Widget? child) {
@@ -70,18 +64,16 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
               if (state.currentNavbarHeight == NavbarHeight.hidden ||
                   (state.currentNavbarHeight == NavbarHeight.max &&
                       state.previousNavbarHeight == NavbarHeight.hidden)) {
-                slide = uiservices.screen.navbar.maxHeight *
-                    animationController.value;
+                slide = maxHeight * animationController.value;
               } else {
-                slide = (uiservices.screen.navbar.maxHeight / 2) *
-                    animationController.value;
+                slide = (maxHeight / 2) * animationController.value;
               }
               return Transform(
                 alignment: Alignment.bottomCenter,
                 transform: Matrix4.identity()..translate(0.0, slide, 0.0),
                 child: Container(
-                    width: uiservices.screen.width,
-                    height: uiservices.screen.navbar.maxHeight,
+                    width: screen.width,
+                    height: maxHeight,
                     clipBehavior: Clip.antiAlias,
                     padding: const EdgeInsets.only(
                         left: 16, right: 16, top: 16, bottom: 0),
@@ -96,13 +88,8 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                         // we will need to make these buttons dependant upon the navigation
                         // of the front page through streams but for now, we'll show they
                         // can changed based upon whats selected:
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: actionButtons
-                              .intersperse(const SizedBox(width: 16))
-                              .toList(),
-                        ),
-                        if (false /*widget.includeSectors*/) ...<Widget>[
+                        NavbarActions(),
+                        if (state.showSections) ...<Widget>[
                           const SizedBox(height: 6),
                           Padding(
                               padding: EdgeInsets.zero,
@@ -131,7 +118,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                               Container(
                                 alignment: Alignment.center,
                                 // decoration: BoxDecoration(color: AppColors.primary),
-                                height: uiservices.screen.navbar.maxHeight / 2,
+                                height: maxHeight / 2,
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: ElevatedButton(
                                     onPressed: () {},
@@ -148,7 +135,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                                     alignment: Alignment.center,
                                     // decoration: BoxDecoration(color: AppColors.primary),
                                     height:
-                                        uiservices.screen.navbar.maxHeight / 2,
+                                        maxHeight / 2,
                                     width:
                                         MediaQuery.of(context).size.width / 2,
                                     child: ElevatedButton(
@@ -173,7 +160,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                                     alignment: Alignment.center,
                                     // decoration: BoxDecoration(color: Colors.green),
                                     height:
-                                        uiservices.screen.navbar.maxHeight / 2,
+                                        maxHeight / 2,
                                     width:
                                         MediaQuery.of(context).size.width / 3,
                                     child: const Icon(Icons.money),
@@ -189,7 +176,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                                     alignment: Alignment.center,
                                     // decoration: BoxDecoration(color: Colors.green),
                                     height:
-                                        uiservices.screen.navbar.maxHeight / 2,
+                                        maxHeight / 2,
                                     width:
                                         MediaQuery.of(context).size.width / 3,
                                     child: const Icon(Icons.add),
@@ -205,7 +192,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
                                     alignment: Alignment.center,
                                     // decoration: BoxDecoration(color: Colors.green),
                                     height:
-                                        uiservices.screen.navbar.maxHeight / 2,
+                                        maxHeight / 2,
                                     width:
                                         MediaQuery.of(context).size.width / 3,
                                     child: const Icon(Icons.swap_horiz),
@@ -222,74 +209,79 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
           );
         },
       );
+}
 
-  Iterable<Widget> get actionButtons =>
-      widget.actionButtons ??
-      (widget.appContext == AppContext.wallet
-          ? <Widget>[
-              //if (walletIsEmpty &&
-              //    !walletHasTransactions &&
-              //    streams.import.result.value == null)
-              //  components.buttons.actionButton(
-              //    context,
-              //    label: 'import',
-              //    onPressed: () async {
-              //      Navigator.of(components.routes.routeContext!)
-              //          .pushNamed('/settings/import');
-              //    },
-              //  )
-              //else
-              components.buttons.actionButton(
-                context,
-                label: 'send',
-                enabled: false,
-                //!walletIsEmpty &&
-                //    connectionStatus == ConnectionStatus.connected,
-                //disabledOnPressed: () {
-                //  if (connectionStatus != ConnectionStatus.connected) {
-                //    streams.app.snack
-                //        .add(Snack(message: 'Not connected to network'));
-                //  } else if (walletIsEmpty) {
-                //    streams.app.snack.add(Snack(
-                //        message: 'This wallet has no coin, unable to send.'));
-                //  } else {
-                //    streams.app.snack
-                //        .add(Snack(message: 'Claimed your EVR first.'));
-                //  }
-                //},
-                onPressed: () => Navigator.of(components.routes.routeContext!)
-                    .pushNamed('/transaction/send'),
-              ),
-              components.buttons.actionButton(
-                context,
-                label: 'receive',
-                onPressed: () => Navigator.of(components.routes.routeContext!)
-                    .pushNamed('/transaction/receive'),
-              )
-            ]
-          : widget.appContext == AppContext.manage
-              ? <Widget>[
-                  components.buttons.actionButton(
-                    context,
-                    label: 'create',
-                    enabled: false,
-                    onPressed: () => _produceCreateModal(context),
-                  )
-                ]
-              : <Widget>[
-                  components.buttons.actionButton(
-                    context,
-                    label: 'buy',
-                    enabled: false,
-                    onPressed: () => _produceCreateModal(context),
-                  ),
-                  components.buttons.actionButton(
-                    context,
-                    label: 'sell',
-                    enabled: false,
-                    onPressed: () => _produceCreateModal(context),
-                  )
-                ]);
+class NavbarActions extends StatelessWidget {
+  const NavbarActions({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocBuilder<LocationCubit, LocationCubitState>(
+          builder: (BuildContext context, LocationCubitState state) => Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: ((state.section == Section.wallet
+                        ? <Widget>[
+                            //if (walletIsEmpty &&
+                            //    !walletHasTransactions &&
+                            //    streams.import.result.value == null)
+                            //  BottomButton(
+                            //    label: 'import',
+                            //    onPressed: () async {
+                            //      sail.to('/restore/import');
+                            //    },
+                            //  )
+                            //else
+                            Expanded(
+                                child: BottomButton(
+                              label: 'send',
+                              enabled: false,
+                              //!walletIsEmpty &&
+                              //    connectionStatus == ConnectionStatus.connected,
+                              //disabledOnPressed: () {
+                              //  if (connectionStatus != ConnectionStatus.connected) {
+                              //    streams.app.snack
+                              //        .add(Snack(message: 'Not connected to network'));
+                              //  } else if (walletIsEmpty) {
+                              //    streams.app.snack.add(Snack(
+                              //        message: 'This wallet has no coin, unable to send.'));
+                              //  } else {
+                              //    streams.app.snack
+                              //        .add(Snack(message: 'Claimed your EVR first.'));
+                              //  }
+                              //},
+                              onPressed: () => sail.to('/transaction/send'),
+                            )),
+                            Expanded(
+                                child: BottomButton(
+                              label: 'receive',
+                              onPressed: () => sail.to('/transaction/receive'),
+                            ))
+                          ]
+                        : state.section == Section.manage
+                            ? <Widget>[
+                                Expanded(
+                                    child: BottomButton(
+                                  label: 'create',
+                                  enabled: false,
+                                  onPressed: () => _produceCreateModal(context),
+                                ))
+                              ]
+                            : <Widget>[
+                                Expanded(
+                                    child: BottomButton(
+                                  enabled: false,
+                                  onPressed: () => _produceCreateModal(context),
+                                )),
+                                Expanded(
+                                    child: BottomButton(
+                                  label: 'sell',
+                                  enabled: false,
+                                  onPressed: () => _produceCreateModal(context),
+                                ))
+                              ]))
+                    .intersperse(const SizedBox(width: 16))
+                    .toList(),
+              ));
 
   void _produceCreateModal(BuildContext context) {
     SelectionItems(context, modalSet: SelectionSet.Create).build();
@@ -312,7 +304,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 // Old But Good Working Code
 /* -------------------------------------------------------------------------- */
 
-// class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
+// class _NavbarState extends State<Navbar> {
 //   final int _currentIndex = 0;
 //   final int _tappedIndex = 0;
 //   final Sailor _sail = const Sailor();
@@ -323,13 +315,13 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return BlocBuilder<NavbarHeightCubit, NavbarHeightCubitState>(
+//     return BlocBuilder<NavbarCubit, NavbarCubitState>(
 //       builder: (context, state) {
 //         // Provide Navbar Section View Cubit
 //         final navbarSectionViewCubit =
 //             BlocProvider.of<NavbarSectionViewCubit>(context);
 
-//         if (state is NavbarHeightCubitStateHidden) {
+//         if (state is NavbarCubitStateHidden) {
 //           return const SizedBox.shrink();
 //         } else {
 //           return AnimatedContainer(
@@ -355,7 +347,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 //             // After Animation has Completed, Show Navbar's Section Widget
 //             // onEnd: () => print('On End'),
 //             onEnd: () {
-//               if (state is NavbarHeightCubitStateMax) {
+//               if (state is NavbarCubitStateMax) {
 //                 return navbarSectionViewCubit.show();
 //               }
 //             },
@@ -371,9 +363,9 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 //                         Container(
 //                           alignment: Alignment.center,
 //                           // decoration: BoxDecoration(color: AppColors.primary),
-//                           height: state is NavbarHeightCubitStateMid
-//                               ? uiservices.screen.navbarMidHeight
-//                               : uiservices.screen.navbar.maxHeight / 2,
+//                           height: state is NavbarCubitStateMid
+//                               ? screen.navbarMidHeight
+//                               : maxHeight / 2,
 //                           width: MediaQuery.of(context).size.width / 2,
 
 //                           child: ElevatedButton(
@@ -390,9 +382,9 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 //                               alignment: Alignment.center,
 //                               // decoration: BoxDecoration(color: AppColors.primary),
 //                               height:
-//                                   state is NavbarHeightCubitStateMid
-//                                       ? uiservices.screen.navbarMidHeight
-//                                       : uiservices.screen.navbar.maxHeight / 2,
+//                                   state is NavbarCubitStateMid
+//                                       ? screen.navbarMidHeight
+//                                       : maxHeight / 2,
 //                               width: MediaQuery.of(context).size.width / 2,
 //                               child: ElevatedButton(
 //                                   onPressed: () {},
@@ -445,7 +437,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 //             Container(
 //               alignment: Alignment.center,
 //               // decoration: BoxDecoration(color: Colors.green),
-//               height: uiservices.screen.navbar.maxHeight / 2,
+//               height: maxHeight / 2,
 //               width: MediaQuery.of(context).size.width / 3,
 //               child: const Icon(Icons.money),
 //             )
@@ -456,7 +448,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 //             Container(
 //               alignment: Alignment.center,
 //               // decoration: BoxDecoration(color: Colors.green),
-//               height: uiservices.screen.navbar.maxHeight / 2,
+//               height: maxHeight / 2,
 //               width: MediaQuery.of(context).size.width / 3,
 //               child: const Icon(Icons.add),
 //             )
@@ -467,7 +459,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget>
 //             Container(
 //               alignment: Alignment.center,
 //               // decoration: BoxDecoration(color: Colors.green),
-//               height: uiservices.screen.navbar.maxHeight / 2,
+//               height: maxHeight / 2,
 //               width: MediaQuery.of(context).size.width / 3,
 //               child: const Icon(Icons.swap_horiz),
 //             )

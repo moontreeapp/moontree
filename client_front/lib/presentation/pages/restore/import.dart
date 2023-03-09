@@ -80,10 +80,8 @@ class Import extends StatelessWidget {
                       ? <Widget>[
                           if (services.developer.advancedDeveloperMode &&
                               !Platform.isIOS &&
-                              words.text == '') ...<Widget>[
+                              words.text == '')
                             FileButton(),
-                            const SizedBox(width: 16)
-                          ],
                           SubmitButton(state: state, submitFocus: submitFocus),
                         ]
                       : <Widget>[
@@ -304,47 +302,38 @@ class WordInput extends StatelessWidget {
                   ? state.importFormatDetected
                   : null
               : null,
-          suffixIcon:
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: <
-                  Widget>[
-            IconButton(
-              icon: Icon(
-                  state.importVisible ? Icons.visibility : Icons.visibility_off,
-                  color: AppColors.black60),
-              onPressed: () => components.cubits.import
-                  .set(importVisible: !state.importVisible),
-            ),
-            if (clip !=
-                null /*&& components.cubits.import.validateValue(clip) we're just going to get it again anyway*/)
-              IconButton(
-                  icon:
-                      const Icon(Icons.paste_rounded, color: AppColors.black60),
-                  onPressed: () async {
-                    final String clip = await (context
-                            .findAncestorWidgetOfExactType<Import>() as Import)
-                        .getClip();
-                    components.cubits.import.set(words: clip);
-                    components.cubits.import.enableImport();
-                  }),
-            //if (clip == null)
-            //  IconButton(
-            //      icon:
-            //          const Icon(Icons.paste_rounded, color: AppColors.black60),
-            //      onPressed: () async {
-            //        final String clip = await (context
-            //                .findAncestorWidgetOfExactType<Import>() as Import)
-            //            .getClip();
-            //        components.cubits.import.set(words: clip);
-            //        components.cubits.import.enableImport();
-            //      }),
-            IconButton(
-                icon: Icon(Icons.clear_rounded,
-                    color: words.text != ''
-                        ? AppColors.black60
-                        : AppColors.black12),
-                onPressed: () => components.cubits.import
-                    .set(words: '', importFormatDetected: '')),
-          ]),
+          suffixIcon: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                      state.importVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.black60),
+                  onPressed: () => components.cubits.import
+                      .set(importVisible: !state.importVisible),
+                ),
+                //if (clip !=
+                //    null /*&& components.cubits.import.validateValue(clip) we're just going to get it again anyway*/)
+                //  IconButton(
+                //      icon:
+                //          const Icon(Icons.paste_rounded, color: AppColors.black60),
+                //      onPressed: () async {
+                //        final String clip = await (context
+                //                .findAncestorWidgetOfExactType<Import>() as Import)
+                //            .getClip();
+                //        components.cubits.import.set(words: clip);
+                //        components.cubits.import.enableImport();
+                //      }),
+                IconButton(
+                    icon: Icon(Icons.clear_rounded,
+                        color: words.text != ''
+                            ? AppColors.black60
+                            : AppColors.black12),
+                    onPressed: () => components.cubits.import
+                        .set(words: '', importFormatDetected: '')),
+              ]),
           onChanged: (String value) {
             components.cubits.import.set(submittedAttempt: false, words: value);
             components.cubits.import.enableImport();
@@ -372,7 +361,7 @@ class SubmitButton extends StatelessWidget {
       enabled: state.importEnabled,
       focusNode: submitFocus,
       label: (label ?? 'Import').toUpperCase(),
-      disabledIcon: components.icons.importDisabled(context),
+      //disabledIcon: components.icons.importDisabled(context),
       onPressed: () async {
         components.cubits.import.set(submittedAttempt: true);
         if (state.importEnabled) {

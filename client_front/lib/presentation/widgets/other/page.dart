@@ -1,3 +1,4 @@
+import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
 
@@ -22,6 +23,7 @@ class PageStructure extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: FocusScope.of(context).unfocus,
+        behavior: HitTestBehavior.translucent,
         child: Container(
             padding:
                 const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
@@ -42,10 +44,13 @@ class PageStructure extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(children: <Widget>[
-                      for (final child in (widthSpacer == null
+                      for (final Widget child in (widthSpacer == null
                           ? firstLowerChildren
                           : firstLowerChildren.intersperse(widthSpacer!)))
-                        Expanded(child: child)
+                        if (child == widthSpacer)
+                          child
+                        else
+                          Expanded(child: child)
                     ]),
                     if (secondLowerChildren != null)
                       heightSpacer ?? const SizedBox(height: 16),
@@ -54,7 +59,10 @@ class PageStructure extends StatelessWidget {
                         for (final child in (widthSpacer == null
                             ? secondLowerChildren!
                             : secondLowerChildren!.intersperse(widthSpacer!)))
-                          Expanded(child: child)
+                          if (child == widthSpacer)
+                            child
+                          else
+                            Expanded(child: child)
                       ]),
                     if (thirdLowerChildren != null)
                       heightSpacer ?? const SizedBox(height: 16),
@@ -63,7 +71,10 @@ class PageStructure extends StatelessWidget {
                         for (final child in (widthSpacer == null
                             ? thirdLowerChildren!
                             : thirdLowerChildren!.intersperse(widthSpacer!)))
-                          Expanded(child: child)
+                          if (child == widthSpacer)
+                            child
+                          else
+                            Expanded(child: child)
                       ]),
                   ],
                 )

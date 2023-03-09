@@ -1,6 +1,6 @@
 part of 'cubit.dart';
 
-enum Section { wallet, manage, swap }
+enum Section { login, wallet, manage, swap, settings }
 
 /// describes where we are at in the app
 abstract class LocationCubitState extends Equatable {
