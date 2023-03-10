@@ -1,14 +1,6 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
-import 'package:client_front/presentation/pages/settings/database.dart';
-import 'package:client_front/presentation/pages/settings/mining.dart';
-import 'package:client_front/presentation/pages/settings/mode/advanced.dart';
-import 'package:client_front/presentation/pages/settings/mode/developer.dart';
-import 'package:client_front/presentation/pages/settings/network/blockchain.dart';
-import 'package:client_front/presentation/pages/settings/security.dart';
-import 'package:client_front/presentation/pages/support/about.dart';
-import 'package:client_front/presentation/pages/support/support.dart';
-import 'package:client_front/presentation/pages/wallet/receive.dart';
+import 'package:client_front/presentation/pages/wallet/front_holding.dart';
 import 'package:flutter/material.dart';
 //import 'package:client_front/presentation/pagesv1/home/home.dart';
 //import 'package:client_front/presentation/pagesv1/manage/assets.dart';
@@ -66,6 +58,15 @@ import 'package:client_front/presentation/pages/login/login.dart';
 import 'package:client_front/presentation/pages/wallet/wallet.dart';
 import 'package:client_front/presentation/pages/backup/backup.dart';
 import 'package:client_front/presentation/pages/restore/restore.dart';
+import 'package:client_front/presentation/pages/settings/database.dart';
+import 'package:client_front/presentation/pages/settings/mining.dart';
+import 'package:client_front/presentation/pages/settings/mode/advanced.dart';
+import 'package:client_front/presentation/pages/settings/mode/developer.dart';
+import 'package:client_front/presentation/pages/settings/network/blockchain.dart';
+import 'package:client_front/presentation/pages/settings/security.dart';
+import 'package:client_front/presentation/pages/support/about.dart';
+import 'package:client_front/presentation/pages/support/support.dart';
+import 'package:client_front/presentation/pages/wallet/receive.dart';
 
 final _staticRoutes = <String, Widget Function(BuildContext)>{
   //'/home': (BuildContext context) => const Home(),
@@ -145,6 +146,7 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/login/native': (BuildContext context) => const LoginNative(),
   '/login/password': (BuildContext context) => const LoginPassword(),
   '/wallet/holdings': (BuildContext context) => const WalletHoldings(),
+  '/wallet/holding': (BuildContext context) => const WalletHolding(),
   '/wallet/receive': (BuildContext context) => const Receive(),
   '/backup/intro': (BuildContext context) => const BackupIntro(),
   '/backup/keypair': (BuildContext context) => const ShowKeypair(),

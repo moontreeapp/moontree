@@ -66,7 +66,8 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       state.previousNavbarHeight == NavbarHeight.hidden)) {
                 slide = maxHeight * animationController.value;
               } else {
-                slide = (maxHeight / 2) * animationController.value;
+                slide = (screen.navbar.midHeight / maxHeight) *
+                    animationController.value;
               }
               return Transform(
                 alignment: Alignment.bottomCenter,

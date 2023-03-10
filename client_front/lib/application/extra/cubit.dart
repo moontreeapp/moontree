@@ -11,5 +11,7 @@ class ExtraContainerCubit extends Cubit<ExtraContainerState> {
 
   void enter() => emit(state);
 
-  void set({Widget? child}) => emit(state.load(child: child));
+  void set({Widget? child}) => child == null
+      ? emit(ExtraContainerState.initial())
+      : emit(state.load(child: child));
 }

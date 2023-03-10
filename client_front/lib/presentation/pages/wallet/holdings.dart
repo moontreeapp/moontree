@@ -262,11 +262,10 @@ class _HoldingsView extends State<HoldingsView> {
   }
 
   void navigate(BalanceView balance, {Wallet? wallet}) {
-    streams.app.wallet.asset.add(balance.symbol);
-    Navigator.of(components.routes.routeContext!).pushNamed(
-      '/transactions',
-      arguments: <String, Object?>{'holding': balance, 'walletId': wallet?.id},
-    );
+    streams.app.wallet.asset.add(balance.symbol); // todo: remove
+    sail.to('/wallet/holding', symbol: balance.symbol
+        //arguments: <String, Object?>{'holding': balance, 'walletId': wallet?.id},
+        );
   }
 
   Future<void> onTap(Wallet? wallet, AssetHolding holding) async {

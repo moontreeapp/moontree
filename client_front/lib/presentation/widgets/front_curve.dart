@@ -57,7 +57,7 @@ class FuzzyTop extends StatelessWidget {
         child ?? const SizedBox.shrink(),
         IgnorePointer(
             child: Container(
-                height: 8,
+                height: 16,
                 decoration: BoxDecoration(
                   color: color,
                   borderRadius: frontLayerBorderRadius,

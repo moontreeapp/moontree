@@ -2,7 +2,7 @@ part of 'cubit.dart';
 
 @immutable
 class ExtraContainerState {
-  final Widget child;
+  final Widget? child;
 
   const ExtraContainerState({required this.child});
 
@@ -12,7 +12,7 @@ class ExtraContainerState {
   List<Object?> get props => <Object?>[child];
 
   factory ExtraContainerState.initial() =>
-      const ExtraContainerState(child: SizedBox.shrink());
+      const ExtraContainerState(child: null);
 
   ExtraContainerState load({Widget? child}) =>
       ExtraContainerState.load(state: this, child: child);

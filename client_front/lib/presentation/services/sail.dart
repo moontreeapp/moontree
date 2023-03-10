@@ -5,6 +5,7 @@ import 'package:client_front/application/navbar/cubit.dart';
 import 'package:client_front/application/location/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/pages/wallet/front_holding.dart';
 
 class Manifest {
   final Section section;
@@ -109,7 +110,7 @@ class Sail {
       frontPath: '/backup/verify',
     ),
     '/wallet/holdings': Manifest(
-      title: 'Holdings', // should be wallet name
+      title: 'Holdings', // gets overridden with wallet name
       section: Section.wallet,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.max,
@@ -117,11 +118,13 @@ class Sail {
       backPath: '/menu',
     ),
     '/wallet/holding': Manifest(
-      title: 'Holding', // should be holding name
+      title: 'Holding', // gets overridden with holding name
       section: Section.wallet,
       frontHeight: FrontContainerHeight.mid,
       navbarHeight: NavbarHeight.mid,
       frontPath: '/wallet/holding',
+      extraChild: const FrontHoldingExtra(),
+      backPath: '/wallet/holding/coinspec',
     ),
     '/wallet/holding/transaction': Manifest(
       title: 'Transaction',
@@ -129,6 +132,7 @@ class Sail {
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.mid,
       frontPath: '/wallet/holding/transaction',
+      backPath: '/',
     ),
     '/wallet/receive': Manifest(
       title: 'Receive',
@@ -136,6 +140,7 @@ class Sail {
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/wallet/receive',
+      backPath: '/',
     ),
     '/manage': Manifest(
       title: 'Manage',
@@ -238,23 +243,7 @@ class Sail {
     components.cubits.title.update(editable: false);
   }
 
-  Future<String> back() async {
-    /// todo: extra content is only used on transactions history page right now,
-    ///       but we might use it elsewhere of course, so this shouldn't be
-    ///       'when navigating back to /wallet/holdings' it should be based on
-    ///       if that container/ cubits have anything in them. do it when
-    ///       conforming the transaction history page so you can test it easily.
-    // any page that uses ContentExtra layer for draggable sheets
-    if (['/wallet/holdings'].contains(latestLocation)) {
-      // show front layer and instantly remove extra content before anything else.
-      // todo make this dependant on the map.
-      components.cubits.frontContainer.setHidden(false);
-      components.cubits.extraContainer.reset();
-    }
-    return _sailBack();
-  }
-
-  String _sailBack() {
+  String back() {
     String location = _handleHistoryRemoval();
     final manifest = destinationMap[location]!;
     updateCubits(location, manifest, back: true);
@@ -262,18 +251,18 @@ class Sail {
     return location;
   }
 
-  Future<void> home({
+  void home({
     String location = '/wallet/holdings',
     bool forceFullScreen = true,
-  }) async {
+  }) {
     // if /wallet/holdings in DestinationHistory
     if (destinationHistory[Section.wallet]!.contains(location)) {
-      while (await back() != location &&
+      while (back() != location &&
           destinationHistory[Section.wallet]!.length > 0) {
         print('going back');
       }
     } else {
-      await to(location);
+      to(location);
     }
     if (forceFullScreen) {
       components.cubits.frontContainer
@@ -281,14 +270,15 @@ class Sail {
     }
   }
 
-  Future<String?> to(
+  String? to(
     String? location, {
     BuildContext? context,
     Section? section,
+    String? symbol,
     Map<String, dynamic>? arguments,
     bool addToHistory = true,
     bool replaceOverride = false,
-  }) async {
+  }) {
     if (location == null && section == null) {
       throw Exception('must supply location or section');
     }
@@ -307,11 +297,11 @@ class Sail {
       _handleHistoryAddition(
         location,
         currSection: sectionHistory.last,
-        destSection: manifest.section!,
+        destSection: manifest.section,
         addToDestinationHistory: addToDestinationHistory,
       );
     }
-    updateCubits(location, manifest);
+    updateCubits(location, manifest, symbol: symbol);
     if (manifest.frontPath != null &&
         RegExp(r'^\/[a-z\/]*[a-z]$').hasMatch(manifest.frontPath!)) {
       _navigate(manifest.frontPath!,
@@ -323,17 +313,32 @@ class Sail {
   /// many things are keyed off the current location so we make it available.
   /// so far nothing has to react in realtime to the path so, it's just a var.
   /// if/when we need it to notify things, we'll add it to a stream.
-  void broadcast(String location, Manifest manifest) =>
-      components.cubits.location
-          .update(path: location, section: manifest.section);
+  void broadcast(String location, Manifest manifest, String? symbol) =>
+      components.cubits.location.update(
+        path: location,
+        section: manifest.section,
+        symbol: symbol,
+      );
   //latestLocation = location; // streams.app.path.add(location);
 
   String? get latestLocation => components.cubits.location.state.path;
 
-  void updateCubits(String location, Manifest manifest, {bool back = false}) {
-    broadcast(location, manifest);
+  void updateCubits(
+    String location,
+    Manifest manifest, {
+    String? symbol,
+    bool back = false,
+  }) {
+    if (back &&
+        manifest.extraChild == null &&
+        components.cubits.extraContainer.state.child != null) {
+      components.cubits.extraContainer.reset();
+      if (manifest.frontHeight != FrontContainerHeight.hidden) {
+        components.cubits.frontContainer.setHidden(false);
+      }
+    }
+    broadcast(location, manifest, symbol);
     components.cubits.title.update(title: manifest.title);
-    components.cubits.backContainer.update(path: manifest.backPath);
     // if we're going back home and we came from the menu then show the menu
     if (back &&
         ['/wallet/holdings', '/manage', '/swap'].contains(location) &&
@@ -346,12 +351,13 @@ class Sail {
           .setHeightTo(height: manifest.frontHeight);
       components.cubits.navbar.setHeightTo(height: manifest.navbarHeight);
     }
+    components.cubits.backContainer.update(path: manifest.backPath);
     components.cubits.extraContainer.set(child: manifest.extraChild);
   }
 
   /// mutates history state
-  _handleHistoryAddition(
-    location, {
+  void _handleHistoryAddition(
+    String location, {
     required Section currSection,
     required Section destSection,
     bool addToDestinationHistory = true,

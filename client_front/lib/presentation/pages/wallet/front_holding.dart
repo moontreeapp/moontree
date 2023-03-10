@@ -6,30 +6,9 @@ import 'package:client_front/presentation/services/services.dart' as services;
 import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/widgets/front_curve.dart';
 
-class FrontHoldingScreen extends StatefulWidget {
-  const FrontHoldingScreen({Key? key}) : super(key: key ?? defaultKey);
-  static const defaultKey = ValueKey('frontHolding');
-
-  @override
-  FrontHoldingScreenState createState() => FrontHoldingScreenState();
-}
-
-class FrontHoldingScreenState extends State<FrontHoldingScreen>
-    with SingleTickerProviderStateMixin {
-  late ExtraContainerCubit cubit;
-
-  @override
-  void initState() {
-    super.initState();
-    cubit = BlocProvider.of<ExtraContainerCubit>(context);
-    cubit.set(child: const FrontHoldingExtra());
-  }
-
-  @override
-  void dispose() {
-    cubit.reset();
-    super.dispose();
-  }
+class WalletHolding extends StatelessWidget {
+  const WalletHolding({Key? key}) : super(key: key ?? defaultKey);
+  static const defaultKey = ValueKey('Holding');
 
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();
@@ -90,6 +69,8 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
           controller: draggableScrollableController,
           builder: (BuildContext context, ScrollController scrollController) =>
               FrontCurve(
+                  color: Colors.white,
+                  fuzzyTop: true,
                   child: BlocBuilder<ExtraContainerCubit, ExtraContainerState>(
                       //bloc: cubit..enter(),
                       builder: (BuildContext context,

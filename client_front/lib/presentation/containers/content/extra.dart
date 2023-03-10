@@ -9,5 +9,5 @@ class ExtraContainer extends StatelessWidget {
   Widget build(BuildContext context) =>
       BlocBuilder<ExtraContainerCubit, ExtraContainerState>(
           builder: (BuildContext context, ExtraContainerState state) =>
-              state.child);
+              state.child ?? SizedBox.shrink());
 }

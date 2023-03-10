@@ -42,7 +42,7 @@ class FrontContainerView extends StatelessWidget {
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              FrontCurve(color: hide ? Colors.transparent : Colors.white),
+              if (!hide) FrontCurve(color: Colors.white),
               //AnimatedOpacity(
               //    duration: animation.fadeDuration,
               //    opacity: state.hideContent ? 0.0 : 1.0,

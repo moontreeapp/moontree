@@ -1,3 +1,4 @@
+import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -13,6 +14,8 @@ import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
+import 'package:client_front/presentation/utils/animation.dart' as animation;
+
 class MenuRouter extends StatelessWidget {
   final String path;
   final String prior;
@@ -22,7 +25,7 @@ class MenuRouter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (path == '/menu' && prior == '/') {
-      return MainMenu();
+      return FadeIn(duration: animation.fadeDuration * 2, child: MainMenu());
     } else if (path == '/menu' && prior == '/menu/restore') {
       return SlideOutIn(left: MainMenu(), right: RestoreMenu(), enter: false);
     } else if (path == '/menu' && prior == '/menu/settings') {
@@ -32,7 +35,7 @@ class MenuRouter extends StatelessWidget {
     } else if (path == '/menu/settings') {
       return SlideOutIn(left: MainMenu(), right: SettingsMenu());
     } else {
-      return MainMenu();
+      return FadeIn(duration: animation.fadeDuration * 2, child: MainMenu());
     }
   }
 }
