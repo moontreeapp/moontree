@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:bloc/bloc.dart';
 import 'package:client_back/services/transaction/verify.dart';
 import 'package:flutter/material.dart';
@@ -153,9 +151,9 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     //return parsed();
 
     /// gives type error
-    //final txb = TransactionBuilder.fromTransaction(
-    //    wutx.Transaction.fromBuffer(state.unsigned!.rawHex.hexBytes));
-    //print(txb.chainName);
+    final txb = TransactionBuilder.fromTransaction(
+        wutx.Transaction.fromBuffer(state.unsigned!.rawHex.hexBytes));
+    print(txb.chainName);
     return false;
   }
 }
