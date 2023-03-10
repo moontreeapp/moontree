@@ -1,6 +1,7 @@
-import 'package:client_front/presentation/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/utils/ext.dart';
+import 'package:client_front/presentation/services/services.dart' show screen;
 
 class BackHoldingScreen extends StatelessWidget {
   final String chainSymbol;
@@ -10,7 +11,8 @@ class BackHoldingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        color: Colors.transparent,
+        height: screen.frontContainer.inverseMid,
+        //color: Colors.transparent,
         alignment: Alignment.center,
         child: Container(
           transform: Matrix4.identity()..translate(0.0, -28.0, 0.0),
@@ -19,7 +21,7 @@ class BackHoldingScreen extends StatelessWidget {
           child: CircleAvatar(
             backgroundColor: AppColors.primary,
             minRadius: 40,
-            child: Text(chainSymbol.characters.firstOrNull ?? ''),
+            child: Text(chainSymbol.characters.firstOrNull ?? '?'),
           ),
         ),
       );

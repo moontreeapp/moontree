@@ -63,8 +63,12 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   String? settingTitle;
   AppContext appContext = AppContext.login;
   final TextEditingController changeName = TextEditingController();
-  late AnimationController controller;
-  late Animation<double> animate;
+
+  /// after testing the animations on page change, fade out and fade in, are too
+  /// distracting. so we're removing this. but we may want to retain the slow
+  /// fade in on the login screens...
+  //late AnimationController controller;
+  //late Animation<double> animate;
   late AnimationController slowController;
   late Animation<double> slowAnimation;
   bool dropDownActive = false;
@@ -82,10 +86,10 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     slowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(parent: slowController, curve: Curves.easeInOutCubic));
     slowController.forward();
-    controller =
-        AnimationController(vsync: this, duration: animation.fadeDuration);
-    animate = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic));
+    //controller =
+    //    AnimationController(vsync: this, duration: animation.fadeDuration);
+    //animate = Tween<double>(begin: 0.0, end: 1.0).animate(
+    //    CurvedAnimation(parent: controller, curve: Curves.easeInOutCubic));
 
     /*
     initializeWalletSecurities();
@@ -139,8 +143,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    controller.dispose();
-    slowController.dispose();
+    //controller.dispose();
+    //slowController.dispose();
     for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
@@ -342,17 +346,17 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    Animation<double> anima;
-    if (slowController.isCompleted) {
-      anima = animate;
-      controller.reset();
-      controller.forward();
-    } else {
-      anima = slowAnimation;
-    }
+    //Animation<double> anima;
+    //if (slowController.isCompleted) {
+    //  anima = animate;
+    //  controller.reset();
+    //  controller.forward();
+    //} else {
+    //  anima = slowAnimation;
+    //}
     return BlocBuilder<TitleCubit, TitleCubitState>(
         builder: (context, state) => AnimatedBuilder(
-            animation: anima,
+            animation: slowAnimation,
             builder: (context, child) {
               return GestureDetector(
                   onDoubleTap: () async {
@@ -369,9 +373,11 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     }
                     setState(() {}); // recalculates the name of the wallet.
                   },
-                  child: FadeTransition(
-                      opacity: anima,
-                      child: Container(
+                  child:
+                      //FadeTransition(
+                      //    opacity: anima,
+                      //    child:
+                      Container(
                           width: screen.width -
                               ((16 + 40 + 16) + //left lead
                                   (16 + 28 + 16) // right connection
@@ -407,8 +413,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                   }
                                   return SizedBox.shrink();
                                 }),
-                              ]))));
-            }));
+                              ])));
+            })); // AnimatedBuilder, FadeTransition
 
 /*
     if (streams.app.page.value == 'Splash') {

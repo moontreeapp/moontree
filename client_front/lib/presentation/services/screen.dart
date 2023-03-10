@@ -104,7 +104,10 @@ class FrontPageContainer {
         minHeight: height * _minHeightPercentage,
       );
 
-  double midtoPercentage(double small, double big) => small / big;
+  double toPercentage(double small, double big) => small / big;
+  double get inverseMid => maxHeight - midHeight;
+  double get inverseMin => maxHeight - minHeight;
+  double get inverseMidMin => midHeight - minHeight;
 }
 
 class BackPageContainer {
