@@ -34,6 +34,8 @@ class ReceiveCall extends ServerCall {
 
   Future<CommInt> call() async {
     late CommInt index;
+    print('root:');
+    print(await wallet.externalRoot);
     try {
       index = mockFlag
 

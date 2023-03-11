@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:client_back/utilities/conversion.dart';
 import 'package:convert/convert.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
@@ -94,7 +95,7 @@ class Address with EquatableMixin {
   static String walletExposureKey(String walletId, NodeExposure exposure) =>
       '$walletId:$exposure';
 
-  Uint8List get h160 => hash160(pubkey);
+  Uint8List get h160 => hash160FromHexString(pubkey);
   String get h160AsString =>
       hex.encode(h160); // right? only used on subscription.
   ByteData get h160AsByteData => h160.buffer.asByteData();
