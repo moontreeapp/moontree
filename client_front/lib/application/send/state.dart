@@ -10,6 +10,8 @@ class SimpleSendFormState extends CubitState {
   final String note;
   final String addressName;
   final UnsignedTransactionResult? unsigned;
+  final wutx.Transaction? signed;
+  final String? txHash;
   final bool isSubmitting;
 
   const SimpleSendFormState({
@@ -21,6 +23,8 @@ class SimpleSendFormState extends CubitState {
     this.note = '',
     this.addressName = '',
     this.unsigned,
+    this.signed,
+    this.txHash,
     this.isSubmitting = false,
   });
 
@@ -28,6 +32,7 @@ class SimpleSendFormState extends CubitState {
   String toString() =>
       'SpendForm(security=$security, address=$address, amount=$amount, '
       'fee=$fee, note=$note, addressName=$addressName, unsigned=$unsigned, '
+      'signed=$signed, txHash=$txHash, '
       'isSubmitting=$isSubmitting)';
 
   @override
@@ -40,6 +45,8 @@ class SimpleSendFormState extends CubitState {
         note,
         addressName,
         unsigned,
+        signed,
+        txHash,
         isSubmitting,
       ];
 
@@ -55,6 +62,8 @@ class SimpleSendFormState extends CubitState {
     String? note,
     String? addressName,
     UnsignedTransactionResult? unsigned,
+    wutx.Transaction? signed,
+    String? txHash,
     bool? isSubmitting,
   }) =>
       SimpleSendFormState(
@@ -66,6 +75,8 @@ class SimpleSendFormState extends CubitState {
         note: note ?? this.note,
         addressName: addressName ?? this.addressName,
         unsigned: unsigned ?? this.unsigned,
+        signed: signed ?? this.signed,
+        txHash: txHash ?? this.txHash,
         isSubmitting: isSubmitting ?? this.isSubmitting,
       );
 

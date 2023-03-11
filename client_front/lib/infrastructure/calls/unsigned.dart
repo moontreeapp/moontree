@@ -47,7 +47,7 @@ class UnsignedTransactionCall extends ServerCall {
           request: server.UnsignedTransactionRequest(
             myH106s: h160s,
             myPubkeys: roots,
-            feeRateKb: feeRateKb,
+            feeRateKb: feeRateKb!,
             eachOutputAddress: addresses,
             eachOutputAsset: serverAssets,
             eachOutputAmount: satsToSend,
@@ -95,7 +95,10 @@ class UnsignedTransactionCall extends ServerCall {
 }
 
 server.UnsignedTransactionResult spoof() => server.UnsignedTransactionResult(
-      rawHex: '0x00',
-      vinPrivateKeySource: [''],
-      vinLockingScriptType: [0],
-    );
+    rawHex: '0x00',
+    vinPrivateKeySource: [''],
+    vinLockingScriptType: [0],
+    changeSource: [''],
+    vinScriptOverride: [''],
+    vinAmounts: [''],
+    targetFee: 0);

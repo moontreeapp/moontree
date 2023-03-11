@@ -1,13 +1,20 @@
+import 'dart:typed_data';
+
 import 'package:bloc/bloc.dart';
 import 'package:client_back/services/transaction/verify.dart';
+import 'package:client_back/streams/app.dart';
+import 'package:client_front/infrastructure/calls/broadcast.dart';
+import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:tuple/tuple.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show
         AmountToSatsExtension,
+        ECPair,
         FeeRate,
         TransactionBuilder,
+        evrmoreMainnet,
         parseSendAmountAndFeeFromSerializedTransaction,
         satsPerCoin,
         standardFee;
@@ -45,6 +52,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     String? note,
     String? addressName,
     UnsignedTransactionResult? unsigned,
+    wutx.Transaction? signed,
+    String? txHash,
     bool? isSubmitting,
   }) {
     emit(submitting());
@@ -57,6 +66,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       note: note,
       addressName: addressName,
       unsigned: unsigned,
+      signed: signed,
+      txHash: txHash,
       isSubmitting: isSubmitting,
     ));
   }
@@ -117,7 +128,56 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
 
   /// get fee, change, and sending amount from the raw hex, save to state.
   /// convert to TransactionBuilder object, inspect
-  bool processHex() {
+  Future<bool> sign() async {
+    final txb = TransactionBuilder.fromRawInfo(
+        state.unsigned!.rawHex,
+        state.unsigned!.vinScriptOverride.map((e) => e?.hexBytes),
+        state.unsigned!.vinLockingScriptType.map(
+            (e) => e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
+        state.security.chainNet.network //  evrmoreMainnet.
+        );
+    print(txb.chainName);
+    for (final Tuple2<int, String> e
+        in state.unsigned!.vinPrivateKeySource.enumeratedTuple<String>()) {
+      ECPair? keyPair;
+      if (e.item2.contains(':')) {
+        final walletPubKeyAndDerivationIndex = e.item2.split(':');
+        // todo Current.wallet must be LeaderWallet, if not err?
+        keyPair = await services.wallet.getAddressKeypair(
+            await services.wallet.leader.deriveAddressByIndex(
+          wallet: Current.wallet as LeaderWallet,
+          exposure: walletPubKeyAndDerivationIndex[0] ==
+                  (await (Current.wallet as LeaderWallet).roots)[0]
+              ? NodeExposure.external
+              : NodeExposure.internal,
+          hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
+          chain: state.security.chain,
+          net: state.security.net,
+        ));
+      } else {
+        // case for SingleWallet
+        final h160 = e.item2;
+        // h160 -> address.keypair
+        //(Current.wallet as SingleWallet).addresses.first.
+      }
+      txb.sign(
+        vin: e.item1,
+        keyPair: keyPair!,
+        hashType: null,
+        prevOutScriptOverride:
+            state.unsigned!.vinScriptOverride[e.item1]?.hexBytes,
+      );
+    }
+    final tx = txb.build();
+    print(tx);
+    set(signed: tx);
+    // compare this against parsed fee amount to verify fee.
+    print(tx.fee(goal: state.fee));
+    return false;
+  }
+
+  ///
+  Future<void> processHex() async {
     bool parsed() {
       final Map<String, Tuple2<String?, int>> cryptoAssetSatsByVinTxPos =
           <String, Tuple2<String?, int>>{};
@@ -149,11 +209,48 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     }
 
     //return parsed();
+    // or process txb or tx from sign
 
-    /// gives type error
-    final txb = TransactionBuilder.fromTransaction(
-        wutx.Transaction.fromBuffer(state.unsigned!.rawHex.hexBytes));
-    print(txb.chainName);
-    return false;
+    // sum the vinAmounts that are evr
+    state.unsigned!.vinAmounts.where((e) => e.contains('null:')).sum(); //split
+    // parsed transaction vouts that are evr (txb.vouts.sum that are ever)
+    // subtract the outputs that are = fee amount
+    // (should equal feerate*tx.virtual bytes or something)
+    //?state.unsigned!.vinAmounts.where((e) => !e.contains('null:')).sum();
+  }
+
+  ///
+  Future<void> broadcast() async {
+    if (state.signed == null) {
+      print('transaction not signed yet');
+      return;
+    }
+
+    /// should we use a repository for this? why?
+    set(
+        txHash: (await BroadcastTransactionCall(
+      rawTransactionHex: state.signed!.toHex(),
+      chain: state.security.chain,
+      net: state.security.net,
+    )())
+            .value);
+    streams.app.snack.add(Snack(
+        positive: true,
+        message: 'Successfully Sent Transaction',
+        copy: state.txHash));
   }
 }
+
+/// todo should come from wallet uils
+//enum LockingScriptType { p2pkh, p2sh, p2pk }
+//const SCRIPT_TYPES = {
+//  'P2SM': 'multisig',
+//  'NONSTANDARD': 'nonstandard',
+//  'NULLDATA': 'nulldata',
+//  'P2PK': 'pubkey',
+//  'P2PKH': 'pubkeyhash',
+//  'P2SH': 'scripthash',
+//  'P2WPKH': 'witnesspubkeyhash',
+//  'P2WSH': 'witnessscripthash',
+//  'WITNESS_COMMITMENT': 'witnesscommitment'
+//};
