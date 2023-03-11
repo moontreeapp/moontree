@@ -13,8 +13,12 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
     this.id,
     this.error,
     required this.rawHex,
+    required this.vinAmounts,
     required this.vinPrivateKeySource,
     required this.vinLockingScriptType,
+    required this.vinScriptOverride,
+    required this.changeSource,
+    required this.targetFee,
   });
 
   factory UnsignedTransactionResult.fromJson(
@@ -27,10 +31,18 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
           serializationManager.deserialize<String?>(jsonSerialization['error']),
       rawHex:
           serializationManager.deserialize<String>(jsonSerialization['rawHex']),
+      vinAmounts: serializationManager
+          .deserialize<List<String>>(jsonSerialization['vinAmounts']),
       vinPrivateKeySource: serializationManager
           .deserialize<List<String>>(jsonSerialization['vinPrivateKeySource']),
       vinLockingScriptType: serializationManager
           .deserialize<List<int>>(jsonSerialization['vinLockingScriptType']),
+      vinScriptOverride: serializationManager
+          .deserialize<List<String?>>(jsonSerialization['vinScriptOverride']),
+      changeSource: serializationManager
+          .deserialize<List<String?>>(jsonSerialization['changeSource']),
+      targetFee:
+          serializationManager.deserialize<int>(jsonSerialization['targetFee']),
     );
   }
 
@@ -40,9 +52,17 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
 
   String rawHex;
 
+  List<String> vinAmounts;
+
   List<String> vinPrivateKeySource;
 
   List<int> vinLockingScriptType;
+
+  List<String?> vinScriptOverride;
+
+  List<String?> changeSource;
+
+  int targetFee;
 
   @override
   Map<String, dynamic> toJson() {
@@ -50,8 +70,12 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
       'id': id,
       'error': error,
       'rawHex': rawHex,
+      'vinAmounts': vinAmounts,
       'vinPrivateKeySource': vinPrivateKeySource,
       'vinLockingScriptType': vinLockingScriptType,
+      'vinScriptOverride': vinScriptOverride,
+      'changeSource': changeSource,
+      'targetFee': targetFee,
     };
   }
 }

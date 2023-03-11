@@ -13,14 +13,15 @@ import 'asset_metadata_class.dart' as _i4;
 import 'comm_balance_view.dart' as _i5;
 import 'dart:typed_data' as _i6;
 import 'comm_transaction_view.dart' as _i7;
+import 'comm_string.dart' as _i8;
 import 'comm_transaction_details_view.dart'
-    as _i8;
-import 'comm_unsigned_transaction_result_class.dart'
     as _i9;
-import 'comm_unsigned_transaction_request_class.dart'
+import 'comm_unsigned_transaction_result_class.dart'
     as _i10;
-import 'dart:io' as _i11;
-import 'protocol.dart' as _i12;
+import 'comm_unsigned_transaction_request_class.dart'
+    as _i11;
+import 'dart:io' as _i12;
+import 'protocol.dart' as _i13;
 
 class _EndpointAddresses extends _i1.EndpointRef {
   _EndpointAddresses(_i1.EndpointCaller caller) : super(caller);
@@ -194,6 +195,26 @@ class _EndpointMempoolTransactions extends _i1.EndpointRef {
       );
 }
 
+class _EndpointBroadcastTransaction extends _i1.EndpointRef {
+  _EndpointBroadcastTransaction(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'broadcastTransaction';
+
+  _i2.Future<_i8.CommString> get({
+    required String rawTransactionHex,
+    required String chainName,
+  }) =>
+      caller.callServerEndpoint<_i8.CommString>(
+        'broadcastTransaction',
+        'get',
+        {
+          'rawTransactionHex': rawTransactionHex,
+          'chainName': chainName,
+        },
+      );
+}
+
 class _EndpointSubscription extends _i1.EndpointRef {
   _EndpointSubscription(_i1.EndpointCaller caller) : super(caller);
 
@@ -207,11 +228,11 @@ class _EndpointTransactionDetails extends _i1.EndpointRef {
   @override
   String get name => 'transactionDetails';
 
-  _i2.Future<_i8.TransactionDetailsView> get({
+  _i2.Future<_i9.TransactionDetailsView> get({
     required _i6.ByteData hash,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i8.TransactionDetailsView>(
+      caller.callServerEndpoint<_i9.TransactionDetailsView>(
         'transactionDetails',
         'get',
         {
@@ -253,11 +274,11 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
   @override
   String get name => 'unsignedTransaction';
 
-  _i2.Future<_i9.UnsignedTransactionResult> generateUnsignedTransaction({
-    required _i10.UnsignedTransactionRequest request,
+  _i2.Future<_i10.UnsignedTransactionResult> generateUnsignedTransaction({
+    required _i11.UnsignedTransactionRequest request,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i9.UnsignedTransactionResult>(
+      caller.callServerEndpoint<_i10.UnsignedTransactionResult>(
         'unsignedTransaction',
         'generateUnsignedTransaction',
         {
@@ -270,11 +291,11 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i11.SecurityContext? context,
+    _i12.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i12.Protocol(),
+          _i13.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {
@@ -286,6 +307,7 @@ class Client extends _i1.ServerpodClient {
     document = _EndpointDocument(this);
     example = _EndpointExample(this);
     mempoolTransactions = _EndpointMempoolTransactions(this);
+    broadcastTransaction = _EndpointBroadcastTransaction(this);
     subscription = _EndpointSubscription(this);
     transactionDetails = _EndpointTransactionDetails(this);
     transactions = _EndpointTransactions(this);
@@ -308,6 +330,8 @@ class Client extends _i1.ServerpodClient {
 
   late final _EndpointMempoolTransactions mempoolTransactions;
 
+  late final _EndpointBroadcastTransaction broadcastTransaction;
+
   late final _EndpointSubscription subscription;
 
   late final _EndpointTransactionDetails transactionDetails;
@@ -326,6 +350,7 @@ class Client extends _i1.ServerpodClient {
         'document': document,
         'example': example,
         'mempoolTransactions': mempoolTransactions,
+        'broadcastTransaction': broadcastTransaction,
         'subscription': subscription,
         'transactionDetails': transactionDetails,
         'transactions': transactions,

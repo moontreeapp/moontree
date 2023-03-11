@@ -80,4 +80,6 @@ class Security with EquatableMixin {
       : isCoin
           ? SecurityType.coin
           : SecurityType.asset;
+
+  ChainNet get chainNet => ChainNet(chain, net);
 }

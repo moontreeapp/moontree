@@ -641,7 +641,14 @@ class _SendState extends State<Send> {
             <String>['Transaction Fee', 'calculating fee...']
           ],
           total: 'calculating total...',
-          buttonAction: () => streams.spend.send.add(streams.spend.made.value),
+          buttonAction: () async {
+            // ideally this should be done here, just befor broadcast, but we
+            // have to generate and sign transaction to verify fees, etc prior
+            //await cubit.sign();
+
+            // broadcast signed trasnaction
+            await cubit.broadcast();
+          }, //streams.spend.send.add(streams.spend.made.value),
           buttonWord: 'Send',
           loadingMessage: 'Sending',
         )
@@ -650,7 +657,7 @@ class _SendState extends State<Send> {
     setState(() {
       clicked = false;
     });
-    cubit.processHex();
+    await cubit.sign();
   }
 
   void _produceAssetModal(SimpleSendFormCubit cubit) {
