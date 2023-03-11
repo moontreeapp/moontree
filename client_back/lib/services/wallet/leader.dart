@@ -1,7 +1,6 @@
 // ignore_for_file: omit_local_variable_types
 import 'dart:typed_data';
-
-import 'package:wallet_utils/src/utilities/address.dart';
+import 'package:client_back/utilities/conversion.dart';
 import 'package:equatable/equatable.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:moontree_utils/moontree_utils.dart';
@@ -79,11 +78,13 @@ class LeaderWalletService {
   }) async {
     final HDWallet subwallet =
         await getSubWallet(wallet, hdIndex, exposure, chain, net);
-    print('subwallet.pubKey');
-    print(subwallet.pubKey);
-    print(hash160(subwallet.pubKey));
-    print(Address.addressFrom(hash160(subwallet.pubKey),
-        chain ?? pros.settings.chain, net ?? pros.settings.net));
+    //print(await wallet.externalRoot);
+    //print('subwallet.pubKey');
+    //print(subwallet.pubKey);
+    //print(hash160FromHexString(subwallet.pubKey));
+    //print(hash160FromHexString(subwallet.pubKey).toHex());
+    //print(Address.addressFrom(hash160FromHexString(subwallet.pubKey),
+    //    chain ?? pros.settings.chain, net ?? pros.settings.net));
     return Address(
         scripthash: subwallet.scripthash,
         pubkey: subwallet.pubKey,
