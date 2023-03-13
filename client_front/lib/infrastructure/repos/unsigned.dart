@@ -8,20 +8,24 @@ import 'package:wallet_utils/wallet_utils.dart';
 
 class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
   late Wallet wallet;
-  late String? symbol;
-  late Security? security;
-  late FeeRate? feeRate;
-  final int sats;
-  final String address;
   late Chain chain;
   late Net net;
+  final String? symbol;
+  final Security? security;
+  final FeeRate? feeRate;
+  final String? changeAddress; // if not supplied, server defaults to index 0
+  final String? memo;
+  final int sats;
+  final String address;
   UnsignedTransactionRepo({
-    Wallet? wallet,
     this.symbol,
     this.security,
     this.feeRate,
+    this.changeAddress,
+    this.memo,
     required this.sats,
     required this.address,
+    Wallet? wallet,
     Chain? chain,
     Net? net,
   }) : super(UnsignedTransactionResult(
@@ -47,6 +51,8 @@ class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
         symbol: symbol,
         security: security,
         feeRate: feeRate,
+        memo: memo,
+        changeAddress: changeAddress,
         sats: sats,
         address: address,
       )();

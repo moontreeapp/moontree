@@ -4,6 +4,7 @@ part of 'cubit.dart';
 class SimpleSendFormState extends CubitState {
   final Security security;
   final String address;
+  final String changeAddress;
   final double amount;
   final FeeRate fee;
   final String memo;
@@ -17,6 +18,7 @@ class SimpleSendFormState extends CubitState {
   const SimpleSendFormState({
     required this.security,
     this.address = '',
+    this.changeAddress = '',
     this.amount = 0.0,
     this.fee = standardFee,
     this.memo = '',
@@ -32,7 +34,7 @@ class SimpleSendFormState extends CubitState {
   String toString() =>
       'SpendForm(security=$security, address=$address, amount=$amount, '
       'fee=$fee, note=$note, addressName=$addressName, unsigned=$unsigned, '
-      'signed=$signed, txHash=$txHash, '
+      'signed=$signed, txHash=$txHash, changeAddress=$changeAddress, '
       'isSubmitting=$isSubmitting)';
 
   @override
@@ -43,6 +45,7 @@ class SimpleSendFormState extends CubitState {
         fee,
         memo,
         note,
+        changeAddress,
         addressName,
         unsigned,
         signed,
@@ -60,6 +63,7 @@ class SimpleSendFormState extends CubitState {
     FeeRate? fee,
     String? memo,
     String? note,
+    String? changeAddress,
     String? addressName,
     UnsignedTransactionResult? unsigned,
     wutx.Transaction? signed,
@@ -73,6 +77,7 @@ class SimpleSendFormState extends CubitState {
         fee: fee ?? this.fee,
         memo: memo ?? this.memo,
         note: note ?? this.note,
+        changeAddress: changeAddress ?? this.changeAddress,
         addressName: addressName ?? this.addressName,
         unsigned: unsigned ?? this.unsigned,
         signed: signed ?? this.signed,
