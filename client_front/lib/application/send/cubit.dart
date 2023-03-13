@@ -145,7 +145,6 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
             (e) => e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
         state.security.chainNet.network //  evrmoreMainnet.
         );
-    print(txb.chainName);
     for (final Tuple2<int, String> e
         in state.unsigned!.vinPrivateKeySource.enumeratedTuple<String>()) {
       ECPair? keyPair;
@@ -235,18 +234,31 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       return;
     }
 
-    /// should we use a repository for this? why?
-    set(
-        txHash: (await BroadcastTransactionCall(
+    /// should we use a repository for this? why? myabe for validation purposes?
+    /// and for saving the note in success case? we'd still do the rest here...
+    /// todo: do repo pattern I guess..
+    final broadcastResult = (await BroadcastTransactionCall(
       rawTransactionHex: state.signed!.toHex(),
       chain: state.security.chain,
       net: state.security.net,
-    )())
-            .value);
-    streams.app.snack.add(Snack(
-        positive: true,
-        message: 'Successfully Sent Transaction',
-        copy: state.txHash));
+    )());
+
+    // todo: should we do more validation on the txHash?
+    if (broadcastResult.value != null && broadcastResult.error == null) {
+      set(txHash: broadcastResult.value);
+      // todo: save note by this txHash here
+      // should this be in a repo?
+      pros.notes.save(Note(note: state.note, transactionId: state.txHash!));
+      streams.app.snack.add(Snack(
+          positive: true,
+          message: 'Successfully Sent Transaction',
+          copy: state.txHash));
+    } else {
+      streams.app.snack.add(Snack(
+          positive: false,
+          message: 'Unable to Send, Try again Later',
+          copy: broadcastResult.error));
+    }
   }
 }
 

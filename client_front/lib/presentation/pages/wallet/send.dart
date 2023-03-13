@@ -662,8 +662,8 @@ class _SendState extends State<Send> {
             // have to generate and sign transaction to verify fees, etc prior
             //await cubit.sign();
 
-            // broadcast signed trasnaction
-            await cubit.broadcast();
+            // broadcast signed trasnaction -- commented out for testing verification
+            //await cubit.broadcast();
           }, //streams.spend.send.add(streams.spend.made.value),
           buttonWord: 'Send',
           loadingMessage: 'Sending',
