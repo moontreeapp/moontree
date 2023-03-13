@@ -52,11 +52,11 @@ class UnsignedTransactionCall extends ServerCall {
             myH106s: h160s,
             myPubkeys: roots,
             feeRateKb: feeRateKb!,
-            changeSource: changeAddress,
+            //changeSource: changeAddress,
             eachOutputAddress: addresses,
             eachOutputAsset: serverAssets,
             eachOutputAmount: satsToSend,
-            opReturnMemo: memo,
+            //opReturnMemo: memo,
           ));
 
   /// this simple version of the request handles sending one asset to one address.

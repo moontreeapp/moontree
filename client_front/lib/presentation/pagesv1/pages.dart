@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
+import 'package:client_front/presentation/pages/wallet/checkout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:client_front/presentation/pagesv1/home/home.dart';
 import 'package:client_front/presentation/pagesv1/manage/assets.dart';
@@ -125,6 +126,9 @@ class pages {
     '/settings/advanced': (BuildContext context) =>
         const AdvancedDeveloperOptions(),
     '/settings/sweep': (BuildContext context) => SweepPage(),
+    '/send/checkout': (BuildContext context) => SimpleSendCheckout(
+          transactionType: TransactionType.spend,
+        ),
   };
 
   static Map<String, Widget Function(BuildContext)> get routes => staticRoutes;

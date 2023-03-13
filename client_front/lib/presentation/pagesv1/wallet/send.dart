@@ -132,7 +132,14 @@ class _SendState extends State<Send> {
     data = populateData(context, data);
     populateFromData(cubit);
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
+        onTap: () {
+          // getting error on back button.
+          try {
+            FocusScope.of(context).unfocus();
+          } catch (e) {
+            return;
+          }
+        },
         child: BlocBuilder<SimpleSendFormCubit, SimpleSendFormState>(
             bloc: cubit..enter(),
             builder: (BuildContext context, SimpleSendFormState state) {
@@ -602,62 +609,71 @@ class _SendState extends State<Send> {
       txHex: cubit.state.unsigned!.rawHex,
       note: sendRequest.note,
     ));
-    streams.spend.estimate.add(SendEstimate(
-      sendRequest.sendAmountAsSats,
-      sendAll: sendRequest.sendAll,
-      fees: 412000, // estimate. server doesn't tell us yet
-      utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
-      security: cubit.state.security,
-      //assetMemo: Uint8List.fromList(cubit.state.memo
-      //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
-      memo: cubit.state.memo, // todo: correct?memo,
-      creation: false,
+    cubit.set(
+        checkout: SimpleSendCheckoutForm(
+      symbol: sendRequest.security!.symbol,
+      displaySymbol: sendRequest.security!.name,
+      subSymbol: '',
+      paymentSymbol: pros.securities.currentCoin.symbol,
+      items: <List<String>>[
+        <String>['To', sendRequest.sendAddress],
+        if (addressName != '') <String>['Known As', addressName],
+        <String>[
+          'Amount',
+          if (sendRequest.sendAll)
+            'calculating amount...'
+          else
+            sendRequest.visibleAmount
+        ],
+        if (!<String?>['', null].contains(sendRequest.memo))
+          <String>['Memo', sendRequest.memo!],
+        if (!<String?>['', null].contains(sendRequest.note))
+          <String>['Note', sendRequest.note!],
+      ],
+      fees: <List<String>>[
+        <String>['Transaction Fee', 'calculating fee...']
+      ],
+      total: 'calculating total...',
+      buttonAction: () async {
+        // ideally this should be done here, just befor broadcast, but we
+        // have to generate and sign transaction to verify fees, etc prior
+        //await cubit.sign();
+
+        // broadcast signed trasnaction -- commented out for testing verification
+        //await cubit.broadcast();
+      }, //streams.spend.send.add(streams.spend.made.value),
+      buttonWord: 'Send',
+      loadingMessage: 'Sending',
+      estimate: SendEstimate(
+        sendRequest.sendAmountAsSats,
+        sendAll: sendRequest.sendAll,
+        fees: 0,
+        //utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
+        security: cubit.state.security,
+        //assetMemo: Uint8List.fromList(cubit.state.memo
+        //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
+        memo: cubit.state.memo, // todo: correct?memo,
+        creation: false,
+      ),
     ));
+    //streams.spend.estimate.add(SendEstimate(
+    //  sendRequest.sendAmountAsSats,
+    //  sendAll: sendRequest.sendAll,
+    //  fees: 412000, // estimate. server doesn't tell us yet
+    //  utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
+    //  security: cubit.state.security,
+    //  //assetMemo: Uint8List.fromList(cubit.state.memo
+    //  //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
+    //  memo: cubit.state.memo, // todo: correct?memo,
+    //  creation: false,
+    //));
 
-    Navigator.of(components.routes.routeContext!).pushNamed(
-      '/transaction/checkout',
-      arguments: <String, CheckoutStruct>{
-        'struct': CheckoutStruct(
-          symbol: sendRequest.security!.symbol,
-          displaySymbol: sendRequest.security!.name,
-          subSymbol: '',
-          paymentSymbol: pros.securities.currentCoin.symbol,
-          items: <List<String>>[
-            <String>['To', sendRequest.sendAddress],
-            if (addressName != '') <String>['Known As', addressName],
-            <String>[
-              'Amount',
-              if (sendRequest.sendAll)
-                'calculating amount...'
-              else
-                sendRequest.visibleAmount
-            ],
-            if (!<String?>['', null].contains(sendRequest.memo))
-              <String>['Memo', sendRequest.memo!],
-            if (!<String?>['', null].contains(sendRequest.note))
-              <String>['Note', sendRequest.note!],
-          ],
-          fees: <List<String>>[
-            <String>['Transaction Fee', 'calculating fee...']
-          ],
-          total: 'calculating total...',
-          buttonAction: () async {
-            // ideally this should be done here, just befor broadcast, but we
-            // have to generate and sign transaction to verify fees, etc prior
-            //await cubit.sign();
-
-            // broadcast signed trasnaction
-            await cubit.broadcast();
-          }, //streams.spend.send.add(streams.spend.made.value),
-          buttonWord: 'Send',
-          loadingMessage: 'Sending',
-        )
-      },
-    );
+    Navigator.of(components.routes.routeContext!).pushNamed('/send/checkout');
     setState(() {
       clicked = false;
     });
     await cubit.sign();
+    await cubit.verifyTransaction();
   }
 
   void _produceAssetModal(SimpleSendFormCubit cubit) {

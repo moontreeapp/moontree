@@ -58,6 +58,7 @@ import 'package:client_front/presentation/pages/login/login.dart';
 import 'package:client_front/presentation/pages/wallet/wallet.dart';
 import 'package:client_front/presentation/pages/backup/backup.dart';
 import 'package:client_front/presentation/pages/restore/restore.dart';
+import 'package:client_front/presentation/pages/wallet/checkout.dart';
 import 'package:client_front/presentation/pages/settings/database.dart';
 import 'package:client_front/presentation/pages/settings/mining.dart';
 import 'package:client_front/presentation/pages/settings/mode/advanced.dart';
@@ -162,6 +163,9 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/setting/mining': (BuildContext context) => const MiningSetting(),
   '/setting/security': (BuildContext context) => const SecuritySettings(),
   '/network/blockchain': (BuildContext context) => const BlockchainSettings(),
+  '/send/checkout': (BuildContext context) => SimpleSendCheckout(
+        transactionType: TransactionType.spend,
+      ),
 };
 
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;

@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
+import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/services/transaction/verify.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:tuple/tuple.dart';
@@ -56,6 +58,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     UnsignedTransactionResult? unsigned,
     wutx.Transaction? signed,
     String? txHash,
+    SimpleSendCheckoutForm? checkout,
     bool? isSubmitting,
   }) {
     emit(submitting());
@@ -71,6 +74,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       unsigned: unsigned,
       signed: signed,
       txHash: txHash,
+      checkout: checkout,
       isSubmitting: isSubmitting,
     ));
   }
@@ -100,8 +104,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       chain: chain,
       net: net,
 
-      /// what should I do with these?
-      //String? note, // should be saved to our own database on send...
+      /// todo: eventually we'll make a system to have accounts serverside, and
+      ///       this will be relevant. until then, keep it as a reminder
       //String? addressName,
     ).fetch(only: true);
     set(
@@ -145,7 +149,6 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
             (e) => e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
         state.security.chainNet.network //  evrmoreMainnet.
         );
-    print(txb.chainName);
     for (final Tuple2<int, String> e
         in state.unsigned!.vinPrivateKeySource.enumeratedTuple<String>()) {
       ECPair? keyPair;
@@ -186,7 +189,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
   }
 
   ///
-  Future<void> processHex() async {
+  Future<TransactionComponents> processHex() async {
+    /*
     bool parsed() {
       final Map<String, Tuple2<String?, int>> cryptoAssetSatsByVinTxPos =
           <String, Tuple2<String?, int>>{};
@@ -217,37 +221,139 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       return true;
     }
 
+    // old way:
     //return parsed();
     // or process txb or tx from sign
+    */
 
-    // sum the vinAmounts that are evr
-    state.unsigned!.vinAmounts.where((e) => e.contains('null:')).sum(); //split
-    // parsed transaction vouts that are evr (txb.vouts.sum that are ever)
-    // subtract the outputs that are = fee amount
-    // (should equal feerate*tx.virtual bytes or something)
-    //?state.unsigned!.vinAmounts.where((e) => !e.contains('null:')).sum();
+    /// new way:
+    int getFee() {
+      // sum the vinAmounts that are evr
+      final coinInputs = state.unsigned!.vinAmounts
+          .where((e) => e.contains('null:'))
+          .map((e) => int.parse(e.split('null:').last))
+          .sum();
+      print(coinInputs);
+      // parsed transaction vouts that are evr (txb.vouts.sum that are evr)
+      print(state.signed!.outs);
+      print(state.signed!.outs.map((e) => e.value));
+      print(state.signed!.outs.map((e) => e.valueBuffer));
+      print(state.signed!.outs.map((e) => e.script));
+      print(state.signed!.outs.map((e) => e.signatures));
+      print(state.signed!.outs.map((e) => e.pubkeys));
+
+      // subtract the outputs that are = fee amount ???
+      // (should equal feerate*tx.virtual bytes or something)
+      //?state.unsigned!.vinAmounts.where((e) => !e.contains('null:')).sum();
+      return 0;
+    }
+
+    String getTargetAddress() {
+      return '';
+    }
+
+    String getChangeAddress() {
+      return '';
+    }
+
+    return TransactionComponents(
+        fee: getFee(),
+        targetAddress: getTargetAddress(),
+        changeAddress: getChangeAddress());
   }
 
-  ///
+  /// verify fee, sending to address, and return address
+  Future<bool> verifyTransaction() async {
+    final transactionComponents = await processHex();
+    final ret = (
+            // no transaction should cost more than 2 coins
+            transactionComponents.feeSanityCheck &&
+                // our estimate a of the fee should be close to the fee the server calculated,
+                // which should be equal to next condition, by the way.
+                transactionComponents.fee <=
+                    state.fee.rate *
+                        state.signed!.fee(goal: state.fee) *
+                        1.01 &&
+                // just double checking...
+                transactionComponents.fee <=
+                    (state.fee.rate * state.signed!.virtualSize()) * 1.01 &&
+                // send the value to our intended address
+                transactionComponents.targetAddress == state.address &&
+                // send the change back to us
+                transactionComponents.changeAddress == state.changeAddress //&&
+        // todo: what about send amount?
+        //transactionComponents.sendAmount == state.sats
+        // todo: what about change amount?
+        //transactionComponents.changeAmount == transactionComponents.totalOut - transactionComponents.sendAmount - transactionComponents.fee
+        );
+    if (ret) {
+      // update checkout struct to update checkout page
+      set(
+        checkout: state.checkout!.newEstimate(
+          SendEstimate(
+            state.sats,
+            sendAll: state.checkout!.estimate!.sendAll,
+            fees: transactionComponents.fee,
+            // not necessary
+            //utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
+            security: state.security,
+            //assetMemo: Uint8List.fromList(cubit.state.memo
+            //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
+            memo: state.memo,
+            creation: false,
+          ),
+        ),
+      );
+    }
+    return ret;
+  }
+
+  /// actually commit transaction
   Future<void> broadcast() async {
     if (state.signed == null) {
       print('transaction not signed yet');
       return;
     }
 
-    /// should we use a repository for this? why?
-    set(
-        txHash: (await BroadcastTransactionCall(
+    /// should we use a repository for this? why? myabe for validation purposes?
+    /// and for saving the note in success case? we'd still do the rest here...
+    /// todo: do repo pattern I guess..
+    final broadcastResult = (await BroadcastTransactionCall(
       rawTransactionHex: state.signed!.toHex(),
       chain: state.security.chain,
       net: state.security.net,
-    )())
-            .value);
-    streams.app.snack.add(Snack(
-        positive: true,
-        message: 'Successfully Sent Transaction',
-        copy: state.txHash));
+    )());
+
+    // todo: should we do more validation on the txHash?
+    if (broadcastResult.value != null && broadcastResult.error == null) {
+      set(txHash: broadcastResult.value);
+      // todo: save note by this txHash here
+      // should this be in a repo?
+      pros.notes.save(Note(note: state.note, transactionId: state.txHash!));
+      streams.app.snack.add(Snack(
+          positive: true,
+          message: 'Successfully Sent Transaction',
+          copy: state.txHash));
+    } else {
+      streams.app.snack.add(Snack(
+          positive: false,
+          message: 'Unable to Send, Try again Later',
+          copy: broadcastResult.error));
+    }
   }
+}
+
+class TransactionComponents {
+  final int fee;
+  final String targetAddress; // assumes we're only sending to 1 address
+  final String changeAddress;
+  const TransactionComponents({
+    required this.fee,
+    required this.targetAddress,
+    required this.changeAddress,
+  });
+
+  bool get feeSanityCheck => fee < 2 * satsPerCoin;
 }
 
 /// todo should come from wallet uils
