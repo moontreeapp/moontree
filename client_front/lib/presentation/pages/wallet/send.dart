@@ -128,7 +128,14 @@ class _SendState extends State<Send> {
     data = populateData(context, data);
     populateFromData(cubit);
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
+        onTap: () {
+          // getting error on back button.
+          try {
+            FocusScope.of(context).unfocus();
+          } catch (e) {
+            return;
+          }
+        },
         child: BlocBuilder<SimpleSendFormCubit, SimpleSendFormState>(
             bloc: cubit..enter(),
             builder: (BuildContext context, SimpleSendFormState state) {
@@ -674,6 +681,7 @@ class _SendState extends State<Send> {
       clicked = false;
     });
     await cubit.sign();
+    await cubit.verifyTransaction();
   }
 
   void _produceAssetModal(SimpleSendFormCubit cubit) {

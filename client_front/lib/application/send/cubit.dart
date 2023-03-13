@@ -100,8 +100,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       chain: chain,
       net: net,
 
-      /// what should I do with these?
-      //String? note, // should be saved to our own database on send...
+      /// todo: eventually we'll make a system to have accounts serverside, and
+      ///       this will be relevant. until then, keep it as a reminder
       //String? addressName,
     ).fetch(only: true);
     set(
@@ -185,7 +185,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
   }
 
   ///
-  Future<void> processHex() async {
+  Future<TransactionComponents> processHex() async {
+    /*
     bool parsed() {
       final Map<String, Tuple2<String?, int>> cryptoAssetSatsByVinTxPos =
           <String, Tuple2<String?, int>>{};
@@ -216,18 +217,67 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       return true;
     }
 
+    // old way:
     //return parsed();
     // or process txb or tx from sign
+    */
 
-    // sum the vinAmounts that are evr
-    state.unsigned!.vinAmounts.where((e) => e.contains('null:')).sum(); //split
-    // parsed transaction vouts that are evr (txb.vouts.sum that are ever)
-    // subtract the outputs that are = fee amount
-    // (should equal feerate*tx.virtual bytes or something)
-    //?state.unsigned!.vinAmounts.where((e) => !e.contains('null:')).sum();
+    /// new way:
+    int getFee() {
+      // sum the vinAmounts that are evr
+      final coinInputs = state.unsigned!.vinAmounts
+          .where((e) => e.contains('null:'))
+          .map((e) => int.parse(e.split('null:').last))
+          .sum();
+      print(coinInputs);
+      // parsed transaction vouts that are evr (txb.vouts.sum that are evr)
+      print(state.signed!.outs);
+      print(state.signed!.outs.map((e) => e.value));
+      print(state.signed!.outs.map((e) => e.valueBuffer));
+      print(state.signed!.outs.map((e) => e.script));
+      print(state.signed!.outs.map((e) => e.signatures));
+      print(state.signed!.outs.map((e) => e.pubkeys));
+
+      // subtract the outputs that are = fee amount ???
+      // (should equal feerate*tx.virtual bytes or something)
+      //?state.unsigned!.vinAmounts.where((e) => !e.contains('null:')).sum();
+      return 0;
+    }
+
+    String getTargetAddress() {
+      return '';
+    }
+
+    String getChangeAddress() {
+      return '';
+    }
+
+    return TransactionComponents(
+        fee: getFee(),
+        targetAddress: getTargetAddress(),
+        changeAddress: getChangeAddress());
   }
 
-  ///
+  /// verify fee, sending to address, and return address
+  Future<bool> verifyTransaction() async {
+    final transactionComponents = await processHex();
+    return (
+        // no transaction should cost more than 2 coins
+        transactionComponents.feeSanityCheck &&
+            // our estimate a of the fee should be close to the fee the server calculated,
+            // which should be equal to next condition, by the way.
+            transactionComponents.fee <=
+                state.fee.rate * state.signed!.fee(goal: state.fee) * 1.01 &&
+            // just double checking...
+            transactionComponents.fee <=
+                (state.fee.rate * state.signed!.virtualSize()) * 1.01 &&
+            // send the value to our intended address
+            transactionComponents.targetAddress == state.address &&
+            // send the change back to us
+            transactionComponents.changeAddress == state.changeAddress);
+  }
+
+  /// actually commit transaction
   Future<void> broadcast() async {
     if (state.signed == null) {
       print('transaction not signed yet');
@@ -260,6 +310,19 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           copy: broadcastResult.error));
     }
   }
+}
+
+class TransactionComponents {
+  final int fee;
+  final String targetAddress; // assumes we're only sending to 1 address
+  final String changeAddress;
+  const TransactionComponents({
+    required this.fee,
+    required this.targetAddress,
+    required this.changeAddress,
+  });
+
+  bool get feeSanityCheck => fee < 2 * satsPerCoin;
 }
 
 /// todo should come from wallet uils
