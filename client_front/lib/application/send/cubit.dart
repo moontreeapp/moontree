@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
+import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/services/transaction/verify.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:tuple/tuple.dart';
@@ -56,6 +58,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     UnsignedTransactionResult? unsigned,
     wutx.Transaction? signed,
     String? txHash,
+    SimpleSendCheckoutForm? checkout,
     bool? isSubmitting,
   }) {
     emit(submitting());
@@ -71,6 +74,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       unsigned: unsigned,
       signed: signed,
       txHash: txHash,
+      checkout: checkout,
       isSubmitting: isSubmitting,
     ));
   }
@@ -261,20 +265,47 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
   /// verify fee, sending to address, and return address
   Future<bool> verifyTransaction() async {
     final transactionComponents = await processHex();
-    return (
-        // no transaction should cost more than 2 coins
-        transactionComponents.feeSanityCheck &&
-            // our estimate a of the fee should be close to the fee the server calculated,
-            // which should be equal to next condition, by the way.
-            transactionComponents.fee <=
-                state.fee.rate * state.signed!.fee(goal: state.fee) * 1.01 &&
-            // just double checking...
-            transactionComponents.fee <=
-                (state.fee.rate * state.signed!.virtualSize()) * 1.01 &&
-            // send the value to our intended address
-            transactionComponents.targetAddress == state.address &&
-            // send the change back to us
-            transactionComponents.changeAddress == state.changeAddress);
+    final ret = (
+            // no transaction should cost more than 2 coins
+            transactionComponents.feeSanityCheck &&
+                // our estimate a of the fee should be close to the fee the server calculated,
+                // which should be equal to next condition, by the way.
+                transactionComponents.fee <=
+                    state.fee.rate *
+                        state.signed!.fee(goal: state.fee) *
+                        1.01 &&
+                // just double checking...
+                transactionComponents.fee <=
+                    (state.fee.rate * state.signed!.virtualSize()) * 1.01 &&
+                // send the value to our intended address
+                transactionComponents.targetAddress == state.address &&
+                // send the change back to us
+                transactionComponents.changeAddress == state.changeAddress //&&
+        // todo: what about send amount?
+        //transactionComponents.sendAmount == state.sats
+        // todo: what about change amount?
+        //transactionComponents.changeAmount == transactionComponents.totalOut - transactionComponents.sendAmount - transactionComponents.fee
+        );
+    if (ret) {
+      // update checkout struct to update checkout page
+      set(
+        checkout: state.checkout!.newEstimate(
+          SendEstimate(
+            state.sats,
+            sendAll: state.checkout!.estimate!.sendAll,
+            fees: transactionComponents.fee,
+            // not necessary
+            //utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
+            security: state.security,
+            //assetMemo: Uint8List.fromList(cubit.state.memo
+            //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
+            memo: state.memo,
+            creation: false,
+          ),
+        ),
+      );
+    }
+    return ret;
   }
 
   /// actually commit transaction

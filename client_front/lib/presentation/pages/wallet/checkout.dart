@@ -1,153 +1,48 @@
-import 'dart:async';
-
-import 'package:client_front/presentation/pages/wallet/checkout.dart';
+import 'package:client_front/application/send/cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_back/streams/app.dart';
 import 'package:client_front/presentation/components/components.dart';
 import 'package:client_front/presentation/theme/extensions.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
-class CheckoutStruct {
-  final Widget? icon;
-  final String? symbol;
-  final String displaySymbol;
-  final String? subSymbol;
-  final String? paymentSymbol;
-  final double? left;
-  final Iterable<Iterable<String>> items;
-  final Iterable<Iterable<String>>? fees;
-  final String? total;
-  final String? confirm;
-  final Function? buttonAction;
-  final String? buttonWord;
-  final Widget? button;
-  final String loadingMessage;
-  final int? playcount;
-  static const Iterable<Iterable<String>> exampleItems = <List<String>>[
-    <String>['Short Text', 'aligned right'],
-    <String>['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
-    <String>[
-      'Multiline (2) - Limited',
-      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
-      '2'
-    ],
-    <String>[
-      'Multiline (5)',
-      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
-      '5'
-    ]
-  ];
-  static const Iterable<Iterable<String>> exampleFees = <List<String>>[
-    <String>['Transaction', '1'],
-    <String>['Sub Asset', '100'],
-    <String>['long amount', '21,000,000.00000000']
-  ];
+enum TransactionType { spend, create, reissue, export }
 
-  const CheckoutStruct({
-    this.icon,
-    this.left,
-    this.symbol = '#MoonTree',
-    this.displaySymbol = 'MoonTree',
-    this.subSymbol = 'Main/',
-    this.paymentSymbol = 'RVN',
-    this.items = exampleItems,
-    this.fees = exampleFees,
-    this.total = '101',
-    this.buttonAction,
-    this.buttonWord = 'Submit',
-    this.loadingMessage = 'Sending Transaction',
-    this.confirm,
-    this.button,
-    this.playcount = 2,
-  });
-}
-
-class Checkout extends StatefulWidget {
+class SimpleSendCheckout extends StatelessWidget {
   final TransactionType? transactionType;
 
-  const Checkout({required this.transactionType, Key? key}) : super(key: key);
+  SimpleSendCheckout({required this.transactionType, Key? key})
+      : super(key: key);
 
-  @override
-  _CheckoutState createState() => _CheckoutState();
-}
-
-class _CheckoutState extends State<Checkout> {
-  late Map<String, dynamic> data = <String, dynamic>{};
-  late CheckoutStruct struct;
-  late List<StreamSubscription<dynamic>> listeners =
-      <StreamSubscription<dynamic>>[];
-  SendEstimate? estimate;
-  late bool disabled = false;
+  // on cubit?
+  //late SendEstimate? estimate;
+  // on cubit?
+  //late bool disabled = false;
+  // on cubit?
   late DateTime startTime;
+  late SimpleSendFormState state; // remove in uiv3
+  late BuildContext context;
 
   @override
-  void initState() {
-    super.initState();
-
-    /// if still in download process of any kind, tell user they must wait till
-    /// sync is finished, disable button until done.
-    if (streams.client.busy.value) {
-      streams.app.snack
-          .add(Snack(message: 'Still syncing with network, please wait'));
-    }
-    if (widget.transactionType == TransactionType.spend) {
-      listeners.add(streams.spend.estimate.listen((SendEstimate? value) {
-        if (value != estimate) {
-          setState(() {
-            estimate = value;
-          });
-        }
-      }));
-    } else if (widget.transactionType == TransactionType.create) {
-      listeners.add(streams.create.estimate.listen((SendEstimate? value) {
-        if (value != estimate) {
-          setState(() {
-            estimate = value;
-          });
-        }
-      }));
-    } else if (widget.transactionType == TransactionType.reissue) {
-      listeners.add(streams.reissue.estimate.listen((SendEstimate? value) {
-        if (value != estimate) {
-          setState(() {
-            estimate = value;
-          });
-        }
-      }));
-    }
-  }
-
-  @override
-  void dispose() {
-    for (final StreamSubscription<dynamic> listener in listeners) {
-      listener.cancel();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    data = populateData(context, data);
-    struct = data['struct'] as CheckoutStruct? ?? const CheckoutStruct();
+  Widget build(BuildContext buildContext) {
+    context = buildContext;
     startTime = DateTime.now();
     return BackdropLayers(
         back: const BlankBack(), front: FrontCurve(child: body()));
   }
 
-  Widget body() => CustomScrollView(
-        shrinkWrap: true,
-        slivers: <Widget>[
+  Widget body() => BlocBuilder<SimpleSendFormCubit, SimpleSendFormState>(
+          builder: (BuildContext context, SimpleSendFormState cubitState) {
+        state = cubitState;
+        return CustomScrollView(shrinkWrap: true, slivers: <Widget>[
           topPart,
           bottomPart,
-        ],
-      );
+        ]);
+      });
 
   Widget get topPart => SliverToBoxAdapter(
         child: Column(
@@ -168,8 +63,8 @@ class _CheckoutState extends State<Checkout> {
   Widget get header => ListTile(
         dense: true,
         visualDensity: VisualDensity.compact,
-        leading: struct.icon ??
-            components.icons.assetAvatar(struct.symbol!.toUpperCase(),
+        leading: state.checkout!.icon ??
+            components.icons.assetAvatar(state.checkout!.symbol!.toUpperCase(),
                 net: pros.settings.net),
         title: Row(children: <Widget>[
           const SizedBox(width: 5),
@@ -179,12 +74,12 @@ class _CheckoutState extends State<Checkout> {
               child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
-                  child: Text(struct.displaySymbol,
+                  child: Text(state.checkout!.displaySymbol,
                       style: Theme.of(context).textTheme.bodyText1)))
         ]),
         //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         //  const SizedBox(width: 5),
-        //  Text(struct.subSymbol!.toUpperCase(),
+        //  Text(state.checkout!.subSymbol!.toUpperCase(),
         //      style: Theme.of(context).checkoutSubAsset),
         //])
       );
@@ -195,7 +90,7 @@ class _CheckoutState extends State<Checkout> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ...detailItems(
-            pairs: struct.items,
+            pairs: state.checkout!.items,
             style: Theme.of(context).textTheme.checkoutItem,
           )
         ],
@@ -223,7 +118,7 @@ class _CheckoutState extends State<Checkout> {
           children: <Widget>[
             SizedBox(
                 width: (MediaQuery.of(context).size.width - 16 - 16 - 8) *
-                    (struct.left ?? .5),
+                    (state.checkout!.left ?? .5),
                 child: Text(pair.toList()[0],
                     style: style,
                     overflow: TextOverflow.fade,
@@ -234,7 +129,7 @@ class _CheckoutState extends State<Checkout> {
             else
               SizedBox(
                   width: (MediaQuery.of(context).size.width - 16 - 16 - 8) *
-                      (1 - (struct.left ?? .5)),
+                      (1 - (state.checkout!.left ?? .5)),
                   child: Text(
                     rightSide,
                     style: style,
@@ -252,26 +147,15 @@ class _CheckoutState extends State<Checkout> {
   }
 
   String getRightAmount(String x) {
-    if (x == 'calculating amount...') {
-      disabled = true;
-      if (estimate != null) {
-        disabled = false;
-        return estimate!.amount.asCoin.toString();
-        //return satToAmount(estimate!.total - estimate!.fees).toString();
-      }
-      return x;
+    if ((state.checkout!.estimate?.fees ?? 0) > 0) {
+      return state.checkout!.estimate!.amount.asCoin.toString();
     }
     return x;
   }
 
   String getRightFee(String x) {
-    if (x == 'calculating fee...') {
-      disabled = true;
-      if (estimate != null) {
-        disabled = false;
-        return estimate!.fees.asCoin.toString();
-      }
-      return x;
+    if ((state.checkout!.estimate?.fees ?? 0) > 0) {
+      return state.checkout!.estimate!.fees.asCoin.toString();
     }
     return x;
   }
@@ -282,7 +166,7 @@ class _CheckoutState extends State<Checkout> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (struct.fees != null)
+            if (state.checkout!.fees != null)
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 7),
                 child: Column(
@@ -293,7 +177,7 @@ class _CheckoutState extends State<Checkout> {
                 ),
               ),
             const Divider(indent: 0),
-            if (struct.total != null)
+            if (state.checkout!.total != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
@@ -305,7 +189,7 @@ class _CheckoutState extends State<Checkout> {
                   components.containers.navBar(context, child: submitButton),
                 ],
               ),
-            if (struct.confirm != null)
+            if (state.checkout!.confirm != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
@@ -315,9 +199,9 @@ class _CheckoutState extends State<Checkout> {
                       child: confirm),
                   const SizedBox(height: 40),
                   components.containers.navBar(context,
-                      child: struct.button == null
+                      child: state.checkout!.button == null
                           ? submitButton
-                          : struct.button!),
+                          : state.checkout!.button!),
                 ],
               ),
           ],
@@ -328,7 +212,7 @@ class _CheckoutState extends State<Checkout> {
         Text('Fees', style: Theme.of(context).textTheme.checkoutFees),
         const SizedBox(height: 14),
         ...detailItems(
-          pairs: struct.fees!,
+          pairs: state.checkout!.fees!,
           style: Theme.of(context).textTheme.checkoutFee,
           fee: true,
         ),
@@ -338,7 +222,7 @@ class _CheckoutState extends State<Checkout> {
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
         Text('Total:', style: Theme.of(context).textTheme.bodyText1),
         Text(
-            '${getRightTotal(struct.total!)} ${struct.paymentSymbol!.toUpperCase()}',
+            '${getRightTotal(state.checkout!.total!)} ${state.checkout!.paymentSymbol!.toUpperCase()}',
             style: Theme.of(context).textTheme.bodyText1,
             key: Key('checkoutTotal')),
       ]);
@@ -347,7 +231,7 @@ class _CheckoutState extends State<Checkout> {
         height: 60,
         alignment: Alignment.center,
         child: Text(
-          struct.confirm!,
+          state.checkout!.confirm!,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyText1,
           softWrap: true,
@@ -357,12 +241,8 @@ class _CheckoutState extends State<Checkout> {
       );
 
   String getRightTotal(String x) {
-    if (x == 'calculating total...') {
-      disabled = true;
-      if (estimate != null) {
-        disabled = false;
-        return estimate!.total.asCoin.toString();
-      }
+    if ((state.checkout!.estimate?.fees ?? 0) > 0) {
+      return state.checkout!.estimate!.total.asCoin.toString();
     }
     return x;
   }
@@ -370,14 +250,14 @@ class _CheckoutState extends State<Checkout> {
   Widget get submitButton => Row(children: <Widget>[
         components.buttons.actionButton(
           context,
-          enabled: !disabled,
-          label: struct.buttonWord,
+          enabled: state.checkout!.disabled,
+          label: state.checkout!.buttonWord,
           onPressed: () async {
             if (DateTime.now().difference(startTime).inMilliseconds > 500) {
               components.loading.screen(
-                  message: struct.loadingMessage,
-                  playCount: struct.playcount ?? 2,
-                  then: struct.buttonAction);
+                  message: state.checkout!.loadingMessage,
+                  playCount: state.checkout!.playcount ?? 2,
+                  then: state.checkout!.buttonAction);
             }
           },
         )
