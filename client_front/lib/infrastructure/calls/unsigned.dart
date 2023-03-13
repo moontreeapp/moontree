@@ -13,6 +13,8 @@ class UnsignedTransactionCall extends ServerCall {
   late String? symbol;
   late Security? security;
   late FeeRate? feeRate;
+  final String? changeAddress;
+  final String? memo;
   final int sats;
   final String address;
   late Chain chain;
@@ -23,6 +25,8 @@ class UnsignedTransactionCall extends ServerCall {
     this.symbol,
     this.security,
     this.feeRate,
+    this.changeAddress,
+    this.memo,
     required this.sats,
     required this.address,
     Chain? chain,
@@ -48,9 +52,11 @@ class UnsignedTransactionCall extends ServerCall {
             myH106s: h160s,
             myPubkeys: roots,
             feeRateKb: feeRateKb!,
+            changeSource: changeAddress,
             eachOutputAddress: addresses,
             eachOutputAsset: serverAssets,
             eachOutputAmount: satsToSend,
+            opReturnMemo: memo,
           ));
 
   /// this simple version of the request handles sending one asset to one address.

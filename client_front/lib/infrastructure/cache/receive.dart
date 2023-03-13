@@ -23,10 +23,9 @@ class ReceiveCache {
   /// gets list of BalanceView objects from cache
   static Address? get({
     required Wallet wallet,
+    required NodeExposure exposure,
     required Chain chain,
     required Net net,
   }) => // addresses concept needs to change.
-      pros.addresses.byWalletExposure
-          .getAll(wallet.id, NodeExposure.external)
-          .firstOrNull;
+      pros.addresses.byWalletExposure.getAll(wallet.id, exposure).firstOrNull;
 }

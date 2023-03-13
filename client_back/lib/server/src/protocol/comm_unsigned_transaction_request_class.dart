@@ -14,6 +14,8 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
     required this.myH106s,
     required this.myPubkeys,
     this.feeRateKb,
+    this.changeSource,
+    this.opReturnMemo,
     required this.eachOutputAddress,
     required this.eachOutputAsset,
     required this.eachOutputAmount,
@@ -31,6 +33,10 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
           .deserialize<List<String>>(jsonSerialization['myPubkeys']),
       feeRateKb: serializationManager
           .deserialize<double?>(jsonSerialization['feeRateKb']),
+      changeSource: serializationManager
+          .deserialize<String?>(jsonSerialization['changeSource']),
+      opReturnMemo: serializationManager
+          .deserialize<String?>(jsonSerialization['opReturnMemo']),
       eachOutputAddress: serializationManager
           .deserialize<List<String>>(jsonSerialization['eachOutputAddress']),
       eachOutputAsset: serializationManager
@@ -48,6 +54,10 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
 
   double? feeRateKb;
 
+  String? changeSource;
+
+  String? opReturnMemo;
+
   List<String> eachOutputAddress;
 
   List<String?> eachOutputAsset;
@@ -61,6 +71,8 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
       'myH106s': myH106s,
       'myPubkeys': myPubkeys,
       'feeRateKb': feeRateKb,
+      'changeSource': changeSource,
+      'opReturnMemo': opReturnMemo,
       'eachOutputAddress': eachOutputAddress,
       'eachOutputAsset': eachOutputAsset,
       'eachOutputAmount': eachOutputAmount,

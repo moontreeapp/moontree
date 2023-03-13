@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:client_back/services/transaction/verify.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
+import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -50,6 +51,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     FeeRate? fee,
     String? memo,
     String? note,
+    String? changeAddress,
     String? addressName,
     UnsignedTransactionResult? unsigned,
     wutx.Transaction? signed,
@@ -64,6 +66,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       fee: fee,
       memo: memo,
       note: note,
+      changeAddress: changeAddress,
       addressName: addressName,
       unsigned: unsigned,
       signed: signed,
@@ -81,23 +84,29 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     set(
       isSubmitting: true,
     );
+    chain ??= Current.chain;
+    net ??= Current.net;
+    final changeAddress =
+        (await ReceiveRepo(wallet: wallet).fetch()).address(chain, net);
     UnsignedTransactionResult unsigned = await UnsignedTransactionRepo(
       wallet: wallet,
       symbol: symbol ?? state.security.symbol,
       security: state.security,
       feeRate: state.fee,
       sats: state.sats,
+      changeAddress: changeAddress,
       address: state.address,
+      memo: state.memo,
       chain: chain,
       net: net,
 
       /// what should I do with these?
-      //String? memo,
-      //String? note,
+      //String? note, // should be saved to our own database on send...
       //String? addressName,
     ).fetch(only: true);
     set(
       unsigned: unsigned,
+      changeAddress: changeAddress,
       isSubmitting: false,
     );
   }

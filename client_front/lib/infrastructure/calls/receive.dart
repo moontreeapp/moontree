@@ -14,10 +14,12 @@ import 'package:moontree_utils/moontree_utils.dart';
 
 class ReceiveCall extends ServerCall {
   late LeaderWallet wallet;
+  late bool change;
   late Chain chain;
   late Net net;
   ReceiveCall({
     required this.wallet,
+    this.change = false, // default external
     Chain? chain,
     Net? net,
   }) : super() {
@@ -25,17 +27,13 @@ class ReceiveCall extends ServerCall {
     this.net = net ?? Current.net;
   }
 
-  Future<CommInt> emptyAddressBy({
-    required Chaindata chain,
-    required String root,
-  }) async =>
-      await client.addresses
-          .nextEmptyIndex(chainName: chain.name, xpubkey: root);
+  Future<CommInt> emptyAddressBy({required Chaindata chain}) async =>
+      await client.addresses.nextEmptyIndex(
+          chainName: chain.name,
+          xpubkey: await (change ? wallet.internalRoot : wallet.externalRoot));
 
   Future<CommInt> call() async {
     late CommInt index;
-    print('root:');
-    print(await wallet.externalRoot);
     try {
       index = mockFlag
 
@@ -43,9 +41,7 @@ class ReceiveCall extends ServerCall {
           ? await Future.delayed(Duration(seconds: 1), spoof)
 
           /// SERVER
-          : await emptyAddressBy(
-              chain: ChainNet(chain, net).chaindata,
-              root: await wallet.externalRoot);
+          : await emptyAddressBy(chain: ChainNet(chain, net).chaindata);
     } catch (e) {
       index = CommInt(error: 'unable to contact server', value: -1);
     }
