@@ -1,8 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:bloc/bloc.dart';
 import 'package:client_back/services/transaction/maker.dart';
-import 'package:client_back/services/transaction/verify.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
@@ -17,8 +14,6 @@ import 'package:wallet_utils/wallet_utils.dart'
         ECPair,
         FeeRate,
         TransactionBuilder,
-        evrmoreMainnet,
-        parseSendAmountAndFeeFromSerializedTransaction,
         satsPerCoin,
         standardFee;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
@@ -115,30 +110,6 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     );
   }
 
-  //void clearCache() => set(
-  //      unsigned: null,
-  //    );
-
-  //void submit() async {
-  //  emit(await submitSend());
-  //}
-
-  /*
-  TODO:
-  // convertion to txb so we can sign it
-  TransactionBuilder.fromTransaction(Transaction.fromBuffer(our hex.toUint8List())) -> txb object 
-  hex -> get addresses, amounts, etc we're sending too (details)
-  hex + other -> sign -> signed tx -> endpoint
-  
-  // will call on each value:
-  signRaw({
-    required int vin, // from unsigned tx
-    required ECPair keyPair, // from unsigned tx
-    int? hashType,
-    Uint8List? prevOutScriptOverride, // from unsigned tx
-  })
-  */
-
   /// get fee, change, and sending amount from the raw hex, save to state.
   /// convert to TransactionBuilder object, inspect
   Future<bool> sign() async {
@@ -147,8 +118,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         state.unsigned!.vinScriptOverride.map((e) => e?.hexBytes),
         state.unsigned!.vinLockingScriptType.map(
             (e) => e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
-        state.security.chainNet.network //  evrmoreMainnet.
-        );
+        state.security.chainNet.network);
     for (final Tuple2<int, String> e
         in state.unsigned!.vinPrivateKeySource.enumeratedTuple<String>()) {
       ECPair? keyPair;
@@ -197,45 +167,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     return false;
   }
 
-  ///
+  /// parse transaction to verify elements within
   Future<TransactionComponents> processHex() async {
-    /*
-    bool parsed() {
-      final Map<String, Tuple2<String?, int>> cryptoAssetSatsByVinTxPos =
-          <String, Tuple2<String?, int>>{};
-      for (final Vout utxo in /*estimate.utxos*/ [
-        //Vout(
-        //  toAddress: state.address,
-        //  /*String*/ transactionId: state.unsigned.transactionId,
-        //  /*int*/ position: state.unsigned.position,
-        //  /*String*/ type: state.unsigned.vinLockingScriptType,
-        //  /*int*/ coinValue: state.amount,
-        //  /*String?*/ assetSecurityId: state.security
-        //)
-      ]) {
-        //state.unsigned.vinPrivateKeySource // should have transactionIds and positions implied, need amounts.
-        cryptoAssetSatsByVinTxPos['${utxo.transactionId}:${utxo.position}'] =
-            Tuple2<String?, int>(
-                utxo.isAsset ? utxo.security!.symbol : null, utxo.coinValue);
-      }
-      final Tuple2<Map<String?, int>, int> result =
-          parseSendAmountAndFeeFromSerializedTransaction(
-        cryptoAssetSatsByVinTxPos,
-        state.unsigned!.rawHex.hexDecode,
-      );
-      // todo also check item1 against state.
-      if (result.item2 > 2 * satsPerCoin) {
-        throw FeeGuardException('Parsed fee too large.');
-      }
-      return true;
-    }
-
-    // old way:
-    //return parsed();
-    // or process txb or tx from sign
-    */
-
-    /// new way:
     int getFee() {
       // sum the vinAmounts that are evr
       final coinInputs = state.unsigned!.vinAmounts
@@ -303,13 +236,16 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
             state.sats,
             sendAll: state.checkout!.estimate!.sendAll,
             fees: transactionComponents.fee,
-            // not necessary
-            //utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
             security: state.security,
-            //assetMemo: Uint8List.fromList(cubit.state.memo
-            //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
             memo: state.memo,
             creation: false,
+
+            /// not necessary
+            /// in string form at cubit.state.unsigned.vinPrivateKeySource
+            //utxos: null,
+            /// todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
+            //assetMemo: Uint8List.fromList(cubit.state.memo
+            //    .codeUnits),
           ),
         ),
       );
