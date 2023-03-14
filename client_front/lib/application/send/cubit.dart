@@ -167,14 +167,20 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           net: state.security.net,
         ));
       } else {
-        // case for SingleWallet
-        final h160 = e.item2;
-        // h160 -> address.keypair
-        //(Current.wallet as SingleWallet).addresses.first.
+        /// case for SingleWallet
+        /// in theory we shouldn't have to use the h160 to figureout which
+        /// address since the current wallet is the one that made this
+        /// transaction, it should always match the h160 provided
+        print(e.item2);
+        print(e.item2 ==
+            (Current.wallet as SingleWallet).addresses.first.h160AsString);
+        print((Current.wallet as SingleWallet).addresses.first.h160AsString);
+        keyPair = await services.wallet.getAddressKeypair(
+            (Current.wallet as SingleWallet).addresses.first);
       }
       txb.sign(
         vin: e.item1,
-        keyPair: keyPair!,
+        keyPair: keyPair,
         hashType: null,
         prevOutScriptOverride:
             state.unsigned!.vinScriptOverride[e.item1]?.hexBytes,
