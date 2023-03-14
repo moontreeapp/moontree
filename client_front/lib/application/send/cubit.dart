@@ -171,10 +171,13 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         /// in theory we shouldn't have to use the h160 to figureout which
         /// address since the current wallet is the one that made this
         /// transaction, it should always match the h160 provided
-        print(e.item2);
-        print(e.item2 ==
-            (Current.wallet as SingleWallet).addresses.first.h160AsString);
-        print((Current.wallet as SingleWallet).addresses.first.h160AsString);
+        if (e.item2 !=
+            (Current.wallet as SingleWallet).addresses.first.h160AsString) {
+          throw Exception(
+              ("Single wallet signing erorr: wallet doens't match h160 returned from server\n"
+                  "h160: ${e.item2}"
+                  "local: ${(Current.wallet as SingleWallet).addresses.first.h160AsString}"));
+        }
         keyPair = await services.wallet.getAddressKeypair(
             (Current.wallet as SingleWallet).addresses.first);
       }
