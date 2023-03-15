@@ -41,5 +41,6 @@ class Current {
 
   static Chain get chain => pros.settings.chain;
   static Net get net => pros.settings.net;
+  static ChainNet get chainNet => pros.settings.chainNet;
   static Security get coin => pros.securities.currentCoin;
 }

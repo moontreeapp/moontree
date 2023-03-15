@@ -11,6 +11,7 @@ import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:client_front/presentation/widgets/other/textfield.dart';
 import 'package:client_front/presentation/widgets/assets/icons.dart';
+import 'package:client_front/infrastructure/services/subscription.dart';
 
 class BlockchainChoice extends StatefulWidget {
   const BlockchainChoice({Key? key, this.data}) : super(key: key);
@@ -186,6 +187,12 @@ Future<void> changeChainNet(
   //  returnHome: false,
   //);
   streams.client.busy.add(true);
+  // reset subscriptions to point to this chain
+  await subscription.setupSubscription(
+    wallet: pros.wallets.currentWallet,
+    chain: value.chain,
+    net: value.net,
+  );
   await services.client.switchNetworks(chain: value.chain, net: value.net);
   streams.app.snack.add(Snack(message: 'Successfully connected'));
   await components.cubits.holdingsView.setHoldingViews(force: true);

@@ -1,7 +1,9 @@
+import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:serverpod_client/serverpod_client.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
-import 'package:serverpod_client/serverpod_client.dart';
+import 'package:client_front/presentation/components/components.dart';
 
 class SubscriptionService {
   static const String moontreeUrl =
@@ -45,6 +47,28 @@ class SubscriptionService {
           print('H160 balance!');
         } else if (message is protocol.NotifyChainWalletBalance) {
           print('wallet balance!');
+          if ((Current.wallet is LeaderWallet &&
+                  (Current.wallet as LeaderWallet).pubkey !=
+                      message.walletPubKey) ||
+              (Current.wallet is SingleWallet &&
+                  (Current.wallet as SingleWallet).publicKey !=
+                      message.walletPubKey)) {
+            // this message is not for current wallet?
+            // but we set up subscriptions again each time we change wallets.
+            print('this should never happen. NotifyChainWalletBalance');
+            // well if it does happen just resync anyway:
+            components.cubits.holdingsViewCubit
+                .setHoldingViews(Current.wallet, Current.chainNet);
+          } else {
+            final chainNet = ChainNet.from(name: message.chainName);
+            components.cubits.holdingsViewCubit.updateHoldingView(
+              Current.wallet,
+              chainNet,
+              symbol: message.symbol ?? chainNet.symbol,
+              satsConfirmed: message.satsConfirmed,
+              satsUnconfirmed: message.satsUnconfirmed,
+            );
+          }
         } else {
           print(message.runtimeType);
         }
@@ -100,7 +124,7 @@ class SubscriptionService {
         //await Future.delayed(Duration(seconds: 1), spoofNothing);
 
         /// SERVER
-        await services.subscription.specifySubscription(
+        await subscription.specifySubscription(
             chains: [ChainNet(chain, net).chaindata.name],
             roots: roots,
             h160s: h160s);
@@ -110,3 +134,5 @@ class SubscriptionService {
 
   void spoofNothing() {}
 }
+
+final SubscriptionService subscription = SubscriptionService();

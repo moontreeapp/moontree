@@ -18,23 +18,35 @@ class IconComponents {
 
   Icon get close => const Icon(Icons.close, color: Colors.white);
 
-  Widget income(BuildContext context) =>
-      Image.asset('assets/icons/receive/receive_green.png');
+  addOpacity(Widget img, double? opacity) =>
+      opacity != null ? Opacity(opacity: opacity, child: img) : img;
 
-  Widget out(BuildContext context, {Color? color}) => Image.asset(
-        'assets/icons/send/send_red.png',
-        color: color,
-      );
-  Widget outIn(BuildContext context, {Color? color}) => Image.asset(
-        'assets/icons/send/send_receive.png',
-        color: color ?? AppColors.black38,
-      );
-  Widget fee(BuildContext context, {Color? color}) => Image.asset(
-        'assets/icons/send/send_red.png',
-        color: color,
-        //height: 16,
-        //width: 16,
-      );
+  Widget income(BuildContext context, {double? opacity}) => addOpacity(
+      Image.asset('assets/icons/receive/receive_green.png'), opacity);
+
+  Widget out(BuildContext context, {Color? color, double? opacity}) =>
+      addOpacity(
+          Image.asset(
+            'assets/icons/send/send_red.png',
+            color: color,
+          ),
+          opacity);
+  Widget outIn(BuildContext context, {Color? color, double? opacity}) =>
+      addOpacity(
+          Image.asset(
+            'assets/icons/send/send_receive.png',
+            color: color ?? AppColors.black38,
+          ),
+          opacity);
+  Widget fee(BuildContext context, {Color? color, double? opacity}) =>
+      addOpacity(
+          Image.asset(
+            'assets/icons/send/send_red.png',
+            color: color,
+            //height: 16,
+            //width: 16,
+          ),
+          opacity);
 
   // faded colors will be for mempool
   Widget mempoolOut(BuildContext context, {Color? color}) => Image.asset(

@@ -38,7 +38,7 @@ class UnsignedTransactionCall extends ServerCall {
   }
 
   Future<server.UnsignedTransactionResult> unsignedTransactionBy({
-    double? feeRateKb,
+    double? feeRatePerByte,
     required Chaindata chain,
     required List<String> roots,
     required List<String> h160s,
@@ -51,12 +51,15 @@ class UnsignedTransactionCall extends ServerCall {
           request: server.UnsignedTransactionRequest(
             myH106s: h160s,
             myPubkeys: roots,
-            feeRateKb: feeRateKb!,
-            //changeSource: changeAddress,
+            // per kilobyte //todo handle error, fee rate less than min
+            feeRateKb: feeRatePerByte! * 1000,
+            changeSource: changeAddress,
             eachOutputAddress: addresses,
             eachOutputAsset: serverAssets,
             eachOutputAmount: satsToSend,
-            //opReturnMemo: memo,
+            opReturnMemo: memo == "" || memo == null
+                ? null
+                : memo!.utf8ToHex, // should be hex string
           ));
 
   /// this simple version of the request handles sending one asset to one address.
@@ -85,7 +88,7 @@ class UnsignedTransactionCall extends ServerCall {
 
         /// SERVER
         : await unsignedTransactionBy(
-            feeRateKb: feeRate?.rate ?? FeeRates.cheap.rate,
+            feeRatePerByte: feeRate?.rate ?? FeeRates.cheap.rate,
             addresses: [address],
             serverAssets: [serverSymbol],
             satsToSend: [sats],

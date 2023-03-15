@@ -52,11 +52,19 @@ extension TransactionViewMethods on TransactionView {
   //    type == TransactionViewType.self ? iReceived : iValue;
   /// just the total that went away or came in
   int get totalValue => outgoing ? iProvided : iReceived;
-  int get iValueTotal => !isCoin &&
-          [TransactionViewType.self, TransactionViewType.consolidation]
-              .contains(type)
-      ? iReceived
-      : iValue;
+  int get iValueTotal {
+    if (height <= 0 || iReceived == 8164205066) {
+      print(isCoin);
+      print(iReceived);
+      print(iValue);
+    }
+    return !isCoin &&
+            [TransactionViewType.self, TransactionViewType.consolidation]
+                .contains(type) &&
+            height > 0
+        ? iReceived
+        : iValue;
+  }
 
   /// iValue and sent to self on assets always shows 0 since tx fees are in the base currency...
   /// Using iReceived is not technically any better because it just reflects the
@@ -148,8 +156,16 @@ extension TransactionViewMethods on TransactionView {
     return burn ?? regular;
   }
 
-  String get formattedDatetime =>
-      formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);
+  String get formattedDatetime => height <= 0
+      ? 'just now'
+      : formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);
+  //{
+  //String ret = formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);
+  //if (ret == 'January 1, 0000') {
+  //  ret = 'just now';
+  //}
+  //return ret;
+  //}
 }
 
 class TransactionViewSpoof {

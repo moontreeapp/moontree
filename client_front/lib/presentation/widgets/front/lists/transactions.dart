@@ -206,19 +206,38 @@ class _TransactionListState extends State<TransactionList> {
                                                   .bodyText1),
                                   Text(
                                       '${transactionView.formattedDatetime} ${transactionView.type.specialPaddedDisplay(transactionView.feeOnly, transactionView.consolidationToSelf)}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText2!
-                                          .copyWith(color: AppColors.black60)),
+                                      style: transactionView.height <= 0
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .bodyText1!
+                                              .copyWith(
+                                                  color: AppColors.disabled)
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .bodyText2!
+                                              .copyWith(
+                                                  color: AppColors.black60)),
                                 ]),
                             trailing: transactionView.feeOnly
-                                ? components.icons.fee(context)
+                                ? components.icons.fee(context,
+                                    opacity: transactionView.height <= 0
+                                        ? 1 - .38
+                                        : null)
                                 : (transactionView.sentToSelf &&
                                         !transactionView.isCoin
-                                    ? components.icons.outIn(context)
+                                    ? components.icons.outIn(context,
+                                        opacity: transactionView.height <= 0
+                                            ? 1 - .38
+                                            : null)
                                     : (transactionView.outgoing
-                                        ? components.icons.out(context)
-                                        : components.icons.income(context))),
+                                        ? components.icons.out(context,
+                                            opacity: transactionView.height <= 0
+                                                ? 1 - .38
+                                                : null)
+                                        : components.icons.income(context,
+                                            opacity: transactionView.height <= 0
+                                                ? 1 - .38
+                                                : null))),
                           ),
                           const Divider(indent: 16),
                         ]

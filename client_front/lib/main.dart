@@ -9,7 +9,6 @@ import 'package:flutter_bloc/src/bloc_provider.dart'
     show BlocProviderSingleChildWidget;
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:client_back/streams/streams.dart';
-import 'package:client_back/services/services.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/presentation/theme/theme.dart';
@@ -22,6 +21,7 @@ import 'package:client_front/presentation/containers/content/extra.dart';
 import 'package:client_front/presentation/containers/content/content.dart';
 import 'package:client_front/presentation/containers/layers/loading.dart';
 import 'package:client_front/presentation/containers/layers/tutorial.dart';
+import 'package:client_front/infrastructure/services/subscription.dart';
 //import 'package:flutter/foundation.dart' show kDebugMode;
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -38,7 +38,7 @@ Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // setup moontree server client for subscriptions
-  await services.subscription.setupClient(FlutterConnectivityMonitor());
+  await subscription.setupClient(FlutterConnectivityMonitor());
 
   // setup system ui stuff
   //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);

@@ -103,15 +103,16 @@ class SimpleSendCheckout extends StatelessWidget {
     bool fee = false,
   }) {
     final List<Widget> rows = <Widget>[];
+
     for (final Iterable<String> pair in pairs) {
-      String rightSide = fee
-          ? getRightFee(pair.toList()[1])
-          : getRightAmount(pair.toList()[1]);
-      if (rightSide.length > 20) {
-        rightSide = <String>['To', 'IPFS', 'IPFS/TxId', 'ID', 'TxId']
-                .contains(pair.toList()[0])
-            ? rightSide.cutOutMiddle()
-            : rightSide;
+      String rightSide;
+      if (<String>['To', 'IPFS', 'IPFS/TxId', 'ID', 'TxId', 'Note', 'Memo']
+          .contains(pair.first)) {
+        rightSide = pair.last.cutOutMiddle();
+      } else {
+        rightSide = fee
+            ? getRightFee(pair.toList()[1])
+            : getRightAmount(pair.toList()[1]);
       }
       rows.add(Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -251,7 +252,7 @@ class SimpleSendCheckout extends StatelessWidget {
   Widget get submitButton => Row(children: <Widget>[
         components.buttons.actionButton(
           context,
-          enabled: state.checkout!.disabled,
+          enabled: !state.checkout!.disabled,
           label: state.checkout!.buttonWord,
           onPressed: () async {
             if (DateTime.now().difference(startTime).inMilliseconds > 500) {

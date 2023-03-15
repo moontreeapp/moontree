@@ -62,6 +62,7 @@ class _SendState extends State<Send> {
   String visibleAmount = '0';
   bool clicked = false;
   bool validatedAddress = true;
+  late Balance holdingBalance;
 
   @override
   void initState() {
@@ -143,6 +144,15 @@ class _SendState extends State<Send> {
         child: BlocBuilder<SimpleSendFormCubit, SimpleSendFormState>(
             bloc: cubit..enter(),
             builder: (BuildContext context, SimpleSendFormState state) {
+              // instead of using balances, which is unreliable, use holdingView
+              final BalanceView? holdingView = components.cubits.holdingsView
+                  .holdingsViewFor(state.security.symbol);
+              holdingBalance = Balance(
+                  walletId: Current.walletId,
+                  security: state.security,
+                  confirmed: holdingView?.satsConfirmed ?? 0,
+                  unconfirmed: holdingView?.satsUnconfirmed ?? 0);
+              // carry on
               sendAsset.text = state.security.name;
               if (state.amount > 0) {
                 final String text = enforceDivisibility(
@@ -304,22 +314,7 @@ class _SendState extends State<Send> {
                                   if (x == '0') {
                                     return 'must be greater than 0';
                                   }
-                                  if (_asDouble(x) >
-                                      (state.security.balance?.amount ??
-                                          components.cubits.holdingsView.state
-                                              .holdingsViews
-                                              .where((e) =>
-                                                  e.symbol ==
-                                                      state.security.symbol &&
-                                                  ChainNet.from(name: e.chain)
-                                                          .chain ==
-                                                      state.security.chain &&
-                                                  ChainNet.from(name: e.chain)
-                                                          .net ==
-                                                      state.security.net)
-                                              .firstOrNull
-                                              ?.amount ??
-                                          0)) {
+                                  if (_asDouble(x) > holdingBalance.amount) {
                                     return 'too large';
                                   }
                                   if (x.isNumeric) {
@@ -536,39 +531,37 @@ class _SendState extends State<Send> {
   bool _verifyMemo([String? memo]) =>
       (memo ?? sendMemo.text).isMemo || (memo ?? sendMemo.text).isIpfs;
 
-  bool _coinValidation() =>
-      pros.balances.primaryIndex
-          .getOne(Current.walletId, pros.securities.currentCoin) !=
-      null;
+  bool _coinValidation() => holdingBalance.value > 0;
+  //pros.balances.primaryIndex
+  //    .getOne(Current.walletId, pros.securities.currentCoin) !=
+  //null;
 
-  bool _fieldValidation() {
-    return sendAddress.text != '' && _validateAddress() && _verifyMemo();
-  }
+  bool _fieldValidation() =>
+      sendAddress.text != '' && _validateAddress() && _verifyMemo();
 
   bool _holdingValidation(SimpleSendFormState state) {
     if (_asDouble(sendAmount.text) == 0.0) {
       return false;
     }
-    return (state.security.balance?.amount ?? 0) >=
-        double.parse(sendAmount.text);
+    return holdingBalance.amount > double.parse(sendAmount.text);
+    //return (state.security.balance?.amount ?? 0) >=
+    //    double.parse(sendAmount.text);
   }
 
-  bool _allValidation(SimpleSendFormState state) {
-    return _coinValidation() && _fieldValidation() && _holdingValidation(state);
-  }
+  bool _allValidation(SimpleSendFormState state) =>
+      /*_coinValidation() && */ _fieldValidation() && _holdingValidation(state);
 
   void _startSend(SimpleSendFormCubit cubit, SimpleSendFormState state) {
     final bool vAddress = sendAddress.text != '' && _validateAddress();
     final bool vMemo = _verifyMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
-      if ((state.security.balance?.amount ?? 0) >=
-          double.parse(sendAmount.text)) {
+      if (holdingBalance.amount >= double.parse(sendAmount.text)) {
         final SendRequest sendRequest = SendRequest(
-          sendAll: (state.security.balance?.amount ?? 0) == state.amount,
+          sendAll: holdingBalance.amount == state.amount,
           wallet: Current.wallet,
           sendAddress: state.address,
-          holding: state.security.balance?.amount ?? 0.0,
+          holding: holdingBalance.amount,
           visibleAmount: _asDoubleString(state.amount),
           sendAmountAsSats: state.sats,
           feeRate: state.fee,
@@ -605,6 +598,21 @@ class _SendState extends State<Send> {
       chain: Current.chain,
       net: Current.net,
     );
+    // this check should live in repository or something, todo: fix
+    if (cubit.state.unsigned == null) {
+      streams.app.snack.add(Snack(
+          message: 'Unable to contact server. Please try again later.',
+          positive: false));
+      return;
+    }
+    if (cubit.state.unsigned!.error != null) {
+      print(cubit.state.unsigned!.error);
+      streams.app.snack.add(Snack(
+          message: 'Unable to make transaction at this time.',
+          positive: false,
+          copy: cubit.state.unsigned!.error));
+      return;
+    }
     streams.spend.made.add(TransactionNote(
       txHex: cubit.state.unsigned!.rawHex,
       note: sendRequest.note,
@@ -640,7 +648,7 @@ class _SendState extends State<Send> {
         //await cubit.sign();
 
         // broadcast signed trasnaction -- commented out for testing verification
-        //await cubit.broadcast();
+        await cubit.broadcast();
       }, //streams.spend.send.add(streams.spend.made.value),
       buttonWord: 'Send',
       loadingMessage: 'Sending',

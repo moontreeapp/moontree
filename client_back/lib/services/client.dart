@@ -179,14 +179,6 @@ class ClientService {
 
   Future<void> switchNetworks({required Chain chain, required Net net}) async {
     await pros.settings.setBlockchain(chain: chain, net: net);
-
-    // reset subscriptions to point to this chain
-    await services.subscription.setupSubscription(
-      wallet: pros.wallets.currentWallet,
-      chain: chain,
-      net: net,
-    );
-
     await resetMemoryAndConnection();
   }
 
