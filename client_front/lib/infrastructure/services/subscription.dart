@@ -3,7 +3,8 @@ import 'package:serverpod_client/serverpod_client.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class SubscriptionService {
   static const String moontreeUrl =
@@ -57,11 +58,11 @@ class SubscriptionService {
             // but we set up subscriptions again each time we change wallets.
             print('this should never happen. NotifyChainWalletBalance');
             // well if it does happen just resync anyway:
-            components.cubits.holdingsViewCubit
-                .setHoldingViews(Current.wallet, Current.chainNet);
+            components.cubits.holdingsView.setHoldingViews(
+                wallet: Current.wallet, chainNet: Current.chainNet);
           } else {
             final chainNet = ChainNet.from(name: message.chainName);
-            components.cubits.holdingsViewCubit.updateHoldingView(
+            components.cubits.holdingsView.updateHoldingView(
               Current.wallet,
               chainNet,
               symbol: message.symbol ?? chainNet.symbol,
