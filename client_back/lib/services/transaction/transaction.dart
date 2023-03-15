@@ -148,8 +148,16 @@ extension TransactionViewMethods on TransactionView {
     return burn ?? regular;
   }
 
-  String get formattedDatetime =>
-      formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);
+  String get formattedDatetime => height <= 0
+      ? 'just now'
+      : formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);
+  //{
+  //String ret = formatDate(datetime, <String>[MM, ' ', d, ', ', yyyy]);
+  //if (ret == 'January 1, 0000') {
+  //  ret = 'just now';
+  //}
+  //return ret;
+  //}
 }
 
 class TransactionViewSpoof {
