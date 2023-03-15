@@ -9,7 +9,6 @@ import 'developer.dart';
 import 'download/download.dart';
 import 'password.dart';
 import 'rate.dart';
-import 'subscription.dart';
 import 'transaction/transaction.dart';
 import 'tutorial.dart';
 import 'version.dart';
@@ -29,5 +28,4 @@ class services {
   static VersionService version = VersionService();
   static DeveloperService developer = DeveloperService();
   static ConversionService conversion = ConversionService();
-  static SubscriptionService subscription = SubscriptionService();
 }

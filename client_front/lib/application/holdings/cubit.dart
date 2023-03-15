@@ -68,6 +68,43 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> with SetCubitMixin {
     }
   }
 
+  Future<void> updateHoldingView(
+    Wallet wallet,
+    ChainNet chainNet, {
+    required String symbol,
+    required int satsConfirmed,
+    required int satsUnconfirmed,
+  }) async {
+    bool found = false;
+    List<BalanceView> holdingViews = [];
+    for (final BalanceView view in state.holdingsViews) {
+      if (view.chain == chainNet.chain &&
+          view.symbol == symbol &&
+          view.error == null) {
+        holdingViews.add(BalanceView(
+          chain: view.chain,
+          symbol: view.symbol,
+          satsConfirmed: satsConfirmed,
+          satsUnconfirmed: satsUnconfirmed,
+        ));
+        found = true;
+      } else {
+        holdingViews.add(view);
+      }
+    }
+    if (found == false) {
+      await setHoldingViews(wallet, chainNet);
+    } else {
+      set(
+        holdingsViews: holdingViews,
+        assetHoldings: assetHoldings(holdingViews),
+        ranWallet: wallet,
+        ranChainNet: chainNet,
+        isSubmitting: false,
+      );
+    }
+  }
+
   void clearCache() => set(holdingsViews: <BalanceView>[]);
 
   BalanceView? holdingsViewFor(String symbol) =>

@@ -11,15 +11,14 @@ import 'package:serverpod_flutter/serverpod_flutter.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'package:client_back/streams/streams.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/pages/pages.dart';
 import 'package:client_front/presentation/components/components.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
-import 'package:client_front/infrastructure/calls/subscription.dart';
+import 'package:client_front/infrastructure/services/subscription.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:client_back/streams/streams.dart';
-import 'package:client_back/services/services.dart';
 import 'package:client_front/presentation/screens/screens.dart';
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -33,7 +32,7 @@ Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // setup moontree server client for subscriptions
-  await services.subscription.setupClient(FlutterConnectivityMonitor());
+  await subscription.setupClient(FlutterConnectivityMonitor());
 
   runApp(RavenMobileApp());
 

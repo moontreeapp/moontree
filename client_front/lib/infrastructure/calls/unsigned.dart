@@ -38,7 +38,7 @@ class UnsignedTransactionCall extends ServerCall {
   }
 
   Future<server.UnsignedTransactionResult> unsignedTransactionBy({
-    double? feeRateKb,
+    double? feeRatePerByte,
     required Chaindata chain,
     required List<String> roots,
     required List<String> h160s,
@@ -51,7 +51,8 @@ class UnsignedTransactionCall extends ServerCall {
           request: server.UnsignedTransactionRequest(
             myH106s: h160s,
             myPubkeys: roots,
-            feeRateKb: feeRateKb!,
+            feeRateKb: feeRatePerByte! *
+                1000, // per kilobyte //todo handle error, fee rate less than min
             //changeSource: changeAddress,
             eachOutputAddress: addresses,
             eachOutputAsset: serverAssets,
@@ -85,7 +86,7 @@ class UnsignedTransactionCall extends ServerCall {
 
         /// SERVER
         : await unsignedTransactionBy(
-            feeRateKb: feeRate?.rate ?? FeeRates.cheap.rate,
+            feeRatePerByte: feeRate?.rate ?? FeeRates.cheap.rate,
             addresses: [address],
             serverAssets: [serverSymbol],
             satsToSend: [sats],
