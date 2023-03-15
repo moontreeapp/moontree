@@ -141,9 +141,9 @@ class _SendState extends State<Send> {
             bloc: cubit..enter(),
             builder: (BuildContext context, SimpleSendFormState state) {
               // instead of using balances, which is unreliable, use holdingView
-              final holdingsCubit = components.cubits.holdingsViewCubit;
-              final BalanceView? holdingView =
-                  holdingsCubit.holdingsViewFor(state.security.symbol);
+              final BalanceView? holdingView = components
+                  .cubits.holdingsViewCubit
+                  .holdingsViewFor(state.security.symbol);
               holdingBalance = Balance(
                   walletId: Current.walletId,
                   security: state.security,

@@ -51,13 +51,15 @@ class UnsignedTransactionCall extends ServerCall {
           request: server.UnsignedTransactionRequest(
             myH106s: h160s,
             myPubkeys: roots,
-            feeRateKb: feeRatePerByte! *
-                1000, // per kilobyte //todo handle error, fee rate less than min
-            //changeSource: changeAddress,
+            // per kilobyte //todo handle error, fee rate less than min
+            feeRateKb: feeRatePerByte! * 1000,
+            changeSource: changeAddress,
             eachOutputAddress: addresses,
             eachOutputAsset: serverAssets,
             eachOutputAmount: satsToSend,
-            //opReturnMemo: memo,
+            opReturnMemo: memo == "" || memo == null
+                ? null
+                : memo!.utf8ToHex, // should be hex string
           ));
 
   /// this simple version of the request handles sending one asset to one address.

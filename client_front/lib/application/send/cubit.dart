@@ -86,7 +86,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     chain ??= Current.chain;
     net ??= Current.net;
     final changeAddress =
-        (await ReceiveRepo(wallet: wallet).fetch()).address(chain, net);
+        (await ReceiveRepo(wallet: wallet, change: true).fetch())
+            .address(chain, net);
     UnsignedTransactionResult unsigned = await UnsignedTransactionRepo(
       wallet: wallet,
       symbol: symbol ?? state.security.symbol,
