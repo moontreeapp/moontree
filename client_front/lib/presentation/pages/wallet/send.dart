@@ -58,6 +58,7 @@ class _SendState extends State<Send> {
   String visibleAmount = '0';
   bool clicked = false;
   bool validatedAddress = true;
+  late Balance holdingBalance;
 
   @override
   void initState() {
@@ -139,6 +140,16 @@ class _SendState extends State<Send> {
         child: BlocBuilder<SimpleSendFormCubit, SimpleSendFormState>(
             bloc: cubit..enter(),
             builder: (BuildContext context, SimpleSendFormState state) {
+              // instead of using balances, which is unreliable, use holdingView
+              final holdingsCubit = components.cubits.holdingsViewCubit;
+              final BalanceView? holdingView =
+                  holdingsCubit.holdingsViewFor(state.security.symbol);
+              holdingBalance = Balance(
+                  walletId: Current.walletId,
+                  security: state.security,
+                  confirmed: holdingView?.satsConfirmed ?? 0,
+                  unconfirmed: holdingView?.satsUnconfirmed ?? 0);
+              // carry on
               sendAsset.text = state.security.name;
               if (state.amount > 0) {
                 final String text = enforceDivisibility(
@@ -552,26 +563,25 @@ class _SendState extends State<Send> {
   bool _verifyMemo([String? memo]) =>
       (memo ?? sendMemo.text).isMemo || (memo ?? sendMemo.text).isIpfs;
 
-  bool _coinValidation() =>
-      pros.balances.primaryIndex
-          .getOne(Current.walletId, pros.securities.currentCoin) !=
-      null;
+  bool _coinValidation() => holdingBalance.value > 0;
+  //pros.balances.primaryIndex
+  //    .getOne(Current.walletId, pros.securities.currentCoin) !=
+  //null;
 
-  bool _fieldValidation() {
-    return sendAddress.text != '' && _validateAddress() && _verifyMemo();
-  }
+  bool _fieldValidation() =>
+      sendAddress.text != '' && _validateAddress() && _verifyMemo();
 
   bool _holdingValidation(SimpleSendFormState state) {
     if (_asDouble(sendAmount.text) == 0.0) {
       return false;
     }
-    return (state.security.balance?.amount ?? 0) >=
-        double.parse(sendAmount.text);
+    return holdingBalance.amount > double.parse(sendAmount.text);
+    //return (state.security.balance?.amount ?? 0) >=
+    //    double.parse(sendAmount.text);
   }
 
-  bool _allValidation(SimpleSendFormState state) {
-    return _coinValidation() && _fieldValidation() && _holdingValidation(state);
-  }
+  bool _allValidation(SimpleSendFormState state) =>
+      /*_coinValidation() && */ _fieldValidation() && _holdingValidation(state);
 
   void _startSend(SimpleSendFormCubit cubit, SimpleSendFormState state) {
     final bool vAddress = sendAddress.text != '' && _validateAddress();

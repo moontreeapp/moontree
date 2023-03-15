@@ -23,6 +23,6 @@ class BlockchainChoices extends StatelessWidget {
                 child: Container(
                     alignment: Alignment.topLeft,
                     child: const BlockchainChoice()))),
-        const ElectrumNetwork(),
+        //const ElectrumNetwork(),
       ]);
 }

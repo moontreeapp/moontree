@@ -86,6 +86,7 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
             //        padding:
             //            EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0),
             //        child: networkTextField)),
+            /* no longer use electrum
             SliverToBoxAdapter(
                 child: Padding(
                     padding: const EdgeInsets.only(
@@ -110,7 +111,7 @@ class _ElectrumNetworkPageState extends State<ElectrumNetworkPage> {
                       child: Container(
                           alignment: Alignment.topLeft,
                           child: const DownloadActivity()))),
-
+            */
             //SliverToBoxAdapter(
             //    child: Container(height: MediaQuery.of(context).size.height / 2)),
             SliverFillRemaining(
