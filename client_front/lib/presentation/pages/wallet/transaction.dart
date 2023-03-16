@@ -240,7 +240,8 @@ class TransactionPageContent extends StatelessWidget {
     if (cubit.state.transactionView?.memo == null) {
       return null;
     }
-    return cubit.state.transactionView!.memo!.toBs58();
+    // remove op_return byte (6a) and length of string (80)
+    return cubit.state.transactionView!.memo!.toHex().substring(4).hexToUtf8;
   }
 
   String? transactionAssets(TransactionViewCubit cubit) {
@@ -380,9 +381,14 @@ class TransactionPageContent extends StatelessWidget {
 
   /// added to a block is 1 confirmation, mempool = 0 confirmations:
   int? getBlocksBetweenHelper({Block? current}) {
+    if (transactionView.height <= 0) {
+      return 0;
+    }
     current = current ?? pros.blocks.latest;
     return (current != null)
-        ? (current.height - transactionView.height) + 1
+        ? current.height <= transactionView.height
+            ? 1
+            : (current.height - transactionView.height)
         : null;
   }
 

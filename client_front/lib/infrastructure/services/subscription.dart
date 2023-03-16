@@ -44,12 +44,18 @@ class SubscriptionService {
           await pros.blocks.save(Block.fromNotification(message));
           print('pros.blocks.records ${pros.blocks.records.first}');
         } else if (message is protocol.NotifyChainH160Balance) {
+          // this would be for single wallets
           print('H160 balance!');
+          // no need to get surgical, single wallets are an edge case anyway
+          components.cubits.holdingsViewCubit
+              .setHoldingViews(Current.wallet, Current.chainNet, force: true);
         } else if (message is protocol.NotifyChainWalletBalance) {
           print('wallet balance!');
           if ((Current.wallet is LeaderWallet &&
-                  (Current.wallet as LeaderWallet).pubkey !=
-                      message.walletPubKey) ||
+                  !(await (Current.wallet as LeaderWallet).internalRoot ==
+                          message.walletPubKey ||
+                      await (Current.wallet as LeaderWallet).externalRoot ==
+                          message.walletPubKey)) ||
               (Current.wallet is SingleWallet &&
                   (Current.wallet as SingleWallet).publicKey !=
                       message.walletPubKey)) {
@@ -58,8 +64,9 @@ class SubscriptionService {
             print('this should never happen. NotifyChainWalletBalance');
             // well if it does happen just resync anyway:
             components.cubits.holdingsViewCubit
-                .setHoldingViews(Current.wallet, Current.chainNet);
+                .setHoldingViews(Current.wallet, Current.chainNet, force: true);
           } else {
+            /// surgically update holdings with given information
             final chainNet = ChainNet.from(name: message.chainName);
             components.cubits.holdingsViewCubit.updateHoldingView(
               Current.wallet,
@@ -69,6 +76,8 @@ class SubscriptionService {
               satsUnconfirmed: message.satsUnconfirmed,
             );
           }
+          components.cubits.receiveViewCubit
+              .setAddress(Current.wallet, force: true);
         } else {
           print(message.runtimeType);
         }
