@@ -39,18 +39,30 @@ class SubscriptionService {
         // if balance update do y, etc.
         print(message);
         if (message is protocol.NotifyChainStatus) {
-          print('status!');
+          print('status! ${message.toJson()}');
         } else if (message is protocol.NotifyChainHeight) {
           await pros.blocks.save(Block.fromNotification(message));
           print('pros.blocks.records ${pros.blocks.records.first}');
         } else if (message is protocol.NotifyChainH160Balance) {
           // this would be for single wallets
           print('H160 balance!');
-          // no need to get surgical, single wallets are an edge case anyway
-          components.cubits.holdingsViewCubit
-              .setHoldingViews(Current.wallet, Current.chainNet, force: true);
+          final chainNet = ChainNet.from(name: message.chainName);
+
+          /// surgical should work...
+          components.cubits.holdingsViewCubit.updateHoldingView(
+            Current.wallet,
+            chainNet,
+            symbol: message.symbol ?? chainNet.symbol,
+            satsConfirmed: message.satsConfirmed,
+            satsUnconfirmed: message.satsUnconfirmed,
+          );
+
+          /// no need to get surgical, single wallets are an edge case anyway
+          //components.cubits.holdingsViewCubit
+          //    .setHoldingViews(Current.wallet, Current.chainNet, force: true);
         } else if (message is protocol.NotifyChainWalletBalance) {
           print('wallet balance!');
+          final chainNet = ChainNet.from(name: message.chainName);
           if ((Current.wallet is LeaderWallet &&
                   !(await (Current.wallet as LeaderWallet).internalRoot ==
                           message.walletPubKey ||
@@ -67,7 +79,6 @@ class SubscriptionService {
                 .setHoldingViews(Current.wallet, Current.chainNet, force: true);
           } else {
             /// surgically update holdings with given information
-            final chainNet = ChainNet.from(name: message.chainName);
             components.cubits.holdingsViewCubit.updateHoldingView(
               Current.wallet,
               chainNet,
@@ -79,7 +90,7 @@ class SubscriptionService {
           components.cubits.receiveViewCubit
               .setAddress(Current.wallet, force: true);
         } else {
-          print(message.runtimeType);
+          print('unknown subscription message: ${message.runtimeType}');
         }
       });
     } on StateError {

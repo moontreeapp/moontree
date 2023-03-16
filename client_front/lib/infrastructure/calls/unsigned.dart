@@ -51,7 +51,6 @@ class UnsignedTransactionCall extends ServerCall {
           request: server.UnsignedTransactionRequest(
             myH106s: h160s,
             myPubkeys: roots,
-            // per kilobyte //todo handle error, fee rate less than min
             feeRateKb: feeRatePerByte! * 1000,
             changeSource: changeAddress,
             eachOutputAddress: addresses,
