@@ -1,8 +1,8 @@
-import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:serverpod_client/serverpod_client.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/components/components.dart';
 
 class SubscriptionService {
@@ -10,16 +10,23 @@ class SubscriptionService {
       'http://24.199.68.139:8080'; //'https://api.moontree.com';
   final server.Client client;
   late server.ConnectivityMonitor monitor;
+  bool isConnected = false;
+  late final StreamingConnectionHandler connectionHandler;
 
   SubscriptionService() : client = server.Client('$moontreeUrl/');
 
-  Future<void> setupClient(
-    server.ConnectivityMonitor givenMonitor,
-  ) async {
+  Future<void> setupClient(server.ConnectivityMonitor givenMonitor) async {
     monitor = givenMonitor;
     client.connectivityMonitor = givenMonitor;
-    await client.openStreamingConnection(
-        disconnectOnLostInternetConnection: true);
+    //await client.openStreamingConnection(
+    //    disconnectOnLostInternetConnection: true);
+    connectionHandler = StreamingConnectionHandler(
+      client: client,
+      listener: (connectionState) {
+        print('connection state: ${connectionState.status}');
+      },
+    );
+    connectionHandler.connect();
     await setupListeners();
   }
 

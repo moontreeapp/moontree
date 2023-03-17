@@ -331,22 +331,7 @@ class _SendState extends State<Send> {
                                   if (x == '0') {
                                     return 'must be greater than 0';
                                   }
-                                  if (_asDouble(x) >
-                                      (holdingBalance.amount ??
-                                          components.cubits.holdingsViewCubit
-                                              .state.holdingsViews
-                                              .where((e) =>
-                                                  e.symbol ==
-                                                      state.security.symbol &&
-                                                  ChainNet.from(name: e.chain)
-                                                          .chain ==
-                                                      state.security.chain &&
-                                                  ChainNet.from(name: e.chain)
-                                                          .net ==
-                                                      state.security.net)
-                                              .firstOrNull
-                                              ?.amount ??
-                                          0)) {
+                                  if (_asDouble(x) > holdingBalance.amount) {
                                     return 'too large';
                                   }
                                   if (x.isNumeric) {
@@ -575,7 +560,21 @@ class _SendState extends State<Send> {
     if (_asDouble(sendAmount.text) == 0.0) {
       return false;
     }
-    return holdingBalance.amount > double.parse(sendAmount.text);
+    if (holdingBalance.security.isCoin) {
+      // we have enough coin for the send and minimum fee estimate
+      return holdingBalance.amount > double.parse(sendAmount.text) + 0.0021;
+    } else {
+      final BalanceView? holdingView = components.cubits.holdingsViewCubit
+          .holdingsViewFor(Current.coin.symbol);
+      final Balance holdingBalanceCoin = Balance(
+          walletId: Current.walletId,
+          security: state.security,
+          confirmed: holdingView?.satsConfirmed ?? 0,
+          unconfirmed: holdingView?.satsUnconfirmed ?? 0);
+      // we have enough asset for the send and enough coin for minimum fee
+      return holdingBalance.amount >= double.parse(sendAmount.text) &&
+          holdingView!.satsConfirmed + holdingView.satsUnconfirmed > 210000;
+    }
     //return (state.security.balance?.amount ?? 0) >=
     //    double.parse(sendAmount.text);
   }
