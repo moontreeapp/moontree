@@ -7,8 +7,8 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/components/components.dart';
 
 class SubscriptionService {
-  static const String moontreeUrl =
-      'http://24.199.68.139:8080'; //'https://api.moontree.com';
+  //'https://api.moontree.com';
+  static const String moontreeUrl = 'http://24.199.68.139:8080';
   final server.Client client;
   late server.ConnectivityMonitor monitor;
   bool isConnected = false;

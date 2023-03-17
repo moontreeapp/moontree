@@ -60,7 +60,10 @@ class HoldingBalancesCall extends ServerCall {
             chain: ChainNet(chain, net).chaindata,
             roots: roots,
             h160s: roots.isEmpty
-                ? Current.wallet.addresses.map((e) => e.h160AsByteData).toList()
+                ? [
+                    (await (Current.wallet as SingleWallet).address)
+                        .h160AsByteData
+                  ]
                 : []);
 
     if (history.length == 1 && history.first.error != null) {

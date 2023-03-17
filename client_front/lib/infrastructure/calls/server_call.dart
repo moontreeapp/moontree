@@ -1,13 +1,15 @@
 import 'package:client_back/server/serverv2_client.dart';
+import 'package:client_front/infrastructure/services/subscription.dart';
 
 class ServerCall {
-  static const String moontreeUrl =
-      'http://24.199.68.139:8080'; //'https://api.moontree.com';
   Client client;
 
-  ServerCall() : client = Client('$moontreeUrl/');
+  /// use the client that automatically stays connected.
+  ServerCall() : client = subscription.client;
 
-  void recreateClient() => client = Client('$moontreeUrl/');
+  /// if it fails, then make your own.
+  void recreateClient() =>
+      client = Client('${SubscriptionService.moontreeUrl}/');
 
   Future<T> runCall<T>(Function f) async {
     try {

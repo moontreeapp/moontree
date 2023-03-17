@@ -1,3 +1,4 @@
+import 'package:client_back/joins/joins.dart';
 import 'package:client_back/records/records.dart';
 import 'package:client_back/services/services.dart';
 import 'package:client_front/infrastructure/calls/receive.dart';
@@ -19,10 +20,6 @@ extension GenerateAddressThruDeriviation on LeaderWallet {
         chain: chain,
         net: net,
       );
-}
-
-extension GenerateAddressThruConversion on SingleWallet {
-  Future<Address> get address async => services.wallet.single.toAddress(this);
 }
 
 class ReceiveRepo extends Repository<Address> {

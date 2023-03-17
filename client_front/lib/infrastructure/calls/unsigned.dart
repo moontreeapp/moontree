@@ -57,6 +57,8 @@ class UnsignedTransactionCall extends ServerCall {
                 eachOutputAddress: addresses,
                 eachOutputAsset: serverAssets,
                 eachOutputAmount: satsToSend,
+                eachOutputAssetMemo: [], // unimplemented on front end
+                eachOutputAssetMemoTimestamp: [], // unimplemented on front end
                 opReturnMemo: memo == "" || memo == null
                     ? null
                     : memo!.utf8ToHex, // should be hex string

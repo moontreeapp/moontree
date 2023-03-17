@@ -11,6 +11,19 @@ extension WalletHasManyAddresses on Wallet {
   List<Address> get addresses => pros.addresses.byWallet.getAll(id);
 }
 
+extension GenerateAddressThruConversion on Wallet {
+  Future<Address> get address async {
+    final wallet_utils.KPWallet kpWallet =
+        await (this as SingleWallet).kpWallet; //getKPWallet(wallet);
+    return Address(
+        scripthash: kpWallet.scripthash,
+        pubkey: kpWallet.pubKey!,
+        walletId: id,
+        index: 0,
+        exposure: NodeExposure.external);
+  }
+}
+
 extension WalletHasManyAddressesByExposure on Wallet {
   List<Address> addressesBy(NodeExposure exposure, [Chain? chain, Net? net]) =>
       pros.addresses.byWalletExposure.getAll(id, exposure);
