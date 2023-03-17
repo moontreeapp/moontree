@@ -27,16 +27,6 @@ class ReceiveCall extends ServerCall {
     this.net = net ?? Current.net;
   }
 
-  Future<CommInt> runCall(Function f) async {
-    try {
-      return await f();
-    } catch (e) {
-      //SocketException: HTTP connection timed out after 0:00:20.000000, host: 24.199.68.139, port: 8080
-      recreateClient();
-      return await f();
-    }
-  }
-
   Future<CommInt> emptyAddressBy({required Chaindata chain}) async =>
       await runCall(() async => await client.addresses.nextEmptyIndex(
           chainName: chain.name,
