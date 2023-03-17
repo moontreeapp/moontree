@@ -46,20 +46,21 @@ class UnsignedTransactionCall extends ServerCall {
     required List<String?> serverAssets,
     required List<int> satsToSend,
   }) async =>
-      await client.unsignedTransaction.generateUnsignedTransaction(
-          chainName: chain.name,
-          request: server.UnsignedTransactionRequest(
-            myH106s: h160s,
-            myPubkeys: roots,
-            feeRateKb: feeRatePerByte! * 1000,
-            changeSource: changeAddress,
-            eachOutputAddress: addresses,
-            eachOutputAsset: serverAssets,
-            eachOutputAmount: satsToSend,
-            opReturnMemo: memo == "" || memo == null
-                ? null
-                : memo!.utf8ToHex, // should be hex string
-          ));
+      await runCall(() async =>
+          await client.unsignedTransaction.generateUnsignedTransaction(
+              chainName: chain.name,
+              request: server.UnsignedTransactionRequest(
+                myH106s: h160s,
+                myPubkeys: roots,
+                feeRateKb: feeRatePerByte! * 1000,
+                changeSource: changeAddress,
+                eachOutputAddress: addresses,
+                eachOutputAsset: serverAssets,
+                eachOutputAmount: satsToSend,
+                opReturnMemo: memo == "" || memo == null
+                    ? null
+                    : memo!.utf8ToHex, // should be hex string
+              )));
 
   /// this simple version of the request handles sending one asset to one address.
   Future<server.UnsignedTransactionResult> call() async {

@@ -29,7 +29,8 @@ class TransactionDetailsCall extends ServerCall {
     required Chaindata chain,
     required ByteData hash,
   }) async =>
-      await client.transactionDetails.get(hash: hash, chainName: chain.name);
+      await runCall(() async => await client.transactionDetails
+          .get(hash: hash, chainName: chain.name));
 
   Future<server.TransactionDetailsView> call() async {
     final server.TransactionDetailsView tx = mockFlag
