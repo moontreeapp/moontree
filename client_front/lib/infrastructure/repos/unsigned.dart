@@ -35,6 +35,7 @@ class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
             vinLockingScriptType: [],
             changeSource: [],
             vinScriptOverride: [],
+            vinAssets: [],
             vinAmounts: [],
             targetFee: 0)) {
     this.chain = chain ?? security?.chain ?? Current.chain;

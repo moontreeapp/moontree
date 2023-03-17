@@ -28,7 +28,7 @@ void main() {
       txb.addOutput('mp4dJLeLDNi4B9vZs46nEtM478cUvmx4m7',
           4000000); // (in)5000000 - (out)4000000 = (fee)1000000, this is the miner fee
       // print(txb.tx.virtualSize());
-      txb.sign(vin: 0, keyPair: wallet.keyPair);
+      //txb.sign(vin: 0, keyPair: wallet.keyPair);
       final String transaction = txb.build().toHex();
       expect(
           transaction,

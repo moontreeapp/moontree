@@ -13,6 +13,7 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
     this.id,
     this.error,
     required this.rawHex,
+    required this.vinAssets,
     required this.vinAmounts,
     required this.vinPrivateKeySource,
     required this.vinLockingScriptType,
@@ -31,8 +32,10 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
           serializationManager.deserialize<String?>(jsonSerialization['error']),
       rawHex:
           serializationManager.deserialize<String>(jsonSerialization['rawHex']),
+      vinAssets: serializationManager
+          .deserialize<List<String?>>(jsonSerialization['vinAssets']),
       vinAmounts: serializationManager
-          .deserialize<List<String>>(jsonSerialization['vinAmounts']),
+          .deserialize<List<int>>(jsonSerialization['vinAmounts']),
       vinPrivateKeySource: serializationManager
           .deserialize<List<String>>(jsonSerialization['vinPrivateKeySource']),
       vinLockingScriptType: serializationManager
@@ -52,7 +55,9 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
 
   String rawHex;
 
-  List<String> vinAmounts;
+  List<String?> vinAssets;
+
+  List<int> vinAmounts;
 
   List<String> vinPrivateKeySource;
 
@@ -70,6 +75,7 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
       'id': id,
       'error': error,
       'rawHex': rawHex,
+      'vinAssets': vinAssets,
       'vinAmounts': vinAmounts,
       'vinPrivateKeySource': vinPrivateKeySource,
       'vinLockingScriptType': vinLockingScriptType,

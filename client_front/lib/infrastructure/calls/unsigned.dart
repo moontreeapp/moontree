@@ -108,5 +108,6 @@ server.UnsignedTransactionResult spoof() => server.UnsignedTransactionResult(
     vinLockingScriptType: [0],
     changeSource: [''],
     vinScriptOverride: [''],
-    vinAmounts: [''],
+    vinAmounts: [0],
+    vinAssets: [''],
     targetFee: 0);

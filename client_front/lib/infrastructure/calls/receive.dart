@@ -27,10 +27,19 @@ class ReceiveCall extends ServerCall {
     this.net = net ?? Current.net;
   }
 
-  Future<CommInt> emptyAddressBy({required Chaindata chain}) async =>
-      await client.addresses.nextEmptyIndex(
+  Future<CommInt> emptyAddressBy({required Chaindata chain}) async {
+    try {
+      return await client.addresses.nextEmptyIndex(
           chainName: chain.name,
           xpubkey: await (change ? wallet.internalRoot : wallet.externalRoot));
+    } catch (e) {
+      //SocketException: HTTP connection timed out after 0:00:20.000000, host: 24.199.68.139, port: 8080
+      recreateClient();
+      return await client.addresses.nextEmptyIndex(
+          chainName: chain.name,
+          xpubkey: await (change ? wallet.internalRoot : wallet.externalRoot));
+    }
+  }
 
   Future<CommInt> call() async {
     late CommInt index;
