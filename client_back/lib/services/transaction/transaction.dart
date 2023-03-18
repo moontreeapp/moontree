@@ -55,8 +55,13 @@ extension TransactionViewMethods on TransactionView {
   int get iValueTotal {
     if (height <= 0 || iReceived == 8164205066) {
       print(isCoin);
-      print(iReceived);
+      // mempool transaction going out to a different wallet shows:
+      print(iProvided); //I/flutter ( 5031): 16387546173
+      print(iReceived); //I/flutter ( 5031): 16387297573
+      // so we display the fee 0.002486
       print(iValue);
+      print(outgoing);
+      print(totalValue);
     }
     return !isCoin &&
             [TransactionViewType.self, TransactionViewType.consolidation]
