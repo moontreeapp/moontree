@@ -2,6 +2,7 @@ part of 'cubit.dart';
 
 @immutable
 class SimpleSendFormState extends CubitState {
+  final AssetMetadata? metadataView;
   final Security security;
   final String address;
   final String changeAddress;
@@ -17,6 +18,7 @@ class SimpleSendFormState extends CubitState {
   final bool isSubmitting;
 
   const SimpleSendFormState({
+    required this.metadataView,
     required this.security,
     this.address = '',
     this.changeAddress = '',
@@ -37,11 +39,12 @@ class SimpleSendFormState extends CubitState {
       'SpendForm(security=$security, address=$address, amount=$amount, '
       'fee=$fee, note=$note, addressName=$addressName, unsigned=$unsigned, '
       'signed=$signed, txHash=$txHash, changeAddress=$changeAddress, '
-      'checkout=$checkout, '
+      'checkout=$checkout, metadataView=$metadataView, '
       'isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
+        metadataView,
         security,
         address,
         amount,
@@ -57,10 +60,11 @@ class SimpleSendFormState extends CubitState {
         isSubmitting,
       ];
 
-  factory SimpleSendFormState.initial() =>
-      SimpleSendFormState(security: pros.securities.currentCoin);
+  factory SimpleSendFormState.initial() => SimpleSendFormState(
+      metadataView: null, security: pros.securities.currentCoin);
 
   SimpleSendFormState load({
+    AssetMetadata? metadataView,
     Security? security,
     String? address,
     double? amount,
@@ -76,6 +80,7 @@ class SimpleSendFormState extends CubitState {
     bool? isSubmitting,
   }) =>
       SimpleSendFormState(
+        metadataView: metadataView ?? this.metadataView,
         security: security ?? this.security,
         address: address ?? this.address,
         amount: amount ?? this.amount,

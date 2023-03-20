@@ -1,3 +1,5 @@
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
+import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
 import 'package:client_back/services/transaction/maker.dart';
@@ -43,6 +45,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
 
   @override
   void set({
+    AssetMetadata? metadataView,
     Security? security,
     String? address,
     double? amount,
@@ -59,6 +62,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
   }) {
     emit(submitting());
     emit(state.load(
+      metadataView: metadataView,
       security: security,
       address: address,
       amount: amount,
@@ -74,6 +78,19 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       isSubmitting: isSubmitting,
     ));
   }
+
+  // needed for validation of divisibility
+  Future<void> setMetadataView({Security? security}) async => set(
+        metadataView: (await AssetMetadataHistoryRepo(
+                    security: security ?? state.security)
+                .get())
+            .firstOrNull,
+        isSubmitting: false,
+      );
+  Future<AssetMetadata?> getMetadataView({Security? security}) async =>
+      (await AssetMetadataHistoryRepo(security: security ?? state.security)
+              .get())
+          .firstOrNull;
 
   Future<void> setUnsignedTransaction({
     Wallet? wallet,
