@@ -81,10 +81,6 @@ class UnsignedTransactionCall extends ServerCall {
       roots = await (wallet as LeaderWallet).roots;
     } else if (wallet is SingleWallet) {
       h160s = [(await wallet.address).h160AsString];
-      //wallet.addresses.map((e) => e.h160AsString).toList();
-      print((await wallet.address));
-      print((await wallet.address).h160);
-      print((await wallet.address).h160AsString);
     }
     roots ??= await Current.wallet.roots;
     final server.UnsignedTransactionResult unsignedTx = mockFlag
