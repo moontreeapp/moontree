@@ -133,7 +133,12 @@ void produceBlockchainModal(
                       first: first,
                       second: second,
                     )
-                  : null),
+                  : changeChainNet(
+                      context,
+                      x.chainNet,
+                      first: first,
+                      second: second,
+                    )),
     ]).build();
 
 Future<void> changeChainNet(

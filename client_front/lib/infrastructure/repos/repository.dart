@@ -20,6 +20,7 @@ class Repository<T> {
     final resultServer = await fromServer();
     if (detectServerError(resultServer)) {
       errors[RepoSource.server] = extractError(resultServer);
+      print(errors);
       if (only) {
         return results;
       }
