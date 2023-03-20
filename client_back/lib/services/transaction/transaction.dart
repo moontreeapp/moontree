@@ -52,24 +52,12 @@ extension TransactionViewMethods on TransactionView {
   //    type == TransactionViewType.self ? iReceived : iValue;
   /// just the total that went away or came in
   int get totalValue => outgoing ? iProvided : iReceived;
-  int get iValueTotal {
-    if (height <= 0 || iReceived == 8164205066) {
-      print(isCoin);
-      // mempool transaction going out to a different wallet shows:
-      print(iProvided); //I/flutter ( 5031): 16387546173
-      print(iReceived); //I/flutter ( 5031): 16387297573
-      // so we display the fee 0.002486
-      print(iValue);
-      print(outgoing);
-      print(totalValue);
-    }
-    return !isCoin &&
+  int get iValueTotal => !isCoin &&
             [TransactionViewType.self, TransactionViewType.consolidation]
                 .contains(type) &&
             height > 0
         ? iReceived
         : iValue;
-  }
 
   /// iValue and sent to self on assets always shows 0 since tx fees are in the base currency...
   /// Using iReceived is not technically any better because it just reflects the

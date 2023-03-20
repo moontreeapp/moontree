@@ -47,6 +47,19 @@ class SubscriptionService {
   }
 
   Future<void> setupListeners() async {
+    void triggerBalanceUpdates() {
+      // update holdings list
+      components.cubits.holdingsViewCubit
+          .setHoldingViews(Current.wallet, Current.chainNet, force: true);
+      // update receive address
+      components.cubits.receiveViewCubit
+          .setAddress(Current.wallet, force: true);
+      // if we're on the transactions list, update that too:
+      if (components.cubits.transactionsViewCubit.state.ranWallet != null) {
+        components.cubits.transactionsViewCubit.setInitial();
+      }
+    }
+
     // move this to waiter? no, it has to be setup after above, I think, and
     // monitor comes from the frontend, so we have to load the app first.
     // we might as well setup these listeners on login or something like that.
@@ -67,67 +80,11 @@ class SubscriptionService {
           await pros.blocks.save(Block.fromNotification(message));
           print('pros.blocks.records ${pros.blocks.records.first}');
         } else if (message is protocol.NotifyChainH160Balance) {
-          // this would be for single wallets
-          print('H160 balance!');
-
-          /// surgical should work...
-          //final chainNet = ChainNet.from(name: message.chainName);
-          //components.cubits.holdingsViewCubit.updateHoldingView(
-          //  Current.wallet,
-          //  chainNet,
-          //  symbol: message.symbol ?? chainNet.symbol,
-          //  satsConfirmed: message.satsConfirmed,
-          //  satsUnconfirmed: message.satsUnconfirmed,
-          //);
-
-          /// no need to get surgical, single wallets are an edge case anyway
-          // update holdings list
-          components.cubits.holdingsViewCubit
-              .setHoldingViews(Current.wallet, Current.chainNet, force: true);
-          // update receive address
-          components.cubits.receiveViewCubit
-              .setAddress(Current.wallet, force: true);
-          // if we're on the transactions list, update that too:
-          if (components.cubits.transactionsViewCubit.state.ranWallet != null) {
-            components.cubits.transactionsViewCubit.setInitial();
-          }
+          // print('H160 (SingleWallet) balance updated!');
+          triggerBalanceUpdates();
         } else if (message is protocol.NotifyChainWalletBalance) {
-          print('wallet balance!');
-          //if ((Current.wallet is LeaderWallet &&
-          //        !(await (Current.wallet as LeaderWallet).internalRoot ==
-          //                message.walletPubKey ||
-          //            await (Current.wallet as LeaderWallet).externalRoot ==
-          //                message.walletPubKey)) ||
-          //    (Current.wallet is SingleWallet &&
-          //        (Current.wallet as SingleWallet).publicKey !=
-          //            message.walletPubKey)) {
-          //  // this message is not for current wallet?
-          //  // but we set up subscriptions again each time we change wallets.
-          //  print('this should never happen. NotifyChainWalletBalance');
-          //  // well if it does happen just resync anyway:
-          //  components.cubits.holdingsViewCubit
-          //      .setHoldingViews(Current.wallet, Current.chainNet, force: true);
-          //} else {
-          //  /// surgically update holdings with given information
-          //  final chainNet = ChainNet.from(name: message.chainName);
-          //  components.cubits.holdingsViewCubit.updateHoldingView(
-          //    Current.wallet,
-          //    chainNet,
-          //    symbol: message.symbol ?? chainNet.symbol,
-          //    satsConfirmed: message.satsConfirmed,
-          //    satsUnconfirmed: message.satsUnconfirmed,
-          //  );
-          //}
-          // update holdings list
-          components.cubits.holdingsViewCubit
-              .setHoldingViews(Current.wallet, Current.chainNet, force: true);
-          // update receive address
-          components.cubits.receiveViewCubit
-              .setAddress(Current.wallet, force: true);
-          // if we're on the transactions list, update that too:
-          if (components.cubits.transactionsViewCubit.state.ranWallet != null) {
-            components.cubits.transactionsViewCubit.setInitial();
-          }
+          // print('LeaderWallet balance updated!');
+          triggerBalanceUpdates();
         } else {
           print('unknown subscription message: ${message.runtimeType}');
         }
