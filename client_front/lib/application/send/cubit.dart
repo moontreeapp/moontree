@@ -1,3 +1,6 @@
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
+import 'package:client_front/infrastructure/repos/asset_metadata.dart';
+import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
 import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
@@ -42,6 +45,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
 
   @override
   void set({
+    AssetMetadata? metadataView,
     Security? security,
     String? address,
     double? amount,
@@ -58,6 +62,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
   }) {
     emit(submitting());
     emit(state.load(
+      metadataView: metadataView,
       security: security,
       address: address,
       amount: amount,
@@ -73,6 +78,19 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       isSubmitting: isSubmitting,
     ));
   }
+
+  // needed for validation of divisibility
+  Future<void> setMetadataView({Security? security}) async => set(
+        metadataView: (await AssetMetadataHistoryRepo(
+                    security: security ?? state.security)
+                .get())
+            .firstOrNull,
+        isSubmitting: false,
+      );
+  Future<AssetMetadata?> getMetadataView({Security? security}) async =>
+      (await AssetMetadataHistoryRepo(security: security ?? state.security)
+              .get())
+          .firstOrNull;
 
   Future<void> setUnsignedTransaction({
     Wallet? wallet,
@@ -111,7 +129,6 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     );
   }
 
-  /// get fee, change, and sending amount from the raw hex, save to state.
   /// convert to TransactionBuilder object, inspect
   Future<bool> sign() async {
     final txb = TransactionBuilder.fromRawInfo(
@@ -120,6 +137,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         state.unsigned!.vinLockingScriptType.map(
             (e) => e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
         state.security.chainNet.network);
+    print('state.unsigned!.vinAssets');
+    print(state.unsigned!.vinAssets);
     for (final Tuple2<int, String> e
         in state.unsigned!.vinPrivateKeySource.enumeratedTuple<String>()) {
       ECPair? keyPair;
@@ -152,12 +171,15 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         keyPair = await services.wallet.getAddressKeypair(
             (Current.wallet as SingleWallet).addresses.first);
       }
-      txb.sign(
+      txb.signRaw(
         vin: e.item1,
         keyPair: keyPair,
         hashType: null,
         prevOutScriptOverride:
             state.unsigned!.vinScriptOverride[e.item1]?.hexBytes,
+        asset: state.unsigned!.vinAssets[e.item1],
+        assetAmount: state.unsigned!.vinAmounts[e.item1],
+        assetLiteral: Current.chainNet.chaindata.assetLiteral,
       );
     }
     final tx = txb.build();
@@ -172,11 +194,16 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
   Future<TransactionComponents> processHex() async {
     int getFee() {
       // sum the vinAmounts that are evr
-      final int coinInput = state.unsigned!.vinAmounts
-          .where((e) => e.contains('null:'))
-          .map((e) => int.parse(e.split('null:').last))
-          .sum() as int;
+      final int coinInput = [
+        for (final x in IterableZip([
+          state.unsigned!.vinAssets,
+          state.unsigned!.vinAmounts,
+        ]))
+          x[0] == null ? x[1] : 0
+      ].sum() as int;
+      print('coinInput');
       print(coinInput);
+      //{code: -26, message: 16: mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)}
       // parsed transaction vouts that are evr (txb.vouts.sum that are evr)
       // technically unnecessary to filer since assets will always have 0 value
       final int coinOutput = state.signed!.outs
@@ -184,10 +211,22 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           .map((e) => e.value)
           .sum() as int;
 
+      print('with filter');
+      print(state.signed!.outs
+          .where((e) => e.value != null && e.value! > 0) // filter to evr
+          .map((e) => e.value));
+      print('without filter');
+      print(state.signed!.outs.map((e) => e.value));
+
+      print('coinOutput');
+      print(coinOutput);
+
       // subtract the output from input for the fee amount.
       // (should equal feerate*tx.virtual bytes or something)
       final int coinFee = coinInput - coinOutput;
-
+      print('coinFee');
+      print(coinFee);
+      /*
       print(state.signed!.outs);
       print(state.signed!.outs.map((e) => e.value));
       print(state.signed!.outs.map((e) => e.valueBuffer));
@@ -195,7 +234,6 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       print(state.signed!.outs.map((e) => e.signatures));
       print(state.signed!.outs.map((e) => e.pubkeys));
 
-      /*
       I/flutter ( 5386): 16779064734
       /// don't know how to identifiy EVR outs... 
       I/flutter ( 5386): [
@@ -249,9 +287,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
                 // which should be equal to next condition, by the way.
                 (transactionComponents.fee <=
                         state.fee.rate *
-                            state.signed!.fee(
-                                goal: state
-                                    .fee) * //equals state.fee.rate * state.signed!.virtualSize()
+                            state.signed!.fee(goal: state.fee) *
                             1.01 ||
                     // or is should not be bigger than the minimum fee
                     transactionComponents.fee <= FeeRate.minimumFee) //&&

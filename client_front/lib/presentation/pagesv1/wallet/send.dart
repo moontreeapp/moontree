@@ -317,6 +317,9 @@ class _SendState extends State<Send> {
                                   if (_asDouble(x) > holdingBalance.amount) {
                                     return 'too large';
                                   }
+                                  if (!_validateDivisibility()) {
+                                    return 'asset divisible up to ${components.cubits.simpleSendFormCubit.state.metadataView?.divisibility ?? 8} places';
+                                  }
                                   if (x.isNumeric) {
                                     final num? y = x.toNum();
                                     if (y != null && y.isRVNAmount) {
@@ -536,14 +539,38 @@ class _SendState extends State<Send> {
   //    .getOne(Current.walletId, pros.securities.currentCoin) !=
   //null;
 
+  bool _validateDivisibility() =>
+      (components.cubits.simpleSendFormCubit.state.metadataView?.divisibility ??
+          8) >=
+      (sendAmount.text.contains('.')
+          ? sendAmount.text.split('.').last.length
+          : 0);
+
   bool _fieldValidation() =>
-      sendAddress.text != '' && _validateAddress() && _verifyMemo();
+      sendAddress.text != '' &&
+      _validateAddress() &&
+      _validateDivisibility() &&
+      _verifyMemo();
 
   bool _holdingValidation(SimpleSendFormState state) {
     if (_asDouble(sendAmount.text) == 0.0) {
       return false;
     }
-    return holdingBalance.amount > double.parse(sendAmount.text);
+    if (holdingBalance.security.isCoin) {
+      // we have enough coin for the send and minimum fee estimate
+      return holdingBalance.amount > double.parse(sendAmount.text) + 0.0021;
+    } else {
+      final BalanceView? holdingView = components.cubits.holdingsViewCubit
+          .holdingsViewFor(Current.coin.symbol);
+      final Balance holdingBalanceCoin = Balance(
+          walletId: Current.walletId,
+          security: state.security,
+          confirmed: holdingView?.satsConfirmed ?? 0,
+          unconfirmed: holdingView?.satsUnconfirmed ?? 0);
+      // we have enough asset for the send and enough coin for minimum fee
+      return holdingBalance.amount >= double.parse(sendAmount.text) &&
+          holdingView!.satsConfirmed + holdingView.satsUnconfirmed > 210000;
+    }
     //return (state.security.balance?.amount ?? 0) >=
     //    double.parse(sendAmount.text);
   }
@@ -697,9 +724,10 @@ class _SendState extends State<Send> {
             visualDensity: VisualDensity.compact,
             onTap: () {
               Navigator.pop(context);
-              cubit.set(
-                  security: pros.securities.ofCurrent(nameSymbol(name)) ??
-                      pros.securities.currentCoin);
+              final sec = pros.securities.ofCurrent(nameSymbol(name)) ??
+                  pros.securities.currentCoin;
+              cubit.set(security: sec);
+              cubit.setMetadataView(security: sec);
             },
             leading: components.icons.assetAvatar(
                 name == 'Ravencoin'

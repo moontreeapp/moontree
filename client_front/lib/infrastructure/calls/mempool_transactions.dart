@@ -41,13 +41,13 @@ class MempoolTransactionHistoryCall extends ServerCall {
     required List<String> roots,
     required List<ByteData> h160s,
   }) async =>
-      await client.mempoolTransactions.get(
-        symbol: symbol,
-        backFromHeight: height,
-        chainName: chain.name,
-        xpubkeys: roots,
-        h160s: h160s,
-      );
+      await runCall(() async => await client.mempoolTransactions.get(
+            symbol: symbol,
+            backFromHeight: height,
+            chainName: chain.name,
+            xpubkeys: roots,
+            h160s: h160s,
+          ));
 
   Future<List<server.TransactionView>> call() async {
     final String? serverSymbol = ((security?.isCoin ?? true) &&

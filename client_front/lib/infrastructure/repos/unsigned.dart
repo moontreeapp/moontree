@@ -29,12 +29,13 @@ class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
     Chain? chain,
     Net? net,
   }) : super(UnsignedTransactionResult(
-            error: 'fallback value',
+            error: 'failure to generate Unsigned Transaction',
             rawHex: '',
             vinPrivateKeySource: [],
             vinLockingScriptType: [],
             changeSource: [],
             vinScriptOverride: [],
+            vinAssets: [],
             vinAmounts: [],
             targetFee: 0)) {
     this.chain = chain ?? security?.chain ?? Current.chain;

@@ -19,6 +19,8 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
     required this.eachOutputAddress,
     required this.eachOutputAsset,
     required this.eachOutputAmount,
+    required this.eachOutputAssetMemo,
+    required this.eachOutputAssetMemoTimestamp,
   });
 
   factory UnsignedTransactionRequest.fromJson(
@@ -43,6 +45,11 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
           .deserialize<List<String?>>(jsonSerialization['eachOutputAsset']),
       eachOutputAmount: serializationManager
           .deserialize<List<int>>(jsonSerialization['eachOutputAmount']),
+      eachOutputAssetMemo: serializationManager
+          .deserialize<List<String?>>(jsonSerialization['eachOutputAssetMemo']),
+      eachOutputAssetMemoTimestamp:
+          serializationManager.deserialize<List<int?>>(
+              jsonSerialization['eachOutputAssetMemoTimestamp']),
     );
   }
 
@@ -64,6 +71,10 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
 
   List<int> eachOutputAmount;
 
+  List<String?> eachOutputAssetMemo;
+
+  List<int?> eachOutputAssetMemoTimestamp;
+
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -76,6 +87,8 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
       'eachOutputAddress': eachOutputAddress,
       'eachOutputAsset': eachOutputAsset,
       'eachOutputAmount': eachOutputAmount,
+      'eachOutputAssetMemo': eachOutputAssetMemo,
+      'eachOutputAssetMemoTimestamp': eachOutputAssetMemoTimestamp,
     };
   }
 }

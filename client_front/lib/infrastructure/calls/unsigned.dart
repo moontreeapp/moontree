@@ -46,21 +46,23 @@ class UnsignedTransactionCall extends ServerCall {
     required List<String?> serverAssets,
     required List<int> satsToSend,
   }) async =>
-      await client.unsignedTransaction.generateUnsignedTransaction(
-          chainName: chain.name,
-          request: server.UnsignedTransactionRequest(
-            myH106s: h160s,
-            myPubkeys: roots,
-            // per kilobyte //todo handle error, fee rate less than min
-            feeRateKb: feeRatePerByte! * 1000,
-            changeSource: changeAddress,
-            eachOutputAddress: addresses,
-            eachOutputAsset: serverAssets,
-            eachOutputAmount: satsToSend,
-            opReturnMemo: memo == "" || memo == null
-                ? null
-                : memo!.utf8ToHex, // should be hex string
-          ));
+      await runCall(() async =>
+          await client.unsignedTransaction.generateUnsignedTransaction(
+              chainName: chain.name,
+              request: server.UnsignedTransactionRequest(
+                myH106s: h160s,
+                myPubkeys: roots,
+                feeRateKb: feeRatePerByte! * 1000,
+                changeSource: changeAddress,
+                eachOutputAddress: addresses,
+                eachOutputAsset: serverAssets,
+                eachOutputAmount: satsToSend,
+                eachOutputAssetMemo: [], // unimplemented on front end
+                eachOutputAssetMemoTimestamp: [], // unimplemented on front end
+                opReturnMemo: memo == "" || memo == null
+                    ? null
+                    : memo!.utf8ToHex, // should be hex string
+              )));
 
   /// this simple version of the request handles sending one asset to one address.
   Future<server.UnsignedTransactionResult> call() async {
@@ -78,7 +80,11 @@ class UnsignedTransactionCall extends ServerCall {
     if (wallet is LeaderWallet) {
       roots = await (wallet as LeaderWallet).roots;
     } else if (wallet is SingleWallet) {
-      h160s = wallet.addresses.map((e) => e.h160AsString).toList();
+      h160s = [(await wallet.address).h160AsString];
+      //wallet.addresses.map((e) => e.h160AsString).toList();
+      print((await wallet.address));
+      print((await wallet.address).h160);
+      print((await wallet.address).h160AsString);
     }
     roots ??= await Current.wallet.roots;
     final server.UnsignedTransactionResult unsignedTx = mockFlag
@@ -109,5 +115,6 @@ server.UnsignedTransactionResult spoof() => server.UnsignedTransactionResult(
     vinLockingScriptType: [0],
     changeSource: [''],
     vinScriptOverride: [''],
-    vinAmounts: [''],
+    vinAmounts: [0],
+    vinAssets: [''],
     targetFee: 0);

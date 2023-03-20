@@ -147,14 +147,21 @@ List<Widget> blockchainOptions({
               if (onTap != null) {
                 onTap();
               }
-              !(isSelected(x.chain, x.net) && isConnected())
-                  ? changeChainNet(
-                      context ?? components.routes.routeContext!,
-                      x.chainNet,
-                      first: first,
-                      second: second,
-                    )
-                  : null;
+              //!(isSelected(x.chain, x.net) && isConnected())
+              //? changeChainNet(
+              //    context ?? components.routes.routeContext!,
+              //    x.chainNet,
+              //    first: first,
+              //    second: second,
+              //  )
+              //: null;
+              /// just do it even if it's already selected, to refresh conn
+              changeChainNet(
+                context ?? components.routes.routeContext!,
+                x.chainNet,
+                first: first,
+                second: second,
+              );
             },
             leading: x.icon(height: 24, width: 24, circled: true),
             title: Text(x.name,

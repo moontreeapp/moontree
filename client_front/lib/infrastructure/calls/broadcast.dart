@@ -25,8 +25,8 @@ class BroadcastTransactionCall extends ServerCall {
     required Chaindata chain,
     required String rawTransactionHex,
   }) async =>
-      await client.broadcastTransaction
-          .get(chainName: chain.name, rawTransactionHex: rawTransactionHex);
+      await runCall(() async => await client.broadcastTransaction
+          .get(chainName: chain.name, rawTransactionHex: rawTransactionHex));
 
   /// this simple version of the request handles sending one asset to one address.
   Future<server.CommString> call() async {

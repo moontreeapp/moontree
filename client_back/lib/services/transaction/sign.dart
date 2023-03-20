@@ -14,20 +14,20 @@ extension SignEachInput on TransactionBuilder {
       final ECPair keypair =
           await services.wallet.getAddressKeypair(utxo.address!);
       print(keypair);
-      sign(
-        vin: e.item1,
-        keyPair: await services.wallet.getAddressKeypair(utxo.address!),
-        prevOutScriptOverride: utxo.isAsset
-            ? (utxo.lockingScript == null
-                    ? (await services.client.api
-                            .getTransaction(utxo.transactionId))
-                        .vout[utxo.position]
-                        .scriptPubKey
-                        .hex
-                    : utxo.lockingScript!)
-                .hexBytes
-            : null,
-      );
+      //sign(
+      //  vin: e.item1,
+      //  keyPair: await services.wallet.getAddressKeypair(utxo.address!),
+      //  prevOutScriptOverride: utxo.isAsset
+      //      ? (utxo.lockingScript == null
+      //              ? (await services.client.api
+      //                      .getTransaction(utxo.transactionId))
+      //                  .vout[utxo.position]
+      //                  .scriptPubKey
+      //                  .hex
+      //              : utxo.lockingScript!)
+      //          .hexBytes
+      //      : null,
+      //);
     }
   }
 }

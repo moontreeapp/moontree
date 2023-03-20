@@ -24,21 +24,21 @@ final entropy = bip39.mnemonicToEntropy(mnemonic);
 // TODO: when we switch from CipherNone to CipherAES, we need to encrypt/decrypt
 final encryptedSeed = seed;
 
-KPWallet newKPWallet({
-  required Uint8List privateKey,
-  bool compressed = true,
-}) {
-  return KPWallet(
-      ECPair.fromPrivateKey(
-        privateKey,
-        network: ChainNet(Chain.ravencoin, raven_net.Net.test).network,
-        compressed: compressed,
-      ),
-      P2PKH(
-          data: PaymentData(),
-          network: ChainNet(Chain.ravencoin, raven_net.Net.test).network),
-      ChainNet(Chain.ravencoin, raven_net.Net.test).network);
-}
+//KPWallet newKPWallet({
+//  required Uint8List privateKey,
+//  bool compressed = true,
+//}) {
+//  return KPWallet(
+//      ECPair.fromPrivateKey(
+//        privateKey,
+//        network: ChainNet(Chain.ravencoin, raven_net.Net.test).network,
+//        compressed: compressed,
+//      ),
+//      //P2PKH(
+//      //    data: PaymentData(),
+//      //    network: ChainNet(Chain.ravencoin, raven_net.Net.test).network),
+//      ChainNet(Chain.ravencoin, raven_net.Net.test).network);
+//}
 
 void main() {
   //test('derive mainnet address', () {

@@ -367,6 +367,10 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toList() as dynamic;
     }
+    if (t == List<int?>) {
+      return (data as List).map((e) => deserialize<int?>(e)).toList()
+          as dynamic;
+    }
     if (t == List<_i37.AssetMetadata>) {
       return (data as List)
           .map((e) => deserialize<_i37.AssetMetadata>(e))

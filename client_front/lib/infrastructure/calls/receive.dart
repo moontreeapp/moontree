@@ -28,9 +28,9 @@ class ReceiveCall extends ServerCall {
   }
 
   Future<CommInt> emptyAddressBy({required Chaindata chain}) async =>
-      await client.addresses.nextEmptyIndex(
+      await runCall(() async => await client.addresses.nextEmptyIndex(
           chainName: chain.name,
-          xpubkey: await (change ? wallet.internalRoot : wallet.externalRoot));
+          xpubkey: await (change ? wallet.internalRoot : wallet.externalRoot)));
 
   Future<CommInt> call() async {
     late CommInt index;

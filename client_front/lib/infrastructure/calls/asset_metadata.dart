@@ -27,11 +27,11 @@ class AssetMetadataHistoryCall extends ServerCall {
     required String symbol,
     required Chaindata chain,
   }) async =>
-      await client.metadata.get(
-        symbol: symbol,
-        chainName: chain.name,
-        height: null,
-      );
+      await runCall(() async => await client.metadata.get(
+            symbol: symbol,
+            chainName: chain.name,
+            height: null,
+          ));
 
   Future<List<server.AssetMetadata>> call() async {
     if (symbol == pros.securities.coinOf(chain, net).symbol) {
