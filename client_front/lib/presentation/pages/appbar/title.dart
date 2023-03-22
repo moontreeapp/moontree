@@ -359,6 +359,13 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             animation: slowAnimation,
             builder: (context, child) {
               return GestureDetector(
+                  onTap: () async {
+                    if (!dropDownActive) {
+                      dropDownActive = true;
+                      setWalletsSecurities();
+                      await walletSelection();
+                    }
+                  },
                   onDoubleTap: () async {
                     bool next = false;
                     for (final Wallet wallet
