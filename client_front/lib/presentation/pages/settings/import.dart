@@ -441,15 +441,23 @@ class _ImportState extends State<Import> {
 
     /// save the wallet
     components.loading.screen(
-      message: 'Importing',
-      staticImage: true,
-      playCount: 2,
-      then: () async => streams.import.attempt.add(ImportRequest(
-        text: text,
-        /*onSuccess: populateWalletsWithSensitives*/
-        getEntropy: getEntropy,
-        saveSecret: saveSecret,
-      )),
-    );
+        message: 'Importing',
+        staticImage: true,
+        playCount: 2,
+        then: () async {
+          streams.import.attempt.add(ImportRequest(
+            text: text,
+            /*onSuccess: populateWalletsWithSensitives*/
+            getEntropy: getEntropy,
+            saveSecret: saveSecret,
+          ));
+          await Future.delayed(Duration(seconds: 5));
+          final cubit = components.cubits.holdingsViewCubit;
+          if (cubit.state.ranWallet != Current.wallet ||
+              cubit.state.ranChainNet != pros.settings.chainNet) {
+            cubit.set(isSubmitting: true);
+          }
+          cubit.setHoldingViews(Current.wallet, pros.settings.chainNet);
+        });
   }
 }
