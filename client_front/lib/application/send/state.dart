@@ -108,7 +108,7 @@ class SimpleSendFormState extends CubitState {
     }
   }
 
-  int get sats => amount.asSats;
+  int get sats => (amount * satsPerCoin).round(); //amount.asSats;
 }
 
 class SimpleSendCheckoutForm with EquatableMixin {

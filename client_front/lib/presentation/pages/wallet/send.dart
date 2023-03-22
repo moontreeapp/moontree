@@ -484,6 +484,7 @@ class _SendState extends State<Send> {
                                   }),
                             ].intersperse(const SizedBox(height: 16)),
                             const SizedBox(height: 64),
+                            const SizedBox(height: 40),
                           ],
                         ),
                         KeyboardHidesWidgetWithDelay(
@@ -575,6 +576,11 @@ class _SendState extends State<Send> {
     }
     if (holdingBalance.security.isCoin) {
       // we have enough coin for the send and minimum fee estimate
+      // actaully don't do this because we can send all.
+      if (holdingBalance.amount == double.parse(sendAmount.text)) {
+        return true;
+      }
+      // if not sending all:
       return holdingBalance.amount > double.parse(sendAmount.text) + 0.0021;
     } else {
       final BalanceView? holdingView = components.cubits.holdingsViewCubit
@@ -720,12 +726,18 @@ class _SendState extends State<Send> {
     //  creation: false,
     //));
 
-    Navigator.of(components.routes.routeContext!).pushNamed('/send/checkout');
-    setState(() {
-      clicked = false;
-    });
+    setState(() => clicked = false);
     await cubit.sign();
-    await cubit.verifyTransaction();
+    final validateMsg = await cubit.verifyTransaction();
+    if (validateMsg.item1) {
+      Navigator.of(components.routes.routeContext!).pushNamed('/send/checkout');
+    } else {
+      streams.app.snack.add(Snack(
+          message: 'unable to generate transaction',
+          positive: false,
+          copy: validateMsg.item2,
+          label: 'copy'));
+    }
   }
 
   void _produceAssetModal(SimpleSendFormCubit cubit) {

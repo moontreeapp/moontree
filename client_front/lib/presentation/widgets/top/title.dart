@@ -317,6 +317,13 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
         return walletDropDown();
       } else if (appContext == AppContext.wallet) {
         return GestureDetector(
+            onTap: () async {
+              if (!dropDownActive) {
+                dropDownActive = true;
+                setWalletsSecurities();
+                await walletSelection();
+              }
+            },
             onDoubleTap: () async {
               bool next = false;
               for (final Wallet wallet
