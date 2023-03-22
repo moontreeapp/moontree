@@ -49,11 +49,10 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
 
   TextStyle style() => snack!.positive
       ? Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.white)
-      : Theme.of(context).textTheme.bodyText2!.copyWith(
-          color: AppColors.error
-              .withRed(AppColors.error.red + 16)
-              .withGreen(AppColors.error.green + 16)
-              .withBlue(AppColors.error.blue + 16));
+      : Theme.of(context)
+          .textTheme
+          .bodyText2!
+          .copyWith(color: AppColors.errorlight);
 
   static const Set<String> emptyLocations = {
     '',

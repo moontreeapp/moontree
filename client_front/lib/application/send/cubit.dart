@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:collection/collection.dart';
@@ -110,7 +113,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       wallet: wallet,
       symbol: symbol ?? state.security.symbol,
       security: state.security,
-      feeRate: state.fee,
+      // server decides fast:
+      feeRate: state.fee == standardFee ? state.fee : null,
       sats: state.sats,
       changeAddress: changeAddress,
       address: state.address,
@@ -192,17 +196,16 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
 
   /// parse transaction to verify elements within
   Future<TransactionComponents> processHex() async {
-    int getFee() {
-      // sum the vinAmounts that are evr
-      final int coinInput = [
-        for (final x in IterableZip([
-          state.unsigned!.vinAssets,
-          state.unsigned!.vinAmounts,
-        ]))
-          x[0] == null ? x[1] : 0
-      ].sum() as int;
-      print('coinInput');
-      print(coinInput);
+    /// sum the vinAmounts that are evr
+    int getCoinInput() => [
+          for (final x in IterableZip([
+            state.unsigned!.vinAssets,
+            state.unsigned!.vinAmounts,
+          ]))
+            x[0] == null ? x[1] : 0
+        ].sum() as int;
+
+    int getCoinFee(int coinInput) {
       //{code: -26, message: 16: mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)}
       // parsed transaction vouts that are evr (txb.vouts.sum that are evr)
       // technically unnecessary to filer since assets will always have 0 value
@@ -210,119 +213,228 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           .where((e) => e.value != null && e.value! > 0) // filter to evr
           .map((e) => e.value)
           .sum() as int;
-
-      print('with filter');
-      print(state.signed!.outs
-          .where((e) => e.value != null && e.value! > 0) // filter to evr
-          .map((e) => e.value));
-      print('without filter');
-      print(state.signed!.outs.map((e) => e.value));
-
-      print('coinOutput');
-      print(coinOutput);
-
       // subtract the output from input for the fee amount.
       // (should equal feerate*tx.virtual bytes or something)
       final int coinFee = coinInput - coinOutput;
-      print('coinFee');
-      print(coinFee);
-      /*
-      print(state.signed!.outs);
-      print(state.signed!.outs.map((e) => e.value));
-      print(state.signed!.outs.map((e) => e.valueBuffer));
-      print(state.signed!.outs.map((e) => e.script));
-      print(state.signed!.outs.map((e) => e.signatures));
-      print(state.signed!.outs.map((e) => e.pubkeys));
-
-      I/flutter ( 5386): 16779064734
-      /// don't know how to identifiy EVR outs... 
-      I/flutter ( 5386): [
-        Output{script: [118, 169, 20, 254, 203, 15, 108, 36, 248, 195, 38, 115, 211, 222, 2, 240, 179, 245, 96, 184, 44, 208, 180, 136, 172], value: 100000000, valueBuffer: null, pubkeys: null, signatures: null}, 
-        Output{script: [118, 169, 20, 192, 83, 97, 158, 202, 96, 72, 25, 100, 187, 225, 130, 133, 66, 97, 184, 179, 83, 129, 129, 136, 172], value: 16678064734, valueBuffer: null, pubkeys: null, signatures: null}]
-      I/flutter ( 5386): (100000000, 16678064734)
-      I/flutter ( 5386): (null, null)
-      I/flutter ( 5386): ([118, 169, 20, 254, 203, 15, 108, 36, 248, 195, 38, 115, 211, 222, 2, 240, 179, 245, 96, 184, 44, 208, 180, 136, 172], [118, 169, 20, 192, 83, 97, 158, 202, 96, 72, 25, 100, 187, 225, 130, 133, 66, 97, 184, 179, 83, 129, 129, 136, 172])
-      I/flutter ( 5386): (null, null)
-      I/flutter ( 5386): (null, null)
-
-      // asset tx... value is 0, script is much longer...
-      // also notice the in: 15674583 minus out: 14674583 is 1 evr. 
-      // but evr should be the fee, we're trying to send 1 asset token... 
-      // so shouldn't it be a fee amount, not 1 full evr? is there a mixup?
-      // nvm that's not a unit, thats the minimum fee 1000000 sats
-      I/flutter ( 5386): 15674583
-      I/flutter ( 5386): [
-        Output{script: [118, 169, 20, 254, 203, 15, 108, 36, 248, 195, 38, 115, 211, 222, 2, 240, 179, 245, 96, 184, 44, 208, 180, 136, 172, 192, 40, 116, 30, 83, 65, 84, 79, 82, 73, 35, 70, 79, 85, 78, 68, 65, 84, 73, 79, 78, 95, 82, 69, 80, 95, 84, 79, 75, 69, 78, 46, 95, 48, 0, 225, 245, 5, 0, 0, 0, 0, 117], value: 0, valueBuffer: null, pubkeys: null, signatures: null}, 
-        Output{script: [118, 169, 20, 222, 228, 92, 57, 137, 96, 225, 183, 255, 241, 48, 239, 91, 214, 51, 126, 15, 218, 232, 65, 136, 172], value: 14674583, valueBuffer: null, pubkeys: null, signatures: null}]
-      I/flutter ( 5386): (0, 14674583)
-      I/flutter ( 5386): (null, null)
-      I/flutter ( 5386): ([118, 169, 20, 254, 203, 15, 108, 36, 248, 195, 38, 115, 211, 222, 2, 240, 179, 245, 96, 184, 44, 208, 180, 136, 172, 192, 40, 116, 30, 83, 65, 84, 79, 82, 73, 35, 70, 79, 85, 78, 68, 65, 84, 73, 79, 78, 95, 82, 69, 80, 95, 84, 79, 75, 69, 78, 46, 95, 48, 0, 225, 245, 5, 0, 0, 0, 0, 117], [118, 169, 20, 222, 228, 92, 57, 137, 96, 225, 183, 255, 241, 48, 239, 91, 214, 51, 126, 15, 218, 232, 65, 136, 172])
-      I/flutter ( 5386): (null, null)
-      */
-
       return coinFee;
     }
 
-    String getTargetAddress() {
-      return '';
+    Map<String, int> _parseAsset(maybeOpRVNAssetTuplePtr, opCodes) {
+// this part doesn't work, so we do it manually below
+      //final assetTransferData = parseAssetTransfer(
+      //    opCodes.sublist(maybeOpRVNAssetTuplePtr), x.script!);
+      final assetPortion = opCodes.sublist(maybeOpRVNAssetTuplePtr)[1].item3;
+      final type = assetPortion[3];
+      final assetNameLength = assetPortion[4];
+      if (assetPortion.length >= 5 + assetNameLength) {
+        final assetName =
+            utf8.decode(assetPortion.sublist(5, 5 + assetNameLength));
+        if (state.security.symbol == assetName) {
+          if (type == 0x6f) {
+            // Ownership creation
+            return {assetName: coin};
+          } else if (assetPortion.length >= 13 + assetNameLength) {
+            return {
+              assetName: assetPortion
+                  .sublist(5 + assetNameLength, 13 + assetNameLength)
+                  .buffer
+                  .asByteData()
+                  .getUint64(0, Endian.little)
+            };
+          }
+        }
+      }
+      return {'': 0};
     }
 
-    String getChangeAddress() {
-      return '';
+    bool getTargetAddressVerification() {
+      for (final x in state.signed!.outs) {
+        if (x.script != null) {
+          final opCodes = getOpCodes(x.script!);
+          int maybeOpRVNAssetTuplePtr = opCodes.length;
+          for (int tupleCnt = 0; tupleCnt < opCodes.length; tupleCnt++) {
+            if (opCodes[tupleCnt].item1 == 0xc0) {
+              maybeOpRVNAssetTuplePtr = tupleCnt;
+              break;
+            }
+          }
+          final addressData = tryGuessAddressFromOpList(
+              opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
+              Current.chainNet.constants);
+          if (addressData?.address == state.address) {
+            if (state.security.isCoin) {
+              if (x.value == state.sats) {
+                return true;
+              }
+            } else {
+              final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
+              if (nameSats[state.security.symbol] == state.sats) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
     }
 
+    /// coin: should be coinInput - fee - target (if any)
+    /// any asset: assetInput - target
+    /// also verify that every address other than the one that matches
+    /// state.address is mine.
+    Future<bool> getChangeAddressVerification(int coinInput, int fee) async {
+      // verify all addresses
+      // get change amount(s) here too
+      int coinChange = 0;
+      int assetChange = 0;
+      for (final x in state.signed!.outs) {
+        if (x.script != null) {
+          final opCodes = getOpCodes(x.script!);
+          int maybeOpRVNAssetTuplePtr = opCodes.length;
+          for (int tupleCnt = 0; tupleCnt < opCodes.length; tupleCnt++) {
+            if (opCodes[tupleCnt].item1 == 0xc0) {
+              maybeOpRVNAssetTuplePtr = tupleCnt;
+              break;
+            }
+          }
+          final addressData = tryGuessAddressFromOpList(
+              opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
+              Current.chainNet.constants);
+          print(addressData);
+          if (state.address == state.changeAddress) {
+            coinChange += x.value ?? 0;
+          } else if (addressData?.address != state.address) {
+            if (addressData?.address != state.changeAddress) {
+              /* where is this going? why are we sending anything to an address
+              that is neither the specified changeAddress or the target address?
+              so we fail here if we don't recognize the address.
+              notice: if we were not to specify a changeAddress we would merely
+              trust the server. this is possible because the server doesn't 
+              require us to specify it, but we always do. cubit requires it.*/
+              return false;
+            }
+
+            coinChange += x.value ?? 0;
+            if (x.value == 0 || x.value == null) {
+              final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
+              assetChange += nameSats[state.security.symbol] ?? 0;
+            }
+          }
+        }
+      }
+      // verify amounts
+      if (state.security.isCoin) {
+        if (state.address == state.changeAddress) {
+          coinChange -= state.sats;
+        }
+        if (coinInput - fee - state.sats - coinChange != 0) {
+          return false;
+        }
+      } else {
+        if (coinInput - fee - coinChange != 0) {
+          return false;
+        }
+        /*
+        kralverde — Today at 10:48 AM
+          Yeah for the vins, the tx would fail if they aren’t ours and the 
+          asset/amount are pulled directly from the db
+        meta stack — Today at 10:51 AM
+          true I was just trying to to verify that the 
+          `assetInput - assetSent == assetChange` to make sure the client is
+          getting all the change they deserve back, but I can't verify that
+          without determining the assetInput used, but since the server could
+          lie about tx data there's no way to guarantee it.
+        if (assetInput - state.sats - assetChange != 0) {
+          return false;
+        }
+        */
+      }
+      // no errors found
+      return true;
+    }
+
+    final coinInput = getCoinInput();
+    final fee = getCoinFee(coinInput);
     return TransactionComponents(
-        fee: getFee(),
-        targetAddress: getTargetAddress(),
-        changeAddress: getChangeAddress());
+        coinInput: coinInput,
+        fee: fee,
+        targetAddressAmountVerified: getTargetAddressVerification(),
+        changeAddressAmountVerified:
+            await getChangeAddressVerification(coinInput, fee));
   }
 
   /// verify fee, sending to address, and return address
-  Future<bool> verifyTransaction() async {
+  Future<Tuple2<bool, String>> verifyTransaction() async {
     final transactionComponents = await processHex();
-    final ret = (
-            // no transaction should cost more than 2 coins
-            transactionComponents.feeSanityCheck &&
-                // our estimate a of the fee should be close to the fee the server calculated,
-                // which should be equal to next condition, by the way.
-                (transactionComponents.fee <=
-                        state.fee.rate *
-                            state.signed!.fee(goal: state.fee) *
-                            1.01 ||
-                    // or is should not be bigger than the minimum fee
-                    transactionComponents.fee <= FeeRate.minimumFee) //&&
-        // todo: send the value to our intended address
-        //transactionComponents.targetAddress == state.address &&
-        // todo: send the change back to us
-        //transactionComponents.changeAddress == state.changeAddress //&&
-        // todo: what about send amount?
-        //transactionComponents.sendAmount == state.sats
-        // todo: what about change amount?
-        //transactionComponents.changeAmount == transactionComponents.totalOut - transactionComponents.sendAmount - transactionComponents.fee
-        );
-    if (ret) {
-      // update checkout struct to update checkout page
-      set(
-        checkout: state.checkout!.newEstimate(
-          SendEstimate(
-            state.sats,
-            sendAll: state.checkout!.estimate!.sendAll,
-            fees: transactionComponents.fee,
-            security: state.security,
-            memo: state.memo,
-            creation: false,
-
-            /// not necessary
-            /// in string form at cubit.state.unsigned.vinPrivateKeySource
-            //utxos: null,
-            /// todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
-            //assetMemo: Uint8List.fromList(cubit.state.memo
-            //    .codeUnits),
-          ),
-        ),
-      );
+    if (!transactionComponents.feeSanityCheck) {
+      return Tuple2(false, 'fee too large');
     }
-    return ret;
+    // our estimate a of the fee should be close to the fee the server calculated,
+    // which should be equal to next condition, by the way.
+    if (state.fee == standardFee) {
+      if (!(transactionComponents.fee <=
+          state.fee.rate * state.signed!.fee(goal: state.fee) * 1.01)) {
+        return Tuple2(false, 'fee does not match specified fee rate');
+      }
+    } else {
+      // server rate is the same as our rate, but has a minimum limit of 1 kb
+      // so if we specify the server rate we want to make sure it's still no
+      // larger than our rate or its the minimumFee
+      if (!(transactionComponents.fee <=
+              state.fee.rate * state.signed!.fee(goal: state.fee) * 1.01 ||
+          transactionComponents.fee <= FeeRate.minimumFee)) {
+        return Tuple2(false, 'fee does not match server rate');
+      }
+    }
+    if (!transactionComponents.targetAddressAmountVerified) {
+      return Tuple2(false, 'target address or amounts invalid');
+    }
+    if (!transactionComponents.changeAddressAmountVerified) {
+      return Tuple2(false, 'change address or amounts invalid');
+    }
+    //final ret = (
+    //        // no transaction should cost more than 2 coins
+    //        transactionComponents.feeSanityCheck &&
+    //            // our estimate a of the fee should be close to the fee the server calculated,
+    //            // which should be equal to next condition, by the way.
+    //            (transactionComponents.fee <=
+    //                    state.fee.rate *
+    //                        state.signed!.fee(goal: state.fee) *
+    //                        1.01 ||
+    //                // or is should not be bigger than the minimum fee
+    //                transactionComponents.fee <= FeeRate.minimumFee) &&
+    //            transactionComponents.targetAddressAmountVerified &&
+    //            transactionComponents.changeAddressAmountVerified
+    //    // todo: send the value to our intended address
+    //    //transactionComponents.targetAddress == state.address &&
+    //    // todo: send the change back to us
+    //    //transactionComponents.changeAddress == state.changeAddress //&&
+    //    // todo: what about send amount?
+    //    //transactionComponents.sendAmount == state.sats
+    //    // todo: what about change amount?
+    //    //transactionComponents.changeAmount == transactionComponents.totalOut - transactionComponents.sendAmount - transactionComponents.fee
+    //    );
+    // update checkout struct to update checkout page
+    set(
+      checkout: state.checkout!.newEstimate(
+        SendEstimate(
+          state.sats,
+          sendAll: state.checkout!.estimate!.sendAll,
+          fees: transactionComponents.fee,
+          security: state.security,
+          memo: state.memo,
+          creation: false,
+
+          /// not necessary
+          /// in string form at cubit.state.unsigned.vinPrivateKeySource
+          //utxos: null,
+          /// todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
+          //assetMemo: Uint8List.fromList(cubit.state.memo
+          //    .codeUnits),
+        ),
+      ),
+    );
+    return Tuple2(true, 'success');
   }
 
   /// actually commit transaction
@@ -361,13 +473,17 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
 }
 
 class TransactionComponents {
+  final int coinInput;
   final int fee;
-  final String targetAddress; // assumes we're only sending to 1 address
-  final String changeAddress;
+  // assumes we're only sending to 1 address
+  final bool targetAddressAmountVerified;
+  // should be inputs - fee - target
+  final bool changeAddressAmountVerified;
   const TransactionComponents({
+    required this.coinInput,
     required this.fee,
-    required this.targetAddress,
-    required this.changeAddress,
+    required this.targetAddressAmountVerified,
+    required this.changeAddressAmountVerified,
   });
 
   bool get feeSanityCheck => fee < 2 * satsPerCoin;

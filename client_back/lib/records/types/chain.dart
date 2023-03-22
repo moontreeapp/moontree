@@ -176,4 +176,13 @@ class ChainNet with EquatableMixin {
     }
     return ravencoinMainnetChaindata;
   }
+
+  //Constants get constants =>
+  //    net == Net.main ? mainnetConstants : testnetConstants;
+
+  Constants get constants {
+    final Chaindata cd = chaindata;
+    return Constants(
+        cd.kawpowHeaderActivationTimestamp, cd.p2pkhPrefix, cd.p2shPrefix);
+  }
 }
