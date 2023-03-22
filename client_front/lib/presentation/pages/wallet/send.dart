@@ -643,6 +643,7 @@ class _SendState extends State<Send> {
   void _confirmSend(SendRequest sendRequest, SimpleSendFormCubit cubit) async {
     //streams.spend.make.add(sendRequest); // using cubit instead, poorly
     await cubit.setUnsignedTransaction(
+      sendAllCoinFlag: cubit.state.security.isCoin && sendRequest.sendAll,
       symbol: cubit.state.security.symbol,
       wallet: Current.wallet,
       chain: Current.chain,

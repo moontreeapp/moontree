@@ -96,6 +96,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           .firstOrNull;
 
   Future<void> setUnsignedTransaction({
+    required bool sendAllCoinFlag,
     Wallet? wallet,
     String? symbol,
     Chain? chain,
@@ -115,7 +116,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       security: state.security,
       // server decides fast:
       feeRate: state.fee == standardFee ? state.fee : null,
-      sats: state.sats,
+      sats: sendAllCoinFlag ? -1 : state.sats,
       changeAddress: changeAddress,
       address: state.address,
       memo: state.memo,
