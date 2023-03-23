@@ -149,6 +149,12 @@ class SimpleSendCheckout extends StatelessWidget {
 
   String getRightAmount(String x) {
     if ((state.checkout!.estimate?.fees ?? 0) > 0) {
+      if (state.checkout!.estimate?.sendAll ?? false) {
+        return (state.checkout!.estimate!.amount -
+                state.checkout!.estimate!.fees)
+            .asCoin
+            .toString();
+      }
       return state.checkout!.estimate!.amount.asCoin.toString();
     }
     return x;
@@ -243,6 +249,9 @@ class SimpleSendCheckout extends StatelessWidget {
 
   String getRightTotal(String x) {
     if ((state.checkout!.estimate?.fees ?? 0) > 0) {
+      if (state.checkout!.estimate?.sendAll ?? false) {
+        return state.checkout!.estimate!.amount.asCoin.toString();
+      }
       return state.checkout!.estimate!.total.asCoin.toString();
     }
     return x;

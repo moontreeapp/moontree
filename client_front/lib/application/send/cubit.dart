@@ -96,7 +96,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           .firstOrNull;
 
   Future<void> setUnsignedTransaction({
-    required bool sendAllCoinFlag,
+    bool sendAllCoinFlag = false,
     Wallet? wallet,
     String? symbol,
     Chain? chain,
@@ -248,7 +248,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       return {'': 0};
     }
 
-    bool getTargetAddressVerification() {
+    bool getTargetAddressVerification(int fee) {
       for (final x in state.signed!.outs) {
         if (x.script != null) {
           final opCodes = getOpCodes(x.script!);
@@ -264,7 +264,10 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
               Current.chainNet.constants);
           if (addressData?.address == state.address) {
             if (state.security.isCoin) {
-              if (x.value == state.sats) {
+              if ((!state.checkout!.estimate!.sendAll &&
+                      x.value == state.sats) ||
+                  (state.checkout!.estimate!.sendAll &&
+                      x.value == state.sats - fee)) {
                 return true;
               }
             } else {
@@ -328,8 +331,14 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         if (state.address == state.changeAddress) {
           coinChange -= state.sats;
         }
-        if (coinInput - fee - state.sats - coinChange != 0) {
-          return false;
+        if (state.checkout!.estimate!.sendAll) {
+          if (coinChange > 0) {
+            return false;
+          }
+        } else {
+          if (coinInput - fee - state.sats - coinChange != 0) {
+            return false;
+          }
         }
       } else {
         if (coinInput - fee - coinChange != 0) {
@@ -359,7 +368,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     return TransactionComponents(
         coinInput: coinInput,
         fee: fee,
-        targetAddressAmountVerified: getTargetAddressVerification(),
+        targetAddressAmountVerified: getTargetAddressVerification(fee),
         changeAddressAmountVerified:
             await getChangeAddressVerification(coinInput, fee));
   }
