@@ -8,6 +8,10 @@ const BorderRadius topRoundedBorder16 = BorderRadius.only(
   topLeft: Radius.circular(16),
   topRight: Radius.circular(16),
 );
+BorderRadius topRoundedBorder(double value) => BorderRadius.only(
+      topLeft: Radius.circular(value),
+      topRight: Radius.circular(value),
+    );
 const RoundedRectangleBorder rounded8 = RoundedRectangleBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)));
 const RoundedRectangleBorder topRounded8 =

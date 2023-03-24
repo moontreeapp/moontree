@@ -118,14 +118,9 @@ class _HoldingsView extends State<HoldingsView> {
     super.dispose();
   }
 
-  Future<void> refresh(HoldingsViewCubit cubit) async {
-    //widget.cubit.update(isSubmitting: true);
-    //setState(() {});
-    await cubit.setHoldingViews(
-      force: true,
-    );
-    setState(() {});
-  }
+  Future<void> refresh(HoldingsViewCubit cubit) async =>
+    await cubit.setHoldingViews(force: true);
+  
 
   void _toggleUSD() {
     if (pros.rates.primaryIndex

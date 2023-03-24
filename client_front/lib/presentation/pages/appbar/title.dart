@@ -18,7 +18,8 @@ import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:client_front/presentation/widgets/other/textfield.dart';
 import 'package:client_front/presentation/widgets/assets/icons.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
-import 'package:client_front/presentation/services/services.dart' show screen;
+import 'package:client_front/presentation/services/services.dart'
+    show sail, screen;
 
 class PageTitle extends StatefulWidget {
   final bool showWalletChange;
@@ -344,6 +345,14 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
           ),
       ];
 
+  void showWallets() {
+    components.cubits.bottomModalSheet.show(children: walletOptions(onTap: () {
+      components.cubits.bottomModalSheet.hide();
+    }));
+    // we'd really like to trigger this whenever we lose focus of it...
+    components.cubits.title.update(editable: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     //Animation<double> anima;
@@ -360,25 +369,30 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             builder: (context, child) {
               return GestureDetector(
                   onTap: () async {
-                    if (!dropDownActive) {
-                      dropDownActive = true;
-                      setWalletsSecurities();
-                      await walletSelection();
+                    if (components.cubits.title.showWalletName) {
+                      showWallets();
                     }
+                    //if (!dropDownActive) {
+                    //  dropDownActive = true;
+                    //  setWalletsSecurities();
+                    //  await walletSelection();
+                    //}
                   },
                   onDoubleTap: () async {
-                    bool next = false;
-                    for (final Wallet wallet
-                        in pros.wallets.ordered + pros.wallets.ordered) {
-                      if (next) {
-                        await switchWallet(wallet.id);
-                        break;
+                    if (components.cubits.title.showWalletName) {
+                      bool next = false;
+                      for (final Wallet wallet
+                          in pros.wallets.ordered + pros.wallets.ordered) {
+                        if (next) {
+                          await switchWallet(wallet.id);
+                          break;
+                        }
+                        if (Current.walletId == wallet.id) {
+                          next = true;
+                        }
                       }
-                      if (Current.walletId == wallet.id) {
-                        next = true;
-                      }
+                      setState(() {}); // recalculates the name of the wallet.
                     }
-                    setState(() {}); // recalculates the name of the wallet.
                   },
                   child:
                       //FadeTransition(
@@ -401,18 +415,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                   if (state.menuOpen) {
                                     return FadeIn(
                                         child: IconButton(
-                                            onPressed: () {
-                                              components.cubits.bottomModalSheet
-                                                  .show(children:
-                                                      walletOptions(onTap: () {
-                                                components
-                                                    .cubits.bottomModalSheet
-                                                    .hide();
-                                              }));
-                                              // we'd really like to trigger this whenever we lose focus of it...
-                                              components.cubits.title
-                                                  .update(editable: false);
-                                            },
+                                            onPressed: () => showWallets(),
                                             icon: const Icon(
                                               Icons.expand_more_rounded,
                                               color: Colors.white,
@@ -809,7 +812,11 @@ class WalletNameText extends StatelessWidget {
           fit: FlexFit.loose,
           flex: 1,
           child: GestureDetector(
-              onLongPress: () => components.cubits.title.update(editable: true),
+              onLongPress: () {
+                if (components.cubits.title.showWalletName) {
+                  components.cubits.title.update(editable: true);
+                }
+              },
               child: Text(title,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,

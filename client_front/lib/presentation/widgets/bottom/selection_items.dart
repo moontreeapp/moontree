@@ -499,7 +499,9 @@ class SelectionItems {
     // wait for keyboard to drop (if you don't it has issues on ios)
     while (streams.app.keyboard.value != KeyboardStatus.down) {
       // drop keyboard incase it's up
-      FocusScope.of(context).unfocus();
+      try {
+        FocusScope.of(context).unfocus();
+      } catch (e) {}
       await Future<void>.delayed(const Duration(milliseconds: 600));
     }
     if (modalSet == SelectionSet.Wallets) {

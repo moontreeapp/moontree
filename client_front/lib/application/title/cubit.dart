@@ -1,3 +1,4 @@
+import 'package:client_back/joins/joins.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -17,16 +18,18 @@ class TitleCubit extends Cubit<TitleCubitState> {
 
   /// returns override title, the title by location, or empty string.
   String get title {
-    if ([
-      '/wallet/holdings',
-      '/manage',
-      '/swap',
-    ].contains(sail.latestLocation)) {
+    if (showWalletName) {
       return Current.wallet.name;
     }
     if (sail.latestLocation == '/wallet/holding') {
-      return 'Holding'; // should be holding name
+      return Current.holding.shortName; // should be holding name
     }
     return state.title ?? sail.latestLocation ?? ' ';
   }
+
+  bool get showWalletName => [
+        '/wallet/holdings',
+        '/manage',
+        '/swap',
+      ].contains(sail.latestLocation);
 }

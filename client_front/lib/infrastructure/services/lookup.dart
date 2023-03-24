@@ -42,4 +42,7 @@ class Current {
   static Chain get chain => pros.settings.chain;
   static Net get net => pros.settings.net;
   static Security get coin => pros.securities.currentCoin;
+
+  static Security get holding =>
+      components.cubits.transactionsView.state.security;
 }
