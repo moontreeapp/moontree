@@ -83,7 +83,8 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
     cubit.set(
         wallet: pros.wallets.currentWallet,
         security: Security(
-          symbol: cubit.state.security.symbol,
+          symbol: components.cubits.location.state.symbol ??
+              cubit.state.security.symbol,
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
