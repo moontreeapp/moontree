@@ -52,7 +52,8 @@ class UnsignedTransactionCall extends ServerCall {
               request: server.UnsignedTransactionRequest(
                 myH106s: h160s,
                 myPubkeys: roots,
-                feeRateKb: feeRatePerByte! * 1000,
+                feeRateKb:
+                    feeRatePerByte == null ? null : feeRatePerByte * 1000,
                 changeSource: changeAddress,
                 eachOutputAddress: addresses,
                 eachOutputAsset: serverAssets,
@@ -90,7 +91,8 @@ class UnsignedTransactionCall extends ServerCall {
 
         /// SERVER
         : await unsignedTransactionBy(
-            feeRatePerByte: feeRate?.rate ?? FeeRates.cheap.rate,
+            // send null to let the server choose
+            feeRatePerByte: feeRate?.rate, // ?? FeeRates.cheap.rate
             addresses: [address],
             serverAssets: [serverSymbol],
             satsToSend: [sats],

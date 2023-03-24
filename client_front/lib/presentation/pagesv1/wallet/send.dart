@@ -318,7 +318,7 @@ class _SendState extends State<Send> {
                                     return 'too large';
                                   }
                                   if (!_validateDivisibility()) {
-                                    return 'asset divisible up to ${components.cubits.simpleSendFormCubit.state.metadataView?.divisibility ?? 8} places';
+                                    return 'asset divisible up to ${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8} places';
                                   }
                                   if (x.isNumeric) {
                                     final num? y = x.toNum();
@@ -541,7 +541,7 @@ class _SendState extends State<Send> {
   //null;
 
   bool _validateDivisibility() =>
-      (components.cubits.simpleSendFormCubit.state.metadataView?.divisibility ??
+      (components.cubits.simpleSendForm.state.metadataView?.divisibility ??
           8) >=
       (sendAmount.text.contains('.')
           ? sendAmount.text.split('.').last.length
@@ -566,8 +566,8 @@ class _SendState extends State<Send> {
       // if not sending all:
       return holdingBalance.amount > double.parse(sendAmount.text) + 0.0021;
     } else {
-      final BalanceView? holdingView = components.cubits.holdingsViewCubit
-          .holdingsViewFor(Current.coin.symbol);
+      final BalanceView? holdingView =
+          components.cubits.holdingsView.holdingsViewFor(Current.coin.symbol);
       final Balance holdingBalanceCoin = Balance(
           walletId: Current.walletId,
           security: state.security,
@@ -626,6 +626,7 @@ class _SendState extends State<Send> {
   void _confirmSend(SendRequest sendRequest, SimpleSendFormCubit cubit) async {
     //streams.spend.make.add(sendRequest); // using cubit instead, poorly
     await cubit.setUnsignedTransaction(
+      sendAllCoinFlag: cubit.state.security.isCoin && sendRequest.sendAll,
       symbol: cubit.state.security.symbol,
       wallet: Current.wallet,
       chain: Current.chain,

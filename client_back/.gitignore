@@ -14,4 +14,4 @@ testdb/
 
 *.exe
 
-lib/server/src/protocol/*.dart
+#lib/server/src/protocol/*.dart
