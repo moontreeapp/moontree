@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/streams/spend.dart';
-import 'package:collection/collection.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +23,6 @@ import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/pagesv1/misc/checkout.dart';
 import 'package:client_front/domain/utils/params.dart';
 import 'package:client_front/domain/utils/data.dart';
 
@@ -302,7 +300,11 @@ class _SendState extends State<Send> {
                                         decimal: true),
                                 inputFormatters: <TextInputFormatter>[
                                   //DecimalTextInputFormatter(decimalRange: divisibility)
-                                  FilteringTextInputFormatter(RegExp(r'[.0-9]'),
+                                  FilteringTextInputFormatter(
+                                      //RegExp(r'[.0-9]'),
+                                      RegExp(r'^[0-9]*(\.[0-9]{0,' +
+                                          '${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8}' +
+                                          r'})?'),
                                       allow: true)
                                 ],
                                 labelText: 'Amount',
@@ -316,9 +318,6 @@ class _SendState extends State<Send> {
                                   }
                                   if (_asDouble(x) > holdingBalance.amount) {
                                     return 'too large';
-                                  }
-                                  if (!_validateDivisibility()) {
-                                    return 'asset divisible up to ${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8} places';
                                   }
                                   if (x.isNumeric) {
                                     final num? y = x.toNum();
@@ -348,9 +347,6 @@ class _SendState extends State<Send> {
                                   ),
                                   */
                                 onChanged: (String value) {
-                                  value = enforceDivisibility(value,
-                                      divisibility:
-                                          state.security.divisibility);
                                   try {
                                     cubit.set(amount: double.parse(value));
                                   } catch (e) {
@@ -359,9 +355,6 @@ class _SendState extends State<Send> {
                                 },
                                 onEditingComplete: () {
                                   String value = sendAmount.text;
-                                  value = enforceDivisibility(value,
-                                      divisibility:
-                                          state.security.divisibility);
                                   try {
                                     cubit.set(amount: double.parse(value));
                                   } catch (e) {

@@ -1,6 +1,5 @@
 // ignore_for_file: omit_local_variable_types
 import 'dart:typed_data';
-import 'package:client_back/utilities/conversion.dart';
 import 'package:equatable/equatable.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:moontree_utils/moontree_utils.dart';
@@ -15,6 +14,8 @@ class LeaderWalletService {
   final int requiredGap = 20;
   Set<LeaderWallet> backlog = <LeaderWallet>{};
   bool newLeaderProcessRunning = false;
+  // used to speed up derivations during signing a transaction
+  Map<String, SeedWallet> seedWalletsByPubkeyChainNet = {};
 
   bool gapSatisfied(LeaderWallet leader, [NodeExposure? exposure]) =>
       exposure != null
@@ -97,12 +98,16 @@ class LeaderWalletService {
     LeaderWallet wallet, [
     Chain? chain,
     Net? net,
-  ]) async =>
-      SeedWallet(
-        await wallet.seed,
-        chain ?? pros.settings.chain,
-        net ?? pros.settings.net,
-      );
+  ]) async {
+    final chainNet = ChainNet(
+      chain ??= pros.settings.chain,
+      net ??= pros.settings.net,
+    );
+    final String key = '${wallet.pubkey}.${chainNet.key}';
+    seedWalletsByPubkeyChainNet[key] ??=
+        SeedWallet(await wallet.seed, chainNet);
+    return seedWalletsByPubkeyChainNet[key]!;
+  }
 
   Future<HDWallet> getSubWallet(
     LeaderWallet wallet,

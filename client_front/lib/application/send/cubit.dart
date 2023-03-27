@@ -15,13 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:tuple/tuple.dart';
 import 'package:wallet_utils/wallet_utils.dart'
-    show
-        AmountToSatsExtension,
-        ECPair,
-        FeeRate,
-        TransactionBuilder,
-        satsPerCoin,
-        standardFee;
+    show ECPair, FeeRate, TransactionBuilder, satsPerCoin, standardFee;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
 import 'package:client_front/infrastructure/repos/unsigned.dart';
@@ -63,7 +57,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     SimpleSendCheckoutForm? checkout,
     bool? isSubmitting,
   }) {
-    emit(submitting());
+    //emit(submitting());
     emit(state.load(
       metadataView: metadataView,
       security: security,
@@ -142,25 +136,32 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         state.unsigned!.vinLockingScriptType.map(
             (e) => e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
         state.security.chainNet.network);
-    print('state.unsigned!.vinAssets');
-    print(state.unsigned!.vinAssets);
+    // this map reduces the time to sign large tx in half (for mining wallets)
+    Map<String, ECPair?> keyPairByPath = {};
+    ECPair? keyPair;
+    final List<String> walletRoots =
+        await (Current.wallet as LeaderWallet).roots;
     for (final Tuple2<int, String> e
         in state.unsigned!.vinPrivateKeySource.enumeratedTuple<String>()) {
-      ECPair? keyPair;
       if (e.item2.contains(':')) {
         final walletPubKeyAndDerivationIndex = e.item2.split(':');
         // todo Current.wallet must be LeaderWallet, if not err?
-        keyPair = await services.wallet.getAddressKeypair(
-            await services.wallet.leader.deriveAddressByIndex(
+        final NodeExposure nodeExposure =
+            walletPubKeyAndDerivationIndex[0] == walletRoots[0]
+                ? NodeExposure.external
+                : NodeExposure.internal;
+        keyPairByPath[
+                '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
+            await services.wallet.getAddressKeypair(
+                await services.wallet.leader.deriveAddressByIndex(
           wallet: Current.wallet as LeaderWallet,
-          exposure: walletPubKeyAndDerivationIndex[0] ==
-                  (await (Current.wallet as LeaderWallet).roots)[0]
-              ? NodeExposure.external
-              : NodeExposure.internal,
+          exposure: nodeExposure,
           hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
           chain: state.security.chain,
           net: state.security.net,
         ));
+        keyPair = keyPairByPath[
+            '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
       } else {
         /// case for SingleWallet
         /// in theory we shouldn't have to use the h160 to figureout which
@@ -173,12 +174,12 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
                   "h160: ${e.item2}"
                   "local: ${(Current.wallet as SingleWallet).addresses.first.h160AsString}"));
         }
-        keyPair = await services.wallet.getAddressKeypair(
+        keyPair ??= await services.wallet.getAddressKeypair(
             (Current.wallet as SingleWallet).addresses.first);
       }
       txb.signRaw(
         vin: e.item1,
-        keyPair: keyPair,
+        keyPair: keyPair!,
         hashType: null,
         prevOutScriptOverride:
             state.unsigned!.vinScriptOverride[e.item1]?.hexBytes,
@@ -188,10 +189,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       );
     }
     final tx = txb.build();
-    print(tx);
     set(signed: tx);
     // compare this against parsed fee amount to verify fee.
-    print(tx.fee(goal: state.fee));
     return false;
   }
 
@@ -304,7 +303,6 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           final addressData = tryGuessAddressFromOpList(
               opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
               Current.chainNet.constants);
-          print(addressData);
           if (state.address == state.changeAddress) {
             coinChange += x.value ?? 0;
           } else if (addressData?.address != state.address) {

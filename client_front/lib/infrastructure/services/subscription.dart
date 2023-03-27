@@ -13,7 +13,7 @@ class SubscriptionService {
   final server.Client client;
   late server.ConnectivityMonitor monitor;
   bool isConnected = false;
-  late final StreamingConnectionHandler connectionHandler;
+  late StreamingConnectionHandler connectionHandler;
 
   SubscriptionService() : client = server.Client('$moontreeUrl/');
 
@@ -56,7 +56,7 @@ class SubscriptionService {
       components.cubits.receiveView.setAddress(Current.wallet, force: true);
       // if we're on the transactions list, update that too:
       if (components.cubits.transactionsView.state.ranWallet != null) {
-        components.cubits.transactionsView.setInitial();
+        components.cubits.transactionsView.setInitial(force: true);
       }
     }
 

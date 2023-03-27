@@ -158,11 +158,12 @@ class _NavMenuState extends State<NavMenu> {
           //    name: 'Addresses',
           //    link: '/addresses',
           //  ),
-          destination(
-            icon: MdiIcons.pickaxe,
-            name: 'Mining',
-            link: '/settings/network/mining',
-          ),
+          /// hide mine to wallet
+          //destination(
+          //  icon: MdiIcons.pickaxe,
+          //  name: 'Mining',
+          //  link: '/settings/network/mining',
+          //),
           if (services.developer.developerMode)
             destination(
               icon: MdiIcons.database,
