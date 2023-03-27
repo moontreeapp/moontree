@@ -287,6 +287,13 @@ class _HoldingsView extends State<HoldingsView> {
     if (holding.length == 1) {
       navigate(holding.balance!, wallet: wallet);
     } else {
+      components.cubits.bottomModalSheet.show(children: assetOptions(
+        // TODO: finish
+        onTap: () {
+          components.cubits.bottomModalSheet.hide();
+        },
+      ));
+      /*
       SelectionItems(
         context,
         symbol: holding.symbol,
@@ -427,6 +434,7 @@ class _HoldingsView extends State<HoldingsView> {
             ),
         ],
       ).build();
+      */
     }
   }
 

@@ -245,3 +245,39 @@ void navToBlockchain([BuildContext? context, Function? then]) {
     components.cubits.title.update(editable: false);
   }
 }
+
+List<Widget> assetOptions({
+  BuildContext? context,
+  Function? onTap,
+  Function(ChainNet)? first,
+  Function? second,
+}) =>
+    <Widget>[
+      for (ChainBundle x in <ChainBundle>[
+        ChainBundle(icons.evrmore, 'Evrmore', Chain.evrmore, Net.main),
+        ChainBundle(icons.ravencoin, 'Ravencoin', Chain.ravencoin, Net.main),
+        ChainBundle(
+            icons.evrmoreTest, 'Evrmore testnet', Chain.evrmore, Net.test),
+        ChainBundle(icons.ravencoinTest, 'Ravencoin testnet', Chain.ravencoin,
+            Net.test),
+      ])
+        if (services
+            .developer.featureLevelBlockchainMap[services.developer.userLevel]!
+            .contains(x.chainNet))
+          ListTile(
+            onTap: () {
+              if (onTap != null) {
+                onTap();
+              }
+            },
+            leading: x.icon(height: 24, width: 24, circled: true),
+            title: Text(x.name,
+                style: Theme.of(context ?? components.routes.context!)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: AppColors.black87)),
+            trailing: isSelected(x.chain, x.net) && isConnected()
+                ? const Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+          ),
+    ];
