@@ -1,6 +1,5 @@
 // ignore_for_file: omit_local_variable_types
 import 'dart:typed_data';
-import 'package:client_back/utilities/conversion.dart';
 import 'package:equatable/equatable.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:moontree_utils/moontree_utils.dart';

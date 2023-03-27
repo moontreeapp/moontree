@@ -136,14 +136,11 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         state.unsigned!.vinLockingScriptType.map(
             (e) => e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
         state.security.chainNet.network);
-    print('state.unsigned!.vinAssets');
-    print(state.unsigned!.vinAssets);
     // this map reduces the time to sign large tx in half (for mining wallets)
     Map<String, ECPair?> keyPairByPath = {};
     ECPair? keyPair;
     final List<String> walletRoots =
         await (Current.wallet as LeaderWallet).roots;
-    final Stopwatch s = Stopwatch()..start();
     for (final Tuple2<int, String> e
         in state.unsigned!.vinPrivateKeySource.enumeratedTuple<String>()) {
       if (e.item2.contains(':')) {
@@ -191,12 +188,9 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         assetLiteral: Current.chainNet.chaindata.assetLiteral,
       );
     }
-    print(s.elapsed.inMilliseconds);
     final tx = txb.build();
-    print(tx);
     set(signed: tx);
     // compare this against parsed fee amount to verify fee.
-    print(tx.fee(goal: state.fee));
     return false;
   }
 
@@ -309,7 +303,6 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           final addressData = tryGuessAddressFromOpList(
               opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
               Current.chainNet.constants);
-          print(addressData);
           if (state.address == state.changeAddress) {
             coinChange += x.value ?? 0;
           } else if (addressData?.address != state.address) {
