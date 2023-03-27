@@ -317,7 +317,11 @@ class _SendState extends State<Send> {
                                         decimal: true),
                                 inputFormatters: <TextInputFormatter>[
                                   //DecimalTextInputFormatter(decimalRange: divisibility)
-                                  FilteringTextInputFormatter(RegExp(r'[.0-9]'),
+                                  FilteringTextInputFormatter(
+                                      //RegExp(r'[.0-9]'),
+                                      RegExp(r'^[0-9]*(\.[0-9]{0,' +
+                                          '${components.cubits.simpleSendFormCubit.state.metadataView?.divisibility ?? 8}' +
+                                          r'})?'),
                                       allow: true)
                                 ],
                                 labelText: 'Amount',
@@ -331,9 +335,6 @@ class _SendState extends State<Send> {
                                   }
                                   if (_asDouble(x) > holdingBalance.amount) {
                                     return 'too large';
-                                  }
-                                  if (!_validateDivisibility()) {
-                                    return 'asset divisible up to ${components.cubits.simpleSendFormCubit.state.metadataView?.divisibility ?? 8} places';
                                   }
                                   if (x.isNumeric) {
                                     final num? y = x.toNum();
@@ -363,14 +364,6 @@ class _SendState extends State<Send> {
                                   ),
                                   */
                                 onChanged: (String value) {
-                                  value = enforceDivisibility(value,
-                                      divisibility: components
-                                              .cubits
-                                              .simpleSendFormCubit
-                                              .state
-                                              .metadataView
-                                              ?.divisibility ??
-                                          state.security.divisibility);
                                   try {
                                     cubit.set(amount: double.parse(value));
                                   } catch (e) {
@@ -379,14 +372,6 @@ class _SendState extends State<Send> {
                                 },
                                 onEditingComplete: () {
                                   String value = sendAmount.text;
-                                  value = enforceDivisibility(value,
-                                      divisibility: components
-                                              .cubits
-                                              .simpleSendFormCubit
-                                              .state
-                                              .metadataView
-                                              ?.divisibility ??
-                                          state.security.divisibility);
                                   try {
                                     cubit.set(amount: double.parse(value));
                                   } catch (e) {

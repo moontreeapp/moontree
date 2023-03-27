@@ -56,7 +56,7 @@ class SubscriptionService {
           .setAddress(Current.wallet, force: true);
       // if we're on the transactions list, update that too:
       if (components.cubits.transactionsViewCubit.state.ranWallet != null) {
-        components.cubits.transactionsViewCubit.setInitial();
+        components.cubits.transactionsViewCubit.setInitial(force:true);
       }
     }
 

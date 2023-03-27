@@ -57,7 +57,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     SimpleSendCheckoutForm? checkout,
     bool? isSubmitting,
   }) {
-    emit(submitting());
+    //emit(submitting());
     emit(state.load(
       metadataView: metadataView,
       security: security,
