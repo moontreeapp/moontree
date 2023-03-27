@@ -12,7 +12,7 @@ class SubscriptionService {
   final server.Client client;
   late server.ConnectivityMonitor monitor;
   bool isConnected = false;
-  late final StreamingConnectionHandler connectionHandler;
+  late StreamingConnectionHandler connectionHandler;
 
   SubscriptionService() : client = server.Client('$moontreeUrl/');
 

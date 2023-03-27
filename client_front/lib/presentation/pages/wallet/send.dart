@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/streams/spend.dart';
-import 'package:collection/collection.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +19,6 @@ import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/pages/misc/checkout.dart';
 import 'package:client_front/domain/utils/params.dart';
 import 'package:client_front/domain/utils/data.dart';
 
@@ -366,7 +364,12 @@ class _SendState extends State<Send> {
                                   */
                                 onChanged: (String value) {
                                   value = enforceDivisibility(value,
-                                      divisibility:
+                                      divisibility: components
+                                              .cubits
+                                              .simpleSendFormCubit
+                                              .state
+                                              .metadataView
+                                              ?.divisibility ??
                                           state.security.divisibility);
                                   try {
                                     cubit.set(amount: double.parse(value));
@@ -377,7 +380,12 @@ class _SendState extends State<Send> {
                                 onEditingComplete: () {
                                   String value = sendAmount.text;
                                   value = enforceDivisibility(value,
-                                      divisibility:
+                                      divisibility: components
+                                              .cubits
+                                              .simpleSendFormCubit
+                                              .state
+                                              .metadataView
+                                              ?.divisibility ??
                                           state.security.divisibility);
                                   try {
                                     cubit.set(amount: double.parse(value));
