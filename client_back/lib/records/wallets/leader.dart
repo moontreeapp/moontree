@@ -97,7 +97,7 @@ class LeaderWallet extends Wallet {
     Chain chain = Chain.ravencoin,
     Net net = Net.main,
   }) async =>
-      SeedWallet(await seed, chain, net).wallet;
+      SeedWallet(await seed, ChainNet(chain, net)).wallet;
 
   @override
   SecretType get secretType => SecretType.mnemonic;

@@ -228,11 +228,8 @@ extension LeaderWalletHasTwoRoots on LeaderWallet {
         await internalRoot,
       ];
 
-  Future<String> get externalRoot async => SeedWallet(
-        await seed,
-        pros.settings.chain,
-        pros.settings.net,
-      )
+  Future<String> get externalRoot async =>
+      SeedWallet(await seed, ChainNet(pros.settings.chain, pros.settings.net))
           .wallet
           .derivePath(
             // "m/44'/175'/0'/0"
@@ -243,11 +240,8 @@ extension LeaderWalletHasTwoRoots on LeaderWallet {
           )
           .base58!;
 
-  Future<String> get internalRoot async => SeedWallet(
-        await seed,
-        pros.settings.chain,
-        pros.settings.net,
-      )
+  Future<String> get internalRoot async =>
+      SeedWallet(await seed, ChainNet(pros.settings.chain, pros.settings.net))
           .wallet
           .derivePath(
             //"m/44'/175'/0'/1"

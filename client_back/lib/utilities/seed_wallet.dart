@@ -6,29 +6,26 @@ import 'package:client_back/utilities/derivation_path.dart';
 import 'package:client_back/client_back.dart';
 
 class SeedWallet {
-  Uint8List seed;
-  Chain chain;
-  Net net;
+  final Uint8List seed;
+  final ChainNet chainNet;
+  final Map<String, HDWallet> subwalletsByPath = {};
 
-  SeedWallet(this.seed, this.chain, this.net);
+  SeedWallet(this.seed, this.chainNet);
 
-  HDWallet get wallet =>
-      HDWallet.fromSeed(seed, network: ChainNet(chain, net).network);
+  HDWallet get wallet => HDWallet.fromSeed(seed, network: chainNet.network);
 
   HDWallet subwallet(
     int hdIndex, {
     NodeExposure exposure = NodeExposure.external,
   }) {
-    print(getDerivationPath(
+    final path = getDerivationPath(
       index: hdIndex,
       exposure: exposure,
-      net: net,
-    ));
-    return wallet.derivePath(getDerivationPath(
-      index: hdIndex,
-      exposure: exposure,
-      net: net,
-    ));
+      net: chainNet.net,
+    );
+    print(path);
+    subwalletsByPath[path] ??= wallet.derivePath(path);
+    return subwalletsByPath[path]!;
   }
 }
 

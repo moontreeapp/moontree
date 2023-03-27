@@ -15,6 +15,8 @@ class LeaderWalletService {
   final int requiredGap = 20;
   Set<LeaderWallet> backlog = <LeaderWallet>{};
   bool newLeaderProcessRunning = false;
+  // used to speed up derivations during signing a transaction
+  Map<String, SeedWallet> seedWalletsByPubkeyChainNet = {};
 
   bool gapSatisfied(LeaderWallet leader, [NodeExposure? exposure]) =>
       exposure != null
@@ -97,12 +99,16 @@ class LeaderWalletService {
     LeaderWallet wallet, [
     Chain? chain,
     Net? net,
-  ]) async =>
-      SeedWallet(
-        await wallet.seed,
-        chain ?? pros.settings.chain,
-        net ?? pros.settings.net,
-      );
+  ]) async {
+    final chainNet = ChainNet(
+      chain ??= pros.settings.chain,
+      net ??= pros.settings.net,
+    );
+    final String key = '${wallet.pubkey}.${chainNet.key}';
+    seedWalletsByPubkeyChainNet[key] ??=
+        SeedWallet(await wallet.seed, chainNet);
+    return seedWalletsByPubkeyChainNet[key]!;
+  }
 
   Future<HDWallet> getSubWallet(
     LeaderWallet wallet,
