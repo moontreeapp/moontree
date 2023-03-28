@@ -28,20 +28,23 @@ class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
     Wallet? wallet,
     Chain? chain,
     Net? net,
-  }) : super(UnsignedTransactionResult(
-            error: 'failure to generate Unsigned Transaction',
-            rawHex: '',
-            vinPrivateKeySource: [],
-            vinLockingScriptType: [],
-            changeSource: [],
-            vinScriptOverride: [],
-            vinAssets: [],
-            vinAmounts: [],
-            targetFee: 0)) {
+  }) : super(generateFallback) {
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;
   }
+
+  static UnsignedTransactionResult generateFallback(String error) =>
+      UnsignedTransactionResult(
+          error: error,
+          rawHex: '',
+          vinPrivateKeySource: [],
+          vinLockingScriptType: [],
+          changeSource: [],
+          vinScriptOverride: [],
+          vinAssets: [],
+          vinAmounts: [],
+          targetFee: 0);
 
   @override
   Future<UnsignedTransactionResult> fromServer() async =>

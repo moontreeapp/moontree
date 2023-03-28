@@ -633,11 +633,11 @@ class _SendState extends State<Send> {
       return;
     }
     if (cubit.state.unsigned!.error != null) {
-      print(cubit.state.unsigned!.error);
       streams.app.snack.add(Snack(
-          message: 'Unable to make transaction at this time.',
-          positive: false,
-          copy: cubit.state.unsigned!.error));
+        message: cubit.state.unsigned!.error ??
+            'Unable to make transaction at this time.',
+        positive: false,
+      ));
       return;
     }
     streams.spend.made.add(TransactionNote(

@@ -18,11 +18,13 @@ class TransactionDetailsRepo extends Repository<TransactionDetailsView> {
     required this.hash,
     Chain? chain,
     Net? net,
-  }) : super(TransactionDetailsView(error: 'fallback value')) {
+  }) : super(generateFallback) {
     this.chain = chain ?? Current.chain;
     this.net = net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;
   }
+  static TransactionDetailsView generateFallback(String error) =>
+      TransactionDetailsView(error: error);
 
   @override
   Future<TransactionDetailsView> fromServer() async => TransactionDetailsCall(

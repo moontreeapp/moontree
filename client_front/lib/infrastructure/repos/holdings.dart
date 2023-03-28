@@ -14,11 +14,13 @@ class HoldingsRepo extends Repository<Iterable<BalanceView>> {
     Wallet? wallet,
     Chain? chain,
     Net? net,
-  }) : super(<BalanceView>[]) {
+  }) : super(generateFallback) {
     this.chain = chain ?? Current.chain;
     this.net = net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;
   }
+  static Iterable<BalanceView> generateFallback([String? error]) =>
+      <BalanceView>[];
 
   @override
   bool detectServerError(dynamic resultServer) =>

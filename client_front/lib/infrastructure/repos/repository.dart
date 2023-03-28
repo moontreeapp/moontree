@@ -1,7 +1,7 @@
 enum RepoSource { local, server, electrumx }
 
 class Repository<T> {
-  T fallback;
+  T Function(String error) fallback;
   late RepoSource source;
   late T results;
   late Map<RepoSource, String> errors;
@@ -16,12 +16,12 @@ class Repository<T> {
   /// fetches values from server; if that fails, from cache; saves results
   /// and any errors encountered to self. saves to cache automatically.
   Future<T> fetch({bool only = false}) async {
-    results = fallback;
     final resultServer = await fromServer();
     if (detectServerError(resultServer)) {
       errors[RepoSource.server] = extractError(resultServer);
       print(errors);
       if (only) {
+        results = fallback(errors[RepoSource.server]!);
         return results;
       }
       var resultLocal;
@@ -47,11 +47,11 @@ class Repository<T> {
   /// gets values from cache; if that fails, from server; saves results
   /// and any errors encountered to self. saves to cache automatically.
   Future<T> get({bool only = false}) async {
-    results = fallback;
     final resultLocal = fromLocal();
     if (detectLocalError(resultLocal)) {
       errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
       if (only) {
+        results = fallback(errors[RepoSource.local]!);
         return results;
       }
       final resultServer = await fromServer();
