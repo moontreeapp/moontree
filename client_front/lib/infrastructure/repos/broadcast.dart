@@ -13,10 +13,11 @@ class BroadcastTransactionRepo extends Repository<CommString> {
     required this.rawTransactionHex,
     Chain? chain,
     Net? net,
-  }) : super(CommString(error: 'fallback value')) {
+  }) : super(generateFallback) {
     this.chain = chain ?? Current.chain;
     this.net = net ?? Current.net;
   }
+  static CommString generateFallback(String error) => CommString(error: error);
 
   @override
   Future<CommString> fromServer() async => BroadcastTransactionCall(

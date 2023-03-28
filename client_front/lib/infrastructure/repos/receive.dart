@@ -32,11 +32,12 @@ class ReceiveRepo extends Repository<Address> {
     this.change = false, // default external
     Chain? chain,
     Net? net,
-  }) : super(Address.empty()) {
+  }) : super(generateFallback) {
     this.chain = chain ?? Current.chain;
     this.net = net ?? Current.net;
     this.wallet = wallet ?? Current.wallet;
   }
+  static Address generateFallback(String error) => Address.empty();
 
   @override
   bool detectLocalError(dynamic resultLocal) => resultLocal == null;

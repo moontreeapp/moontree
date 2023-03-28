@@ -16,13 +16,15 @@ class AssetMetadataHistoryRepo extends Repository<Iterable<AssetMetadata>> {
     Security? security,
     Chain? chain,
     Net? net,
-  }) : super(<AssetMetadata>[]) {
+  }) : super(generateFallback) {
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
     this.symbol = symbol ??
         security?.symbol ??
         pros.securities.coinOf(this.chain, this.net).symbol;
   }
+  static Iterable<AssetMetadata> generateFallback([String? error]) =>
+      <AssetMetadata>[];
 
   @override
   bool detectServerError(dynamic resultServer) => resultServer.length == 0;

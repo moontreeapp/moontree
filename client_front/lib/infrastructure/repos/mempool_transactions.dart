@@ -21,11 +21,13 @@ class MempoolTransactionHistoryRepo
     this.height,
     Chain? chain,
     Net? net,
-  }) : super(<TransactionView>[]) {
+  }) : super(generateFallback) {
     this.wallet = wallet ?? Current.wallet;
     this.chain = chain ?? security?.chain ?? Current.chain;
     this.net = net ?? security?.net ?? Current.net;
   }
+  static Iterable<TransactionView> generateFallback([String? error]) =>
+      <TransactionView>[];
 
   @override
   bool detectServerError(dynamic resultServer) =>
