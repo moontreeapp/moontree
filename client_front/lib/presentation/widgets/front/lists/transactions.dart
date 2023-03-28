@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/records/types/transaction_view.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:client_back/services/transaction/transaction.dart';
+import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/theme/theme.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 class TransactionList extends StatefulWidget {
   final TransactionsViewCubit? cubit;
@@ -170,8 +170,7 @@ class _TransactionListState extends State<TransactionList> {
                           ListTile(
                             //contentPadding:
                             //    EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 13),
-                            onTap: () => Navigator.pushNamed(
-                                context, '/transaction/transaction',
+                            onTap: () => sail.to('/wallet/holding/transaction',
                                 arguments: <String, TransactionView>{
                                   'transactionView': transactionView
                                 }),

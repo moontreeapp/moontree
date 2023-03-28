@@ -130,7 +130,7 @@ class Sail {
       title: 'Transaction',
       section: Section.wallet,
       frontHeight: FrontContainerHeight.max,
-      navbarHeight: NavbarHeight.mid,
+      navbarHeight: NavbarHeight.hidden,
       frontPath: '/wallet/holding/transaction',
       backPath: '/',
     ),
