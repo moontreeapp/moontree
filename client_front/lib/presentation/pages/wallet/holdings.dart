@@ -1,9 +1,11 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
+import 'package:client_front/presentation/theme/fonts.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/client_back.dart';
@@ -287,27 +289,24 @@ class _HoldingsView extends State<HoldingsView> {
     if (holding.length == 1) {
       navigate(holding.balance!, wallet: wallet);
     } else {
-      components.cubits.bottomModalSheet.show(children: assetOptions(
-        // TODO: finish
+      components.cubits.bottomModalSheet.show(
+          children: assetOptions(
+        context: context,
         onTap: () {
           components.cubits.bottomModalSheet.hide();
         },
-      ));
-      /*
-      SelectionItems(
-        context,
         symbol: holding.symbol,
-        names: <SelectionOption>[
-          if (holding.main != null) SelectionOption.Main,
-          if (holding.sub != null) SelectionOption.Sub,
-          if (holding.subAdmin != null) SelectionOption.Sub_Admin,
-          if (holding.admin != null) SelectionOption.Admin,
-          if (holding.restricted != null) SelectionOption.Restricted,
-          if (holding.restrictedAdmin != null) SelectionOption.Restricted_Admin,
-          if (holding.qualifier != null) SelectionOption.Qualifier,
-          if (holding.qualifierSub != null) SelectionOption.Sub_Qualifier,
-          if (holding.nft != null) SelectionOption.NFT,
-          if (holding.channel != null) SelectionOption.Channel,
+        names: <String>[
+          if (holding.main != null) 'main',
+          if (holding.sub != null) 'sub',
+          if (holding.subAdmin != null) 'sub admin',
+          if (holding.admin != null) 'admin',
+          if (holding.restricted != null) 'restricted',
+          if (holding.restrictedAdmin != null) 'restricted admin',
+          if (holding.qualifier != null) 'qualifier',
+          if (holding.qualifierSub != null) 'sub qualifier',
+          if (holding.nft != null) 'nft',
+          if (holding.channel != null) 'channel',
         ],
         behaviors: <void Function()>[
           if (holding.main != null)
@@ -433,8 +432,7 @@ class _HoldingsView extends State<HoldingsView> {
               asUSD: widget.cubit.state.showUSD,
             ),
         ],
-      ).build();
-      */
+      ));
     }
   }
 
@@ -515,3 +513,52 @@ class _HoldingsView extends State<HoldingsView> {
         ),
       ]);
 }
+
+List<Widget> assetOptions({
+  BuildContext? context,
+  Function? onTap,
+  Function(ChainNet)? first,
+  Function? second,
+  required String symbol,
+  required Iterable<String> names,
+  required Iterable<void Function()> behaviors,
+  required Iterable<String> values,
+}) =>
+    <Widget>[
+      for (List x
+          in zipIterable([names.toList(), behaviors.toList(), values.toList()]))
+        ListTile(
+          onTap: () {
+            if (onTap != null) {
+              onTap();
+            }
+            (x[1] as void Function())(); // behavior
+          },
+          leading: components.icons.assetAvatar(
+              {
+                'main': symbol,
+                'sub': symbol,
+                'sub admin': symbol,
+                'admin': '$symbol!',
+                'restricted': '\$$symbol',
+                'restricted admin': '\$$symbol',
+                'qualifier': '#$symbol',
+                'sub qualifier': '#$symbol',
+                'nft': symbol,
+                'channel': symbol,
+              }[(x[0] as String)]!,
+              size: 24),
+          title: Text((x[0] as String).toTitleCase(),
+              style: Theme.of(context ?? components.routes.context!)
+                  .textTheme
+                  .bodyText1!
+                  .copyWith(color: AppColors.black87)),
+          trailing: (x[2] as String) != null
+              ? Text((x[2] as String),
+                  style: Theme.of(context!).textTheme.bodyText2!.copyWith(
+                      fontWeight: FontWeights.bold,
+                      letterSpacing: 0.1,
+                      color: AppColors.black60))
+              : null,
+        ),
+    ];
