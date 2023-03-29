@@ -5,6 +5,7 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class BackupIntro extends StatefulWidget {
   final dynamic data;

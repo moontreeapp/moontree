@@ -14,6 +14,7 @@ import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class BackdropAppBarContents extends StatelessWidget
     implements PreferredSizeWidget {

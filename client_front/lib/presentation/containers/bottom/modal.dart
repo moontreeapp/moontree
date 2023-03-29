@@ -9,6 +9,7 @@ import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:client_front/presentation/services/services.dart' show screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/components/shadows.dart' as shadows;
 
 class BottomModalSheet extends StatelessWidget {
   const BottomModalSheet({Key? key}) : super(key: key);
@@ -23,7 +24,8 @@ class BottomModalSheet extends StatelessWidget {
             final double childrenPixels =
                 (state.children.length * state.childrenHeight + 16) /
                     screen.app.height;
-            final double minExtent = min(childrenPixels, 0.5);
+            final double minExtent =
+                min(childrenPixels, screen.frontContainer.midHeightPercentage);
             final double maxExtent = min(1.0, max(minExtent, childrenPixels));
             if (!state.exiting) {
               components.cubits.bottomModalSheet
@@ -36,16 +38,20 @@ class BottomModalSheet extends StatelessWidget {
                       child: DraggableScrollableSheet(
                           controller: draggableScrollController,
                           expand: false,
-                          initialChildSize: minExtent,
+                          initialChildSize: state.fullscreen ? 1 : minExtent,
                           minChildSize: minExtent,
-                          maxChildSize: maxExtent,
+                          maxChildSize: state.fullscreen ? 1 : maxExtent,
                           builder: (BuildContext context,
                               ScrollController scrollController) {
                             draggableScrollController.addListener(() async =>
                                 components.cubits.bottomModalSheet.setHeight(
                                     draggableScrollController.pixels));
                             return FrontCurve(
-                                color: Colors.white,
+                                color: state.color,
+                                frontLayerBoxShadow:
+                                    state.color == Colors.transparent
+                                        ? []
+                                        : shadows.frontLayer,
                                 fuzzyTop: false,
                                 child: ListView(
                                   shrinkWrap: true,

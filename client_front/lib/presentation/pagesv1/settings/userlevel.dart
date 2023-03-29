@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 enum UserLevel { beginner, intermediate, advanced }
 

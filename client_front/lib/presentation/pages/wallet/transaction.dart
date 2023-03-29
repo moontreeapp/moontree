@@ -18,6 +18,8 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
 
+import '../../widgets/front_curve.dart';
+
 class TransactionPage extends StatefulWidget {
   const TransactionPage({Key? key}) : super(key: key);
 
@@ -97,10 +99,7 @@ class TransactionPageContent extends StatelessWidget {
     return flutter_bloc.BlocBuilder<TransactionViewCubit, TransactionViewState>(
         bloc: cubit..enter(),
         builder: (BuildContext context, TransactionViewState state) {
-          return BackdropLayers(
-            back: const BlankBack(),
-            front: FrontCurve(child: detailsBody(cubit, context)),
-          );
+          return FrontCurve(child: detailsBody(cubit, context));
         });
   }
 

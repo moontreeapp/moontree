@@ -5,6 +5,7 @@ import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_back/client_back.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class About extends StatefulWidget {
   @override

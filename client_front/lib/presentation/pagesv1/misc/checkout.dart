@@ -14,6 +14,7 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:wallet_utils/wallet_utils.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class CheckoutStruct {
   final Widget? icon;

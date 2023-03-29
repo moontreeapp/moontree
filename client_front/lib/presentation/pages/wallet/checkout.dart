@@ -1,4 +1,7 @@
 import 'package:client_front/application/send/cubit.dart';
+import 'package:client_front/presentation/services/services.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
@@ -54,7 +57,6 @@ class SimpleSendCheckout extends StatelessWidget {
             const Divider(indent: 16 + 56),
             const SizedBox(height: 14),
             transactionItems,
-
             const SizedBox(height: 16),
             //Divider(indent: 16),
           ],
@@ -194,7 +196,13 @@ class SimpleSendCheckout extends StatelessWidget {
                           const EdgeInsets.only(top: 10, left: 16, right: 16),
                       child: total),
                   const SizedBox(height: 40),
-                  components.containers.navBar(context, child: submitButton),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          top: 0, right: 16, bottom: 24, left: 16),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [Expanded(child: submitButton)])),
                 ],
               ),
             if (state.checkout!.confirm != null)
@@ -206,10 +214,19 @@ class SimpleSendCheckout extends StatelessWidget {
                           const EdgeInsets.only(top: 10, left: 16, right: 16),
                       child: confirm),
                   const SizedBox(height: 40),
-                  components.containers.navBar(context,
-                      child: state.checkout!.button == null
-                          ? submitButton
-                          : state.checkout!.button!),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          top: 0, right: 16, bottom: 24, left: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                              child: state.checkout!.button == null
+                                  ? submitButton
+                                  : state.checkout!.button!)
+                        ],
+                      ))
                 ],
               ),
           ],
@@ -258,19 +275,23 @@ class SimpleSendCheckout extends StatelessWidget {
     return x;
   }
 
-  Widget get submitButton => Row(children: <Widget>[
-        components.buttons.actionButton(
-          context,
-          enabled: !state.checkout!.disabled,
-          label: state.checkout!.buttonWord,
-          onPressed: () async {
-            if (DateTime.now().difference(startTime).inMilliseconds > 500) {
-              components.loading.screen(
-                  message: state.checkout!.loadingMessage,
-                  playCount: state.checkout!.playcount ?? 2,
-                  then: state.checkout!.buttonAction);
-            }
-          },
-        )
-      ]);
+  Widget get submitButton => BottomButton(
+        enabled: !state.checkout!.disabled,
+        label: state.checkout!.buttonWord,
+        onPressed: () async {
+          if (DateTime.now().difference(startTime).inMilliseconds > 500) {
+            //await components.loading.screen(
+            //  message: state.checkout!.loadingMessage,
+            //  playCount: state.checkout!.playcount ?? 2,
+            //);
+            components.cubits.loadingView
+                .show(title: 'Sending', msg: 'broadcasting transaction');
+            state.checkout!.buttonAction!();
+            await Future.delayed(Duration(seconds: 3));
+            components.cubits.loadingView.hide();
+            await Future.delayed(Duration(milliseconds: 50));
+            sail.home();
+          }
+        },
+      );
 }

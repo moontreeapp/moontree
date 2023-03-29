@@ -25,6 +25,7 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/params.dart';
 import 'package:client_front/domain/utils/data.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 extension FunctionsForBalanceView on BalanceView {
   int get sats => satsConfirmed + satsUnconfirmed;

@@ -1,3 +1,5 @@
+import 'package:client_front/presentation/widgets/backdrop/layers.dart';
+import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:client_back/client_back.dart';

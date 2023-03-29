@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class Support extends StatelessWidget {
   @override

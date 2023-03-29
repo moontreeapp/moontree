@@ -15,6 +15,7 @@ import 'package:client_front/infrastructure/services/wallet.dart'
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class BackupSeed extends StatefulWidget {
   final dynamic data;

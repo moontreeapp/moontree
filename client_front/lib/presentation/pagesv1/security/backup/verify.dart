@@ -12,6 +12,7 @@ import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class VerifySeed extends StatefulWidget {
   final dynamic data;

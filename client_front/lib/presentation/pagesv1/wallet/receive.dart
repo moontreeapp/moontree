@@ -12,6 +12,7 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:share/share.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class Receive extends StatelessWidget {
   const Receive({Key? key}) : super(key: key);

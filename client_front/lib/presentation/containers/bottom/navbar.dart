@@ -235,7 +235,7 @@ class NavbarActions extends StatelessWidget {
                             Expanded(
                                 child: BottomButton(
                               label: 'send',
-                              enabled: false,
+                              enabled: true,
                               //!walletIsEmpty &&
                               //    connectionStatus == ConnectionStatus.connected,
                               //disabledOnPressed: () {

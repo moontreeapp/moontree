@@ -1,7 +1,7 @@
 import 'package:client_back/records/security.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_front/application/transactions/cubit.dart';
-import 'package:client_front/presentation/pages/wallet/front_holding.dart';
+import 'package:client_front/presentation/pages/wallet/front/holding.dart';
 import 'package:client_front/presentation/widgets/back/coinspec/spec.dart';
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/theme/colors.dart';

@@ -142,6 +142,9 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/wallet/holding': (BuildContext context) => const WalletHolding(),
   '/wallet/holding/transaction': (BuildContext context) =>
       const TransactionPage(),
+  '/wallet/send': (BuildContext context) => const SimpleSend(),
+  '/wallet/send/checkout': (BuildContext context) =>
+      SimpleSendCheckout(transactionType: TransactionType.spend),
   '/backup/intro': (BuildContext context) => const BackupIntro(),
   '/backup/keypair': (BuildContext context) => const ShowKeypair(),
   '/backup/seed': (BuildContext context) => const BackupSeed(),

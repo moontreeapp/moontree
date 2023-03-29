@@ -6,6 +6,7 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/records/asset.dart' as asset_record;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class AssetPage extends StatefulWidget {
   const AssetPage() : super();

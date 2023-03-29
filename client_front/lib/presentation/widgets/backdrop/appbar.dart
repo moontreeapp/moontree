@@ -5,6 +5,7 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 
 class BackdropAppBar extends StatefulWidget implements PreferredSizeWidget {
   const BackdropAppBar({Key? key}) : super(key: key);

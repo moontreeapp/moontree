@@ -5,7 +5,7 @@ import 'package:client_front/application/navbar/cubit.dart';
 import 'package:client_front/application/location/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/pages/wallet/front_holding.dart';
+import 'package:client_front/presentation/pages/wallet/front/holding.dart';
 
 class Manifest {
   final Section section;
@@ -142,6 +142,30 @@ class Sail {
       frontPath: '/wallet/receive',
       backPath: '/',
     ),
+    '/wallet/send': Manifest(
+      title: 'Send',
+      section: Section.wallet,
+      frontHeight: FrontContainerHeight.mid,
+      navbarHeight: NavbarHeight.hidden, // should be replaced with 'preview'
+      frontPath: '/wallet/send',
+      backPath: '/wallet/send/coinspec',
+    ),
+    '/wallet/send/checkout': Manifest(
+      title: 'Checkout',
+      section: Section.wallet,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/wallet/send/checkout',
+      backPath: '/',
+    ),
+    //'/wallet/send/scan': Manifest(
+    //  title: 'Scan QR Code',
+    //  section: Section.wallet,
+    //  frontHeight: FrontContainerHeight.max,
+    //  navbarHeight: NavbarHeight.hidden,
+    //  frontPath: '/',
+    //  backPath: '/wallet/send/scan',
+    //),
     '/manage': Manifest(
       title: 'Manage',
       section: Section.manage,
@@ -247,7 +271,9 @@ class Sail {
     String location = _handleHistoryRemoval();
     final manifest = destinationMap[location]!;
     updateCubits(location, manifest, back: true);
-    components.routes.navigatorKey.currentState!.pop();
+    print(
+        'components.routes.navigatorKey.currentState ${components.routes.navigatorKey.currentState}');
+    components.routes.navigatorKey.currentState!.pop(); // ? should we do this?
     return location;
   }
 

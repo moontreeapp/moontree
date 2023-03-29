@@ -10,7 +10,7 @@ import 'package:client_front/presentation/pagesv1/wallet/transactions/components
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-
+import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 //import 'bloc.dart';
 
 double minHeight = 0.65.figmaAppHeight;
