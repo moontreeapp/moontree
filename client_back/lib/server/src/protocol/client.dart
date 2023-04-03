@@ -274,11 +274,11 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
   @override
   String get name => 'unsignedTransaction';
 
-  _i2.Future<_i10.UnsignedTransactionResult> generateUnsignedTransaction({
+  _i2.Future<List<_i10.UnsignedTransactionResult>> generateUnsignedTransaction({
     required _i11.UnsignedTransactionRequest request,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i10.UnsignedTransactionResult>(
+      caller.callServerEndpoint<List<_i10.UnsignedTransactionResult>>(
         'unsignedTransaction',
         'generateUnsignedTransaction',
         {

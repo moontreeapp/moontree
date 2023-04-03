@@ -37,7 +37,7 @@ class UnsignedTransactionCall extends ServerCall {
     this.wallet = wallet ?? Current.wallet;
   }
 
-  Future<server.UnsignedTransactionResult> unsignedTransactionBy({
+  Future<List<server.UnsignedTransactionResult>> unsignedTransactionBy({
     double? feeRatePerByte,
     required Chaindata chain,
     required List<String> roots,
@@ -66,7 +66,7 @@ class UnsignedTransactionCall extends ServerCall {
               )));
 
   /// this simple version of the request handles sending one asset to one address.
-  Future<server.UnsignedTransactionResult> call() async {
+  Future<List<server.UnsignedTransactionResult>> call() async {
     final String? serverSymbol = ((security?.isCoin ?? true) &&
             (symbol == null ||
                 symbol == pros.securities.coinOf(chain, net).symbol)
@@ -84,7 +84,7 @@ class UnsignedTransactionCall extends ServerCall {
       h160s = [(await wallet.address).h160AsString];
     }
     roots ??= await Current.wallet.roots;
-    final server.UnsignedTransactionResult unsignedTx = mockFlag
+    final List<server.UnsignedTransactionResult> unsignedTx = mockFlag
 
         /// MOCK SERVER
         ? await Future.delayed(Duration(seconds: 1), spoof)
@@ -107,12 +107,14 @@ class UnsignedTransactionCall extends ServerCall {
   }
 }
 
-server.UnsignedTransactionResult spoof() => server.UnsignedTransactionResult(
-    rawHex: '0x00',
-    vinPrivateKeySource: [''],
-    vinLockingScriptType: [0],
-    changeSource: [''],
-    vinScriptOverride: [''],
-    vinAmounts: [0],
-    vinAssets: [''],
-    targetFee: 0);
+List<server.UnsignedTransactionResult> spoof() => [
+      server.UnsignedTransactionResult(
+          rawHex: '0x00',
+          vinPrivateKeySource: [''],
+          vinLockingScriptType: [0],
+          changeSource: [''],
+          vinScriptOverride: [''],
+          vinAmounts: [0],
+          vinAssets: [''],
+          targetFee: 0)
+    ];

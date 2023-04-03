@@ -51,9 +51,9 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     String? note,
     String? changeAddress,
     String? addressName,
-    UnsignedTransactionResult? unsigned,
-    wutx.Transaction? signed,
-    String? txHash,
+    List<UnsignedTransactionResult>? unsigned,
+    List<wutx.Transaction>? signed,
+    List<String>? txHash,
     SimpleSendCheckoutForm? checkout,
     bool? isSubmitting,
   }) {
@@ -104,7 +104,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     final changeAddress =
         (await ReceiveRepo(wallet: wallet, change: true).fetch())
             .address(chain, net);
-    UnsignedTransactionResult unsigned = await UnsignedTransactionRepo(
+    List<UnsignedTransactionResult> unsigned = await UnsignedTransactionRepo(
       wallet: wallet,
       symbol: symbol ?? state.security.symbol,
       security: state.security,
@@ -130,77 +130,83 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
 
   /// convert to TransactionBuilder object, inspect
   Future<bool> sign() async {
-    final txb = TransactionBuilder.fromRawInfo(
-        state.unsigned!.rawHex,
-        state.unsigned!.vinScriptOverride.map((e) => e?.hexBytes),
-        state.unsigned!.vinLockingScriptType.map(
-            (e) => e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
-        state.security.chainNet.network);
-    // this map reduces the time to sign large tx in half (for mining wallets)
-    Map<String, ECPair?> keyPairByPath = {};
-    ECPair? keyPair;
-    final List<String> walletRoots =
-        await (Current.wallet as LeaderWallet).roots;
-    for (final Tuple2<int, String> e
-        in state.unsigned!.vinPrivateKeySource.enumeratedTuple<String>()) {
-      if (e.item2.contains(':')) {
-        final walletPubKeyAndDerivationIndex = e.item2.split(':');
-        // todo Current.wallet must be LeaderWallet, if not err?
-        final NodeExposure nodeExposure =
-            walletPubKeyAndDerivationIndex[0] == walletRoots[0]
-                ? NodeExposure.external
-                : NodeExposure.internal;
-        keyPairByPath[
-                '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
-            await services.wallet.getAddressKeypair(
-                await services.wallet.leader.deriveAddressByIndex(
-          wallet: Current.wallet as LeaderWallet,
-          exposure: nodeExposure,
-          hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
-          chain: state.security.chain,
-          net: state.security.net,
-        ));
-        keyPair = keyPairByPath[
-            '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
-      } else {
-        /// case for SingleWallet
-        /// in theory we shouldn't have to use the h160 to figureout which
-        /// address since the current wallet is the one that made this
-        /// transaction, it should always match the h160 provided
-        if (e.item2 !=
-            (Current.wallet as SingleWallet).addresses.first.h160AsString) {
-          throw Exception(
-              ("Single wallet signing erorr: wallet doens't match h160 returned from server\n"
-                  "h160: ${e.item2}"
-                  "local: ${(Current.wallet as SingleWallet).addresses.first.h160AsString}"));
+    List<wutx.Transaction> txs = [];
+    for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
+      final txb = TransactionBuilder.fromRawInfo(
+          unsigned.rawHex,
+          unsigned.vinScriptOverride.map((String? e) => e?.hexBytes),
+          unsigned.vinLockingScriptType.map((e) =>
+              e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
+          state.security.chainNet.network);
+      // this map reduces the time to sign large tx in half (for mining wallets)
+      Map<String, ECPair?> keyPairByPath = {};
+      ECPair? keyPair;
+      final List<String> walletRoots =
+          await (Current.wallet as LeaderWallet).roots;
+      for (final Tuple2<int, String> e
+          in unsigned.vinPrivateKeySource.enumeratedTuple<String>()) {
+        if (e.item2.contains(':')) {
+          final walletPubKeyAndDerivationIndex = e.item2.split(':');
+          // todo Current.wallet must be LeaderWallet, if not err?
+          final NodeExposure nodeExposure =
+              walletPubKeyAndDerivationIndex[0] == walletRoots[0]
+                  ? NodeExposure.external
+                  : NodeExposure.internal;
+          keyPairByPath[
+                  '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
+              await services.wallet.getAddressKeypair(
+                  await services.wallet.leader.deriveAddressByIndex(
+            wallet: Current.wallet as LeaderWallet,
+            exposure: nodeExposure,
+            hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
+            chain: state.security.chain,
+            net: state.security.net,
+          ));
+          keyPair = keyPairByPath[
+              '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
+        } else {
+          /// case for SingleWallet
+          /// in theory we shouldn't have to use the h160 to figureout which
+          /// address since the current wallet is the one that made this
+          /// transaction, it should always match the h160 provided
+          if (e.item2 !=
+              (Current.wallet as SingleWallet).addresses.first.h160AsString) {
+            throw Exception(
+                ("Single wallet signing erorr: wallet doens't match h160 returned from server\n"
+                    "h160: ${e.item2}"
+                    "local: ${(Current.wallet as SingleWallet).addresses.first.h160AsString}"));
+          }
+          keyPair ??= await services.wallet.getAddressKeypair(
+              (Current.wallet as SingleWallet).addresses.first);
         }
-        keyPair ??= await services.wallet.getAddressKeypair(
-            (Current.wallet as SingleWallet).addresses.first);
+        txb.signRaw(
+          vin: e.item1,
+          keyPair: keyPair!,
+          hashType: null,
+          prevOutScriptOverride: unsigned.vinScriptOverride[e.item1]?.hexBytes,
+          asset: unsigned.vinAssets[e.item1],
+          assetAmount: unsigned.vinAmounts[e.item1],
+          assetLiteral: Current.chainNet.chaindata.assetLiteral,
+        );
       }
-      txb.signRaw(
-        vin: e.item1,
-        keyPair: keyPair!,
-        hashType: null,
-        prevOutScriptOverride:
-            state.unsigned!.vinScriptOverride[e.item1]?.hexBytes,
-        asset: state.unsigned!.vinAssets[e.item1],
-        assetAmount: state.unsigned!.vinAmounts[e.item1],
-        assetLiteral: Current.chainNet.chaindata.assetLiteral,
-      );
+      final tx = txb.build();
+      txs.add(tx);
     }
-    final tx = txb.build();
-    set(signed: tx);
+    set(signed: txs);
     // compare this against parsed fee amount to verify fee.
     return false;
   }
 
   /// parse transaction to verify elements within
-  Future<TransactionComponents> processHex() async {
+  Future<TransactionComponents> processHex(
+    int index,
+    wutx.Transaction signed,
+  ) async {
     /// sum the vinAmounts that are evr
     int getCoinInput() => [
           for (final x in IterableZip([
-            state.unsigned!.vinAssets,
-            state.unsigned!.vinAmounts,
+            state.unsigned![index].vinAssets,
+            state.unsigned![index].vinAmounts,
           ]))
             x[0] == null ? x[1] : 0
         ].sum() as int;
@@ -209,7 +215,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       //{code: -26, message: 16: mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)}
       // parsed transaction vouts that are evr (txb.vouts.sum that are evr)
       // technically unnecessary to filer since assets will always have 0 value
-      final int coinOutput = state.signed!.outs
+      final int coinOutput = signed.outs
           .where((e) => e.value != null && e.value! > 0) // filter to evr
           .map((e) => e.value)
           .sum() as int;
@@ -220,7 +226,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     }
 
     Map<String, int> _parseAsset(maybeOpRVNAssetTuplePtr, opCodes) {
-// this part doesn't work, so we do it manually below
+      // this part doesn't work, so we do it manually below
       //final assetTransferData = parseAssetTransfer(
       //    opCodes.sublist(maybeOpRVNAssetTuplePtr), x.script!);
       final assetPortion = opCodes.sublist(maybeOpRVNAssetTuplePtr)[1].item3;
@@ -247,8 +253,8 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       return {'': 0};
     }
 
-    bool getTargetAddressVerification(int fee) {
-      for (final x in state.signed!.outs) {
+    bool getTargetAddressVerification(wutx.Transaction signed, int fee) {
+      for (final x in signed.outs) {
         if (x.script != null) {
           final opCodes = getOpCodes(x.script!);
           int maybeOpRVNAssetTuplePtr = opCodes.length;
@@ -262,23 +268,38 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
               opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
               Current.chainNet.constants);
           if (addressData?.address == state.address) {
-            if (state.security.isCoin) {
-              if ((!state.checkout!.estimate!.sendAll &&
-                      x.value == state.sats) ||
-                  (state.checkout!.estimate!.sendAll &&
-                      x.value == state.sats - fee)) {
-                return true;
-              }
-            } else {
-              final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
-              if (nameSats[state.security.symbol] == state.sats) {
-                return true;
+            if (state.signed!.length == 1) {
+              if (state.security.isCoin) {
+                if ((!state.checkout!.estimate!.sendAll &&
+                        x.value == state.sats) ||
+                    (state.checkout!.estimate!.sendAll &&
+                        x.value == state.sats - fee)) {
+                  return true;
+                }
+              } else {
+                final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
+                if (nameSats[state.security.symbol] == state.sats) {
+                  return true;
+                }
               }
             }
           }
         }
       }
+      if (state.signed!.length > 1) {
+        return true;
+      }
       return false;
+    }
+
+    bool getTargetAddressVerificationForAll(int fee) {
+      // do this once on the last tx
+      if (index == state.signed!.length - 1) {
+        return [
+          for (final s in state.signed!) getTargetAddressVerification(s, fee)
+        ].every((i) => i);
+      }
+      return true;
     }
 
     /// coin: should be coinInput - fee - target (if any)
@@ -290,7 +311,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       // get change amount(s) here too
       int coinChange = 0;
       int assetChange = 0;
-      for (final x in state.signed!.outs) {
+      for (final x in signed.outs) {
         if (x.script != null) {
           final opCodes = getOpCodes(x.script!);
           int maybeOpRVNAssetTuplePtr = opCodes.length;
@@ -324,25 +345,26 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           }
         }
       }
-      // verify amounts
-      if (state.security.isCoin) {
-        if (state.address == state.changeAddress) {
-          coinChange -= state.sats;
-        }
-        if (state.checkout!.estimate!.sendAll) {
-          if (coinChange > 0) {
-            return false;
+      if (state.signed!.length == 1) {
+        // verify amounts
+        if (state.security.isCoin) {
+          if (state.address == state.changeAddress) {
+            coinChange -= state.sats;
+          }
+          if (state.checkout!.estimate!.sendAll) {
+            if (coinChange > 0) {
+              return false;
+            }
+          } else {
+            if (coinInput - fee - state.sats - coinChange != 0) {
+              return false;
+            }
           }
         } else {
-          if (coinInput - fee - state.sats - coinChange != 0) {
+          if (coinInput - fee - coinChange != 0) {
             return false;
           }
-        }
-      } else {
-        if (coinInput - fee - coinChange != 0) {
-          return false;
-        }
-        /*
+          /*
         kralverde — Today at 10:48 AM
           Yeah for the vins, the tx would fail if they aren’t ours and the 
           asset/amount are pulled directly from the db
@@ -356,49 +378,74 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           return false;
         }
         */
+        }
       }
       // no errors found
       return true;
     }
 
+    Future<bool> getChangeAddressVerificationForAll() async {
+      // do this once on the last tx
+      if (index == state.signed!.length - 1) {
+        return [
+          for (final _ in state.signed!)
+            await getChangeAddressVerification(0, 0)
+        ].every((i) => i);
+      }
+      return true;
+    }
+
     final coinInput = getCoinInput();
     final fee = getCoinFee(coinInput);
+    final targetAddressVerified = state.signed!.length == 1
+        ? getTargetAddressVerification(signed, fee)
+        : getTargetAddressVerificationForAll(fee);
+    final changeAddressVerified = state.signed!.length == 1
+        ? await getChangeAddressVerification(coinInput, fee)
+        : await getChangeAddressVerificationForAll();
     return TransactionComponents(
         coinInput: coinInput,
         fee: fee,
-        targetAddressAmountVerified: getTargetAddressVerification(fee),
-        changeAddressAmountVerified:
-            await getChangeAddressVerification(coinInput, fee));
+        targetAddressAmountVerified: targetAddressVerified,
+        changeAddressAmountVerified: changeAddressVerified);
   }
 
   /// verify fee, sending to address, and return address
   Future<Tuple2<bool, String>> verifyTransaction() async {
-    final transactionComponents = await processHex();
-    if (!transactionComponents.feeSanityCheck) {
-      return Tuple2(false, 'fee too large');
-    }
-    // our estimate a of the fee should be close to the fee the server calculated,
-    // which should be equal to next condition, by the way.
-    if (state.fee == standardFee) {
-      if (!(transactionComponents.fee <=
-          state.fee.rate * state.signed!.fee(goal: state.fee) * 1.01)) {
-        return Tuple2(false, 'fee does not match specified fee rate');
+    int fees = 0;
+    for (final Tuple2<int, wutx.Transaction> indexSigned
+        in (state.signed ?? []).enumeratedTuple<wutx.Transaction>()) {
+      final transactionComponents =
+          await processHex(indexSigned.item1, indexSigned.item2);
+      if (!transactionComponents.feeSanityCheck) {
+        return Tuple2(false, 'fee too large');
       }
-    } else {
-      // server rate is the same as our rate, but has a minimum limit of 1 kb
-      // so if we specify the server rate we want to make sure it's still no
-      // larger than our rate or its the minimumFee
-      if (!(transactionComponents.fee <=
-              state.fee.rate * state.signed!.fee(goal: state.fee) * 1.01 ||
-          transactionComponents.fee <= FeeRate.minimumFee)) {
-        return Tuple2(false, 'fee does not match server rate');
+      // our estimate a of the fee should be close to the fee the server calculated,
+      // which should be equal to next condition, by the way.
+      if (state.fee == standardFee) {
+        if (!(transactionComponents.fee <=
+            state.fee.rate * indexSigned.item2.fee(goal: state.fee) * 1.01)) {
+          return Tuple2(false, 'fee does not match specified fee rate');
+        }
+      } else {
+        // server rate is the same as our rate, but has a minimum limit of 1 kb
+        // so if we specify the server rate we want to make sure it's still no
+        // larger than our rate or its the minimumFee
+        if (!(transactionComponents.fee <=
+                state.fee.rate *
+                    indexSigned.item2.fee(goal: state.fee) *
+                    1.01 ||
+            transactionComponents.fee <= FeeRate.minimumFee)) {
+          return Tuple2(false, 'fee does not match server rate');
+        }
       }
-    }
-    if (!transactionComponents.targetAddressAmountVerified) {
-      return Tuple2(false, 'target address or amounts invalid');
-    }
-    if (!transactionComponents.changeAddressAmountVerified) {
-      return Tuple2(false, 'change address or amounts invalid');
+      if (!transactionComponents.targetAddressAmountVerified) {
+        return Tuple2(false, 'target address or amounts invalid');
+      }
+      if (!transactionComponents.changeAddressAmountVerified) {
+        return Tuple2(false, 'change address or amounts invalid');
+      }
+      fees += transactionComponents.fee;
     }
     //final ret = (
     //        // no transaction should cost more than 2 coins
@@ -428,7 +475,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         SendEstimate(
           state.sats,
           sendAll: state.checkout!.estimate!.sendAll,
-          fees: transactionComponents.fee,
+          fees: fees,
           security: state.security,
           memo: state.memo,
           creation: false,
@@ -451,31 +498,35 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       print('transaction not signed yet');
       return;
     }
+    for (final wutx.Transaction signed in state.signed ?? []) {
+      print('broadcasting ${signed.toHex()}');
 
-    /// should we use a repository for this? why? myabe for validation purposes?
-    /// and for saving the note in success case? we'd still do the rest here...
-    /// todo: do repo pattern I guess..
-    final broadcastResult = (await BroadcastTransactionCall(
-      rawTransactionHex: state.signed!.toHex(),
-      chain: state.security.chain,
-      net: state.security.net,
-    )());
+      /// should we use a repository for this? why? myabe for validation purposes?
+      /// and for saving the note in success case? we'd still do the rest here...
+      /// todo: do repo pattern I guess..
+      final broadcastResult = (await BroadcastTransactionCall(
+        rawTransactionHex: signed.toHex(),
+        chain: state.security.chain,
+        net: state.security.net,
+      )());
 
-    // todo: should we do more validation on the txHash?
-    if (broadcastResult.value != null && broadcastResult.error == null) {
-      set(txHash: broadcastResult.value);
-      // todo: save note by this txHash here
-      // should this be in a repo?
-      pros.notes.save(Note(note: state.note, transactionId: state.txHash!));
-      streams.app.snack.add(Snack(
-          positive: true,
-          message: 'Successfully Sent Transaction',
-          copy: state.txHash));
-    } else {
-      streams.app.snack.add(Snack(
-          positive: false,
-          message: 'Unable to Send, Try again Later',
-          copy: broadcastResult.error));
+      // todo: should we do more validation on the txHash?
+      if (broadcastResult.value != null && broadcastResult.error == null) {
+        set(txHash: [...state.txHash ?? [], broadcastResult.value!]);
+        // todo: save note by this txHash here
+        // should this be in a repo?
+        pros.notes.save(
+            Note(note: state.note, transactionId: broadcastResult.value!));
+        streams.app.snack.add(Snack(
+            positive: true,
+            message: 'Successfully Sent Transaction',
+            copy: broadcastResult.value!));
+      } else {
+        streams.app.snack.add(Snack(
+            positive: false,
+            message: 'Unable to Send, Try again Later',
+            copy: broadcastResult.error));
+      }
     }
   }
 }

@@ -48,6 +48,8 @@ import 'comm_balance_view.dart' as _i38;
 import 'dart:typed_data' as _i39;
 import 'comm_transaction_view.dart'
     as _i40;
+import 'comm_unsigned_transaction_result_class.dart'
+    as _i41;
 export 'asset_class.dart';
 export 'asset_metadata_class.dart';
 export 'asset_metadata_history_class.dart';
@@ -392,6 +394,11 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<_i40.TransactionView>) {
       return (data as List)
           .map((e) => deserialize<_i40.TransactionView>(e))
+          .toList() as dynamic;
+    }
+    if (t == List<_i41.UnsignedTransactionResult>) {
+      return (data as List)
+          .map((e) => deserialize<_i41.UnsignedTransactionResult>(e))
           .toList() as dynamic;
     }
     return super.deserialize<T>(data, t);

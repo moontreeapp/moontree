@@ -649,16 +649,17 @@ class _SendState extends State<Send> {
           positive: false));
       return;
     }
-    if (cubit.state.unsigned!.error != null) {
-      streams.app.snack.add(Snack(
-        message: cubit.state.unsigned!.error ??
-            'Unable to make transaction at this time.',
-        positive: false,
-      ));
-      return;
+    for (final unsigned in cubit.state.unsigned ?? []) {
+      if (unsigned.error != null) {
+        streams.app.snack.add(Snack(
+          message: unsigned.error ?? 'Unable to make transaction at this time.',
+          positive: false,
+        ));
+        return;
+      }
     }
     streams.spend.made.add(TransactionNote(
-      txHex: cubit.state.unsigned!.rawHex,
+      txHex: cubit.state.unsigned![0].rawHex,
       note: sendRequest.note,
     ));
     cubit.set(
@@ -727,10 +728,10 @@ class _SendState extends State<Send> {
       Navigator.of(components.routes.routeContext!).pushNamed('/send/checkout');
     } else {
       streams.app.snack.add(Snack(
-          message: 'unable to generate transaction',
-          positive: false,
-          copy: validateMsg.item2,
-          label: 'copy'));
+        message: 'unable to generate transaction',
+        positive: false,
+        copy: validateMsg.item2,
+      ));
     }
   }
 
