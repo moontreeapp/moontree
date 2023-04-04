@@ -11,9 +11,9 @@ class SimpleSendFormState extends CubitState {
   final String memo;
   final String note;
   final String addressName;
-  final UnsignedTransactionResult? unsigned;
-  final wutx.Transaction? signed;
-  final String? txHash;
+  final List<UnsignedTransactionResult>? unsigned;
+  final List<wutx.Transaction>? signed;
+  final List<String>? txHash;
   final SimpleSendCheckoutForm? checkout;
   final bool isSubmitting;
 
@@ -73,9 +73,9 @@ class SimpleSendFormState extends CubitState {
     String? note,
     String? changeAddress,
     String? addressName,
-    UnsignedTransactionResult? unsigned,
-    wutx.Transaction? signed,
-    String? txHash,
+    List<UnsignedTransactionResult>? unsigned,
+    List<wutx.Transaction>? signed,
+    List<String>? txHash,
     SimpleSendCheckoutForm? checkout,
     bool? isSubmitting,
   }) =>

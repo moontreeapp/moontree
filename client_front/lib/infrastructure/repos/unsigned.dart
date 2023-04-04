@@ -6,7 +6,8 @@ import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
-class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
+class UnsignedTransactionRepo
+    extends Repository<List<UnsignedTransactionResult>> {
   late Wallet wallet;
   late Chain chain;
   late Net net;
@@ -34,20 +35,32 @@ class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
     this.wallet = wallet ?? Current.wallet;
   }
 
-  static UnsignedTransactionResult generateFallback(String error) =>
-      UnsignedTransactionResult(
-          error: error,
-          rawHex: '',
-          vinPrivateKeySource: [],
-          vinLockingScriptType: [],
-          changeSource: [],
-          vinScriptOverride: [],
-          vinAssets: [],
-          vinAmounts: [],
-          targetFee: 0);
+  static List<UnsignedTransactionResult> generateFallback(String error) => [
+        UnsignedTransactionResult(
+            error: error,
+            rawHex: '',
+            vinPrivateKeySource: [],
+            vinLockingScriptType: [],
+            changeSource: [],
+            vinScriptOverride: [],
+            vinAssets: [],
+            vinAmounts: [],
+            targetFee: 0)
+      ];
 
   @override
-  Future<UnsignedTransactionResult> fromServer() async =>
+  bool detectServerError(dynamic resultServer) =>
+      (resultServer.length == 1 && resultServer.first.error != null) ||
+      resultServer.length >= 1 && !resultServer.every((e) => e.error == null);
+
+  @override
+  bool detectLocalError(dynamic resultLocal) => resultLocal.length == 0;
+
+  @override
+  String extractError(dynamic resultServer) => resultServer.first.error!;
+
+  @override
+  Future<List<UnsignedTransactionResult>> fromServer() async =>
       UnsignedTransactionCall(
         wallet: wallet,
         chain: chain,
@@ -64,7 +77,7 @@ class UnsignedTransactionRepo extends Repository<UnsignedTransactionResult> {
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  UnsignedTransactionResult? fromLocal() => null;
+  List<UnsignedTransactionResult>? fromLocal() => null;
 
   /// don't save or retrieve unsigned tx, make them anew everytime
   @override
