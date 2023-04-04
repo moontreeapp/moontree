@@ -22,7 +22,7 @@ class BlockWaiter extends Trigger {
   Future<void> subscribeAndNotify(ConnectionStatus _) async {
     await subscribe();
     if (notify) {
-      streams.app.snack.add(Snack(message: 'Successfully Connected'));
+      //streams.app.snack.add(Snack(message: 'Successfully Connected'));
       notify = false;
     }
   }

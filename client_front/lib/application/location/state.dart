@@ -16,14 +16,19 @@ abstract class LocationCubitState extends Equatable {
   /// should replace Current.wallet not included yet because so many back processes need access to it still.
   // final Wallet? wallet;
   // final ChainNet? chainNet; // what chain net am I connected to
+
+  /// the menu (on the home page) is open
+  final bool menuOpen;
+
   const LocationCubitState({
     this.path,
     this.section,
     this.symbol,
+    this.menuOpen = false,
   });
 
   @override
-  List<Object?> get props => [path, section, symbol];
+  List<Object?> get props => [path, section, symbol, menuOpen];
 
   /// these path through functions allow this to be the single source of truth,
   /// for the rest of the front end. Todo: convert frontend to reference this.
@@ -37,5 +42,6 @@ class LocationState extends LocationCubitState {
     super.path,
     super.section,
     super.symbol,
+    super.menuOpen,
   });
 }

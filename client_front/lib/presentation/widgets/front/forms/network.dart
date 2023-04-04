@@ -47,7 +47,7 @@ class _ElectrumNetworkState extends State<ElectrumNetwork> {
         setState(() {});
 
         /// why is this happening here?
-        streams.app.snack.add(Snack(message: 'Successfully Connected'));
+        //streams.app.snack.add(Snack(message: 'Successfully Connected'));
       }
     }));
   }

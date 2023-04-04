@@ -261,8 +261,17 @@ class Sail {
         };
 
   void menu() async {
-    components.cubits.navbar.menuToggle();
-    components.cubits.frontContainer.menuToggle();
+    if (components.cubits.location.state.menuOpen) {
+      components.cubits.navbar.closeMenu();
+      components.cubits.frontContainer.closeMenu();
+      components.cubits.location.update(menuOpen: false);
+    } else {
+      components.cubits.navbar.openMenu();
+      components.cubits.frontContainer.openMenu();
+      components.cubits.location.update(menuOpen: true);
+    }
+    //components.cubits.navbar.menuToggle();
+    //components.cubits.frontContainer.menuToggle();
     // we'd really like to trigger this whenever we lose focus of it...
     components.cubits.title.update(editable: false);
   }
@@ -340,11 +349,8 @@ class Sail {
   /// so far nothing has to react in realtime to the path so, it's just a var.
   /// if/when we need it to notify things, we'll add it to a stream.
   void broadcast(String location, Manifest manifest, String? symbol) =>
-      components.cubits.location.update(
-        path: location,
-        section: manifest.section,
-        symbol: symbol,
-      );
+      components.cubits.location
+          .update(path: location, section: manifest.section, symbol: symbol);
   //latestLocation = location; // streams.app.path.add(location);
 
   String? get latestLocation => components.cubits.location.state.path;
@@ -368,7 +374,7 @@ class Sail {
     // if we're going back home and we came from the menu then show the menu
     if (back &&
         ['/wallet/holdings', '/manage', '/swap'].contains(location) &&
-        components.cubits.backContainer.state.path.startsWith('/menu')) {
+        components.cubits.location.state.menuOpen) {
       components.cubits.frontContainer
           .setHeightTo(height: FrontContainerHeight.min);
       components.cubits.navbar.setHeightTo(height: NavbarHeight.hidden);

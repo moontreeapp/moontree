@@ -36,6 +36,9 @@ class FrontContainerCubit extends Cubit<FrontContainerCubitState>
     }
   }
 
+  void openMenu() => min();
+  void closeMenu() => max();
+
   @override
   void max() async => emit(FrontContainerState(
       containerHeight: FrontContainerHeight.max,

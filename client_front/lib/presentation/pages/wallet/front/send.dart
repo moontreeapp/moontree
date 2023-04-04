@@ -212,18 +212,27 @@ class _SimpleSendState extends State<SimpleSend> {
                           controller: sendAsset,
                           readOnly: true,
                           textInputAction: TextInputAction.next,
-                          decoration: styles.decorations.textField(context,
-                              focusNode: sendAssetFocusNode,
-                              labelText: 'Asset',
-                              hintText: pros.settings.chain.title,
-                              suffixIcon: IconButton(
-                                key: Key('sendAssetDropDown'),
-                                icon: const Padding(
-                                    padding: EdgeInsets.only(right: 14),
-                                    child: Icon(Icons.expand_more_rounded,
-                                        color: Color(0xDE000000))),
-                                onPressed: () => _produceAssetModal(cubit),
-                              )),
+                          prefixIcon: SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: components.icons.assetAvatar(
+                                      holdingView!.symbol,
+                                      net: pros.settings.net))),
+                          //decoration: styles.decorations.textField(context,
+                          //    focusNode: sendAssetFocusNode,
+                          //    labelText: 'Asset',
+                          //    hintText: pros.settings.chain.title,
+                          //    prefixIcon: components.icons.assetAvatar(
+                          //        holdingView!.symbol,
+                          //        net: pros.settings.net)),
+                          suffixIcon: IconButton(
+                              icon: const Padding(
+                                  padding: const EdgeInsets.only(right: 14),
+                                  child: Icon(Icons.expand_more_rounded,
+                                      color: AppColors.black60)),
+                              onPressed: () => _produceAssetModal(cubit)),
                           onTap: () => _produceAssetModal(cubit),
                           onChanged: (String value) {},
                           onEditingComplete: () async {
@@ -355,7 +364,7 @@ class _SimpleSendState extends State<SimpleSend> {
                               icon: const Padding(
                                   padding: const EdgeInsets.only(right: 14),
                                   child: Icon(Icons.expand_more_rounded,
-                                      color: Color(0xDE000000))),
+                                      color: AppColors.black60)),
                               onPressed: () => _produceFeeModal(cubit)),
                           onChanged: (String newValue) {
                             //sendFee.text = newValue; //necessary?

@@ -13,6 +13,7 @@ class DecorationComponents {
     String? errorText,
     Widget? suffixIcon,
     String? suffixText,
+    Widget? prefixIcon,
     TextStyle? helperStyle,
     TextStyle? suffixStyle,
     FocusNode? focusNode,
@@ -20,6 +21,7 @@ class DecorationComponents {
     bool enabled = true, // be sure to set the field to enabled: false
   }) =>
       InputDecoration(
+        prefixIcon: prefixIcon,
         focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: const BorderSide(color: AppColors.error, width: 2)),

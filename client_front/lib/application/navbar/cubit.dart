@@ -85,4 +85,7 @@ class NavbarCubit extends Cubit<NavbarCubitState> {
         return hidden();
     }
   }
+
+  void openMenu() => hidden();
+  void closeMenu() => max();
 }
