@@ -611,16 +611,17 @@ class _SimpleSendState extends State<SimpleSend> {
           positive: false));
       return;
     }
-    if (cubit.state.unsigned!.error != null) {
-      streams.app.snack.add(Snack(
-        message: cubit.state.unsigned!.error ??
-            'Unable to make transaction at this time.',
-        positive: false,
-      ));
-      return;
+    for (final unsigned in cubit.state.unsigned ?? []) {
+      if (unsigned.error != null) {
+        streams.app.snack.add(Snack(
+          message: unsigned.error ?? 'Unable to make transaction at this time.',
+          positive: false,
+        ));
+        return;
+      }
     }
     streams.spend.made.add(TransactionNote(
-      txHex: cubit.state.unsigned!.rawHex,
+      txHex: cubit.state.unsigned![0].rawHex,
       note: sendRequest.note,
     ));
     cubit.set(
