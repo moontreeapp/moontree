@@ -1,9 +1,12 @@
+import 'package:client_back/streams/app.dart';
+import 'package:client_back/streams/streams.dart';
+import 'package:client_front/application/connection/cubit.dart';
+import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/utils/ext.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
-import 'package:client_back/streams/app.dart';
 import 'package:client_front/application/navbar/cubit.dart';
 import 'package:client_front/application/location/cubit.dart';
 import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
@@ -218,276 +221,96 @@ class NavbarActions extends StatelessWidget {
   const NavbarActions({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<LocationCubit, LocationCubitState>(
-          builder: (BuildContext context, LocationCubitState state) => Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: ((state.section == Section.wallet
-                        ? <Widget>[
-                            if (components.cubits.holdingsView.state
-                                        .holdingsViews.length ==
-                                    1 &&
-                                components.cubits.holdingsView.state
-                                        .holdingsViews.first.sats ==
-                                    0)
-                              Expanded(
-                                  child: BottomButton(
-                                label: 'import',
-                                enabled: true,
-                                onPressed: () => sail.to('/restore/import'),
-                              ))
-                            else
-
-                              //if (walletIsEmpty &&
-                              //    !walletHasTransactions &&
-                              //    streams.import.result.value == null)
-                              //  BottomButton(
-                              //    label: 'import',
-                              //    onPressed: () async {
-                              //      sail.to('/restore/import');
-                              //    },
-                              //  )
-                              //else
-                              Expanded(
-                                  child: BottomButton(
-                                label: 'send',
-                                enabled: components
-                                        .cubits.holdingsView.state.holdingsViews
-                                        .map((e) => e.sats)
-                                        .sum >
-                                    0,
-                                //!walletIsEmpty &&
-                                //    connectionStatus == ConnectionStatus.connected,
-                                //disabledOnPressed: () {
-                                //  if (connectionStatus != ConnectionStatus.connected) {
-                                //    streams.app.snack
-                                //        .add(Snack(message: 'Not connected to network'));
-                                //  } else if (walletIsEmpty) {
-                                //    streams.app.snack.add(Snack(
-                                //        message: 'This wallet has no coin, unable to send.'));
-                                //  } else {
-                                //    streams.app.snack
-                                //        .add(Snack(message: 'Claimed your EVR first.'));
-                                //  }
-                                //},
-                                onPressed: () => sail.to('/wallet/send'),
-                              )),
-                            Expanded(
-                                child: BottomButton(
-                              label: 'receive',
-                              onPressed: () => sail.to('/wallet/receive'),
-                            ))
-                          ]
-                        : state.section == Section.manage
-                            ? <Widget>[
-                                Expanded(
-                                    child: BottomButton(
-                                  label: 'create',
-                                  enabled: false,
-                                  onPressed: () => _produceCreateModal(context),
-                                ))
-                              ]
-                            : <Widget>[
-                                Expanded(
-                                    child: BottomButton(
-                                  enabled: false,
-                                  onPressed: () => _produceCreateModal(context),
-                                )),
-                                Expanded(
-                                    child: BottomButton(
-                                  label: 'sell',
-                                  enabled: false,
-                                  onPressed: () => _produceCreateModal(context),
-                                ))
-                              ]))
-                    .intersperse(const SizedBox(width: 16))
-                    .toList(),
-              ));
+  Widget build(BuildContext context) => BlocBuilder<LocationCubit,
+          LocationCubitState>(
+      builder: (BuildContext context, LocationCubitState locationState) =>
+          BlocBuilder<ConnectionStatusCubit, ConnectionStatusCubitState>(
+              builder: (BuildContext context,
+                      ConnectionStatusCubitState connectionState) =>
+                  BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
+                      builder: (BuildContext context,
+                              HoldingsViewState holdingState) =>
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: ((locationState.section == Section.wallet
+                                    ? <Widget>[
+                                        if (components.cubits.holdingsView.state
+                                                    .holdingsViews.length ==
+                                                1 &&
+                                            components.cubits.holdingsView.state
+                                                    .holdingsViews.first.sats ==
+                                                0)
+                                          Expanded(
+                                              child: BottomButton(
+                                            label: 'import',
+                                            enabled: true,
+                                            onPressed: () =>
+                                                sail.to('/restore/import'),
+                                          ))
+                                        else
+                                          Expanded(
+                                              child: BottomButton(
+                                            label: 'send',
+                                            enabled: connectionState.status ==
+                                                    ConnectionStatus
+                                                        .connected &&
+                                                !components.cubits.holdingsView
+                                                    .walletEmptyCoin,
+                                            disabledOnPressed: () {
+                                              if (connectionState.status !=
+                                                  ConnectionStatus.connected) {
+                                                streams.app.snack.add(Snack(
+                                                    message:
+                                                        'Not connected to network'));
+                                              } else if (components
+                                                  .cubits
+                                                  .holdingsView
+                                                  .walletEmptyCoin) {
+                                                streams.app.snack.add(Snack(
+                                                    message:
+                                                        'This wallet has no coin, unable to send.'));
+                                              }
+                                            },
+                                            onPressed: () =>
+                                                sail.to('/wallet/send'),
+                                          )),
+                                        Expanded(
+                                            child: BottomButton(
+                                          label: 'receive',
+                                          onPressed: () =>
+                                              sail.to('/wallet/receive'),
+                                        ))
+                                      ]
+                                    : locationState.section == Section.manage
+                                        ? <Widget>[
+                                            Expanded(
+                                                child: BottomButton(
+                                              label: 'create',
+                                              enabled: false,
+                                              onPressed: () =>
+                                                  _produceCreateModal(context),
+                                            ))
+                                          ]
+                                        : <Widget>[
+                                            Expanded(
+                                                child: BottomButton(
+                                              enabled: false,
+                                              onPressed: () =>
+                                                  _produceCreateModal(context),
+                                            )),
+                                            Expanded(
+                                                child: BottomButton(
+                                              label: 'sell',
+                                              enabled: false,
+                                              onPressed: () =>
+                                                  _produceCreateModal(context),
+                                            ))
+                                          ]))
+                                .intersperse(const SizedBox(width: 16))
+                                .toList(),
+                          ))));
 
   void _produceCreateModal(BuildContext context) {
     SelectionItems(context, modalSet: SelectionSet.Create).build();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* -------------------------------------------------------------------------- */
-// Old But Good Working Code
-/* -------------------------------------------------------------------------- */
-
-// class _NavbarState extends State<Navbar> {
-//   final int _currentIndex = 0;
-//   final int _tappedIndex = 0;
-//   final Sailor _sail = const Sailor();
-
-//   void updateState() => setState(() {
-//         // _currentIndex = _tappedIndex;
-//       });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocBuilder<NavbarCubit, NavbarCubitState>(
-//       builder: (context, state) {
-//         // Provide Navbar Section View Cubit
-//         final navbarSectionViewCubit =
-//             BlocProvider.of<NavbarSectionViewCubit>(context);
-
-//         if (state is NavbarCubitStateHidden) {
-//           return const SizedBox.shrink();
-//         } else {
-//           return AnimatedContainer(
-//             duration: const Duration(milliseconds: 200),
-//             curve: Curves.linear,
-//             width: MediaQuery.of(context).size.width,
-//             height: state.navbarHeight,
-//             clipBehavior: Clip.antiAlias,
-//             decoration: const BoxDecoration(
-//               boxShadow: [
-//                 BoxShadow(
-//                     color: AppColors.primary,
-//                     offset: Offset(0, 3),
-//                     spreadRadius: 3,
-//                     blurRadius: 3)
-//               ],
-//               color: Colors.white,
-//               borderRadius: BorderRadius.only(
-//                 topLeft: Radius.circular(16),
-//                 topRight: Radius.circular(16),
-//               ),
-//             ),
-//             // After Animation has Completed, Show Navbar's Section Widget
-//             // onEnd: () => print('On End'),
-//             onEnd: () {
-//               if (state is NavbarCubitStateMax) {
-//                 return navbarSectionViewCubit.show();
-//               }
-//             },
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Column(
-//                       // children: [Text('Column 1')],
-//                       children: [
-//                         Container(
-//                           alignment: Alignment.center,
-//                           // decoration: BoxDecoration(color: AppColors.primary),
-//                           height: state is NavbarCubitStateMid
-//                               ? screen.navbarMidHeight
-//                               : maxHeight / 2,
-//                           width: MediaQuery.of(context).size.width / 2,
-
-//                           child: ElevatedButton(
-//                               onPressed: () {}, child: const Text('Send')),
-//                         )
-//                       ],
-//                     ),
-//                     Column(
-//                       children: [
-//                         Column(
-//                           // children: [Text('Column 1')],
-//                           children: [
-//                             Container(
-//                               alignment: Alignment.center,
-//                               // decoration: BoxDecoration(color: AppColors.primary),
-//                               height:
-//                                   state is NavbarCubitStateMid
-//                                       ? screen.navbarMidHeight
-//                                       : maxHeight / 2,
-//                               width: MediaQuery.of(context).size.width / 2,
-//                               child: ElevatedButton(
-//                                   onPressed: () {},
-//                                   child: const Text('Receive')),
-//                             )
-//                           ],
-//                         ),
-//                       ],
-//                     )
-//                   ],
-//                 ),
-//                 BlocBuilder<NavbarSectionViewCubit, NavbarSectionViewState>(
-//                   builder: (context, navbarViewState) {
-//                     if (navbarViewState.showSections == true) {
-//                       return const AnimatedOpacity(
-//                         opacity: 1.0,
-//                         duration: Duration(milliseconds: 100),
-//                         child: NavbarMax(),
-//                       );
-//                     } else {
-//                       return const AnimatedOpacity(
-//                         opacity: 0,
-//                         duration: Duration(milliseconds: 0),
-//                         // Returns Empty SizedBox So That Nothing Is Displayed
-//                         child: SizedBox.shrink(),
-//                         // onEnd: () => navbarHeightCubit.mid(),
-//                       );
-//                     }
-//                   },
-//                 )
-//               ],
-//             ),
-//           );
-//         }
-//       },
-//     );
-//   }
-// }
-
-// class NavbarMax extends StatelessWidget {
-//   const NavbarMax({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//       children: [
-//         Column(
-//           children: [
-//             Container(
-//               alignment: Alignment.center,
-//               // decoration: BoxDecoration(color: Colors.green),
-//               height: maxHeight / 2,
-//               width: MediaQuery.of(context).size.width / 3,
-//               child: const Icon(Icons.money),
-//             )
-//           ],
-//         ),
-//         Column(
-//           children: [
-//             Container(
-//               alignment: Alignment.center,
-//               // decoration: BoxDecoration(color: Colors.green),
-//               height: maxHeight / 2,
-//               width: MediaQuery.of(context).size.width / 3,
-//               child: const Icon(Icons.add),
-//             )
-//           ],
-//         ),
-//         Column(
-//           children: [
-//             Container(
-//               alignment: Alignment.center,
-//               // decoration: BoxDecoration(color: Colors.green),
-//               height: maxHeight / 2,
-//               width: MediaQuery.of(context).size.width / 3,
-//               child: const Icon(Icons.swap_horiz),
-//             )
-//           ],
-//         ),
-//       ],
-//     );
-//   }
-// }
-

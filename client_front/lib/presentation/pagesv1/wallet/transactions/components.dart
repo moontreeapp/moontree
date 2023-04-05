@@ -1,8 +1,9 @@
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_back/server/src/protocol/protocol.dart';
+import 'package:client_front/application/transactions/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/services/transaction/transaction.dart';
-import 'package:client_front/application/cubits.dart';
+//import 'package:client_front/application/cubits.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';

@@ -1,4 +1,4 @@
-import 'package:client_back/streams/client.dart';
+import 'package:client_front/application/connection/cubit.dart';
 import 'package:serverpod_client/serverpod_client.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
@@ -26,20 +26,25 @@ class SubscriptionService {
       client: client,
       listener: (connectionState) {
         print('connection state: ${connectionState.status}');
-        // todo: make connection light dependent upon this (cubit)
-        // StreamingConnectionStatus.connecting
-        // StreamingConnectionStatus.connected
-        // StreamingConnectionStatus.waitingToRetry
         if (connectionState.status == StreamingConnectionStatus.connected) {
-          streams.client.connected.add(ConnectionStatus.connected);
+          if (!streams.app.splash.value) {
+            components.cubits.connection
+                .update(status: ConnectionStatus.connected);
+          }
         } else if (connectionState.status ==
                 StreamingConnectionStatus.connecting ||
             connectionState.status ==
                 StreamingConnectionStatus.waitingToRetry) {
-          streams.client.connected.add(ConnectionStatus.connecting);
+          if (!streams.app.splash.value) {
+            components.cubits.connection
+                .update(status: ConnectionStatus.connecting);
+          }
         } else if (connectionState.status ==
             StreamingConnectionStatus.disconnected) {
-          streams.client.connected.add(ConnectionStatus.disconnected);
+          if (!streams.app.splash.value) {
+            components.cubits.connection
+                .update(status: ConnectionStatus.disconnected);
+          }
         }
       },
     );

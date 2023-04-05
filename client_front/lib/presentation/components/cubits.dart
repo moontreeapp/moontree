@@ -29,6 +29,7 @@ class GlobalCubits {
   final LoadingViewCubit loadingView = LoadingViewCubit();
   final ImportFormCubit import = ImportFormCubit();
   final LocationCubit location = LocationCubit();
+  final ConnectionStatusCubit connection = ConnectionStatusCubit();
 
   GlobalCubits();
 }

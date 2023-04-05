@@ -1,113 +1,77 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_back/streams/app.dart';
-import 'package:client_back/streams/client.dart';
+import 'package:client_front/application/connection/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/widgets/other/fading.dart';
-
 import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:client_front/presentation/widgets/front/choices/blockchain_choice.dart'
-    show blockchainOptions, navToBlockchain;
+    show navToBlockchain;
 
-class ConnectionLight extends StatefulWidget {
+class ConnectionLight extends StatelessWidget {
   const ConnectionLight({Key? key}) : super(key: key);
 
   @override
-  _ConnectionLightState createState() => _ConnectionLightState();
-}
-
-class _ConnectionLightState extends State<ConnectionLight>
-    with TickerProviderStateMixin {
-  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
-  ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
-  Color connectionStatusColor = AppColors.error;
-  Map<ConnectionStatus, Color> connectionColor = <ConnectionStatus, Color>{
-    ConnectionStatus.connected: AppColors.success,
-    ConnectionStatus.connecting: AppColors.yellow,
-    ConnectionStatus.disconnected: AppColors.error,
-  };
-  /* alternative */
-  bool connectionBusy = false;
-  /* blinking animations */
-  //bool busy = false;
-
-  @override
-  void initState() {
-    super.initState();
-    listeners.add(streams.client.connected.listen((ConnectionStatus value) {
-      if (value != connectionStatus) {
-        setState(() {
-          connectionStatus = value;
-          connectionStatusColor = connectionColor[value]!;
-        });
-      }
-    }));
-    listeners.add(streams.client.busy.listen((bool value) async {
-      if (value != connectionBusy) {
-        setState(() => connectionBusy = value);
-      }
-    }));
-  }
-
-  @override
-  void dispose() {
-    for (final StreamSubscription<dynamic> listener in listeners) {
-      listener.cancel();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final AnimatedContainer circleIcon = AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      height: 8,
-      width: 8,
-      decoration: BoxDecoration(
-        color: statusColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
-    return FadeIn(
-        duration: animation.slowFadeDuration,
-        child: GestureDetector(
-          onTap: navToBlockchain,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 400),
-            alignment: Alignment.center,
-            padding: EdgeInsets.zero,
-            child: pros.settings.chain == Chain.none
-                ? IconButton(
-                    splashRadius: 26,
-                    padding: EdgeInsets.zero,
-                    icon: circleIcon,
-                    onPressed: navToBlockchain,
-                  )
-                : Stack(alignment: Alignment.center, children: <Widget>[
-                    ColorFiltered(
-                        colorFilter:
-                            ColorFilter.mode(statusColor, BlendMode.srcIn),
-                        child: components.icons.assetAvatar(
-                          pros.settings.chain.symbol,
-                          net: pros.settings.net,
-                          height: 28,
-                          width: 28,
-                        )),
-                    components.icons.assetAvatar(pros.settings.chain.symbol,
-                        net: pros.settings.net, height: 24, width: 24),
-                  ]),
-          ),
-        ));
+    return BlocBuilder<ConnectionStatusCubit, ConnectionStatusCubitState>(
+        builder: (BuildContext context, ConnectionStatusCubitState state) {
+      final Color connectionStatusColor = statusColor(state);
+      return FadeIn(
+          duration: animation.slowFadeDuration,
+          child: GestureDetector(
+            onTap: navToBlockchain,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              alignment: Alignment.center,
+              padding: EdgeInsets.zero,
+              child: pros.settings.chain == Chain.none
+                  ? IconButton(
+                      splashRadius: 26,
+                      padding: EdgeInsets.zero,
+                      icon: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        height: 8,
+                        width: 8,
+                        decoration: BoxDecoration(
+                          color: connectionStatusColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: navToBlockchain,
+                    )
+                  : Stack(alignment: Alignment.center, children: <Widget>[
+                      ColorFiltered(
+                          colorFilter: ColorFilter.mode(
+                              connectionStatusColor, BlendMode.srcIn),
+                          child: components.icons.assetAvatar(
+                            pros.settings.chain.symbol,
+                            net: pros.settings.net,
+                            height: 28,
+                            width: 28,
+                          )),
+                      components.icons.assetAvatar(pros.settings.chain.symbol,
+                          net: pros.settings.net, height: 24, width: 24),
+                    ]),
+            ),
+          ));
+    });
   }
 
-  Color get statusColor => connectionStatus == ConnectionStatus.connected &&
-          connectionBusy // && busy
-      ? AppColors.logoGreen
-      : connectionStatusColor;
+  Color statusColor(ConnectionStatusCubitState state) {
+    if (state.status == ConnectionStatus.connected && !state.busy) {
+      return AppColors.logoGreen;
+    } else if (state.status == ConnectionStatus.connected && state.busy) {
+      return AppColors.lightGreen;
+    } else if (state.status == ConnectionStatus.connecting) {
+      return AppColors.yellow;
+    } else if (state.status == ConnectionStatus.disconnected) {
+      return AppColors.error;
+    }
+    return AppColors.error;
+  }
 }
 
 class SpoofedConnectionLight extends StatelessWidget {

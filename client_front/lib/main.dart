@@ -229,6 +229,8 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.import),
       BlocProvider<LocationCubit>(
           create: (context) => components.cubits.location),
+      BlocProvider<ConnectionStatusCubit>(
+          create: (context) => components.cubits.connection),
       BlocProvider<ReceiveViewCubit>(
           create: (BuildContext context) => components.cubits.receiveView),
     ];

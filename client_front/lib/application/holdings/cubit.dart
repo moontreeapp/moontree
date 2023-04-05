@@ -3,6 +3,7 @@ import 'package:client_back/utilities/assets.dart';
 import 'package:bloc/bloc.dart';
 import 'package:client_front/infrastructure/repos/holdings.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:client_front/presentation/utils/ext.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
@@ -126,6 +127,10 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
 
   BalanceView? holdingsViewFor(String symbol) =>
       state.holdingsViews.where((e) => e.symbol == symbol).firstOrNull;
+
+  bool get walletEmpty => state.holdingsViews.map((e) => e.sats).sum == 0;
+  bool get walletEmptyCoin =>
+      state.holdingsViews.where((e) => e.isCoin).map((e) => e.sats).sum == 0;
 
 // we want to group certain assets into one view so we arrange them into this:
 }
