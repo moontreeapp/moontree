@@ -1,3 +1,4 @@
+import 'package:client_front/presentation/utils/ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
@@ -222,36 +223,50 @@ class NavbarActions extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: ((state.section == Section.wallet
                         ? <Widget>[
-                            //if (walletIsEmpty &&
-                            //    !walletHasTransactions &&
-                            //    streams.import.result.value == null)
-                            //  BottomButton(
-                            //    label: 'import',
-                            //    onPressed: () async {
-                            //      sail.to('/restore/import');
-                            //    },
-                            //  )
-                            //else
-                            Expanded(
-                                child: BottomButton(
-                              label: 'send',
-                              enabled: true,
-                              //!walletIsEmpty &&
-                              //    connectionStatus == ConnectionStatus.connected,
-                              //disabledOnPressed: () {
-                              //  if (connectionStatus != ConnectionStatus.connected) {
-                              //    streams.app.snack
-                              //        .add(Snack(message: 'Not connected to network'));
-                              //  } else if (walletIsEmpty) {
-                              //    streams.app.snack.add(Snack(
-                              //        message: 'This wallet has no coin, unable to send.'));
-                              //  } else {
-                              //    streams.app.snack
-                              //        .add(Snack(message: 'Claimed your EVR first.'));
-                              //  }
-                              //},
-                              onPressed: () => sail.to('/wallet/send'),
-                            )),
+                            if (components.cubits.holdingsView.state
+                                        .holdingsViews.length ==
+                                    1 &&
+                                components.cubits.holdingsView.state
+                                        .holdingsViews.first.sats ==
+                                    0)
+                              Expanded(
+                                  child: BottomButton(
+                                label: 'import',
+                                enabled: true,
+                                onPressed: () => sail.to('/restore/import'),
+                              ))
+                            else
+
+                              //if (walletIsEmpty &&
+                              //    !walletHasTransactions &&
+                              //    streams.import.result.value == null)
+                              //  BottomButton(
+                              //    label: 'import',
+                              //    onPressed: () async {
+                              //      sail.to('/restore/import');
+                              //    },
+                              //  )
+                              //else
+                              Expanded(
+                                  child: BottomButton(
+                                label: 'send',
+                                enabled: true,
+                                //!walletIsEmpty &&
+                                //    connectionStatus == ConnectionStatus.connected,
+                                //disabledOnPressed: () {
+                                //  if (connectionStatus != ConnectionStatus.connected) {
+                                //    streams.app.snack
+                                //        .add(Snack(message: 'Not connected to network'));
+                                //  } else if (walletIsEmpty) {
+                                //    streams.app.snack.add(Snack(
+                                //        message: 'This wallet has no coin, unable to send.'));
+                                //  } else {
+                                //    streams.app.snack
+                                //        .add(Snack(message: 'Claimed your EVR first.'));
+                                //  }
+                                //},
+                                onPressed: () => sail.to('/wallet/send'),
+                              )),
                             Expanded(
                                 child: BottomButton(
                               label: 'receive',

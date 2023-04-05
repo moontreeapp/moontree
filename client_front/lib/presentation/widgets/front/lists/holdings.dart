@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:math';
+import 'package:client_front/presentation/utils/ext.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
@@ -14,10 +15,6 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-
-extension FunctionsForBalanceView on BalanceView {
-  int get sats => satsConfirmed + satsUnconfirmed;
-}
 
 class HoldingList extends StatefulWidget {
   final ScrollController? scrollController;
