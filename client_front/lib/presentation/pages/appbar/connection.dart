@@ -25,7 +25,7 @@ class ConnectionLight extends StatelessWidget {
           child: GestureDetector(
             onVerticalDragDown: (_) {
               print('testing');
-              streams.app.snack.add(Snack(message: 'snickity snack'));
+              streams.app.snack.add(Snack(message: state.status.name));
             },
             onTap: navToBlockchain,
             child: AnimatedContainer(
