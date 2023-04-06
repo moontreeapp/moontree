@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -70,41 +71,50 @@ class _SnackBarViewerState extends State<SnackBarViewer> {
     }
 
     final NavHeight navHeight;
-    if (streams.app.page.value == 'Home' && streams.app.setting.value == null) {
+    if (components.cubits.navbar.state.currentNavbarHeight ==
+        NavbarHeight.max) {
       navHeight = NavHeight.short; // should be tall
-    } else if (streams.app.page.value == 'Home' &&
-        streams.app.setting.value != null) {
+    } else if (components.cubits.navbar.state.currentNavbarHeight ==
+        NavbarHeight.hidden) {
       navHeight = NavHeight.none;
-    } else if (<String>['Support'].contains(streams.app.page.value)) {
-      navHeight = NavHeight.tall;
-    } else if (<String>[
-      'Setup',
-      'Createlogin',
-      'Login',
-      'Locked',
-      'Change',
-      'Mining',
-      'Database',
-      'Developer',
-      'Advanced',
-      'Addresses',
-      'Transaction',
-    ].contains(streams.app.page.value)) {
-      navHeight = NavHeight.none;
-    } else if (<String>[
-      'Blockchain',
-      'Import',
-      'Sweep',
-      'Backup',
-      'Backupconfirm',
-      'Receive',
-      'Transactions',
-      'Send',
-      'Checkout',
-    ].contains(streams.app.page.value)) {
+    } else if (components.cubits.navbar.state.currentNavbarHeight ==
+        NavbarHeight.mid) {
       navHeight = NavHeight.short;
     } else {
-      navHeight = streams.app.navHeight.value;
+      if (components.cubits.navbar.state.currentNavbarHeight ==
+          NavbarHeight.same) {
+        if (<String>[
+          'Setup',
+          'Createlogin',
+          'Login',
+          'Locked',
+          'Change',
+          'Mining',
+          'Database',
+          'Developer',
+          'Advanced',
+          'Addresses',
+          'Transaction',
+        ].contains(streams.app.page.value)) {
+          navHeight = NavHeight.none;
+        } else if (<String>[
+          'Blockchain',
+          'Import',
+          'Sweep',
+          'Backup',
+          'Backupconfirm',
+          'Receive',
+          'Transactions',
+          'Send',
+          'Checkout',
+        ].contains(streams.app.page.value)) {
+          navHeight = NavHeight.short;
+        } else {
+          navHeight = NavHeight.short;
+        }
+      } else {
+        navHeight = NavHeight.short;
+      }
     }
 
     final bool copy = services.developer.developerMode && snack!.copy != null;

@@ -1,3 +1,4 @@
+import 'package:client_back/streams/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +23,10 @@ class ConnectionLight extends StatelessWidget {
       return FadeIn(
           duration: animation.slowFadeDuration,
           child: GestureDetector(
+            onVerticalDragDown: (_) {
+              print('testing');
+              streams.app.snack.add(Snack(message: 'snickity snack'));
+            },
             onTap: navToBlockchain,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 400),
