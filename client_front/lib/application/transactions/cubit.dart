@@ -97,13 +97,12 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       if (checkCleared && cleared) {
         return;
       }
-      // endpoint failure
-      //if (state.security.isCoin) {
-      //  metadataView?.totalSupply = (await CirculatingSatsRepo(
-      //    security: state.security,
-      //  ).get())
-      //      .value;
-      //}
+      if (state.security.isCoin) {
+        metadataView?.totalSupply = (await CirculatingSatsRepo(
+          security: state.security,
+        ).get())
+            .value;
+      }
       set(
         metadataView: metadataView,
         isSubmitting: false,

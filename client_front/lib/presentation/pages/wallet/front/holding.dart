@@ -339,7 +339,7 @@ class MetadataView extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyText1,
             ),
             trailing: SelectableText(
-              securityAsset.totalSupply.toCommaString(),
+              securityAsset.totalSupply.asCoin.toSatsCommaString(),
               style: Theme.of(context).textTheme.bodyText1,
             ),
           ),
