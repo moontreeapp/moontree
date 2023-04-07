@@ -1,6 +1,6 @@
 import 'dart:math';
 
-
+import 'package:client_front/infrastructure/repos/circulating_sats.dart';
 import 'package:collection/src/iterable_extensions.dart' show IterableExtension;
 import 'package:rxdart/rxdart.dart';
 import 'package:bloc/bloc.dart';
@@ -97,6 +97,13 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
       if (checkCleared && cleared) {
         return;
       }
+      // endpoint failure
+      //if (state.security.isCoin) {
+      //  metadataView?.totalSupply = (await CirculatingSatsRepo(
+      //    security: state.security,
+      //  ).get())
+      //      .value;
+      //}
       set(
         metadataView: metadataView,
         isSubmitting: false,

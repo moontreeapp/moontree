@@ -333,7 +333,9 @@ class MetadataView extends StatelessWidget {
         children = <Widget>[
           ListTile(
             title: Text(
-              'Total Supply:',
+              cubit.state.security.isCoin
+                  ? 'Cirulcating Supply:'
+                  : 'Total Supply:',
               style: Theme.of(context).textTheme.bodyText1,
             ),
             trailing: SelectableText(
