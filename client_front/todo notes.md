@@ -2,9 +2,9 @@ DONE - send button disabled always.
 
 DONE - send button always send.
 
-on change wallet, go to holdings screen.
+DONE - name wallet change only happens on menu touch.
 
-name wallet change only happens on menu touch.
+DONE - on change wallet, go to holdings screen.
 
 snack bar should be snack layer, behind nav.
 

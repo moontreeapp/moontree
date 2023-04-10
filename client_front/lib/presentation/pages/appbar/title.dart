@@ -259,6 +259,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
               }
               await switchWallet(wallet.id);
               setState(() {});
+              sail.menu(open: false);
               return;
             },
             // todo: show chain icons for what blockchains this wallet has assets on here
@@ -394,6 +395,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                         }
                       }
                       setState(() {}); // recalculates the name of the wallet.
+                      sail.menu(open: false);
                     }
                   },
                   child:

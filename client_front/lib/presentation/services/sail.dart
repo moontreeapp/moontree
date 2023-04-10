@@ -260,15 +260,19 @@ class Sail {
           Section.settings: []
         };
 
-  void menu() async {
-    if (components.cubits.location.state.menuOpen) {
+  void menu({bool? open}) async {
+    if ((open == null && components.cubits.location.state.menuOpen) ||
+        open == false) {
       components.cubits.navbar.closeMenu();
       components.cubits.frontContainer.closeMenu();
       components.cubits.location.update(menuOpen: false);
-    } else {
+    } else if ((open == null && !components.cubits.location.state.menuOpen) ||
+        open == true) {
       components.cubits.navbar.openMenu();
       components.cubits.frontContainer.openMenu();
       components.cubits.location.update(menuOpen: true);
+    } else {
+      return;
     }
     //components.cubits.navbar.menuToggle();
     //components.cubits.frontContainer.menuToggle();
