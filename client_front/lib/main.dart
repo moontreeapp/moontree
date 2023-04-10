@@ -174,14 +174,10 @@ class HomePage extends StatelessWidget {
             ] +
             const <Widget>[
               ExtraContainer(),
-              //SnackbarLayer(),
               Navbar(),
               BottomModalSheet(),
               MessageModalLayer(),
               LoadingLayer(),
-
-              /// must merge both implementations
-              //LoadingLayerV1(),
               TutorialLayer(),
             ],
       ),
@@ -202,8 +198,6 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.transactionView),
       BlocProvider<HoldingsViewCubit>(
           create: (context) => components.cubits.holdingsView),
-      //BlocProvider<LoadingViewCubit>(
-      //    create: (context) => components.cubits.loadingView),
       // v2
       BlocProvider<TitleCubit>(create: (context) => components.cubits.title),
       BlocProvider<BackContainerCubit>(
