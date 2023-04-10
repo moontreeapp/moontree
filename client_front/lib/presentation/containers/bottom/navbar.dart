@@ -86,7 +86,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: shapes.topRoundedBorder16,
-                      boxShadow: shadows.navBar,
+                      boxShadow: shadows.navbar,
                     ),
                     child: Column(
                       //mainAxisAlignment: MainAxisAlignment.spaceBetween,

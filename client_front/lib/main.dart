@@ -213,6 +213,8 @@ List<BlocProviderSingleChildWidget> get providers => [
       BlocProvider<ExtraContainerCubit>(
           create: (context) => components.cubits.extraContainer),
       BlocProvider<NavbarCubit>(create: (context) => components.cubits.navbar),
+      BlocProvider<SnackbarCubit>(
+          create: (context) => components.cubits.snackbar),
       BlocProvider<BottomModalSheetCubit>(
           create: (context) => components.cubits.bottomModalSheet),
       BlocProvider<MessageModalCubit>(

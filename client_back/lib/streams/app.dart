@@ -1,7 +1,8 @@
-import 'package:client_back/client_back.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:equatable/equatable.dart';
 import 'package:moontree_utils/moontree_utils.dart'
     show ReadableIdentifierExtension;
+import 'package:client_back/client_back.dart';
 
 enum NavHeight { tall, short, none }
 
@@ -95,7 +96,17 @@ class SwapSideStreams {
     ..name = 'app.swap.asset';
 }
 
-class Snack {
+class Snack with EquatableMixin {
+  final String message;
+  // not used
+  final bool positive;
+  final String? details; // if they click on the message, popup details
+  final String? label; // link label
+  final String? link;
+  final String? copy;
+  final Map<String, dynamic>? arguments;
+  final bool showOnLogin;
+
   Snack({
     required this.message,
     this.positive = true,
@@ -107,15 +118,18 @@ class Snack {
     this.showOnLogin = false,
   });
 
-  final String message;
-  // not used
-  final bool positive;
-  final String? details; // if they click on the message, popup details
-  final String? label; // link label
-  final String? link;
-  final String? copy;
-  final Map<String, dynamic>? arguments;
-  final bool showOnLogin;
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        message,
+        positive,
+        details,
+        label,
+        link,
+        copy,
+        arguments,
+        showOnLogin,
+      ];
 
   @override
   String toString() {

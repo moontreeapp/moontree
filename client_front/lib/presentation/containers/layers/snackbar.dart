@@ -1,12 +1,14 @@
-import 'package:client_front/application/modal/message/cubit.dart';
-import 'package:client_front/presentation/widgets/other/fading.dart';
+import 'package:client_front/presentation/widgets/other/sliding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_front/application/snackbar/cubit.dart';
 import 'package:client_front/presentation/utils/animation.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart'
     show FrontCurve;
-import 'package:client_front/presentation/components/shapes.dart' as shapes;
-import 'package:client_front/presentation/theme/theme.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+import 'package:client_front/presentation/components/shadows.dart' as shadows;
+import 'package:client_front/presentation/services/services.dart' show screen;
 
 class SnackbarLayer extends StatefulWidget {
   const SnackbarLayer({Key? key}) : super(key: key);
@@ -18,7 +20,7 @@ class SnackbarLayer extends StatefulWidget {
 class SnackbarLayerState extends State<SnackbarLayer>
     with SingleTickerProviderStateMixin {
   late AnimationController animationController;
-  late MessageModalCubit cubit;
+  late SnackbarCubit cubit;
 
   @override
   void initState() {
@@ -37,80 +39,34 @@ class SnackbarLayerState extends State<SnackbarLayer>
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<MessageModalCubit, MessageModalCubitState>(
-          //bloc: cubit..enter(),
-          builder: (BuildContext context, MessageModalCubitState state) {
-        if (state.title != null ||
-            state.content != null ||
-            state.child != null) {
-          return FadeIn(
+      BlocBuilder<SnackbarCubit, SnackbarCubitState>(
+          builder: (BuildContext context, SnackbarCubitState state) {
+        final percent =
+            components.cubits.navbar.state.height / screen.app.height;
+        print(percent);
+        if (state.snack != null) {
+          return SlideUp(
+              heightPercentage: percent + .06,
               child: GestureDetector(
-                  /* for testing - remove onTap later */
-                  //onTap: cubit.hide,
+                  onTap: components.cubits.snackbar.clear,
                   behavior: HitTestBehavior.opaque,
                   child: FrontCurve(
                       fuzzyTop: false,
-                      frontLayerBoxShadow: const <BoxShadow>[],
-                      color: const Color(0xFF000000)
-                          .withOpacity(1 - .38), // AppColors.white87,,
-                      child: AlertDialog(
-                          elevation: 0,
-                          shape: shapes.rounded8,
-                          title: state.title == null
-                              ? null
-                              : Text(state.title!,
-                                  style: Theme.of(context).textTheme.headline2),
-                          content: state.child != null && state.content != null
-                              ? Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                (24 - 24 - 40 - 40),
-                                        child: Text(state.content!,
-                                            overflow: TextOverflow.fade,
-                                            softWrap: true,
-                                            maxLines: 10,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2!
-                                                .copyWith(
-                                                    color: AppColors.black38))),
-                                    state.child!,
-                                  ],
-                                )
-                              : state.child ??
-                                  (state.content != null
-                                      ? SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              (24 - 24 - 40 - 40),
-                                          child: Text(state.content!,
-                                              overflow: TextOverflow.fade,
-                                              softWrap: true,
-                                              maxLines: 10,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText2!
-                                                  .copyWith(
-                                                      color:
-                                                          AppColors.black38)))
-                                      : null),
-                          actions: <Widget>[
-                            for (String key in state.behaviors.keys)
-                              TextButton(
-                                  onPressed: state.behaviors[key],
-                                  child: Text(key,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .button!
-                                          .copyWith(
-                                              fontWeight: FontWeights.semiBold,
-                                              color: AppColors.primary)))
-                          ]))));
+                      frontLayerBoxShadow: shadows.snackbar,
+                      color: const Color(0xFF000000),
+                      child: Text(state.snack?.message ?? 'message'))));
         }
+        if (state.prior != null)
+          return SlideUp(
+              enter: false,
+              heightPercentage: percent + .06,
+              child: GestureDetector(
+                  onTap: components.cubits.snackbar.clear,
+                  behavior: HitTestBehavior.opaque,
+                  child: FrontCurve(
+                      fuzzyTop: false,
+                      color: const Color(0xFF000000),
+                      child: Text(state.prior?.message ?? 'message'))));
         return SizedBox.shrink();
       });
 }

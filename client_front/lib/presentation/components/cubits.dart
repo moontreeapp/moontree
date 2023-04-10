@@ -23,6 +23,7 @@ class GlobalCubits {
   final BackContainerCubit backContainer = BackContainerCubit();
   final FrontContainerCubit frontContainer = FrontContainerCubit();
   final ExtraContainerCubit extraContainer = ExtraContainerCubit();
+  final SnackbarCubit snackbar = SnackbarCubit();
   final NavbarCubit navbar = NavbarCubit();
   final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();
   final MessageModalCubit messageModal = MessageModalCubit();

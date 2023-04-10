@@ -1,37 +1,16 @@
 part of 'cubit.dart';
 
 abstract class SnackbarCubitState extends Equatable {
-  final bool showSections;
-  final double height;
-  final SnackbarHeight currentSnackbarHeight;
-  final SnackbarHeight previousSnackbarHeight;
+  final Snack? snack;
+  final Snack? prior;
 
-  const SnackbarCubitState(
-    this.showSections,
-    this.height,
-    this.previousSnackbarHeight,
-    this.currentSnackbarHeight,
-  );
+  const SnackbarCubitState(this.snack, this.prior);
 
   @override
-  List<Object> get props => [
-        showSections,
-        height,
-        previousSnackbarHeight,
-        currentSnackbarHeight,
-      ];
+  List<Object?> get props => [snack, prior];
 }
 
 class SnackbarState extends SnackbarCubitState {
-  const SnackbarState({
-    required bool showSections,
-    required double height,
-    required SnackbarHeight previousSnackbarHeight,
-    required SnackbarHeight currentSnackbarHeight,
-  }) : super(
-          showSections,
-          height,
-          previousSnackbarHeight,
-          currentSnackbarHeight,
-        );
+  const SnackbarState({required Snack? snack, required Snack? prior})
+      : super(snack, prior);
 }

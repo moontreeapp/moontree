@@ -81,11 +81,13 @@ class SlideUp extends StatefulWidget {
   final Widget child;
   final Duration duration;
   final bool enter;
+  final double heightPercentage;
 
   const SlideUp({
     required this.child,
     this.duration = animation.slideDuration,
     this.enter = true,
+    this.heightPercentage = .5,
   });
 
   @override
@@ -94,24 +96,15 @@ class SlideUp extends StatefulWidget {
 
 class _SlideUpState extends State<SlideUp> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<Offset> _animationUp;
+  late Animation<Offset> _animationUp;
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
     );
-
-    _animationUp = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOutCubic,
-    ));
   }
 
   @override
@@ -122,11 +115,19 @@ class _SlideUpState extends State<SlideUp> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    _animationUp = Tween<Offset>(
+      begin: Offset(0, 1),
+      end: Offset(0, 1 - widget.heightPercentage),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOutCubic,
+    ));
     if (widget.enter) {
       _controller.forward();
     } else {
       _controller.reverse();
     }
+
     return Stack(
       children: [
         SlideTransition(

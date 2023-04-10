@@ -18,3 +18,4 @@ export 'package:client_front/application/login/cubit.dart';
 export 'package:client_front/application/location/cubit.dart';
 export 'package:client_front/application/import/cubit.dart';
 export 'package:client_front/application/connection/cubit.dart';
+export 'package:client_front/application/snackbar/cubit.dart';
