@@ -7,6 +7,8 @@ abstract class ConnectionStatusCubitState extends Equatable {
 
   @override
   List<Object?> get props => [status, busy];
+
+  bool get isConnected => status == ConnectionStatus.connected;
 }
 
 class ConnectionStatusState extends ConnectionStatusCubitState {

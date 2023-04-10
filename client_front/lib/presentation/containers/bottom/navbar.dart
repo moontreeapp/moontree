@@ -251,14 +251,15 @@ class NavbarActions extends StatelessWidget {
                                           Expanded(
                                               child: BottomButton(
                                             label: 'send',
-                                            enabled: connectionState.status ==
-                                                    ConnectionStatus
-                                                        .connected &&
-                                                !components.cubits.holdingsView
-                                                    .walletEmptyCoin,
+                                            enabled:
+                                                connectionState.isConnected &&
+                                                    !components
+                                                        .cubits
+                                                        .holdingsView
+                                                        .walletEmptyCoin,
                                             disabledOnPressed: () {
-                                              if (connectionState.status !=
-                                                  ConnectionStatus.connected) {
+                                              if (!connectionState
+                                                  .isConnected) {
                                                 streams.app.snack.add(Snack(
                                                     message:
                                                         'Not connected to network'));
