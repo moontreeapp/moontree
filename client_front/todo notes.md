@@ -12,14 +12,16 @@ snack bar should show last.
 
 tx details minimize tx font on long names.
 
-animations always first, then data gathering.
+max height on draggable layer should be limited to mid if not many items.
 
-receive screen on tx list
+receive screen on tx list.
 
 tx list to details blank screen first.
 
-max height on draggable layer should be limited to mid if not many items.
+animations always first, then data gathering.
 
-holding to tx list too choppy
+holding to tx list too choppy, animate first.
+
+add tutorial system.
 
 not locking (x min inactive timeout).

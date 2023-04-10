@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'package:client_front/presentation/containers/bottom/modal.dart';
-import 'package:client_front/presentation/containers/layers/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,17 +9,13 @@ import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:client_back/streams/streams.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
+import 'package:client_front/infrastructure/services/subscription.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/pages.dart' as pages;
-import 'package:client_front/presentation/containers/bottom/navbar.dart';
-import 'package:client_front/presentation/containers/content/extra.dart';
-import 'package:client_front/presentation/containers/content/content.dart';
-import 'package:client_front/presentation/containers/layers/loading.dart';
-import 'package:client_front/presentation/containers/layers/tutorial.dart';
-import 'package:client_front/infrastructure/services/subscription.dart';
+import 'package:client_front/presentation/containers/containers.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 //import 'package:flutter/foundation.dart' show kDebugMode;
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -180,6 +174,7 @@ class HomePage extends StatelessWidget {
             ] +
             const <Widget>[
               ExtraContainer(),
+              SnackbarLayer(),
               Navbar(),
               BottomModalSheet(),
               MessageModalLayer(),
