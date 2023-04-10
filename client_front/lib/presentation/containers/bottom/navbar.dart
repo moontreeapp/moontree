@@ -234,47 +234,45 @@ class NavbarActions extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: ((locationState.section == Section.wallet
                                     ? <Widget>[
-                                        if (components.cubits.holdingsView.state
-                                                    .holdingsViews.length ==
-                                                1 &&
-                                            components.cubits.holdingsView.state
-                                                    .holdingsViews.first.sats ==
-                                                0)
-                                          Expanded(
-                                              child: BottomButton(
-                                            label: 'import',
-                                            enabled: true,
-                                            onPressed: () =>
-                                                sail.to('/restore/import'),
-                                          ))
-                                        else
-                                          Expanded(
-                                              child: BottomButton(
-                                            label: 'send',
-                                            enabled:
-                                                connectionState.isConnected &&
-                                                    !components
-                                                        .cubits
-                                                        .holdingsView
-                                                        .walletEmptyCoin,
-                                            disabledOnPressed: () {
-                                              if (!connectionState
-                                                  .isConnected) {
-                                                streams.app.snack.add(Snack(
-                                                    message:
-                                                        'Not connected to network'));
-                                              } else if (components
-                                                  .cubits
-                                                  .holdingsView
-                                                  .walletEmptyCoin) {
-                                                streams.app.snack.add(Snack(
-                                                    message:
-                                                        'This wallet has no coin, unable to send.'));
-                                              }
-                                            },
-                                            onPressed: () =>
-                                                sail.to('/wallet/send'),
-                                          )),
+                                        /// never show import for this button
+                                        //if (components.cubits.holdingsView.state
+                                        //            .holdingsViews.length ==
+                                        //        1 &&
+                                        //    components.cubits.holdingsView.state
+                                        //            .holdingsViews.first.sats ==
+                                        //        0)
+                                        //  Expanded(
+                                        //      child: BottomButton(
+                                        //    label: 'import',
+                                        //    enabled: true,
+                                        //    onPressed: () =>
+                                        //        sail.to('/restore/import'),
+                                        //  ))
+                                        //else
+                                        Expanded(
+                                            child: BottomButton(
+                                          label: 'send',
+                                          enabled:
+                                              connectionState.isConnected &&
+                                                  !components
+                                                      .cubits
+                                                      .holdingsView
+                                                      .walletEmptyCoin,
+                                          disabledOnPressed: () {
+                                            if (!connectionState.isConnected) {
+                                              streams.app.snack.add(Snack(
+                                                  message:
+                                                      'Not connected to network'));
+                                            } else if (components.cubits
+                                                .holdingsView.walletEmptyCoin) {
+                                              streams.app.snack.add(Snack(
+                                                  message:
+                                                      'This wallet has no coin, unable to send.'));
+                                            }
+                                          },
+                                          onPressed: () =>
+                                              sail.to('/wallet/send'),
+                                        )),
                                         Expanded(
                                             child: BottomButton(
                                           label: 'receive',
