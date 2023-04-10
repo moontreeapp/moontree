@@ -257,7 +257,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
               if (onTap != null) {
                 onTap();
               }
-              return await switchWallet(wallet.id);
+              await switchWallet(wallet.id);
+              setState(() {});
+              return;
             },
             // todo: show chain icons for what blockchains this wallet has assets on here
             leading: Icon(Icons.wallet_rounded,

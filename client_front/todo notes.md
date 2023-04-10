@@ -1,16 +1,16 @@
 DONE - send button disabled always.
 
-send button always send.
+DONE - send button always send.
 
 on change wallet, go to holdings screen.
+
+name wallet change only happens on menu touch.
 
 snack bar should be snack layer, behind nav.
 
 snack bar should show last.
 
 tx details minimize tx font on long names.
-
-name wallet change only happens on menu touch
 
 animations always first, then data gathering.
 
@@ -22,4 +22,4 @@ max height on draggable layer should be limited to mid if not many items.
 
 holding to tx list too choppy
 
-not locking.
+not locking (x min inactive timeout).
