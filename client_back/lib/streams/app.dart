@@ -100,42 +100,44 @@ class Snack with EquatableMixin {
   final String message;
   // not used
   final bool positive;
-  final String? details; // if they click on the message, popup details
+  //final String? details; // if they click on the message, popup details
   final String? label; // link label
   final String? link;
   final String? copy;
   final Map<String, dynamic>? arguments;
   final bool showOnLogin;
+  final int seconds;
 
   Snack({
     required this.message,
     this.positive = true,
-    this.details,
+    //this.details,
     this.label,
     this.link,
     this.copy,
     this.arguments,
     this.showOnLogin = false,
+    this.seconds = 5,
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
         message,
         positive,
-        details,
+        //details,
         label,
         link,
         copy,
         arguments,
         showOnLogin,
+        seconds,
       ];
 
   @override
   String toString() {
-    return 'Snack(message: $message, positive: $positive, details: $details, '
+    return 'Snack(message: $message, positive: $positive, ' //details: $details,
         'label: $label, link: $link, copy: $copy, arguments: $arguments, '
-        'showOnLogin: $showOnLogin)';
+        'showOnLogin: $showOnLogin, seconds: $seconds)';
   }
 }
 

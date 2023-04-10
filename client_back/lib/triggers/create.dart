@@ -36,7 +36,7 @@ class CreateWaiter extends Trigger {
           } on InsufficientFunds {
             streams.app.snack.add(Snack(
               message: 'Send Failure',
-              details: 'Insufficient Funds',
+              copy: 'Insufficient Funds',
             ));
             streams.create.success.add(false);
           } catch (e) {
@@ -69,7 +69,7 @@ class CreateWaiter extends Trigger {
           } else {
             streams.app.snack.add(Snack(
               message: 'Asset Creation Failure',
-              details: 'Unable to verify the transaction succeeded, '
+              copy: 'Unable to verify the transaction succeeded, '
                   'please try again later.',
             ));
             streams.create.success.add(false);

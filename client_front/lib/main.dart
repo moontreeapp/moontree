@@ -174,7 +174,7 @@ class HomePage extends StatelessWidget {
             ] +
             const <Widget>[
               ExtraContainer(),
-              SnackbarLayer(),
+              //SnackbarLayer(),
               Navbar(),
               BottomModalSheet(),
               MessageModalLayer(),

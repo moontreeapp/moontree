@@ -35,7 +35,7 @@ class ReissueWaiter extends Trigger {
           } on InsufficientFunds {
             streams.app.snack.add(Snack(
               message: 'Send Failure',
-              details: 'Insufficient Funds',
+              copy: 'Insufficient Funds',
             ));
             streams.reissue.success.add(false);
           } catch (e, stack) {
@@ -67,7 +67,7 @@ class ReissueWaiter extends Trigger {
           } else {
             streams.app.snack.add(Snack(
               message: 'Asset Creation Failure',
-              details: 'Unable to verify the transaction succeeded, '
+              copy: 'Unable to verify the transaction succeeded, '
                   'please try again later.',
             ));
             streams.reissue.success.add(false);

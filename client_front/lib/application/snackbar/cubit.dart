@@ -13,12 +13,24 @@ class SnackbarCubit extends Cubit<SnackbarCubitState> {
     setupListener();
   }
 
+  Future<void> countdownTimer(int seconds) =>
+      Future.delayed(Duration(seconds: seconds));
+
+  Future<void> runAsyncFunction() async => clear();
+
   /// we can remove these once we never make a snackbar from back processes such
   /// as import processes. until then we make this cubit responsive to the
   /// stream:
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
-  void setupListener() => listeners.add(back.streams.app.snack
-      .listen((Snack? value) => _update(snack: value, prior: state.snack)));
+  void setupListener() =>
+      listeners.add(back.streams.app.snack.listen((Snack? value) {
+        _update(snack: value, prior: state.snack);
+        if (value != null) {
+          countdownTimer(value.seconds).then((_) {
+            runAsyncFunction();
+          });
+        }
+      }));
 
   // don't use this function on pages for this cubit.
   void _update({required Snack? snack, required Snack? prior}) =>

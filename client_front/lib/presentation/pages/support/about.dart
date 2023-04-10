@@ -24,7 +24,7 @@ class _AboutState extends State<About> {
         children: <Widget>[
           GestureDetector(
               onDoubleTap: () =>
-                  clicked ? sail.to('/settings/advanced') : clicked = true,
+                  clicked ? sail.to('/mode/advanced') : clicked = true,
               child: Image.asset(
                 'assets/logo/moontree_logo.png',
                 height: null,

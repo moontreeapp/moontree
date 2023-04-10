@@ -6,9 +6,11 @@ DONE - name wallet change only happens on menu touch.
 
 DONE - on change wallet, go to holdings screen.
 
-snack bar should be snack layer, behind nav.
+DONE - snack bar should be snack layer, behind nav.
 
 snack bar should show last.
+
+title wallet choice not showing all choices anymore - why? height issue?
 
 tx details minimize tx font on long names.
 

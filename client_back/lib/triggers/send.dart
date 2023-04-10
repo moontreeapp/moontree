@@ -96,7 +96,7 @@ class SendWaiter extends Trigger {
           } else {
             streams.app.snack.add(Snack(
               message: 'Send Failure',
-              details: 'Unable to verify the transaction succeeded, '
+              copy: 'Unable to verify the transaction succeeded, '
                   'please try again later.',
             ));
             streams.spend.success.add(false);
