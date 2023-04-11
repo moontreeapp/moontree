@@ -734,8 +734,11 @@ class _SimpleSendState extends State<SimpleSend> {
                   height: 24,
                   width: 24,
                   net: pros.settings.net),
-              title: Text(symbolName(name),
-                  style: Theme.of(context).textTheme.bodyText1))
+              title: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(symbolName(name),
+                      style: Theme.of(context).textTheme.bodyText1)))
       ]);
 
   void _produceFeeModal(SimpleSendFormCubit cubit) =>

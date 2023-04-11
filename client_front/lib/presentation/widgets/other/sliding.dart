@@ -87,7 +87,7 @@ class SlideUp extends StatefulWidget {
     required this.child,
     this.duration = animation.slideDuration,
     this.enter = true,
-    this.heightPercentage = .5,
+    this.heightPercentage = 1,
   });
 
   @override

@@ -365,9 +365,9 @@ class Sail {
     String? symbol,
     bool back = false,
   }) {
-    if (back &&
+    if ( //back && // removing this fixed the receive from tx history page
         manifest.extraChild == null &&
-        components.cubits.extraContainer.state.child != null) {
+            components.cubits.extraContainer.state.child != null) {
       components.cubits.extraContainer.reset();
       if (manifest.frontHeight != FrontContainerHeight.hidden) {
         components.cubits.frontContainer.setHidden(false);

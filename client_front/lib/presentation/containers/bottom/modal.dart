@@ -35,6 +35,7 @@ class BottomModalSheet extends StatelessWidget {
                 children: [
                   FadeIn(child: Scrim()),
                   SlideUp(
+                      heightPercentage: 1,
                       child: DraggableScrollableSheet(
                           controller: draggableScrollController,
                           expand: false,

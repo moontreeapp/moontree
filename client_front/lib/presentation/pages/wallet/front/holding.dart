@@ -94,102 +94,111 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
     }
     return BlocBuilder<TransactionsViewCubit, TransactionsViewState>(
         bloc: cubit..enter(),
-        builder: (BuildContext context, TransactionsViewState state) {
-          return Container(
-              color: Colors.transparent,
-              height: services.screen.frontContainer.maxHeight,
-              width: services.screen.width,
-              child: DraggableScrollableSheet(
-                  initialChildSize: minSize,
-                  minChildSize: minSize,
-                  maxChildSize: 1,
-                  controller: draggableScrollableController,
-                  builder: (BuildContext context,
-                      ScrollController scrollController) {
-                    _scrollListener() {
-                      try {
-                        state.scrollObserver
-                            .add(draggableScrollableController.size);
-                      } catch (e) {
-                        return;
-                      }
-                    }
-
-                    scrollController.addListener(() async {
-                      /// just call this as soon as we start scrolling
-                      /// actually thats not efficient for the server
-                      double maxScroll =
-                          scrollController.position.maxScrollExtent;
-                      if (currentMaxScroll < maxScroll) {
-                        previousMaxScroll = currentMaxScroll;
-                        currentMaxScroll = maxScroll;
-                      }
-                      double currentScroll = scrollController.position.pixels;
-                      if (currentScroll > previousMaxScroll) {
-                        if (lengthOfLoadMore < state.transactionViews.length) {
-                          lengthOfLoadMore = state.transactionViews.length;
-                          await cubit.addSetTransactionViews();
+        builder: (BuildContext context, TransactionsViewState state) =>
+            Container(
+                color: Colors.transparent,
+                height: services.screen.frontContainer.maxHeight,
+                width: services.screen.width,
+                child: DraggableScrollableSheet(
+                    initialChildSize: minSize,
+                    minChildSize: minSize,
+                    maxChildSize: (state.mempoolViews.length +
+                                        state.transactionViews.length) *
+                                    52 +
+                                (40 + 16 + 16 + 16) >
+                            services.screen.frontContainer.maxHeight / 2
+                        ? 1
+                        : minSize,
+                    controller: draggableScrollableController,
+                    builder: (BuildContext context,
+                        ScrollController scrollController) {
+                      _scrollListener() {
+                        try {
+                          state.scrollObserver
+                              .add(draggableScrollableController.size);
+                        } catch (e) {
+                          return;
                         }
                       }
-                      if (currentScroll == maxScroll) {
-                        // first time we hit the bottom, set a timer
-                        if (!timedCalling) {
-                          timedCalling = true;
-                          await Future.delayed(
-                            Duration(seconds: 5),
-                            () async {
-                              // if max hasn't changed after 5 seconds
-                              if (mounted &&
-                                  maxScroll ==
-                                      scrollController
-                                          .position.maxScrollExtent) {
-                                // call it again
-                                await cubit.addSetTransactionViews(force: true);
-                              }
-                            },
-                          ).then((value) => timedCalling = false);
+
+                      scrollController.addListener(() async {
+                        /// just call this as soon as we start scrolling
+                        /// actually thats not efficient for the server
+                        double maxScroll =
+                            scrollController.position.maxScrollExtent;
+                        if (currentMaxScroll < maxScroll) {
+                          previousMaxScroll = currentMaxScroll;
+                          currentMaxScroll = maxScroll;
                         }
+                        double currentScroll = scrollController.position.pixels;
+                        if (currentScroll > previousMaxScroll) {
+                          if (lengthOfLoadMore <
+                              state.transactionViews.length) {
+                            lengthOfLoadMore = state.transactionViews.length;
+                            await cubit.addSetTransactionViews();
+                          }
+                        }
+                        if (currentScroll == maxScroll) {
+                          // first time we hit the bottom, set a timer
+                          if (!timedCalling) {
+                            timedCalling = true;
+                            await Future.delayed(
+                              Duration(seconds: 5),
+                              () async {
+                                // if max hasn't changed after 5 seconds
+                                if (mounted &&
+                                    maxScroll ==
+                                        scrollController
+                                            .position.maxScrollExtent) {
+                                  // call it again
+                                  await cubit.addSetTransactionViews(
+                                      force: true);
+                                }
+                              },
+                            ).then((value) => timedCalling = false);
+                          }
 
-                        //if (lengthOfLoadMore <
-                        //    state.transactionViews.length) {
-                        //  print('length');
-                        //  lengthOfLoadMore =
-                        //      state.transactionViews.length;
-                        //  await cubit.addSetTransactionViews();
-                        //}
-                      }
-                    });
-                    draggableScrollableController.addListener(_scrollListener);
+                          //if (lengthOfLoadMore <
+                          //    state.transactionViews.length) {
+                          //  print('length');
+                          //  lengthOfLoadMore =
+                          //      state.transactionViews.length;
+                          //  await cubit.addSetTransactionViews();
+                          //}
+                        }
+                      });
+                      draggableScrollableController
+                          .addListener(_scrollListener);
 
-                    // 2 options: a. move the metadatatabs to the back, and
-                    // don't have them move with the scroll, or b. don't put the
-                    // front curve here and ignore the jump that the front curve
-                    // makes when going back to the home page or solve for it.
-                    return //FrontCurve(
-                        //color: Colors.transparent,
-                        //fuzzyTop: true,
-                        //child:
-                        BlocBuilder<ExtraContainerCubit, ExtraContainerState>(
-                            //bloc: cubit..enter(),
-                            builder: (BuildContext context,
-                                    ExtraContainerState state) =>
-                                AnimatedContainer(
-                                    duration: animation.fadeDuration,
-                                    curve: Curves.easeInOut,
-                                    alignment: Alignment.center,
-                                    child: FadeTransition(
-                                        opacity: _opacityAnimation,
-                                        child: CoinDetailsGlidingSheet(
-                                          cubit: cubit,
-                                          cachedMetadataView:
-                                              cubit.nullCacheView
-                                                  ? null
-                                                  : MetadataView(cubit: cubit),
-                                          dController:
-                                              draggableScrollableController,
-                                          scrollController: scrollController,
-                                        )
-                                        /*ListView.builder(
+                      // 2 options: a. move the metadatatabs to the back, and
+                      // don't have them move with the scroll, or b. don't put the
+                      // front curve here and ignore the jump that the front curve
+                      // makes when going back to the home page or solve for it.
+                      return //FrontCurve(
+                          //color: Colors.transparent,
+                          //fuzzyTop: true,
+                          //child:
+                          BlocBuilder<ExtraContainerCubit, ExtraContainerState>(
+                              //bloc: cubit..enter(),
+                              builder: (BuildContext context,
+                                      ExtraContainerState state) =>
+                                  AnimatedContainer(
+                                      duration: animation.fadeDuration,
+                                      curve: Curves.easeInOut,
+                                      alignment: Alignment.center,
+                                      child: FadeTransition(
+                                          opacity: _opacityAnimation,
+                                          child: CoinDetailsGlidingSheet(
+                                            cubit: cubit,
+                                            cachedMetadataView: cubit
+                                                    .nullCacheView
+                                                ? null
+                                                : MetadataView(cubit: cubit),
+                                            dController:
+                                                draggableScrollableController,
+                                            scrollController: scrollController,
+                                          )
+                                          /*ListView.builder(
                                             controller: scrollController,
                                             itemCount: 100,
                                             itemBuilder: (BuildContext context,
@@ -197,11 +206,10 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
                                                 ListTile(
                                                     title: Text(
                                                         'Item $index')))*/
-                                        )))
-                        //)
-                        ;
-                  }));
-        });
+                                          )))
+                          //)
+                          ;
+                    })));
   }
 }
 
