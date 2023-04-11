@@ -107,6 +107,7 @@ class Snack with EquatableMixin {
   final Map<String, dynamic>? arguments;
   final bool showOnLogin;
   final int seconds;
+  final int delay;
 
   Snack({
     required this.message,
@@ -118,6 +119,7 @@ class Snack with EquatableMixin {
     this.arguments,
     this.showOnLogin = false,
     this.seconds = 5,
+    this.delay = 2,
   });
 
   @override
@@ -131,13 +133,14 @@ class Snack with EquatableMixin {
         arguments,
         showOnLogin,
         seconds,
+        delay,
       ];
 
   @override
   String toString() {
     return 'Snack(message: $message, positive: $positive, ' //details: $details,
         'label: $label, link: $link, copy: $copy, arguments: $arguments, '
-        'showOnLogin: $showOnLogin, seconds: $seconds)';
+        'showOnLogin: $showOnLogin, seconds: $seconds, delay: $delay)';
   }
 }
 
