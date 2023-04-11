@@ -23,8 +23,8 @@ class ConnectionLight extends StatelessWidget {
       return FadeIn(
           duration: animation.slowFadeDuration,
           child: GestureDetector(
-            onVerticalDragDown: (_) {
-              print('testing');
+            onLongPress: () {
+              print('testing done here');
               streams.app.snack.add(Snack(message: state.status.name));
             },
             onTap: navToBlockchain,

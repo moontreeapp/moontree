@@ -119,7 +119,7 @@ class Snack with EquatableMixin {
     this.arguments,
     this.showOnLogin = false,
     this.seconds = 5,
-    this.delay = 2,
+    this.delay = 1,
   });
 
   @override
