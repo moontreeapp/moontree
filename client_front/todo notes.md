@@ -8,11 +8,11 @@ DONE - on change wallet, go to holdings screen.
 
 DONE - snack bar should be snack layer, behind nav.
 
-snack bar should show last.
-
-title wallet choice not showing all choices anymore - why? height issue?
+DONE - snack bar should show last.
 
 tx details minimize tx font on long names.
+
+title wallet choice not showing all choices anymore - why? height issue?
 
 max height on draggable layer should be limited to mid if not many items.
 

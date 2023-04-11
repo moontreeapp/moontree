@@ -16,6 +16,7 @@ import 'package:client_back/client_back.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/services/services.dart' show screen;
 import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
 
 import '../../widgets/front_curve.dart';
@@ -271,24 +272,26 @@ class TransactionPageContent extends StatelessWidget {
     }
   }
 
-  Widget plain(BuildContext context, String text, String value) =>
-      value == '' || value == null
-          ? SizedBox(height: 0)
-          : ListTile(
-              dense: true,
-              title: Text(text, style: Theme.of(context).textTheme.bodyText1),
-              trailing: GestureDetector(
-                onLongPress: () {
-                  Clipboard.setData(ClipboardData(text: value));
-                  streams.app.snack.add(Snack(message: 'copied to clipboard'));
-                },
+  Widget plain(BuildContext context, String text, String value) => value == ''
+      ? SizedBox(height: 0)
+      : ListTile(
+          dense: true,
+          title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+          trailing: GestureDetector(
+            onLongPress: () {
+              Clipboard.setData(ClipboardData(text: value));
+              streams.app.snack.add(Snack(message: 'copied to clipboard'));
+            },
+            child: SizedBox(
+                width: screen.width / 2,
                 child: Text(
                   value,
+                  textAlign: TextAlign.right,
                   style: Theme.of(context).textTheme.bodyText1,
                   maxLines: text == 'Memo' ? 3 : null,
-                ),
-              ),
-            );
+                )),
+          ),
+        );
 
   Widget link(
     BuildContext context, {
