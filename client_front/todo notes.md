@@ -10,7 +10,7 @@ DONE - snack bar should be snack layer, behind nav.
 
 DONE - snack bar should show last.
 
-tx details minimize tx font on long names.
+DONE - tx details minimize tx font on long names.
 
 title wallet choice not showing all choices anymore - why? height issue?
 
