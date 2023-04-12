@@ -20,18 +20,20 @@ DONE - max height on draggable layer should be limited to mid if not many items.
 
 DONE - receive screen on tx list.
 
----
+DONE - tx list to details blank screen first.
 
-tx list to details blank screen first.
+DONE - holding to tx list too choppy, animate first.
+
+DONE - holding to tx list still too choppy, headers should appear first?.
 
 animations always first, then data gathering.
-
-holding to tx list too choppy, animate first.
 
 ---
 
 add tutorial system.
 
-not locking (x min inactive timeout).
-
 new icons
+
+derive in background for consistently fast signing
+
+not locking (x min inactive timeout).

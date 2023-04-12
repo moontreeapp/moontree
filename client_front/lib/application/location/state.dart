@@ -35,6 +35,14 @@ abstract class LocationCubitState extends Equatable {
   Wallet get wallet => Current.wallet;
   ChainNet get chainNet => Current.chainNet;
   //String get menuPath => components.cubits.backContainer.state.path;
+
+  Security get security => symbol == null
+      ? Current.coin
+      : Security(
+          symbol: symbol!,
+          chain: pros.settings.chain,
+          net: pros.settings.net,
+        );
 }
 
 class LocationState extends LocationCubitState {

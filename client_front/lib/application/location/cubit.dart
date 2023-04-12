@@ -1,7 +1,6 @@
+import 'package:client_back/client_back.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_back/records/types/chain.dart';
-import 'package:client_back/records/wallets/wallet.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 
 part 'state.dart';

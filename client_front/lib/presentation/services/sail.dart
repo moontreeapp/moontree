@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:client_front/application/navbar/cubit.dart';
 import 'package:client_front/application/location/cubit.dart';
+import 'package:client_front/presentation/pages/wallet/front/holding.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/pages/wallet/front/holding.dart';
+import 'package:client_front/presentation/utils/animation.dart' as animation;
 
 class Manifest {
   final Section section;
@@ -388,7 +389,9 @@ class Sail {
       components.cubits.navbar.setHeightTo(height: manifest.navbarHeight);
     }
     components.cubits.backContainer.update(path: manifest.backPath);
-    components.cubits.extraContainer.set(child: manifest.extraChild);
+    Future.delayed(animation.slideDuration).then((_) async {
+      components.cubits.extraContainer.set(child: manifest.extraChild);
+    });
   }
 
   /// mutates history state

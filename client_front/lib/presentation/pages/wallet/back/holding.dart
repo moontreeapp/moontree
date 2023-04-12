@@ -1,5 +1,6 @@
 import 'package:client_back/records/security.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
+import 'package:client_front/application/location/cubit.dart';
 import 'package:client_front/application/transactions/cubit.dart';
 import 'package:client_front/presentation/pages/wallet/front/holding.dart';
 import 'package:client_front/presentation/widgets/back/coinspec/spec.dart';
@@ -41,7 +42,9 @@ class CoinDetailsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TransactionsViewCubit cubit = components.cubits.transactionsView;
-    final double minHeight = screen.frontContainer.midHeightPercentage;
+    final LocationCubit locCubit = components.cubits.location;
+    final double minHeight = screen.frontContainer.midHeightPercentage * 1 +
+        (48 / screen.frontContainer.maxHeight);
     return StreamBuilder<double>(
         stream: cubit.state.scrollObserver,
         builder: (BuildContext context, AsyncSnapshot<Object?> snapshot) {
@@ -59,7 +62,7 @@ class CoinDetailsHeader extends StatelessWidget {
               ),
               child: CoinSpec(
                 pageTitle: 'Transactions',
-                security: cubit.state.security,
+                security: locCubit.state.security,
                 bottom: cubit.nullCacheView ? null : Container(),
               ),
             ),

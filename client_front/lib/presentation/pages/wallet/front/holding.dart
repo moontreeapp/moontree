@@ -39,11 +39,16 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
     with TickerProviderStateMixin {
   final DraggableScrollableController draggableScrollableController =
       DraggableScrollableController();
-  final double minSize = services.screen.frontContainer.midHeightPercentage;
+
+  final double minSize =
+      services.screen.frontContainer.midHeightPercentage * 1 +
+          (48 / services.screen.frontContainer.maxHeight);
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
   late FrontContainerCubit heightCubit;
-  double draggableHeight = services.screen.frontContainer.midHeightPercentage;
+  double draggableHeight =
+      services.screen.frontContainer.midHeightPercentage * 1 +
+          (48 / services.screen.frontContainer.maxHeight);
   int lengthOfLoadMore = 0;
   double currentMaxScroll = 0;
   double previousMaxScroll = 0;
@@ -248,11 +253,11 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
-        if (widget.cachedMetadataView != null)
-          CoinSpecTabs(cubit: widget.cubit),
+        //if (widget.cachedMetadataView != null) // always show the tabs, but maybe grey out data if it's not populated
+        CoinSpecTabs(cubit: widget.cubit),
         Padding(
             padding: EdgeInsets.only(
-                top: widget.cachedMetadataView != null ? 48 : 0),
+                top: /*widget.cachedMetadataView != null ?*/ 48 /*: 0*/),
             child: FrontCurve(
               color: Colors.white,
               frontLayerBoxShadow: shadows.none,
