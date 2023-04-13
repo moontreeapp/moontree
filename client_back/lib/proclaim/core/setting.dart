@@ -13,9 +13,6 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   static final ChainNet defaultChainNet = ChainNet(defaultChain, defaultNet);
   static final String defaultDomain = defaultChainNet.domain;
   static final int defaultPort = defaultChainNet.port;
-  static const List<TutorialStatus> tutorials = <TutorialStatus>[
-    TutorialStatus.blockchain
-  ];
 
   static Map<String, Setting> get defaults => <SettingName, Setting>{
         SettingName.version_database:
@@ -46,8 +43,8 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
             const Setting(name: SettingName.version_previous, value: null),
         SettingName.mode_dev:
             const Setting(name: SettingName.mode_dev, value: FeatureLevel.easy),
-        SettingName.tutorial_status: const Setting(
-            name: SettingName.tutorial_status, value: <TutorialStatus>[]),
+        SettingName.tutorial_status:
+            const Setting(name: SettingName.tutorial_status, value: <String>[]),
       }.map((SettingName settingName, Setting setting) =>
           MapEntry<String, Setting>(settingName.name, setting));
 

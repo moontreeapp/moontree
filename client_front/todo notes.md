@@ -24,13 +24,17 @@ DONE - tx list to details blank screen first.
 
 DONE - holding to tx list too choppy, animate first.
 
-DONE - holding to tx list still too choppy, headers should appear first?.
+DONE - holding to tx list still too choppy, headers should appear first?
 
 animations always first, then data gathering.
 
 ---
 
-add tutorial system.
+create first wallet process broken
+
+add tutorial system
+
+fix multiple tutorial issue
 
 new icons
 

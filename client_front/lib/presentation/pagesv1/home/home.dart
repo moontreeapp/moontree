@@ -70,18 +70,7 @@ class _HomeState extends State<Home> {
           );
         }
       });
-    } else if (services.tutorial.missing.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await showTutorials();
-      });
     }
     return HomePage(appContext: appContext);
-  }
-
-  Future<void> showTutorials() async {
-    for (final TutorialStatus tutorial in services.tutorial.missing) {
-      streams.app.tutorial.add(tutorial);
-      await services.tutorial.complete(tutorial);
-    }
   }
 }

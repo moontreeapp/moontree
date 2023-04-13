@@ -224,4 +224,6 @@ List<BlocProviderSingleChildWidget> get providers => [
           create: (context) => components.cubits.connection),
       BlocProvider<ReceiveViewCubit>(
           create: (BuildContext context) => components.cubits.receiveView),
+      BlocProvider<TutorialCubit>(
+          create: (BuildContext context) => components.cubits.tutorial),
     ];

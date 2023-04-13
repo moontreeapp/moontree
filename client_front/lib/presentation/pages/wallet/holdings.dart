@@ -47,6 +47,13 @@ class WalletHoldings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (components.cubits.tutorial.missing.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (components.cubits.location.state.path == '/wallet/holdings') {
+          components.cubits.tutorial.load();
+        }
+      });
+    }
     final HoldingsViewCubit cubit = components.cubits.holdingsView;
     if (cubit.state.ranWallet != Current.wallet ||
         cubit.state.ranChainNet != pros.settings.chainNet) {

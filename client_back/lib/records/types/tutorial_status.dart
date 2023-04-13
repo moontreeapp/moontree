@@ -8,4 +8,5 @@ part 'tutorial_status.g.dart';
 enum TutorialStatus {
   @HiveField(0)
   blockchain,
+  wallet,
 }

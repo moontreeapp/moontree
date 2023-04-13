@@ -169,12 +169,10 @@ class _VerifySeedState extends State<VerifySeed> {
       print('home not found');
       Navigator.of(context).pushReplacementNamed('/home');
     }
-    if (services.tutorial.missing.isEmpty) {
-      if (skipped) {
-        streams.app.snack.add(Snack(message: 'Successfully Skipped Backup'));
-      } else {
-        streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
-      }
+    if (skipped) {
+      streams.app.snack.add(Snack(message: 'Successfully Skipped Backup'));
+    } else {
+      streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
     }
     streams.app.wallet.refresh.add(true);
   }

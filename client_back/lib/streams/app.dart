@@ -60,8 +60,6 @@ class AppStreams {
     ..name = 'app.logout';
   final BehaviorSubject<bool?> scrim = BehaviorSubject<bool?>.seeded(false)
     ..name = 'app.scrim'; // null = disable
-  final BehaviorSubject<TutorialStatus?> tutorial =
-      BehaviorSubject<TutorialStatus?>.seeded(null)..name = 'app.tutorial';
   final BehaviorSubject<bool> authenticating = BehaviorSubject<bool>.seeded(
       false)
     ..name =

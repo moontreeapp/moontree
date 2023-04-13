@@ -157,13 +157,15 @@ class _VerifySeedState extends State<VerifySeed> {
       await populateWalletsWithSensitives();
     }
     sail.home();
-    if (services.tutorial.missing.isEmpty) {
-      if (skipped) {
-        streams.app.snack.add(Snack(message: 'Successfully Skipped Backup'));
-      } else {
-        streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
-      }
-    }
+    Future.delayed(Duration(seconds: 1))
+        .then((value) => components.cubits.tutorial.load());
+    //if (components.cubits.tutorial.isEmpty) {
+    //  if (skipped) {
+    //    streams.app.snack.add(Snack(message: 'Successfully Skipped Backup'));
+    //  } else {
+    //    streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
+    //  }
+    //}
     streams.app.wallet.refresh.add(true);
   }
 }

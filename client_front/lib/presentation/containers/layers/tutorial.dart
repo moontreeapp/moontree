@@ -1,137 +1,105 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_back/client_back.dart';
+import 'package:client_front/application/tutorial/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/pages/appbar/connection.dart';
 import 'package:client_front/presentation/widgets/other/speech_bubble.dart';
 import 'package:client_front/presentation/widgets/other/other.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
-class TutorialLayer extends StatefulWidget {
+class TutorialLayer extends StatelessWidget {
   const TutorialLayer({Key? key}) : super(key: key);
 
   @override
-  _TutorialLayerState createState() => _TutorialLayerState();
-}
-
-class _TutorialLayerState extends State<TutorialLayer> {
-  late List<StreamSubscription<dynamic>> listeners =
-      <StreamSubscription<dynamic>>[];
-  Color scrimColor = Colors.transparent;
-  HitTestBehavior? behavior = null;
-  double? height = 0;
-  void Function()? onEnd = null;
-  void Function()? onTap = null;
-
-  @override
-  void initState() {
-    super.initState();
-    onEnd = () => setState(() => height = 0);
-    listeners.add(streams.app.tutorial.listen((TutorialStatus? value) async {
-      if (value != null) {
-        activateScrim();
+  Widget build(BuildContext context) {
+    return BlocBuilder<TutorialCubit, TutorialCubitState>(
+        builder: (BuildContext context, TutorialCubitState state) {
+      if (state.showTutorials.length > 0) {
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 1000),
+          height: null,
+          color: AppColors.scrim,
+          child: GestureDetector(
+            onTap: () =>
+                components.cubits.tutorial.viewed(state.showTutorials.first),
+            behavior: HitTestBehavior.opaque,
+            child: state.showTutorials.first == TutorialStatus.blockchain
+                ? TutorialBlockchain()
+                : state.showTutorials.first == TutorialStatus.wallet
+                    ? TutorialWallet()
+                    : Container(),
+          ),
+        );
       }
-    }));
-  }
-
-  @override
-  void dispose() {
-    for (final StreamSubscription<dynamic> listener in listeners) {
-      listener.cancel();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => AnimatedContainer(
-        duration: const Duration(milliseconds: 100),
-        onEnd: onEnd,
-        height: height,
-        color: scrimColor,
-        child: GestureDetector(
-          onTap: onTap,
-          behavior: behavior,
-          child: TutorialContent(tutorial: streams.app.tutorial.value),
-        ),
-      );
-
-  void activateScrim() {
-    setState(() {
-      scrimColor = AppColors.scrim;
-      behavior = HitTestBehavior.opaque;
-      height = null;
-      onEnd = null;
-      onTap = removeScrim;
-    });
-  }
-
-  void removeScrim() {
-    streams.app.tutorial.add(null);
-    setState(() {
-      scrimColor = Colors.transparent;
-      behavior = null;
-      onEnd = () => setState(() => height = 0);
-      onTap = null;
+      return SizedBox.shrink();
     });
   }
 }
 
-class TutorialContent extends StatelessWidget {
-  const TutorialContent({Key? key, this.tutorial}) : super(key: key);
-
-  final TutorialStatus? tutorial;
+class TutorialBlockchain extends StatelessWidget {
+  const TutorialBlockchain({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => IgnorePointer(
-      child: tutorial == TutorialStatus.blockchain
-          ? Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: PreferredSize(
-                  preferredSize: const Size.fromHeight(50),
-                  child: AppBar(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      actions: <Widget>[
-                        const Padding(
-                            padding: EdgeInsets.only(top: 6),
-                            child: ConnectionLight()),
-                        const SizedBox(width: 6),
-                        Container(width: 40),
-                        const SizedBox(width: 8),
-                      ])),
-              body: Container(
-                alignment: Alignment.topRight,
-                padding: const EdgeInsets.only(top: 1, right: 40),
-                child: SpeechBubble(
-                  nipOffCenter: 86,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    Text('Tap to switch Blockchains',
-                        style: Theme.of(context).textTheme.bodyText1),
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(50),
+              child: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  actions: <Widget>[
+                    const Padding(
+                        padding: EdgeInsets.only(top: 6),
+                        child: ConnectionLight()),
+                    const SizedBox(width: 16),
+                  ])),
+          body: Container(
+            alignment: Alignment.topRight,
+            padding: const EdgeInsets.only(top: 1, right: 3),
+            child: SpeechBubble(
+              nipOffCenter: 86,
+              child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Text('Tap to switch Blockchains',
+                    style: Theme.of(context).textTheme.bodyText1),
+              ]),
+            ),
+          )));
+}
+
+class TutorialWallet extends StatelessWidget {
+  const TutorialWallet({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => IgnorePointer(
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(50),
+              child: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: SizedBox(width: 40),
+                  title: Column(children: [
+                    SizedBox(height: 4),
+                    Text('Wallet 1',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline2!
+                            .copyWith(color: AppColors.white))
                   ]),
-                ),
-              ))
-          : Container());
-
-  //services.tutorial.clear();
-  //if (services.tutorial.missing.isNotEmpty) {
-  //  WidgetsBinding.instance.addPostFrameCallback((_) async {
-  //    await showTutorials();
-  //  });
-  //}
-
-  //Future showTutorials() async {
-  //  for (var tutorial in services.tutorial.missing) {
-  //    streams.app.tutorial.add(true);
-  //    services.tutorial.complete(tutorial);
-  //    await showDialog(
-  //        context: context,
-  //        builder: (BuildContext context) {
-  //          streams.app.scrim.add(true);
-  //          return AlertDialog(
-  //              title: Text('Password Not Recognized'),
-  //              content: Text(
-  //                  'Password does not match the password used at the time of encryption.'));
-  //        }).then((dynamic value) => streams.app.scrim.add(false));
-  //  }
-  //}
+                  actions: <Widget>[])),
+          body: Container(
+            alignment: Alignment.topLeft,
+            padding: const EdgeInsets.only(top: 1, left: 80),
+            child: SpeechBubble(
+              nipOffCenter: -70,
+              child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Text('Tap to switch Wallets',
+                    style: Theme.of(context).textTheme.bodyText1),
+              ]),
+            ),
+          )));
 }

@@ -10,7 +10,6 @@ import 'download/download.dart';
 import 'password.dart';
 import 'rate.dart';
 import 'transaction/transaction.dart';
-import 'tutorial.dart';
 import 'version.dart';
 import 'wallet.dart';
 
@@ -24,7 +23,6 @@ class services {
   static PasswordService password = PasswordService();
   static AuthenticationService authentication = AuthenticationService();
   static DownloadService download = DownloadService();
-  static TutorialService tutorial = TutorialService();
   static VersionService version = VersionService();
   static DeveloperService developer = DeveloperService();
   static ConversionService conversion = ConversionService();

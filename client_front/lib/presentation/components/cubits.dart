@@ -31,6 +31,7 @@ class GlobalCubits {
   final ImportFormCubit import = ImportFormCubit();
   final LocationCubit location = LocationCubit();
   final ConnectionStatusCubit connection = ConnectionStatusCubit();
+  final TutorialCubit tutorial = TutorialCubit();
 
   GlobalCubits();
 }
