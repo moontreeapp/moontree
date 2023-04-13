@@ -26,13 +26,17 @@ DONE - holding to tx list too choppy, animate first.
 
 DONE - holding to tx list still too choppy, headers should appear first?
 
-animations always first, then data gathering.
+DONE - add tutorial system
+
+DONE - fix multiple tutorial issue
 
 ---
 
-create first wallet process broken
+home after import not perfect - navbar not showing up
 
-add tutorial system
+animations always first, then data gathering.
+
+create first wallet process broken
 
 fix multiple tutorial issue
 
