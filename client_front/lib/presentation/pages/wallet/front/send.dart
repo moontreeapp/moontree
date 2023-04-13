@@ -67,10 +67,30 @@ class _SimpleSendState extends State<SimpleSend> {
   bool validatedAddress = true;
   late Balance holdingBalance;
 
+  void scrollToItem(FocusNode focusNode, double offset, [double returnTo = 0]) {
+    if (focusNode.hasFocus) {
+      setState(() {});
+      scrollController.animateTo(
+          offset, //scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOutCubic);
+    } else {
+      scrollController.animateTo(returnTo,
+          duration: Duration(milliseconds: 300), curve: Curves.easeInOutCubic);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     BlocProvider.of<SimpleSendFormCubit>(context).reset();
+    // Add a listener to the focus node
+    sendAmountFocusNode
+        .addListener(() => scrollToItem(sendAmountFocusNode, 70));
+    sendFeeFocusNode.addListener(() => scrollToItem(sendFeeFocusNode, 130));
+    sendMemoFocusNode.addListener(() => scrollToItem(sendMemoFocusNode, 190));
+    sendNoteFocusNode
+        .addListener(() => scrollToItem(sendNoteFocusNode, 250, 70));
   }
 
   @override
@@ -200,6 +220,7 @@ class _SimpleSendState extends State<SimpleSend> {
                 children: <Widget>[
                   ListView(
                     physics: const ClampingScrollPhysics(),
+                    controller: scrollController,
                     padding:
                         const EdgeInsets.only(left: 16, right: 16, top: 16),
                     children: <Widget>[
@@ -441,6 +462,13 @@ class _SimpleSendState extends State<SimpleSend> {
                       ].intersperse(const SizedBox(height: 16)),
                       const SizedBox(height: 64),
                       const SizedBox(height: 40),
+                      SizedBox(
+                          height: (sendAmountFocusNode.hasFocus ||
+                                  sendFeeFocusNode.hasFocus ||
+                                  sendMemoFocusNode.hasFocus ||
+                                  sendNoteFocusNode.hasFocus)
+                              ? screen.frontContainer.midHeight / 2
+                              : 0),
                     ],
                   ),
                   Container(

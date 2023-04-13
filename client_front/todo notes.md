@@ -30,18 +30,18 @@ DONE - add tutorial system
 
 DONE - fix multiple tutorial issue
 
+DONE - home after import not perfect - navbar not showing up
+
 ---
 
-home after import not perfect - navbar not showing up
-
-animations always first, then data gathering.
-
-create first wallet process broken
-
-fix multiple tutorial issue
+DONE - send screen memo and note should come up above keyboard - if upon keyboard up add spacer to list and scroll up, on keyboard dismiss, remove spacer. 
 
 new icons
+
+animations always first, then data gathering.
 
 derive in background for consistently fast signing
 
 not locking (x min inactive timeout).
+
+server generate unsigned tx functionality broken
