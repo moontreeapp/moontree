@@ -54,10 +54,3 @@ class TutorialCubit extends Cubit<TutorialCubitState> {
   Future<Change<Setting>?> clear() async => pros.settings.save(
       const Setting(name: SettingName.tutorial_status, value: <String>[]));
 }
-
-TutorialStatus enumFromString(String value) {
-  return TutorialStatus.values.firstWhere(
-    (e) => e.name == value,
-    orElse: () => null,
-  );
-}
