@@ -41,11 +41,13 @@ DONE - animations always first, then data gathering.
 
 DONE - not locking (x min inactive timeout).
 
+DONE - server generate unsigned tx functionality broken
+
+DONE - refactor the tutorial stuff.
+
 ---
 
 new icons
 
-server generate unsigned tx functionality broken
-
-refactor the tutorial stuff.
+test memo send 
 
