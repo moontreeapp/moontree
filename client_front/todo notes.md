@@ -39,10 +39,10 @@ DONE - derive in background for consistently fast signing
 
 DONE - animations always first, then data gathering.
 
+DONE - not locking (x min inactive timeout).
+
 ---
 
 new icons
-
-not locking (x min inactive timeout).
 
 server generate unsigned tx functionality broken
