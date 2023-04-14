@@ -10,6 +10,7 @@ abstract class HoldingsViewCubitState extends CubitState {
   final bool showUSD;
   final bool showPath;
   final bool showSearchBar;
+  final Map<ChainNet, List<Wallet>> startedDerive;
   final bool isSubmitting;
   // for holdingsViews so that we never hit the endpoint multiple times with
   // the same input as last time. This also allows us to set the wallet and
@@ -23,6 +24,7 @@ abstract class HoldingsViewCubitState extends CubitState {
     required this.showUSD,
     required this.showPath,
     required this.showSearchBar,
+    required this.startedDerive,
     required this.isSubmitting,
   });
 
@@ -36,6 +38,7 @@ abstract class HoldingsViewCubitState extends CubitState {
       'showUSD=$showUSD, '
       'showPath=$showPath, '
       'showSearchBar=$showSearchBar, '
+      'showSearchBar=$startedDerive, '
       'isSubmitting=$isSubmitting)';
 
   @override
@@ -48,6 +51,7 @@ abstract class HoldingsViewCubitState extends CubitState {
         showUSD,
         showPath,
         showSearchBar,
+        startedDerive,
         isSubmitting,
       ];
 }
@@ -62,6 +66,7 @@ class HoldingsViewState extends HoldingsViewCubitState {
     required super.showUSD,
     required super.showPath,
     required super.showSearchBar,
+    required super.startedDerive,
     required super.isSubmitting,
   });
 }

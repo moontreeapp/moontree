@@ -1,13 +1,24 @@
+import 'dart:isolate';
+
+import 'package:client_front/application/holdings/derive.dart';
+import 'package:client_front/infrastructure/repos/receive.dart';
+import 'package:collection/collection.dart';
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/utilities/assets.dart';
-import 'package:bloc/bloc.dart';
 import 'package:client_front/infrastructure/repos/holdings.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/utils/ext.dart';
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:client_back/client_back.dart';
 import 'package:client_front/application/common.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:tuple/tuple.dart';
+
 part 'state.dart';
 
 /// show shimmer while retrieving list of transactions
@@ -23,6 +34,7 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
             showUSD: false,
             showPath: false,
             showSearchBar: false,
+            startedDerive: {},
             isSubmitting: true));
 
   Future<void> enter() async {
@@ -44,6 +56,7 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
     bool? showUSD,
     bool? showPath,
     bool? showSearchBar,
+    Map<ChainNet, List<Wallet>>? startedDerive,
     bool? isSubmitting,
   }) {
     emit(HoldingsViewState(
@@ -55,6 +68,7 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
       showUSD: showUSD ?? state.showUSD,
       showPath: showPath ?? state.showPath,
       showSearchBar: showSearchBar ?? state.showSearchBar,
+      startedDerive: startedDerive ?? state.startedDerive,
       isSubmitting: isSubmitting ?? state.isSubmitting,
     ));
   }
@@ -76,16 +90,32 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
         isSubmitting: true,
       );
       final holdingViews = await HoldingsRepo(wallet: wallet).fetch();
+      Map<ChainNet, List<Wallet>> startedDerive = state.startedDerive;
+      if (wallet is LeaderWallet &&
+          (!(state.startedDerive.get(chainNet, [])?.contains(wallet) ??
+              false))) {
+        //print(pros.addresses.primaryIndex.keys);
+        await pros.addresses.removeAll(pros.addresses.primaryIndex.values);
+
+        /// spin off a slow derivation process in the background
+        //compute(preDerive, 'nothing');
+        preDeriveInBackground(wallet, chainNet);
+
+        startedDerive[chainNet] =
+            (state.startedDerive[chainNet] ?? []) + [wallet];
+      }
       update(
         holdingsViews: holdingViews.toList(),
         assetHoldings: assetHoldings(holdingViews),
         ranWallet: wallet,
         ranChainNet: chainNet,
+        startedDerive: startedDerive,
         isSubmitting: false,
       );
     }
   }
 
+  /* /// unused, presumably for pagination
   Future<void> updateHoldingView(
     Wallet wallet,
     ChainNet chainNet, {
@@ -122,6 +152,7 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
       );
     }
   }
+  */
 
   void clearCache() => update(holdingsViews: <BalanceView>[]);
 
