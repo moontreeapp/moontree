@@ -46,3 +46,6 @@ DONE - not locking (x min inactive timeout).
 new icons
 
 server generate unsigned tx functionality broken
+
+refactor the tutorial stuff.
+

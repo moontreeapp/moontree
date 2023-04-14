@@ -43,8 +43,8 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
             const Setting(name: SettingName.version_previous, value: null),
         SettingName.mode_dev:
             const Setting(name: SettingName.mode_dev, value: FeatureLevel.easy),
-        SettingName.tutorial_status:
-            const Setting(name: SettingName.tutorial_status, value: <String>[]),
+        SettingName.tutorial_status: const Setting(
+            name: SettingName.tutorial_status, value: <TutorialStatus>[]),
       }.map((SettingName settingName, Setting setting) =>
           MapEntry<String, Setting>(settingName.name, setting));
 

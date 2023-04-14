@@ -15,6 +15,8 @@ class TutorialStatusAdapter extends TypeAdapter<TutorialStatus> {
     switch (reader.readByte()) {
       case 0:
         return TutorialStatus.blockchain;
+      case 1:
+        return TutorialStatus.wallet;
       default:
         return TutorialStatus.blockchain;
     }
@@ -25,6 +27,9 @@ class TutorialStatusAdapter extends TypeAdapter<TutorialStatus> {
     switch (obj) {
       case TutorialStatus.blockchain:
         writer.writeByte(0);
+        break;
+      case TutorialStatus.wallet:
+        writer.writeByte(1);
         break;
     }
   }
