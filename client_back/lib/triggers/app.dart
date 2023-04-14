@@ -4,8 +4,8 @@ import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
 class AppWaiter extends Trigger {
   DateTime lastActiveTime = DateTime.now();
-  int inactiveGracePeriod = 30;
-  int idleGracePeriod = 60 * 5;
+  int inactiveGracePeriod = 3;
+  int idleGracePeriod = 6;
   Timer? _inactiveTimer;
 
   void init({Object? reconnect}) {

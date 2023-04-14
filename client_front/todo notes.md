@@ -32,15 +32,16 @@ DONE - fix multiple tutorial issue
 
 DONE - home after import not perfect - navbar not showing up
 
-DONE - send screen memo and note should come up above keyboard - if upon keyboard up add spacer to list and scroll up, on keyboard dismiss, remove spacer. 
+DONE - send screen memo and note should come up above keyboard...
+DONE -  if upon keyboard up add spacer to list and scroll up, on keyboard dismiss, remove spacer. 
+
+DONE - derive in background for consistently fast signing
+
+DONE - animations always first, then data gathering.
 
 ---
 
 new icons
-
-derive in background for consistently fast signing
-
-animations always first, then data gathering.
 
 not locking (x min inactive timeout).
 

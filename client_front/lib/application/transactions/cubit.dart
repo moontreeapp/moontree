@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:client_front/infrastructure/repos/circulating_sats.dart';
+import 'package:client_front/presentation/utils/animation.dart';
 import 'package:collection/src/iterable_extensions.dart' show IterableExtension;
 import 'package:rxdart/rxdart.dart';
 import 'package:bloc/bloc.dart';
@@ -83,7 +84,9 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   Future<void> setInitial({bool force = false}) async {
     setMempoolTransactionViews(force: force);
     setTransactionViews(force: force);
-    setMetadataView(force: force);
+    Future.delayed(slideDuration).then((_) {
+      setMetadataView(force: force);
+    });
   }
 
   Future<void> setMetadataView({bool force = false}) async {

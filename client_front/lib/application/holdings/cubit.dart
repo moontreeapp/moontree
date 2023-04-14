@@ -94,11 +94,16 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
       if (wallet is LeaderWallet &&
           (!(state.startedDerive.get(chainNet, [])?.contains(wallet) ??
               false))) {
-        //print(pros.addresses.primaryIndex.keys);
-        await pros.addresses.removeAll(pros.addresses.primaryIndex.values);
-
-        /// spin off a slow derivation process in the background
-        //compute(preDerive, 'nothing');
+        /// spin off a slow derivation process in the background.
+        /// had lots of trouble with this. turns out the LeaderWallet being
+        /// passed to the isolate is the issue. I think it's Hive, and frankly,
+        /// I don't even know if an isolate would have access to the proclaim
+        /// and disk functionality we have setup. so. instead we derive with a
+        /// future, but very slowly, so it doesn't noticably interfere with the
+        /// front end animations. by the way, I anticipate we'll someday stop
+        /// using hive, because we might covert this to a web wallet too, idk.
+        /// we might have more luck making use of compute in that case. maybe.
+        //compute(preDerive, [wallet, chainNet]);
         preDeriveInBackground(wallet, chainNet);
 
         startedDerive[chainNet] =
