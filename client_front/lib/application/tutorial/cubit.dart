@@ -28,20 +28,6 @@ class TutorialCubit extends Cubit<TutorialCubitState> {
       pros.settings.primaryIndex.getOne(SettingName.tutorial_status)!.value
           as List<dynamic>);
 
-  /// if we save as String rather than TutorialStatus
-  //List<TutorialStatus> get completed {
-  //  final names = TutorialStatus.values.map((e) => e.name);
-  //  final List<TutorialStatus> comps = [];
-  //  for (final x in pros.settings.primaryIndex
-  //      .getOne(SettingName.tutorial_status)!
-  //      .value) {
-  //    if (names.contains(x)) {
-  //      comps.add(TutorialStatus.values.firstWhere((e) => e.name == x));
-  //    }
-  //  }
-  //  return comps;
-  //}
-
   List<TutorialStatus> get missing => TutorialStatus.values
       .where((TutorialStatus tutorial) => !completed.contains(tutorial))
       .toList();
@@ -52,15 +38,4 @@ class TutorialCubit extends Cubit<TutorialCubitState> {
 
   Future<Change<Setting>?> clear() async => pros.settings.save(const Setting(
       name: SettingName.tutorial_status, value: <TutorialStatus>[]));
-
-  /// String impl
-  //Future<Change<Setting>?> complete(TutorialStatus tutorial) async =>
-  //    pros.settings.save(Setting(
-  //        name: SettingName.tutorial_status,
-  //        value:
-  //            [for (final x in completed) x.name] + <String>[tutorial.name]));
-  //
-  //Future<Change<Setting>?> clear() async => pros.settings.save(
-  //    const Setting(name: SettingName.tutorial_status, value: <String>[]));
-
 }

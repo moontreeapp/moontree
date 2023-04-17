@@ -47,6 +47,10 @@ DONE - refactor the tutorial stuff.
 
 ---
 
+refactor everything in services that should be in cubits into cubits
+
+refactor the client_back out of existence if possible
+
 new icons
 
 test memo send 
