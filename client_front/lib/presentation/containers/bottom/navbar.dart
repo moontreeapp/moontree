@@ -1,17 +1,16 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intersperse/intersperse.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/streams.dart';
 import 'package:client_front/application/connection/cubit.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/utils/ext.dart';
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intersperse/intersperse.dart';
 import 'package:client_front/application/navbar/cubit.dart';
 import 'package:client_front/application/location/cubit.dart';
-import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/services/services.dart'
@@ -394,7 +393,7 @@ class NavbarActions extends StatelessWidget {
                           ))));
 
   void _produceCreateModal(BuildContext context) {
-    SelectionItems(context, modalSet: SelectionSet.Create).build();
+    //SelectionItems(context, modalSet: SelectionSet.Create).build();
   }
 }
 

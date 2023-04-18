@@ -12,7 +12,6 @@ import 'package:client_front/infrastructure/services/password.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/domain/utils/device.dart';
-import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/infrastructure/services/services.dart';

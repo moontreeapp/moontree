@@ -43,6 +43,19 @@ abstract class LocationCubitState extends Equatable {
           chain: pros.settings.chain,
           net: pros.settings.net,
         );
+
+  bool get loggedOut => [
+        null,
+        '',
+        '/',
+        '/splash',
+        '/login/create',
+        '/login/create/native',
+        '/login/create/resume',
+        '/login/create/password',
+        '/login/native',
+        '/login/password',
+      ].contains(path);
 }
 
 class LocationState extends LocationCubitState {

@@ -1,4 +1,3 @@
-import 'package:client_front/presentation/widgets/backdrop/layers.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
@@ -83,46 +82,43 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
     //GestureDetector(
     //onTap: () => FocusScope.of(context).unfocus(),
     //child:
-    return BackdropLayers(
-        back: const BlankBack(),
-        front: FrontCurve(
-          child: components.page.form(
-            context,
-            columnWidgets: <Widget>[
-              if (widget.intro != null) widget.intro!,
-              Container(
-                  height: ((MediaQuery.of(context).size.height) -
-                          (56 +
-                              40 +
-                              16 +
-                              16 +
-                              72.figma(context) +
-                              (widget.intro != null ? 40.figma(context) : 0))) /
-                      3),
-              //Center(
-              //    child: Text(
-              //        'Please verify your password\nto proceed' +
-              //            (widget.suffix != null ? ' ' + widget.suffix! : ''),
-              //        textAlign: TextAlign.center,
-              //        style: Theme.of(context).textTheme.bodyText1)),
-              //SizedBox(height: 8),
+    return FrontCurve(
+      child: components.page.form(
+        context,
+        columnWidgets: <Widget>[
+          if (widget.intro != null) widget.intro!,
+          Container(
+              height: ((MediaQuery.of(context).size.height) -
+                      (56 +
+                          40 +
+                          16 +
+                          16 +
+                          72.figma(context) +
+                          (widget.intro != null ? 40.figma(context) : 0))) /
+                  3),
+          //Center(
+          //    child: Text(
+          //        'Please verify your password\nto proceed' +
+          //            (widget.suffix != null ? ' ' + widget.suffix! : ''),
+          //        textAlign: TextAlign.center,
+          //        style: Theme.of(context).textTheme.bodyText1)),
+          //SizedBox(height: 8),
 
-              const LockedOutTime(),
-              if (pros.settings.authMethodIsNativeSecurity)
-                bioText
-              else
-                passwordField,
-            ],
-            buttons: <Widget>[
-              if (pros.settings.authMethodIsNativeSecurity)
-                bioButton
-              else
-                submitButton
-            ],
-          ),
-        )
-        //)
-        );
+          const LockedOutTime(),
+          if (pros.settings.authMethodIsNativeSecurity)
+            bioText
+          else
+            passwordField,
+        ],
+        buttons: <Widget>[
+          if (pros.settings.authMethodIsNativeSecurity)
+            bioButton
+          else
+            submitButton
+        ],
+      ),
+      //)
+    );
   }
 
   Widget get passwordField => TextField(

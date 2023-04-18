@@ -1,6 +1,6 @@
 import 'package:client_front/application/send/cubit.dart';
 import 'package:client_front/presentation/services/services.dart';
-import 'package:client_front/presentation/widgets/backdrop/backdrop.dart';
+import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,8 +35,7 @@ class SimpleSendCheckout extends StatelessWidget {
   Widget build(BuildContext buildContext) {
     context = buildContext;
     startTime = DateTime.now();
-    return BackdropLayers(
-        back: const BlankBack(), front: FrontCurve(child: body()));
+    return FrontCurve(child: body());
   }
 
   Widget body() => BlocBuilder<SimpleSendFormCubit, SimpleSendFormState>(

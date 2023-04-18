@@ -1,9 +1,6 @@
-import 'package:client_front/application/back/cubit.dart';
-import 'package:client_front/application/front/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/location/cubit.dart';
-import 'package:client_front/presentation/widgets/bottom/snackbar.dart';
 import 'package:client_front/presentation/pages/appbar/connection.dart';
 import 'package:client_front/presentation/pages/appbar/lead.dart';
 import 'package:client_front/presentation/pages/appbar/title.dart';

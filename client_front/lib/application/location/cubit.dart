@@ -8,18 +8,25 @@ part 'state.dart';
 class LocationCubit extends Cubit<LocationCubitState> {
   LocationCubit() : super(const LocationState());
 
+  List<void Function(LocationCubitState, LocationCubitState)> hooks = [];
+
   void update({
     String? path,
     Section? section,
     String? symbol,
     bool? menuOpen,
-  }) =>
-      emit(LocationState(
-        path: path ?? state.path,
-        section: section ?? state.section,
-        symbol: symbol ?? state.symbol,
-        menuOpen: menuOpen ?? state.menuOpen,
-      ));
+  }) {
+    final newState = LocationState(
+      path: path ?? state.path,
+      section: section ?? state.section,
+      symbol: symbol ?? state.symbol,
+      menuOpen: menuOpen ?? state.menuOpen,
+    );
+    for (final hook in hooks) {
+      hook(state, newState);
+    }
+    emit(newState);
+  }
 
   void reset() => emit(LocationState(
         path: null,

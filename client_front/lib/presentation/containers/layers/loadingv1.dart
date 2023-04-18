@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:client_front/application/cubits.dart';
-import 'package:client_front/presentation/widgets/backdrop/curve.dart';
+import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/theme/theme.dart';

@@ -1,7 +1,4 @@
 import 'dart:math';
-
-import 'package:client_front/infrastructure/repos/circulating_sats.dart';
-import 'package:client_front/presentation/utils/animation.dart';
 import 'package:collection/src/iterable_extensions.dart' show IterableExtension;
 import 'package:rxdart/rxdart.dart';
 import 'package:bloc/bloc.dart';
@@ -9,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_front/infrastructure/repos/transactions.dart';
 import 'package:client_front/infrastructure/repos/mempool_transactions.dart';
-import 'package:client_front/infrastructure/repos/transactions.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
-import 'package:client_front/infrastructure/repos/asset_metadata.dart';
+import 'package:client_front/infrastructure/repos/circulating_sats.dart';
 import 'package:client_front/application/common.dart';
+import 'package:client_front/application/location/cubit.dart';
+import 'package:client_front/presentation/utils/animation.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 part 'state.dart';
 
@@ -23,10 +22,8 @@ part 'state.dart';
 /// show list of transactions
 class TransactionsViewCubit extends Cubit<TransactionsViewState>
     with SetCubitMixin {
-  String? priorPage;
-
   TransactionsViewCubit() : super(TransactionsViewState.initial()) {
-    init();
+    Future.delayed(Duration(seconds: 10)).then((_) => init());
   }
 
   @override
@@ -68,11 +65,11 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   }
 
   void init() {
-    streams.app.page.listen((String value) {
-      if (value == 'Home' && priorPage == 'Transactions') {
+    components.cubits.location.hooks
+        .add((LocationCubitState state, LocationCubitState next) {
+      if (state.path == '/wallet/holdings' && next.path == '/wallet/holding') {
         reset();
       }
-      priorPage = value;
     });
   }
 

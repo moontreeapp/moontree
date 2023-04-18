@@ -1,3 +1,4 @@
+/*
 /// make name static, make decimals static if at max, make quantity static if at max,
 /// limit quantity to not go lower than itself
 /// limit decimals to not go lower than itself
@@ -16,7 +17,8 @@ import 'package:client_front/presentation/components/styles/styles.dart'
     as styles;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/pagesv1/misc/checkout.dart';
+//import 'package:client_front/presentation/pagesv1/misc/checkout.dart';
+import 'package:client_front/presentation/pages/wallet/checkout.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_back/streams/reissue.dart';
 import 'package:client_front/domain/utils/transformers.dart';
@@ -589,3 +591,4 @@ class _ReissueAssetState extends State<ReissueAsset> {
             .toList());
   }
 }
+*/

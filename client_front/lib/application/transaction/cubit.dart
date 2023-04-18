@@ -1,21 +1,21 @@
 import 'dart:typed_data';
-
-import 'package:client_back/server/serverv2_client.dart';
 import 'package:bloc/bloc.dart';
-import 'package:client_front/infrastructure/repos/transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:client_back/client_back.dart';
+import 'package:client_back/server/serverv2_client.dart';
+import 'package:client_front/infrastructure/repos/transaction.dart';
 import 'package:client_front/application/common.dart';
+import 'package:client_front/application/location/cubit.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+
 part 'state.dart';
 
 /// show shimmer while retrieving list of transactions
 /// show list of transactions
 class TransactionViewCubit extends Cubit<TransactionViewState>
     with SetCubitMixin {
-  String? priorPage;
-
   TransactionViewCubit() : super(TransactionViewState.initial()) {
-    init();
+    Future.delayed(Duration(seconds: 10)).then((_) => init());
   }
 
   @override
@@ -26,7 +26,6 @@ class TransactionViewCubit extends Cubit<TransactionViewState>
 
   @override
   Future<void> enter() async {
-    //emit(submitting());
     emit(state);
   }
 
@@ -36,7 +35,6 @@ class TransactionViewCubit extends Cubit<TransactionViewState>
     ByteData? ranHash,
     bool? isSubmitting,
   }) {
-    //emit(submitting());
     emit(state.load(
       transactionView: transactionView,
       ranHash: ranHash,
@@ -45,11 +43,13 @@ class TransactionViewCubit extends Cubit<TransactionViewState>
   }
 
   void init() {
-    streams.app.page.listen((String value) {
-      if (value == 'Transactions' && priorPage == 'Transaction') {
+    // alternative to a listener, setup a callback on the location cubit
+    components.cubits.location.hooks
+        .add((LocationCubitState state, LocationCubitState next) {
+      if (state.path == '/wallet/holding' &&
+          next.path == '/wallet/holding/transaction') {
         reset();
       }
-      priorPage = value;
     });
   }
 

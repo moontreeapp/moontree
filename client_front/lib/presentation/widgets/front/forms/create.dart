@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ import 'package:client_front/presentation/components/styles/styles.dart'
     as styles;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/pagesv1/misc/checkout.dart';
+//import 'package:client_front/presentation/pagesv1/misc/checkout.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/domain/utils/transformers.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
@@ -689,3 +690,4 @@ class _CreateAssetState extends State<CreateAsset> {
             .toList());
   }
 }
+*/

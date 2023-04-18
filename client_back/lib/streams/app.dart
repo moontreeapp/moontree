@@ -18,18 +18,19 @@ class AppStreams {
   /// resumed inactive paused detached
   static final BehaviorSubject<String?> appStatus$ =
       BehaviorSubject<String?>.seeded('resumed');
-
   final BehaviorSubject<String?> status = appStatus$..name = 'app.status';
   final BehaviorSubject<bool> active = BehaviorSubject<bool>.seeded(true)
     ..addStream(appStatus$.map((String? status) => status == 'resumed'))
     ..name = 'app.active';
-  final Stream<dynamic> ping =
-      Stream<dynamic>.periodic(const Duration(seconds: 60 * 2))
-        ..name = 'app.ping';
   final BehaviorSubject<bool?> tap = BehaviorSubject<bool?>.seeded(null)
     ..name = 'app.tap';
+
+  //final Stream<dynamic> ping =
+  //    Stream<dynamic>.periodic(const Duration(seconds: 60 * 2))
+  //      ..name = 'app.ping';
   final BehaviorSubject<bool> verify = BehaviorSubject<bool>.seeded(false)
     ..name = 'app.verify';
+
   final BehaviorSubject<String> page = BehaviorSubject<String>.seeded('main')
     ..name = 'app.page';
   final BehaviorSubject<String?> path = BehaviorSubject<String?>.seeded(null)

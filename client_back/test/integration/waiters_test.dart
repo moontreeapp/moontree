@@ -18,7 +18,7 @@ void main() async {
     triggers.leader.init();
     triggers.single.init();
     triggers.address.init();
-    triggers.client.init();
+    //triggers.client.init();
     //triggers.setting.init();
     triggers.subscription.init();
     triggers.block.init();
