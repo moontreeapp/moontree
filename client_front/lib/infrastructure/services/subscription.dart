@@ -27,7 +27,7 @@ class SubscriptionService {
       listener: (connectionState) {
         print('connection state: ${connectionState.status}');
         if (connectionState.status == StreamingConnectionStatus.connected) {
-          if (!streams.app.splash.value) {
+          if (!streams.app.loc.splash.value) {
             components.cubits.connection
                 .update(status: ConnectionStatus.connected);
           }
@@ -35,13 +35,13 @@ class SubscriptionService {
                 StreamingConnectionStatus.connecting ||
             connectionState.status ==
                 StreamingConnectionStatus.waitingToRetry) {
-          if (!streams.app.splash.value) {
+          if (!streams.app.loc.splash.value) {
             components.cubits.connection
                 .update(status: ConnectionStatus.connecting);
           }
         } else if (connectionState.status ==
             StreamingConnectionStatus.disconnected) {
-          if (!streams.app.splash.value) {
+          if (!streams.app.loc.splash.value) {
             components.cubits.connection
                 .update(status: ConnectionStatus.disconnected);
           }

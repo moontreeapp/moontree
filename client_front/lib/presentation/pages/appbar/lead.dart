@@ -67,16 +67,16 @@ class _PageLead extends State<PageLead> {
   }
 
   Widget body() {
-    if (loading && streams.app.page.value != 'Network') {
+    if (loading && streams.app.loc.page.value != 'Network') {
       return Container();
     }
-    if (streams.app.page.value == 'Home' &&
+    if (streams.app.loc.page.value == 'Home' &&
         (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value ?? false) {
+            if (streams.app.behavior.scrim.value ?? false) {
               return;
             }
             streams.app.setting.add('/settings');
@@ -88,13 +88,13 @@ class _PageLead extends State<PageLead> {
             //streams.app.setting.add(settingTitle);
           });
     }
-    if (streams.app.page.value != 'Home' &&
+    if (streams.app.loc.page.value != 'Home' &&
         (settingTitle?.startsWith('/settings/') ?? false)) {
       return IconButton(
           splashRadius: 24,
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value ?? false) {
+            if (streams.app.behavior.scrim.value ?? false) {
               return;
             }
             Navigator.pop(components.routes.routeContext ?? context);
@@ -102,11 +102,11 @@ class _PageLead extends State<PageLead> {
           });
     }
 
-    if (streams.app.page.value == 'Home') {
+    if (streams.app.loc.page.value == 'Home') {
       return IconButton(
           splashRadius: 24,
           onPressed: () {
-            if (streams.app.scrim.value ?? false) {
+            if (streams.app.behavior.scrim.value ?? false) {
               return;
             }
             ScaffoldMessenger.of(context).clearSnackBars();
@@ -115,20 +115,20 @@ class _PageLead extends State<PageLead> {
           padding: const EdgeInsets.only(left: 16),
           icon: SvgPicture.asset('assets/icons/menu/menu.svg'));
     }
-    if (streams.app.page.value == '') {
+    if (streams.app.loc.page.value == '') {
       //return Container();
     }
     if (xlead == LeadIcon.none ||
-        <String>['Splash', 'Login'].contains(streams.app.page.value)) {
+        <String>['Splash', 'Login'].contains(streams.app.loc.page.value)) {
       return Container();
     }
     if (xlead == LeadIcon.dismiss ||
-        <String>['Send', 'Scan', 'Receive'].contains(streams.app.page.value)) {
+        <String>['Send', 'Scan', 'Receive'].contains(streams.app.loc.page.value)) {
       return IconButton(
           splashRadius: 24,
           icon: const Icon(Icons.close_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value ?? false) {
+            if (streams.app.behavior.scrim.value ?? false) {
               return;
             }
             streams.app.lead.add(LeadIcon.pass);
@@ -149,34 +149,34 @@ class _PageLead extends State<PageLead> {
       'Qualifiersub',
       'Nft',
       'Channel',
-    ].contains(streams.app.page.value)) {
+    ].contains(streams.app.loc.page.value)) {
       return IconButton(
           splashRadius: 24,
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value ?? false) {
+            if (streams.app.behavior.scrim.value ?? false) {
               return;
             }
             streams.app.fling.add(false);
             Navigator.pop(components.routes.routeContext ?? context);
           });
     }
-    if (<String>['Createlogin'].contains(streams.app.page.value)) {
+    if (<String>['Createlogin'].contains(streams.app.loc.page.value)) {
       return IconButton(
           splashRadius: 24,
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value ?? false) {
+            if (streams.app.behavior.scrim.value ?? false) {
               return;
             }
             Navigator.pushReplacementNamed(
               components.routes.routeContext ?? context,
               '/security/create/setup',
             );
-            streams.app.splash.add(false);
+            streams.app.loc.splash.add(false);
           });
     }
-    if (<String>['Backupconfirm', 'Backup'].contains(streams.app.page.value)) {
+    if (<String>['Backupconfirm', 'Backup'].contains(streams.app.loc.page.value)) {
       /// the reason for this is after we took out encryptedEntropy from
       /// LeaderWallets we needed to make all the functions dealing with getting
       /// sensitive information futures, and since they're futures, we had to
@@ -192,7 +192,7 @@ class _PageLead extends State<PageLead> {
           splashRadius: 24,
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            if (streams.app.scrim.value ?? false) {
+            if (streams.app.behavior.scrim.value ?? false) {
               return;
             }
             Navigator.popUntil(
@@ -211,7 +211,7 @@ class _PageLead extends State<PageLead> {
         splashRadius: 24,
         icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
         onPressed: () {
-          if (streams.app.scrim.value ?? false) {
+          if (streams.app.behavior.scrim.value ?? false) {
             return;
           }
           Navigator.pop(components.routes.routeContext ?? context);

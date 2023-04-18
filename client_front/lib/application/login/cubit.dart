@@ -15,7 +15,8 @@ class LoginCubit extends Cubit<LoginCubitState> {
 
   /// we can notify logout process from anywhere using this listener
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
-  void setupListener() => listeners.add(streams.app.logout.listen((bool value) {
+  void setupListener() =>
+      listeners.add(streams.app.auth.logout.listen((bool value) {
         if (value && !components.cubits.location.state.loggedOut) {
           logout();
         }

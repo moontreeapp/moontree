@@ -105,7 +105,7 @@ class QueueService {
       streams.app.wallet.refresh.add(true);
       if (pros.transactions.records.isNotEmpty) {
         services.download.overrideGettingStarted = false;
-        streams.app.snack
+        streams.app.behavior.snack
             .add(Snack(message: 'Transaction history successfully downloaded'));
       }
       await reset();

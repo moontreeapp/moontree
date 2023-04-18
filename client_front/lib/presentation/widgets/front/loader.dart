@@ -66,10 +66,10 @@ class _LoaderState extends State<Loader> {
     // not ideal sends to home page even on error - in order to go back
     // intelligently we must know which stream matters and listen to that
     // like streams.spend.success or whatever.
-    streams.app.snack.add(null); // clear out first just in case.
+    streams.app.behavior.snack.add(null); // clear out first just in case.
     const int duration = 1330;
     if (widget.playCount == null) {
-      listeners.add(streams.app.snack.listen((Snack? value) async {
+      listeners.add(streams.app.behavior.snack.listen((Snack? value) async {
         if (value != null) {
           if (!widget.staticImage) {
             final int waited =

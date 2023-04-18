@@ -431,12 +431,12 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             })); // AnimatedBuilder, FadeTransition
 
 /*
-    if (streams.app.page.value == 'Splash') {
+    if (streams.app.loc.page.value == 'Splash') {
       slowController.forward(from: 0.0);
       return FadeTransition(
           opacity: slowAnimation, child: const Text('Welcome'));
     }
-    if (loading || <String>['main', ''].contains(streams.app.page.value)) {
+    if (loading || <String>['main', ''].contains(streams.app.loc.page.value)) {
       return const Text('');
     }
     FittedBox wrap(String x) => FittedBox(
@@ -465,18 +465,18 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                               ? FontWeights.bold
                               : FontWeights.semiBold,
                         )))));
-    if (<String>['Asset', 'Transactions'].contains(streams.app.page.value)) {
+    if (<String>['Asset', 'Transactions'].contains(streams.app.loc.page.value)) {
       return assetWrap(fullname ? assetTitle : assetName(assetTitle));
     }
     fullname = false;
     return walletNumber() ??
         wrap((streams.reissue.form.value != null
-                ? PageTitle.pageMapReissue[streams.app.page.value]
+                ? PageTitle.pageMapReissue[streams.app.loc.page.value]
                 : null) ??
-            PageTitle.pageMap[streams.app.page.value] ??
-            (streams.app.page.value == 'Home'
+            PageTitle.pageMap[streams.app.loc.page.value] ??
+            (streams.app.loc.page.value == 'Home'
                 ? /*appContext.name.toTitleCase()*/ ' '
-                : streams.app.page.value));
+                : streams.app.loc.page.value));
   }
 
   String assetName(String given) {
@@ -504,7 +504,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
   }
 
   Widget? walletNumber() {
-    if (streams.app.page.value != 'Home') {
+    if (streams.app.loc.page.value != 'Home') {
       return null;
     }
     if (pros.wallets.isNotEmpty) {
@@ -612,7 +612,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                             await walletSelection();
                             await Future<void>.delayed(
                                 const Duration(milliseconds: 100));
-                            streams.app.scrim.add(false);
+                            streams.app.behavior.scrim.add(false);
                           },
                           child: Text(
                             'Show All',

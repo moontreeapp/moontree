@@ -161,9 +161,9 @@ class _VerifySeedState extends State<VerifySeed> {
         .then((value) => components.cubits.tutorial.load());
     //if (components.cubits.tutorial.isEmpty) {
     //  if (skipped) {
-    //    streams.app.snack.add(Snack(message: 'Successfully Skipped Backup'));
+    //    streams.app.behavior.snack.add(Snack(message: 'Successfully Skipped Backup'));
     //  } else {
-    //    streams.app.snack.add(Snack(message: 'Successfully Verified Backup'));
+    //    streams.app.behavior.snack.add(Snack(message: 'Successfully Verified Backup'));
     //  }
     //}
     streams.app.wallet.refresh.add(true);

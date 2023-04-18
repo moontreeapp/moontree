@@ -15,7 +15,46 @@ enum LeadIcon {
 }
 
 class AppStreams {
-  /// resumed inactive paused detached
+  AppBehaviorStreams behavior = AppBehaviorStreams();
+  AppLocStreams loc = AppLocStreams();
+  AppAuthStreams auth = AppAuthStreams();
+  AppActiveStreams active = AppActiveStreams();
+  WalletSideStreams wallet = WalletSideStreams();
+  ManageSideStreams manage = ManageSideStreams();
+  SwapSideStreams swap = SwapSideStreams();
+}
+
+class AppBehaviorStreams {
+  final BehaviorSubject<Snack?> snack = BehaviorSubject<Snack?>.seeded(null)
+    ..name = 'app.snack';
+  // to remove, must at least first convert away from
+  // components.message.giveChoices to using the modal cubit instead.
+  final BehaviorSubject<bool?> scrim = BehaviorSubject<bool?>.seeded(false)
+    ..name = 'app.scrim'; // null = disable
+}
+
+class AppLocStreams {
+  final BehaviorSubject<String> page = BehaviorSubject<String>.seeded('main')
+    ..name = 'app.page';
+  final BehaviorSubject<bool> splash = BehaviorSubject<bool>.seeded(true)
+    ..name = 'app.splash';
+  // if we are minimized because of we are opening browser
+  final BehaviorSubject<bool> browsing = BehaviorSubject<bool>.seeded(false)
+    ..name = 'app.browsing';
+}
+
+class AppAuthStreams {
+  // if we are minimized because of local auth do not logout
+  final BehaviorSubject<bool> authenticating =
+      BehaviorSubject<bool>.seeded(false)..name = 'app.authenticating';
+  final BehaviorSubject<bool> logout = BehaviorSubject<bool>.seeded(false)
+    ..name = 'app.logout';
+  final BehaviorSubject<bool> verify = BehaviorSubject<bool>.seeded(false)
+    ..name = 'app.verify';
+}
+
+class AppActiveStreams {
+  // resumed inactive paused detached
   static final BehaviorSubject<String?> appStatus$ =
       BehaviorSubject<String?>.seeded('resumed');
   final BehaviorSubject<String?> status = appStatus$..name = 'app.status';
@@ -24,37 +63,7 @@ class AppStreams {
     ..name = 'app.active';
   final BehaviorSubject<bool?> tap = BehaviorSubject<bool?>.seeded(null)
     ..name = 'app.tap';
-  final BehaviorSubject<bool> verify = BehaviorSubject<bool>.seeded(false)
-    ..name = 'app.verify';
-  final BehaviorSubject<String> page = BehaviorSubject<String>.seeded('main')
-    ..name = 'app.page';
-  final BehaviorSubject<Snack?> snack = BehaviorSubject<Snack?>.seeded(null)
-    ..name = 'app.snack';
-  final BehaviorSubject<bool> splash = BehaviorSubject<bool>.seeded(true)
-    ..name = 'app.splash';
-  final BehaviorSubject<KeyboardStatus?> keyboard =
-      BehaviorSubject<KeyboardStatus?>.seeded(null)..name = 'app.keyboard';
-  //final locked = BehaviorSubject<bool>.seeded(false);
-  final BehaviorSubject<bool> logout = BehaviorSubject<bool>.seeded(false)
-    ..name = 'app.logout';
-  final BehaviorSubject<bool?> scrim = BehaviorSubject<bool?>.seeded(false)
-    ..name = 'app.scrim'; // null = disable
-  final BehaviorSubject<bool> authenticating = BehaviorSubject<bool>.seeded(
-      false)
-    ..name =
-        'app.authenticating'; // if we are minimized because of local auth do not logout
-  final BehaviorSubject<bool> browsing = BehaviorSubject<bool>.seeded(false)
-    ..name =
-        'app.browsing'; // if we are minimized because of we are opening browser
-
-  WalletSideStreams wallet = WalletSideStreams();
-  ManageSideStreams manage = ManageSideStreams();
-  SwapSideStreams swap = SwapSideStreams();
 }
-
-enum ThresholdTrigger { backup }
-
-enum KeyboardStatus { up, down }
 
 class WalletSideStreams {
   final BehaviorSubject<String?> asset = BehaviorSubject<String?>.seeded(null)

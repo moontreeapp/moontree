@@ -23,10 +23,5 @@ void main() async {
       expect(pros.balances.primaryIndex.getOne('0', pros.securities.RVN),
           updatedBalance);
     });
-
-    test('collectUTXOs', () {
-      expect(() => services.balance.collectUTXOs(walletId: '0', amount: 16),
-          throwsException);
-    });
   });
 }

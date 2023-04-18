@@ -45,7 +45,7 @@ class _LoginCreateState extends State<LoginCreate> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.active.listen((bool value) {
+    listeners.add(streams.app.active.active.listen((bool value) {
       if (value) {
         setState(() {});
       }

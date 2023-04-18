@@ -9,11 +9,11 @@ import 'package:client_front/presentation/services/services.dart' show sail;
 
 Future<void> logout() async {
   pros.ciphers.clear();
-  //streams.app.logout.add(true); // notify the login page not to auto-ask
+  //streams.app.auth.logout.add(true); // notify the login page not to auto-ask
   sail.to(getMethodPathLogin(),
       arguments: <String, bool>{'autoInitiateUnlock': false},
       replaceOverride: true);
-  streams.app.splash.add(false);
+  streams.app.loc.splash.add(false);
 }
 
 String getMethodPathLogin({bool? nativeSecurity}) =>

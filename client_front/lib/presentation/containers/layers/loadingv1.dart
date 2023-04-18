@@ -37,7 +37,7 @@ class LoadingLayerV1State extends State<LoadingLayerV1> {
     onEnd = () => setState(() => height = 0);
 
     /// this listener is on this page because the cubit doesn't exist first.
-    listeners.add(streams.app.page.listen((String? value) async {
+    listeners.add(streams.app.loc.page.listen((String? value) async {
       if (['Splash', 'Login', 'Setup', 'Createlogin'].contains(value)) {
         if (active) {
           setState(() {
@@ -78,7 +78,7 @@ class LoadingLayerV1State extends State<LoadingLayerV1> {
             builder: (BuildContext context, LoadingViewState state) {
           if (cubit.shouldShow) {
             // this conditions allows us to bring back loading after login
-            if (streams.app.page.value != 'Login') {
+            if (streams.app.loc.page.value != 'Login') {
               scrimColor = AppColors.scrimLight;
               behavior = HitTestBehavior.opaque;
               height = MediaQuery.of(context).size.height;

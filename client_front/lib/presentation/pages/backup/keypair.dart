@@ -23,7 +23,7 @@ class _ShowKeypairState extends State<ShowKeypair>
   @override
   void initState() {
     super.initState();
-    streams.app.verify.add(false);
+    streams.app.auth.verify.add(false);
     if (Platform.isAndroid) {
       FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     } else if (Platform.isIOS) {

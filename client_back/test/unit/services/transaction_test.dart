@@ -58,38 +58,6 @@ void main() async {
     });
   });
 
-  group('CollectUTXOs RVN', () {
-    test('pick smallest UTXO of sufficient size', () async {
-      var utxos =
-          await services.balance.collectUTXOs(walletId: wallet.id, amount: 500);
-      expect(utxos.map((utxo) => utxo.coinValue).toList(), [5000000]);
-    });
-    test('take multiple from the top', () async {
-      var utxos = await services.balance
-          .collectUTXOs(walletId: wallet.id, amount: 12000000);
-      expect(
-          utxos.map((utxo) => utxo.coinValue).toList(), [10000000, 10000000]);
-    });
-  });
-
-  group('CollectUTXOs asset', () {
-    test('pick smallest UTXO of sufficient size', () async {
-      var utxos = await services.balance.collectUTXOs(
-          walletId: wallet.id,
-          amount: 5,
-          security: pros.securities.primaryIndex
-              .getOne('MOONTREE', Chain.ravencoin, Net.test));
-      expect(utxos.map((utxo) => utxo.assetValue).toList(), [100]);
-    });
-    test('take multiple from the top', () async {
-      var utxos = await services.balance.collectUTXOs(
-          walletId: wallet.id,
-          amount: 1200,
-          security: pros.securities.primaryIndex
-              .getOne('MOONTREE', Chain.ravencoin, Net.test));
-      expect(utxos.map((utxo) => utxo.assetValue).toList(), [1000, 500]);
-    });
-  });
   group('TransactionBuilder', () {
     test('default transaction version is 1', () {
       var txb = TransactionBuilder(network: mainnet);

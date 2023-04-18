@@ -91,8 +91,8 @@ class SimpleSelectionItems {
         barrierColor: AppColors.black38,
         shape: shapes.topRounded8,
         builder: (BuildContext context) {
-          if (streams.app.scrim.value == false) {
-            streams.app.scrim.add(true);
+          if (streams.app.behavior.scrim.value == false) {
+            streams.app.behavior.scrim.add(true);
           }
           final DraggableScrollableController draggableScrollController =
               DraggableScrollableController();
@@ -127,8 +127,8 @@ class SimpleSelectionItems {
           );
           //});
         }).then((value) {
-      if (streams.app.scrim.value == true) {
-        streams.app.scrim.add(false);
+      if (streams.app.behavior.scrim.value == true) {
+        streams.app.behavior.scrim.add(false);
       }
       if (then != null) {
         then!();
@@ -150,13 +150,13 @@ class SimpleScrim {
         barrierColor: AppColors.black38,
         shape: shapes.topRounded8,
         builder: (BuildContext context) {
-          if (streams.app.scrim.value == false) {
-            streams.app.scrim.add(true);
+          if (streams.app.behavior.scrim.value == false) {
+            streams.app.behavior.scrim.add(true);
           }
           return Container(height: 0);
         }).then((value) {
-      if (streams.app.scrim.value == true) {
-        streams.app.scrim.add(false);
+      if (streams.app.behavior.scrim.value == true) {
+        streams.app.behavior.scrim.add(false);
       }
       if (then != null) {
         then!();

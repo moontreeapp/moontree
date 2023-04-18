@@ -133,7 +133,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     //  _slideController.reset();
     //});
 
-    streams.app.splash.add(false);
+    streams.app.loc.splash.add(false);
 
     /// does not work
     ///

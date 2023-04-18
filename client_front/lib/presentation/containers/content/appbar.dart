@@ -23,8 +23,6 @@ class CustomAppBar extends StatelessWidget {
           Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             const ConnectionLight(),
             components.status,
-            //const SnackBarViewer(), // replaced with a snackbar layer behind nav bar
-            //const PeristentKeyboardWatcher(), // shouldn't need custom keyboard logic in uiv2
           ]),
         ],
       ));

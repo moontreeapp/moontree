@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
-import 'package:client_back/services/consent.dart'
-    show consentToAgreements;
+import 'package:client_back/services/consent.dart' show consentToAgreements;
 import 'package:client_front/domain/utils/auth.dart';
 import 'package:client_front/domain/utils/login.dart';
 import 'package:client_front/domain/utils/data.dart';
@@ -60,7 +59,7 @@ class _LoginNativeState extends State<LoginNative> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.active.listen((bool value) {
+    listeners.add(streams.app.active.active.listen((bool value) {
       if (value) {
         setState(() {});
       }
@@ -136,10 +135,10 @@ class _LoginNativeState extends State<LoginNative> {
     /// there are existing wallets, we should populate them with sensitives now.
     await populateWalletsWithSensitives();
     final LocalAuthApi localAuthApi = LocalAuthApi();
-    streams.app.authenticating.add(true);
+    streams.app.auth.authenticating.add(true);
     final bool validate = await localAuthApi.authenticate(
         skip: devFlags.contains(DevFlag.skipPin));
-    streams.app.authenticating.add(false);
+    streams.app.auth.authenticating.add(false);
     setState(() => enabled = false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (!consented) {
@@ -150,7 +149,7 @@ class _LoginNativeState extends State<LoginNative> {
       /// this is a pretty wild edge case:
       /// they were able to set nativeSecurity up but now its not working anymore
       if (localAuthApi.reason == AuthenticationResult.error) {
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
             message: 'Unknown login error: please set a pin on the device.',
             showOnLogin: true));
         setState(() => enabled = true);
@@ -158,7 +157,7 @@ class _LoginNativeState extends State<LoginNative> {
           context,
           getMethodPathLogin(nativeSecurity: false),
         );
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
             message: 'Please set a password to secure your wallet.',
             showOnLogin: true));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {

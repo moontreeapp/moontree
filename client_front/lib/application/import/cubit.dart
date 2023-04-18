@@ -115,7 +115,7 @@ class ImportFormCubit extends Cubit<ImportFormState> with SetCubitMixin {
         }
         // used in navbar ('import' or 'send')
         streams.import.result.add(ImportRequest(text: 'sensitive'));
-        streams.app.snack.add(Snack(message: 'Sucessful Import'));
+        streams.app.behavior.snack.add(Snack(message: 'Sucessful Import'));
       } else {
         // notify about failures:
         for (final x in range(tuple3.item1.length)) {
@@ -123,7 +123,7 @@ class ImportFormCubit extends Cubit<ImportFormState> with SetCubitMixin {
             continue;
           } else if (tuple3.item3.isNotEmpty &&
               tuple3.item3.first != 'Success!') {
-            streams.app.snack.add(Snack(
+            streams.app.behavior.snack.add(Snack(
                 message: tuple3.item3[x]
                     //.firstWhere((String? element) => element != null)
                     //?.split(': ')

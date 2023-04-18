@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
-import 'package:client_front/presentation/widgets/front/forms/network.dart';
 import 'package:client_front/presentation/widgets/front/choices/blockchain_choice.dart';
 
 class BlockchainSettings extends StatelessWidget {
@@ -11,10 +10,7 @@ class BlockchainSettings extends StatelessWidget {
     return PageStructure(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        const BlockchainChoice(),
-        //const ElectrumNetwork(), // no longer use electrum...
-      ],
+      children: <Widget>[const BlockchainChoice()],
     );
   }
 }

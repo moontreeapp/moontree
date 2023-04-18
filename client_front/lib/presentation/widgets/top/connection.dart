@@ -124,7 +124,7 @@ class _ConnectionLightState extends State<ConnectionLight>
       : connectionStatusColor;
 
   void navToBlockchain() {
-    if (streams.app.scrim.value ?? false) {
+    if (streams.app.behavior.scrim.value ?? false) {
       return;
     }
 

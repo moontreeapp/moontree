@@ -65,7 +65,7 @@ class _LoginPasswordState extends State<LoginPassword> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.active.listen((bool value) {
+    listeners.add(streams.app.active.active.listen((bool value) {
       if (value) {
         setState(() {});
       }
@@ -166,7 +166,7 @@ class _LoginPasswordState extends State<LoginPassword> {
               label: passwordText == null ? 'Unlock' : 'Unlocking...',
               disabledOnPressed: () => setState(() {
                     if (!isConnected()) {
-                      streams.app.snack.add(Snack(
+                      streams.app.behavior.snack.add(Snack(
                         message:
                             'Unable to connect! Please check connectivity.',
                       ));
@@ -207,7 +207,7 @@ class _LoginPasswordState extends State<LoginPassword> {
 
     /// bridge
     if (ancientValidate()) {
-      streams.app.snack.add(Snack(
+      streams.app.behavior.snack.add(Snack(
           message: 'Migrating to latest version. Just a sec...',
           showOnLogin: true));
       setState(() => passwordText = password.text);
@@ -232,8 +232,8 @@ class _LoginPasswordState extends State<LoginPassword> {
       await updateWalletsToSecureStorage();
       await updateEnumLowerCase();
       await updateChain();
-      streams.app.scrim.add(null);
-      streams.app.snack
+      streams.app.behavior.scrim.add(null);
+      streams.app.behavior.snack
           .add(Snack(message: 'Migration complete...', showOnLogin: true));
 
       await initiateLogin(password.text, refresh: true);
@@ -276,12 +276,11 @@ class _LoginPasswordState extends State<LoginPassword> {
     // create ciphers for wallets we have
     login(context, password: providedPassword);
     if (refresh) {
-      streams.app.snack
+      streams.app.behavior.snack
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));
 
       /// erase all history stuff
       await services.client.resetMemoryAndConnection(keepBalances: false);
-      services.download.overrideGettingStarted = true;
       streams.app.wallet.refresh.add(true);
     }
   }

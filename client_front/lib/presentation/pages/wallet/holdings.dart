@@ -250,7 +250,7 @@ class _HoldingsView extends State<HoldingsView> {
     //if (services.developer.advancedDeveloperMode == true) {
     //  return RefreshIndicator(
     //    onRefresh: () async {
-    //      streams.app.snack.add(Snack(message: 'Resyncing...'));
+    //      streams.app.behavior.snack.add(Snack(message: 'Resyncing...'));
     //      await services.client.resetMemoryAndConnection();
     //      setState(() {});
     //    },
@@ -290,7 +290,6 @@ class _HoldingsView extends State<HoldingsView> {
       ...<int>[0]
     ].sum;
     if (unspentSum != unspentBal) {
-      await services.balance.recalculateAllBalances();
       setState(() {});
     }
 

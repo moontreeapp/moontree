@@ -343,12 +343,12 @@ class NavbarActions extends StatelessWidget {
                                                       .walletEmptyCoin,
                                           disabledOnPressed: () {
                                             if (!connectionState.isConnected) {
-                                              streams.app.snack.add(Snack(
+                                              streams.app.behavior.snack.add(Snack(
                                                   message:
                                                       'Not connected to network'));
                                             } else if (components.cubits
                                                 .holdingsView.walletEmptyCoin) {
-                                              streams.app.snack.add(Snack(
+                                              streams.app.behavior.snack.add(Snack(
                                                   message:
                                                       'This wallet has no coin, unable to send.'));
                                             }

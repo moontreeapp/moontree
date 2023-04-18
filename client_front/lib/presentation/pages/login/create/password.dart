@@ -174,7 +174,7 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
                   passwordText == null ? 'Create Wallet' : 'Creating Wallet...',
               disabledOnPressed: () => setState(() {
                     if (!isConnected()) {
-                      streams.app.snack.add(Snack(
+                      streams.app.behavior.snack.add(Snack(
                         message:
                             'Unable to connect! Please check connectivity.',
                       ));

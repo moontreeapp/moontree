@@ -58,7 +58,7 @@ class _ClearSSChoice extends State<ClearSSChoice> {
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
-                                streams.app.snack.add(
+                                streams.app.behavior.snack.add(
                                     Snack(message: 'Secure Storage Cleared'));
                               }
                             })

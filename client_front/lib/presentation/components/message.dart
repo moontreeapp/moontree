@@ -20,7 +20,7 @@ class MessageComponents {
         barrierColor: AppColors.black38,
         useSafeArea: false,
         builder: (BuildContext context) {
-          streams.app.scrim.add(true);
+          streams.app.behavior.scrim.add(true);
           return AlertDialog(
               elevation: 0,
               shape: shapes.rounded8,
@@ -68,6 +68,6 @@ class MessageComponents {
                               fontWeight: FontWeights.semiBold,
                               color: AppColors.primary)))
               ]);
-        }).then((dynamic value) => streams.app.scrim.add(false));
+        }).then((dynamic value) => streams.app.behavior.scrim.add(false));
   }
 }

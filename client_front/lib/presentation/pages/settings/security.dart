@@ -27,7 +27,7 @@ class _SecuritySettingsState extends State<SecuritySettings> {
   @override
   void initState() {
     super.initState();
-    streams.app.verify.add(false);
+    streams.app.auth.verify.add(false);
   }
 
   @override

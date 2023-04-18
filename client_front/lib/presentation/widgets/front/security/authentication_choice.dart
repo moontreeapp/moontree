@@ -57,10 +57,10 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             onChanged: (AuthMethod? value) async {
               Future<void> onSuccess() async {
                 final LocalAuthApi localAuthApi = LocalAuthApi();
-                streams.app.authenticating.add(true);
+                streams.app.auth.authenticating.add(true);
                 final bool validate = await localAuthApi.authenticate(
                     skip: devFlags.contains(DevFlag.skipPin));
-                streams.app.authenticating.add(false);
+                streams.app.auth.authenticating.add(false);
                 if (validate) {
                   if (mounted) {
                     setState(() {
@@ -86,7 +86,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                       setState(() => authenticationMethodChoice =
                           AuthMethod.moontreePassword);
                     });
-                    streams.app.snack.add(Snack(
+                    streams.app.behavior.snack.add(Snack(
                       message:
                           'Failed. To use Native Security authentication, set it up a pin in the phone settings.',
                     ));
@@ -94,7 +94,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                       AuthenticationResult.failure) {
                     setState(() => authenticationMethodChoice =
                         AuthMethod.moontreePassword);
-                    streams.app.snack.add(Snack(
+                    streams.app.behavior.snack.add(Snack(
                       message:
                           'Unable to authenticate; setting login method to password.',
                     ));
@@ -104,7 +104,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
 
               setState(() => authenticationMethodChoice = value);
 
-              streams.app.verify.add(false); // require auth
+              streams.app.auth.verify.add(false); // require auth
               if (services.password.askCondition) {
                 await Navigator.pushNamed(
                   components.routes.routeContext!,
@@ -157,7 +157,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               //  },
               //);
               //if (!canceled) {
-              streams.app.verify.add(false); // always require auth
+              streams.app.auth.verify.add(false); // always require auth
               Navigator.of(components.routes.routeContext!).pushNamed(
                 '/security/password/change',
                 arguments: <String, Object>{
@@ -173,7 +173,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                     await services.authentication.setMethod(method: value!);
                   },
                   //'then.then': () async {
-                  //  streams.app.snack
+                  //  streams.app.behavior.snack
                   //      .add(Snack(message: 'Successfully Updated Security'));
                   //},
                 },

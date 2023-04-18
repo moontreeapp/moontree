@@ -517,12 +517,12 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         // should this be in a repo?
         pros.notes.save(
             Note(note: state.note, transactionId: broadcastResult.value!));
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
             positive: true,
             message: 'Successfully Sent Transaction',
             copy: broadcastResult.value!));
       } else {
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
             positive: false,
             message: 'Unable to Send, Try again Later',
             copy: broadcastResult.error));

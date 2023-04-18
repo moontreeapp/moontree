@@ -280,7 +280,8 @@ class TransactionPageContent extends StatelessWidget {
           trailing: GestureDetector(
             onLongPress: () {
               Clipboard.setData(ClipboardData(text: value));
-              streams.app.snack.add(Snack(message: 'copied to clipboard'));
+              streams.app.behavior.snack
+                  .add(Snack(message: 'copied to clipboard'));
             },
             child: SizedBox(
                 width: screen.width / 2,
@@ -313,14 +314,15 @@ class TransactionPageContent extends StatelessWidget {
                   'Browser'.toUpperCase(): () {
                     Navigator.of(context).pop();
                     //launch(url + elementFull(text));
-                    streams.app.browsing.add(true);
+                    streams.app.loc.browsing.add(true);
                     launchUrl(Uri.parse(url + elementFull(text, cubit)));
                   },
                 },
               ),
           onLongPress: () {
             Clipboard.setData(ClipboardData(text: elementFull(text, cubit)));
-            streams.app.snack.add(Snack(message: 'copied to clipboard'));
+            streams.app.behavior.snack
+                .add(Snack(message: 'copied to clipboard'));
           },
           trailing: Text(element(text, cubit),
               style: Theme.of(context).textTheme.link));

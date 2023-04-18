@@ -31,7 +31,7 @@ class _QRCodeButtonState extends State<QRCodeButton> {
                 color: widget.light ? Colors.white : Colors.black,
               ),
               onPressed: () async {
-                if (streams.app.scrim.value == true) return;
+                if (streams.app.behavior.scrim.value == true) return;
                 ScaffoldMessenger.of(context).clearSnackBars();
                 //Backdrop.of(components.routes.routeContext!).concealBackLayer();
                 //ScanResult result = await BarcodeScanner.scan();

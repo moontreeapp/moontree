@@ -36,7 +36,7 @@ class LoadingViewV1Cubit extends Cubit<LoadingViewV1State> with SetCubitMixin {
 
   void init() {
     /// will probably need some kind of listeners, maybe depending on page.
-    //streams.app.page.listen((String value) {
+    //streams.app.loc.page.listen((String value) {
     //  if (value == 'Home' && priorPage == 'Transactions') {
     //    reset();
     //  }

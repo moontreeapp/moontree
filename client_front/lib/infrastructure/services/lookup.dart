@@ -20,7 +20,7 @@ class Current {
 
   static Set<Transaction> get transactions => wallet.transactions;
 
-  static List<Balance> get holdings => services.balance.walletBalances(wallet);
+  static List<Balance> get holdings => wallet.balances;
 
   static List<String> get holdingNames =>
       components.cubits.holdingsView.state.holdingsViews
@@ -35,9 +35,6 @@ class Current {
   static Iterable<String> get qualifierNames => holdings
       .where((Balance balance) => balance.security.asset?.isQualifier ?? false)
       .map((Balance balance) => balance.security.symbol);
-
-  static List<TransactionViewSpoof> walletCompiledTransactions() =>
-      services.transaction.getTransactionViewSpoof(wallet: wallet);
 
   static Chain get chain => pros.settings.chain;
   static Net get net => pros.settings.net;

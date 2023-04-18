@@ -25,7 +25,7 @@ class ConnectionLight extends StatelessWidget {
           child: GestureDetector(
             onLongPress: () {
               print('testing done here');
-              streams.app.snack.add(Snack(message: state.status.name));
+              streams.app.behavior.snack.add(Snack(message: state.status.name));
             },
             onTap: navToBlockchain,
             child: AnimatedContainer(

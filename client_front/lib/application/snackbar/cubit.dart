@@ -23,7 +23,7 @@ class SnackbarCubit extends Cubit<SnackbarCubitState> {
   /// stream:
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
   void setupListener() =>
-      listeners.add(back.streams.app.snack.listen((Snack? value) {
+      listeners.add(back.streams.app.behavior.snack.listen((Snack? value) {
         if (value != null) {
           if (value.delay > 0) {
             countdownTimer(value.delay).then((_) {

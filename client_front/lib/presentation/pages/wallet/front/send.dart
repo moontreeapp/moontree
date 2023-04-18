@@ -114,7 +114,7 @@ class _SimpleSendState extends State<SimpleSend> {
     super.dispose();
   }
 
-  void _announceNoCoin() => streams.app.snack.add(Snack(
+  void _announceNoCoin() => streams.app.behavior.snack.add(Snack(
         message: 'No coin in wallet - unable to pay fees',
         positive: false,
       ));
@@ -134,13 +134,13 @@ class _SimpleSendState extends State<SimpleSend> {
             note: data['note'] as String? ?? cubit.state.note,
           );
         } else {
-          streams.app.snack.add(Snack(
+          streams.app.behavior.snack.add(Snack(
             message: 'Not connected to ${data['chain']} ${data['net']}',
             positive: false,
           ));
         }
       } else {
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
           message: 'Not connected to ${data['chain']}',
           positive: false,
         ));
@@ -643,14 +643,14 @@ class _SimpleSendState extends State<SimpleSend> {
     );
     // this check should live in repository or something, todo: fix
     if (cubit.state.unsigned == null) {
-      streams.app.snack.add(Snack(
+      streams.app.behavior.snack.add(Snack(
           message: 'Unable to contact server. Please try again later.',
           positive: false));
       return;
     }
     for (final unsigned in cubit.state.unsigned ?? []) {
       if (unsigned.error != null) {
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
           message: unsigned.error ?? 'Unable to make transaction at this time.',
           positive: false,
         ));
@@ -727,7 +727,7 @@ class _SimpleSendState extends State<SimpleSend> {
     if (validateMsg.item1) {
       sail.to('/wallet/send/checkout');
     } else {
-      streams.app.snack.add(Snack(
+      streams.app.behavior.snack.add(Snack(
           message: 'unable to generate transaction',
           positive: false,
           copy: validateMsg.item2,

@@ -20,16 +20,4 @@ void printFullState() {
   print('wallets ${pros.wallets.records.length}');
   print(
       'subscribe subscriptionHandlesAsset ${services.client.subscribe.subscriptionHandlesAsset}');
-  print(
-      'services.download.history.calledAllDoneProcess ${services.download.history.calledAllDoneProcess}');
-  print(
-      'services.download.queue.addresses ${services.download.queue.addresses.length}');
-  print(
-      'services.download.queue.transactions ${services.download.queue.transactions.length}');
-  print(
-      'services.download.queue.dangling ${services.download.queue.dangling.length}');
-  print('services.download.queue.updated ${services.download.queue.updated}');
-  print('services.download.queue.address ${services.download.queue.address}');
-  print(
-      'services.download.queue.transactionSet ${services.download.queue.transactionSet}');
 }

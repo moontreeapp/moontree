@@ -32,7 +32,7 @@ class Receive extends StatelessWidget {
                 onTap: () {
                   Clipboard.setData(ClipboardData(
                       text: components.cubits.receiveView.address));
-                  streams.app.snack.add(
+                  streams.app.behavior.snack.add(
                       Snack(message: 'Address copied to clipboard', delay: 0));
                   // not formatted the same...
                   //ScaffoldMessenger.of(context).showSnackBar(new SnackBar(

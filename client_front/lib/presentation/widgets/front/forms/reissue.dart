@@ -345,7 +345,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
               onPressed: () => showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  streams.app.scrim.add(true);
+                  streams.app.behavior.scrim.add(true);
                   return const AlertDialog(
                     content:
                         Text('Reissuable asset can increase in quantity and '
@@ -353,7 +353,7 @@ class _ReissueAssetState extends State<ReissueAsset> {
                             'assets cannot be modified in anyway.'),
                   );
                 },
-              ).then((dynamic value) => streams.app.scrim.add(false)),
+              ).then((dynamic value) => streams.app.behavior.scrim.add(false)),
               icon: const Icon(
                 Icons.help_rounded,
                 color: Colors.black,

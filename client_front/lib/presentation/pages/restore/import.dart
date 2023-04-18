@@ -99,7 +99,7 @@ class Import extends StatelessWidget {
   Future<void> requestPassword() async => showDialog(
       context: buildContext,
       builder: (BuildContext context) {
-        streams.app.scrim.add(true);
+        streams.app.behavior.scrim.add(true);
         return AlertDialog(
           title: Column(
             children: <Widget>[
@@ -124,12 +124,12 @@ class Import extends StatelessWidget {
             ],
           ),
         );
-      }).then((dynamic value) => streams.app.scrim.add(false));
+      }).then((dynamic value) => streams.app.behavior.scrim.add(false));
 
   Future<void> requestSalt() async => showDialog(
       context: buildContext,
       builder: (BuildContext context) {
-        streams.app.scrim.add(true);
+        streams.app.behavior.scrim.add(true);
         return AlertDialog(
           title: Column(
             children: <Widget>[
@@ -153,7 +153,7 @@ class Import extends StatelessWidget {
             ],
           ),
         );
-      }).then((dynamic value) => streams.app.scrim.add(false));
+      }).then((dynamic value) => streams.app.behavior.scrim.add(false));
 
   Future<void> attemptImport([String? importData]) async {
     FocusScope.of(buildContext).unfocus();
@@ -234,14 +234,15 @@ class Import extends StatelessWidget {
           }
           if (resp == text && encrypted) {
             showDialog(
-                context: buildContext,
-                builder: (BuildContext context) {
-                  streams.app.scrim.add(true);
-                  return const AlertDialog(
-                      title: Text('Password Not Recognized'),
-                      content: Text(
-                          'Password does not match the password used at the time of encryption.'));
-                }).then((dynamic value) => streams.app.scrim.add(false));
+                    context: buildContext,
+                    builder: (BuildContext context) {
+                      streams.app.behavior.scrim.add(true);
+                      return const AlertDialog(
+                          title: Text('Password Not Recognized'),
+                          content: Text(
+                              'Password does not match the password used at the time of encryption.'));
+                    })
+                .then((dynamic value) => streams.app.behavior.scrim.add(false));
             return;
           }
         }

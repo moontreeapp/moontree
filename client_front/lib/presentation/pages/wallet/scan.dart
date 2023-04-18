@@ -31,7 +31,7 @@ class _ScanQRState extends State<ScanQR> {
   @override
   void initState() {
     super.initState();
-    streams.app.browsing.add(true);
+    streams.app.loc.browsing.add(true);
   }
 
   @override
@@ -119,7 +119,7 @@ class _ScanQRState extends State<ScanQR> {
       components.cubits.bottomModalSheet.hide();
 
       // tell user
-      streams.app.snack
+      streams.app.behavior.snack
           .add(Snack(message: 'please give Moontree app camera permissions'));
     }
   }

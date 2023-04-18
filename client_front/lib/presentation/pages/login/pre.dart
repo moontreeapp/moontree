@@ -43,7 +43,7 @@ class PreLogin extends StatelessWidget {
         try {
           hasConsented = await discoverConsent(await getId());
         } catch (e) {
-          streams.app.snack.add(Snack(
+          streams.app.behavior.snack.add(Snack(
             message: 'Unable to connect! Please check connectivity.',
           ));
         }

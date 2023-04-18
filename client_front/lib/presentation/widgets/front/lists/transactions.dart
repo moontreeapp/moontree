@@ -103,7 +103,7 @@ class _TransactionListState extends State<TransactionList> {
   Widget build(BuildContext context) {
     transactions = (widget.mempool?.toList() ?? []) +
         (widget.transactions?.toList() ?? []);
-    // ?? services.transaction.getTransactionViewSpoof(wallet: Current.wallet);
+
     if (transactions.isEmpty) {
       transactionCount = pros.unspents.bySymbol
           .getAll(widget.symbol ?? pros.securities.currentCoin.symbol)

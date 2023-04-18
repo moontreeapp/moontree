@@ -1,4 +1,5 @@
 import 'package:client_front/presentation/widgets/front_curve.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -83,9 +84,10 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
     //onTap: () => FocusScope.of(context).unfocus(),
     //child:
     return FrontCurve(
-      child: components.page.form(
-        context,
-        columnWidgets: <Widget>[
+      child: PageStructure(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
           if (widget.intro != null) widget.intro!,
           Container(
               height: ((MediaQuery.of(context).size.height) -
@@ -110,7 +112,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
           else
             passwordField,
         ],
-        buttons: <Widget>[
+        firstLowerChildren: <Widget>[
           if (pros.settings.authMethodIsNativeSecurity)
             bioButton
           else
@@ -172,7 +174,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
   Future<void> submitProceedure() async {
     if (await services.password.lockout
         .handleVerificationAttempt(await verify())) {
-      streams.app.verify.add(true);
+      streams.app.auth.verify.add(true);
       widget.parentState?.setState(() {});
       (data['onSuccess'] ?? () {})();
     } else {
@@ -215,15 +217,15 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
   Future<void> submit() async {
     setState(() => enabled = false);
     final LocalAuthApi localAuthApi = LocalAuthApi();
-    streams.app.authenticating.add(true);
+    streams.app.auth.authenticating.add(true);
     final bool validate = await localAuthApi.authenticate(
         skip: devFlags.contains(DevFlag.skipPin));
-    streams.app.authenticating.add(false);
+    streams.app.auth.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (widget.asLoginTime) {
         services.cipher.loginTime();
       }
-      streams.app.verify.add(true);
+      streams.app.auth.verify.add(true);
       widget.parentState?.setState(() {});
       (data['onSuccess'] ?? () {})();
     } else {
@@ -231,7 +233,7 @@ class _VerifyAuthenticationState extends State<VerifyAuthentication> {
         setState(() {
           enabled = true;
         });
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
           message: 'Unknown login error: please set a pin on the device.',
         ));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {

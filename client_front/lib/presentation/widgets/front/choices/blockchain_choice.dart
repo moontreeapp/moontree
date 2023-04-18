@@ -201,7 +201,7 @@ Future<void> changeChainNet(
     net: value.net,
   );
   await services.client.switchNetworks(chain: value.chain, net: value.net);
-  streams.app.snack.add(Snack(message: 'Successfully connected'));
+  streams.app.behavior.snack.add(Snack(message: 'Successfully connected'));
   await components.cubits.holdingsView.setHoldingViews(force: true);
   components.cubits.loadingView.hide();
   (second ?? () {})();
@@ -221,7 +221,7 @@ class ChainBundle {
 }
 
 void navToBlockchain([BuildContext? context, Function? then]) {
-  //if (streams.app.scrim.value ?? false) {
+  //if (streams.app.behavior.scrim.value ?? false) {
   //  return;
   //}
   //if (streams.app.loading.value == true) {

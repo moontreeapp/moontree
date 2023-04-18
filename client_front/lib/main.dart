@@ -143,7 +143,7 @@ class MoontreeAppState extends State<MoontreeApp> {
 
   @override
   Widget build(BuildContext context) => StreamBuilder<bool>(
-        stream: streams.app.splash.stream,
+        stream: streams.app.loc.splash.stream,
         initialData: true,
         builder: (context, snapshot) {
           if (snapshot.data == true) {
@@ -183,7 +183,7 @@ class HomePage extends StatelessWidget {
       ),
     );
     return GestureDetector(
-        onTap: () => streams.app.tap.add(null),
+        onTap: () => streams.app.active.tap.add(null),
         behavior: HitTestBehavior.translucent,
         child: Platform.isIOS ? scaffold : SafeArea(child: scaffold));
   }

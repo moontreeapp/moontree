@@ -49,7 +49,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
   @override
   void initState() {
     super.initState();
-    listeners.add(streams.app.active.listen((bool value) {
+    listeners.add(streams.app.active.active.listen((bool value) {
       if (value) {
         setState(() {});
       }
@@ -146,10 +146,10 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
 
   Future<void> submit() async {
     setState(() => enabled = false);
-    streams.app.authenticating.add(true);
+    streams.app.auth.authenticating.add(true);
     final bool validate = await localAuthApi.authenticate(
         skip: devFlags.contains(DevFlag.skipPin));
-    streams.app.authenticating.add(false);
+    streams.app.auth.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       /// v2 solution for loading screen: limitation: must remember to hide later
       components.cubits.loadingView
@@ -185,7 +185,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
         setState(() {
           enabled = true;
         });
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
           message: 'No pin detected; please set a password.',
         ));
         Future<Object?>.microtask(() => sail.to(
