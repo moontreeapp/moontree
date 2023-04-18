@@ -14,7 +14,6 @@ void main() {
     setUp(() async {
       fixtures.useEmptyFixtures();
       dotenv.load();
-      triggers.leader.init();
       await pros.wallets.save(LeaderWallet(
           id: '0',
           encryptedEntropy:

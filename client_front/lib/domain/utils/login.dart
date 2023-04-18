@@ -20,11 +20,9 @@ Future<void> login(
   await services.cipher.updateWallets();
   services.cipher.cleanupCiphers();
   services.cipher.loginTime();
-  streams.app.context.add(AppContext.wallet);
   streams.app.splash.add(false); // trigger to refresh app bar again
   streams.app.logout.add(false);
   streams.app.verify.add(true);
-  //streams.app.lead.add(LeadIcon.menu);
 
   // setup subscription on moontree client for this wallet
   await setupSubscription(wallet: Current.wallet);

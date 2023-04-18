@@ -44,8 +44,6 @@ class _LoaderState extends State<Loader> {
 
   void _goSomewhere() {
     if (widget.returnHome) {
-      streams.app.setting.add(null);
-      streams.app.fling.add(false);
       //await Future<void>.delayed(const Duration(milliseconds: 100)); // doesn't help
       Navigator.popUntil(
         components.routes.routeContext!,
@@ -65,7 +63,6 @@ class _LoaderState extends State<Loader> {
   @override
   void initState() {
     super.initState();
-    streams.app.loading.add(true);
     // not ideal sends to home page even on error - in order to go back
     // intelligently we must know which stream matters and listen to that
     // like streams.spend.success or whatever.
@@ -97,7 +94,6 @@ class _LoaderState extends State<Loader> {
     for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
-    streams.app.loading.add(false);
     super.dispose();
   }
 

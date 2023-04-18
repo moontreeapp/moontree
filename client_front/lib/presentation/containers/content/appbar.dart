@@ -35,20 +35,6 @@ class AppBarLeft extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-
-      /// the latest path is available in sail.latestLocation for these to use,
-      /// but we need them to be rebuilt too. So either we make a cubit just for
-      /// that which can rebuild things, like PathCubit or we put it on a stream
-      /// like streams.app.path. if its on the stream it's nice because the back
-      /// can access it, but we have to rebuild pages with listeners ourselves.
-      /// if it's in a cubit that's nice because it can trigger rebuilds for us.
-      /// for now, we'll just keep a duplicate of the value on this TitleCubit,
-      /// but only because its easy and already in place to rebuild the page,
-      /// we'll try to reference one source of truth everywhere, including the
-      /// cubit itself (sail.latestLocation), that is until we make a decision.
-      /// maybe we'll determin that the back doesn't need to know where they are
-      /// so we'll make a PathCubit. I suppose we could put the path on multiple
-      /// cubits too.
       BlocBuilder<LocationCubit, LocationCubitState>(
           builder: (context, state) =>
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [

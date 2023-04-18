@@ -23,9 +23,6 @@ class RouteStack extends NavigatorObserver {
     if (previousRoute?.settings.name == '/home') {
       ScaffoldMessenger.of(routeContext!).clearSnackBars();
     }
-
-    /// moved to sailor
-    //streams.app.path.add(route.settings.name);
   }
 
   @override
@@ -34,10 +31,6 @@ class RouteStack extends NavigatorObserver {
     routeStack.removeLast();
     routeContext =
         routeStack.isEmpty ? null : routeStack.last.navigator?.context;
-
-    /// moved to sailor
-    //streams.app.path
-    //    .add(routeStack.isEmpty ? null : routeStack.last.settings.name);
   }
 
   @override
@@ -46,10 +39,6 @@ class RouteStack extends NavigatorObserver {
     routeStack.removeLast();
     routeContext =
         routeStack.isEmpty ? null : routeStack.last.navigator?.context;
-
-    /// moved to sailor
-    //streams.app.path
-    //    .add(routeStack.isEmpty ? null : routeStack.last.settings.name);
   }
 
   @override
@@ -61,9 +50,5 @@ class RouteStack extends NavigatorObserver {
     }
     routeContext =
         routeStack.isEmpty ? null : routeStack.last.navigator?.context;
-
-    /// moved to sailor
-    //streams.app.path
-    //    .add(routeStack.isEmpty ? null : routeStack.last.settings.name);
   }
 }

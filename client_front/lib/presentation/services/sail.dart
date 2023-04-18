@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:client_back/streams/streams.dart'; // streams.app.path
 import 'package:client_front/application/utilities.dart';
 import 'package:client_front/application/navbar/cubit.dart';
 import 'package:client_front/application/location/cubit.dart';
@@ -357,7 +356,6 @@ class Sail {
   void broadcast(String location, Manifest manifest, String? symbol) =>
       components.cubits.location
           .update(path: location, section: manifest.section, symbol: symbol);
-  //latestLocation = location; // streams.app.path.add(location);
 
   String? get latestLocation => components.cubits.location.state.path;
 

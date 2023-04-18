@@ -127,12 +127,9 @@ class _ConnectionLightState extends State<ConnectionLight>
     if (streams.app.scrim.value ?? false) {
       return;
     }
-    if (streams.app.loading.value == true) {
-      return;
-    }
+
     if (!disabledLocations.contains(sail.latestLocation)) {
       ScaffoldMessenger.of(context).clearSnackBars();
-      streams.app.lead.add(LeadIcon.dismiss);
       produceBlockchainModal(context: components.routes.routeContext!);
       //Navigator.of(components.routes.routeContext!)
       //    .pushNamed('/settings/network/blockchain');

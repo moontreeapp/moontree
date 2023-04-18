@@ -24,36 +24,14 @@ class AppStreams {
     ..name = 'app.active';
   final BehaviorSubject<bool?> tap = BehaviorSubject<bool?>.seeded(null)
     ..name = 'app.tap';
-
-  //final Stream<dynamic> ping =
-  //    Stream<dynamic>.periodic(const Duration(seconds: 60 * 2))
-  //      ..name = 'app.ping';
   final BehaviorSubject<bool> verify = BehaviorSubject<bool>.seeded(false)
     ..name = 'app.verify';
-
   final BehaviorSubject<String> page = BehaviorSubject<String>.seeded('main')
     ..name = 'app.page';
-  final BehaviorSubject<String?> path = BehaviorSubject<String?>.seeded(null)
-    ..name = 'app.path';
-  final BehaviorSubject<String?> setting = BehaviorSubject<String?>.seeded(null)
-    ..name = 'app.setting';
-  final BehaviorSubject<LeadIcon> lead =
-      BehaviorSubject<LeadIcon>.seeded(LeadIcon.pass)..name = 'app.lead';
-  final BehaviorSubject<AppContext> context =
-      BehaviorSubject<AppContext>.seeded(AppContext.login)
-        ..name = 'app.context';
   final BehaviorSubject<Snack?> snack = BehaviorSubject<Snack?>.seeded(null)
     ..name = 'app.snack';
-  final BehaviorSubject<NavHeight> navHeight =
-      BehaviorSubject<NavHeight>.seeded(NavHeight.none)..name = 'app.navHeight';
-  final BehaviorSubject<bool?> fling = BehaviorSubject<bool?>.seeded(null)
-    ..name = 'app.fling';
   final BehaviorSubject<bool> splash = BehaviorSubject<bool>.seeded(true)
     ..name = 'app.splash';
-  final BehaviorSubject<ThresholdTrigger?> triggers =
-      BehaviorSubject<ThresholdTrigger?>.seeded(null)..name = 'app.triggers';
-  final BehaviorSubject<bool> loading = BehaviorSubject<bool>.seeded(false)
-    ..name = 'app.loading';
   final BehaviorSubject<KeyboardStatus?> keyboard =
       BehaviorSubject<KeyboardStatus?>.seeded(null)..name = 'app.keyboard';
   //final locked = BehaviorSubject<bool>.seeded(false);

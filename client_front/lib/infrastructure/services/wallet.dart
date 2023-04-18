@@ -27,7 +27,6 @@ Future<String> generateWallet({
   WalletType? walletType,
   String? mnemonic,
 }) async {
-  streams.app.triggers.add(ThresholdTrigger.backup);
   final Wallet? wallet = await services.wallet.createSave(
     walletType: walletType,
     mnemonic: mnemonic,
