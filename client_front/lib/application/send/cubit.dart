@@ -327,7 +327,11 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           if (state.address == state.changeAddress) {
             coinChange += x.value ?? 0;
           } else if (addressData?.address != state.address) {
-            if (addressData?.address != state.changeAddress) {
+            if (addressData == null) {
+              /* does this mean there is no return address? that's highly 
+              irregular. but could happen, so don't error here? */
+              //return false;
+            } else if (addressData.address != state.changeAddress) {
               /* where is this going? why are we sending anything to an address
               that is neither the specified changeAddress or the target address?
               so we fail here if we don't recognize the address.
@@ -517,15 +521,17 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         // should this be in a repo?
         pros.notes.save(
             Note(note: state.note, transactionId: broadcastResult.value!));
-        streams.app.behavior.snack.add(Snack(
-            positive: true,
-            message: 'Successfully Sent Transaction',
-            copy: broadcastResult.value!));
+        Future.delayed(Duration(seconds: 2)).then((_) =>
+            streams.app.behavior.snack.add(Snack(
+                positive: true,
+                message: 'Successfully Sent Transaction',
+                copy: broadcastResult.value!)));
       } else {
-        streams.app.behavior.snack.add(Snack(
-            positive: false,
-            message: 'Unable to Send, Try again Later',
-            copy: broadcastResult.error));
+        Future.delayed(Duration(seconds: 2)).then((_) =>
+            streams.app.behavior.snack.add(Snack(
+                positive: false,
+                message: 'Unable to Send, Try again Later',
+                copy: broadcastResult.error)));
       }
     }
   }

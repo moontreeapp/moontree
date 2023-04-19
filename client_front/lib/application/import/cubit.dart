@@ -5,13 +5,13 @@ import 'package:tuple/tuple.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:client_back/services/import.dart';
-import 'package:client_back/streams/app.dart';
-import 'package:client_back/streams/import.dart';
 import 'package:client_back/client_back.dart';
+import 'package:client_back/streams/app.dart';
+import 'package:client_back/services/import.dart';
 import 'package:client_back/services/wallet/constants.dart';
 import 'package:client_front/infrastructure/services/storage.dart';
 import 'package:client_front/application/common.dart';
+//import 'package:client_back/records/raw/secret.dart';
 
 part 'state.dart';
 
@@ -113,8 +113,6 @@ class ImportFormCubit extends Cubit<ImportFormState> with SetCubitMixin {
               .savePreferredWalletId(pros.wallets.records.first.id);
           firstWallet = false;
         }
-        // used in navbar ('import' or 'send')
-        streams.import.result.add(ImportRequest(text: 'sensitive'));
         streams.app.behavior.snack.add(Snack(message: 'Sucessful Import'));
       } else {
         // notify about failures:
@@ -137,4 +135,16 @@ class ImportFormCubit extends Cubit<ImportFormState> with SetCubitMixin {
       }
     }
   }
+}
+
+class ImportRequest {
+  ImportRequest(
+      {required this.text, this.onSuccess, this.getEntropy, this.saveSecret});
+  final String text;
+  final Future<void> Function()? onSuccess;
+  final Future<String> Function(String id)? getEntropy;
+  final Future<void> Function(Secret secret)? saveSecret;
+  @override
+  String toString() =>
+      'ImportRequest(text=$text, onSuccess=$onSuccess, getEntropy=$getEntropy, saveSecret=$saveSecret)';
 }

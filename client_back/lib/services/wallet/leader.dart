@@ -54,10 +54,6 @@ class LeaderWalletService {
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     newLeaderProcessRunning = true;
     streams.client.busy.add(true);
-    streams.client.activity.add(ActivityMessage(
-        active: true,
-        title: 'Syncing with the network',
-        message: 'Downloading your balances...'));
     await deriveMoreAddresses(leader);
   }
 

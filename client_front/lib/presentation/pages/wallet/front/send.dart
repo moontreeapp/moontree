@@ -12,7 +12,6 @@ import 'package:wallet_utils/wallet_utils.dart'
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_back/streams/spend.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_front/domain/concepts/fee.dart' as fees;
 import 'package:client_front/domain/utils/params.dart';
@@ -657,10 +656,10 @@ class _SimpleSendState extends State<SimpleSend> {
         return;
       }
     }
-    streams.spend.made.add(TransactionNote(
-      txHex: cubit.state.unsigned![0].rawHex,
-      note: sendRequest.note,
-    ));
+    //streams.spend.made.add(TransactionNote(
+    //  txHex: cubit.state.unsigned![0].rawHex,
+    //  note: sendRequest.note,
+    //));
     cubit.set(
         checkout: SimpleSendCheckoutForm(
       symbol: sendRequest.security!.symbol,
@@ -694,7 +693,7 @@ class _SimpleSendState extends State<SimpleSend> {
         // broadcast signed trasnaction -- commented out for testing verification
         await cubit.broadcast();
         //sail.home();
-      }, //streams.spend.send.add(streams.spend.made.value),
+      },
       buttonWord: 'Send',
       loadingMessage: 'Sending',
       estimate: SendEstimate(

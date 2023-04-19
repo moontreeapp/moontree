@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/import.dart';
 import 'package:client_back/services/wallet/constants.dart';
-import 'package:client_back/streams/import.dart';
 import 'package:client_front/domain/utils/log.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart';

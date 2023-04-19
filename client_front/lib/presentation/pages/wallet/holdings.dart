@@ -273,26 +273,6 @@ class _HoldingsView extends State<HoldingsView> {
   }
 
   Future<void> onTap(Wallet? wallet, AssetHolding holding) async {
-    final int unspentSum = <int>[
-      ...<int>[
-        for (Unspent x in Current.wallet.unspents
-            .where((Unspent u) => u.symbol == holding.symbol))
-          x.value
-      ],
-      ...<int>[0]
-    ].sum;
-    final int unspentBal = <int>[
-      ...<int>[
-        for (Balance x in Current.wallet.balances
-            .where((Balance b) => b.security.symbol == holding.symbol))
-          x.value
-      ],
-      ...<int>[0]
-    ].sum;
-    if (unspentSum != unspentBal) {
-      setState(() {});
-    }
-
     if (holding.length == 1) {
       navigate(holding.balance!, wallet: wallet);
     } else {

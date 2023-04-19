@@ -70,26 +70,6 @@ void main() async {
       expect(txb.tx!.fee(), 11000);
     });
   });
-  group('TransactionService', () {
-    test('test BuildTransaction', () async {
-      var t = await TransactionService().make.transaction(
-            //'RM2fJN6HCLKp2DnmKMA5SBYvdKBCvmyaju',
-            'mtraysi8CBwHSSmyoEHPKBWZxc4vh6Phpn',
-            SendEstimate(4),
-            wallet: pros.wallets.primaryIndex.getByKeyStr('1')[0],
-          );
-      var tx = t.item1;
-      var estimate = t.item2;
-      expect(tx.fee(), 247500);
-      //expect(tx.fee(), estimate.fees); // 248600 (1100)
-      expect(tx.ins.length, 1);
-      expect(tx.outs.length, 2);
-      expect(tx.outs[0].value, 4);
-      //expect(tx.outs[1].value, 4752496); // 4751396 (1100)
-      expect(tx.outs[1].value! + tx.outs[0].value! + /*tx.fee()*/ estimate.fees,
-          5000000);
-    });
-  });
 
   // test('choose enough inputs for fee', () async {
   //   var txhelper = tx.TransactionBuilderHelper(

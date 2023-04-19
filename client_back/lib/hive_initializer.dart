@@ -102,17 +102,19 @@ class HiveInitializer {
     if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
         .contains(step)) {
       await Hive.openBox<Address>('addresses');
-      await Hive.openBox<Asset>('assets');
       await Hive.openBox<Balance>('balances');
       await Hive.openBox<Block>('blocks');
-      await Hive.openBox<Metadata>('metadatas');
       await Hive.openBox<Note>('notes');
       await Hive.openBox<Security>('securities');
-      await Hive.openBox<Status>('statuses');
-      await Hive.openBox<Transaction>('transactions');
-      await Hive.openBox<Unspent>('unspents');
-      await Hive.openBox<Vin>('vins');
-      await Hive.openBox<Vout>('vouts');
+
+      /// unused in v2
+      //await Hive.openBox<Status>('statuses');
+      //await Hive.openBox<Asset>('assets');
+      //await Hive.openBox<Metadata>('metadatas');
+      //await Hive.openBox<Transaction>('transactions');
+      //await Hive.openBox<Unspent>('unspents');
+      //await Hive.openBox<Vin>('vins');
+      //await Hive.openBox<Vout>('vouts');
     }
   }
 
@@ -137,17 +139,20 @@ class HiveInitializer {
       pros.addresses.setSource(HiveSource<Address>('addresses'));
       pros.balances.setSource(HiveSource<Balance>('balances'));
       pros.blocks.setSource(HiveSource<Block>('blocks'));
-      //pros.assets.setSource(HiveSource<Asset>('assets'));
-      //pros.metadatas.setSource(HiveSource<Metadata>('metadatas'));
       pros.notes.setSource(HiveSource<Note>('notes'));
       pros.securities.setSource(HiveSource<Security>(
         'securities',
         defaults: SecurityProclaim.defaults,
       ));
+
+      /// unused in v2
+      //pros.statuses.setSource(HiveSource<Status>('statuses'));
+      //pros.assets.setSource(HiveSource<Asset>('assets'));
+      //pros.metadatas.setSource(HiveSource<Metadata>('metadatas'));
       //pros.transactions.setSource(HiveSource<Transaction>('transactions'));
       //pros.vins.setSource(HiveSource<Vin>('vins'));
       //pros.vouts.setSource(HiveSource<Vout>('vouts'));
-      pros.statuses.setSource(HiveSource<Status>('statuses'));
+
     }
   }
 
