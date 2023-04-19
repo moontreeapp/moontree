@@ -313,7 +313,13 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
       // get change amount(s) here too
       for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
         for (final cs in unsigned.changeSource) {
-          if (cs != null) {
+          /* kralverde -
+          Just fyi it can also be wallet_key:index just like the vin source
+          meta stack -
+          the changeSource?
+          kralverde - 
+          Yeah, if you were to put in a change wallet for instance */
+          if (cs != null && !cs.contains(':')) {
             //print(state.changeAddress);
             //print(Current.chainNet.addressFromH160String(cs));
             //print(h160ToAddress(

@@ -156,7 +156,7 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                                               color: Colors.black,
                                               borderRadius:
                                                   shapes.topRoundedBorder16,
-                                              boxShadow: shadows.snackbar,
+                                              //boxShadow: shadows.snackbar, // looks weird with a shadow actually.
                                             ),
                                             child:
                                                 SnackContents(snack: snack))));
