@@ -25,7 +25,13 @@ class WalletHolding extends StatelessWidget {
   static const defaultKey = ValueKey('Holding');
 
   @override
-  Widget build(BuildContext context) => const SizedBox.shrink();
+  //Widget build(BuildContext context) => const SizedBox.shrink();
+  Widget build(BuildContext context) =>
+      components.empty.getTransactionsPlaceholder(
+        context,
+        scrollController: ScrollController(),
+        count: 1,
+      );
 }
 
 class FrontHoldingExtra extends StatefulWidget {

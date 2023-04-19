@@ -28,14 +28,14 @@ Future<void> eraseUnspentData({
   bool keepBalances = false,
 }) async {
   if (quick) {
-    await pros.statuses.delete();
+    //await pros.statuses.delete();
     //await pros.unspents.delete();
     if (!keepBalances) {
       await pros.balances.delete();
     }
   } else {
-    await pros.statuses.clear();
-    await pros.unspents.clear();
+    //await pros.statuses.clear();
+    //await pros.unspents.clear();
     if (!keepBalances) {
       await pros.balances.clear();
     }
