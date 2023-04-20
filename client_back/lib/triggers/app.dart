@@ -22,7 +22,13 @@ class AppWaiter extends Trigger {
           _inactiveTimer = Timer(
             Duration(seconds: inactiveGracePeriod),
             () {
-              if (!streams.app.active.active.value) {
+              if (!streams.app.active.active.value &&
+                      pros.wallets.primaryIndex
+                          .getOne(pros.settings.currentWalletId)!
+                          .backedUp // backup already performed,
+                  // we're not on the initial backup screen.
+                  // logout on backup screen causes issues.
+                  ) {
                 streams.app.auth.logout.add(true);
                 _inactiveTimer?.cancel();
                 _inactiveTimer = null;
@@ -59,7 +65,13 @@ class AppWaiter extends Trigger {
               !streams.app.auth.logout.value &&
               // have we had no activity while we've been waiting?
               DateTime.now().difference(lastActiveTime).inSeconds >=
-                  idleGracePeriod) {
+                  idleGracePeriod &&
+              // backup already performed,
+              // we're not on the initial backup screen.
+              // logout on backup screen causes issues.
+              pros.wallets.primaryIndex
+                  .getOne(pros.settings.currentWalletId)!
+                  .backedUp) {
         streams.app.auth.logout.add(true);
       }
     }

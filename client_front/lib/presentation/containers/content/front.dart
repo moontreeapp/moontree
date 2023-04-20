@@ -40,6 +40,18 @@ class FrontContainerView extends StatelessWidget {
           duration: animation.slideDuration,
           curve: Curves.easeInOutCubic,
           child: Stack(
+/* ran into error on ultra small screen
+'package:flutter/src/widgets/framework.dart': Failed assertion: line 5472 pos 14: '() {
+framework.dart:5472
+        // check that it really is our descendant
+        Element? ancestor = dependent._parent;
+        while (ancestor != this && ancestor != null) {
+          ancestor = ancestor._parent;
+        }
+        return ancestor == this;
+      }()': is not true.
+*/
+
             alignment: Alignment.bottomCenter,
             children: [
               if (!hide) FrontCurve(color: Colors.white),
