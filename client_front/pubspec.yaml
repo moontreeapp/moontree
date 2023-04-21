@@ -111,6 +111,12 @@ flutter:
   assets:
     - assets/
     - assets/icons/
+    - assets/icons/custom/
+    - assets/icons/custom/mobile/
+    - assets/icons/custom/black/
+    - assets/icons/custom/white/
+    - assets/icons/custom/color/
+    - assets/icons/custom/menu/
     - assets/icons/create/
     - assets/icons/discord/
     - assets/icons/extras/

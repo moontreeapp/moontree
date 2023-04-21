@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
@@ -22,30 +23,47 @@ class IconComponents {
       opacity != null ? Opacity(opacity: opacity, child: img) : img;
 
   Widget income(BuildContext context, {double? opacity}) => addOpacity(
-      Image.asset('assets/icons/receive/receive_green.png'), opacity);
+      //Image.asset('assets/icons/receive/receive_green.png')
+      SvgPicture.asset(
+          width: 20,
+          height: 20,
+          'assets/icons/custom/mobile/transaction-incoming.svg'),
+      opacity);
 
   Widget out(BuildContext context, {Color? color, double? opacity}) =>
       addOpacity(
-          Image.asset(
-            'assets/icons/send/send_red.png',
-            color: color,
-          ),
+          //Image.asset(
+          //  'assets/icons/send/send_red.png',
+          //  color: color,
+          //),
+          SvgPicture.asset(
+              width: 20,
+              height: 20,
+              'assets/icons/custom/mobile/transaction-outgoing.svg'),
           opacity);
   Widget outIn(BuildContext context, {Color? color, double? opacity}) =>
       addOpacity(
-          Image.asset(
-            'assets/icons/send/send_receive.png',
-            color: color ?? AppColors.black38,
-          ),
+          //Image.asset(
+          //  'assets/icons/send/send_receive.png',
+          //  color: color ?? AppColors.black38,
+          //),
+          SvgPicture.asset(
+              width: 20,
+              height: 20,
+              'assets/icons/custom/black/transaction-none.svg'),
           opacity);
   Widget fee(BuildContext context, {Color? color, double? opacity}) =>
       addOpacity(
-          Image.asset(
-            'assets/icons/send/send_red.png',
-            color: color,
-            //height: 16,
-            //width: 16,
-          ),
+          //Image.asset(
+          //  'assets/icons/send/send_red.png',
+          //  color: color,
+          //  //height: 16,
+          //  //width: 16,
+          //),
+          SvgPicture.asset(
+              width: 20,
+              height: 20,
+              'assets/icons/custom/mobile/transaction-outgoing.svg'),
           opacity);
 
   // faded colors will be for mempool

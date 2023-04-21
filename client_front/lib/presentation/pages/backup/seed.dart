@@ -41,7 +41,7 @@ class _BackupSeedState extends State<BackupSeed>
   @override
   void initState() {
     super.initState();
-    streams.app.auth.verify.add(false);
+    //streams.app.auth.verify.add(false);
     if (Platform.isAndroid) {
       FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     } else if (Platform.isIOS) {
@@ -76,68 +76,69 @@ class _BackupSeedState extends State<BackupSeed>
         builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
           if (snapshot.hasData) {
             secret = snapshot.data!;
-            return services.password.askCondition
-                ? VerifyAuthentication(
-                    parentState: this,
-                    buttonLabel: 'Show Seed',
-                    intro: Container(
-                        //height: 48,
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          'Your wallet is valuable.\nPlease create a backup!',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(color: AppColors.black),
-                        )),
-                    safe: Container(
-                        //height: 48,
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          'You are about to backup your seed words.\nKeep it secret, keep it safe.',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(color: AppColors.error),
-                        )),
-                    auto: true,
-                    asLoginTime: true,
+            return
+                //services.password.askCondition
+                //    ? VerifyAuthentication(
+                //        parentState: this,
+                //        buttonLabel: 'Show Seed',
+                //        intro: Container(
+                //            //height: 48,
+                //            alignment: Alignment.topCenter,
+                //            child: Text(
+                //              'Your wallet is valuable.\nPlease create a backup!',
+                //              textAlign: TextAlign.center,
+                //              style: Theme.of(context)
+                //                  .textTheme
+                //                  .subtitle1!
+                //                  .copyWith(color: AppColors.black),
+                //            )),
+                //        safe: Container(
+                //            //height: 48,
+                //            alignment: Alignment.topCenter,
+                //            child: Text(
+                //              'You are about to backup your seed words.\nKeep it secret, keep it safe.',
+                //              textAlign: TextAlign.center,
+                //              style: Theme.of(context)
+                //                  .textTheme
+                //                  .subtitle1!
+                //                  .copyWith(color: AppColors.error),
+                //            )),
+                //        auto: true,
+                //        asLoginTime: true,
+                //      )
+                //    :
+                Stack(children: [
+              PageStructure(
+                children: <Widget>[
+                  BackupInstructions(),
+                  BackupWarning(),
+                  if (smallScreen) words
+                ],
+                firstLowerChildren: <Widget>[
+                  BottomButton(
+                    label: 'Verify Backup',
+                    link: '/backup/verify',
+                    arguments: () {
+                      //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
+                      final List<SecretWord> shuffled = <SecretWord>[
+                        for (Tuple2<int, String> s in secret.enumeratedTuple())
+                          SecretWord(word: s.item2, order: s.item1)
+                      ];
+                      shuffled.shuffle();
+                      return <String, dynamic>{
+                        'secret': secret,
+                        'shuffled': shuffled,
+                      };
+                    }(),
                   )
-                : Stack(children: [
-                    PageStructure(
-                      children: <Widget>[
-                        BackupInstructions(),
-                        BackupWarning(),
-                        if (smallScreen) words
-                      ],
-                      firstLowerChildren: <Widget>[
-                        BottomButton(
-                          label: 'Verify Backup',
-                          link: '/backup/verify',
-                          arguments: () {
-                            //secret = Current.wallet.secret(Current.wallet.cipher!).split(' ');
-                            final List<SecretWord> shuffled = <SecretWord>[
-                              for (Tuple2<int, String> s
-                                  in secret.enumeratedTuple())
-                                SecretWord(word: s.item2, order: s.item1)
-                            ];
-                            shuffled.shuffle();
-                            return <String, dynamic>{
-                              'secret': secret,
-                              'shuffled': shuffled,
-                            };
-                          }(),
-                        )
-                      ],
-                    ),
-                    if (!smallScreen)
-                      Container(
-                          height: (1 - 72.ofAppHeight).ofAppHeight,
-                          alignment: Alignment.center,
-                          child: words)
-                  ]);
+                ],
+              ),
+              if (!smallScreen)
+                Container(
+                    height: (1 - 72.ofAppHeight).ofAppHeight,
+                    alignment: Alignment.center,
+                    child: words)
+            ]);
           } else {
             return const CircularProgressIndicator();
           }

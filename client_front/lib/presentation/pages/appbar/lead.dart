@@ -277,8 +277,11 @@ class MenuLead extends StatelessWidget {
           width: 40,
           alignment: Alignment.centerLeft,
           child: path.startsWith('/menu/')
-              ? const Icon(Icons.chevron_left_rounded,
-                  color: Colors.white, size: 30)
+              ? //const Icon(Icons.chevron_left_rounded,
+              //  color: Colors.white, size: 30)
+              SvgPicture.asset(
+                  'assets/icons/custom/white/chevron-left.svg',
+                )
               : SvgPicture.asset(
                   'assets/icons/menu/menu.svg',
                 )));
@@ -295,8 +298,12 @@ class BackLead extends StatelessWidget {
             height: 40,
             width: 40,
             alignment: Alignment.centerLeft,
-            child: const Icon(Icons.chevron_left_rounded,
-                color: Colors.white, size: 30)),
+            child:
+                //const Icon(Icons.chevron_left_rounded,
+                //    color: Colors.white, size: 30)
+                SvgPicture.asset(
+              'assets/icons/custom/white/chevron-left.svg',
+            )),
       );
 }
 

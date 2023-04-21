@@ -3,6 +3,7 @@ import 'package:client_front/application/front/cubit.dart';
 import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/wallet/constants.dart';
@@ -263,8 +264,12 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
               return;
             },
             // todo: show chain icons for what blockchains this wallet has assets on here
-            leading: Icon(Icons.wallet_rounded,
-                color: wallet == Current.wallet ? AppColors.primary : null),
+            leading:
+                //Icon(Icons.wallet_rounded,
+                //    color: wallet == Current.wallet ? AppColors.primary : null),
+                Container(
+                    child: SvgPicture.asset(
+                        'assets/icons/custom/mobile/wallet${wallet == Current.wallet ? '-active' : ''}.svg')),
             title: Text(wallet.name,
                 style: Theme.of(context ?? components.routes.context!)
                     .textTheme
@@ -419,11 +424,18 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                   if (state.menuOpen) {
                                     return FadeIn(
                                         child: IconButton(
-                                            onPressed: () => showWallets(),
-                                            icon: const Icon(
-                                              Icons.expand_more_rounded,
-                                              color: Colors.white,
-                                            )));
+                                      onPressed: () => showWallets(),
+                                      icon:
+                                          //const Icon(
+                                          //  Icons.expand_more_rounded,
+                                          //  color: Colors.white,
+                                          //)
+                                          Container(
+                                              height: 24,
+                                              width: 24,
+                                              child: SvgPicture.asset(
+                                                  'assets/icons/custom/white/chevron-down.svg')),
+                                    ));
                                   }
                                   return SizedBox.shrink();
                                 }),
@@ -576,7 +588,12 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                   .textTheme
                   .headline2!
                   .copyWith(color: AppColors.white)),
-          const Icon(Icons.expand_more_rounded, color: Colors.white),
+          //const Icon(Icons.expand_more_rounded, color: Colors.white),
+          Container(
+              height: 16,
+              width: 16,
+              child: SvgPicture.asset(
+                  'assets/icons/custom/white/chevron-down.svg')),
         ],
       ));
 
@@ -652,10 +669,16 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     leading: walletsSecurities[wallet] == null ||
                             walletsSecurities[wallet]!.isEmpty ||
                             !services.developer.developerMode
-                        ? const Icon(
-                            Icons.account_balance_wallet_rounded,
-                            color: AppColors.primary,
-                          )
+                        ? Container(
+                            //height: 16,
+                            //width: 16,
+                            child: SvgPicture.asset(
+                                'assets/icons/custom/mobile/wallet.svg'))
+
+                        //const Icon(
+                        //  Icons.account_balance_wallet_rounded,
+                        //  color: AppColors.primary,
+                        //)
                         : SizedBox(
                             width: indicatorWidth,
                             child: Stack(children: holdingsIndicators(wallet))),

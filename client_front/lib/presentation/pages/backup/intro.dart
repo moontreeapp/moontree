@@ -10,7 +10,7 @@ class BackupIntro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    streams.app.auth.verify.add(false);
+    //streams.app.auth.verify.add(false);
     return PageStructure(
       children: [
         Container(

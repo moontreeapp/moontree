@@ -1,6 +1,7 @@
 import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:client_back/client_back.dart';
@@ -150,13 +151,22 @@ class MainMenu extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           MenuLink(
-            icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant,
+            //icon: MdiIcons.linkBoxVariant, //MdiIcons.linkVariant,
+            widget: Stack(alignment: Alignment.center, children: [
+              SvgPicture.asset('assets/icons/custom/white/blockchain.svg'),
+              Container(
+                  alignment: Alignment.center,
+                  height: 24,
+                  width: 24,
+                  child: Icon(MdiIcons.linkVariant, color: Colors.white)),
+            ]),
             name: 'Blockchain',
             link: '/network/blockchain',
           ),
           if (!services.developer.developerMode)
             MenuLink(
                 icon: MdiIcons.shieldKey,
+                svg: SvgPicture.asset('assets/icons/custom/mobile/import.svg'),
                 name: 'Import',
                 link: '/restore/import'),
           if (false && // not yet supported
@@ -170,12 +180,15 @@ class MainMenu extends StatelessWidget {
           if (services.developer.developerMode)
             MenuLink(
               icon: MdiIcons.shieldKey,
+              svg: SvgPicture.asset(
+                  'assets/icons/custom/mobile/import-export.svg'),
               name: 'Import & Export',
               link: '/menu/restore',
               arrow: true,
             ),
           MenuLink(
             icon: MdiIcons.drawPen,
+            svg: SvgPicture.asset('assets/icons/custom/mobile/backup.svg'),
             name: 'Backup',
             link: Current.wallet is LeaderWallet
                 ? '/backup/intro'
@@ -183,6 +196,7 @@ class MainMenu extends StatelessWidget {
           ),
           MenuLink(
             icon: Icons.settings,
+            svg: SvgPicture.asset('assets/icons/custom/mobile/settings.svg'),
             name: 'Settings',
             link: '/menu/settings',
             arrow: true,
@@ -196,11 +210,13 @@ class MainMenu extends StatelessWidget {
           */
           MenuLink(
             icon: Icons.help,
+            svg: SvgPicture.asset('assets/icons/custom/mobile/support.svg'),
             name: 'Support',
             link: '/support/support',
           ),
           MenuLink(
             icon: Icons.info_rounded,
+            svg: SvgPicture.asset('assets/icons/custom/mobile/about.svg'),
             name: 'About',
             link: '/support/about',
           ),
@@ -274,11 +290,15 @@ class RestoreMenu extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           MenuLink(
-              icon: MdiIcons.keyPlus, name: 'Import', link: '/restore/import'),
+              icon: MdiIcons.keyPlus,
+              svg: SvgPicture.asset('assets/icons/custom/mobile/import.svg'),
+              name: 'Import',
+              link: '/restore/import'),
           if (false // not yet supported
           )
             MenuLink(
                 icon: MdiIcons.keyMinus,
+                svg: SvgPicture.asset('assets/icons/custom/mobile/export.svg'),
                 name: 'Export',
                 link: '/restore/export',
                 disabled: !services.developer.advancedDeveloperMode),
@@ -305,6 +325,7 @@ class SettingsMenu extends StatelessWidget {
         children: <Widget>[
           MenuLink(
             icon: Icons.lock_rounded,
+            svg: SvgPicture.asset('assets/icons/custom/mobile/security.svg'),
             name: 'Security',
             link: '/setting/security',
           ),
@@ -355,7 +376,7 @@ class SettingsMenu extends StatelessWidget {
               link: '/mode/advanced',
             ),
           MenuLink(
-            icon: MdiIcons.devTo,
+            icon: Icons.developer_mode_rounded,
             name: 'Developer',
             link: '/mode/developer',
           ),
@@ -368,6 +389,8 @@ class MenuLink extends StatelessWidget {
   final String link;
   final IconData? icon;
   final Image? image;
+  final SvgPicture? svg;
+  final Widget? widget;
   final bool arrow;
   final Map<String, dynamic>? arguments;
   final Function? execute;
@@ -379,6 +402,8 @@ class MenuLink extends StatelessWidget {
     required this.link,
     this.icon,
     this.image,
+    this.svg,
+    this.widget,
     this.arguments,
     this.execute,
     this.executeAfter,
@@ -408,9 +433,14 @@ class MenuLink extends StatelessWidget {
                   executeAfter!();
                 }
               },
-        leading: icon != null
-            ? Icon(icon, color: disabled ? AppColors.white60 : Colors.white)
-            : image!,
+        leading: widget != null
+            ? widget
+            : svg != null
+                ? svg
+                : icon != null
+                    ? Icon(icon,
+                        color: disabled ? AppColors.white60 : Colors.white)
+                    : image!,
         title: Text(name,
             style: Theme.of(context).textTheme.bodyText1!.copyWith(
                 color: disabled ? AppColors.white60 : AppColors.white)),

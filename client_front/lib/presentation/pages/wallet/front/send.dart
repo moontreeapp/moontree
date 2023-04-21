@@ -5,6 +5,7 @@ import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:wallet_utils/wallet_utils.dart'
@@ -248,10 +249,13 @@ class _SimpleSendState extends State<SimpleSend> {
                           //        holdingView!.symbol,
                           //        net: pros.settings.net)),
                           suffixIcon: IconButton(
-                              icon: const Padding(
+                              icon: Padding(
                                   padding: const EdgeInsets.only(right: 14),
-                                  child: Icon(Icons.expand_more_rounded,
-                                      color: AppColors.black60)),
+                                  child: SvgPicture.asset(
+                                      'assets/icons/custom/black/chevron-down.svg')
+                                  //Icon(Icons.expand_more_rounded,
+                                  //    color: AppColors.black60)
+                                  ),
                               onPressed: () => _produceAssetModal(cubit)),
                           onTap: () => _produceAssetModal(cubit),
                           onChanged: (String value) {},
@@ -282,10 +286,13 @@ class _SimpleSendState extends State<SimpleSend> {
                               ? 'Unrecognized Address'
                               : null,
                           suffixIcon: IconButton(
-                              icon: const Padding(
-                                  padding: const EdgeInsets.only(right: 14),
-                                  child: Icon(Icons.qr_code_scanner_rounded,
-                                      color: AppColors.black60)),
+                              icon: Padding(
+                                padding: const EdgeInsets.only(right: 14),
+                                child: SvgPicture.asset(
+                                    'assets/icons/custom/black/qrcode.svg'),
+                                //Icon(Icons.qr_code_scanner_rounded,
+                                //    color: AppColors.black60)
+                              ),
                               onPressed: () async => cubit.set(
                                   address: (await _produceScanModal()))),
                           onChanged: (String value) =>
@@ -381,10 +388,13 @@ class _SimpleSendState extends State<SimpleSend> {
                           labelText: 'Transaction Speed',
                           hintText: 'Standard',
                           suffixIcon: IconButton(
-                              icon: const Padding(
+                              icon: Padding(
                                   padding: const EdgeInsets.only(right: 14),
-                                  child: Icon(Icons.expand_more_rounded,
-                                      color: AppColors.black60)),
+                                  child: SvgPicture.asset(
+                                      'assets/icons/custom/black/chevron-down.svg')
+                                  //Icon(Icons.expand_more_rounded,
+                                  //    color: AppColors.black60)
+                                  ),
                               onPressed: () => _produceFeeModal(cubit)),
                           onChanged: (String newValue) {
                             //sendFee.text = newValue; //necessary?

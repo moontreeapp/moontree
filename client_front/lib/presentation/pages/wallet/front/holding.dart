@@ -82,7 +82,7 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
   }
 
   void scrollListener() => heightCubit.setHeightToExactly(
-      height: services.screen.frontContainer.maxHeight *
+      height: (services.screen.frontContainer.maxHeight - 40) *
           draggableScrollableController.size);
 
   @override
