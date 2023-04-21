@@ -445,8 +445,9 @@ class MenuLink extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyText1!.copyWith(
                 color: disabled ? AppColors.white60 : AppColors.white)),
         trailing: arrow
-            ? Icon(Icons.chevron_right,
-                color: disabled ? AppColors.white60 : Colors.white)
+            ? SvgPicture.asset('assets/icons/custom/white/chevron-right.svg')
+            //Icon(Icons.chevron_right,
+            //  color: disabled ? AppColors.white60 : Colors.white)
             : null,
       );
 }
