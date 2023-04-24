@@ -1,3 +1,4 @@
+import 'package:client_front/application/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,11 +27,16 @@ class WalletHolding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      components.empty.getTransactionsPlaceholder(
-        context,
-        scrollController: ScrollController(),
-        count: 1,
-      );
+      BlocBuilder<FrontContainerCubit, FrontContainerCubitState>(
+          builder: (BuildContext context, FrontContainerCubitState state) =>
+              //state.mempoolViews.length + state.transactionViews.length > 0
+              state.containerHeight == null
+                  ? SizedBox.shrink()
+                  : components.empty.getTransactionsPlaceholder(
+                      context,
+                      scrollController: ScrollController(),
+                      count: 1,
+                    ));
 }
 
 class FrontHoldingExtra extends StatefulWidget {

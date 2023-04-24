@@ -64,7 +64,7 @@ DONE - to back to home page on chain change
 
 DONE - close menu if we go to home screen
 
-scroll down transactions shows hidden widget
+DONE - scroll down transactions shows hidden widget
 
 DONE - send button low
 test send button too low on smaller screen
