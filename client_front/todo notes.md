@@ -71,8 +71,8 @@ DONE - send button low
 
 DONE - test send button too low on smaller screen
 
-front layer height able to be broken on sending
-test this.
+DONE - front layer height able to be broken on sending
+DONE - test this. (unable to recreate)
 
 DONE - bring up password login on login page
 
@@ -81,5 +81,7 @@ DONE - hide developer mode for now (haven't tested anything there, so don't want
 DONE - fix whole sizing being off on smaller screen
 
 DONE - fix preview on send on smaller screens
+
+DONE - fix flash on tx list screen
 
 fix the derivation (happens again each time switch networks, but doesn't need to, we're probably deleteing addresses each time we change networks which isn't needed anymore)
