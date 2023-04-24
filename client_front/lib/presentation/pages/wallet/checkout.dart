@@ -212,9 +212,8 @@ class SimpleSendCheckout extends StatelessWidget {
                       padding:
                           const EdgeInsets.only(top: 10, left: 16, right: 16),
                       child: confirm),
-                  const SizedBox(height: 40),
                   Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 0, right: 16, bottom: 24, left: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

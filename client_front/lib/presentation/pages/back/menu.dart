@@ -375,16 +375,16 @@ class SettingsMenu extends StatelessWidget {
               name: 'Advanced',
               link: '/mode/advanced',
             ),
-          MenuLink(
-            widget: Container(
-                alignment: Alignment.center,
-                height: 24,
-                width: 24,
-                padding: EdgeInsets.only(left: 4),
-                child: Icon(Icons.developer_mode_rounded, color: Colors.white)),
-            name: 'Developer',
-            link: '/mode/developer',
-          ),
+          //MenuLink(
+          //  widget: Container(
+          //      alignment: Alignment.center,
+          //      height: 24,
+          //      width: 24,
+          //      padding: EdgeInsets.only(left: 4),
+          //      child: Icon(Icons.developer_mode_rounded, color: Colors.white)),
+          //  name: 'Developer',
+          //  link: '/mode/developer',
+          //),
         ],
       );
 }

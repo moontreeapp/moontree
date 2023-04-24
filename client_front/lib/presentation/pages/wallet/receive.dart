@@ -59,7 +59,7 @@ class Receive extends StatelessWidget {
               showCursor: true,
               toolbarOptions: const ToolbarOptions(copy: true, selectAll: true),
             ),
-            if (!smallScreen) SizedBox(height: 72.figmaH)
+            //if (!smallScreen) SizedBox(height: 72.figmaH)
           ],
           firstLowerChildren: <Widget>[
             BottomButton(

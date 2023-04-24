@@ -236,8 +236,9 @@ void navToBlockchain([BuildContext? context, Function? then]) {
         children: blockchainOptions(
       onTap: () {
         components.cubits.bottomModalSheet.hide();
+        sail.home();
       },
-      second: then ?? () {},
+      second: then,
     ));
     //Navigator.of(components.routes.routeContext!)
     //    .pushNamed('/settings/network/blockchain');

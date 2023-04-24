@@ -294,14 +294,19 @@ class Sail {
     String location = '/wallet/holdings',
     bool forceFullScreen = true,
   }) {
-    // if /wallet/holdings in DestinationHistory
-    if (destinationHistory[Section.wallet]!.contains(location)) {
-      while (back() != location &&
-          destinationHistory[Section.wallet]!.length > 0) {
-        print('going back');
+    if (components.cubits.location.state.path != '/wallet/holdings') {
+      // if /wallet/holdings in DestinationHistory
+      if (destinationHistory[Section.wallet]!.contains(location)) {
+        while (back() != location &&
+            destinationHistory[Section.wallet]!.length > 0) {
+          print('going back');
+        }
+      } else {
+        to(location);
       }
-    } else {
-      to(location);
+    }
+    if (components.cubits.location.state.menuOpen) {
+      menu(open: false);
     }
     if (forceFullScreen) {
       components.cubits.frontContainer

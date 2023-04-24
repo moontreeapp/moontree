@@ -136,16 +136,13 @@ class _LoginPasswordState extends State<LoginPassword> {
       isConsented = state.isConsented;
       return PageStructure(
         children: [
-          SizedBox(height: 76.figmaH),
+          SizedBox(height: 40.figmaH),
           SizedBox(height: 128.figmaH, child: MoontreeLogo()),
           Container(
               alignment: Alignment.bottomCenter,
               height: (16 + 24).figmaH,
               child: WelcomeMessage()),
-          Container(
-              alignment: Alignment.bottomCenter,
-              height: 40.figma(context),
-              child: const LockedOutTime()),
+          const LockedOutTime(),
           Container(
               alignment: Alignment.center, height: 120, child: loginField),
         ],
