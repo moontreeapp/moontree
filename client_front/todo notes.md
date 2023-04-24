@@ -45,14 +45,28 @@ DONE - server generate unsigned tx functionality broken
 
 DONE - refactor the tutorial stuff.
 
----
+DONE - refactor the client_back out of existence if possible
+
+DONE - new icons
+
+DONE - test memo send 
 
 refactor everything in services that should be in cubits into cubits
 
-refactor the client_back out of existence if possible
+---
 
-new icons
+DONE - center the developer icon
 
-test memo send 
+recieve screen to long
 
-caroline hoa director - lakeshorelandingmaster@gmail.com
+to back to home page on chain change
+
+scroll down transactions shows hidden widget
+
+send button low
+
+front layer height able to be broken on sending
+
+bring up password login on login page
+
+hide developer mode for now (haven't tested anything there, so don't want potential breaks)

@@ -376,7 +376,12 @@ class SettingsMenu extends StatelessWidget {
               link: '/mode/advanced',
             ),
           MenuLink(
-            icon: Icons.developer_mode_rounded,
+            widget: Container(
+                alignment: Alignment.center,
+                height: 24,
+                width: 24,
+                padding: EdgeInsets.only(left: 4),
+                child: Icon(Icons.developer_mode_rounded, color: Colors.white)),
             name: 'Developer',
             link: '/mode/developer',
           ),
