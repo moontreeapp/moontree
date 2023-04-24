@@ -69,7 +69,8 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
   void initState() {
     super.initState();
     heightCubit = BlocProvider.of<FrontContainerCubit>(context);
-    heightCubit.setHidden(true);
+    Future.delayed(Duration(seconds: 1))
+        .then((_) => heightCubit.setHidden(true));
     draggableScrollableController.addListener(scrollListener);
     _controller = AnimationController(
       vsync: this,

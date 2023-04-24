@@ -82,8 +82,12 @@ class SubscriptionService {
         if (message is protocol.NotifyChainStatus) {
           print('status! ${message.toJson()}');
         } else if (message is protocol.NotifyChainHeight) {
-          await pros.blocks.save(Block.fromNotification(message));
-          print('pros.blocks.records ${pros.blocks.records.first}');
+          if (message.height > 0) {
+            await pros.blocks.save(Block.fromNotification(message));
+            print('pros.blocks.records ${pros.blocks.records.first}');
+          } else {
+            print('message was weird: ${message.toJson()}');
+          }
         } else if (message is protocol.NotifyChainH160Balance) {
           // print('H160 (SingleWallet) balance updated!');
           triggerBalanceUpdates();
