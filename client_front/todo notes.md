@@ -58,7 +58,8 @@ refactor everything in services that should be in cubits into cubits
 DONE - center the developer icon
 
 DONE - receive screen to long
-test receive screen on smaller screen
+
+DONE - test receive screen on smaller screen
 
 DONE - to back to home page on chain change
 
@@ -67,7 +68,8 @@ DONE - close menu if we go to home screen
 DONE - scroll down transactions shows hidden widget
 
 DONE - send button low
-test send button too low on smaller screen
+
+DONE - test send button too low on smaller screen
 
 front layer height able to be broken on sending
 test this.
@@ -75,5 +77,9 @@ test this.
 DONE - bring up password login on login page
 
 DONE - hide developer mode for now (haven't tested anything there, so don't want potential breaks)
+
+DONE - fix whole sizing being off on smaller screen
+
+DONE - fix preview on send on smaller screens
 
 fix the derivation (happens again each time switch networks, but doesn't need to, we're probably deleteing addresses each time we change networks which isn't needed anymore)

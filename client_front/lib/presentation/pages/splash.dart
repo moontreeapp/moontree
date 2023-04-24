@@ -88,6 +88,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     uiservices.init(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
+      statusBarHeight: MediaQuery.of(context).padding.top,
     );
   }
 

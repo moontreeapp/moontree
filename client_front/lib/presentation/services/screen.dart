@@ -30,20 +30,26 @@ class Screen {
     required this.buttonHeight,
   });
 
-  factory Screen.init(double height, double width) => Screen(
-        width: width,
-        app: App.init(height),
-        navbar: Navbar.init(height),
-        frontContainer: FrontPageContainer.init(height),
-        backContainer: BackPageContainer.init(height),
-        buttonHeight: height * (40 / 760),
-      );
+  factory Screen.init(double height, double width, double statusBarHeight) {
+    final app = App.init(height, statusBarHeight);
+    return Screen(
+      width: width,
+      app: app,
+      navbar: Navbar.init(height),
+      frontContainer: FrontPageContainer.init(height, app),
+      backContainer: BackPageContainer.init(height, app),
+      buttonHeight: height * (40 / 760),
+    );
+  }
 }
 
 class App {
   static const double _appBarHeightPercentage = 0.07368421053;
-  // Android system bar
-  static const double _systemStatusBarHeightPercentage = 0.03157894737;
+
+  /// Android system bar - variable on android so we must get instead of declare
+  /// and front and back stuff is determined by this
+  //static const double _systemStatusBarHeightPercentage = 0.03157894737;
+  final double statusBarHeightPercentage;
   final double screenHeight;
   final double systemStatusBarHeight;
   final double appBarHeight;
@@ -51,17 +57,23 @@ class App {
 
   App({
     required this.screenHeight,
+    required this.statusBarHeightPercentage,
     required this.systemStatusBarHeight,
     required this.appBarHeight,
   }) {
     height = screenHeight - (Platform.isWindows ? 0 : systemStatusBarHeight);
   }
 
-  factory App.init(double height) => App(
+  factory App.init(double height, double statusBarHeight) => App(
         screenHeight: height,
-        systemStatusBarHeight: height * _systemStatusBarHeightPercentage,
+        statusBarHeightPercentage: statusBarHeight / height,
+        systemStatusBarHeight: statusBarHeight,
         appBarHeight: height * _appBarHeightPercentage,
       );
+
+  double get top => systemStatusBarHeight + appBarHeight;
+  double get topPercentage =>
+      statusBarHeightPercentage + _appBarHeightPercentage;
 }
 
 class Navbar {
@@ -82,24 +94,28 @@ class Navbar {
 }
 
 class FrontPageContainer {
-  static const double _maxHeightPercentage = 0.8947368421;
+  //static const double _maxHeightPercentage = 0.8947368421; //variable
   static const double _midHeightPercentage = 0.6315789474;
   static const double _minHeightPercentage = 0.07368421053;
-  final double midHeightPercentage =
-      _midHeightPercentage / _maxHeightPercentage;
+  final double maxHeightPercentage;
+  final double midHeightPercentage;
   final double maxHeight;
   final double midHeight;
   final double minHeight;
   final double hiddenHeight = 0.0;
 
   FrontPageContainer({
+    required this.maxHeightPercentage,
+    required this.midHeightPercentage,
     required this.maxHeight,
     required this.midHeight,
     required this.minHeight,
   });
 
-  factory FrontPageContainer.init(double height) => FrontPageContainer(
-        maxHeight: height * _maxHeightPercentage,
+  factory FrontPageContainer.init(double height, App app) => FrontPageContainer(
+        maxHeightPercentage: 1 - app.topPercentage,
+        midHeightPercentage: _midHeightPercentage / (1 - app.topPercentage),
+        maxHeight: height * (1 - app.topPercentage),
         midHeight: height * _midHeightPercentage,
         minHeight: height * _minHeightPercentage,
       );
@@ -111,19 +127,22 @@ class FrontPageContainer {
 }
 
 class BackPageContainer {
-  static const double _maxHeightPercentage = 0.8947368421;
+  //static const double _maxHeightPercentage = 0.8947368421; // (minused default status)
   static const double _midHeightPercentage = 0.2631578947;
+  final double maxHeightPercentage;
   final double maxHeight;
   final double midHeight;
   final double hiddenHeight = 0.0;
 
   BackPageContainer({
+    required this.maxHeightPercentage,
     required this.maxHeight,
     required this.midHeight,
   });
 
-  factory BackPageContainer.init(double height) => BackPageContainer(
-        maxHeight: height * _maxHeightPercentage,
+  factory BackPageContainer.init(double height, App app) => BackPageContainer(
+        maxHeightPercentage: 1 - app.topPercentage,
+        maxHeight: height * (1 - app.topPercentage),
         midHeight: height * _midHeightPercentage,
       );
 }

@@ -485,7 +485,7 @@ class _SimpleSendState extends State<SimpleSend> {
                       height: screen.frontContainer.midHeight,
                       child: FrontCurve(
                         fuzzyTop: false,
-                        height: 88,
+                        height: screen.buttonHeight + 24 + 24,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
