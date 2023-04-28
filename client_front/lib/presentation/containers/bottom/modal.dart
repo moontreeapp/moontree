@@ -74,6 +74,7 @@ class BottomModalSheet extends StatelessWidget {
                         fuzzyTop: false,
                         height: components.cubits.bottomModalSheet.height,
                         child: ListView(
+                          padding: EdgeInsets.zero,
                           shrinkWrap: true,
                           children: state.children,
                         ))),

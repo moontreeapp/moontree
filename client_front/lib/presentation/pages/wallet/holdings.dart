@@ -95,17 +95,9 @@ class WalletHoldings extends StatelessWidget {
                   }
                 } else {
                   //if (state.holdingsViews.isNotEmpty) {
-                  return Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      RefreshIndicator(
-                        onRefresh: () => refresh(cubit),
-                        //child: HoldingsView(cubit: cubit),
-                        child: ListView(
-                          children: [Text('what?')],
-                        ),
-                      ),
-                    ],
+                  return RefreshIndicator(
+                    onRefresh: () => refresh(cubit),
+                    child: HoldingsView(cubit: cubit),
                   );
                 }
               }
@@ -250,6 +242,7 @@ class _HoldingsView extends State<HoldingsView> {
     }
 
     final ListView listView = ListView(
+        padding: EdgeInsets.zero,
         controller: scrollController,
         physics: const ClampingScrollPhysics(),
         children: <Widget>[

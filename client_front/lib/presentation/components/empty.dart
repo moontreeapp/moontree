@@ -92,6 +92,7 @@ class EmptyComponents {
         highlightColor: Colors.white,
         child: assetPlaceholder(context, holding: holding));
     return ListView(
+        padding: EdgeInsets.zero,
         controller: scrollController,
         physics: const ClampingScrollPhysics(),
         children: <Widget>[
@@ -220,6 +221,7 @@ class EmptyComponents {
     int count = 1,
   }) {
     return ListView(
+        padding: EdgeInsets.zero,
         controller: scrollController,
         physics: const ClampingScrollPhysics(),
         children: <Widget>[
