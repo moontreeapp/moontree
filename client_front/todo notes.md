@@ -88,7 +88,7 @@ DONE - import type in is wrong, resets cursor
 
 DONE - sometimes front layer is transparent - unable to duplicate earlier, but figured it out how now.
 
-spacing on apple is wrong - on listviews or something?
+DONE - spacing on apple is wrong - on listviews or something? yes listviews need padding override on IOS
 
 setup auth method is fine but change auth method not working
 
