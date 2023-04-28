@@ -16,7 +16,7 @@ class ImportFrom {
   late String? importedMsg;
 
   //Future<bool> handleImport() async {
-  Future<Tuple3<bool, List<String?>, List<String?>>> handleImport(
+  Future<Tuple3<List<bool>, List<String?>, List<String?>>> handleImport(
     Future<String> Function(String id)? getEntropy,
     Future<void> Function(Secret secret)? saveSecret,
   ) async {
@@ -42,10 +42,8 @@ class ImportFrom {
         break;
       }
     }
-    return Tuple3<bool, List<String?>, List<String?>>(
-        results
-            .map((HandleResult result) => result.success)
-            .every((bool element) => element),
+    return Tuple3<List<bool>, List<String?>, List<String?>>(
+        results.map((HandleResult result) => result.success).toList(),
         importedTitles,
         importedMsgs);
     //return results

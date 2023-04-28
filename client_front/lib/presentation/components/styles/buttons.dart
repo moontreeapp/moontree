@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 
 class ButtonStyleComponents {
+  const ButtonStyleComponents();
   ButtonStyle bottom(
     BuildContext context, {
     bool disabled = false,

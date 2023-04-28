@@ -167,12 +167,5 @@ class WalletService {
         ));
       }
     }
-
-    /// might belong in waiter but no need to make a new waiter just for this.
-    if (value && wallet == currentWallet) {
-      await services.download.queue.reset();
-    } else {
-      await services.download.queue.process();
-    }
   }
 }

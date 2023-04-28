@@ -10,7 +10,8 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/application/cubits.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class CoinSpec extends StatefulWidget {
   final String pageTitle;
@@ -54,7 +55,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     // TODO: we have to pull this from the server, not from balance.
     //final Balance? holdingBalance = widget.security.balance;
-    final holdingsCubit = components.cubits.holdingsViewCubit;
+    final holdingsCubit = components.cubits.holdingsView;
     final BalanceView? holdingView =
         holdingsCubit.holdingsViewFor(widget.security.symbol);
     final Balance holdingBalance = Balance(

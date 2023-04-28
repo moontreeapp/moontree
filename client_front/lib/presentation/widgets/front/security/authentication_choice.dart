@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/infrastructure/services/auth.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
@@ -48,7 +50,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
         //SizedBox(height: 16),
         RadioListTile<AuthMethod>(
             title: Text(
-              "${Platform.isIOS ? 'iOS' : 'Android'} Phone Security",
+              '${Platform.isIOS ? 'iOS' : 'Android'} Phone Security',
               style: Theme.of(context).textTheme.bodyText1,
             ),
             value: AuthMethod.nativeSecurity,
@@ -56,21 +58,21 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
             onChanged: (AuthMethod? value) async {
               Future<void> onSuccess() async {
                 final LocalAuthApi localAuthApi = LocalAuthApi();
-                streams.app.authenticating.add(true);
+                streams.app.auth.authenticating.add(true);
                 final bool validate = await localAuthApi.authenticate(
                     skip: devFlags.contains(DevFlag.skipPin));
-                streams.app.authenticating.add(false);
+                streams.app.auth.authenticating.add(false);
                 if (validate) {
                   if (mounted) {
                     setState(() {
                       authenticationMethodChoice = AuthMethod.nativeSecurity;
                     });
                   }
-                  components.loading.screen(
-                      message: 'Setting Security',
-                      staticImage: true,
-                      returnHome: true,
-                      playCount: 1);
+                  //components.loading.screen(
+                  //    message: 'Setting Security',
+                  //    staticImage: true,
+                  //    returnHome: true,
+                  //    playCount: 1);
                   final String key = await SecureStorage.authenticationKey;
                   await services.authentication.setPassword(
                     password: key,
@@ -85,7 +87,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                       setState(() => authenticationMethodChoice =
                           AuthMethod.moontreePassword);
                     });
-                    streams.app.snack.add(Snack(
+                    streams.app.behavior.snack.add(Snack(
                       message:
                           'Failed. To use Native Security authentication, set it up a pin in the phone settings.',
                     ));
@@ -93,7 +95,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                       AuthenticationResult.failure) {
                     setState(() => authenticationMethodChoice =
                         AuthMethod.moontreePassword);
-                    streams.app.snack.add(Snack(
+                    streams.app.behavior.snack.add(Snack(
                       message:
                           'Unable to authenticate; setting login method to password.',
                     ));
@@ -103,15 +105,15 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
 
               setState(() => authenticationMethodChoice = value);
 
-              streams.app.verify.add(false); // require auth
+              streams.app.auth.verify.add(false); // require auth
               if (services.password.askCondition) {
-                await Navigator.pushNamed(
-                  components.routes.routeContext!,
-                  '/security/security',
+                await sail.to(
+                  '/login/verify',
                   arguments: <String, Object>{
                     'buttonLabel': 'Submit',
                     'onSuccess': () async {
-                      Navigator.pop(components.routes.routeContext!);
+                      //Navigator.pop(components.routes.routeContext!);
+                      //sail.back();
                       await onSuccess();
                     }
                   },
@@ -156,9 +158,9 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               //  },
               //);
               //if (!canceled) {
-              streams.app.verify.add(false); // always require auth
-              Navigator.of(components.routes.routeContext!).pushNamed(
-                '/security/password/change',
+              streams.app.auth.verify.add(false); // always require auth
+              sail.to(
+                '/login/modify/password',
                 arguments: <String, Object>{
                   'verification.ButtonLabel': 'Continue',
                   'onSuccess.returnHome': true,
@@ -172,7 +174,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                     await services.authentication.setMethod(method: value!);
                   },
                   //'then.then': () async {
-                  //  streams.app.snack
+                  //  streams.app.behavior.snack
                   //      .add(Snack(message: 'Successfully Updated Security'));
                   //},
                 },

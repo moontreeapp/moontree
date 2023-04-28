@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/application/cubits.dart';
 //import '../../../pages/wallet/transactions/bloc.dart';
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
 
 class CoinSpecTabs extends StatefulWidget {
   const CoinSpecTabs({
@@ -38,36 +39,38 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-        child: Container(
-            height: 56,
-            alignment: Alignment.topCenter,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
+    return Column(children: [
+      SizedBox(height: 3),
+      ClipRect(
+          child: Container(
+              height: 60,
+              alignment: Alignment.topCenter,
+              decoration: const BoxDecoration(
+                borderRadius: shapes.topRoundedBorder16,
               ),
-            ),
-            child: TabBar(
-                controller: tabController,
-                indicatorColor: Colors.white,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: _TabIndicator(),
-                labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
-                    fontWeight: FontWeights.medium,
-                    letterSpacing: 1.25,
-                    color: AppColors.white87),
-                unselectedLabelStyle: Theme.of(context)
-                    .textTheme
-                    .bodyText2!
-                    .copyWith(
-                        fontWeight: FontWeights.medium,
-                        letterSpacing: 1.25,
-                        color: AppColors.white60),
-                tabs: <Widget>[
-                  Tab(text: CoinSpecTabs.tabIndex[0]),
-                  Tab(text: CoinSpecTabs.tabIndex[1]),
-                ])));
+              child: TabBar(
+                  controller: tabController,
+                  indicatorColor: Colors.white,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: _TabIndicator(),
+                  labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      fontWeight: FontWeights.medium,
+                      letterSpacing: 1.25,
+                      color: AppColors.white87),
+                  unselectedLabelStyle: Theme.of(context)
+                      .textTheme
+                      .bodyText2!
+                      .copyWith(
+                          fontWeight: FontWeights.medium,
+                          letterSpacing: 1.25,
+                          color: AppColors.white60),
+                  tabs: <Widget>[
+                    Tab(
+                        iconMargin: EdgeInsets.zero,
+                        text: CoinSpecTabs.tabIndex[0]),
+                    Tab(text: CoinSpecTabs.tabIndex[1]),
+                  ])))
+    ]);
   }
 }
 
@@ -93,13 +96,13 @@ class _TabIndicatorPainter extends BoxPainter {
     canvas.drawRRect(
       RRect.fromRectAndCorners(
         Rect.fromLTRB(
-          offset.dx,
+          offset.dx + 0,
           offset.dy + cfg.size!.height + 10,
-          offset.dx + cfg.size!.width,
-          offset.dy + cfg.size!.height - 2,
+          offset.dx + cfg.size!.width + 0,
+          offset.dy + cfg.size!.height - 5,
         ),
-        topLeft: const Radius.circular(8.0),
-        topRight: const Radius.circular(8.0),
+        topLeft: const Radius.circular(16.0),
+        topRight: const Radius.circular(16.0),
       ),
       _paint,
     );

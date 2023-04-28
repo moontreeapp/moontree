@@ -31,7 +31,7 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    streams.app.status.add(state.name);
+    streams.app.active.status.add(state.name);
     setState(() {
       _notification = state;
     });

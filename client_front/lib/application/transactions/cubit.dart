@@ -1,26 +1,29 @@
 import 'dart:math';
-
-import 'package:client_front/infrastructure/repos/mempool_transactions.dart';
-import 'package:client_front/infrastructure/repos/transactions.dart';
-import 'package:client_front/infrastructure/repos/asset_metadata.dart';
-import 'package:bloc/bloc.dart';
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:collection/src/iterable_extensions.dart' show IterableExtension;
-import 'package:flutter/material.dart';
-import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
+import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
+import 'package:client_front/infrastructure/repos/transactions.dart';
+import 'package:client_front/infrastructure/repos/mempool_transactions.dart';
+import 'package:client_front/infrastructure/repos/asset_metadata.dart';
+import 'package:client_front/infrastructure/repos/circulating_sats.dart';
 import 'package:client_front/application/common.dart';
+import 'package:client_front/application/location/cubit.dart';
+import 'package:client_front/presentation/utils/animation.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+
 part 'state.dart';
 
 /// show shimmer while retrieving list of transactions
 /// show list of transactions
 class TransactionsViewCubit extends Cubit<TransactionsViewState>
     with SetCubitMixin {
-  String? priorPage;
-
   TransactionsViewCubit() : super(TransactionsViewState.initial()) {
-    init();
+    Future.delayed(Duration(seconds: 10)).then((_) => init());
   }
 
   @override
@@ -62,11 +65,11 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   }
 
   void init() {
-    streams.app.page.listen((String value) {
-      if (value == 'Home' && priorPage == 'Transactions') {
+    components.cubits.location.hooks
+        .add((LocationCubitState state, LocationCubitState next) {
+      if (state.path == '/wallet/holdings' && next.path == '/wallet/holding') {
         reset();
       }
-      priorPage = value;
     });
   }
 
@@ -78,7 +81,9 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
   Future<void> setInitial({bool force = false}) async {
     setMempoolTransactionViews(force: force);
     setTransactionViews(force: force);
-    setMetadataView(force: force);
+    Future.delayed(slideDuration).then((_) {
+      setMetadataView(force: force);
+    });
   }
 
   Future<void> setMetadataView({bool force = false}) async {
@@ -91,6 +96,12 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
           .firstOrNull;
       if (checkCleared && cleared) {
         return;
+      }
+      if (state.security.isCoin) {
+        metadataView?.totalSupply = (await CirculatingSatsRepo(
+          security: state.security,
+        ).get())
+            .value;
       }
       set(
         metadataView: metadataView,
@@ -150,9 +161,9 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
           .fetch(only: true);
       /*
       kralverde — Today at 9:06 AM
-        if you look at the actual vins from https://evr.cryptoscope.io/api/getrawtransaction/?txid=df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188&decode=1 they will match 
+        if you look at the actual vins from https://evr.cryptoscope.io/api/getrawtransaction/?txid=df745a3ee1050a9557c3b449df87bdd8942980dff365f7f5a93bc10cb1080188&decode=1 they will match
         the client side fix would just be to maintain a set of heights already seen
-        if the vouttransactionstructthingie's height is in that set, ignore it 
+        if the vouttransactionstructthingie's height is in that set, ignore it
       meta stack — Today at 9:08 AM
         but couldn't we have multiple transactions at the same height?
       kralverde — Today at 9:08 AM
@@ -162,7 +173,7 @@ class TransactionsViewCubit extends Cubit<TransactionsViewState>
         ah, so only compare against the list that was generated before the current batch?
       kralverde — Today at 9:09 AM
         it would have to be against the entire list, but yes
-        just keep a set<int>, if x.height in set, ignore, else insert x.height into the set + add to the ui 
+        just keep a set<int>, if x.height in set, ignore, else insert x.height into the set + add to the ui
       */
       /// by individual transaction solution - this clears up all the semi-duplicate erroneous inputs but I think it also removes potentially good transactions as we could have multiple unrelated transactions in the same height and this would filter those out too...
       /// preferring this one as multiple transactions at the same height is a more rare occurance I think.

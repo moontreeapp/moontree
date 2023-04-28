@@ -107,7 +107,11 @@ class AppColors {
   static const List<int> whiteNumbers = <int>[12, 38, 60, 87, 100];
   static const List<int> blackNumbers = <int>[12, 38, 60, 87, 100];
 
-  static Color androidSystemBar = primary.withOpacity(1 - .12);
+  static const Color androidSystemBar =
+      const Color(0xFF505DA9); //primary.withOpacity(1 - .12);
+  static const Color androidNavigationBar =
+      const Color(0xFF272B4C); //primary.withOpacity(1 - .60);
+  //Color(0xFF384277); //primary.withOpacity(1 - .38);
   static Color scrim = black.withOpacity(1 - .38);
   static Color scrimLight = white.withOpacity(1 - .12);
 

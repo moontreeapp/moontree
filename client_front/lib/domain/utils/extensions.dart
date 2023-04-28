@@ -2,7 +2,8 @@ import 'dart:ui' as ui;
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:client_front/domain/utils/size.dart' as size;
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 /*
 .figma(context)      // for use in builders
 .figmaH             // entire screen (sizing)

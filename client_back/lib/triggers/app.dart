@@ -11,26 +11,32 @@ class AppWaiter extends Trigger {
   void init({Object? reconnect}) {
     /// logout on minimize
     when(
-      thereIsA: streams.app.active,
+      thereIsA: streams.app.active.active,
       doThis: (bool active) async {
         if (!active &&
             services.password.required &&
-            streams.app.authenticating.value == false &&
-            streams.app.browsing.value == false) {
+            streams.app.auth.authenticating.value == false &&
+            streams.app.loc.browsing.value == false) {
           /// you can remove the timer stuff for immediate logout
-          //streams.app.logout.add(true);
+          //streams.app.auth.logout.add(true);
           _inactiveTimer = Timer(
             Duration(seconds: inactiveGracePeriod),
             () {
-              if (!streams.app.active.value) {
-                streams.app.logout.add(true);
+              if (!streams.app.active.active.value &&
+                      pros.wallets.primaryIndex
+                          .getOne(pros.settings.currentWalletId)!
+                          .backedUp // backup already performed,
+                  // we're not on the initial backup screen.
+                  // logout on backup screen causes issues.
+                  ) {
+                streams.app.auth.logout.add(true);
                 _inactiveTimer?.cancel();
                 _inactiveTimer = null;
               }
             },
           );
         } else if (active) {
-          streams.app.browsing.add(false);
+          streams.app.loc.browsing.add(false);
           _inactiveTimer?.cancel();
           _inactiveTimer = null;
         }
@@ -41,7 +47,7 @@ class AppWaiter extends Trigger {
     /// we know the user is active by navigation events and gestures that aren't
     /// captured by a button or anything
     when(
-      thereIsA: streams.app.tap,
+      thereIsA: streams.app.active.tap,
       doThis: (bool? _) async => lastActiveTime = DateTime.now(),
     );
   }
@@ -56,11 +62,17 @@ class AppWaiter extends Trigger {
           // we have a password
           services.password.required &&
               // are we logged in?
-              !streams.app.logout.value &&
+              !streams.app.auth.logout.value &&
               // have we had no activity while we've been waiting?
               DateTime.now().difference(lastActiveTime).inSeconds >=
-                  idleGracePeriod) {
-        streams.app.logout.add(true);
+                  idleGracePeriod &&
+              // backup already performed,
+              // we're not on the initial backup screen.
+              // logout on backup screen causes issues.
+              pros.wallets.primaryIndex
+                  .getOne(pros.settings.currentWalletId)!
+                  .backedUp) {
+        streams.app.auth.logout.add(true);
       }
     }
   }

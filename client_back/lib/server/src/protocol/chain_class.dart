@@ -14,6 +14,7 @@ class Chain extends _i1.SerializableEntity {
     required this.name,
     required this.height,
     required this.upToDate,
+    required this.circulatingSats,
   });
 
   factory Chain.fromJson(
@@ -27,6 +28,8 @@ class Chain extends _i1.SerializableEntity {
           serializationManager.deserialize<int>(jsonSerialization['height']),
       upToDate:
           serializationManager.deserialize<bool>(jsonSerialization['upToDate']),
+      circulatingSats: serializationManager
+          .deserialize<int>(jsonSerialization['circulatingSats']),
     );
   }
 
@@ -38,6 +41,8 @@ class Chain extends _i1.SerializableEntity {
 
   bool upToDate;
 
+  int circulatingSats;
+
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -45,6 +50,7 @@ class Chain extends _i1.SerializableEntity {
       'name': name,
       'height': height,
       'upToDate': upToDate,
+      'circulatingSats': circulatingSats,
     };
   }
 }

@@ -5,7 +5,7 @@ class TransactionsViewState extends CubitState {
   final List<TransactionView> transactionViews;
   final List<TransactionView> mempoolViews;
   final AssetMetadata? metadataView;
-  final Wallet wallet;
+  final Wallet? wallet;
   final Security security;
   final bool end;
   final BehaviorSubject<double> scrollObserver;
@@ -67,7 +67,8 @@ class TransactionsViewState extends CubitState {
       metadataView: null,
       scrollObserver: BehaviorSubject<double>.seeded(.7),
       currentTab: BehaviorSubject<String>.seeded('HISTORY'),
-      wallet: pros.wallets.currentWallet,
+      wallet:
+          pros.wallets.records.length == 0 ? null : pros.wallets.currentWallet,
       security: pros.securities.currentCoin,
       end: false,
       ranWallet: null,

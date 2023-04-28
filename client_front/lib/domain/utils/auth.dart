@@ -1,27 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:client_back/client_back.dart';
+// why?
 // ignore: unused_import
 import 'package:client_back/services/consent.dart';
-import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/components/components.dart';
+
+import 'package:client_back/client_back.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 Future<void> logout() async {
   pros.ciphers.clear();
-  streams.app.setting.add(null);
-  //streams.app.logout.add(true); // notify the login page not to auto-ask
-  Navigator.pushReplacementNamed(
-      components.routes.routeContext!, getMethodPathLogin(),
-      arguments: <String, bool>{'autoInitiateUnlock': false});
-  //streams.app.lead.add(LeadIcon.dismiss);
-  streams.app.splash.add(false);
+  //streams.app.auth.logout.add(true); // notify the login page not to auto-ask
+  sail.to(getMethodPathLogin(),
+      arguments: <String, bool>{'autoInitiateUnlock': false},
+      replaceOverride: true);
+  streams.app.loc.splash.add(false);
 }
 
 String getMethodPathLogin({bool? nativeSecurity}) =>
     nativeSecurity ?? pros.settings.authMethodIsNativeSecurity
-        ? '/security/native/login'
-        : '/security/password/login';
+        ? '/login/native'
+        : '/login/password';
 
 String getMethodPathCreate({bool? nativeSecurity}) =>
     nativeSecurity ?? pros.settings.authMethodIsNativeSecurity
-        ? '/security/native/createlogin'
-        : '/security/password/createlogin';
+        ? '/login/create/native'
+        : '/login/create/password';

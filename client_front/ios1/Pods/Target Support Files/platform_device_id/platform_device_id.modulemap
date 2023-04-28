@@ -1,0 +1,6 @@
+framework module platform_device_id {
+  umbrella header "platform_device_id-umbrella.h"
+
+  export *
+  module * { export * }
+}

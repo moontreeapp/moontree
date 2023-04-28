@@ -14,8 +14,12 @@ import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_back/services/transaction/transaction.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/domain/utils/data.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
+import 'package:client_front/presentation/services/services.dart' show screen;
 import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
+
+import '../../widgets/front_curve.dart';
 
 class TransactionPage extends StatefulWidget {
   const TransactionPage({Key? key}) : super(key: key);
@@ -96,10 +100,7 @@ class TransactionPageContent extends StatelessWidget {
     return flutter_bloc.BlocBuilder<TransactionViewCubit, TransactionViewState>(
         bloc: cubit..enter(),
         builder: (BuildContext context, TransactionViewState state) {
-          return BackdropLayers(
-            back: const BlankBack(),
-            front: FrontCurve(child: detailsBody(cubit, context)),
-          );
+          return FrontCurve(child: detailsBody(cubit, context));
         });
   }
 
@@ -271,24 +272,27 @@ class TransactionPageContent extends StatelessWidget {
     }
   }
 
-  Widget plain(BuildContext context, String text, String value) =>
-      value == '' || value == null
-          ? SizedBox(height: 0)
-          : ListTile(
-              dense: true,
-              title: Text(text, style: Theme.of(context).textTheme.bodyText1),
-              trailing: GestureDetector(
-                onLongPress: () {
-                  Clipboard.setData(ClipboardData(text: value));
-                  streams.app.snack.add(Snack(message: 'copied to clipboard'));
-                },
+  Widget plain(BuildContext context, String text, String value) => value == ''
+      ? SizedBox(height: 0)
+      : ListTile(
+          dense: true,
+          title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+          trailing: GestureDetector(
+            onLongPress: () {
+              Clipboard.setData(ClipboardData(text: value));
+              streams.app.behavior.snack
+                  .add(Snack(message: 'copied to clipboard'));
+            },
+            child: SizedBox(
+                width: screen.width / 2,
                 child: Text(
                   value,
+                  textAlign: TextAlign.right,
                   style: Theme.of(context).textTheme.bodyText1,
                   maxLines: text == 'Memo' ? 3 : null,
-                ),
-              ),
-            );
+                )),
+          ),
+        );
 
   Widget link(
     BuildContext context, {
@@ -310,14 +314,15 @@ class TransactionPageContent extends StatelessWidget {
                   'Browser'.toUpperCase(): () {
                     Navigator.of(context).pop();
                     //launch(url + elementFull(text));
-                    streams.app.browsing.add(true);
+                    streams.app.loc.browsing.add(true);
                     launchUrl(Uri.parse(url + elementFull(text, cubit)));
                   },
                 },
               ),
           onLongPress: () {
             Clipboard.setData(ClipboardData(text: elementFull(text, cubit)));
-            streams.app.snack.add(Snack(message: 'copied to clipboard'));
+            streams.app.behavior.snack
+                .add(Snack(message: 'copied to clipboard'));
           },
           trailing: Text(element(text, cubit),
               style: Theme.of(context).textTheme.link));

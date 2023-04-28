@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/widgets/widgets.dart';
 
 class LoadingComponents {
+  const LoadingComponents();
   Future<void> screen({
     BuildContext? context,
     String? message,
@@ -12,13 +15,13 @@ class LoadingComponents {
     bool staticImage = false,
   }) async =>
       await showModalBottomSheet<void>(
-          context: context ?? components.routes.routeContext!,
+          context: context ?? components.routes.context!,
           enableDrag: false,
           elevation: 0,
           isScrollControlled: true,
           backgroundColor: Colors.transparent,
           barrierColor: Colors.transparent,
-          shape: components.shape.topRounded8,
+          shape: shapes.topRounded8,
           builder: (BuildContext context) => Loader(
                 message: message ?? 'Loading',
                 playCount: playCount,

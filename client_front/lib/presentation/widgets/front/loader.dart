@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 
@@ -42,8 +44,6 @@ class _LoaderState extends State<Loader> {
 
   void _goSomewhere() {
     if (widget.returnHome) {
-      streams.app.setting.add(null);
-      streams.app.fling.add(false);
       //await Future<void>.delayed(const Duration(milliseconds: 100)); // doesn't help
       Navigator.popUntil(
         components.routes.routeContext!,
@@ -63,14 +63,13 @@ class _LoaderState extends State<Loader> {
   @override
   void initState() {
     super.initState();
-    streams.app.loading.add(true);
     // not ideal sends to home page even on error - in order to go back
     // intelligently we must know which stream matters and listen to that
     // like streams.spend.success or whatever.
-    streams.app.snack.add(null); // clear out first just in case.
+    streams.app.behavior.snack.add(null); // clear out first just in case.
     const int duration = 1330;
     if (widget.playCount == null) {
-      listeners.add(streams.app.snack.listen((Snack? value) async {
+      listeners.add(streams.app.behavior.snack.listen((Snack? value) async {
         if (value != null) {
           if (!widget.staticImage) {
             final int waited =
@@ -95,7 +94,6 @@ class _LoaderState extends State<Loader> {
     for (final StreamSubscription<dynamic> listener in listeners) {
       listener.cancel();
     }
-    streams.app.loading.add(false);
     super.dispose();
   }
 

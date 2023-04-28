@@ -3,7 +3,8 @@ import 'package:client_front/application/send/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/domain/utils/extensions.dart';
 
 class Coin extends StatefulWidget {

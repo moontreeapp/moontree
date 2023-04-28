@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class QRCodeButton extends StatefulWidget {
   final String pageTitle;
@@ -30,7 +31,7 @@ class _QRCodeButtonState extends State<QRCodeButton> {
                 color: widget.light ? Colors.white : Colors.black,
               ),
               onPressed: () async {
-                if (streams.app.scrim.value == true) return;
+                if (streams.app.behavior.scrim.value == true) return;
                 ScaffoldMessenger.of(context).clearSnackBars();
                 //Backdrop.of(components.routes.routeContext!).concealBackLayer();
                 //ScanResult result = await BarcodeScanner.scan();

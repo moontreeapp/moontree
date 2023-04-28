@@ -11,8 +11,11 @@ enum LoadingStatus {
 }
 
 @immutable
-class LoadingViewState extends CubitState {
+class LoadingViewState {
   final LoadingStatus status;
+  final LoadingStatus priorStatus;
+  final String? title;
+  final String? msg;
   final bool isSubmitting;
 
   /// anticipating the need for these in the future:
@@ -23,25 +26,61 @@ class LoadingViewState extends CubitState {
 
   const LoadingViewState({
     required this.status,
+    required this.priorStatus,
+    required this.title,
+    required this.msg,
     required this.isSubmitting,
   });
 
   @override
   String toString() => 'LoadingView( '
-      'status=$status, isSubmitting=$isSubmitting)';
+      'status=$status, priorStatus=$priorStatus, title=$title, msg=$msg, '
+      'isSubmitting=$isSubmitting)';
 
-  @override
   List<Object?> get props => <Object?>[
         status,
+        priorStatus,
         isSubmitting,
+        title,
+        msg,
       ];
 
-  factory LoadingViewState.initial() =>
-      LoadingViewState(status: LoadingStatus.none, isSubmitting: true);
+  factory LoadingViewState.initial() => const LoadingViewState(
+      status: LoadingStatus.none,
+      priorStatus: LoadingStatus.none,
+      title: null,
+      msg: null,
+      isSubmitting: true);
 
-  LoadingViewState load({LoadingStatus? status, bool? isSubmitting}) =>
+  LoadingViewState load({
+    LoadingStatus? status,
+    LoadingStatus? priorStatus,
+    String? title,
+    String? msg,
+    bool? isSubmitting,
+  }) =>
+      LoadingViewState.load(
+        state: this,
+        status: status,
+        priorStatus: priorStatus,
+        title: title,
+        msg: msg,
+        isSubmitting: isSubmitting,
+      );
+
+  factory LoadingViewState.load({
+    required LoadingViewState state,
+    LoadingStatus? status,
+    LoadingStatus? priorStatus,
+    String? title,
+    String? msg,
+    bool? isSubmitting,
+  }) =>
       LoadingViewState(
-        status: status ?? this.status,
-        isSubmitting: isSubmitting ?? this.isSubmitting,
+        status: status ?? state.status,
+        priorStatus: priorStatus ?? state.priorStatus,
+        title: title ?? state.title,
+        msg: msg ?? state.msg,
+        isSubmitting: isSubmitting ?? state.isSubmitting,
       );
 }

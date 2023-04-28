@@ -13,9 +13,6 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   static final ChainNet defaultChainNet = ChainNet(defaultChain, defaultNet);
   static final String defaultDomain = defaultChainNet.domain;
   static final int defaultPort = defaultChainNet.port;
-  static const List<TutorialStatus> tutorials = <TutorialStatus>[
-    TutorialStatus.blockchain
-  ];
 
   static Map<String, Setting> get defaults => <SettingName, Setting>{
         SettingName.version_database:

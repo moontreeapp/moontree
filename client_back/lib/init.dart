@@ -8,7 +8,7 @@ void initTriggers(HiveLoadingStep step) {
     //triggers.leader.init();
     ////triggers.setting.init();
     triggers.app.init();
-    triggers.rate.init(RVNtoFiat());
+    //triggers.rate.init(RVNtoFiat());
   }
   if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
       .contains(step)) {
@@ -16,11 +16,10 @@ void initTriggers(HiveLoadingStep step) {
     //triggers.address.init();
     ////triggers.asset.init();
     //triggers.subscription.init();
-    triggers.block.init();
-    triggers.send.init();
-    triggers.import.init();
-    triggers.create.init();
-    triggers.reissue.init();
+    //triggers.block.init();
+    //triggers.send.init();
+    //triggers.create.init();
+    //triggers.reissue.init();
     //triggers.unspent.init();
   }
 }

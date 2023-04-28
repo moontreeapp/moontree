@@ -25,7 +25,7 @@ class PasswordService {
   bool get askCondition =>
       required &&
       services.cipher.canAskForPasswordNow &&
-      !streams.app.verify.value;
+      !streams.app.auth.verify.value;
 
   bool interruptedPasswordChange() => <int?>{
         for (CipherUpdate cipherUpdate in services.wallet.getAllCipherUpdates)
@@ -50,7 +50,7 @@ class PasswordLockoutService {
   Future<bool> handleVerificationAttempt(bool verification) async {
     if (verification) {
       if (pros.settings.loginAttempts.isNotEmpty) {
-        streams.app.snack.add(Snack(
+        streams.app.behavior.snack.add(Snack(
           message: pros.settings.loginAttempts.length == 1
               ? 'There was ${pros.settings.loginAttempts.length} unsuccessful login attempt'
               : 'There have been ${pros.settings.loginAttempts.length} unsuccessful login attempts',

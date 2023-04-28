@@ -28,14 +28,14 @@ Future<void> eraseUnspentData({
   bool keepBalances = false,
 }) async {
   if (quick) {
-    await pros.statuses.delete();
+    //await pros.statuses.delete();
     //await pros.unspents.delete();
     if (!keepBalances) {
       await pros.balances.delete();
     }
   } else {
-    await pros.statuses.clear();
-    await pros.unspents.clear();
+    //await pros.statuses.clear();
+    //await pros.unspents.clear();
     if (!keepBalances) {
       await pros.balances.clear();
     }
@@ -61,14 +61,6 @@ Future<void> eraseAddressData({bool quick = false}) async {
 void resetInMemoryState() {
   services.client.subscribe.unsubscribeAssetsAll();
   services.client.subscribe.subscriptionHandlesAsset.clear();
-  services.download.overrideGettingStarted = false;
-  services.download.history.calledAllDoneProcess = 0;
-  services.download.queue.addresses.clear();
-  services.download.queue.transactions.clear();
-  services.download.queue.dangling.clear();
-  services.download.queue.updated = false;
-  services.download.queue.address = null;
-  services.download.queue.transactionSet = null;
 }
 
 Future<void> deleteDatabase() async {

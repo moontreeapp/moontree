@@ -94,6 +94,20 @@ class _EndpointBalances extends _i1.EndpointRef {
       );
 }
 
+class _EndpointCirculatingSats extends _i1.EndpointRef {
+  _EndpointCirculatingSats(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'circulatingSats';
+
+  _i2.Future<_i3.CommInt> get({required String chainName}) =>
+      caller.callServerEndpoint<_i3.CommInt>(
+        'circulatingSats',
+        'get',
+        {'chainName': chainName},
+      );
+}
+
 class _EndpointConsent extends _i1.EndpointRef {
   _EndpointConsent(_i1.EndpointCaller caller) : super(caller);
 
@@ -302,6 +316,7 @@ class Client extends _i1.ServerpodClient {
     addresses = _EndpointAddresses(this);
     metadata = _EndpointMetadata(this);
     balances = _EndpointBalances(this);
+    circulatingSats = _EndpointCirculatingSats(this);
     consent = _EndpointConsent(this);
     hasGiven = _EndpointHasGiven(this);
     document = _EndpointDocument(this);
@@ -319,6 +334,8 @@ class Client extends _i1.ServerpodClient {
   late final _EndpointMetadata metadata;
 
   late final _EndpointBalances balances;
+
+  late final _EndpointCirculatingSats circulatingSats;
 
   late final _EndpointConsent consent;
 
@@ -345,6 +362,7 @@ class Client extends _i1.ServerpodClient {
         'addresses': addresses,
         'metadata': metadata,
         'balances': balances,
+        'circulatingSats': circulatingSats,
         'consent': consent,
         'hasGiven': hasGiven,
         'document': document,

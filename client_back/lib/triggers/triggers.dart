@@ -1,34 +1,36 @@
-import 'address.dart';
+//import 'asset.dart';
+//import 'subscription.dart';
+//import 'block.dart';
+//import 'client.dart';
+//import 'rate.dart';
+//import 'reissue.dart';
+//import 'send.dart';
+//import 'unspent.dart';
+//import 'setting.dart';
+//import 'create.dart';
+//import 'address.dart';
+//import 'single.dart';
+//import 'leader.dart';
 import 'app.dart';
-import 'asset.dart';
-import 'subscription.dart';
-import 'block.dart';
-import 'client.dart';
-import 'create.dart';
-import 'import.dart';
-import 'leader.dart';
-import 'rate.dart';
-import 'reissue.dart';
-import 'send.dart';
-import 'unspent.dart';
-import 'setting.dart';
-import 'single.dart';
 
 class triggers {
-  static AddressWaiter address = AddressWaiter();
-  static AssetWaiter asset = AssetWaiter();
+  /// needed
   static AppWaiter app = AppWaiter();
-  static SubscriptionWaiter subscription = SubscriptionWaiter();
-  static BlockWaiter block = BlockWaiter();
-  static CreateWaiter create = CreateWaiter();
-  static ImportWaiter import = ImportWaiter();
-  static RateWaiter rate = RateWaiter();
-  static RavenClientWaiter client = RavenClientWaiter();
-  static ReissueWaiter reissue = ReissueWaiter();
-  static SendWaiter send = SendWaiter();
+
+  /// not needed
+  //static AddressWaiter address = AddressWaiter();
+  //static AssetWaiter asset = AssetWaiter();
+  //static RavenClientWaiter client = RavenClientWaiter();
   //static SettingWaiter setting = SettingWaiter();
-  static UnspentWaiter unspent = UnspentWaiter();
-  // Wallets
-  static LeaderWaiter leader = LeaderWaiter();
-  static SingleWaiter single = SingleWaiter();
+  //static SendWaiter send = SendWaiter();
+  //static CreateWaiter create = CreateWaiter();
+  //static ReissueWaiter reissue = ReissueWaiter();
+  //static UnspentWaiter unspent = UnspentWaiter();
+  //static BlockWaiter block = BlockWaiter();
+
+  /// unknown
+  //static RateWaiter rate = RateWaiter();
+  //static SubscriptionWaiter subscription = SubscriptionWaiter();
+  //static SingleWaiter single = SingleWaiter();
+  //static LeaderWaiter leader = LeaderWaiter();
 }

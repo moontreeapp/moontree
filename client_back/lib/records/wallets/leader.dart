@@ -64,6 +64,8 @@ class LeaderWallet extends Wallet {
         getEntropy: getEntropy ?? existing.getEntropy,
       );
 
+  factory LeaderWallet.empty() => LeaderWallet(id: '', encryptedEntropy: '');
+
   void setSecret(Future<String> Function(String id) getEntropy) =>
       _getEntropy = getEntropy;
 
