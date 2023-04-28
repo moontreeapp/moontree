@@ -783,7 +783,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                                     Navigator.pushNamed(
                                                         components.routes
                                                             .routeContext!,
-                                                        '/security/security',
+                                                        '/login/verify',
                                                         arguments: <String,
                                                             Object>{
                                                           'buttonLabel':

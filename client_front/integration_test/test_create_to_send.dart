@@ -3,6 +3,7 @@ cd client_front
 flutter test integration_test/test_create_to_send.dart -d emulator-5554
  */
 import 'package:client_front/presentation/containers/layers/tutorial.dart';
+import 'package:client_front/presentation/pages/appbar/connection.dart';
 import 'package:client_front/presentation/pages/appbar/lead.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,7 +16,6 @@ import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show getSecret;
-import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 void main() {

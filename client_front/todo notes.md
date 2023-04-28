@@ -90,9 +90,11 @@ DONE - sometimes front layer is transparent - unable to duplicate earlier, but f
 
 DONE - spacing on apple is wrong - on listviews or something? yes listviews need padding override on IOS
 
-setup auth method is fine but change auth method not working
+DONE - change password not working
 
-change password not working
+DONE - setup auth method is fine but change auth method not working
+
+DONE - enforce authenticate for backup screen
 
 fix lock and login screen for really small screens
 

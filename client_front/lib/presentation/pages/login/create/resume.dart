@@ -7,6 +7,7 @@ import 'package:client_front/infrastructure/services/password.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
 import 'package:client_front/domain/utils/auth.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 class CreateResume extends StatefulWidget {
   const CreateResume({Key? key}) : super(key: key ?? defaultKey);
@@ -48,8 +49,10 @@ class _CreateResumeState extends State<CreateResume> {
   Row submitButton() =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         TextButton.icon(
-            onPressed: () => Navigator.pushReplacementNamed(
-                context, getMethodPathLogin(), arguments: <dynamic, dynamic>{}),
+            onPressed: () => sail.to(
+                  getMethodPathLogin(),
+                  arguments: <String, dynamic>{},
+                ),
             icon: const Icon(Icons.login),
             label: Text('Abort Password Change Process',
                 style: TextStyle(color: Theme.of(context).primaryColor))),

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
+import 'package:client_front/presentation/widgets/front/verify.dart';
 import 'package:client_front/presentation/pages/wallet/wallet.dart';
 import 'package:client_front/presentation/pages/backup/backup.dart';
 import 'package:client_front/presentation/pages/restore/restore.dart';
@@ -19,6 +20,9 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
       const LoginCreatePassword(),
   '/login/native': (BuildContext context) => const LoginNative(),
   '/login/password': (BuildContext context) => const LoginPassword(),
+  '/login/verify': (BuildContext context) => const VerifyAuthentication(),
+  '/login/modify/password': (BuildContext context) =>
+      const ChangeLoginPassword(),
   '/wallet/receive': (BuildContext context) => const Receive(),
   '/wallet/holdings': (BuildContext context) => const WalletHoldings(),
   '/wallet/holding': (BuildContext context) => const WalletHolding(),
@@ -40,8 +44,6 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/setting/database': (BuildContext context) => const DatabaseSettings(),
   '/setting/mining': (BuildContext context) => const MiningSetting(),
   '/setting/security': (BuildContext context) => const SecuritySettings(),
-  '/security/security': (BuildContext context) =>
-      const SecuritySettings(), // update this
   '/network/blockchain': (BuildContext context) => const BlockchainSettings(),
   '/send/checkout': (BuildContext context) => SimpleSendCheckout(
         transactionType: TransactionType.spend,

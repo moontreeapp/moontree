@@ -51,13 +51,13 @@ class _SecuritySettingsState extends State<SecuritySettings> {
         firstLowerChildren: !pros.settings.authMethodIsNativeSecurity
             ? [
                 /// TODO: fix this.
-                //BottomButton(
-                //  label: 'Change Password',
-                //  focusNode: buttonFocus,
-                //  disabledIcon:
-                //      const Icon(Icons.lock_rounded, color: AppColors.black38),
-                //  link: '/security/password/change',
-                //)
+                BottomButton(
+                  label: 'Change Password',
+                  focusNode: buttonFocus,
+                  disabledIcon:
+                      const Icon(Icons.lock_rounded, color: AppColors.black38),
+                  link: '/login/modify/password',
+                )
               ]
             : null,
       );

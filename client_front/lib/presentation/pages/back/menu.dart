@@ -238,12 +238,11 @@ class MainMenu extends StatelessWidget {
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style:
-                  Theme.of(components.routes.routeContext!).textTheme.bodyText2,
+              style: Theme.of(components.routes.context!).textTheme.bodyText2,
               children: <TextSpan>[
                 TextSpan(
                     text: 'User Agreement',
-                    style: Theme.of(components.routes.routeContext!)
+                    style: Theme.of(components.routes.context!)
                         .textTheme
                         .underlinedMenuLink,
                     recognizer: TapGestureRecognizer()
@@ -254,7 +253,7 @@ class MainMenu extends StatelessWidget {
                 const TextSpan(text: '   '),
                 TextSpan(
                     text: 'Privacy Policy',
-                    style: Theme.of(components.routes.routeContext!)
+                    style: Theme.of(components.routes.context!)
                         .textTheme
                         .underlinedMenuLink,
                     recognizer: TapGestureRecognizer()
@@ -265,7 +264,7 @@ class MainMenu extends StatelessWidget {
                 const TextSpan(text: '   '),
                 TextSpan(
                     text: 'Risk Disclosure',
-                    style: Theme.of(components.routes.routeContext!)
+                    style: Theme.of(components.routes.context!)
                         .textTheme
                         .underlinedMenuLink,
                     recognizer: TapGestureRecognizer()

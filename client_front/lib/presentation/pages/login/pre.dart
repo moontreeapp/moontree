@@ -34,9 +34,11 @@ class PreLogin extends StatelessWidget {
                     actions: <Widget>[
                       TextButton(
                           child: const Text('ok'),
-                          onPressed: () => sail.to('/security/resume',
-                              replaceOverride: true,
-                              arguments: <String, dynamic>{}))
+                          onPressed: () => sail.to(
+                                '/login/create/resume',
+                                replaceOverride: true,
+                                arguments: <String, dynamic>{},
+                              ))
                     ]));
       } else {
         bool hasConsented = false;

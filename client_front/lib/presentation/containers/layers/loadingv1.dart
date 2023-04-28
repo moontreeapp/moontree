@@ -5,9 +5,6 @@ import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/widgets/top/connection.dart';
-import 'package:client_front/presentation/widgets/other/speech_bubble.dart';
-import 'package:client_front/presentation/widgets/other/other.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;

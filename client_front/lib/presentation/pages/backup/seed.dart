@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:client_front/presentation/services/services.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -27,10 +29,13 @@ class BackupSeed extends StatefulWidget {
 
 class _BackupSeedState extends State<BackupSeed>
     with SingleTickerProviderStateMixin {
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   bool validated = true;
   bool warn = true;
   late double buttonWidth;
   late List<String> secret;
+
   //ScreenshotCallback screenshotCallback = ScreenshotCallback();
 
   /// from exploring animations - want to return to
@@ -51,6 +56,11 @@ class _BackupSeedState extends State<BackupSeed>
       //  print('detect screenshot');
       //});
     }
+    //listeners.add(streams.app.auth.verify.listen((value) {
+    //  if (value == true) {
+    //    setState(() {});
+    //  }
+    //}));
   }
 
   @override
@@ -66,6 +76,45 @@ class _BackupSeedState extends State<BackupSeed>
 
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
+  Future<List<String>> auth() async {
+    if (/*services.password.askCondition*/ false) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      //produceBlockchainModal(context: components.routes.routeContext!);
+      //components.cubits.bottomModalSheet.show(children: [
+      showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        backgroundColor: Colors.white,
+        builder: (context) => Container(
+            height: screen.app.height / 2,
+            width: screen.width,
+            alignment: Alignment.center,
+            child: VerifyAuthentication(
+              buttonLabel: 'Show Seed',
+              intro: Container(
+                  //height: 48,
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    'Your wallet is valuable.\nPlease create a backup!',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(color: AppColors.black),
+                  )),
+              auto: true,
+              asLoginTime: true,
+            )),
+      );
+
+      //]);
+      components.cubits.title.update(editable: false);
+    }
+    return await getSecret;
+  }
+
   @override
   Widget build(BuildContext context) {
     buttonWidth = (MediaQuery.of(context).size.width - (17 + 17 + 16 + 16)) / 3;
@@ -79,7 +128,6 @@ class _BackupSeedState extends State<BackupSeed>
             return
                 //services.password.askCondition
                 //    ? VerifyAuthentication(
-                //        parentState: this,
                 //        buttonLabel: 'Show Seed',
                 //        intro: Container(
                 //            //height: 48,
@@ -91,17 +139,6 @@ class _BackupSeedState extends State<BackupSeed>
                 //                  .textTheme
                 //                  .subtitle1!
                 //                  .copyWith(color: AppColors.black),
-                //            )),
-                //        safe: Container(
-                //            //height: 48,
-                //            alignment: Alignment.topCenter,
-                //            child: Text(
-                //              'You are about to backup your seed words.\nKeep it secret, keep it safe.',
-                //              textAlign: TextAlign.center,
-                //              style: Theme.of(context)
-                //                  .textTheme
-                //                  .subtitle1!
-                //                  .copyWith(color: AppColors.error),
                 //            )),
                 //        auto: true,
                 //        asLoginTime: true,

@@ -81,6 +81,20 @@ class Sail {
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/login/password',
     ),
+    '/login/verify': Manifest(
+      title: 'Security',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/login/verify',
+    ),
+    '/login/modify/password': Manifest(
+      title: 'Security',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/login/modify/password',
+    ),
     '/backup/intro': Manifest(
       title: 'Backup',
       section: Section.settings,
@@ -238,13 +252,6 @@ class Sail {
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/setting/security',
     ),
-    '/security/security': Manifest(
-      title: 'Security',
-      section: Section.settings,
-      frontHeight: FrontContainerHeight.max,
-      navbarHeight: NavbarHeight.hidden,
-      frontPath: '/security/security',
-    ),
     '/network/blockchain': Manifest(
       title: 'Blockchain Settings',
       section: Section.settings,
@@ -344,6 +351,9 @@ class Sail {
     final manifest = destinationMap[location];
     if (manifest == null) {
       throw Exception('Invalid location: $location');
+    }
+    if (replaceOverride) {
+      _handleHistoryRemoval();
     }
     if (addToHistory) {
       _handleHistoryAddition(
@@ -452,9 +462,11 @@ class Sail {
       replace
           ? context == null
               ? components.routes.navigatorKey.currentState!
-                  .pushReplacementNamed(path, arguments: arguments)
+                  .popAndPushNamed(path, arguments: arguments)
+              //.pushReplacementNamed(path, arguments: arguments)
               : Navigator.of(context)
-                  .pushReplacementNamed(path, arguments: arguments)
+                  .popAndPushNamed(path, arguments: arguments)
+          //.pushReplacementNamed(path, arguments: arguments)
           : context == null
               ? components.routes.navigatorKey.currentState!
                   .pushNamed(path, arguments: arguments)

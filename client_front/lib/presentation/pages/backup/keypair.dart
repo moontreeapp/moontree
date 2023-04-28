@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
@@ -18,12 +19,14 @@ class ShowKeypair extends StatefulWidget {
 
 class _ShowKeypairState extends State<ShowKeypair>
     with SingleTickerProviderStateMixin {
+  late List<StreamSubscription<dynamic>> listeners =
+      <StreamSubscription<dynamic>>[];
   late double buttonWidth;
   late String secret;
   @override
   void initState() {
     super.initState();
-    streams.app.auth.verify.add(false);
+    //streams.app.auth.verify.add(false);
     if (Platform.isAndroid) {
       FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     } else if (Platform.isIOS) {
@@ -33,6 +36,11 @@ class _ShowKeypairState extends State<ShowKeypair>
       //  print('detect screenshot');
       //});
     }
+    //listeners.add(streams.app.auth.verify.listen((value) {
+    //  if (value == true) {
+    //    setState(() {});
+    //  }
+    //}));
   }
 
   @override
@@ -64,68 +72,57 @@ class _ShowKeypairState extends State<ShowKeypair>
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
             secret = snapshot.data!;
-            return services.password.askCondition
-                ? VerifyAuthentication(
-                    parentState: this,
-                    buttonLabel: 'Show Private Key',
-                    intro: Container(
-                        //height: 48,
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          'Your wallet is valuable.\nPlease create a backup!',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(color: AppColors.black),
-                        )),
-                    safe: Container(
-                        //height: 48,
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          'You are about to backup your private key.\nKeep it secret, keep it safe.',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(color: AppColors.error),
-                        )),
-                  )
-                : PageStructure(
-                    children: <Widget>[
-                      Container(
-                          //height: 48,
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            'This is the private key (wif) for this wallet. Whoever has this can access the funds.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle1!
-                                .copyWith(color: AppColors.black),
-                          )),
-                      Container(
-                          //height: 48,
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            'Be sure to back up your private key securely.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle1!
-                                .copyWith(color: AppColors.error),
-                          )),
-                      Container(
-                          height: 272 * (smallScreen ? .8 : 1),
-                          alignment: Alignment.center,
-                          padding: smallScreen
-                              ? null
-                              : const EdgeInsets.only(left: 16, right: 16),
-                          child: SelectableText(secret,
-                              textAlign: TextAlign.center)),
-                    ],
-                    firstLowerChildren: <Widget>[],
-                  );
+            return
+                //services.password.askCondition
+                //? VerifyAuthentication(
+                //    buttonLabel: 'Show Private Key',
+                //    intro: Container(
+                //        //height: 48,
+                //        alignment: Alignment.topCenter,
+                //        child: Text(
+                //          'Your wallet is valuable.\nPlease create a backup!',
+                //          textAlign: TextAlign.center,
+                //          style: Theme.of(context)
+                //              .textTheme
+                //              .subtitle1!
+                //              .copyWith(color: AppColors.black),
+                //        )),
+                //  )
+                //:
+                PageStructure(
+              children: <Widget>[
+                Container(
+                    //height: 48,
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      'This is the private key (wif) for this wallet. Whoever has this can access the funds.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1!
+                          .copyWith(color: AppColors.black),
+                    )),
+                Container(
+                    //height: 48,
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      'Be sure to back up your private key securely.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1!
+                          .copyWith(color: AppColors.error),
+                    )),
+                Container(
+                    height: 272 * (smallScreen ? .8 : 1),
+                    alignment: Alignment.center,
+                    padding: smallScreen
+                        ? null
+                        : const EdgeInsets.only(left: 16, right: 16),
+                    child: SelectableText(secret, textAlign: TextAlign.center)),
+              ],
+              firstLowerChildren: <Widget>[],
+            );
           } else {
             return const CircularProgressIndicator();
           }

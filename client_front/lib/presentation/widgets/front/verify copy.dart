@@ -1,4 +1,3 @@
-import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/material.dart';
@@ -13,58 +12,37 @@ import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/password.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
+import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 
-class VerifyAuthentication extends StatelessWidget {
+class VerifyAuthentication extends StatefulWidget {
+  final State? parentState;
   final String buttonLabel;
   final String? suffix;
   final Widget? intro;
+  final Widget? safe;
   final bool auto;
   final bool asLoginTime;
 
   const VerifyAuthentication({
     Key? key,
+    this.parentState,
     this.buttonLabel = 'Submit',
     this.suffix,
     this.intro,
+    this.safe,
     this.auto = true,
     this.asLoginTime = true,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    Map<String, dynamic> data = <String, dynamic>{};
-    try {
-      data = populateData(context, data);
-    } catch (e) {
-      data = <String, dynamic>{};
-    }
-    if (pros.settings.authMethodIsNativeSecurity) {
-      return AuthenticateByNative(data: data);
-    } else {
-      return AuthenticateByPassword(
-        data: data,
-        buttonLabel: buttonLabel,
-        intro: intro,
-      );
-    }
-  }
+  _VerifyAuthenticationState createState() => _VerifyAuthenticationState();
 }
 
-class AuthenticateByPassword extends StatefulWidget {
-  final String? buttonLabel;
-  final Widget? intro;
-  final Map<String, dynamic> data;
-  const AuthenticateByPassword(
-      {super.key, this.buttonLabel, this.intro, required this.data});
-
-  @override
-  _AuthenticateByPasswordState createState() => _AuthenticateByPasswordState();
-}
-
-class _AuthenticateByPasswordState extends State<AuthenticateByPassword> {
+class _VerifyAuthenticationState extends State<VerifyAuthentication> {
+  Map<String, dynamic> data = <String, dynamic>{};
   TextEditingController password = TextEditingController();
   bool passwordVisible = false;
   FocusNode existingFocus = FocusNode();
@@ -86,25 +64,63 @@ class _AuthenticateByPasswordState extends State<AuthenticateByPassword> {
   }
 
   @override
-  Widget build(BuildContext context) => PageStructure(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          if (widget.intro != null) widget.intro!,
-          Container(
-              height: ((MediaQuery.of(context).size.height) -
-                      (56 +
-                          40 +
-                          16 +
-                          16 +
-                          72.figma(context) +
-                          (widget.intro != null ? 40.figma(context) : 0))) /
-                  3),
-          const LockedOutTime(),
-          passwordField,
-        ],
-        firstLowerChildren: <Widget>[submitButton],
-      );
+  Widget build(BuildContext context) {
+    try {
+      data = populateData(context, data);
+    } catch (e) {
+      data = <String, dynamic>{};
+    }
+
+    if (widget.auto &&
+        pros.settings.authMethodIsNativeSecurity &&
+        (data['autoInitiateUnlock'] as bool? ?? true)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await submit();
+      });
+      data['autoInitiateUnlock'] = false;
+    }
+
+    //GestureDetector(
+    //onTap: () => FocusScope.of(context).unfocus(),
+    //child:
+    return PageStructure(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        //if (widget.intro != null) widget.intro!,
+        //Container(
+        //    height: ((MediaQuery.of(context).size.height) -
+        //            (56 +
+        //                40 +
+        //                16 +
+        //                16 +
+        //                72.figma(context) +
+        //                (widget.intro != null ? 40.figma(context) : 0))) /
+        //        3),
+
+        //Center(
+        //    child: Text(
+        //        'Please verify your password\nto proceed' +
+        //            (widget.suffix != null ? ' ' + widget.suffix! : ''),
+        //        textAlign: TextAlign.center,
+        //        style: Theme.of(context).textTheme.bodyText1)),
+        //SizedBox(height: 8),
+
+        const LockedOutTime(),
+        //if (pros.settings.authMethodIsNativeSecurity)
+        //  bioText
+        //else
+        if (!pros.settings.authMethodIsNativeSecurity) passwordField,
+      ],
+      firstLowerChildren: <Widget>[
+        if (pros.settings.authMethodIsNativeSecurity)
+          bioButton
+        else
+          submitButton
+      ],
+      //)
+    );
+  }
 
   Widget get passwordField => TextField(
         focusNode: existingFocus,
@@ -142,9 +158,7 @@ class _AuthenticateByPasswordState extends State<AuthenticateByPassword> {
   Widget get submitButton => BottomButton(
         focusNode: submitFocus,
         enabled: password.text != '' && services.password.lockout.timePast(),
-        label: widget.data['buttonLabel'] as String? ??
-            widget.buttonLabel ??
-            'Submit',
+        label: data['buttonLabel'] as String? ?? widget.buttonLabel,
         onPressed: submitProceedure,
       );
 
@@ -159,7 +173,8 @@ class _AuthenticateByPasswordState extends State<AuthenticateByPassword> {
     if (await services.password.lockout
         .handleVerificationAttempt(await verify())) {
       streams.app.auth.verify.add(true);
-      (widget.data['onSuccess'] ?? () {})();
+      //widget.parentState?.setState(() {});
+      (data['onSuccess'] ?? () {})();
     } else {
       setState(() {
         failedAttempt = true;
@@ -177,65 +192,52 @@ class _AuthenticateByPasswordState extends State<AuthenticateByPassword> {
       }[services.password.validate.previouslyUsed(password.text)] ??
       //'has been used before';
       'unrecognized';
-}
 
-class AuthenticateByNative extends StatelessWidget {
-  final Map<String, dynamic> data;
-  const AuthenticateByNative({super.key, required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    //if (widget.auto &&
-    // pros.settings.authMethodIsNativeSecurity &&
-    //   (data['autoInitiateUnlock'] as bool? ?? true)) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await submit();
-    });
-    data['autoInitiateUnlock'] = false;
-    //}
-    return PageStructure(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Center(
-            child: Text(
-          'Please authenticate to proceed',
+  Widget get bioText => Container(
+      alignment: Alignment.center,
+      child: Text('Please Authenticate',
           textAlign: TextAlign.center,
           style: Theme.of(context)
               .textTheme
-              .subtitle1!
-              .copyWith(color: AppColors.black),
-        )),
-      ],
-      firstLowerChildren: <Widget>[
-        BottomButton(
-          enabled: pros.settings.authMethodIsNativeSecurity,
-          label: 'Unlock',
-          onPressed: () async => submit(),
-        )
-      ],
-    );
-  }
+              .bodyText1
+              ?.copyWith(color: AppColors.primary)));
+
+  Widget get bioButton => BottomButton(
+        enabled: pros.settings.authMethodIsNativeSecurity ||
+            (enabled && services.password.lockout.timePast()),
+        label: widget.buttonLabel == 'Submit'
+            ? 'Unlock'
+            : (data['buttonLable'] as String? ?? widget.buttonLabel),
+        onPressed: () async => submit(),
+      );
 
   Future<void> submit() async {
+    setState(() => enabled = false);
     final LocalAuthApi localAuthApi = LocalAuthApi();
     streams.app.auth.authenticating.add(true);
     final bool validate = await localAuthApi.authenticate(
         skip: devFlags.contains(DevFlag.skipPin));
     streams.app.auth.authenticating.add(false);
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
-      services.cipher.loginTime();
+      if (widget.asLoginTime) {
+        services.cipher.loginTime();
+      }
       streams.app.auth.verify.add(true);
+      //widget.parentState?.setState(() {});
       (data['onSuccess'] ?? () {})();
     } else {
       if (localAuthApi.reason == AuthenticationResult.error) {
+        setState(() {
+          enabled = true;
+        });
         streams.app.behavior.snack.add(Snack(
           message: 'Unknown login error: please set a pin on the device.',
         ));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
-        streams.app.behavior.snack.add(Snack(
-          message: 'Unknown login error: please try again.',
-        ));
+        setState(() {
+          failedAttempt = true;
+          enabled = true;
+        });
       }
     }
   }

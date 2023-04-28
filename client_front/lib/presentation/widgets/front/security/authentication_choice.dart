@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -49,7 +50,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
         //SizedBox(height: 16),
         RadioListTile<AuthMethod>(
             title: Text(
-              "${Platform.isIOS ? 'iOS' : 'Android'} Phone Security",
+              '${Platform.isIOS ? 'iOS' : 'Android'} Phone Security',
               style: Theme.of(context).textTheme.bodyText1,
             ),
             value: AuthMethod.nativeSecurity,
@@ -67,11 +68,11 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                       authenticationMethodChoice = AuthMethod.nativeSecurity;
                     });
                   }
-                  components.loading.screen(
-                      message: 'Setting Security',
-                      staticImage: true,
-                      returnHome: true,
-                      playCount: 1);
+                  //components.loading.screen(
+                  //    message: 'Setting Security',
+                  //    staticImage: true,
+                  //    returnHome: true,
+                  //    playCount: 1);
                   final String key = await SecureStorage.authenticationKey;
                   await services.authentication.setPassword(
                     password: key,
@@ -100,24 +101,24 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                     ));
                   }
                 }
+                sail.back();
               }
 
               setState(() => authenticationMethodChoice = value);
 
               streams.app.auth.verify.add(false); // require auth
               if (services.password.askCondition) {
-                // TODO: fix this - complete setup of this security
-                //await Navigator.pushNamed(
-                //  components.routes.routeContext!,
-                //  '/security/security',
-                //  arguments: <String, Object>{
-                //    'buttonLabel': 'Submit',
-                //    'onSuccess': () async {
-                //      Navigator.pop(components.routes.routeContext!);
-                //      await onSuccess();
-                //    }
-                //  },
-                //);
+                await sail.to(
+                  '/login/verify',
+                  arguments: <String, Object>{
+                    'buttonLabel': 'Submit',
+                    'onSuccess': () async {
+                      //Navigator.pop(components.routes.routeContext!);
+                      //sail.back();
+                      await onSuccess();
+                    }
+                  },
+                );
                 if (mounted) {
                   setState(() {
                     if (!pros.settings.authMethodIsNativeSecurity) {
@@ -159,27 +160,26 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               //);
               //if (!canceled) {
               streams.app.auth.verify.add(false); // always require auth
-              // TODO: fix this - complete setup of this security
-              //Navigator.of(components.routes.routeContext!).pushNamed(
-              //  '/security/password/change',
-              //  arguments: <String, Object>{
-              //    'verification.ButtonLabel': 'Continue',
-              //    'onSuccess.returnHome': true,
-              //    'then': () async {
-              //      setState(() {
-              //        if (pros.settings.authMethodIsNativeSecurity) {
-              //          authenticationMethodChoice =
-              //              AuthMethod.moontreePassword;
-              //        }
-              //      });
-              //      await services.authentication.setMethod(method: value!);
-              //    },
-              //    //'then.then': () async {
-              //    //  streams.app.behavior.snack
-              //    //      .add(Snack(message: 'Successfully Updated Security'));
-              //    //},
-              //  },
-              //);
+              sail.to(
+                '/login/modify/password',
+                arguments: <String, Object>{
+                  'verification.ButtonLabel': 'Continue',
+                  'onSuccess.returnHome': true,
+                  'then': () async {
+                    setState(() {
+                      if (pros.settings.authMethodIsNativeSecurity) {
+                        authenticationMethodChoice =
+                            AuthMethod.moontreePassword;
+                      }
+                    });
+                    await services.authentication.setMethod(method: value!);
+                  },
+                  //'then.then': () async {
+                  //  streams.app.behavior.snack
+                  //      .add(Snack(message: 'Successfully Updated Security'));
+                  //},
+                },
+              );
               setState(() {
                 if (pros.settings.authMethodIsNativeSecurity) {
                   authenticationMethodChoice = AuthMethod.nativeSecurity;

@@ -9,7 +9,7 @@ class TextComponents {
   Widget get passwordWarning => Text(
         'Your password cannot be recovered.\nDo not forget your password.',
         textAlign: TextAlign.center,
-        style: Theme.of(components.routes.routeContext!)
+        style: Theme.of(components.routes.context!)
             .textTheme
             .subtitle1!
             .copyWith(color: AppColors.error),

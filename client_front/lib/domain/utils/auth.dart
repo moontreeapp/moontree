@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:client_back/client_back.dart';
+// why?
 // ignore: unused_import
 import 'package:client_back/services/consent.dart';
-import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
+
+import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 
 Future<void> logout() async {
