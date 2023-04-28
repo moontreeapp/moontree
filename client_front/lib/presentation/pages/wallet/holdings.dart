@@ -95,11 +95,18 @@ class WalletHoldings extends StatelessWidget {
                   }
                 } else {
                   //if (state.holdingsViews.isNotEmpty) {
-                  return Stack(children: [
-                    RefreshIndicator(
+                  return Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      RefreshIndicator(
                         onRefresh: () => refresh(cubit),
-                        child: HoldingsView(cubit: cubit))
-                  ]);
+                        //child: HoldingsView(cubit: cubit),
+                        child: ListView(
+                          children: [Text('what?')],
+                        ),
+                      ),
+                    ],
+                  );
                 }
               }
             }));
