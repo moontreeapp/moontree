@@ -98,4 +98,6 @@ DONE - enforce authenticate for backup screen
 
 DONE - fix lock and login screen for really small screens
 
+DONE - tap to exit qr
+
 fix the derivation (happens again each time switch networks, but doesn't need to, we're probably deleteing addresses each time we change networks which isn't needed anymore)

@@ -59,23 +59,25 @@ class _ScanQRState extends State<ScanQR> {
       controller!.pauseCamera();
       controller!.resumeCamera();
     }
-    return Stack(children: <Widget>[
-      _buildQrView(context),
-      Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-        Container(
-            height: 56,
-            decoration: BoxDecoration(
-              color: Theme.of(context).backgroundColor,
-              borderRadius: shapes.topRoundedBorder16,
-            ),
-            child: Center(
-                child: Text('Point your camera at a QR code',
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                        fontWeight: FontWeights.bold,
-                        letterSpacing: 0.14,
-                        color: AppColors.offWhite)))),
-      ])
-    ]);
+    return GestureDetector(
+        onTap: sail.back,
+        child: Stack(children: <Widget>[
+          _buildQrView(context),
+          Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+            Container(
+                height: 56,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).backgroundColor,
+                  borderRadius: shapes.topRoundedBorder16,
+                ),
+                child: Center(
+                    child: Text('Point your camera at a QR code',
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontWeight: FontWeights.bold,
+                            letterSpacing: 0.14,
+                            color: AppColors.offWhite)))),
+          ])
+        ]));
   }
 
   Widget _buildQrView(BuildContext context) {
