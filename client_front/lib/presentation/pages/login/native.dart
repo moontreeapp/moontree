@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_back/client_back.dart';
@@ -96,7 +97,7 @@ class _LoginNativeState extends State<LoginNative> {
       isConsented = state.isConsented;
       return PageStructure(
         children: <Widget>[
-          SizedBox(height: 76.figmaH),
+          if (screen.app.height >= 640) SizedBox(height: 76.figmaH),
           Container(height: 128.figmaH, child: MoontreeLogo()),
           Container(
               alignment: Alignment.bottomCenter,

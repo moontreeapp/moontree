@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_back/client_back.dart';
@@ -136,7 +137,7 @@ class _LoginPasswordState extends State<LoginPassword> {
       isConsented = state.isConsented;
       return PageStructure(
         children: [
-          SizedBox(height: 40.figmaH),
+          if (screen.app.height >= 640) SizedBox(height: 40.figmaH),
           SizedBox(height: 128.figmaH, child: MoontreeLogo()),
           Container(
               alignment: Alignment.bottomCenter,

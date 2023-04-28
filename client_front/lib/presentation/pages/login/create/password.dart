@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_back/client_back.dart';
@@ -73,11 +74,12 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
       isConsented = state.isConsented;
       return PageStructure(
         children: [
-          SizedBox(height: 16),
-          Container(
-              alignment: Alignment.bottomCenter,
-              //height: .242.ofMediaHeight(context),
-              child: MoontreeLogo()),
+          if (screen.app.height >= 640) SizedBox(height: 16),
+          if (screen.app.height >= 640)
+            Container(
+                alignment: Alignment.bottomCenter,
+                //height: .242.ofMediaHeight(context),
+                child: MoontreeLogo()),
           //SizedBox(height: .01.ofMediaHeight(context)),
           Container(
               alignment: Alignment.bottomCenter,
@@ -86,7 +88,7 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
           //SizedBox(
           //  height: .0789.ofMediaHeight(context),
           //),
-          SizedBox(height: 0),
+          if (screen.app.height >= 640) SizedBox(height: 0),
           Container(
               alignment: Alignment.topCenter,
               //height: 76,

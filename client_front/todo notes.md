@@ -96,6 +96,6 @@ DONE - setup auth method is fine but change auth method not working
 
 DONE - enforce authenticate for backup screen
 
-fix lock and login screen for really small screens
+DONE - fix lock and login screen for really small screens
 
 fix the derivation (happens again each time switch networks, but doesn't need to, we're probably deleteing addresses each time we change networks which isn't needed anymore)

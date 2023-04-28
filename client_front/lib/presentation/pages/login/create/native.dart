@@ -25,7 +25,8 @@ import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
-import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/services/services.dart'
+    show sail, screen;
 
 class LoginCreateNative extends StatefulWidget {
   const LoginCreateNative({Key? key}) : super(key: key ?? defaultKey);
@@ -68,6 +69,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
   Widget build(BuildContext context) {
     data = populateData(context, data);
     needsConsent = data['needsConsent'] as bool? ?? true;
+    print(screen.app.height);
     return FutureBuilder<bool>(
         future: localAuthApi.entirelyReadyToAuthenticate,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -77,8 +79,10 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
             isConsented = state.isConsented;
             return PageStructure(
               children: [
-                SizedBox(height: 76.figmaH),
-                SizedBox(height: 128.figmaH, child: MoontreeLogo()),
+                if (screen.app.height >= 640) SizedBox(height: 76.figmaH),
+                SizedBox(
+                    height: screen.app.height >= 640 ? 128.figmaH : 80,
+                    child: MoontreeLogo()),
                 Container(
                     alignment: Alignment.bottomCenter,
                     height: (16 + 24).figmaH,
@@ -97,7 +101,9 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
                 if (snapshot.hasData && !snapshot.data!)
                   Container(
                       alignment: Alignment.center,
-                      height: (8 + 16 + 24).figmaH,
+                      height: screen.app.height >= 640
+                          ? (8 + 16 + 24).figmaH
+                          : 24 + 16 + 8,
                       child: Text(
                         'Please setup Face, Fingerprints, Pattern, PIN, or Password',
                         textAlign: TextAlign.center,
@@ -107,7 +113,12 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
                       )),
               ],
               firstLowerChildren: <Widget>[
-                if (needsConsent) UlaMessage() else const SizedBox(height: 100),
+                if (needsConsent)
+                  UlaMessage()
+                else if (screen.app.height >= 640)
+                  const SizedBox(height: 100)
+                else
+                  const SizedBox(height: 8),
               ],
               secondLowerChildren: <Widget>[
                 if (snapshot.hasData)

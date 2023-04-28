@@ -101,7 +101,6 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                     ));
                   }
                 }
-                sail.back();
               }
 
               setState(() => authenticationMethodChoice = value);

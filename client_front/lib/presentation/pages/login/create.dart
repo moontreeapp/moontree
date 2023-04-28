@@ -11,7 +11,8 @@ import 'package:client_front/presentation/components/components.dart'
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
-import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/services/services.dart'
+    show sail, screen;
 import 'package:client_front/presentation/utils/animation.dart' as animation;
 
 class LoginCreate extends StatefulWidget {
@@ -81,8 +82,10 @@ class _LoginCreateState extends State<LoginCreate> {
         duration: animation.slowFadeDuration,
         child: PageStructure(
           children: <Widget>[
-            SizedBox(height: 76.figmaH),
-            SizedBox(height: 128.figmaH, child: MoontreeLogo()),
+            if (screen.app.height >= 640) SizedBox(height: 76.figmaH),
+            SizedBox(
+                height: screen.app.height >= 640 ? 128.figmaH : 120,
+                child: MoontreeLogo()),
             Container(
                 alignment: Alignment.bottomCenter,
                 height: (16 + 24).figmaH,
