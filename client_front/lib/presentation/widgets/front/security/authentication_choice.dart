@@ -106,17 +106,18 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
 
               streams.app.auth.verify.add(false); // require auth
               if (services.password.askCondition) {
-                await Navigator.pushNamed(
-                  components.routes.routeContext!,
-                  '/security/security',
-                  arguments: <String, Object>{
-                    'buttonLabel': 'Submit',
-                    'onSuccess': () async {
-                      Navigator.pop(components.routes.routeContext!);
-                      await onSuccess();
-                    }
-                  },
-                );
+                // TODO: fix this - complete setup of this security
+                //await Navigator.pushNamed(
+                //  components.routes.routeContext!,
+                //  '/security/security',
+                //  arguments: <String, Object>{
+                //    'buttonLabel': 'Submit',
+                //    'onSuccess': () async {
+                //      Navigator.pop(components.routes.routeContext!);
+                //      await onSuccess();
+                //    }
+                //  },
+                //);
                 if (mounted) {
                   setState(() {
                     if (!pros.settings.authMethodIsNativeSecurity) {
@@ -158,26 +159,27 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
               //);
               //if (!canceled) {
               streams.app.auth.verify.add(false); // always require auth
-              Navigator.of(components.routes.routeContext!).pushNamed(
-                '/security/password/change',
-                arguments: <String, Object>{
-                  'verification.ButtonLabel': 'Continue',
-                  'onSuccess.returnHome': true,
-                  'then': () async {
-                    setState(() {
-                      if (pros.settings.authMethodIsNativeSecurity) {
-                        authenticationMethodChoice =
-                            AuthMethod.moontreePassword;
-                      }
-                    });
-                    await services.authentication.setMethod(method: value!);
-                  },
-                  //'then.then': () async {
-                  //  streams.app.behavior.snack
-                  //      .add(Snack(message: 'Successfully Updated Security'));
-                  //},
-                },
-              );
+              // TODO: fix this - complete setup of this security
+              //Navigator.of(components.routes.routeContext!).pushNamed(
+              //  '/security/password/change',
+              //  arguments: <String, Object>{
+              //    'verification.ButtonLabel': 'Continue',
+              //    'onSuccess.returnHome': true,
+              //    'then': () async {
+              //      setState(() {
+              //        if (pros.settings.authMethodIsNativeSecurity) {
+              //          authenticationMethodChoice =
+              //              AuthMethod.moontreePassword;
+              //        }
+              //      });
+              //      await services.authentication.setMethod(method: value!);
+              //    },
+              //    //'then.then': () async {
+              //    //  streams.app.behavior.snack
+              //    //      .add(Snack(message: 'Successfully Updated Security'));
+              //    //},
+              //  },
+              //);
               setState(() {
                 if (pros.settings.authMethodIsNativeSecurity) {
                   authenticationMethodChoice = AuthMethod.nativeSecurity;

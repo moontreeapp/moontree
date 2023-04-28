@@ -40,6 +40,8 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/setting/database': (BuildContext context) => const DatabaseSettings(),
   '/setting/mining': (BuildContext context) => const MiningSetting(),
   '/setting/security': (BuildContext context) => const SecuritySettings(),
+  '/security/security': (BuildContext context) =>
+      const SecuritySettings(), // update this
   '/network/blockchain': (BuildContext context) => const BlockchainSettings(),
   '/send/checkout': (BuildContext context) => SimpleSendCheckout(
         transactionType: TransactionType.spend,

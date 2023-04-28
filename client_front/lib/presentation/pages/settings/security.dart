@@ -45,18 +45,19 @@ class _SecuritySettingsState extends State<SecuritySettings> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const AuthenticationMethodChoice(),
-          if (services.developer.advancedDeveloperMode)
-            const ShowAuthenticationChoice(),
+          //if (services.developer.advancedDeveloperMode)
+          //  const ShowAuthenticationChoice(),
         ],
         firstLowerChildren: !pros.settings.authMethodIsNativeSecurity
             ? [
-                BottomButton(
-                  label: 'Change Password',
-                  focusNode: buttonFocus,
-                  disabledIcon:
-                      const Icon(Icons.lock_rounded, color: AppColors.black38),
-                  link: '/security/password/change',
-                )
+                /// TODO: fix this.
+                //BottomButton(
+                //  label: 'Change Password',
+                //  focusNode: buttonFocus,
+                //  disabledIcon:
+                //      const Icon(Icons.lock_rounded, color: AppColors.black38),
+                //  link: '/security/password/change',
+                //)
               ]
             : null,
       );

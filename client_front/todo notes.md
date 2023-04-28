@@ -90,4 +90,10 @@ DONE - sometimes front layer is transparent - unable to duplicate earlier, but f
 
 spacing on apple is wrong - on listviews or something?
 
+setup auth method is fine but change auth method not working
+
+change password not working
+
+fix lock and login screen for really small screens
+
 fix the derivation (happens again each time switch networks, but doesn't need to, we're probably deleteing addresses each time we change networks which isn't needed anymore)
