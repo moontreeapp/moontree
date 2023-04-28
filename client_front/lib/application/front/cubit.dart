@@ -15,11 +15,14 @@ class FrontContainerCubit extends Cubit<FrontContainerCubitState>
             containerHeight: FrontContainerHeight.max,
             height: services.screen.frontContainer.maxHeight));
 
-  void setHidden(bool hide) => emit(FrontContainerState(
-        containerHeight: hide ? FrontContainerHeight.hidden : null,
-        height: state.height,
-        hide: hide,
-      ));
+  void setHidden(bool hide) {
+    print('setHIDDEN!!!');
+    emit(FrontContainerState(
+      containerHeight: hide ? FrontContainerHeight.hidden : null,
+      height: state.height,
+      hide: hide,
+    ));
+  }
 
   void setHeightToExactly({required double height}) => emit(FrontContainerState(
       containerHeight: null,

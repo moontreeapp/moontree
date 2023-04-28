@@ -69,8 +69,11 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
   void initState() {
     super.initState();
     heightCubit = BlocProvider.of<FrontContainerCubit>(context);
-    Future.delayed(animation.fadeDuration)
-        .then((_) => heightCubit.setHidden(true));
+    Future.delayed(animation.fadeDuration).then((_) {
+      if (components.cubits.location.state.path == '/wallet/holding') {
+        heightCubit.setHidden(true);
+      }
+    });
     draggableScrollableController.addListener(scrollListener);
     _controller = AnimationController(
       vsync: this,

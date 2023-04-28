@@ -95,9 +95,11 @@ class WalletHoldings extends StatelessWidget {
                   }
                 } else {
                   //if (state.holdingsViews.isNotEmpty) {
-                  return RefreshIndicator(
-                      onRefresh: () => refresh(cubit),
-                      child: HoldingsView(cubit: cubit));
+                  return Stack(children: [
+                    RefreshIndicator(
+                        onRefresh: () => refresh(cubit),
+                        child: HoldingsView(cubit: cubit))
+                  ]);
                 }
               }
             }));
@@ -212,6 +214,7 @@ class _HoldingsView extends State<HoldingsView> {
       if (holding.symbol == currentCrypto.symbol) {
         //if (pros.securities.coinSymbols.contains(holding.symbol)) {
         rvnHolding.add(Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             thisHolding,
             if (widget.cubit.state.showSearchBar /*&& !isEmpty*/) searchBar,

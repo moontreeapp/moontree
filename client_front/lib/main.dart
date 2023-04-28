@@ -3,8 +3,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc/src/bloc_provider.dart'
-    show BlocProviderSingleChildWidget;
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:client_back/streams/streams.dart';
 import 'package:client_front/application/cubits.dart';
@@ -150,7 +148,49 @@ class MoontreeAppState extends State<MoontreeApp> {
             return Splash();
           } else {
             return MultiBlocProvider(
-              providers: providers,
+              providers: [
+                BlocProvider<SimpleSendFormCubit>(
+                    create: (context) => components.cubits.simpleSendForm),
+                BlocProvider<TransactionsViewCubit>(
+                    create: (context) => components.cubits.transactionsView),
+                BlocProvider<TransactionViewCubit>(
+                    create: (context) => components.cubits.transactionView),
+                BlocProvider<HoldingsViewCubit>(
+                    create: (context) => components.cubits.holdingsView),
+                // v2
+                BlocProvider<TitleCubit>(
+                    create: (context) => components.cubits.title),
+                BlocProvider<BackContainerCubit>(
+                    create: (context) => components.cubits.backContainer),
+                BlocProvider<FrontContainerCubit>(
+                    create: (context) => components.cubits.frontContainer),
+                BlocProvider<ExtraContainerCubit>(
+                    create: (context) => components.cubits.extraContainer),
+                BlocProvider<NavbarCubit>(
+                    create: (context) => components.cubits.navbar),
+                BlocProvider<SnackbarCubit>(
+                    create: (context) => components.cubits.snackbar),
+                BlocProvider<BottomModalSheetCubit>(
+                    create: (context) => components.cubits.bottomModalSheet),
+                BlocProvider<MessageModalCubit>(
+                    create: (context) => components.cubits.messageModal),
+                BlocProvider<LoadingViewCubit>(
+                    create: (context) => components.cubits.loadingView),
+                BlocProvider<LoginCubit>(
+                    create: (context) => components.cubits.login),
+                BlocProvider<ImportFormCubit>(
+                    create: (context) => components.cubits.import),
+                BlocProvider<LocationCubit>(
+                    create: (context) => components.cubits.location),
+                BlocProvider<ConnectionStatusCubit>(
+                    create: (context) => components.cubits.connection),
+                BlocProvider<ReceiveViewCubit>(
+                    create: (BuildContext context) =>
+                        components.cubits.receiveView),
+                BlocProvider<TutorialCubit>(
+                    create: (BuildContext context) =>
+                        components.cubits.tutorial),
+              ],
               child: HomePage(child: child),
             );
           }
@@ -188,42 +228,3 @@ class HomePage extends StatelessWidget {
         child: Platform.isIOS ? scaffold : SafeArea(child: scaffold));
   }
 }
-
-List<BlocProviderSingleChildWidget> get providers => [
-      BlocProvider<SimpleSendFormCubit>(
-          create: (context) => components.cubits.simpleSendForm),
-      BlocProvider<TransactionsViewCubit>(
-          create: (context) => components.cubits.transactionsView),
-      BlocProvider<TransactionViewCubit>(
-          create: (context) => components.cubits.transactionView),
-      BlocProvider<HoldingsViewCubit>(
-          create: (context) => components.cubits.holdingsView),
-      // v2
-      BlocProvider<TitleCubit>(create: (context) => components.cubits.title),
-      BlocProvider<BackContainerCubit>(
-          create: (context) => components.cubits.backContainer),
-      BlocProvider<FrontContainerCubit>(
-          create: (context) => components.cubits.frontContainer),
-      BlocProvider<ExtraContainerCubit>(
-          create: (context) => components.cubits.extraContainer),
-      BlocProvider<NavbarCubit>(create: (context) => components.cubits.navbar),
-      BlocProvider<SnackbarCubit>(
-          create: (context) => components.cubits.snackbar),
-      BlocProvider<BottomModalSheetCubit>(
-          create: (context) => components.cubits.bottomModalSheet),
-      BlocProvider<MessageModalCubit>(
-          create: (context) => components.cubits.messageModal),
-      BlocProvider<LoadingViewCubit>(
-          create: (context) => components.cubits.loadingView),
-      BlocProvider<LoginCubit>(create: (context) => components.cubits.login),
-      BlocProvider<ImportFormCubit>(
-          create: (context) => components.cubits.import),
-      BlocProvider<LocationCubit>(
-          create: (context) => components.cubits.location),
-      BlocProvider<ConnectionStatusCubit>(
-          create: (context) => components.cubits.connection),
-      BlocProvider<ReceiveViewCubit>(
-          create: (BuildContext context) => components.cubits.receiveView),
-      BlocProvider<TutorialCubit>(
-          create: (BuildContext context) => components.cubits.tutorial),
-    ];
