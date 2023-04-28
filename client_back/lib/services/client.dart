@@ -179,7 +179,7 @@ class ClientService {
 
   Future<void> switchNetworks({required Chain chain, required Net net}) async {
     await pros.settings.setBlockchain(chain: chain, net: net);
-    await resetMemoryAndConnection();
+    await resetMemoryAndConnection(keepAddresses: true);
   }
 
   Future<void> resetMemoryAndConnection({
