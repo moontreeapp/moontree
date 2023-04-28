@@ -56,6 +56,7 @@ class BottomModalSheet extends StatelessWidget {
                                 fuzzyTop: false,
                                 child: ListView(
                                   shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
                                   controller: scrollController,
                                   children: state.children,
                                 ));

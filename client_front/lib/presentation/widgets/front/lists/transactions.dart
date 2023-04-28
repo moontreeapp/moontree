@@ -147,6 +147,7 @@ class _TransactionListState extends State<TransactionList> {
   }
 
   ListView _transactionsView(BuildContext context) => ListView(
+      padding: EdgeInsets.zero,
       physics: const BouncingScrollPhysics(),
       //physics: (widget.scrollController?.position.pixels ?? 0) < 56
       //    ? ClampingScrollPhysics()
