@@ -133,6 +133,15 @@ class CachedServerObject with EquatableMixin {
   String get walletIdId => walletIdIdReady ? walletIdKey(walletId!) : '';
   bool get walletIdIdReady => walletId != null;
 
+  static String typeChainNetKey(
+    String type,
+    Chain chain,
+    Net net,
+  ) =>
+      '$type:${ChainNet(chain, net).key}';
+  String get typeChainNetId =>
+      chain != null && net != null ? typeChainNetKey(type, chain!, net!) : '';
+
   static String typeWalletChainNetKey(
     String type,
     String walletId,

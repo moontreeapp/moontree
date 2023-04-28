@@ -1,36 +1,21 @@
+import 'package:client_front/presentation/widgets/front/choices/clear_secure_storage.dart';
+import 'package:client_front/presentation/widgets/front/choices/resync.dart';
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_back/client_back.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 
-class DatabaseOptions extends StatelessWidget {
-  const DatabaseOptions() : super();
+class DatabaseSettings extends StatelessWidget {
+  const DatabaseSettings({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BackdropLayers(
-        back: const BlankBack(),
-        front: FrontCurve(
-            child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: body(),
-        )));
+    return PageStructure(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        const ResyncChoice(),
+        if (services.developer.advancedDeveloperMode) const ClearSSChoice()
+      ],
+    );
   }
-
-  Widget body() => CustomScrollView(slivers: <Widget>[
-        SliverToBoxAdapter(
-            child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 16, right: 16, top: 16, bottom: 16),
-                child: Container(
-                    alignment: Alignment.topLeft,
-                    child: const ResyncChoice()))),
-        if (services.developer.advancedDeveloperMode)
-          SliverToBoxAdapter(
-              child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 16, bottom: 16),
-                  child: Container(
-                      alignment: Alignment.topLeft,
-                      child: const ClearSSChoice()))),
-      ]);
 }

@@ -13,6 +13,8 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:moontree_utils/extensions/extensions.dart'
+    show StringCapitalizationExtension;
 import 'package:tuple/tuple.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show ECPair, FeeRate, TransactionBuilder, satsPerCoin, standardFee;
@@ -309,8 +311,34 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     Future<bool> getChangeAddressVerification(int coinInput, int fee) async {
       // verify all addresses
       // get change amount(s) here too
+      for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
+        for (final cs in unsigned.changeSource) {
+          /* kralverde -
+          Just fyi it can also be wallet_key:index just like the vin source
+          meta stack -
+          the changeSource?
+          kralverde - 
+          Yeah, if you were to put in a change wallet for instance */
+          if (cs != null && !cs.contains(':')) {
+            //print(state.changeAddress);
+            //print(Current.chainNet.addressFromH160String(cs));
+            //print(h160ToAddress(
+            //    cs.hexBytes, Current.chainNet.chaindata.p2pkhPrefix));
+            if (state.changeAddress !=
+                Current.chainNet.addressFromH160String(cs)) {
+              /* where is this going? why are we sending anything to an address
+              that is neither the specified changeAddress or the target address?
+              so we fail here if we don't recognize the address.
+              notice: if we were not to specify a changeAddress we would merely
+              trust the server. this is possible because the server doesn't 
+              require us to specify it, but we always do. cubit requires it.*/
+              return false;
+            }
+          }
+        }
+      }
       int coinChange = 0;
-      int assetChange = 0;
+      // //int assetChange = 0;
       for (final x in signed.outs) {
         if (x.script != null) {
           final opCodes = getOpCodes(x.script!);
@@ -327,21 +355,11 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
           if (state.address == state.changeAddress) {
             coinChange += x.value ?? 0;
           } else if (addressData?.address != state.address) {
-            if (addressData?.address != state.changeAddress) {
-              /* where is this going? why are we sending anything to an address
-              that is neither the specified changeAddress or the target address?
-              so we fail here if we don't recognize the address.
-              notice: if we were not to specify a changeAddress we would merely
-              trust the server. this is possible because the server doesn't 
-              require us to specify it, but we always do. cubit requires it.*/
-              return false;
-            }
-
             coinChange += x.value ?? 0;
-            if (x.value == 0 || x.value == null) {
-              final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
-              assetChange += nameSats[state.security.symbol] ?? 0;
-            }
+            // //if (x.value == 0 || x.value == null) {
+            // //  final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
+            // //  assetChange += nameSats[state.security.symbol] ?? 0;
+            // //}
           }
         }
       }
@@ -517,15 +535,17 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         // should this be in a repo?
         pros.notes.save(
             Note(note: state.note, transactionId: broadcastResult.value!));
-        streams.app.snack.add(Snack(
-            positive: true,
-            message: 'Successfully Sent Transaction',
-            copy: broadcastResult.value!));
+        Future.delayed(Duration(seconds: 2)).then((_) =>
+            streams.app.behavior.snack.add(Snack(
+                positive: true,
+                message: 'Successfully Sent Transaction',
+                copy: broadcastResult.value!)));
       } else {
-        streams.app.snack.add(Snack(
-            positive: false,
-            message: 'Unable to Send, Try again Later',
-            copy: broadcastResult.error));
+        Future.delayed(Duration(seconds: 2)).then((_) =>
+            streams.app.behavior.snack.add(Snack(
+                positive: false,
+                message: 'Unable to Send, Try again Later',
+                copy: broadcastResult.error)));
       }
     }
   }

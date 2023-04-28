@@ -10,6 +10,7 @@ class CacheProclaim extends Proclaim<_IdKey, CachedServerObject> {
   late IndexMultiple<_TypeKey, CachedServerObject> byType;
   late IndexMultiple<_HoldingKey, CachedServerObject> byHolding;
   late IndexMultiple<_AssetMetadataKey, CachedServerObject> byAssetMetadata;
+  late IndexMultiple<_CirculatingSatsKey, CachedServerObject> byCirculatingSats;
   late IndexMultiple<_TransactionDetailKey, CachedServerObject>
       byTransactionDetail;
   late IndexMultiple<_TransactionsKey, CachedServerObject> byTransactions;
@@ -20,6 +21,8 @@ class CacheProclaim extends Proclaim<_IdKey, CachedServerObject> {
     byType = addIndexMultiple('byType', _TypeKey());
     byHolding = addIndexMultiple('byHolding', _HoldingKey());
     byAssetMetadata = addIndexMultiple('byAssetMetadata', _AssetMetadataKey());
+    byCirculatingSats =
+        addIndexMultiple('byCirculatingSats', _CirculatingSatsKey());
     byTransactionDetail =
         addIndexMultiple('byTransactionDetail', _TransactionDetailKey());
     byTransactions = addIndexMultiple('byTransactions', _TransactionsKey());

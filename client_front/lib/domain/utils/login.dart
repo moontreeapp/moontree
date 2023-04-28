@@ -5,6 +5,7 @@ import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 Future<void> login(
   BuildContext context, {
@@ -19,12 +20,9 @@ Future<void> login(
   await services.cipher.updateWallets();
   services.cipher.cleanupCiphers();
   services.cipher.loginTime();
-  //streams.app.triggers.add(ThresholdTrigger.backup);
-  streams.app.context.add(AppContext.wallet);
-  streams.app.splash.add(false); // trigger to refresh app bar again
-  streams.app.logout.add(false);
-  streams.app.verify.add(true);
-  //streams.app.lead.add(LeadIcon.menu);
+  streams.app.loc.splash.add(false); // trigger to refresh app bar again
+  streams.app.auth.logout.add(false);
+  streams.app.auth.verify.add(true);
 
   // setup subscription on moontree client for this wallet
   await setupSubscription(wallet: Current.wallet);
@@ -38,17 +36,10 @@ Future<void> login(
 }
 
 void postLogin(BuildContext context) {
-  if (Current.wallet is LeaderWallet &&
-      //streams.app.triggers.value == ThresholdTrigger.backup &&
-      !Current.wallet.backedUp) {
-    Navigator.pushReplacementNamed(context, '/home',
-        arguments: <dynamic, dynamic>{});
-    Navigator.of(context).pushNamed(
-      '/security/backup/backupintro',
-      arguments: <String, bool>{'fadeIn': true},
-    );
+  if (Current.wallet is LeaderWallet && !Current.wallet.backedUp) {
+    sail.to('/wallet/holdings', replaceOverride: true);
+    sail.to('/backup/intro', arguments: <String, bool>{'fadeIn': true});
   } else {
-    Navigator.pushReplacementNamed(context, '/home',
-        arguments: <dynamic, dynamic>{});
+    sail.to('/wallet/holdings', replaceOverride: true);
   }
 }

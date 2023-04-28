@@ -1,10 +1,11 @@
-import 'package:client_back/streams/client.dart';
+import 'package:client_front/application/connection/cubit.dart';
 import 'package:serverpod_client/serverpod_client.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
 import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:client_front/presentation/components/components.dart';
 
 class SubscriptionService {
   //'https://api.moontree.com';
@@ -25,20 +26,25 @@ class SubscriptionService {
       client: client,
       listener: (connectionState) {
         print('connection state: ${connectionState.status}');
-        // todo: make connection light dependent upon this (cubit)
-        // StreamingConnectionStatus.connecting
-        // StreamingConnectionStatus.connected
-        // StreamingConnectionStatus.waitingToRetry
         if (connectionState.status == StreamingConnectionStatus.connected) {
-          streams.client.connected.add(ConnectionStatus.connected);
+          if (!streams.app.loc.splash.value) {
+            components.cubits.connection
+                .update(status: ConnectionStatus.connected);
+          }
         } else if (connectionState.status ==
                 StreamingConnectionStatus.connecting ||
             connectionState.status ==
                 StreamingConnectionStatus.waitingToRetry) {
-          streams.client.connected.add(ConnectionStatus.connecting);
+          if (!streams.app.loc.splash.value) {
+            components.cubits.connection
+                .update(status: ConnectionStatus.connecting);
+          }
         } else if (connectionState.status ==
             StreamingConnectionStatus.disconnected) {
-          streams.client.connected.add(ConnectionStatus.disconnected);
+          if (!streams.app.loc.splash.value) {
+            components.cubits.connection
+                .update(status: ConnectionStatus.disconnected);
+          }
         }
       },
     );
@@ -49,14 +55,13 @@ class SubscriptionService {
   Future<void> setupListeners() async {
     void triggerBalanceUpdates() {
       // update holdings list
-      components.cubits.holdingsViewCubit
-          .setHoldingViews(Current.wallet, Current.chainNet, force: true);
+      components.cubits.holdingsView.setHoldingViews(
+          wallet: Current.wallet, chainNet: Current.chainNet, force: true);
       // update receive address
-      components.cubits.receiveViewCubit
-          .setAddress(Current.wallet, force: true);
+      components.cubits.receiveView.setAddress(Current.wallet, force: true);
       // if we're on the transactions list, update that too:
-      if (components.cubits.transactionsViewCubit.state.ranWallet != null) {
-        components.cubits.transactionsViewCubit.setInitial(force:true);
+      if (components.cubits.transactionsView.state.ranWallet != null) {
+        components.cubits.transactionsView.setInitial(force: true);
       }
     }
 
@@ -77,8 +82,12 @@ class SubscriptionService {
         if (message is protocol.NotifyChainStatus) {
           print('status! ${message.toJson()}');
         } else if (message is protocol.NotifyChainHeight) {
-          await pros.blocks.save(Block.fromNotification(message));
-          print('pros.blocks.records ${pros.blocks.records.first}');
+          if (message.height > 0) {
+            await pros.blocks.save(Block.fromNotification(message));
+            print('pros.blocks.records ${pros.blocks.records.first}');
+          } else {
+            print('message was weird: ${message.toJson()}');
+          }
         } else if (message is protocol.NotifyChainH160Balance) {
           // print('H160 (SingleWallet) balance updated!');
           triggerBalanceUpdates();

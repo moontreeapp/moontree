@@ -26,7 +26,7 @@ class AuthenticationService {
     await services.cipher.updateWallets(cipher: cipher, saveSecret: saveSecret);
     await services.cipher.cleanupCiphers();
     if (message != null && message != '') {
-      streams.app.snack.add(Snack(message: message));
+      streams.app.behavior.snack.add(Snack(message: message));
     }
   }
 }

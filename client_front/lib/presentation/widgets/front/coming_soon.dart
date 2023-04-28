@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/src/list.dart' show range;
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/colors.dart';
 
 enum PlaceholderType { wallet, asset, swap }

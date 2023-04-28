@@ -2,12 +2,15 @@
 
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/transaction.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class Current {
   static String get walletId => pros.settings.currentWalletId;
 
   static Wallet get wallet => pros.wallets.primaryIndex.getOne(walletId)!;
+
+  static ChainNet get chainNet => pros.settings.chainNet;
 
   static Balance get balanceRVN =>
       services.balance.walletBalance(wallet, pros.securities.RVN);
@@ -17,10 +20,10 @@ class Current {
 
   static Set<Transaction> get transactions => wallet.transactions;
 
-  static List<Balance> get holdings => services.balance.walletBalances(wallet);
+  static List<Balance> get holdings => wallet.balances;
 
   static List<String> get holdingNames =>
-      components.cubits.holdingsViewCubit.state.holdingsViews
+      components.cubits.holdingsView.state.holdingsViews
           .map((e) => e.symbol)
           .toList();
   //<String>[for (Balance balance in holdings) balance.security.symbol];
@@ -33,11 +36,10 @@ class Current {
       .where((Balance balance) => balance.security.asset?.isQualifier ?? false)
       .map((Balance balance) => balance.security.symbol);
 
-  static List<TransactionViewSpoof> walletCompiledTransactions() =>
-      services.transaction.getTransactionViewSpoof(wallet: wallet);
-
   static Chain get chain => pros.settings.chain;
   static Net get net => pros.settings.net;
-  static ChainNet get chainNet => pros.settings.chainNet;
   static Security get coin => pros.securities.currentCoin;
+
+  static Security get holding =>
+      components.cubits.transactionsView.state.security;
 }

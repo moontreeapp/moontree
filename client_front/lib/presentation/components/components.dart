@@ -1,12 +1,5 @@
-//import 'package:flutter/material.dart';
-
-// ignore_for_file: camel_case_types
-
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/components/styles/decorations.dart';
-
 import 'buttons.dart';
-import 'containers.dart';
 import 'cubits.dart';
 import 'icons.dart';
 import 'empty.dart';
@@ -15,33 +8,19 @@ import 'status.dart';
 import 'text.dart';
 import 'loading.dart';
 import 'message.dart';
-import 'shape.dart';
-import 'page.dart';
-import 'styles/buttons.dart';
 
-// ignore: avoid_classes_with_only_static_members
-class components {
-  static final Styles styles = Styles();
+const ButtonComponents buttons = ButtonComponents();
+final IconComponents icons = IconComponents();
+const TextComponents text = TextComponents();
+const AppLifecycleReactor status = AppLifecycleReactor();
+const EmptyComponents empty = EmptyComponents();
+final RouteStack routes = RouteStack();
+final GlobalCubits cubits = GlobalCubits();
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+const LoadingComponents loading = LoadingComponents();
+const MessageComponents message = MessageComponents();
 
-  static final ButtonComponents buttons = ButtonComponents();
-  static final ContainerComponents containers = ContainerComponents();
-  static final IconComponents icons = IconComponents();
-  static final TextComponents text = TextComponents();
-  static const AppLifecycleReactor status = AppLifecycleReactor();
-  static final EmptyComponents empty = EmptyComponents();
-  //static final RouteObserver<PageRoute> routeObserver =
-  //    RouteObserver<PageRoute>();
-  // handled by navigator
-  static final RouteStack routes = RouteStack();
-  static final GlobalCubits cubits = GlobalCubits();
-  static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-  static final LoadingComponents loading = LoadingComponents();
-  static final MessageComponents message = MessageComponents();
-  static final PageComponents page = PageComponents();
-  static final ShapeComponents shape = ShapeComponents();
-}
 
-class Styles {
-  final ButtonStyleComponents buttons = ButtonStyleComponents();
-  final DecorationComponents decorations = DecorationComponents();
-}
+//static final RouteObserver<PageRoute> routeObserver =
+//    RouteObserver<PageRoute>();
+// handled by routes

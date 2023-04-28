@@ -1,16 +1,18 @@
+import 'package:bip32/bip32.dart';
 import 'package:bloc/bloc.dart';
-import 'package:client_front/infrastructure/calls/subscription.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/wallet/constants.dart';
 import 'package:client_back/streams/app.dart';
+import 'package:client_front/infrastructure/calls/subscription.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
-import 'package:bip32/bip32.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 Future<String> Function(String id) get getEntropy => _getSecret;
 Future<void> Function(Secret secret) get saveSecret => _saveSecret;
@@ -25,7 +27,6 @@ Future<String> generateWallet({
   WalletType? walletType,
   String? mnemonic,
 }) async {
-  streams.app.triggers.add(ThresholdTrigger.backup);
   final Wallet? wallet = await services.wallet.createSave(
     walletType: walletType,
     mnemonic: mnemonic,
@@ -61,23 +62,22 @@ Future<void> setupWallets() async {
   }
 }
 
-Future<void> switchWallet(String walletId, BuildContext context) async {
-  if (streams.client.busy.value) {
-    await services.client.disconnect();
-    await services.client.createClient();
-  }
-
+Future<void> switchWallet(String walletId) async {
+  /// probably not necessary
+  //if (streams.client.busy.value) {
+  //  await services.client.disconnect();
+  //  await services.client.createClient();
+  //}
   await pros.settings.setCurrentWalletId(walletId);
-
-  // reset subscriptions for this wallet
+  components.cubits.holdingsView
+      .setHoldingViews(wallet: Current.wallet, force: true);
   await setupSubscription(wallet: Current.wallet);
 
-  streams.app.fling.add(false);
-  streams.app.setting.add(null);
-  final Wallet? currentWallet = pros.wallets.primaryIndex.getOne(walletId);
-  if (currentWallet is LeaderWallet && currentWallet.addresses.isEmpty) {
-    await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
-  }
+  /// probably not necessary
+  //final Wallet? currentWallet = pros.wallets.primaryIndex.getOne(walletId);
+  //if (currentWallet is LeaderWallet && currentWallet.addresses.isEmpty) {
+  //  await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
+  //}
 }
 
 Future<void> populateWalletsWithSensitives() async {

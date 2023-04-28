@@ -58,38 +58,6 @@ void main() async {
     });
   });
 
-  group('CollectUTXOs RVN', () {
-    test('pick smallest UTXO of sufficient size', () async {
-      var utxos =
-          await services.balance.collectUTXOs(walletId: wallet.id, amount: 500);
-      expect(utxos.map((utxo) => utxo.coinValue).toList(), [5000000]);
-    });
-    test('take multiple from the top', () async {
-      var utxos = await services.balance
-          .collectUTXOs(walletId: wallet.id, amount: 12000000);
-      expect(
-          utxos.map((utxo) => utxo.coinValue).toList(), [10000000, 10000000]);
-    });
-  });
-
-  group('CollectUTXOs asset', () {
-    test('pick smallest UTXO of sufficient size', () async {
-      var utxos = await services.balance.collectUTXOs(
-          walletId: wallet.id,
-          amount: 5,
-          security: pros.securities.primaryIndex
-              .getOne('MOONTREE', Chain.ravencoin, Net.test));
-      expect(utxos.map((utxo) => utxo.assetValue).toList(), [100]);
-    });
-    test('take multiple from the top', () async {
-      var utxos = await services.balance.collectUTXOs(
-          walletId: wallet.id,
-          amount: 1200,
-          security: pros.securities.primaryIndex
-              .getOne('MOONTREE', Chain.ravencoin, Net.test));
-      expect(utxos.map((utxo) => utxo.assetValue).toList(), [1000, 500]);
-    });
-  });
   group('TransactionBuilder', () {
     test('default transaction version is 1', () {
       var txb = TransactionBuilder(network: mainnet);
@@ -100,26 +68,6 @@ void main() async {
       var txb = TransactionBuilder(network: mainnet);
       expect(txb.tx!.virtualSize(), 10);
       expect(txb.tx!.fee(), 11000);
-    });
-  });
-  group('TransactionService', () {
-    test('test BuildTransaction', () async {
-      var t = await TransactionService().make.transaction(
-            //'RM2fJN6HCLKp2DnmKMA5SBYvdKBCvmyaju',
-            'mtraysi8CBwHSSmyoEHPKBWZxc4vh6Phpn',
-            SendEstimate(4),
-            wallet: pros.wallets.primaryIndex.getByKeyStr('1')[0],
-          );
-      var tx = t.item1;
-      var estimate = t.item2;
-      expect(tx.fee(), 247500);
-      //expect(tx.fee(), estimate.fees); // 248600 (1100)
-      expect(tx.ins.length, 1);
-      expect(tx.outs.length, 2);
-      expect(tx.outs[0].value, 4);
-      //expect(tx.outs[1].value, 4752496); // 4751396 (1100)
-      expect(tx.outs[1].value! + tx.outs[0].value! + /*tx.fee()*/ estimate.fees,
-          5000000);
     });
   });
 

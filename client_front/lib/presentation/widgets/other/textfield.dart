@@ -71,6 +71,7 @@ class TextFieldFormatted extends StatefulWidget {
   final String? errorText;
   final Widget? suffixIcon;
   final String? suffixText;
+  final Widget? prefixIcon;
   final TextStyle? helperStyle;
   final TextStyle? suffixStyle;
   final bool alwaysShowHelper;
@@ -84,6 +85,7 @@ class TextFieldFormatted extends StatefulWidget {
     this.errorText,
     this.suffixIcon,
     this.suffixText,
+    this.prefixIcon,
     this.helperStyle,
     this.suffixStyle,
     this.helperMaxLines,
@@ -158,8 +160,10 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
     final InputDecoration decoration = widget.border != null
         ? InputDecoration(
             border: widget.border,
+            prefixIcon: widget.prefixIcon,
           )
         : InputDecoration(
+            prefixIcon: widget.prefixIcon,
             focusedErrorBorder: widget.focusedErrorBorder ??
                 OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),

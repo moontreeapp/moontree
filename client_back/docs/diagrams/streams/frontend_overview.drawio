@@ -83,7 +83,7 @@
                 <mxCell id="16" value="The front typically originates changes to streams" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="3" vertex="1">
                     <mxGeometry x="60" y="200" width="410" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="17" value="&lt;div style=&quot;text-align: justify&quot;&gt;&lt;span&gt;The front is the only thing that actually changes during navigation, therefore, the other layers on the front end must listen to the navigation context in order to know where in the app the user is. Instead of listening to the context directly we put the name of the page in a stream called &lt;/span&gt;&lt;b&gt;streams.app.pageTitle&lt;/b&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="3" vertex="1">
+                <mxCell id="17" value="&lt;div style=&quot;text-align: justify&quot;&gt;&lt;span&gt;The front is the only thing that actually changes during navigation, therefore, the other layers on the front end must listen to the navigation context in order to know where in the app the user is. Instead of listening to the context directly we put the name of the page in a stream called &lt;/span&gt;&lt;b&gt;streams.app.loc.pageTitle&lt;/b&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="3" vertex="1">
                     <mxGeometry x="60" y="90" width="410" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="&lt;div style=&quot;text-align: justify&quot;&gt;The snackbar, and nav bar are generally activated by choices made on the front layer, even through a long process (like a checkout process) which finally completes and sends a complete message on a snackbar stream. Nav bar choices are dependant on where the user is in the app, so sometimes the speicifc name of an asset must be shared so it can know what choices to display.&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="3" vertex="1">
@@ -146,13 +146,13 @@
                 <mxCell id="45" value="Sync Streams&#10;(to keep elements of front end in sync)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="25" vertex="1">
                     <mxGeometry x="40" y="60" width="680" height="180" as="geometry"/>
                 </mxCell>
-                <mxCell id="46" value="streams.app.page - current page name" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
+                <mxCell id="46" value="streams.app.loc.page - current page name" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
                     <mxGeometry y="30" width="680" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="47" value="streams.app.setting - nav drawer setting choice" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
                     <mxGeometry y="60" width="680" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="48" value="streams.app.snack - message to send to snackbar" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
+                <mxCell id="48" value="streams.app.behavior.snack - message to send to snackbar" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
                     <mxGeometry y="90" width="680" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="51" value="streams.app.context - which part of the app we're in Wallet, Manage, Swap" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;" parent="45" vertex="1">
@@ -213,7 +213,7 @@
                 <mxCell id="84" value="User confirms send" style="rounded=0;whiteSpace=wrap;html=1;" parent="60" vertex="1">
                     <mxGeometry x="20" y="320" width="160" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="99" value="streams.app.snack" style="edgeStyle=none;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" parent="60" source="87" target="97" edge="1">
+                <mxCell id="99" value="streams.app.behavior.snack" style="edgeStyle=none;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" parent="60" source="87" target="97" edge="1">
                     <mxGeometry x="0.3333" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>

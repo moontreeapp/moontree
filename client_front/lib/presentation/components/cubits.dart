@@ -10,11 +10,26 @@
 import 'package:client_front/application/cubits.dart';
 
 class GlobalCubits {
-  final TransactionsViewCubit transactionsViewCubit = TransactionsViewCubit();
-  final SimpleSendFormCubit simpleSendFormCubit = SimpleSendFormCubit();
-  final TransactionViewCubit transactionViewCubit = TransactionViewCubit();
-  final HoldingsViewCubit holdingsViewCubit = HoldingsViewCubit();
-  final LoadingViewCubit loadingViewCubit = LoadingViewCubit();
-  final ReceiveViewCubit receiveViewCubit = ReceiveViewCubit();
+  /// location cubit must be made first since cubits register callbacks on it.
+  final LocationCubit location = LocationCubit();
+  final TransactionsViewCubit transactionsView = TransactionsViewCubit();
+  final SimpleSendFormCubit simpleSendForm = SimpleSendFormCubit();
+  final TransactionViewCubit transactionView = TransactionViewCubit();
+  final HoldingsViewCubit holdingsView = HoldingsViewCubit();
+  //final LoadingViewCubit loadingView = LoadingViewCubit();
+  final ReceiveViewCubit receiveView = ReceiveViewCubit();
+  final TitleCubit title = TitleCubit();
+  final LoginCubit login = LoginCubit();
+  final BackContainerCubit backContainer = BackContainerCubit();
+  final FrontContainerCubit frontContainer = FrontContainerCubit();
+  final ExtraContainerCubit extraContainer = ExtraContainerCubit();
+  final SnackbarCubit snackbar = SnackbarCubit();
+  final NavbarCubit navbar = NavbarCubit();
+  final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();
+  final MessageModalCubit messageModal = MessageModalCubit();
+  final LoadingViewCubit loadingView = LoadingViewCubit();
+  final ImportFormCubit import = ImportFormCubit();
+  final ConnectionStatusCubit connection = ConnectionStatusCubit();
+  final TutorialCubit tutorial = TutorialCubit();
   GlobalCubits();
 }

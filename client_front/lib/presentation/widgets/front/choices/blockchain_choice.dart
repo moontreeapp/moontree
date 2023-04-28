@@ -1,9 +1,12 @@
+import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/client.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/bottom/selection_items.dart';
 import 'package:client_front/presentation/widgets/other/textfield.dart';
@@ -16,6 +19,19 @@ class BlockchainChoice extends StatefulWidget {
 
   @override
   _BlockchainChoice createState() => _BlockchainChoice();
+
+  static const Set<String> disabledLocations = {
+    '/',
+    '/login/create',
+    '/login/native',
+    '/login/password',
+    '/login/create/native',
+    '/login/create/password',
+    '/backup/intro',
+    '/backup/seed',
+    '/backup/verify',
+    '/backup/keypair',
+  };
 }
 
 class _BlockchainChoice extends State<BlockchainChoice> {
@@ -29,14 +45,18 @@ class _BlockchainChoice extends State<BlockchainChoice> {
   @override
   void initState() {
     super.initState();
-    chainChoice = pros.settings.chain;
-    netChoice = pros.settings.net;
-    chainNet = ChainNet(chainChoice, netChoice);
+    init();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void init() {
+    chainChoice = pros.settings.chain;
+    netChoice = pros.settings.net;
+    chainNet = ChainNet(chainChoice, netChoice);
   }
 
   @override
@@ -70,9 +90,13 @@ class _BlockchainChoice extends State<BlockchainChoice> {
                     padding: const EdgeInsets.only(right: 14),
                     child: Icon(Icons.expand_more_rounded,
                         color: Color(0xDE000000))),
-                onPressed: _produceBlockchainModal,
+                onPressed: () async {
+                  navToBlockchain(context, refresh);
+                },
               ),
-              onTap: _produceBlockchainModal,
+              onTap: () async {
+                navToBlockchain(context, refresh);
+              },
               onEditingComplete: () async {
                 FocusScope.of(context).requestFocus(choiceFocus);
               },
@@ -81,16 +105,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
     );
   }
 
-  void _produceBlockchainModal() => produceBlockchainModal(
-        context,
-        first: (ChainNet value) => setState(() {
-          chainChoice = value.chain;
-          netChoice = value.net;
-          chainNet = value;
-          showHelper = false;
-        }),
-        second: () => setState(() => showHelper = true),
-      );
+  void refresh() => setState(init);
 }
 
 bool isSelected(Chain chain, Net net) =>
@@ -99,12 +114,23 @@ bool isSelected(Chain chain, Net net) =>
 bool isConnected() =>
     streams.client.connected.value == ConnectionStatus.connected;
 
-void produceBlockchainModal(
-  BuildContext context, {
+void produceBlockchainModal({
+  BuildContext? context,
   Function(ChainNet)? first,
   Function? second,
 }) =>
-    SimpleSelectionItems(context, items: <Widget>[
+    SimpleSelectionItems(
+      context ?? components.routes.routeContext!,
+      items: blockchainOptions(),
+    ).build();
+
+List<Widget> blockchainOptions({
+  BuildContext? context,
+  Function? onTap,
+  Function(ChainNet)? first,
+  Function? second,
+}) =>
+    <Widget>[
       for (ChainBundle x in <ChainBundle>[
         ChainBundle(icons.evrmore, 'Evrmore', Chain.evrmore, Net.main),
         ChainBundle(icons.ravencoin, 'Ravencoin', Chain.ravencoin, Net.main),
@@ -117,29 +143,37 @@ void produceBlockchainModal(
             .developer.featureLevelBlockchainMap[services.developer.userLevel]!
             .contains(x.chainNet))
           ListTile(
-              leading: x.icon(height: 24, width: 24, circled: true),
-              title: Text(x.name,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(color: AppColors.black87)),
-              trailing: isSelected(x.chain, x.net) && isConnected()
-                  ? const Icon(Icons.check_rounded, color: AppColors.primary)
-                  : null,
-              onTap: () => !(isSelected(x.chain, x.net) && isConnected())
-                  ? changeChainNet(
-                      context,
-                      x.chainNet,
-                      first: first,
-                      second: second,
-                    )
-                  : changeChainNet(
-                      context,
-                      x.chainNet,
-                      first: first,
-                      second: second,
-                    )),
-    ]).build();
+            onTap: () {
+              if (onTap != null) {
+                onTap();
+              }
+              //!(isSelected(x.chain, x.net) && isConnected())
+              //? changeChainNet(
+              //    context ?? components.routes.routeContext!,
+              //    x.chainNet,
+              //    first: first,
+              //    second: second,
+              //  )
+              //: null;
+              /// just do it even if it's already selected, to refresh conn
+              changeChainNet(
+                context ?? components.routes.routeContext!,
+                x.chainNet,
+                first: first,
+                second: second,
+              );
+            },
+            leading: x.icon(height: 24, width: 24, circled: true),
+            title: Text(x.name,
+                style: Theme.of(context ?? components.routes.context!)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: AppColors.black87)),
+            trailing: isSelected(x.chain, x.net) && isConnected()
+                ? const Icon(Icons.check_rounded, color: AppColors.primary)
+                : null,
+          ),
+    ];
 
 Future<void> changeChainNet(
   BuildContext context,
@@ -147,14 +181,18 @@ Future<void> changeChainNet(
   Function(ChainNet)? first,
   Function? second,
 }) async {
-  Navigator.of(context).pop();
+  //Navigator.of(context).pop();
   // streams.client.busy.add(true); // we want this here?
   (first ?? (_) {})(value);
-  components.loading.screen(
-    message:
-        'Connecting to ${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}',
-    returnHome: false,
-  );
+  components.cubits.loadingView.show(
+      title: 'Connecting',
+      msg:
+          '${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}');
+  //components.loading.screen(
+  //  message:
+  //      'Connecting to ${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}',
+  //  returnHome: false,
+  //);
   streams.client.busy.add(true);
   // reset subscriptions to point to this chain
   await subscription.setupSubscription(
@@ -163,7 +201,9 @@ Future<void> changeChainNet(
     net: value.net,
   );
   await services.client.switchNetworks(chain: value.chain, net: value.net);
-  streams.app.snack.add(Snack(message: 'Successfully connected'));
+  streams.app.behavior.snack.add(Snack(message: 'Successfully connected'));
+  await components.cubits.holdingsView.setHoldingViews(force: true);
+  components.cubits.loadingView.hide();
   (second ?? () {})();
 }
 
@@ -178,4 +218,31 @@ class ChainBundle {
   final Chain chain;
   final Net net;
   ChainNet get chainNet => ChainNet(chain, net);
+}
+
+void navToBlockchain([BuildContext? context, Function? then]) {
+  //if (streams.app.behavior.scrim.value ?? false) {
+  //  return;
+  //}
+  //if (streams.app.loading.value == true) {
+  //  return;
+  //}
+
+  if (!BlockchainChoice.disabledLocations.contains(sail.latestLocation)) {
+    ScaffoldMessenger.of(context ?? components.routes.context!)
+        .clearSnackBars();
+    //produceBlockchainModal(context: components.routes.routeContext!);
+    components.cubits.bottomModalSheet.show(
+        children: blockchainOptions(
+      onTap: () {
+        components.cubits.bottomModalSheet.hide();
+        sail.home();
+      },
+      second: then,
+    ));
+    //Navigator.of(components.routes.routeContext!)
+    //    .pushNamed('/settings/network/blockchain');
+    // we'd really like to trigger this whenever we lose focus of it...
+    components.cubits.title.update(editable: false);
+  }
 }

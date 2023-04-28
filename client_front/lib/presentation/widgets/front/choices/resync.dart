@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class ResyncChoice extends StatefulWidget {
   final dynamic data;
@@ -40,7 +41,7 @@ class _ResyncChoice extends State<ResyncChoice> {
             label: 'Resync Now',
             onPressed: () async {
               //Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-              streams.app.snack
+              streams.app.behavior.snack
                   .add(Snack(message: 'resyncing, please wait...'));
               await services.client.resetMemoryAndConnection(
                   keepTx: false, keepBalances: false, keepAddresses: false);

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_back/client_back.dart';
 
 class MessageComponents {
+  const MessageComponents();
   Future<void> giveChoices(
     BuildContext context, {
     required Map<String, VoidCallback> behaviors,
@@ -14,13 +15,15 @@ class MessageComponents {
     // add scrim to appbar with stream here?
     await showDialog(
         context: context,
+        barrierDismissible: true,
+        useRootNavigator: true,
         barrierColor: AppColors.black38,
         useSafeArea: false,
         builder: (BuildContext context) {
-          streams.app.scrim.add(true);
+          streams.app.behavior.scrim.add(true);
           return AlertDialog(
               elevation: 0,
-              shape: components.shape.rounded8,
+              shape: shapes.rounded8,
               title: title == null
                   ? null
                   : Text(title, style: Theme.of(context).textTheme.headline2),
@@ -65,6 +68,6 @@ class MessageComponents {
                               fontWeight: FontWeights.semiBold,
                               color: AppColors.primary)))
               ]);
-        }).then((dynamic value) => streams.app.scrim.add(false));
+        }).then((dynamic value) => streams.app.behavior.scrim.add(false));
   }
 }

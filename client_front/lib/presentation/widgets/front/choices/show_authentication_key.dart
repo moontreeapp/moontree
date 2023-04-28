@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:client_front/presentation/components/components.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 import 'package:client_front/infrastructure/services/storage.dart';
 
 class ShowAuthenticationChoice extends StatefulWidget {

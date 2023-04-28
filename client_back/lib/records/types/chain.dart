@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:hive/hive.dart';
 import 'package:equatable/equatable.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -185,4 +187,11 @@ class ChainNet with EquatableMixin {
     return Constants(
         cd.kawpowHeaderActivationTimestamp, cd.p2pkhPrefix, cd.p2shPrefix);
   }
+
+  String addressFromH160String(String h160, {bool isP2sh = false}) =>
+      addressFromH160(h160.hexBytes, isP2sh: isP2sh);
+
+  String addressFromH160(Uint8List h160, {bool isP2sh = false}) =>
+      h160ToAddress(
+          h160, isP2sh ? chaindata.p2shPrefix : chaindata.p2pkhPrefix);
 }

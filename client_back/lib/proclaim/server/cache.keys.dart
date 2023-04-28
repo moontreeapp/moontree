@@ -90,6 +90,27 @@ extension ByAssetMetadataKeyMethodsForCachedServerObject
       ));
 }
 
+/// byAsset
+
+class _CirculatingSatsKey extends Key<CachedServerObject> {
+  @override
+  String getKey(CachedServerObject cache) => cache.typeSymbolChainNetId;
+}
+
+extension ByCirculatingSatsKeyMethodsForCachedServerObject
+    on Index<_CirculatingSatsKey, CachedServerObject> {
+  List<CachedServerObject> getAll(
+    Chain chain,
+    Net net, {
+    String? type,
+  }) =>
+      getByKeyStr(CachedServerObject.typeChainNetKey(
+        type ?? 'CirculatingSats',
+        chain,
+        net,
+      ));
+}
+
 /// byTransactionDetail
 
 class _TransactionDetailKey extends Key<CachedServerObject> {

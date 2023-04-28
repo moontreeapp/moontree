@@ -134,7 +134,7 @@ class ClientService {
           return newRavenClient;
         } else {
           if (pros.settings.domainPort != pros.settings.defaultDomainPort) {
-            streams.app.snack.add(Snack(
+            streams.app.behavior.snack.add(Snack(
                 message:
                     'Unable to connect to ${pros.settings.domainPort}, restoring defaults...'));
             await pros.settings.setDomainPortForChainNet();
@@ -179,7 +179,7 @@ class ClientService {
 
   Future<void> switchNetworks({required Chain chain, required Net net}) async {
     await pros.settings.setBlockchain(chain: chain, net: net);
-    await resetMemoryAndConnection();
+    await resetMemoryAndConnection(keepAddresses: true);
   }
 
   Future<void> resetMemoryAndConnection({
@@ -203,9 +203,6 @@ class ClientService {
       await database.eraseAddressData(quick: true);
     }
     await database.eraseCache(quick: true);
-    if (keepBalances) {
-      services.download.overrideGettingStarted = true;
-    }
 
     /// make a new client to connect to the new network
     await services.client.createClient();
@@ -310,8 +307,6 @@ class SubscribeService {
               linkId: asset.symbol,
               statusType: StatusType.asset,
               status: status));
-          //Handles saving the asset meta & the security
-          services.download.asset.get(asset.symbol);
         }
       });
     }
