@@ -84,4 +84,10 @@ DONE - fix preview on send on smaller screens
 
 DONE - fix flash on tx list screen
 
+DONE - import type in is wrong, resets cursor
+
+DONE - sometimes front layer is transparent - unable to duplicate earlier, but figured it out how now.
+
+spacing on apple is wrong - on listviews or something?
+
 fix the derivation (happens again each time switch networks, but doesn't need to, we're probably deleteing addresses each time we change networks which isn't needed anymore)

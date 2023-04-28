@@ -64,7 +64,11 @@ class Import extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) =>
             BlocBuilder<ImportFormCubit, ImportFormState>(
                 builder: (context, state) {
-              words.text = state.words;
+              words.value = TextEditingValue(
+                  text: state.words,
+                  selection: words.selection.baseOffset > state.words.length
+                      ? TextSelection.collapsed(offset: state.words.length)
+                      : words.selection);
               return PageStructure(
                   children: <Widget>[
                     if (state.file == null)
