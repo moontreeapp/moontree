@@ -237,6 +237,8 @@ class _PageLead extends State<PageLead> {
     '/login/native',
     '/login/password',
     '/backup/intro',
+    '/backup/seed',
+    '/backup/keypair',
   };
 
   static bool show(String path) {
@@ -244,6 +246,12 @@ class _PageLead extends State<PageLead> {
       return true;
     }
     if (path == '/backup/intro' && Current.wallet.backedUp) {
+      return true;
+    }
+    if (path == '/backup/seed' && Current.wallet.backedUp) {
+      return true;
+    }
+    if (path == '/backup/keypair' && Current.wallet.backedUp) {
       return true;
     }
     return false;

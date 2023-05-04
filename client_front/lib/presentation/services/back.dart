@@ -23,7 +23,8 @@ class SystemBackButton {
         // edgecase: if at home screen, minimize app
         sendToBackChannel.invokeMethod('sendToBackground');
       } else if (services.screenflags.active ||
-          ['/backup/intro'].contains(sail.latestLocation)) {
+          ['/backup/intro'].contains(sail.latestLocation) ||
+          ['/backup/seed'].contains(sail.latestLocation)) {
         // deactivate the back button in these edge cases...
         // if loading sheet is up do nothing
         // if system dialogue box is up navigator pop
