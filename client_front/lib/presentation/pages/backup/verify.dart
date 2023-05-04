@@ -129,6 +129,15 @@ class _VerifySeedState extends State<VerifySeed> {
                             } else if (shuffled[clicked]!.chosen == null) {
                               click++;
                               shuffled[clicked]!.chosen = click;
+                            } else if ((shuffled[clicked]?.chosen ?? 13) <
+                                click) {
+                              int undo = shuffled[clicked]!.chosen!;
+                              for (final c in range(12)) {
+                                if ((shuffled[c]?.chosen ?? 13) >= undo) {
+                                  shuffled[c]!.chosen = null;
+                                }
+                              }
+                              click = undo - 1;
                             }
                           }
                           setState(() {});

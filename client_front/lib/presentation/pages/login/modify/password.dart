@@ -42,7 +42,9 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
     streams.app.auth.verify.add(false);
     listeners.add(streams.app.auth.verify.listen((value) {
       if (value == true) {
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       }
     }));
   }
