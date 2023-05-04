@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
@@ -121,6 +123,12 @@ class _VerifySeedState extends State<VerifySeed> {
                         chosen: shuffled[(i + x) - 1]!.chosen != null,
                         label: shuffled[(i + x) - 1]!.word,
                         onPressed: () {
+                          if (click == 0) {
+                            click = [
+                              for (SecretWord word in shuffled.values)
+                                word.chosen ?? 0
+                            ].max;
+                          }
                           if (click < 13) {
                             final int clicked = (i + x) - 1;
                             if (shuffled[clicked]!.chosen == click) {
