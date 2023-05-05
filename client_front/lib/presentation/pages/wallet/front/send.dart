@@ -18,16 +18,13 @@ import 'package:client_front/domain/concepts/fee.dart' as fees;
 import 'package:client_front/domain/utils/params.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:client_front/application/send/cubit.dart';
-import 'package:client_front/application/modal/bottom/cubit.dart';
+import 'package:client_front/application/wallet/send/cubit.dart';
+import 'package:client_front/application/layers/modal/bottom/cubit.dart';
 import 'package:client_front/presentation/pages/wallet/scan.dart';
 import 'package:client_front/presentation/services/services.dart';
 import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/components/shadows.dart' as shadows;
-import 'package:client_front/presentation/components/styles/styles.dart'
-    as styles;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 

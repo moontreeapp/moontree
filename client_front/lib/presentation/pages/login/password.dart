@@ -22,7 +22,7 @@ import 'package:client_front/infrastructure/services/wallet.dart'
         updateEnumLowerCase,
         updateWalletNames,
         updateWalletsToSecureStorage;
-import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';

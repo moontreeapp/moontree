@@ -1,6 +1,6 @@
 import 'dart:isolate';
 
-import 'package:client_front/application/holdings/derive.dart';
+import 'package:client_front/application/manage/holdings/derive.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
@@ -23,9 +23,9 @@ part 'state.dart';
 
 /// show shimmer while retrieving list of transactions
 /// show list of transactions
-class HoldingsViewCubit extends Cubit<HoldingsViewState> {
-  HoldingsViewCubit()
-      : super(HoldingsViewState(
+class ManageHoldingsViewCubit extends Cubit<ManageHoldingsViewState> {
+  ManageHoldingsViewCubit()
+      : super(ManageHoldingsViewState(
             holdingsViews: [],
             assetHoldings: [],
             ranWallet: null,
@@ -59,7 +59,7 @@ class HoldingsViewCubit extends Cubit<HoldingsViewState> {
     Map<ChainNet, List<Wallet>>? startedDerive,
     bool? isSubmitting,
   }) {
-    emit(HoldingsViewState(
+    emit(ManageHoldingsViewState(
       holdingsViews: holdingsViews ?? state.holdingsViews,
       assetHoldings: assetHoldings ?? state.assetHoldings,
       ranWallet: ranWallet ?? state.ranWallet,

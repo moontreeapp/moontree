@@ -1,7 +1,7 @@
 part of 'cubit.dart';
 
 @immutable
-abstract class HoldingsViewCubitState extends CubitState {
+abstract class ManageHoldingsViewCubitState extends CubitState {
   final List<BalanceView> holdingsViews;
   final List<AssetHolding> assetHoldings;
   final Wallet? ranWallet;
@@ -15,7 +15,7 @@ abstract class HoldingsViewCubitState extends CubitState {
   // for holdingsViews so that we never hit the endpoint multiple times with
   // the same input as last time. This also allows us to set the wallet and
 
-  const HoldingsViewCubitState({
+  const ManageHoldingsViewCubitState({
     required this.holdingsViews,
     required this.assetHoldings,
     required this.ranWallet,
@@ -56,8 +56,8 @@ abstract class HoldingsViewCubitState extends CubitState {
       ];
 }
 
-class HoldingsViewState extends HoldingsViewCubitState {
-  const HoldingsViewState({
+class ManageHoldingsViewState extends ManageHoldingsViewCubitState {
+  const ManageHoldingsViewState({
     required super.holdingsViews,
     required super.assetHoldings,
     required super.ranWallet,

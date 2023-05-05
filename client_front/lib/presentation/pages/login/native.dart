@@ -16,7 +16,7 @@ import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show populateWalletsWithSensitives;
 import 'package:client_front/infrastructure/services/services.dart';
-import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';

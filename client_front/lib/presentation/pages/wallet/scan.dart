@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'package:client_front/application/modal/bottom/cubit.dart';
 import 'package:client_front/presentation/services/services.dart';
-import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:client_back/client_back.dart';

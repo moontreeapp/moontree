@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/application/connection/cubit.dart';
+import 'package:client_front/application/infrastructure/connection/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/components/components.dart'

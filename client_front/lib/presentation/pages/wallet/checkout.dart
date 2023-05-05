@@ -1,4 +1,4 @@
-import 'package:client_front/application/send/cubit.dart';
+import 'package:client_front/application/wallet/send/cubit.dart';
 import 'package:client_front/presentation/services/services.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
@@ -11,7 +11,6 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/theme/extensions.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 enum TransactionType { spend, create, reissue, export }

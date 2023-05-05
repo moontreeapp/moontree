@@ -18,7 +18,7 @@ import 'package:client_front/infrastructure/services/storage.dart'
 import 'package:client_front/infrastructure/services/wallet.dart'
     show saveSecret, setupWallets;
 import 'package:client_front/infrastructure/services/dev.dart';
-import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/widgets/login/components.dart';

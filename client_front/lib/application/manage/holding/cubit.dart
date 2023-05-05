@@ -2,14 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 part 'state.dart';
 
-class HoldingViewCubit extends Cubit<HoldingViewState> {
+class ManageHoldingViewCubit extends Cubit<ManageHoldingViewState> {
   String? priorPage;
 
-  HoldingViewCubit() : super(HoldingViewState.initial());
+  ManageHoldingViewCubit() : super(ManageHoldingViewState.initial());
 
-  Future<void> reset() async => emit(HoldingViewState.initial());
+  Future<void> reset() async => emit(ManageHoldingViewState.initial());
 
-  HoldingViewState submitting() => state.load(isSubmitting: true);
+  ManageHoldingViewState submitting() => state.load(isSubmitting: true);
 
   Future<void> enter() async {
     emit(state);

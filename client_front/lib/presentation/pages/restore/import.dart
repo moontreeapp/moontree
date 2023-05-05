@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
-import 'package:client_front/application/navbar/cubit.dart';
+import 'package:client_front/application/layers/navbar/cubit.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show getEntropy, saveSecret;
-import 'package:client_front/application/import/cubit.dart';
+import 'package:client_front/application/app/import/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';

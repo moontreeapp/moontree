@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:client_back/server/serverv2_client.dart';
 import 'package:client_front/infrastructure/repos/transaction.dart';
 import 'package:client_front/application/common.dart';
-import 'package:client_front/application/location/cubit.dart';
+import 'package:client_front/application/infrastructure/location/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 

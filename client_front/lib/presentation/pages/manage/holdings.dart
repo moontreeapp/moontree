@@ -1,20 +1,22 @@
 // ignore_for_file: avoid_print
+
 import 'dart:async';
+import 'package:client_front/presentation/theme/fonts.dart';
+import 'package:client_front/presentation/utils/ext.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
-import 'package:shimmer/shimmer.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/application/cubits.dart';
-import 'package:client_front/presentation/theme/fonts.dart';
-import 'package:client_front/presentation/utils/ext.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:client_front/presentation/theme/colors.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 class WalletHoldings extends StatelessWidget {
   const WalletHoldings({Key? key}) : super(key: key ?? defaultKey);

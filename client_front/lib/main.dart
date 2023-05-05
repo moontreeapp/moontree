@@ -155,7 +155,7 @@ class MoontreeAppState extends State<MoontreeApp> {
                     create: (context) => components.cubits.transactionsView),
                 BlocProvider<TransactionViewCubit>(
                     create: (context) => components.cubits.transactionView),
-                BlocProvider<HoldingsViewCubit>(
+                BlocProvider<WalletHoldingsViewCubit>(
                     create: (context) => components.cubits.holdingsView),
                 // v2
                 BlocProvider<TitleCubit>(

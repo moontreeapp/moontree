@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_front/application/extra/cubit.dart';
+import 'package:client_front/application/containers/extra/cubit.dart';
 
 class ExtraContainer extends StatelessWidget {
   const ExtraContainer({Key? key}) : super(key: key);

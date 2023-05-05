@@ -1,16 +1,11 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/streams.dart';
-import 'package:client_front/application/connection/cubit.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/presentation/utils/ext.dart';
-import 'package:client_front/application/navbar/cubit.dart';
-import 'package:client_front/application/location/cubit.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/services/services.dart'
@@ -310,9 +305,9 @@ class NavbarActions extends StatelessWidget {
           BlocBuilder<ConnectionStatusCubit, ConnectionStatusCubitState>(
               builder: (BuildContext context,
                       ConnectionStatusCubitState connectionState) =>
-                  BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
+                  BlocBuilder<WalletHoldingsViewCubit, WalletHoldingsViewState>(
                       builder: (BuildContext context,
-                              HoldingsViewState holdingState) =>
+                              WalletHoldingsViewState holdingState) =>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: ((locationState.section == Section.wallet

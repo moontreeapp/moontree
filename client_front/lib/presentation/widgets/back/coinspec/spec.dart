@@ -80,9 +80,9 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    //return flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
+    //return flutter_bloc.BlocBuilder<WalletHoldingsViewCubit, WalletHoldingsViewState>(
     //   //bloc: cubit..enter(),
-    //    builder: (BuildContext context, HoldingsViewState state) {
+    //    builder: (BuildContext context, WalletHoldingsViewState state) {
     return Container(
       padding: EdgeInsets.only(top: .021.ofMediaHeight(context)),
       //height: widget.pageTitle == 'Send' ? 209 : 201,

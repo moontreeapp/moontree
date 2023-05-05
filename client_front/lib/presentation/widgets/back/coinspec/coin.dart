@@ -1,5 +1,5 @@
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:client_front/application/send/cubit.dart';
+import 'package:client_front/application/wallet/send/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';

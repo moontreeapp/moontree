@@ -1,4 +1,4 @@
-import 'package:client_front/application/connection/cubit.dart';
+import 'package:client_front/application/infrastructure/connection/cubit.dart';
 import 'package:serverpod_client/serverpod_client.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;

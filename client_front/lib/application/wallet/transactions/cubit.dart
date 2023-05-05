@@ -11,7 +11,7 @@ import 'package:client_front/infrastructure/repos/mempool_transactions.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/circulating_sats.dart';
 import 'package:client_front/application/common.dart';
-import 'package:client_front/application/location/cubit.dart';
+import 'package:client_front/application/infrastructure/location/cubit.dart';
 import 'package:client_front/presentation/utils/animation.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;

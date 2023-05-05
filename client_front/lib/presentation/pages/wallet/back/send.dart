@@ -1,9 +1,7 @@
-import 'package:client_front/application/send/cubit.dart';
+import 'package:client_front/application/wallet/send/cubit.dart';
 import 'package:client_front/presentation/widgets/back/coinspec/spec.dart';
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/services/services.dart' show screen;
-import 'package:client_front/presentation/components/components.dart'
-    as components;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BackSendScreen extends StatelessWidget {

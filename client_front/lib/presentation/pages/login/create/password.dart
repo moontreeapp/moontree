@@ -13,7 +13,7 @@ import 'package:client_front/infrastructure/services/wallet.dart'
     show populateWalletsWithSensitives, saveSecret, setupWallets;
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
-import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';

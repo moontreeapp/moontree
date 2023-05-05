@@ -1,4 +1,4 @@
-import 'package:client_front/application/modal/message/cubit.dart';
+import 'package:client_front/application/layers/modal/message/cubit.dart';
 import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,12 +1,12 @@
 part of 'cubit.dart';
 
 @immutable
-class HoldingViewState {
+class ManageHoldingViewState {
   final bool reachedTop;
   final bool atBottom;
   final bool isSubmitting;
 
-  const HoldingViewState({
+  const ManageHoldingViewState({
     required this.reachedTop,
     required this.atBottom,
     required this.isSubmitting,
@@ -22,28 +22,28 @@ class HoldingViewState {
         isSubmitting,
       ];
 
-  factory HoldingViewState.initial() => const HoldingViewState(
+  factory ManageHoldingViewState.initial() => const ManageHoldingViewState(
       reachedTop: false, atBottom: true, isSubmitting: true);
 
-  HoldingViewState load({
+  ManageHoldingViewState load({
     bool? reachedTop,
     bool? atBottom,
     bool? isSubmitting,
   }) =>
-      HoldingViewState.load(
+      ManageHoldingViewState.load(
         state: this,
         reachedTop: reachedTop,
         atBottom: atBottom,
         isSubmitting: isSubmitting,
       );
 
-  factory HoldingViewState.load({
-    required HoldingViewState state,
+  factory ManageHoldingViewState.load({
+    required ManageHoldingViewState state,
     bool? reachedTop,
     bool? atBottom,
     bool? isSubmitting,
   }) =>
-      HoldingViewState(
+      ManageHoldingViewState(
         reachedTop: reachedTop ?? state.reachedTop,
         atBottom: atBottom ?? state.atBottom,
         isSubmitting: isSubmitting ?? state.isSubmitting,

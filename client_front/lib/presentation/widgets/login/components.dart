@@ -1,10 +1,10 @@
-import 'package:client_back/services/consent.dart';
-import 'package:client_front/application/login/cubit.dart';
-import 'package:client_front/presentation/theme/theme.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:client_back/services/consent.dart';
+import 'package:client_front/application/app/login/cubit.dart';
+import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
