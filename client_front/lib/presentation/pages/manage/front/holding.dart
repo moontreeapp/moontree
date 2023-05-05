@@ -267,7 +267,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
       alignment: Alignment.topCenter,
       children: <Widget>[
         //if (widget.cachedMetadataView != null) // always show the tabs, but maybe grey out data if it's not populated
-        CoinSpecTabs(cubit: widget.cubitManage),
+        CoinSpecTabs(manageCubit: widget.cubit),
         Padding(
             padding: EdgeInsets.only(
                 top: /*widget.cachedMetadataView != null ?*/ 48 /*: 0*/),
@@ -446,15 +446,16 @@ class TransactionsContent extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           final String tab = snapshot.data ?? 'HISTORY';
           final bool showTransactions = tab == CoinSpecTabs.tabIndex[0];
-          return showTransactions
-              ? TransactionList(
-                  cubit: cubit,
-                  scrollController: scrollController,
-                  symbol: cubit.state.security.symbol,
-                  mempool: cubit.state.mempoolViews,
-                  transactions: cubit.state.transactionViews,
-                  msg: '\nNo ${cubit.state.security.symbol} transactions.\n')
-              : MetaDataWidget(cachedMetadataView);
+          return //showTransactions
+              //? TransactionList(
+              //    cubit: cubit,
+              //    scrollController: scrollController,
+              //    symbol: cubit.state.security.symbol,
+              //    mempool: cubit.state.mempoolViews,
+              //    transactions: cubit.state.transactionViews,
+              //    msg: '\nNo ${cubit.state.security.symbol} transactions.\n')
+              //:
+              MetaDataWidget(cachedMetadataView);
         });
   }
 }

@@ -267,7 +267,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
       alignment: Alignment.topCenter,
       children: <Widget>[
         //if (widget.cachedMetadataView != null) // always show the tabs, but maybe grey out data if it's not populated
-        CoinSpecTabs(cubit: widget.cubit),
+        CoinSpecTabs(walletCubit: widget.cubit),
         Padding(
             padding: EdgeInsets.only(
                 top: /*widget.cachedMetadataView != null ?*/ 48 /*: 0*/),

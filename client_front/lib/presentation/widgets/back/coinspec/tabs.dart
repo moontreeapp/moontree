@@ -7,11 +7,11 @@ import 'package:client_front/presentation/components/shapes.dart' as shapes;
 class CoinSpecTabs extends StatefulWidget {
   const CoinSpecTabs({
     Key? key,
-    required this.cubit,
-    this.cubitManage,
+    this.walletCubit,
+    this.manageCubit,
   }) : super(key: key);
-  final WalletHoldingViewCubit cubit;
-  final ManageHoldingViewCubit? cubitManage;
+  final WalletHoldingViewCubit? walletCubit;
+  final ManageHoldingViewCubit? manageCubit;
 
   @override
   _CoinSpecTabsState createState() => _CoinSpecTabsState();
@@ -36,8 +36,16 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
     super.dispose();
   }
 
-  void changeContent() => widget.cubit.state.currentTab
-      .add(CoinSpecTabs.tabIndex[tabController.index]);
+  void changeContent() {
+    if (widget.walletCubit != null) {
+      widget.walletCubit!.state.currentTab
+          .add(CoinSpecTabs.tabIndex[tabController.index]);
+    }
+    if (widget.manageCubit != null) {
+      widget.manageCubit!.state.currentTab
+          .add(CoinSpecTabs.tabIndex[tabController.index]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
