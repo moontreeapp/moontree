@@ -13,7 +13,7 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 
 class TransactionList extends StatefulWidget {
-  final TransactionsViewCubit? cubit;
+  final WalletHoldingViewCubit? cubit;
   final Iterable<TransactionView>? mempool;
   final Iterable<TransactionView>? transactions;
   final String? symbol;

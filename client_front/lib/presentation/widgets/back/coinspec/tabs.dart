@@ -8,8 +8,10 @@ class CoinSpecTabs extends StatefulWidget {
   const CoinSpecTabs({
     Key? key,
     required this.cubit,
+    this.cubitManage,
   }) : super(key: key);
-  final TransactionsViewCubit cubit;
+  final WalletHoldingViewCubit cubit;
+  final ManageHoldingViewCubit? cubitManage;
 
   @override
   _CoinSpecTabsState createState() => _CoinSpecTabsState();

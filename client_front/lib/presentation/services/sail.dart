@@ -148,12 +148,12 @@ class Sail {
       frontPath: '/wallet/holding/transaction',
       backPath: '/',
     ),
-    '/wallet/receive': Manifest(
+    '/receive': Manifest(
       title: 'Receive',
       section: Section.wallet,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
-      frontPath: '/wallet/receive',
+      frontPath: '/receive',
       backPath: '/',
     ),
     '/wallet/send': Manifest(
@@ -172,14 +172,6 @@ class Sail {
       frontPath: '/wallet/send/checkout',
       backPath: '/',
     ),
-    //'/wallet/send/scan': Manifest(
-    //  title: 'Scan QR Code',
-    //  section: Section.wallet,
-    //  frontHeight: FrontContainerHeight.max,
-    //  navbarHeight: NavbarHeight.hidden,
-    //  frontPath: '/',
-    //  backPath: '/wallet/send/scan',
-    //),
     '/manage': Manifest(
       title: 'Manage',
       section: Section.manage,
@@ -187,6 +179,39 @@ class Sail {
       navbarHeight: NavbarHeight.max,
       frontPath: '/manage',
       backPath: '/menu',
+    ),
+    '/manage/holdings': Manifest(
+      title: 'Holdings', // gets overridden with wallet name
+      section: Section.wallet,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.max,
+      frontPath: '/manage/holdings',
+      backPath: '/menu',
+    ),
+    '/manage/holding': Manifest(
+      title: 'Holding', // gets overridden with holding name
+      section: Section.wallet,
+      frontHeight: FrontContainerHeight.mid,
+      navbarHeight: NavbarHeight.mid,
+      frontPath: '/manage/holding',
+      extraChild: const FrontHoldingExtra(),
+      backPath: '/manage/holding/coinspec',
+    ),
+    '/manage/reissue': Manifest(
+      title: 'Reissue',
+      section: Section.wallet,
+      frontHeight: FrontContainerHeight.mid,
+      navbarHeight: NavbarHeight.hidden, // should be replaced with 'preview'
+      frontPath: '/manage/reissue',
+      backPath: '/manage/reissue/coinspec',
+    ),
+    '/manage/reissue/checkout': Manifest(
+      title: 'Checkout',
+      section: Section.wallet,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/manage/reissue/checkout',
+      backPath: '/',
     ),
     '/swap': Manifest(
       title: 'Swap',

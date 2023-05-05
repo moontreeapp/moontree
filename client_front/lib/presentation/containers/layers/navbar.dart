@@ -354,8 +354,7 @@ class NavbarActions extends StatelessWidget {
                                         Expanded(
                                             child: BottomButton(
                                           label: 'receive',
-                                          onPressed: () =>
-                                              sail.to('/wallet/receive'),
+                                          onPressed: () => sail.to('/receive'),
                                         ))
                                       ]
                                     : locationState.section == Section.manage

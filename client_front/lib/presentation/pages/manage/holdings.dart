@@ -1,26 +1,25 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-import 'package:client_front/presentation/theme/fonts.dart';
-import 'package:client_front/presentation/utils/ext.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
-import 'package:moontree_utils/moontree_utils.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/application/cubits.dart';
+import 'package:client_front/presentation/theme/fonts.dart';
+import 'package:client_front/presentation/utils/ext.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
-class WalletHoldings extends StatelessWidget {
-  const WalletHoldings({Key? key}) : super(key: key ?? defaultKey);
-  static const defaultKey = ValueKey('WalletHoldings');
+class ManageHoldings extends StatelessWidget {
+  const ManageHoldings({Key? key}) : super(key: key ?? defaultKey);
+  static const defaultKey = ValueKey('ManageHoldings');
 
   /// TODO: modify cubit instead of setstate
 // ignore: unused_element
@@ -40,7 +39,7 @@ class WalletHoldings extends StatelessWidget {
   //    title: Text('WhaleStreet'),
   //  ),
   //),
-  Future<void> refresh(WalletHoldingsViewCubit cubit) async {
+  Future<void> refresh(ManageHoldingsViewCubit cubit) async {
     //cubit.update(isSubmitting: true);
     await cubit.setHoldingViews(force: true);
   }
@@ -54,7 +53,7 @@ class WalletHoldings extends StatelessWidget {
         }
       });
     }
-    final WalletHoldingsViewCubit cubit = components.cubits.holdingsView;
+    final ManageHoldingsViewCubit cubit = components.cubits.manageHoldingsView;
     if (cubit.state.ranWallet != Current.wallet ||
         cubit.state.ranChainNet != pros.settings.chainNet) {
       cubit.update(isSubmitting: true);
@@ -62,10 +61,10 @@ class WalletHoldings extends StatelessWidget {
     cubit.setHoldingViews();
     return GestureDetector(
         onTap: () => refresh(cubit), //FocusScope.of(context).unfocus(),
-        child: flutter_bloc.BlocBuilder<WalletHoldingsViewCubit,
-                WalletHoldingsViewState>(
+        child: flutter_bloc.BlocBuilder<ManageHoldingsViewCubit,
+                ManageHoldingsViewState>(
             bloc: cubit..enter(),
-            builder: (BuildContext context, WalletHoldingsViewState state) {
+            builder: (BuildContext context, ManageHoldingsViewState state) {
               if (state.isSubmitting == true) {
                 return RefreshIndicator(
                     onRefresh: () => refresh(cubit),
@@ -107,7 +106,7 @@ class WalletHoldings extends StatelessWidget {
 }
 
 class HoldingsView extends StatefulWidget {
-  final WalletHoldingsViewCubit cubit;
+  final ManageHoldingsViewCubit cubit;
   const HoldingsView({required this.cubit, super.key});
 
   @override
@@ -130,7 +129,7 @@ class _HoldingsView extends State<HoldingsView> {
     super.dispose();
   }
 
-  Future<void> refresh(WalletHoldingsViewCubit cubit) async =>
+  Future<void> refresh(ManageHoldingsViewCubit cubit) async =>
       await cubit.setHoldingViews(force: true);
 
   void _toggleUSD() {

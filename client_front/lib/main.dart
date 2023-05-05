@@ -151,13 +151,18 @@ class MoontreeAppState extends State<MoontreeApp> {
               providers: [
                 BlocProvider<SimpleSendFormCubit>(
                     create: (context) => components.cubits.simpleSendForm),
-                BlocProvider<TransactionsViewCubit>(
+                BlocProvider<SimpleReissueFormCubit>(
+                    create: (context) => components.cubits.simpleReissueForm),
+                BlocProvider<WalletHoldingViewCubit>(
                     create: (context) => components.cubits.transactionsView),
                 BlocProvider<TransactionViewCubit>(
                     create: (context) => components.cubits.transactionView),
                 BlocProvider<WalletHoldingsViewCubit>(
                     create: (context) => components.cubits.holdingsView),
-                // v2
+                BlocProvider<ManageHoldingsViewCubit>(
+                    create: (context) => components.cubits.manageHoldingsView),
+                BlocProvider<ManageHoldingViewCubit>(
+                    create: (context) => components.cubits.manageHoldingView),
                 BlocProvider<TitleCubit>(
                     create: (context) => components.cubits.title),
                 BlocProvider<BackContainerCubit>(

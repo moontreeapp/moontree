@@ -3,12 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
-import 'package:client_front/presentation/widgets/front/verify.dart';
 import 'package:client_front/presentation/pages/wallet/wallet.dart';
+import 'package:client_front/presentation/pages/manage/manage.dart';
 import 'package:client_front/presentation/pages/backup/backup.dart';
 import 'package:client_front/presentation/pages/restore/restore.dart';
 import 'package:client_front/presentation/pages/settings/settings.dart';
 import 'package:client_front/presentation/pages/support/support.dart';
+import 'package:client_front/presentation/widgets/front/verify.dart';
 
 final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/': (BuildContext context) => const PreLogin(),
@@ -23,7 +24,7 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/login/verify': (BuildContext context) => const VerifyAuthentication(),
   '/login/modify/password': (BuildContext context) =>
       const ChangeLoginPassword(),
-  '/wallet/receive': (BuildContext context) => const Receive(),
+  '/receive': (BuildContext context) => const Receive(),
   '/wallet/holdings': (BuildContext context) => const WalletHoldings(),
   '/wallet/holding': (BuildContext context) => const WalletHolding(),
   '/wallet/holding/transaction': (BuildContext context) =>
@@ -31,6 +32,11 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/wallet/send': (BuildContext context) => const SimpleSend(),
   '/wallet/send/checkout': (BuildContext context) =>
       SimpleSendCheckout(transactionType: TransactionType.spend),
+  '/manage/holdings': (BuildContext context) => const ManageHoldings(),
+  '/manage/holding': (BuildContext context) => const ManageHolding(),
+  '/manage/send': (BuildContext context) => const SimpleReissue(),
+  '/manage/send/checkout': (BuildContext context) =>
+      SimpleReissueCheckout(transactionType: ReissueTransactionType.reissue),
   '/backup/intro': (BuildContext context) => const BackupIntro(),
   '/backup/keypair': (BuildContext context) => const ShowKeypair(),
   '/backup/seed': (BuildContext context) => const BackupSeed(),

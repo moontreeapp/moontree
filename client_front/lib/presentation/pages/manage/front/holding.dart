@@ -9,7 +9,7 @@ import 'package:client_back/server/src/protocol/protocol.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/application/containers/extra/cubit.dart';
 import 'package:client_front/application/containers/front/cubit.dart';
-import 'package:client_front/application/wallet/holding/cubit.dart';
+import 'package:client_front/application/manage/holding/cubit.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/back/coinspec/tabs.dart';
 import 'package:client_front/presentation/widgets/front/lists/transactions.dart';
@@ -19,8 +19,8 @@ import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
-class WalletHolding extends StatelessWidget {
-  const WalletHolding({Key? key}) : super(key: key ?? defaultKey);
+class ManageHolding extends StatelessWidget {
+  const ManageHolding({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('Holding');
 
   @override
@@ -95,8 +95,8 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
 
   @override
   Widget build(BuildContext context) {
-    final WalletHoldingViewCubit cubit =
-        BlocProvider.of<WalletHoldingViewCubit>(context);
+    final ManageHoldingViewCubit cubit =
+        BlocProvider.of<ManageHoldingViewCubit>(context);
     // first set the wallet and security so we can set the coinspec
     cubit.set(
         wallet: pros.wallets.currentWallet,
@@ -110,9 +110,9 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
     if (!pros.wallets.currentWallet.minerMode) {
       cubit.setInitial();
     }
-    return BlocBuilder<WalletHoldingViewCubit, WalletHoldingViewState>(
+    return BlocBuilder<ManageHoldingViewCubit, ManageHoldingViewState>(
         bloc: cubit..enter(),
-        builder: (BuildContext context, WalletHoldingViewState state) =>
+        builder: (BuildContext context, ManageHoldingViewState state) =>
             Container(
                 color: Colors.transparent,
                 height: services.screen.frontContainer.maxHeight,
@@ -239,7 +239,7 @@ class CoinDetailsGlidingSheet extends StatefulWidget {
     required this.scrollController,
     Key? key,
   }) : super(key: key);
-  final WalletHoldingViewCubit cubit;
+  final ManageHoldingViewCubit cubit;
   final Widget? cachedMetadataView;
   final DraggableScrollableController dController;
   final ScrollController scrollController;
@@ -267,7 +267,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
       alignment: Alignment.topCenter,
       children: <Widget>[
         //if (widget.cachedMetadataView != null) // always show the tabs, but maybe grey out data if it's not populated
-        CoinSpecTabs(cubit: widget.cubit),
+        CoinSpecTabs(cubit: widget.cubitManage),
         Padding(
             padding: EdgeInsets.only(
                 top: /*widget.cachedMetadataView != null ?*/ 48 /*: 0*/),
@@ -301,7 +301,7 @@ class MetaDataWidget extends StatelessWidget {
 }
 
 class MetadataView extends StatelessWidget {
-  final WalletHoldingViewCubit cubit;
+  final ManageHoldingViewCubit cubit;
   const MetadataView({Key? key, required this.cubit}) : super(key: key);
 
   Future<void> refresh() async {
@@ -435,7 +435,7 @@ class TransactionsContent extends StatelessWidget {
     this.scrollController, {
     Key? key,
   }) : super(key: key);
-  final WalletHoldingViewCubit cubit;
+  final ManageHoldingViewCubit cubit;
   final Widget? cachedMetadataView;
   final ScrollController scrollController;
 
