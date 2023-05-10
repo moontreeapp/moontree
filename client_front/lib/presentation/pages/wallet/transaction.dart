@@ -10,7 +10,6 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/presentation/theme/extensions.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_back/services/transaction/transaction.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/domain/utils/data.dart';
@@ -276,7 +275,7 @@ class TransactionPageContent extends StatelessWidget {
       ? SizedBox(height: 0)
       : ListTile(
           dense: true,
-          title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+          title: Text(text, style: Theme.of(context).textTheme.bodyLarge),
           trailing: GestureDetector(
             onLongPress: () {
               Clipboard.setData(ClipboardData(text: value));
@@ -288,7 +287,7 @@ class TransactionPageContent extends StatelessWidget {
                 child: Text(
                   value,
                   textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                   maxLines: text == 'Memo' ? 3 : null,
                 )),
           ),
@@ -304,7 +303,7 @@ class TransactionPageContent extends StatelessWidget {
   }) =>
       ListTile(
           dense: true,
-          title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+          title: Text(text, style: Theme.of(context).textTheme.bodyLarge),
           onTap: () => components.message.giveChoices(
                 context,
                 title: title,

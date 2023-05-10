@@ -3,8 +3,6 @@ import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
 import 'package:client_front/infrastructure/services/auth.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/storage.dart'
@@ -42,16 +40,16 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         //Text('Authentication Method',
-        //    style: Theme.of(context).textTheme.bodyText1),
+        //    style: Theme.of(context).textTheme.bodyLarge),
         //Text(
         //  'Setting a strong password only you know offers the highest level of security for your wallets. You also have the choice to use nativeSecurity authentication if you prefer.\n\nBefore you change your authentication method you should backup your wallets by writing down each of their passphrases on paper. \n\nAfter changing your preference your wallets must be reencrypted, so DO NOT close the app until the re-encryption process has finished.',
-        //  style: Theme.of(context).textTheme.bodyText2,
+        //  style: Theme.of(context).textTheme.bodyMedium,
         //),
         //SizedBox(height: 16),
         RadioListTile<AuthMethod>(
             title: Text(
               '${Platform.isIOS ? 'iOS' : 'Android'} Phone Security',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             value: AuthMethod.nativeSecurity,
             groupValue: authenticationMethodChoice,
@@ -132,7 +130,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
         RadioListTile<AuthMethod>(
             title: Text(
               'Moontree Password',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             value: AuthMethod.moontreePassword,
             groupValue: authenticationMethodChoice,

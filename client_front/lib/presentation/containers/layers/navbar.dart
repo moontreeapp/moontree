@@ -16,10 +16,10 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 
 TextStyle style(BuildContext context, Snack? snack) => snack?.positive ?? true
-    ? Theme.of(context).textTheme.bodyText2!.copyWith(color: AppColors.white)
+    ? Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.white)
     : Theme.of(context)
         .textTheme
-        .bodyText2!
+        .bodyMedium!
         .copyWith(color: AppColors.errorlight);
 
 class Navbar extends StatefulWidget {
@@ -104,21 +104,21 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                               animation: snackbarController,
                               builder: (BuildContext context, Widget? child) {
                                 double snackbarSlide;
-                                Widget snackContents;
+                                //Widget snackContents;
                                 if (snackbarState.snack != null) {
                                   snackbarController.reverse();
                                   snackbarSlide =
                                       maxHeight * snackbarController.value;
-                                  snackContents = Text(
-                                    'snack',
-                                    textAlign: TextAlign.right,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: style(
-                                        snackbarContext,
-                                        snackbarState.snack ??
-                                            snackbarState.prior),
-                                  );
+                                  //snackContents = Text(
+                                  //  'snack',
+                                  //  textAlign: TextAlign.right,
+                                  //  maxLines: 1,
+                                  //  overflow: TextOverflow.ellipsis,
+                                  //  style: style(
+                                  //      snackbarContext,
+                                  //      snackbarState.snack ??
+                                  //          snackbarState.prior),
+                                  //);
                                 } else if (snackbarState.prior != null) {
                                   snackbarController.forward();
                                   snackbarSlide =

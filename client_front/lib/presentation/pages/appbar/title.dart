@@ -273,7 +273,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             title: Text(wallet.name,
                 style: Theme.of(context ?? components.routes.context!)
                     .textTheme
-                    .bodyText1!
+                    .bodyLarge!
                     .copyWith(color: AppColors.black87)),
             trailing: wallet == Current.wallet
                 ? const Icon(Icons.check_rounded, color: AppColors.primary)
@@ -454,7 +454,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     FittedBox wrap(String x) => FittedBox(
         fit: BoxFit.fitWidth,
         child: Text(x,
-            style: Theme.of(context).textTheme.headline2!.copyWith(
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
                   color: AppColors.white,
                   fontWeight:
                       x.length >= 25 ? FontWeights.bold : FontWeights.semiBold,
@@ -471,7 +471,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             child: FadeTransition(
                 opacity: animation,
                 child: Text(x,
-                    style: Theme.of(context).textTheme.headline2!.copyWith(
+                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
                           color: AppColors.white,
                           fontWeight: x.length >= 25
                               ? FontWeights.bold
@@ -549,19 +549,19 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             child: Text(pros.wallets.currentWalletName,
                 style: Theme.of(context)
                     .textTheme
-                    .headline2!
+                    .displayMedium!
                     .copyWith(color: AppColors.white)));
       } else if (appContext == AppContext.manage) {
         return Text(pros.wallets.currentWalletName,
             style: Theme.of(context)
                 .textTheme
-                .headline2!
+                .displayMedium!
                 .copyWith(color: AppColors.white));
       } else if (appContext == AppContext.swap) {
         return Text(pros.wallets.currentWalletName,
             style: Theme.of(context)
                 .textTheme
-                .headline2!
+                .displayMedium!
                 .copyWith(color: AppColors.white));
       }
     }
@@ -586,7 +586,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
           Text(pros.wallets.currentWalletName,
               style: Theme.of(context)
                   .textTheme
-                  .headline2!
+                  .displayMedium!
                   .copyWith(color: AppColors.white)),
           //const Icon(Icons.expand_more_rounded, color: Colors.white),
           Container(
@@ -616,7 +616,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                       alignment: Alignment.centerLeft,
                       child: const Icon(Icons.add, color: AppColors.primary)),
                   title: Text('New Wallet',
-                      style: Theme.of(context).textTheme.bodyText1),
+                      style: Theme.of(context).textTheme.bodyLarge),
                   trailing: getWallets().equals(pros.wallets.ordered)
                       ? null
                       : TextButton(
@@ -635,7 +635,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                             'Show All',
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyText1!
+                                .bodyLarge!
                                 .copyWith(color: AppColors.primary),
                           )),
                 ),
@@ -653,7 +653,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                       alignment: Alignment.centerLeft,
                       child: const Icon(Icons.add, color: AppColors.primary)),
                   title: Text('New Single Wallet',
-                      style: Theme.of(context).textTheme.bodyText1),
+                      style: Theme.of(context).textTheme.bodyLarge),
                 )
             ] +
             <Widget>[
@@ -683,7 +683,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                             width: indicatorWidth,
                             child: Stack(children: holdingsIndicators(wallet))),
                     title: Text(wallet.name,
-                        style: Theme.of(context).textTheme.bodyText1),
+                        style: Theme.of(context).textTheme.bodyLarge),
                     // awaiting design..........
                     trailing: !services.developer.developerMode
                         ? null
@@ -847,7 +847,7 @@ class WalletNameText extends StatelessWidget {
               child: Text(title,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: Theme.of(context).textTheme.headline2!.copyWith(
+                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
                         color: AppColors.white,
                         fontWeight: title.length >= 25
                             ? FontWeights.bold
@@ -922,7 +922,7 @@ class WalletNameTextFieldState extends State<WalletNameTextField> {
                     }
                   },
                   maxLines: 1,
-                  style: Theme.of(context).textTheme.headline2!.copyWith(
+                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
                         color: AppColors.white,
                         fontWeight: widget.text.length >= 25
                             ? FontWeights.bold

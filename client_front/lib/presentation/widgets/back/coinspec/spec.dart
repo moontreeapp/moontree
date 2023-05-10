@@ -1,8 +1,6 @@
 import 'package:client_back/server/src/protocol/protocol.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:wallet_utils/wallet_utils.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
@@ -126,7 +124,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                 Text('Remaining:',
                     style: Theme.of(context)
                         .textTheme
-                        .bodyText2!
+                        .bodyMedium!
                         .copyWith(color: AppColors.offWhite)),
                 Text(
                     services.conversion.securityAsReadable(
@@ -135,11 +133,11 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                     style: (holding - amount) >= 0
                         ? Theme.of(context)
                             .textTheme
-                            .bodyText2!
+                            .bodyMedium!
                             .copyWith(color: AppColors.offWhite)
                         : Theme.of(context)
                             .textTheme
-                            .bodyText2!
+                            .bodyMedium!
                             .copyWith(color: AppColors.error))
               ]));
     }

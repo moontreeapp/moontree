@@ -27,10 +27,10 @@ class _SweepChoices extends State<SweepChoices> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Sweep', style: Theme.of(context).textTheme.bodyText1),
+        Text('Sweep', style: Theme.of(context).textTheme.bodyLarge),
         Text(
           'Sweeping means moving all value from one wallet to another. What would you like to sweep?',
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 16),
         CheckboxListTile(

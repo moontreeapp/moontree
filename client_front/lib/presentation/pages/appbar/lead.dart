@@ -1,17 +1,12 @@
 //import 'package:backdrop/backdrop.dart';
-import 'dart:async';
-import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:client_front/presentation/widgets/other/fading.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_front/application/cubits.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:client_back/client_back.dart';
-import 'package:client_back/streams/app.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:client_front/application/cubits.dart';
+import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/services/services.dart' as uiservices;
 
 class PageLead extends StatelessWidget {
   final String path;

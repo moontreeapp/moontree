@@ -26,7 +26,7 @@ class WelcomeMessage extends StatelessWidget {
   Widget build(BuildContext context) => Text(text,
       style: Theme.of(context)
           .textTheme
-          .headline1
+          .displayLarge
           ?.copyWith(color: AppColors.black60));
 }
 
@@ -61,7 +61,7 @@ class UlaMessage extends StatelessWidget {
                 text: TextSpan(
                   style: Theme.of(components.routes.routeContext!)
                       .textTheme
-                      .bodyText2,
+                      .bodyMedium,
                   children: <TextSpan>[
                     const TextSpan(text: "I agree to Moontree's\n"),
                     TextSpan(

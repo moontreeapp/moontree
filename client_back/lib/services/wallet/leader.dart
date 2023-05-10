@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart' show HDWallet;
-import 'package:client_back/streams/client.dart';
 import 'package:client_back/utilities/seed_wallet.dart';
 import 'package:client_back/client_back.dart';
 

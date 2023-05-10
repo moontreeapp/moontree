@@ -33,7 +33,7 @@ class CoinSendHeader extends StatelessWidget {
               cubit: cubit,
               pageTitle: 'Send',
               security: cubit.state.security,
-              color: Theme.of(context).backgroundColor);
+              color: Theme.of(context).colorScheme.background);
         });
   }
 }

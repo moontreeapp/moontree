@@ -65,7 +65,7 @@ class Menu extends StatelessWidget {
       //(options[components.cubits.backContainer.state.path] ??
       //    options['/menu'])!
       Container(
-          color: Theme.of(context).backgroundColor,
+          color: Theme.of(context).colorScheme.background,
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -107,7 +107,7 @@ class MenuContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      color: Theme.of(context).backgroundColor,
+      color: Theme.of(context).colorScheme.background,
       child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -238,7 +238,7 @@ class MainMenu extends StatelessWidget {
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: Theme.of(components.routes.context!).textTheme.bodyText2,
+              style: Theme.of(components.routes.context!).textTheme.bodyMedium,
               children: <TextSpan>[
                 TextSpan(
                     text: 'User Agreement',
@@ -446,7 +446,7 @@ class MenuLink extends StatelessWidget {
                         color: disabled ? AppColors.white60 : Colors.white)
                     : image!,
         title: Text(name,
-            style: Theme.of(context).textTheme.bodyText1!.copyWith(
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 color: disabled ? AppColors.white60 : AppColors.white)),
         trailing: arrow
             ? SvgPicture.asset('assets/icons/custom/white/chevron-right.svg')

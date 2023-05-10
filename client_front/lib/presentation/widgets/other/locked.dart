@@ -35,9 +35,8 @@ class _LockedOutTimeState extends State<LockedOutTime>
   Widget build(BuildContext context) {
     slowController.forward(from: 0.0);
     slowController.duration = Duration(
-        milliseconds: /*min(1000 * 60 * 2,*/ services
-                .password.lockout.timeFromAttempts *
-            2 /*)*/);
+        milliseconds: /*min(1000 * 60 * 2,*/
+            services.password.lockout.timeFromAttempts * 2 /*)*/);
 
     /// fade removal requested:tel
     return //FadeTransition(
@@ -110,7 +109,7 @@ class _LockedOutTimeContentState extends State<LockedOutTimeContent> {
                 : '',
         style: Theme.of(context)
             .textTheme
-            .bodyText2!
+            .bodyMedium!
             .copyWith(color: AppColors.error));
   }
 }

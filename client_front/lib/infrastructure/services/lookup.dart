@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
 import 'package:client_back/client_back.dart';
-import 'package:client_back/services/transaction/transaction.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 

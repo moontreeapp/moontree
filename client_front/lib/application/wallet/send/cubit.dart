@@ -13,8 +13,6 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:moontree_utils/extensions/extensions.dart'
-    show StringCapitalizationExtension;
 import 'package:tuple/tuple.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show ECPair, FeeRate, TransactionBuilder, satsPerCoin, standardFee;

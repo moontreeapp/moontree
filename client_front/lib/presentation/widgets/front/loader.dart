@@ -8,7 +8,6 @@ import 'package:client_back/streams/app.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
 
 class Loader extends StatefulWidget {
   final String message;
@@ -108,7 +107,7 @@ class _LoaderState extends State<Loader> {
             children: <Widget>[
               Text(
                 widget.message,
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 16),
               if (widget.staticImage)

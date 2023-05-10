@@ -39,7 +39,7 @@ class DecorationComponents {
             borderSide: const BorderSide(color: AppColors.black12)),
         labelStyle: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: enabled ? null : AppColors.black38),
         alignLabelWithHint: true,
         floatingLabelStyle: labelColor(focusNode, errorText),
@@ -54,12 +54,12 @@ class DecorationComponents {
         suffixStyle: suffixStyle,
         errorStyle: Theme.of(context)
             .textTheme
-            .caption!
+            .bodySmall!
             .copyWith(height: .8, color: AppColors.error),
         helperStyle: helperStyle ??
             Theme.of(context)
                 .textTheme
-                .caption!
+                .bodySmall!
                 .copyWith(height: .8, color: AppColors.primary),
       );
 

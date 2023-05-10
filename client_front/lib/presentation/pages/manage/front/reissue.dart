@@ -339,7 +339,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                           // put ability to put it in as USD here
                           /* // functionality has been moved to header
                                   suffixText: sendAll ? "don't send all" : 'send all',
-                                  suffixStyle: Theme.of(context).textTheme.caption,
+                                  suffixStyle: Theme.of(context).textTheme.bodySmall,
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                         sendAll ? Icons.not_interested : Icons.all_inclusive,
@@ -420,7 +420,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                                 : null,
                             helperStyle: Theme.of(context)
                                 .textTheme
-                                .caption!
+                                .bodySmall!
                                 .copyWith(height: .7, color: AppColors.primary),
                             errorText: _verifyMemo() ? null : 'too long',
                             /*suffixIcon: IconButton(
@@ -449,7 +449,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                                 : null,
                             helperStyle: Theme.of(context)
                                 .textTheme
-                                .caption!
+                                .bodySmall!
                                 .copyWith(height: .7, color: AppColors.primary),
                             /*suffixIcon: IconButton(
                                 icon: const Icon(Icons.paste_rounded,
@@ -773,7 +773,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
                   child: Text(symbolName(name),
-                      style: Theme.of(context).textTheme.bodyText1)))
+                      style: Theme.of(context).textTheme.bodyLarge)))
       ]);
 
   void _produceFeeModal(SimpleReissueFormCubit cubit) =>
@@ -789,7 +789,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
             },
             leading: feeConcept.icon,
             title: Text(feeConcept.title,
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyLarge),
           )
       ]);
 

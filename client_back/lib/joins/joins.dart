@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:collection/collection.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/proclaim/proclaim.dart';

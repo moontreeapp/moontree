@@ -100,14 +100,14 @@ class _LoginCreateState extends State<LoginCreate> {
                   text: TextSpan(
                     style: Theme.of(components.routes.routeContext!)
                         .textTheme
-                        .bodyText2,
+                        .bodyMedium,
                     children: <TextSpan>[
                       TextSpan(
                           text: 'Protect your wallet with:',
                           //text: "Please set the wallet protection type",
                           style: Theme.of(context)
                               .textTheme
-                              .subtitle1!
+                              .titleMedium!
                               .copyWith(color: AppColors.black)),
                     ],
                   ),

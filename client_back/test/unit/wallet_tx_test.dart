@@ -3,21 +3,18 @@
 import 'package:client_back/records/types/chain.dart';
 import 'package:test/test.dart';
 import 'package:wallet_utils/src/models/networks.dart';
-import 'package:wallet_utils/wallet_utils.dart'
-    show HDWallet, TransactionBuilder;
-
+import 'package:wallet_utils/wallet_utils.dart' show TransactionBuilder;
 import 'package:client_back/records/types/net.dart' show Net;
-import 'package:client_back/records/wallets/extended_wallet_base.dart';
 
 void main() {
   group('Wallet Transaction', () {
     test('create & sign a 1-to-1 transaction', () async {
       final NetworkType network = ChainNet(Chain.ravencoin, Net.test).network;
 
-      final HDWallet wallet = HDWallet.fromBase58(
-          'tprv8jsr128yT1XaEVNpw7t4v5ijZBURTzvqFzy71Favkx7VnMYsmcAf'
-          'KMkW8xQ8YJUwDe1NZE6cyU6NQmfeNQWbKrkdnZXEyPdqpKx6UVc1dNF',
-          network: network);
+      //final HDWallet wallet = HDWallet.fromBase58(
+      //    'tprv8jsr128yT1XaEVNpw7t4v5ijZBURTzvqFzy71Favkx7VnMYsmcAf'
+      //    'KMkW8xQ8YJUwDe1NZE6cyU6NQmfeNQWbKrkdnZXEyPdqpKx6UVc1dNF',
+      //    network: network);
 
       final TransactionBuilder txb = TransactionBuilder(network: network);
       txb.setVersion(1);

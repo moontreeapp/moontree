@@ -187,7 +187,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
                 OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                     borderSide: const BorderSide(color: AppColors.black12)),
-            labelStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
+            labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
                 color: (widget.enabled ?? true) ? null : AppColors.black38),
             alignLabelWithHint: true,
             floatingLabelStyle: widget.focusNode?.hasFocus ?? false
@@ -216,12 +216,12 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
             suffixStyle: widget.suffixStyle,
             errorStyle: Theme.of(context)
                 .textTheme
-                .caption!
+                .bodySmall!
                 .copyWith(height: .8, color: AppColors.error),
             helperStyle: widget.helperStyle ??
                 Theme.of(context)
                     .textTheme
-                    .caption!
+                    .bodySmall!
                     .copyWith(height: .8, color: AppColors.primary),
           );
     final TextField text = TextField(

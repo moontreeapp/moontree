@@ -63,13 +63,13 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
                   indicatorColor: Colors.white,
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicator: _TabIndicator(),
-                  labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  labelStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontWeight: FontWeights.medium,
                       letterSpacing: 1.25,
                       color: AppColors.white87),
                   unselectedLabelStyle: Theme.of(context)
                       .textTheme
-                      .bodyText2!
+                      .bodyMedium!
                       .copyWith(
                           fontWeight: FontWeights.medium,
                           letterSpacing: 1.25,

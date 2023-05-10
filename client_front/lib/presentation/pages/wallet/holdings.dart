@@ -470,7 +470,7 @@ class _HoldingsView extends State<HoldingsView> {
                                 widget.cubit.state.showPath
                             ? holding.symbol
                             : holding.last,
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
               )),
         ]),
         Text(
@@ -497,7 +497,7 @@ class _HoldingsView extends State<HoldingsView> {
                       asUSD: widget.cubit.state.showUSD),
           style: Theme.of(context)
               .textTheme
-              .bodyText2!
+              .bodyMedium!
               .copyWith(color: AppColors.black60),
         ),
       ]);
@@ -540,11 +540,11 @@ List<Widget> assetOptions({
           title: Text((x[0] as String).toTitleCase(),
               style: Theme.of(context ?? components.routes.context!)
                   .textTheme
-                  .bodyText1!
+                  .bodyLarge!
                   .copyWith(color: AppColors.black87)),
           trailing: (x[2] as String) != null
               ? Text((x[2] as String),
-                  style: Theme.of(context!).textTheme.bodyText2!.copyWith(
+                  style: Theme.of(context!).textTheme.bodyMedium!.copyWith(
                       fontWeight: FontWeights.bold,
                       letterSpacing: 0.1,
                       color: AppColors.black60))

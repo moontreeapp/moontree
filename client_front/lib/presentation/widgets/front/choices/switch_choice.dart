@@ -35,7 +35,7 @@ class _SwtichChoice extends State<SwtichChoice> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
         Widget>[
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-        Text(widget.label, style: Theme.of(context).textTheme.bodyText1),
+        Text(widget.label, style: Theme.of(context).textTheme.bodyLarge),
         Switch(
             value: choice,
             onChanged: (bool value) async {
@@ -49,7 +49,7 @@ class _SwtichChoice extends State<SwtichChoice> {
       if (widget.description != null)
         Text(
           widget.description!,
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
     ]);
   }

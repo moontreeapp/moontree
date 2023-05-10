@@ -72,7 +72,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
-                          .headline1
+                          .displayLarge
                           ?.copyWith(color: AppColors.primaries[7]))),
               Center(
                   child: Padding(
@@ -81,7 +81,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
-                        .bodyText1
+                        .bodyLarge
                         ?.copyWith(color: AppColors.primary)),
               )),
               if (behavior != null)

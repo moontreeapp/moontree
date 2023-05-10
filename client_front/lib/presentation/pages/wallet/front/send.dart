@@ -339,7 +339,7 @@ class _SimpleSendState extends State<SimpleSend> {
                           // put ability to put it in as USD here
                           /* // functionality has been moved to header
                                   suffixText: sendAll ? "don't send all" : 'send all',
-                                  suffixStyle: Theme.of(context).textTheme.caption,
+                                  suffixStyle: Theme.of(context).textTheme.bodySmall,
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                         sendAll ? Icons.not_interested : Icons.all_inclusive,
@@ -420,7 +420,7 @@ class _SimpleSendState extends State<SimpleSend> {
                                 : null,
                             helperStyle: Theme.of(context)
                                 .textTheme
-                                .caption!
+                                .bodySmall!
                                 .copyWith(height: .7, color: AppColors.primary),
                             errorText: _verifyMemo() ? null : 'too long',
                             /*suffixIcon: IconButton(
@@ -449,7 +449,7 @@ class _SimpleSendState extends State<SimpleSend> {
                                 : null,
                             helperStyle: Theme.of(context)
                                 .textTheme
-                                .caption!
+                                .bodySmall!
                                 .copyWith(height: .7, color: AppColors.primary),
                             /*suffixIcon: IconButton(
                                 icon: const Icon(Icons.paste_rounded,
@@ -772,7 +772,7 @@ class _SimpleSendState extends State<SimpleSend> {
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
                   child: Text(symbolName(name),
-                      style: Theme.of(context).textTheme.bodyText1)))
+                      style: Theme.of(context).textTheme.bodyLarge)))
       ]);
 
   void _produceFeeModal(SimpleSendFormCubit cubit) =>
@@ -788,7 +788,7 @@ class _SimpleSendState extends State<SimpleSend> {
             },
             leading: feeConcept.icon,
             title: Text(feeConcept.title,
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyLarge),
           )
       ]);
 

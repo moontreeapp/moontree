@@ -1,11 +1,8 @@
 import 'package:bip32/bip32.dart';
-import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/wallet/constants.dart';
-import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/calls/subscription.dart';
 import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';

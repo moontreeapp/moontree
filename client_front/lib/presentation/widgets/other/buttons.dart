@@ -54,7 +54,7 @@ class BottomButton extends StatelessWidget {
                         ? AppColors.white
                         : soft
                             ? AppColors.primaries[3]
-                            : Theme.of(context).backgroundColor,
+                            : Theme.of(context).colorScheme.background,
                 width: 2, //soft ? 1 : 2,
                 style: BorderStyle.solid)),
             shape: MaterialStateProperty.all(RoundedRectangleBorder(

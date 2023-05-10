@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
-import 'package:client_front/application/layers/navbar/cubit.dart';
-import 'package:client_front/application/utilities.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +8,6 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/services/import.dart';
 import 'package:client_back/services/wallet/constants.dart';
 import 'package:client_front/domain/utils/log.dart';
-import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show getEntropy, saveSecret;
@@ -403,9 +400,9 @@ class FilePicked extends StatelessWidget {
               leading:
                   const Icon(Icons.attachment_rounded, color: Colors.black),
               title: Text(state.file!.filename,
-                  style: Theme.of(context).textTheme.bodyText1),
+                  style: Theme.of(context).textTheme.bodyLarge),
               subtitle: Text('${state.file!.size.toString()} KB',
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       height: 1,
                       fontWeight: FontWeights.semiBold,
                       color: AppColors.black38)),

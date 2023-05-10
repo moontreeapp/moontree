@@ -65,12 +65,12 @@ class _ScanQRState extends State<ScanQR> {
             Container(
                 height: 56,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).backgroundColor,
+                  color: Theme.of(context).colorScheme.background,
                   borderRadius: shapes.topRoundedBorder16,
                 ),
                 child: Center(
                     child: Text('Point your camera at a QR code',
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             fontWeight: FontWeights.bold,
                             letterSpacing: 0.14,
                             color: AppColors.offWhite)))),

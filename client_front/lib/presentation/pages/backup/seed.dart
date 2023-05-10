@@ -7,7 +7,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 //import 'package:screenshot_callback/screenshot_callback.dart';
-import 'package:client_back/client_back.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show getSecret;
@@ -101,7 +100,7 @@ class _BackupSeedState extends State<BackupSeed>
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
-                        .subtitle1!
+                        .titleMedium!
                         .copyWith(color: AppColors.black),
                   )),
               auto: true,
@@ -137,7 +136,7 @@ class _BackupSeedState extends State<BackupSeed>
                 //              textAlign: TextAlign.center,
                 //              style: Theme.of(context)
                 //                  .textTheme
-                //                  .subtitle1!
+                //                  .titleMedium!
                 //                  .copyWith(color: AppColors.black),
                 //            )),
                 //        auto: true,
@@ -250,7 +249,7 @@ class BackupInstructions extends StatelessWidget {
         textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: AppColors.black),
       ));
 }
@@ -266,7 +265,7 @@ class BackupWarning extends StatelessWidget {
         textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: AppColors.error),
       ));
 }

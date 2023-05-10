@@ -76,7 +76,7 @@ class SimpleReissueCheckout extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
                   child: Text(state.checkout!.displaySymbol,
-                      style: Theme.of(context).textTheme.bodyText1)))
+                      style: Theme.of(context).textTheme.bodyLarge)))
         ]),
         //subtitle: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         //  const SizedBox(width: 5),
@@ -242,10 +242,10 @@ class SimpleReissueCheckout extends StatelessWidget {
 
   Widget get total =>
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-        Text('Total:', style: Theme.of(context).textTheme.bodyText1),
+        Text('Total:', style: Theme.of(context).textTheme.bodyLarge),
         Text(
             '${getRightTotal(state.checkout!.total!)} ${state.checkout!.paymentSymbol!.toUpperCase()}',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
             key: Key('checkoutTotal')),
       ]);
 
@@ -255,7 +255,7 @@ class SimpleReissueCheckout extends StatelessWidget {
         child: Text(
           state.checkout!.confirm!,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
           softWrap: true,
           overflow: TextOverflow.fade,
           maxLines: 3,

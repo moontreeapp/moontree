@@ -28,10 +28,10 @@ class _ClearSSChoice extends State<ClearSSChoice> {
   Widget build(BuildContext context) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Text('Clear Secure Storage',
-            style: Theme.of(context).textTheme.bodyText1),
+            style: Theme.of(context).textTheme.bodyLarge),
         Text(
           'DO NOT DO THIS. EVER.',
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 16),
         Row(children: <Widget>[

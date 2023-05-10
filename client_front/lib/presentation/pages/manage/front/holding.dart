@@ -12,7 +12,6 @@ import 'package:client_front/application/containers/front/cubit.dart';
 import 'package:client_front/application/manage/holding/cubit.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/back/coinspec/tabs.dart';
-import 'package:client_front/presentation/widgets/front/lists/transactions.dart';
 import 'package:client_front/presentation/services/services.dart' as services;
 import 'package:client_front/presentation/utils/animation.dart' as animation;
 import 'package:client_front/presentation/components/shadows.dart' as shadows;
@@ -362,41 +361,41 @@ class MetadataView extends StatelessWidget {
               cubit.state.security.isCoin
                   ? 'Cirulcating Supply:'
                   : 'Total Supply:',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             trailing: SelectableText(
               securityAsset.totalSupply.asCoin.toSatsCommaString(),
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
           ListTile(
             title: Text(
               'Divisibility:',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             trailing: SelectableText(
               '${securityAsset.divisibility}',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
           ListTile(
             title: Text(
               'Reissuable:',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             trailing: SelectableText(
               '${securityAsset.reissuable ? 'yes' : 'no'}',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
           ListTile(
             title: Text(
               'Frozen:',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             trailing: SelectableText(
               '${securityAsset.frozen ? 'yes' : 'no'}',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
         ];

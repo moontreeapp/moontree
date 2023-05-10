@@ -4,6 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart' show zipMap;
 
 class AppColors {
+  static ColorScheme colorScheme = ColorScheme(
+      brightness: Brightness.light,
+      primary: primary,
+      onPrimary: Colors.white,
+      secondary: primary,
+      onSecondary: Colors.transparent,
+      error: error,
+      onError: Colors.white,
+      background: primary,
+      onBackground: Colors.transparent,
+      surface: Colors.white,
+      onSurface: Colors.transparent);
   static List<Color> get palette => <Color>[
         error,
         const Color(0xFFEC407A),

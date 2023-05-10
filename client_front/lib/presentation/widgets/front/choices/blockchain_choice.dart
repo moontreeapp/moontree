@@ -1,4 +1,3 @@
-import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
@@ -81,7 +80,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               //    : null,
               helperStyle: Theme.of(context)
                   .textTheme
-                  .caption!
+                  .bodySmall!
                   .copyWith(height: .8, color: AppColors.primary),
               alwaysShowHelper: showHelper,
               textInputAction: TextInputAction.next,
@@ -167,7 +166,7 @@ List<Widget> blockchainOptions({
             title: Text(x.name,
                 style: Theme.of(context ?? components.routes.context!)
                     .textTheme
-                    .bodyText1!
+                    .bodyLarge!
                     .copyWith(color: AppColors.black87)),
             trailing: isSelected(x.chain, x.net) && isConnected()
                 ? const Icon(Icons.check_rounded, color: AppColors.primary)

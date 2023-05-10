@@ -157,8 +157,8 @@ class IconComponents {
         width: width,
       );
 
-  Widget _assetAvatarEVR({double? height, double? width}) =>
-      assets.icons.evrmore(height: 24, width: 24, circled: true);
+  Widget _assetAvatarEVR({double? height, double? width}) => assets.icons
+      .evrmore(height: height ?? 24, width: width ?? 24, circled: true);
 
   Widget _assetAvatarMoontree({double? height, double? width}) => Image.asset(
         'assets/logo/moontree.png',
@@ -363,7 +363,7 @@ class IconComponents {
           }(),
               style: Theme.of(components.routes.routeContext!)
                   .textTheme
-                  .headline1!
+                  .displayLarge!
                   .copyWith(
                       fontSize: (height + width) * .3,
                       color: AppColors.white87))),

@@ -2,7 +2,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:equatable/equatable.dart';
 import 'package:moontree_utils/moontree_utils.dart'
     show ReadableIdentifierExtension;
-import 'package:client_back/client_back.dart';
 
 enum NavHeight { tall, short, none }
 

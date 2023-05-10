@@ -28,10 +28,10 @@ class _ResyncChoice extends State<ResyncChoice> {
   Widget build(BuildContext context) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Text('Resync Blockchain Data',
-            style: Theme.of(context).textTheme.bodyText1),
+            style: Theme.of(context).textTheme.bodyLarge),
         Text(
           'Clears database of transaction history and holdings, and redownloads it all.',
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 16),
         Row(children: <Widget>[

@@ -2,11 +2,8 @@ import 'dart:typed_data';
 import 'package:client_back/records/types/transaction_view.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
 import 'package:wallet_utils/wallet_utils.dart' as wallet_utils;
-import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/transaction.dart';
 import 'package:test/test.dart';
-import 'package:rxdart/subjects.dart';
-import 'package:moontree_utils/moontree_utils.dart';
 
 List<TransactionView> spoofTransactionView() {
   final views = <TransactionView>[

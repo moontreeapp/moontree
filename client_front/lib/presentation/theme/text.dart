@@ -19,7 +19,7 @@ class AppText {
       letterSpacing: 0.18,
       color: AppColors.black);
 
-  static TextStyle get subtitle1 => const TextStyle(
+  static TextStyle get titleMedium => const TextStyle(
       fontSize: 16.0,
       height: 1.5,
       fontFamily: 'Nunito',
@@ -27,7 +27,7 @@ class AppText {
       letterSpacing: 0.15,
       color: AppColors.black60);
 
-  static TextStyle get subtitle2 => const TextStyle(
+  static TextStyle get titleSmall => const TextStyle(
       fontSize: 14.0,
       height: 1.714,
       fontFamily: 'Nunito',
@@ -59,7 +59,7 @@ class AppText {
       letterSpacing: 1.25,
       color: AppColors.black);
 
-  static TextStyle get caption => const TextStyle(
+  static TextStyle get bodySmall => const TextStyle(
       fontSize: 12.0,
       height: 1.333,
       fontFamily: 'Nunito',
@@ -99,12 +99,12 @@ class AppText {
   static TextStyle get underlinedLink => link.copyWith(
         decoration: TextDecoration.underline,
       );
-  static TextStyle get underlinedMenuLink => subtitle2.copyWith(
+  static TextStyle get underlinedMenuLink => titleSmall.copyWith(
         decoration: TextDecoration.underline,
         color: const Color(0xFFE8EAF6),
         fontWeight: FontWeights.semiBold,
       );
-  static TextStyle get checkoutFees => caption.copyWith(
+  static TextStyle get checkoutFees => bodySmall.copyWith(
         height: 1,
         color: AppColors.black,
       );

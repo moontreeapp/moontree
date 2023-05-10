@@ -20,6 +20,7 @@ class _BackupIntroState extends State<BackupIntro> {
 
   @override
   void initState() {
+    super.initState();
     streams.app.auth.verify.add(false);
     initialized = true;
   }
@@ -34,7 +35,7 @@ class _BackupIntroState extends State<BackupIntro> {
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
-                    .subtitle1!
+                    .titleMedium!
                     .copyWith(color: AppColors.black),
               )),
           Container(
@@ -44,7 +45,7 @@ class _BackupIntroState extends State<BackupIntro> {
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
-                    .subtitle1!
+                    .titleMedium!
                     .copyWith(color: AppColors.error),
               ))
         ],

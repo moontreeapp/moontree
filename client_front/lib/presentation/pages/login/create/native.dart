@@ -95,7 +95,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
                       textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
-                          .subtitle1!
+                          .titleMedium!
                           .copyWith(color: AppColors.black),
                     )),
                 if (snapshot.hasData && !snapshot.data!)
@@ -107,7 +107,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
                       child: Text(
                         'Please setup Face, Fingerprints, Pattern, PIN, or Password',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             color: AppColors.black,
                             fontWeight: FontWeight.w600),
                       )),

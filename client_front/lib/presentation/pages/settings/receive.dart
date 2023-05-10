@@ -53,10 +53,31 @@ class Receive extends StatelessWidget {
               components.cubits.receiveView.address,
               style: Theme.of(context)
                   .textTheme
-                  .caption!
+                  .bodySmall!
                   .copyWith(color: AppColors.black87),
               showCursor: true,
-              toolbarOptions: const ToolbarOptions(copy: true, selectAll: true),
+              //toolbarOptions: const ToolbarOptions(copy: true, selectAll: true),
+              //contextMenuBuilder: (context, editableTextState) =>
+              //    AdaptiveTextSelectionToolbar(
+              //      anchors: editableTextState.contextMenuAnchors,
+              //      // Build the default buttons, but make them look custom.
+              //      // In a real project you may want to build different
+              //      // buttons depending on the platform.
+              //      children: editableTextState.contextMenuButtonItems
+              //          .map((ContextMenuButtonItem buttonItem) {
+              //        return MaterialButton(
+              //          //color: const Color(0xffaaaa00),
+              //          //disabledColor: const Color(0xffaaaaff),
+              //          onPressed: buttonItem.onPressed,
+              //          //padding: const EdgeInsets.all(10.0),
+              //          child: //SizedBox(
+              //              //width: 200.0,
+              //              //child:
+              //              Text(buttonItem.label ?? ''),
+              //          //),
+              //        );
+              //      }).toList(),
+              //    )
             ),
             //if (!smallScreen) SizedBox(height: 72.figmaH)
           ],

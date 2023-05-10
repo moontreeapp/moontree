@@ -384,11 +384,11 @@ class _CreateAssetState extends State<CreateAsset> {
                 color: Colors.black,
               ),
             ),
-            Text('Reissuable', style: Theme.of(context).textTheme.bodyText1),
+            Text('Reissuable', style: Theme.of(context).textTheme.bodyLarge),
           ]),
           Switch(
             value: reissueValue,
-            activeColor: Theme.of(context).backgroundColor,
+            activeColor: Theme.of(context).colorScheme.background,
             onChanged: (bool value) {
               setState(() {
                 reissueValue = value;

@@ -2,7 +2,7 @@
 //import 'subscription.dart';
 //import 'block.dart';
 //import 'client.dart';
-//import 'rate.dart';
+import 'rate.dart';
 //import 'reissue.dart';
 //import 'send.dart';
 //import 'unspent.dart';
@@ -29,7 +29,7 @@ class triggers {
   //static BlockWaiter block = BlockWaiter();
 
   /// unknown
-  //static RateWaiter rate = RateWaiter();
+  static RateWaiter rate = RateWaiter();
   //static SubscriptionWaiter subscription = SubscriptionWaiter();
   //static SingleWaiter single = SingleWaiter();
   //static LeaderWaiter leader = LeaderWaiter();

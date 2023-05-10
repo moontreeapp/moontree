@@ -106,7 +106,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
             ),
             style: Theme.of(context)
                 .textTheme
-                .bodyText1!
+                .bodyLarge!
                 .copyWith(color: AppColors.white87)),
       ]);
     } else if (front && widget.totalSupply != null) {
@@ -114,7 +114,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
         Text('Total Supply',
             style: Theme.of(context)
                 .textTheme
-                .bodyText1!
+                .bodyLarge!
                 .copyWith(color: AppColors.white)),
       ]);
     }
@@ -142,7 +142,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       widget.totalSupply ?? holding,
       style: Theme.of(context)
           .textTheme
-          .headline1!
+          .displayLarge!
           .copyWith(color: AppColors.white87),
     );
     return widget.pageTitle == 'Send'
@@ -158,7 +158,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
             : widget.symbol,
         style: Theme.of(context)
             .textTheme
-            .bodyText1!
+            .bodyLarge!
             .copyWith(color: AppColors.white),
       );
 }
