@@ -8,10 +8,10 @@ import 'package:client_front/presentation/widgets/widgets.dart';
 class SecuritySettings extends StatefulWidget {
   const SecuritySettings({Key? key}) : super(key: key);
   @override
-  _SecuritySettingsState createState() => _SecuritySettingsState();
+  SecuritySettingsState createState() => SecuritySettingsState();
 }
 
-class _SecuritySettingsState extends State<SecuritySettings> {
+class SecuritySettingsState extends State<SecuritySettings> {
   /// todo: convert to cubit
   TextEditingController newPassword = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
@@ -39,6 +39,8 @@ class _SecuritySettingsState extends State<SecuritySettings> {
     super.dispose();
   }
 
+  void reload() => setState(() {});
+
   @override
   Widget build(BuildContext context) => PageStructure(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -50,7 +52,6 @@ class _SecuritySettingsState extends State<SecuritySettings> {
         ],
         firstLowerChildren: !pros.settings.authMethodIsNativeSecurity
             ? [
-                /// TODO: fix this.
                 BottomButton(
                   label: 'Change Password',
                   focusNode: buttonFocus,

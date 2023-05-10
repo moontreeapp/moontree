@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:client_front/presentation/pages/settings/security.dart';
 import 'package:client_front/presentation/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
@@ -35,6 +36,9 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
 
   @override
   Widget build(BuildContext context) {
+    SecuritySettingsState parent =
+        context.findAncestorStateOfType<SecuritySettingsState>()
+            as SecuritySettingsState;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,6 +83,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                     saveSecret: saveSecret,
                   );
                   await services.authentication.setMethod(method: value!);
+                  parent.reload();
                 } else {
                   if (localAuthApi.reason == AuthenticationResult.error) {
                     setState(() {
@@ -170,6 +175,7 @@ class _AuthenticationMethodChoice extends State<AuthenticationMethodChoice> {
                       }
                     });
                     await services.authentication.setMethod(method: value!);
+                    parent.reload();
                   },
                   //'then.then': () async {
                   //  streams.app.behavior.snack
