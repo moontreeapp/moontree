@@ -34,7 +34,7 @@ class Sail {
     Section.login: initialPath,
     Section.wallet: '/wallet/holdings',
     Section.manage: '/manage/holdings',
-    Section.swap: '/swap',
+    Section.swap: '/swap/holdings',
     Section.settings: '/menu',
   };
 
@@ -205,12 +205,12 @@ class Sail {
       frontPath: '/manage/reissue/checkout',
       backPath: '/',
     ),
-    '/swap': Manifest(
+    '/swap/holdings': Manifest(
       title: 'Swap',
       section: Section.swap,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.max,
-      frontPath: '/swap',
+      frontPath: '/swap/holdings',
       backPath: '/menu',
     ),
     '/restore/import': Manifest(
@@ -420,7 +420,8 @@ class Sail {
     components.cubits.title.update(title: manifest.title);
     // if we're going back home and we came from the menu then show the menu
     if (back &&
-        ['/wallet/holdings', '/manage', '/swap'].contains(location) &&
+        ['/wallet/holdings', '/manage/holdings', '/swap/holdings']
+            .contains(location) &&
         components.cubits.location.state.menuOpen) {
       components.cubits.frontContainer
           .setHeightTo(height: FrontContainerHeight.min);

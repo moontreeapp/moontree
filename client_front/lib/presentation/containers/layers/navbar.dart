@@ -63,13 +63,20 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                 state.currentNavbarHeight == NavbarHeight.mid) ||
             (state.previousNavbarHeight != NavbarHeight.hidden &&
                 state.currentNavbarHeight == NavbarHeight.hidden)) {
+          animationController.value = 0.0;
           animationController.forward();
         } else if (state.previousNavbarHeight == NavbarHeight.hidden &&
             state.currentNavbarHeight == NavbarHeight.hidden) {
           animationController.value = 1.0;
         } else if (state.currentNavbarHeight == NavbarHeight.max) {
+          animationController.value = 1.0;
+          animationController.reverse();
+        } else if (state.previousNavbarHeight == NavbarHeight.hidden &&
+            state.currentNavbarHeight == NavbarHeight.mid) {
+          animationController.value = 1.0;
           animationController.reverse();
         }
+
         final maxHeight = (state.showSections
                 ? screen.navbar.maxHeight
                 : screen.navbar.midHeight) +
@@ -78,18 +85,50 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
             animation: animationController,
             builder: (BuildContext context, Widget? child) {
               double slide;
-              if (state.currentNavbarHeight == NavbarHeight.hidden) {
+              //if (state.currentNavbarHeight == NavbarHeight.hidden &&
+              //    state.previousNavbarHeight == NavbarHeight.mid) {
+              //  slide =
+              //      ((maxHeight - screen.navbar.midHeight) - snackbarHeight) *
+              //          animationController.value;
+              //} else
+              if (state.currentNavbarHeight == NavbarHeight.hidden &&
+                  state.previousNavbarHeight == NavbarHeight.mid) {
+                slide =
+                    ((maxHeight - snackbarHeight) - screen.navbar.midHeight) *
+                        animationController.value;
+                slide += screen.navbar.midHeight;
+              } else if (state.currentNavbarHeight == NavbarHeight.hidden) {
                 slide =
                     (maxHeight - snackbarHeight) * animationController.value;
+              } else if (state.currentNavbarHeight == NavbarHeight.mid &&
+                  state.previousNavbarHeight == NavbarHeight.hidden) {
+                slide =
+                    ((maxHeight - screen.navbar.midHeight) - snackbarHeight) *
+                        animationController.value;
+                //print('state.currentNavbarHeight ${state.currentNavbarHeight}');
+                //print(
+                //    'state.previousNavbarHeight ${state.previousNavbarHeight}');
+                slide +=
+                    ((maxHeight - screen.navbar.midHeight) - snackbarHeight);
+              } else if (state.currentNavbarHeight == NavbarHeight.mid) {
+                slide =
+                    ((maxHeight - screen.navbar.midHeight) - snackbarHeight) *
+                        animationController.value;
               } else if (state.currentNavbarHeight == NavbarHeight.max &&
                   state.previousNavbarHeight == NavbarHeight.hidden) {
                 slide =
                     (maxHeight - snackbarHeight) * animationController.value;
+              } else if (state.currentNavbarHeight == NavbarHeight.max &&
+                  state.previousNavbarHeight == NavbarHeight.mid) {
+                slide =
+                    ((maxHeight - screen.navbar.midHeight) - snackbarHeight) *
+                        animationController.value;
               } else {
                 slide = (screen.navbar.midHeight / maxHeight) *
                     animationController.value;
               }
-
+              print(slide);
+              //print(animationController.value);
               return Transform(
                   alignment: Alignment.bottomCenter,
                   transform: Matrix4.identity()..translate(0.0, slide, 0.0),
@@ -177,7 +216,7 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                                 // can changed based upon whats selected:
                                 NavbarActions(),
                                 if (state.showSections) ...<Widget>[
-                                  const SizedBox(height: 14),
+                                  const SizedBox(height: 16),
                                   Padding(
                                       padding: EdgeInsets.zero,
                                       child: Row(

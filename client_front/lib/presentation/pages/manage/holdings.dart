@@ -21,24 +21,6 @@ class ManageHoldings extends StatelessWidget {
   const ManageHoldings({Key? key}) : super(key: key ?? defaultKey);
   static const defaultKey = ValueKey('ManageHoldings');
 
-  /// TODO: modify cubit instead of setstate
-// ignore: unused_element
-
-  //GestureDetector(
-  //  onTap: () {
-  //    sail.to(
-  //      '/wallet/holding',
-  //      arguments: {'chainSymbol': 'WhaleStreet'},
-  //    );
-  //  },
-  //  child: const ListTile(
-  //    leading: CircleAvatar(
-  //      backgroundColor: AppColors.primary,
-  //      child: Text('W'),
-  //    ),
-  //    title: Text('WhaleStreet'),
-  //  ),
-  //),
   Future<void> refresh(ManageHoldingsViewCubit cubit) async {
     //cubit.update(isSubmitting: true);
     await cubit.setHoldingViews(force: true);
@@ -73,26 +55,14 @@ class ManageHoldings extends StatelessWidget {
                         count: 1,
                         holding: true));
               } else {
-                if (state.holdingsViews.length == 1 &&
-                    state.holdingsViews.first.sats == 0) {
-                  // notice in new design used but empty wallet gets lumped in here too
-                  if (pros.wallets.length == 1) {
-                    return RefreshIndicator(
-                        onRefresh: () => refresh(cubit),
-                        child: ComingSoonPlaceholder(
-                            scrollController: ScrollController(),
-                            header: 'Get Started',
-                            message:
-                                'Use the Import or Receive button to add ${pros.settings.chain.title} & assets to your wallet.'));
-                  } else {
-                    return RefreshIndicator(
-                        onRefresh: () => refresh(cubit),
-                        child: ComingSoonPlaceholder(
-                            scrollController: ScrollController(),
-                            header: 'Empty Wallet',
-                            message:
-                                'This wallet has never been used before.\nClick "Receive" to get started.'));
-                  }
+                if (state.holdingsViews.length == 0) {
+                  return RefreshIndicator(
+                      onRefresh: () => refresh(cubit),
+                      child: ComingSoonPlaceholder(
+                          scrollController: ScrollController(),
+                          header: 'Get Started',
+                          message:
+                              'Use the Create button to make an asset you can manage.'));
                 } else {
                   //if (state.holdingsViews.isNotEmpty) {
                   return RefreshIndicator(
@@ -132,113 +102,28 @@ class _HoldingsView extends State<HoldingsView> {
   Future<void> refresh(ManageHoldingsViewCubit cubit) async =>
       await cubit.setHoldingViews(force: true);
 
-  void _toggleUSD() {
-    if (pros.rates.primaryIndex
-            .getOne(pros.securities.RVN, pros.securities.USD) ==
-        null) {
-      widget.cubit.update(showUSD: false);
-    } else {
-      widget.cubit.update(showUSD: !widget.cubit.state.showUSD);
-    }
-  }
-
   void _togglePath() {
     widget.cubit.update(showPath: !widget.cubit.state.showPath);
   }
 
-  void _toggleSearch() {
-    widget.cubit.update(showSearchBar: !widget.cubit.state.showSearchBar);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final List<Widget> rvnHolding = <Widget>[];
     final List<Widget> assetHoldings = <Widget>[];
-    final Padding searchBar = Padding(
-        padding: const EdgeInsets.only(top: 1, bottom: 16, left: 16, right: 16),
-        child: TextFieldFormatted(
-            controller: TextEditingController(),
-            //focusedErrorBorder: InputBorder.none,
-            //errorBorder: InputBorder.none,
-            //focusedBorder: InputBorder.none,
-            //enabledBorder: InputBorder.none,
-            //disabledBorder: InputBorder.none,
-            contentPadding:
-                const EdgeInsets.only(left: 16, top: 16, bottom: 16),
-            autocorrect: false,
-            textInputAction: TextInputAction.done,
-            labelText: 'Search',
-            suffixIcon: IconButton(
-              icon: const Padding(
-                  padding: const EdgeInsets.only(right: 14),
-                  child: Icon(Icons.clear_rounded, color: AppColors.black38)),
-              onPressed: () => setState(() {
-                searchController.text = '';
-                widget.cubit.update(showSearchBar: false);
-              }),
-            ),
-            onChanged: (_) => setState(() {}),
-            onEditingComplete: () =>
-                widget.cubit.update(showSearchBar: false)));
     for (final AssetHolding holding in widget.cubit.state.assetHoldings) {
       final ListTile thisHolding = ListTile(
-          //dense: true,
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () async => onTap(widget.cubit.state.ranWallet, holding),
-          onLongPress: _togglePath,
-          leading: leadingIcon(holding),
-          title: title(holding, currentCrypto),
-          trailing: services.developer.developerMode == true
-              ? ((holding.symbol == currentCrypto.symbol) // && !isEmpty
-                  ? GestureDetector(
-                      onTap: () => _toggleSearch(),
-                      child: searchController.text == ''
-                          ? const Icon(Icons.search)
-                          : const Icon(
-                              Icons.search,
-                              shadows: <Shadow>[
-                                Shadow(
-                                    color: AppColors.black12,
-                                    offset: Offset(1, 1),
-                                    blurRadius: 1),
-                                Shadow(
-                                    color: AppColors.black12,
-                                    offset: Offset(1, 2),
-                                    blurRadius: 2)
-                              ],
-                            ))
-                  : null)
-              : null);
-      if (holding.symbol == currentCrypto.symbol) {
-        //if (pros.securities.coinSymbols.contains(holding.symbol)) {
-        rvnHolding.add(Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            thisHolding,
-            if (widget.cubit.state.showSearchBar /*&& !isEmpty*/) searchBar,
-          ],
-        ));
-        rvnHolding.add(const Divider(
-          height: 1,
-          indent: 70,
-          endIndent: 0,
-        ));
-      } else {
-        if (searchController.text == '' ||
-            holding.symbol.contains(searchController.text.toUpperCase())) {
-          assetHoldings.add(thisHolding);
-          assetHoldings.add(const Divider(height: 1));
-        }
+        //dense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+        onTap: () async => onTap(widget.cubit.state.ranWallet, holding),
+        onLongPress: _togglePath,
+        leading: leadingIcon(holding),
+        title: title(holding, currentCrypto),
+      );
+      if (searchController.text == '' ||
+          holding.symbol.contains(searchController.text.toUpperCase())) {
+        assetHoldings.add(thisHolding);
+        assetHoldings.add(const Divider(height: 1));
       }
-    }
-
-    /// this case is when we haven't started downloading anything yet.
-    if (rvnHolding.isEmpty && assetHoldings.isEmpty) {
-      rvnHolding.add(Shimmer.fromColors(
-          baseColor: AppColors.primaries[0],
-          highlightColor: Colors.white,
-          child: components.empty.holdingPlaceholder(context)));
     }
 
     final ListView listView = ListView(
@@ -246,7 +131,6 @@ class _HoldingsView extends State<HoldingsView> {
         controller: scrollController,
         physics: const ClampingScrollPhysics(),
         children: <Widget>[
-          ...rvnHolding,
           ...assetHoldings,
           ...<Widget>[components.empty.blankNavArea(context)]
         ]);
@@ -270,7 +154,7 @@ class _HoldingsView extends State<HoldingsView> {
 
   void navigate(BalanceView balance, {Wallet? wallet}) {
     streams.app.wallet.asset.add(balance.symbol); // todo: remove
-    sail.to('/wallet/holding', symbol: balance.symbol
+    sail.to('/manage/holding', symbol: balance.symbol
         //arguments: <String, Object?>{'holding': balance, 'walletId': wallet?.id},
         );
   }

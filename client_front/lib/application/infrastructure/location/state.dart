@@ -30,8 +30,18 @@ abstract class LocationCubitState extends Equatable {
     this.symbol,
     this.menuOpen = false,
   });
-  // would like to enforce it here but we can't because it's final
-  //{sector = sectorSections.contains(this.sector) ? this.sector: Section.wallet;};
+  // would like to enforce it here but we can't because const can't have body
+  //  {
+  //    sector = sectorSections.contains(this.sector)
+  //    ? this.sector
+  //    : Section.wallet;
+  //  }
+  // or
+  //  {
+  //    if (!sectorSections.contains(this.sector)) {
+  //      throw Exception('invalid sector');
+  //    }
+  //  }
 
   static List<Section> get sectorSections =>
       [Section.wallet, Section.manage, Section.swap];

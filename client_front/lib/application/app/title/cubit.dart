@@ -29,7 +29,7 @@ class TitleCubit extends Cubit<TitleCubitState> {
 
   bool get showWalletName => [
         '/wallet/holdings',
-        '/manage',
-        '/swap',
+        '/manage/holdings',
+        '/swap/holdings',
       ].contains(sail.latestLocation);
 }

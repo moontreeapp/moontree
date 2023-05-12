@@ -11,6 +11,7 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/utils/ext.dart';
 import 'package:client_front/application/common.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 part 'state.dart';
 
@@ -71,6 +72,18 @@ class ManageHoldingsViewCubit extends Cubit<ManageHoldingsViewState> {
     ChainNet? chainNet,
     bool force = false,
   }) async {
+    /// filter down to holdings that are or have matching admin assets
+    Iterable<BalanceView> filterToManageableAssets(
+        Iterable<BalanceView> holdingViews) {
+      // we just need the admin symbols I think
+      //final Iterable<String> adminSymbols =
+      //    holdingViews.where((e) => e.symbol.isAdmin).map((e) => e.symbol);
+      //return holdingViews.where((e) =>
+      //    e.symbol.isAdmin ||
+      //    adminSymbols.contains(Symbol(e.symbol).toAdminSymbol));
+      return holdingViews.where((e) => e.symbol.isAdmin);
+    }
+
     wallet ??= Current.wallet;
     chainNet ??= Current.chainNet;
     if (force ||
@@ -82,7 +95,8 @@ class ManageHoldingsViewCubit extends Cubit<ManageHoldingsViewState> {
         assetHoldings: [],
         isSubmitting: true,
       );
-      final holdingViews = await HoldingsRepo(wallet: wallet).fetch();
+      Iterable<BalanceView> holdingViews =
+          filterToManageableAssets(await HoldingsRepo(wallet: wallet).fetch());
       Map<ChainNet, List<Wallet>> startedDerive = state.startedDerive;
       if (wallet is LeaderWallet &&
           (!(state.startedDerive.get(chainNet, [])?.contains(wallet) ??
