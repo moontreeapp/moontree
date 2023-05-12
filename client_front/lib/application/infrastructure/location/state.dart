@@ -10,6 +10,9 @@ abstract class LocationCubitState extends Equatable {
   /// what section of the app am I in?
   final Section? section;
 
+  /// what section of the app am I in?
+  final Section? sector; // wallet / manage / swap
+
   /// what asset I'm looking at currently
   final String? symbol;
 
@@ -23,12 +26,18 @@ abstract class LocationCubitState extends Equatable {
   const LocationCubitState({
     this.path,
     this.section,
+    this.sector,
     this.symbol,
     this.menuOpen = false,
   });
+  // would like to enforce it here but we can't because it's final
+  //{sector = sectorSections.contains(this.sector) ? this.sector: Section.wallet;};
+
+  static List<Section> get sectorSections =>
+      [Section.wallet, Section.manage, Section.swap];
 
   @override
-  List<Object?> get props => [path, section, symbol, menuOpen];
+  List<Object?> get props => [path, section, sector, symbol, menuOpen];
 
   /// these path through functions allow this to be the single source of truth,
   /// for the rest of the front end. Todo: convert frontend to reference this.
@@ -62,6 +71,7 @@ class LocationState extends LocationCubitState {
   const LocationState({
     super.path,
     super.section,
+    super.sector,
     super.symbol,
     super.menuOpen,
   });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/streams.dart';
@@ -176,16 +177,15 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                                 // can changed based upon whats selected:
                                 NavbarActions(),
                                 if (state.showSections) ...<Widget>[
-                                  const SizedBox(height: 6),
+                                  const SizedBox(height: 14),
                                   Padding(
                                       padding: EdgeInsets.zero,
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceAround,
                                         children: <Widget>[
-                                          //sectorIcon(appContext: AppContext.wallet),
-                                          //sectorIcon(appContext: AppContext.manage),
-                                          //sectorIcon(appContext: AppContext.swap),
+                                          SectionIcon(section: Section.wallet),
+                                          SectionIcon(section: Section.manage),
                                         ],
                                       ))
                                 ]
@@ -293,6 +293,36 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                       ])));
             });
       });
+}
+
+class SectionIcon extends StatefulWidget {
+  final Section section;
+  const SectionIcon({super.key, required this.section});
+
+  @override
+  _SectionIconState createState() => _SectionIconState();
+}
+
+class _SectionIconState extends State<SectionIcon> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => BlocBuilder<LocationCubit,
+          LocationCubitState>(
+      builder: (BuildContext context, LocationCubitState state) =>
+          GestureDetector(
+              onTap: () => sail.to(null, section: widget.section),
+              child: SvgPicture.asset(
+                  'assets/icons/custom/mobile/${widget.section.name}'
+                  '${state.section == widget.section ? '-active' : ''}.svg')));
 }
 
 class NavbarActions extends StatelessWidget {

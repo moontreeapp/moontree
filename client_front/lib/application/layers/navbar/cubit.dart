@@ -17,7 +17,7 @@ class NavbarCubit extends Cubit<NavbarCubitState> {
   NavbarCubit()
       : super(
           NavbarState(
-              showSections: false,
+              showSections: true,
               height: 0,
               previousNavbarHeight: NavbarHeight.hidden,
               currentNavbarHeight: NavbarHeight.hidden),

@@ -33,7 +33,7 @@ class Sail {
   static const Map<Section, String> initialPaths = {
     Section.login: initialPath,
     Section.wallet: '/wallet/holdings',
-    Section.manage: '/manage',
+    Section.manage: '/manage/holdings',
     Section.swap: '/swap',
     Section.settings: '/menu',
   };
@@ -172,25 +172,17 @@ class Sail {
       frontPath: '/wallet/send/checkout',
       backPath: '/',
     ),
-    '/manage': Manifest(
-      title: 'Manage',
-      section: Section.manage,
-      frontHeight: FrontContainerHeight.max,
-      navbarHeight: NavbarHeight.max,
-      frontPath: '/manage',
-      backPath: '/menu',
-    ),
     '/manage/holdings': Manifest(
-      title: 'Holdings', // gets overridden with wallet name
-      section: Section.wallet,
+      title: 'Manage', // gets overridden with wallet name
+      section: Section.manage,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.max,
       frontPath: '/manage/holdings',
       backPath: '/menu',
     ),
     '/manage/holding': Manifest(
-      title: 'Holding', // gets overridden with holding name
-      section: Section.wallet,
+      title: 'Manage', // gets overridden with holding name
+      section: Section.manage,
       frontHeight: FrontContainerHeight.mid,
       navbarHeight: NavbarHeight.mid,
       frontPath: '/manage/holding',
@@ -199,7 +191,7 @@ class Sail {
     ),
     '/manage/reissue': Manifest(
       title: 'Reissue',
-      section: Section.wallet,
+      section: Section.manage,
       frontHeight: FrontContainerHeight.mid,
       navbarHeight: NavbarHeight.hidden, // should be replaced with 'preview'
       frontPath: '/manage/reissue',
@@ -207,7 +199,7 @@ class Sail {
     ),
     '/manage/reissue/checkout': Manifest(
       title: 'Checkout',
-      section: Section.wallet,
+      section: Section.manage,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/manage/reissue/checkout',
@@ -329,21 +321,25 @@ class Sail {
     return location;
   }
 
-  void home({
-    String location = '/wallet/holdings',
-    bool forceFullScreen = true,
-  }) {
-    if (components.cubits.location.state.path != '/wallet/holdings') {
-      // if /wallet/holdings in DestinationHistory
-      if (destinationHistory[Section.wallet]!.contains(location)) {
-        while (back() != location &&
-            destinationHistory[Section.wallet]!.length > 0) {
-          print('going back');
+  void home({bool forceFullScreen = true}) {
+    void perSection({Section? section}) {
+      if (section == null) {
+        section == Section.wallet;
+      }
+      final String location = '/${section!.name}/holdings';
+      if (components.cubits.location.state.path != location) {
+        if (destinationHistory[section]!.contains(location)) {
+          while (
+              back() != location && destinationHistory[section]!.length > 0) {
+            print('going back');
+          }
+        } else {
+          to(location);
         }
-      } else {
-        to(location);
       }
     }
+
+    perSection(section: components.cubits.location.state.sector);
     if (components.cubits.location.state.menuOpen) {
       menu(open: false);
     }

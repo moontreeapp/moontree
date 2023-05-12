@@ -19,6 +19,9 @@ class LocationCubit extends Cubit<LocationCubitState> {
     final newState = LocationState(
       path: path ?? state.path,
       section: section ?? state.section,
+      sector: LocationCubitState.sectorSections.contains(section)
+          ? section
+          : state.sector,
       symbol: symbol ?? state.symbol,
       menuOpen: menuOpen ?? state.menuOpen,
     );
@@ -28,12 +31,7 @@ class LocationCubit extends Cubit<LocationCubitState> {
     emit(newState);
   }
 
-  void reset() => emit(LocationState(
-        path: null,
-        section: null,
-        symbol: null,
-        menuOpen: false,
-      ));
+  void reset() => emit(LocationState());
 
   bool get menuOpen => state.menuOpen;
 }

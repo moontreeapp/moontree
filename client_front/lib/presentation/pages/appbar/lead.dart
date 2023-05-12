@@ -217,7 +217,7 @@ class _PageLead extends State<PageLead> {
 */
   static const Set<String> menuLocations = {
     '/wallet/holdings',
-    '/manage',
+    '/manage/holdings',
 
     /// not a route.
     //'/menu',
