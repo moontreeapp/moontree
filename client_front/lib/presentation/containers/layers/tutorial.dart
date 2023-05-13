@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/application/layers/tutorial/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/pages/appbar/connection.dart';
+import 'package:client_front/presentation/containers/appbar/connection.dart';
 import 'package:client_front/presentation/widgets/other/speech_bubble.dart';
 import 'package:client_front/presentation/widgets/other/other.dart';
 import 'package:client_front/presentation/components/components.dart'

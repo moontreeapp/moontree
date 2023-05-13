@@ -75,13 +75,23 @@ class ManageHoldingsViewCubit extends Cubit<ManageHoldingsViewState> {
     /// filter down to holdings that are or have matching admin assets
     Iterable<BalanceView> filterToManageableAssets(
         Iterable<BalanceView> holdingViews) {
-      // we just need the admin symbols I think
+      // return the admins and assets we hold that correspond to them.
       //final Iterable<String> adminSymbols =
       //    holdingViews.where((e) => e.symbol.isAdmin).map((e) => e.symbol);
       //return holdingViews.where((e) =>
       //    e.symbol.isAdmin ||
       //    adminSymbols.contains(Symbol(e.symbol).toAdminSymbol));
-      return holdingViews.where((e) => e.symbol.isAdmin);
+
+      // actually, we just need the admin symbols I think
+      //return holdingViews.where((e) => e.symbol.isAdmin);
+
+      // actually, what would be best is if we went and got the symbols which
+      // this admin symbol control. then just display those.
+      return holdingViews.where((e) => e.symbol.isAdmin).map((e) => BalanceView(
+          satsConfirmed: 0,
+          satsUnconfirmed: 0,
+          symbol: Symbol(e.symbol).toMainSymbol!,
+          chain: e.chain));
     }
 
     wallet ??= Current.wallet;

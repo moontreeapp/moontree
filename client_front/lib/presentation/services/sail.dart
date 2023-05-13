@@ -186,7 +186,6 @@ class Sail {
       frontHeight: FrontContainerHeight.mid,
       navbarHeight: NavbarHeight.mid,
       frontPath: '/manage/holding',
-      extraChild: const FrontHoldingExtra(),
       backPath: '/manage/holding/coinspec',
     ),
     '/manage/reissue': Manifest(

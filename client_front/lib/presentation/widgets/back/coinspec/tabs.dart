@@ -41,10 +41,6 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
       widget.walletCubit!.state.currentTab
           .add(CoinSpecTabs.tabIndex[tabController.index]);
     }
-    if (widget.manageCubit != null) {
-      widget.manageCubit!.state.currentTab
-          .add(CoinSpecTabs.tabIndex[tabController.index]);
-    }
   }
 
   @override

@@ -21,7 +21,7 @@ class TitleCubit extends Cubit<TitleCubitState> {
     if (showWalletName) {
       return Current.wallet.name;
     }
-    if (sail.latestLocation == '/wallet/holding') {
+    if (['/wallet/holding', '/manage/holding'].contains(sail.latestLocation)) {
       return Current.holding.shortName; // should be holding name
     }
     return state.title ?? sail.latestLocation ?? ' ';

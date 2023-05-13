@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_front/application/infrastructure/location/cubit.dart';
-import 'package:client_front/presentation/pages/appbar/connection.dart';
-import 'package:client_front/presentation/pages/appbar/lead.dart';
-import 'package:client_front/presentation/pages/appbar/title.dart';
+import 'package:client_front/presentation/containers/appbar/connection.dart';
+import 'package:client_front/presentation/containers/appbar/lead.dart';
+import 'package:client_front/presentation/containers/appbar/title.dart';
 import 'package:client_front/presentation/services/services.dart'
     show screen, sail;
 import 'package:client_front/presentation/components/components.dart'

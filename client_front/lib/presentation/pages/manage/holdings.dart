@@ -358,33 +358,36 @@ class _HoldingsView extends State<HoldingsView> {
                     style: Theme.of(context).textTheme.bodyLarge),
               )),
         ]),
-        Text(
-          holding.mainLength > 1 && holding.restricted != null
-              ? <String>[
-                  if (holding.main != null) 'Main',
-                  if (holding.admin != null) 'Admin',
-                  if (holding.restricted != null) 'Restricted',
-                  if (holding.restrictedAdmin != null) 'Restricted Admin',
-                ].join(', ')
-              : services.conversion
-                  .securityAsReadable(holding.balance?.sats ?? 0,
-                      security: holding.balance == null
-                          ? const Security(
-                              symbol: 'unknown',
-                              chain: Chain.none,
-                              net: Net.test,
-                            )
-                          : Security(
-                              symbol: holding.balance!.symbol,
-                              chain: pros.settings.chain,
-                              net: pros.settings.net,
-                            ),
-                      asUSD: widget.cubit.state.showUSD),
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium!
-              .copyWith(color: AppColors.black60),
-        ),
+
+        /// this could be the total amount in circulation if we grab that in the
+        /// cubit, but right now we don't.
+        //Text(
+        //  holding.mainLength > 1 && holding.restricted != null
+        //      ? <String>[
+        //          if (holding.main != null) 'Main',
+        //          if (holding.admin != null) 'Admin',
+        //          if (holding.restricted != null) 'Restricted',
+        //          if (holding.restrictedAdmin != null) 'Restricted Admin',
+        //        ].join(', ')
+        //      : services.conversion
+        //          .securityAsReadable(holding.balance?.sats ?? 0,
+        //              security: holding.balance == null
+        //                  ? const Security(
+        //                      symbol: 'unknown',
+        //                      chain: Chain.none,
+        //                      net: Net.test,
+        //                    )
+        //                  : Security(
+        //                      symbol: holding.balance!.symbol,
+        //                      chain: pros.settings.chain,
+        //                      net: pros.settings.net,
+        //                    ),
+        //              asUSD: widget.cubit.state.showUSD),
+        //  style: Theme.of(context)
+        //      .textTheme
+        //      .bodyMedium!
+        //      .copyWith(color: AppColors.black60),
+        //),
       ]);
 }
 

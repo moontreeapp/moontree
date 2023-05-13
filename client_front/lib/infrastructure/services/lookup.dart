@@ -39,6 +39,6 @@ class Current {
   static Net get net => pros.settings.net;
   static Security get coin => pros.securities.currentCoin;
 
-  static Security get holding =>
-      components.cubits.transactionsView.state.security;
+  static Security get holding => components.cubits.location.state.security;
+  //components.cubits.transactionsView.state.security;
 }

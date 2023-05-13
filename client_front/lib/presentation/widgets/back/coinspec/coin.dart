@@ -110,13 +110,13 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
                 .copyWith(color: AppColors.white87)),
       ]);
     } else if (front && widget.totalSupply != null) {
-      ret.addAll(<Widget>[
-        Text('Total Supply',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(color: AppColors.white)),
-      ]);
+      //ret.addAll(<Widget>[
+      //  Text('Total Supply',
+      //      style: Theme.of(context)
+      //          .textTheme
+      //          .bodyLarge!
+      //          .copyWith(color: AppColors.white)),
+      //]);
     }
     return ret;
   }

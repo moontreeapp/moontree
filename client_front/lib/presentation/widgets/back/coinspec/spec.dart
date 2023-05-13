@@ -98,10 +98,11 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
               symbol: symbol,
               holdingSat: holdingSat,
               totalSupply: widget.pageTitle == 'Asset'
-                  ? pros.assets.primaryIndex
-                      .getOne(symbol, pros.settings.chain, pros.settings.net)
-                      ?.amount
-                      .toSatsCommaString()
+                  ? symbol
+                  //? pros.assets.primaryIndex
+                  //    .getOne(symbol, pros.settings.chain, pros.settings.net)
+                  //    ?.amount
+                  //    .toSatsCommaString()
                   : null),
           widget.bottom ?? specBottom(holdingSat, amountSat),
         ],

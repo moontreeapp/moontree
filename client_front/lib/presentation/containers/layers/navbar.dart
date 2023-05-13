@@ -127,8 +127,6 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                 slide = (screen.navbar.midHeight / maxHeight) *
                     animationController.value;
               }
-              print(slide);
-              //print(animationController.value);
               return Transform(
                   alignment: Alignment.bottomCenter,
                   transform: Matrix4.identity()..translate(0.0, slide, 0.0),
@@ -428,27 +426,44 @@ class NavbarActions extends StatelessWidget {
                                       ]
                                     : locationState.section == Section.manage
                                         ? <Widget>[
-                                            Expanded(
-                                                child: BottomButton(
-                                              label: 'create',
-                                              enabled: false,
-                                              onPressed: () =>
-                                                  _produceCreateModal(context),
-                                            ))
+                                            if (locationState.path ==
+                                                '/manage/holdings')
+                                              Expanded(
+                                                  child: BottomButton(
+                                                label: 'create',
+                                                enabled: false,
+                                                onPressed: () =>
+                                                    _produceCreateModal(
+                                                        context),
+                                              ))
+                                            else if (locationState.path ==
+                                                '/manage/holding')
+                                              Expanded(
+                                                  child: BottomButton(
+                                                label: 'reissue',
+                                                enabled: false,
+                                                onPressed: () {},
+                                              ))
+                                            else
+                                              Expanded(
+                                                  child: BottomButton(
+                                                label: 'create',
+                                                enabled: false,
+                                                onPressed: () {},
+                                              ))
                                           ]
                                         : <Widget>[
                                             Expanded(
                                                 child: BottomButton(
                                               enabled: false,
-                                              onPressed: () =>
-                                                  _produceCreateModal(context),
+                                              label: 'buy',
+                                              onPressed: () {},
                                             )),
                                             Expanded(
                                                 child: BottomButton(
                                               label: 'sell',
                                               enabled: false,
-                                              onPressed: () =>
-                                                  _produceCreateModal(context),
+                                              onPressed: () {},
                                             ))
                                           ]))
                                 .intersperse(const SizedBox(width: 16))
