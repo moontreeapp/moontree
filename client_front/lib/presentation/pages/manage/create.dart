@@ -154,21 +154,21 @@ class _SimpleCreateState extends State<SimpleCreate> {
                           textInputAction: TextInputAction.next,
                           labelText: 'Parent Name',
                           hintText: "what asset is this asset a part of?",
-                          prefixIcon: SizedBox(
-                              height: 16,
-                              width: 16,
-                              child: Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: components.icons.assetAvatar(
-                                      parentNameController.text,
-                                      net: pros.settings.net))),
-                          //decoration: styles.decorations.textField(context,
-                          //    focusNode: sendAssetFocusNode,
-                          //    labelText: 'Asset',
-                          //    hintText: pros.settings.chain.title,
-                          //    prefixIcon: components.icons.assetAvatar(
-                          //        holdingView!.symbol,
-                          //        net: pros.settings.net)),
+                          //prefixIcon: SizedBox(
+                          //    height: 16,
+                          //    width: 16,
+                          //    child: Padding(
+                          //        padding: EdgeInsets.all(8),
+                          //        child: components.icons.assetAvatar(
+                          //            parentNameController.text,
+                          //            net: pros.settings.net))),
+                          // //decoration: styles.decorations.textField(context,
+                          // //    focusNode: sendAssetFocusNode,
+                          // //    labelText: 'Asset',
+                          // //    hintText: pros.settings.chain.title,
+                          // //    prefixIcon: components.icons.assetAvatar(
+                          // //        holdingView!.symbol,
+                          // //        net: pros.settings.net)),
                           suffixIcon: IconButton(
                               icon: Padding(
                                   padding: const EdgeInsets.only(right: 14),
@@ -217,7 +217,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                               decimal: true),
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter(
-                                RegExp(r'^[0-9]{0,21000000})?'),
+                                RegExp(r'^[0-9]{0,21000000}?'),
                                 allow: true)
                           ],
                           labelText: 'Quantity',
@@ -225,9 +225,6 @@ class _SimpleCreateState extends State<SimpleCreate> {
                           errorText: (String x) {
                             if (x == '') {
                               return null;
-                            }
-                            if (x == '0') {
-                              return 'must be greater than 0';
                             }
                             if (int.parse(x) > 21000000) {
                               return 'too large';
@@ -238,7 +235,6 @@ class _SimpleCreateState extends State<SimpleCreate> {
                                 return null;
                               }
                             }
-                            return 'Unrecognized Amount';
                           }(quantityController.text),
                           onChanged: (String value) {
                             try {

@@ -189,6 +189,14 @@ class Sail {
       frontPath: '/manage/holding',
       backPath: '/manage/holding/coinspec',
     ),
+    '/manage/create': Manifest(
+      title: 'Create',
+      section: Section.manage,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/manage/create',
+      backPath: '/manage/create/coinspec',
+    ),
     '/manage/reissue': Manifest(
       title: 'Reissue',
       section: Section.manage,

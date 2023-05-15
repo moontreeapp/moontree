@@ -35,6 +35,7 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
       SimpleSendCheckout(transactionType: TransactionType.spend),
   '/manage/holdings': (BuildContext context) => const ManageHoldings(),
   '/manage/holding': (BuildContext context) => const ManageHolding(),
+  '/manage/create': (BuildContext context) => const SimpleCreate(),
   '/manage/reissue': (BuildContext context) => const SimpleReissue(),
   '/manage/reissue/checkout': (BuildContext context) =>
       SimpleReissueCheckout(transactionType: ReissueTransactionType.reissue),
