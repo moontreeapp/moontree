@@ -4,3 +4,4 @@ export 'package:client_front/presentation/pages/manage/front/holding.dart';
 export 'package:client_front/presentation/pages/manage/back/holding.dart';
 export 'package:client_front/presentation/pages/manage/front/reissue.dart';
 export 'package:client_front/presentation/pages/manage/back/reissue.dart';
+export 'package:client_front/presentation/pages/manage/create.dart';

@@ -41,6 +41,7 @@ class GlobalCubits {
   /// manage
   final ManageHoldingsViewCubit manageHoldingsView = ManageHoldingsViewCubit();
   final ManageHoldingViewCubit manageHoldingView = ManageHoldingViewCubit();
+  final SimpleCreateFormCubit simpleCreateForm = SimpleCreateFormCubit();
   final SimpleReissueFormCubit simpleReissueForm = SimpleReissueFormCubit();
 
   GlobalCubits();

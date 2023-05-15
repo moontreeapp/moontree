@@ -15,6 +15,7 @@ export 'package:client_front/application/layers/snackbar/cubit.dart';
 export 'package:client_front/application/layers/tutorial/cubit.dart';
 export 'package:client_front/application/manage/holding/cubit.dart';
 export 'package:client_front/application/manage/holdings/cubit.dart';
+export 'package:client_front/application/manage/create/cubit.dart';
 export 'package:client_front/application/manage/reissue/cubit.dart';
 export 'package:client_front/application/wallet/holding/cubit.dart';
 export 'package:client_front/application/wallet/holdings/cubit.dart';

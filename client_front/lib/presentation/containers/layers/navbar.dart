@@ -475,43 +475,48 @@ class NavbarActions extends StatelessWidget {
                           ))));
 
   void _produceCreateModal(BuildContext context) {
-    final List<ListTile> listTiles = [];
-    //var imageDetails = components.icons.getImageDetailsAlphacon('x');
     final imageDetails = ImageDetails(
         foreground: AppColors.rgb(AppColors.primary),
-        background: AppColors.rgb(AppColors.primary));
-    for (final Tuple2<String, SymbolType> symbolType in [
-      Tuple2('Main', SymbolType.main),
-      Tuple2('Sub', SymbolType.sub),
-      Tuple2('NFT', SymbolType.unique),
-      Tuple2('Channel', SymbolType.channel),
-      Tuple2('Restricted', SymbolType.restricted),
-      Tuple2('Qualifier', SymbolType.qualifier),
-      Tuple2('Sub Qualifier', SymbolType.qualifierSub),
-      //['Admin', SymbolType.admin],
-    ]) {
-      listTiles.add(ListTile(
-        onTap: () {
-          context.read<BottomModalSheetCubit>().hide();
-          print('create page please, for ${symbolType.item1}');
-        },
-        leading: components.icons.generateIndicator(
-                name: 'ASSET',
-                imageDetails: imageDetails,
-                height: 24,
-                width: 24,
-                assetType: symbolType.item2) ??
-            components.icons.assetFromCacheOrGenerate(
-                asset: 'ASSET',
-                height: 24,
-                width: 24,
-                imageDetails: imageDetails,
-                assetType: symbolType.item2),
-        title: Text(symbolType.item1,
-            style: Theme.of(context).textTheme.bodyLarge),
-      ));
-    }
-    components.cubits.bottomModalSheet.show(children: listTiles);
+        background: AppColors.rgb(AppColors.lightPrimaries[1]));
+    final modal = context.read<BottomModalSheetCubit>();
+    final cubit = context.read<SimpleCreateFormCubit>();
+    components.cubits.bottomModalSheet.show(children: [
+      for (final Tuple2<String, SymbolType> symbolType in [
+        Tuple2('Main', SymbolType.main),
+        Tuple2('Sub', SymbolType.sub),
+        Tuple2('NFT', SymbolType.unique),
+        Tuple2('Channel', SymbolType.channel),
+        Tuple2('Restricted', SymbolType.restricted),
+        Tuple2('Qualifier', SymbolType.qualifier),
+        Tuple2('Sub Qualifier', SymbolType.qualifierSub),
+        //['Admin', SymbolType.admin],
+      ])
+        ListTile(
+          onTap: () {
+            modal.hide();
+            cubit.reset();
+            cubit.set(type: symbolType.item2);
+            sail.to('/manage/create');
+            print('create page please, for ${symbolType.item1}');
+          },
+          leading: components.icons.generateIndicator(
+                  name: 'ASSET',
+                  imageDetails: imageDetails,
+                  height: 24,
+                  width: 24,
+                  assetType: symbolType.item2) ??
+              components.icons.assetFromCacheOrGenerate(
+                  asset: 'ASSET',
+                  height: 24,
+                  width: 24,
+                  imageDetails: imageDetails,
+                  assetType: symbolType.item2),
+          title: Text(
+            symbolType.item1,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        )
+    ]);
   }
 }
 
