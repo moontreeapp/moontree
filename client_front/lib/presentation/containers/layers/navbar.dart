@@ -1,3 +1,4 @@
+import 'package:client_back/utilities/structures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:tuple/tuple.dart';
 
 TextStyle style(BuildContext context, Snack? snack) => snack?.positive ?? true
     ? Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.white)
@@ -432,7 +434,7 @@ class NavbarActions extends StatelessWidget {
                                               Expanded(
                                                   child: BottomButton(
                                                 label: 'create',
-                                                enabled: false,
+                                                enabled: true,
                                                 onPressed: () =>
                                                     _produceCreateModal(
                                                         context),
@@ -473,6 +475,40 @@ class NavbarActions extends StatelessWidget {
 
   void _produceCreateModal(BuildContext context) {
     //SelectionItems(context, modalSet: SelectionSet.Create).build();
+    final List<ListTile> listTiles = [];
+    for (final Tuple2<String, SymbolType> symbolType in [
+      Tuple2('Main', SymbolType.main),
+      Tuple2('Sub', SymbolType.sub),
+      Tuple2('NFT', SymbolType.unique),
+      Tuple2('Channel', SymbolType.channel),
+      Tuple2('Restricted', SymbolType.restricted),
+      Tuple2('Qualifier', SymbolType.qualifier),
+      Tuple2('Sub Qualifier', SymbolType.qualifierSub),
+      //['Admin', SymbolType.admin],
+    ]) {
+      var imageDetails = components.icons.getImageDetailsAlphacon('x');
+      listTiles.add(ListTile(
+        onTap: () {
+          context.read<BottomModalSheetCubit>().hide();
+          print('create page please, for ${symbolType.item1}');
+        },
+        leading: components.icons.generateIndicator(
+                name: 'ASSET',
+                imageDetails: imageDetails,
+                height: 24,
+                width: 24,
+                assetType: symbolType.item2) ??
+            components.icons.assetFromCacheOrGenerate(
+                asset: 'ASSET',
+                height: 24,
+                width: 24,
+                imageDetails: imageDetails,
+                assetType: symbolType.item2),
+        title: Text(symbolType.item1,
+            style: Theme.of(context).textTheme.bodyLarge),
+      ));
+    }
+    components.cubits.bottomModalSheet.show(children: listTiles);
   }
 }
 
