@@ -36,6 +36,7 @@ class Sail {
     Section.manage: '/manage/holdings',
     Section.swap: '/swap/holdings',
     Section.settings: '/menu',
+    Section.scan: '/scan',
   };
 
   static const Map<String, Manifest> destinationMap = {
@@ -275,6 +276,13 @@ class Sail {
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/network/blockchain',
     ),
+    '/scan': Manifest(
+      title: 'Send',
+      section: Section.scan,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/scan',
+    ),
   };
 
   final List<Section> sectionHistory;
@@ -287,7 +295,8 @@ class Sail {
           Section.wallet: [],
           Section.manage: [],
           Section.swap: [],
-          Section.settings: []
+          Section.settings: [],
+          Section.scan: [],
         };
 
   void menu({bool? open}) async {

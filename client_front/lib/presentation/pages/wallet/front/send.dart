@@ -151,6 +151,11 @@ class _SimpleSendState extends State<SimpleSend> {
     final SimpleSendFormCubit cubit =
         BlocProvider.of<SimpleSendFormCubit>(context);
     data = populateData(context, data);
+    if (data['openQR'] == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        cubit.set(address: (await _produceScanModal()));
+      });
+    }
     populateFromData(cubit);
     return GestureDetector(
         onTap: () {

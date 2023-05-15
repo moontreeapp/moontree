@@ -222,6 +222,7 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                                             MainAxisAlignment.spaceAround,
                                         children: <Widget>[
                                           SectionIcon(section: Section.wallet),
+                                          SectionIcon(section: Section.scan),
                                           SectionIcon(section: Section.manage),
                                         ],
                                       ))

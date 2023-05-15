@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
+import 'package:client_front/presentation/pages/wallet/scan.dart';
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
@@ -34,8 +35,8 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
       SimpleSendCheckout(transactionType: TransactionType.spend),
   '/manage/holdings': (BuildContext context) => const ManageHoldings(),
   '/manage/holding': (BuildContext context) => const ManageHolding(),
-  '/manage/send': (BuildContext context) => const SimpleReissue(),
-  '/manage/send/checkout': (BuildContext context) =>
+  '/manage/reissue': (BuildContext context) => const SimpleReissue(),
+  '/manage/reissue/checkout': (BuildContext context) =>
       SimpleReissueCheckout(transactionType: ReissueTransactionType.reissue),
   '/backup/intro': (BuildContext context) => const BackupIntro(),
   '/backup/keypair': (BuildContext context) => const ShowKeypair(),
@@ -51,6 +52,7 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/setting/mining': (BuildContext context) => const MiningSetting(),
   '/setting/security': (BuildContext context) => const SecuritySettings(),
   '/network/blockchain': (BuildContext context) => const BlockchainSettings(),
+  '/scan': (BuildContext context) => const ScanQRPage(),
   '/send/checkout': (BuildContext context) => SimpleSendCheckout(
         transactionType: TransactionType.spend,
       ),
