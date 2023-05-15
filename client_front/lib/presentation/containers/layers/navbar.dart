@@ -1,4 +1,5 @@
 import 'package:client_back/utilities/structures.dart';
+import 'package:client_front/domain/utils/alphacon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -474,8 +475,11 @@ class NavbarActions extends StatelessWidget {
                           ))));
 
   void _produceCreateModal(BuildContext context) {
-    //SelectionItems(context, modalSet: SelectionSet.Create).build();
     final List<ListTile> listTiles = [];
+    //var imageDetails = components.icons.getImageDetailsAlphacon('x');
+    final imageDetails = ImageDetails(
+        foreground: AppColors.rgb(AppColors.primary),
+        background: AppColors.rgb(AppColors.primary));
     for (final Tuple2<String, SymbolType> symbolType in [
       Tuple2('Main', SymbolType.main),
       Tuple2('Sub', SymbolType.sub),
@@ -486,7 +490,6 @@ class NavbarActions extends StatelessWidget {
       Tuple2('Sub Qualifier', SymbolType.qualifierSub),
       //['Admin', SymbolType.admin],
     ]) {
-      var imageDetails = components.icons.getImageDetailsAlphacon('x');
       listTiles.add(ListTile(
         onTap: () {
           context.read<BottomModalSheetCubit>().hide();
