@@ -536,15 +536,15 @@ class _SimpleCreateState extends State<SimpleCreate> {
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
     components.cubits.bottomModalSheet.show(children: <Widget>[
       for (final decimal in [
-        Tuple2<String, int>('${cubit.state.quantity}', 0),
-        Tuple2<String, int>('${cubit.state.quantity}.0', 1),
-        Tuple2<String, int>('${cubit.state.quantity}.00', 2),
-        Tuple2<String, int>('${cubit.state.quantity}.000', 3),
-        Tuple2<String, int>('${cubit.state.quantity}.0000', 4),
-        Tuple2<String, int>('${cubit.state.quantity}.00000', 5),
-        Tuple2<String, int>('${cubit.state.quantity}.000000', 6),
-        Tuple2<String, int>('${cubit.state.quantity}.0000000', 7),
-        Tuple2<String, int>('${cubit.state.quantity}.00000000', 8),
+        Tuple2<String, int>('', 0),
+        Tuple2<String, int>('.0', 1),
+        Tuple2<String, int>('.00', 2),
+        Tuple2<String, int>('.000', 3),
+        Tuple2<String, int>('.0000', 4),
+        Tuple2<String, int>('.00000', 5),
+        Tuple2<String, int>('.000000', 6),
+        Tuple2<String, int>('.0000000', 7),
+        Tuple2<String, int>('.00000000', 8),
       ])
         ListTile(
           onTap: () {
@@ -557,8 +557,18 @@ class _SimpleCreateState extends State<SimpleCreate> {
               width: 24,
               imageDetails: imageDetails,
               assetType: SymbolType.main),
-          title:
-              Text(decimal.item1, style: Theme.of(context).textTheme.bodyLarge),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(cubit.state.quantity.toString(),
+                  style: Theme.of(context).textTheme.bodyLarge),
+              Text(decimal.item1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: AppColors.primary)),
+            ],
+          ),
         )
     ]);
   }
