@@ -8,6 +8,7 @@ class PageStructure extends StatelessWidget {
   final List<Widget>? thirdLowerChildren;
   final MainAxisAlignment? mainAxisAlignment;
   final CrossAxisAlignment? crossAxisAlignment;
+  final double headerSpace;
   final Widget? heightSpacer;
   final Widget? widthSpacer;
   const PageStructure({
@@ -18,6 +19,7 @@ class PageStructure extends StatelessWidget {
     this.thirdLowerChildren,
     this.mainAxisAlignment,
     this.crossAxisAlignment,
+    this.headerSpace = 0,
     this.heightSpacer = const SizedBox(height: 16),
     this.widthSpacer = const SizedBox(width: 16),
   });
@@ -28,8 +30,8 @@ class PageStructure extends StatelessWidget {
         onTap: FocusScope.of(context).unfocus,
         behavior: HitTestBehavior.translucent,
         child: Container(
-            padding:
-                const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
+            padding: EdgeInsets.only(
+                left: 16, right: 16, top: 16 + headerSpace, bottom: 40),
             alignment: Alignment.bottomCenter,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

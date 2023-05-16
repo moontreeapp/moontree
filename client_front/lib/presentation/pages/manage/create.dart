@@ -2,8 +2,10 @@ import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:client_front/application/manage/create/cubit.dart';
 import 'package:client_front/domain/utils/alphacon.dart';
+import 'package:client_front/domain/utils/transformers.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -76,10 +78,15 @@ class _SimpleCreateState extends State<SimpleCreate> {
     super.dispose();
   }
 
-  void _announceNoCoin() => streams.app.behavior.snack.add(Snack(
-        message: 'No coin in wallet - unable to pay fees',
-        positive: false,
-      ));
+  void _announceNoCoin(SimpleCreateFormState state) => !_allValidation(state)
+      ? streams.app.behavior.snack.add(Snack(
+          message: 'please fill out form',
+          positive: false,
+        ))
+      : streams.app.behavior.snack.add(Snack(
+          message: 'No coin in wallet - unable to pay fees',
+          positive: false,
+        ));
 
   @override
   Widget build(BuildContext context) {
@@ -98,10 +105,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
         child: BlocBuilder<SimpleCreateFormCubit, SimpleCreateFormState>(
             bloc: cubit..enter(),
             builder: (BuildContext context, SimpleCreateFormState state) {
-              // instead of using balances, which is unreliable, use holdingView
-
               parentNameController.text = state.parentName;
-
               if (state.name.length > 0) {
                 nameController.value = TextEditingValue(
                     text: state.name,
@@ -118,7 +122,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                             ? TextSelection.collapsed(offset: state.memo.length)
                             : memoController.selection);
               }
-              if (state.quantity.toString().length > 0) {
+              if (state.quantity.toString().length > 0 && state.quantity != 0) {
                 quantityController.value = TextEditingValue(
                     text: state.quantity.toString(),
                     selection: quantityController.selection.baseOffset >
@@ -136,165 +140,152 @@ class _SimpleCreateState extends State<SimpleCreate> {
                             offset: state.decimals.toString().length)
                         : decimalsController.selection);
               }
-              return Stack(
+              return PageStructure(
+                headerSpace: Platform.isIOS ? 16 : 8,
                 children: <Widget>[
-                  ListView(
-                    physics: const ClampingScrollPhysics(),
-                    controller: scrollController,
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 16),
-                    children: <Widget>[
-                      if (Platform.isIOS) const SizedBox(height: 8),
-                      const SizedBox(height: 8),
-                      ...<Widget>[
-                        TextFieldFormatted(
-                          focusNode: parentNameFocus,
-                          controller: parentNameController,
-                          readOnly: true,
-                          textInputAction: TextInputAction.next,
-                          labelText: 'Parent Name',
-                          hintText: "what asset is this asset a part of?",
-                          //prefixIcon: SizedBox(
-                          //    height: 16,
-                          //    width: 16,
-                          //    child: Padding(
-                          //        padding: EdgeInsets.all(8),
-                          //        child: components.icons.assetAvatar(
-                          //            parentNameController.text,
-                          //            net: pros.settings.net))),
-                          // //decoration: styles.decorations.textField(context,
-                          // //    focusNode: sendAssetFocusNode,
-                          // //    labelText: 'Asset',
-                          // //    hintText: pros.settings.chain.title,
-                          // //    prefixIcon: components.icons.assetAvatar(
-                          // //        holdingView!.symbol,
-                          // //        net: pros.settings.net)),
-                          suffixIcon: IconButton(
-                              icon: Padding(
-                                  padding: const EdgeInsets.only(right: 14),
-                                  child: SvgPicture.asset(
-                                      'assets/icons/custom/black/chevron-down.svg')
-                                  //Icon(Icons.expand_more_rounded,
-                                  //    color: AppColors.black60)
-                                  ),
-                              onPressed: () => _produceAssetModal(cubit)),
-                          onTap: () => _produceAssetModal(cubit),
-                          onChanged: (String value) {},
-                          onEditingComplete: () async {
-                            FocusScope.of(context).requestFocus(nameFocus);
-                          },
-                        ),
-                        TextFieldFormatted(
-                          focusNode: nameFocus,
-                          controller: nameController,
-                          textInputAction: TextInputAction.next,
-                          selectionControls:
-                              CustomMaterialTextSelectionControls(
-                                  context: components.routes.routeContext,
-                                  offset: Offset.zero),
-                          autocorrect: false,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'),
-                                allow: true)
-                          ],
-                          labelText: 'Name',
-                          hintText: "what's the name of this asset?",
-                          errorText: nameController.text != '' &&
-                                  !_validateAddress(nameController.text)
-                              ? 'Unrecognized Address'
-                              : null,
-                          onChanged: (String value) => cubit.set(name: value),
-                          onEditingComplete: () {
-                            cubit.set(name: nameController.text);
-                            FocusScope.of(context).requestFocus(quantityFocus);
-                          },
-                        ),
-                        TextFieldFormatted(
-                          focusNode: quantityFocus,
-                          controller: quantityController,
-                          textInputAction: TextInputAction.next,
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter(
-                                RegExp(r'^[0-9]{0,21000000}?'),
-                                allow: true)
-                          ],
-                          labelText: 'Quantity',
-                          hintText: 'how many coins should be minted?',
-                          errorText: (String x) {
-                            if (x == '') {
-                              return null;
-                            }
-                            if (int.parse(x) > 21000000) {
-                              return 'too large';
-                            }
-                            if (x.isNumeric) {
-                              final num? y = x.toNum();
-                              if (y != null && y.isRVNAmount) {
-                                return null;
-                              }
-                            }
-                          }(quantityController.text),
-                          onChanged: (String value) {
-                            try {
-                              cubit.set(quantity: int.parse(value));
-                            } catch (e) {
-                              cubit.set(quantity: 0);
-                            }
-                          },
-                          onEditingComplete: () {
-                            String value = quantityController.text;
-                            try {
-                              cubit.set(quantity: int.parse(value));
-                            } catch (e) {
-                              cubit.set(quantity: 0);
-                            }
+                  TextFieldFormatted(
+                    focusNode: parentNameFocus,
+                    controller: parentNameController,
+                    readOnly: true,
+                    textInputAction: TextInputAction.next,
+                    labelText: 'Parent Asset',
+                    hintText: "what asset is this asset a part of?",
+                    prefixIcon: parentNameController.text != ''
+                        ? PrefixAssetCoinIcon(symbol: parentNameController.text)
+                        : null,
+                    // //decoration: styles.decorations.textField(context,
+                    // //    focusNode: sendAssetFocusNode,
+                    // //    labelText: 'Asset',
+                    // //    hintText: pros.settings.chain.title,
+                    // //    prefixIcon: components.icons.assetAvatar(
+                    // //        holdingView!.symbol,
+                    // //        net: pros.settings.net)),
+                    suffixIcon: IconButton(
+                        icon: Padding(
+                            padding: const EdgeInsets.only(right: 14),
+                            child: SvgPicture.asset(
+                                'assets/icons/custom/black/chevron-down.svg')
+                            //Icon(Icons.expand_more_rounded,
+                            //    color: AppColors.black60)
+                            ),
+                        onPressed: () => _produceAssetModal(cubit)),
+                    onTap: () => _produceAssetModal(cubit),
+                    onChanged: (String value) {},
+                    onEditingComplete: () async {
+                      FocusScope.of(context).requestFocus(nameFocus);
+                    },
+                  ),
+                  TextFieldFormatted(
+                    focusNode: nameFocus,
+                    controller: nameController,
+                    textInputAction: TextInputAction.next,
+                    selectionControls: CustomMaterialTextSelectionControls(
+                        context: components.routes.routeContext,
+                        offset: Offset.zero),
+                    autocorrect: false,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter(
+                        RegExp(r'[a-zA-Z0-9._#]'),
+                        allow: true,
+                      ),
+                      UpperCaseTextFormatter(),
+                    ],
+                    labelText: 'Name',
+                    hintText: "what's the name of this asset?",
+                    errorText: nameController.text == ''
+                        ? null
+                        : _validateName()
+                            ? null
+                            : '3-30 characters, special chars allowed: _ . #',
+                    onChanged: (String value) => cubit.set(name: value),
+                    onEditingComplete: () {
+                      cubit.set(name: nameController.text);
+                      FocusScope.of(context).requestFocus(quantityFocus);
+                    },
+                  ),
+                  TextFieldFormatted(
+                    focusNode: quantityFocus,
+                    controller: quantityController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      signed: false,
+                      decimal: false,
+                    ),
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter(
+                        RegExp(r'^[1-9]\d*$'),
+                        allow: true,
+                      )
+                    ],
+                    labelText: 'Quantity',
+                    hintText: 'how many coins should be minted?',
+                    errorText: quantityController.text == ''
+                        ? null
+                        : _validateQuantity()
+                            ? null
+                            : 'too large',
+                    onChanged: (String value) {
+                      if (_validateQuantity()) {
+                        try {
+                          cubit.set(quantity: int.parse(value));
+                        } catch (e) {
+                          cubit.set(quantity: 0);
+                        }
+                      }
+                    },
+                    onEditingComplete: () {
+                      if (_validateQuantity()) {
+                        try {
+                          cubit.set(
+                              quantity: int.parse(quantityController.text));
+                        } catch (e) {
+                          cubit.set(quantity: 0);
+                        }
+                      }
 
-                            //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
-                            //FocusScope.of(context).requestFocus(sendFeeFocusNode);
-                            FocusScope.of(context).unfocus();
-                          },
-                        ),
-                        TextFieldFormatted(
-                          onTap: () => _produceDecimalsModal(cubit),
-                          focusNode: decimalsFocus,
-                          controller: decimalsController,
-                          readOnly: true,
-                          textInputAction: TextInputAction.next,
-                          labelText: 'Decimals',
-                          hintText:
-                              'to how many decimal places is each coin divisible?',
-                          suffixIcon: IconButton(
-                              icon: Padding(
-                                  padding: const EdgeInsets.only(right: 14),
-                                  child: SvgPicture.asset(
-                                      'assets/icons/custom/black/chevron-down.svg')
-                                  //Icon(Icons.expand_more_rounded,
-                                  //    color: AppColors.black60)
-                                  ),
-                              onPressed: () => _produceDecimalsModal(cubit)),
-                          onChanged: (String newValue) {
-                            cubit.set(
-                                decimals: int.parse(decimalsController.text));
-                            FocusScope.of(context).requestFocus(memoFocus);
-                          },
-                        ),
-                        TextFieldFormatted(
-                            focusNode: memoFocus,
-                            controller: memoController,
-                            textInputAction: TextInputAction.next,
-                            labelText: 'Memo',
-                            hintText: 'IPFS',
-                            helperText: memoFocus.hasFocus
-                                ? 'will be saved on the blockchain'
-                                : null,
-                            helperStyle: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(height: .7, color: AppColors.primary),
-                            errorText: _verifyMemo() ? null : 'too long',
-                            /*suffixIcon: IconButton(
+                      //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
+                      //FocusScope.of(context).requestFocus(sendFeeFocusNode);
+                      FocusScope.of(context).unfocus();
+                    },
+                  ),
+                  TextFieldFormatted(
+                    onTap: () => _produceDecimalsModal(cubit),
+                    focusNode: decimalsFocus,
+                    controller: decimalsController,
+                    readOnly: true,
+                    textInputAction: TextInputAction.next,
+                    labelText: 'Decimals',
+                    hintText:
+                        'to how many decimal places is each coin divisible?',
+                    suffixIcon: IconButton(
+                        icon: Padding(
+                            padding: const EdgeInsets.only(right: 14),
+                            child: SvgPicture.asset(
+                                'assets/icons/custom/black/chevron-down.svg')
+                            //Icon(Icons.expand_more_rounded,
+                            //    color: AppColors.black60)
+                            ),
+                        onPressed: () => _produceDecimalsModal(cubit)),
+                    onChanged: (String newValue) {
+                      cubit.set(decimals: int.parse(decimalsController.text));
+                      FocusScope.of(context).requestFocus(memoFocus);
+                    },
+                  ),
+                  TextFieldFormatted(
+                      focusNode: memoFocus,
+                      controller: memoController,
+                      textInputAction: TextInputAction.next,
+                      labelText: 'Memo',
+                      hintText: 'IPFS',
+                      helperText: memoFocus.hasFocus
+                          ? 'will be saved on the blockchain'
+                          : null,
+                      helperStyle: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(height: .7, color: AppColors.primary),
+                      errorText: _validateMemo() ? null : 'too long',
+                      /*suffixIcon: IconButton(
                                 icon: const Icon(Icons.paste_rounded,
                                     color: AppColors.black60),
                                 onPressed: () async => cubit.set(
@@ -302,102 +293,77 @@ class _SimpleCreateState extends State<SimpleCreate> {
                                         (await Clipboard.getData('text/plain'))
                                                 ?.text ??
                                             '')),*/
-                            onChanged: (String value) => cubit.set(memo: value),
-                            onEditingComplete: () {
-                              cubit.set(memo: memoController.text);
-                              FocusScope.of(context)
-                                  .requestFocus(reissuableFocus);
-                            }),
-                        RadioListTile<bool>(
-                            focusNode: reissuableFocus,
-                            title: Text(
-                              'Reissuable',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            value: false,
-                            groupValue: state.reissuable,
-                            onChanged: (bool? value) =>
-                                cubit.set(reissuable: value)),
-                      ].intersperse(const SizedBox(height: 16)),
-                      const SizedBox(height: 40),
-                    ],
+                      onChanged: (String value) => cubit.set(memo: value),
+                      onEditingComplete: () {
+                        cubit.set(memo: memoController.text);
+                        FocusScope.of(context).requestFocus(reissuableFocus);
+                      }),
+                  RadioListTile<bool>(
+                      focusNode: reissuableFocus,
+                      title: Text(
+                        'Reissuable',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      value: true,
+                      groupValue: state.reissuable,
+                      onChanged: (bool? value) => cubit.set(reissuable: value)),
+                ],
+                firstLowerChildren: <Widget>[
+                  BottomButton(
+                    enabled: _allValidation(state) && !clicked,
+                    focusNode: previewFocus,
+                    label: !clicked ? 'Preview' : 'Generating Transaction...',
+                    disabledOnPressed: () => _announceNoCoin(state),
+                    onPressed: () {
+                      cubit.set(
+                        parentName: parentNameController.text,
+                        name: nameController.text,
+                        memo: memoController.text,
+                        quantity: int.parse(quantityController.text),
+                        decimals: int.parse(decimalsController.text),
+                        //reissuable: reissuableController.text,
+                      );
+                      setState(() {
+                        clicked = true;
+                      });
+                      _startSend(cubit, state);
+                    },
                   ),
-                  Container(
-                      alignment: Alignment.bottomCenter,
-                      height: screen.frontContainer.midHeight,
-                      child: FrontCurve(
-                        fuzzyTop: false,
-                        height: screen.buttonHeight + 24 + 24,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    top: 24, right: 16, bottom: 24, left: 16),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Expanded(
-                                          child: BottomButton(
-                                        focusNode: previewFocus,
-                                        enabled:
-                                            _allValidation(state) && !clicked,
-                                        label: !clicked
-                                            ? 'Preview'
-                                            : 'Generating Transaction...',
-                                        onPressed: () {
-                                          setState(() {
-                                            clicked = true;
-                                          });
-                                          _startSend(cubit, state);
-                                        },
-                                        disabledOnPressed: () {
-                                          _announceNoCoin();
-                                        },
-                                      ))
-                                    ])),
-                          ],
-                        ),
-                      ))
                 ],
               );
             }));
   }
 
-  double _asDouble(String x) {
-    try {
-      if (double.parse(x) == 0.0) {
-        return 0;
-      }
-    } catch (e) {
-      return 0;
+  bool _validateMemo([String? memo]) =>
+      (memo ?? memoController.text).isIpfs ||
+      (memo ?? memoController.text).isMemo;
+
+  bool _validateName([String? name]) =>
+      (name ?? nameController.text).isAssetPath;
+
+  bool _validateQuantity([String? quantity]) {
+    quantity = (quantity ?? quantityController.text);
+    if (quantity.contains('.') ||
+        quantity.contains(',') ||
+        quantity.contains('-') ||
+        quantity.contains(' ')) {
+      return false;
     }
-    return double.parse(x);
+    int intQ;
+    try {
+      intQ = int.parse(quantity);
+      return intQ <= 21000000;
+    } catch (e) {
+      return false;
+    }
   }
-
-  bool _validateAddress([String? address]) {
-    address ??= nameController.text;
-    return address == '' ||
-        (pros.settings.chain == Chain.ravencoin
-            ? pros.settings.net == Net.main
-                ? address.isAddressRVN
-                : address.isAddressRVNt
-            : pros.settings.net == Net.main
-                ? address.isAddressEVR
-                : address.isAddressEVRt);
-  }
-
-  bool _verifyMemo([String? memo]) =>
-      (memo ?? memoController.text).isMemo ||
-      (memo ?? memoController.text).isIpfs;
 
   bool _allValidation(SimpleCreateFormState state) =>
-      nameController.text != '' && _validateAddress() && _verifyMemo();
+      _validateName() && _validateQuantity() && _validateMemo();
 
   void _startSend(SimpleCreateFormCubit cubit, SimpleCreateFormState state) {
-    final bool vAddress = nameController.text != '' && _validateAddress();
-    final bool vMemo = _verifyMemo();
+    final bool vAddress = nameController.text != '';
+    final bool vMemo = _validateMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       //final SendRequest sendRequest = SendRequest(
@@ -417,7 +383,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
       //  //TODO: Currently memos are only for non-asset transactions
       //  memo: state.security == pros.securities.currentCoin &&
       //          state.memo != '' &&
-      //          _verifyMemo(state.memo)
+      //          _validateMemo(state.memo)
       //      ? state.memo
       //      : null,
       //  note: state.note != '' ? state.note : null,
@@ -541,32 +507,20 @@ class _SimpleCreateState extends State<SimpleCreate> {
   void _produceAssetModal(SimpleCreateFormCubit cubit) =>
       components.cubits.bottomModalSheet.show(children: <Widget>[
         for (String name in Current.holdingNames
-                .where(
-                    (String item) => item == pros.securities.currentCoin.symbol)
-                .toList() +
-            Current.holdingNames
-                .where(
-                    (String item) => item != pros.securities.currentCoin.symbol)
-                .toList())
+            .where((String item) => item.isAdmin)
+            .map((e) => Symbol(e).toMainSymbol!))
           ListTile(
               onTap: () {
                 context.read<BottomModalSheetCubit>().hide();
-                final sec = pros.securities.ofCurrent(nameSymbol(name)) ??
+                final sec = pros.securities.ofCurrent(name) ??
                     Security(
                         symbol: '',
                         chain: pros.settings.chain,
                         net: pros.settings.net);
                 cubit.set(parentName: sec.symbol);
               },
-              leading: components.icons.assetAvatar(
-                  name == 'Ravencoin'
-                      ? pros.securities.RVN.symbol
-                      : name == 'Evrmore'
-                          ? pros.securities.EVR.symbol
-                          : name,
-                  height: 24,
-                  width: 24,
-                  net: pros.settings.net),
+              leading: components.icons.assetAvatar(name,
+                  height: 24, width: 24, net: pros.settings.net),
               title: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
@@ -596,7 +550,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
             cubit.set(decimals: decimal.item2);
           },
           leading: components.icons.assetFromCacheOrGenerate(
-              asset: 'ASSET',
+              asset: decimal.item2.toString() + 'ABC',
               height: 24,
               width: 24,
               imageDetails: imageDetails,

@@ -235,14 +235,9 @@ class _SimpleSendState extends State<SimpleSend> {
                           controller: sendAsset,
                           readOnly: true,
                           textInputAction: TextInputAction.next,
-                          prefixIcon: SizedBox(
-                              height: 16,
-                              width: 16,
-                              child: Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: components.icons.assetAvatar(
-                                      holdingView!.symbol,
-                                      net: pros.settings.net))),
+                          prefixIcon:
+                              PrefixAssetCoinIcon(symbol: holdingView!.symbol),
+
                           //decoration: styles.decorations.textField(context,
                           //    focusNode: sendAssetFocusNode,
                           //    labelText: 'Asset',
