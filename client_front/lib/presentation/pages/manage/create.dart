@@ -140,7 +140,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                             offset: state.decimals.toString().length)
                         : decimalsController.selection);
               }
-              return PageStructure(
+              return ScrollablePageStructure(
                 headerSpace: Platform.isIOS ? 16 : 8,
                 children: <Widget>[
                   TextFieldFormatted(
@@ -298,15 +298,17 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         cubit.set(memo: memoController.text);
                         FocusScope.of(context).requestFocus(reissuableFocus);
                       }),
-                  RadioListTile<bool>(
-                      focusNode: reissuableFocus,
-                      title: Text(
-                        'Reissuable',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      value: true,
-                      groupValue: state.reissuable,
-                      onChanged: (bool? value) => cubit.set(reissuable: value)),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: SwtichChoice(
+                        label: 'Reissuable',
+                        description:
+                            "A reissuable asset's quantity and decimal places can increase in the future.",
+                        hideDescription: true,
+                        initial: cubit.state.reissuable,
+                        onChanged: (bool value) async =>
+                            cubit.set(reissuable: value),
+                      )),
                 ],
                 firstLowerChildren: <Widget>[
                   BottomButton(
