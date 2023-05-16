@@ -1,7 +1,7 @@
 part of 'cubit.dart';
 
 @immutable
-class SimpleCreateFormState extends CubitState {
+class SimpleCreateFormCubitState extends Equatable {
   final SymbolType? type;
   final String parentName;
   final String name;
@@ -15,7 +15,7 @@ class SimpleCreateFormState extends CubitState {
   final SimpleCreateCheckoutForm? checkout;
   final bool isSubmitting;
 
-  const SimpleCreateFormState({
+  const SimpleCreateFormCubitState({
     required this.type,
     this.parentName = '',
     this.name = '',
@@ -39,6 +39,7 @@ class SimpleCreateFormState extends CubitState {
 
   @override
   List<Object?> get props => <Object?>[
+        type,
         parentName,
         name,
         memo,
@@ -51,37 +52,23 @@ class SimpleCreateFormState extends CubitState {
         checkout,
         isSubmitting,
       ];
+}
 
-  factory SimpleCreateFormState.initial() => SimpleCreateFormState(type: null);
-
-  SimpleCreateFormState load({
-    SymbolType? type,
-    String? parentName,
-    String? name,
-    String? memo,
-    int? quantity,
-    int? decimals,
-    bool? reissuable,
-    List<UnsignedTransactionResult>? unsigned,
-    List<wutx.Transaction>? signed,
-    List<String>? txHash,
-    SimpleCreateCheckoutForm? checkout,
-    bool? isSubmitting,
-  }) =>
-      SimpleCreateFormState(
-        type: type ?? this.type,
-        parentName: parentName ?? this.parentName,
-        name: name ?? this.name,
-        quantity: quantity ?? this.quantity,
-        memo: memo ?? this.memo,
-        decimals: decimals ?? this.decimals,
-        reissuable: reissuable ?? this.reissuable,
-        unsigned: unsigned ?? this.unsigned,
-        signed: signed ?? this.signed,
-        txHash: txHash ?? this.txHash,
-        checkout: checkout ?? this.checkout,
-        isSubmitting: isSubmitting ?? this.isSubmitting,
-      );
+class SimpleCreateFormState extends SimpleCreateFormCubitState {
+  SimpleCreateFormState({
+    super.type = null,
+    super.parentName,
+    super.name,
+    super.quantity,
+    super.memo,
+    super.decimals,
+    super.reissuable,
+    super.unsigned,
+    super.signed,
+    super.txHash,
+    super.checkout,
+    super.isSubmitting,
+  });
 }
 
 class SimpleCreateCheckoutForm with EquatableMixin {

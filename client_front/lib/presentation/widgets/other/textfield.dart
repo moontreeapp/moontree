@@ -163,6 +163,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
             prefixIcon: widget.prefixIcon,
           )
         : InputDecoration(
+            enabled: widget.enabled ?? true,
             prefixIcon: widget.prefixIcon,
             focusedErrorBorder: widget.focusedErrorBorder ??
                 OutlineInputBorder(

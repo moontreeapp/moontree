@@ -478,9 +478,9 @@ class NavbarActions extends StatelessWidget {
     final imageDetails = ImageDetails(
         foreground: AppColors.rgb(AppColors.primary),
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
-    final modal = context.read<BottomModalSheetCubit>();
-    final cubit = context.read<SimpleCreateFormCubit>();
-    components.cubits.bottomModalSheet.show(children: [
+    final modal = components.cubits.bottomModalSheet;
+    final cubit = components.cubits.simpleCreateForm;
+    modal.show(children: [
       for (final Tuple2<String, SymbolType> symbolType in [
         Tuple2('Main', SymbolType.main),
         Tuple2('Sub', SymbolType.sub),
@@ -495,9 +495,8 @@ class NavbarActions extends StatelessWidget {
           onTap: () {
             modal.hide();
             cubit.reset();
-            cubit.set(type: symbolType.item2);
+            cubit.update(type: symbolType.item2);
             sail.to('/manage/create');
-            print('create page please, for ${symbolType.item1}');
           },
           leading: components.icons.generateIndicator(
                   name: 'ASSET',

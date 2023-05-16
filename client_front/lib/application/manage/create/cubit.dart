@@ -9,24 +9,14 @@ import 'package:client_front/application/common.dart';
 
 part 'state.dart';
 
-class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState>
-    with SetCubitMixin {
-  SimpleCreateFormCubit() : super(SimpleCreateFormState.initial());
+class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
+  SimpleCreateFormCubit() : super(SimpleCreateFormState());
 
-  @override
-  Future<void> reset() async => emit(SimpleCreateFormState.initial());
+  void reset() => emit(SimpleCreateFormState());
 
-  @override
-  SimpleCreateFormState submitting() => state.load(isSubmitting: true);
+  void submitting() => update(isSubmitting: true);
 
-  @override
-  Future<void> enter() async {
-    emit(submitting());
-    emit(state);
-  }
-
-  @override
-  void set({
+  void update({
     SymbolType? type,
     String? parentName,
     String? name,
@@ -39,22 +29,21 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState>
     List<String>? txHash,
     SimpleCreateCheckoutForm? checkout,
     bool? isSubmitting,
-  }) {
-    emit(state.load(
-      type: type,
-      parentName: parentName,
-      name: name,
-      memo: memo,
-      quantity: quantity,
-      decimals: decimals,
-      reissuable: reissuable,
-      unsigned: unsigned,
-      signed: signed,
-      txHash: txHash,
-      checkout: checkout,
-      isSubmitting: isSubmitting,
-    ));
-  }
+  }) =>
+      emit(SimpleCreateFormState(
+        type: type ?? state.type,
+        parentName: parentName ?? state.parentName,
+        name: name ?? state.name,
+        memo: memo ?? state.memo,
+        quantity: quantity ?? state.quantity,
+        decimals: decimals ?? state.decimals,
+        reissuable: reissuable ?? state.reissuable,
+        unsigned: unsigned ?? state.unsigned,
+        signed: signed ?? state.signed,
+        txHash: txHash ?? state.txHash,
+        checkout: checkout ?? state.checkout,
+        isSubmitting: isSubmitting ?? state.isSubmitting,
+      ));
 
   // need set unsigned tx
   // need verify
