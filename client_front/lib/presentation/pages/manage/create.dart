@@ -1,35 +1,23 @@
 import 'dart:io' show Platform;
-import 'dart:async';
-import 'package:client_front/application/manage/create/cubit.dart';
-import 'package:client_front/domain/utils/alphacon.dart';
-import 'package:client_front/domain/utils/transformers.dart';
-import 'package:client_front/presentation/widgets/front_curve.dart';
-import 'package:client_front/presentation/widgets/other/buttons.dart';
-import 'package:client_front/presentation/widgets/other/page.dart';
-import 'package:intersperse/intersperse.dart';
+import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tuple/tuple.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
-import 'package:wallet_utils/wallet_utils.dart'
-    show FeeRate, SatsToAmountExtension;
 import 'package:client_back/client_back.dart';
-import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_back/server/src/protocol/comm_balance_view.dart';
-import 'package:client_front/domain/concepts/fee.dart' as fees;
-import 'package:client_front/domain/utils/params.dart';
-import 'package:client_front/domain/utils/data.dart';
+import 'package:client_back/services/transaction/maker.dart';
+import 'package:client_front/domain/utils/alphacon.dart';
+import 'package:client_front/domain/utils/transformers.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:client_front/application/wallet/send/cubit.dart';
+import 'package:client_front/application/manage/create/cubit.dart';
 import 'package:client_front/application/layers/modal/bottom/cubit.dart';
-import 'package:client_front/presentation/pages/wallet/scan.dart';
-import 'package:client_front/presentation/services/services.dart';
-import 'package:client_front/presentation/widgets/other/selection_control.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/theme/theme.dart';
+import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
@@ -88,6 +76,24 @@ class _SimpleCreateState extends State<SimpleCreate> {
           positive: false,
         ));
 
+  bool isSub(SymbolType? type) => [
+        SymbolType.sub,
+        SymbolType.unique,
+        SymbolType.channel,
+        SymbolType.qualifierSub,
+        SymbolType.subAdmin
+      ].contains(type);
+
+  bool isQualifier(SymbolType? type) =>
+      [SymbolType.qualifier, SymbolType.qualifierSub].contains(type);
+
+  bool isMain(SymbolType? type) =>
+      [SymbolType.main, SymbolType.sub].contains(type);
+
+  bool isRestricted(SymbolType? type) => type == SymbolType.restricted;
+  bool isNFT(SymbolType? type) => type == SymbolType.unique;
+  bool isChannel(SymbolType? type) => type == SymbolType.channel;
+
   @override
   Widget build(BuildContext context) {
     final SimpleCreateFormCubit cubit =
@@ -143,38 +149,40 @@ class _SimpleCreateState extends State<SimpleCreate> {
               return ScrollablePageStructure(
                 headerSpace: Platform.isIOS ? 16 : 8,
                 children: <Widget>[
-                  TextFieldFormatted(
-                    focusNode: parentNameFocus,
-                    controller: parentNameController,
-                    readOnly: true,
-                    textInputAction: TextInputAction.next,
-                    labelText: 'Parent Asset',
-                    hintText: "what asset is this asset a part of?",
-                    prefixIcon: parentNameController.text != ''
-                        ? PrefixAssetCoinIcon(symbol: parentNameController.text)
-                        : null,
-                    // //decoration: styles.decorations.textField(context,
-                    // //    focusNode: sendAssetFocusNode,
-                    // //    labelText: 'Asset',
-                    // //    hintText: pros.settings.chain.title,
-                    // //    prefixIcon: components.icons.assetAvatar(
-                    // //        holdingView!.symbol,
-                    // //        net: pros.settings.net)),
-                    suffixIcon: IconButton(
-                        icon: Padding(
-                            padding: const EdgeInsets.only(right: 14),
-                            child: SvgPicture.asset(
-                                'assets/icons/custom/black/chevron-down.svg')
-                            //Icon(Icons.expand_more_rounded,
-                            //    color: AppColors.black60)
-                            ),
-                        onPressed: () => _produceAssetModal(cubit)),
-                    onTap: () => _produceAssetModal(cubit),
-                    onChanged: (String value) {},
-                    onEditingComplete: () async {
-                      FocusScope.of(context).requestFocus(nameFocus);
-                    },
-                  ),
+                  if (isSub(state.type))
+                    TextFieldFormatted(
+                      focusNode: parentNameFocus,
+                      controller: parentNameController,
+                      readOnly: true,
+                      textInputAction: TextInputAction.next,
+                      labelText: 'Parent Asset',
+                      hintText: "what asset is this asset a part of?",
+                      prefixIcon: parentNameController.text != ''
+                          ? PrefixAssetCoinIcon(
+                              symbol: parentNameController.text)
+                          : null,
+                      // //decoration: styles.decorations.textField(context,
+                      // //    focusNode: sendAssetFocusNode,
+                      // //    labelText: 'Asset',
+                      // //    hintText: pros.settings.chain.title,
+                      // //    prefixIcon: components.icons.assetAvatar(
+                      // //        holdingView!.symbol,
+                      // //        net: pros.settings.net)),
+                      suffixIcon: IconButton(
+                          icon: Padding(
+                              padding: const EdgeInsets.only(right: 14),
+                              child: SvgPicture.asset(
+                                  'assets/icons/custom/black/chevron-down.svg')
+                              //Icon(Icons.expand_more_rounded,
+                              //    color: AppColors.black60)
+                              ),
+                          onPressed: () => _produceAssetModal(cubit)),
+                      onTap: () => _produceAssetModal(cubit),
+                      onChanged: (String value) {},
+                      onEditingComplete: () async {
+                        FocusScope.of(context).requestFocus(nameFocus);
+                      },
+                    ),
                   TextFieldFormatted(
                     focusNode: nameFocus,
                     controller: nameController,
@@ -560,13 +568,17 @@ class _SimpleCreateState extends State<SimpleCreate> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(cubit.state.quantity.toString(),
-                  style: Theme.of(context).textTheme.bodyLarge),
-              Text(decimal.item1,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: AppColors.primary)),
+              Text(
+                cubit.state.quantity.toString(),
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              Text(
+                decimal.item1,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(color: AppColors.primary),
+              ),
             ],
           ),
         )
