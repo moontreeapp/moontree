@@ -9,6 +9,7 @@ class SimpleCreateFormCubitState extends Equatable {
   final int quantity;
   final int decimals;
   final bool reissuable;
+  final String changeAddress;
   final List<UnsignedTransactionResult>? unsigned;
   final List<wutx.Transaction>? signed;
   final List<String>? txHash;
@@ -23,6 +24,7 @@ class SimpleCreateFormCubitState extends Equatable {
     this.quantity = 0,
     this.decimals = 0,
     this.reissuable = true,
+    this.changeAddress = '',
     this.unsigned,
     this.signed,
     this.txHash,
@@ -33,8 +35,9 @@ class SimpleCreateFormCubitState extends Equatable {
   @override
   String toString() =>
       'SpendForm(type=$type, parentName=$parentName, name=$name, '
-      'quantity=$quantity, decimals=$decimals, reissuable=$reissuable '
+      'quantity=$quantity, decimals=$decimals, reissuable=$reissuable, '
       'unsigned=$unsigned, signed=$signed, txHash=$txHash, fee=$fee, '
+      'changeAddress=$changeAddress, '
       'isSubmitting=$isSubmitting)';
 
   @override
@@ -46,12 +49,15 @@ class SimpleCreateFormCubitState extends Equatable {
         quantity,
         decimals,
         reissuable,
+        changeAddress,
         unsigned,
         signed,
         txHash,
         fee,
         isSubmitting,
       ];
+
+  FeeRate? get feeRate => standardFee;
 
   int get assetCreationFeeSats => assetCreationFee * satsPerCoin;
 
@@ -129,6 +135,7 @@ class SimpleCreateFormState extends SimpleCreateFormCubitState {
     super.memo,
     super.decimals,
     super.reissuable,
+    super.changeAddress,
     super.unsigned,
     super.signed,
     super.txHash,
