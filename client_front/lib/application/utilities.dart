@@ -1,3 +1,5 @@
+import 'package:wallet_utils/wallet_utils.dart' show satsPerCoin;
+
 enum FrontContainerHeight {
   max,
   mid,
@@ -39,4 +41,21 @@ abstract class HeightCubitMixin {
   void mid() {}
   void min() {}
   void hidden() {}
+}
+
+class TransactionComponents {
+  final int coinInput;
+  final int fee;
+  // assumes we're only sending to 1 address
+  final bool targetAddressAmountVerified;
+  // should be inputs - fee - target
+  final bool changeAddressAmountVerified;
+  const TransactionComponents({
+    required this.coinInput,
+    required this.fee,
+    required this.targetAddressAmountVerified,
+    required this.changeAddressAmountVerified,
+  });
+
+  bool get feeSanityCheck => fee < 2 * satsPerCoin;
 }

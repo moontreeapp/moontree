@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:client_front/application/utilities.dart';
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -14,8 +15,6 @@ import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result
 import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
-import 'package:client_front/application/wallet/send/cubit.dart'
-    show TransactionComponents;
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';

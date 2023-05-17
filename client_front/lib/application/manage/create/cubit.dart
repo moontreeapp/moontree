@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:client_front/application/utilities.dart';
 import 'package:tuple/tuple.dart';
 import 'package:equatable/equatable.dart';
 import 'package:collection/collection.dart';
@@ -434,21 +435,4 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       }
     }
   }
-}
-
-class TransactionComponents {
-  final int coinInput;
-  final int fee;
-  // assumes we're only sending to 1 address
-  final bool targetAddressAmountVerified;
-  // should be inputs - fee - target
-  final bool changeAddressAmountVerified;
-  const TransactionComponents({
-    required this.coinInput,
-    required this.fee,
-    required this.targetAddressAmountVerified,
-    required this.changeAddressAmountVerified,
-  });
-
-  bool get feeSanityCheck => fee < 2 * satsPerCoin;
 }
