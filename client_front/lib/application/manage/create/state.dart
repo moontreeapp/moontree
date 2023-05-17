@@ -12,7 +12,7 @@ class SimpleCreateFormCubitState extends Equatable {
   final List<UnsignedTransactionResult>? unsigned;
   final List<wutx.Transaction>? signed;
   final List<String>? txHash;
-  final SimpleCreateCheckoutForm? checkout;
+  final int? fee;
   final bool isSubmitting;
 
   const SimpleCreateFormCubitState({
@@ -26,16 +26,16 @@ class SimpleCreateFormCubitState extends Equatable {
     this.unsigned,
     this.signed,
     this.txHash,
-    this.checkout,
+    this.fee,
     this.isSubmitting = false,
   });
 
   @override
   String toString() =>
-      'SpendForm(type=$type, parentName=$parentName, quantity=$quantity, '
-      'decimals=$decimals, reissuable=$reissuable '
-      'unsigned=$unsigned, signed=$signed, txHash=$txHash, name=$name, '
-      'checkout=$checkout, isSubmitting=$isSubmitting)';
+      'SpendForm(type=$type, parentName=$parentName, name=$name, '
+      'quantity=$quantity, decimals=$decimals, reissuable=$reissuable '
+      'unsigned=$unsigned, signed=$signed, txHash=$txHash, fee=$fee, '
+      'isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
@@ -49,9 +49,75 @@ class SimpleCreateFormCubitState extends Equatable {
         unsigned,
         signed,
         txHash,
-        checkout,
+        fee,
         isSubmitting,
       ];
+
+  int get assetCreationFeeSats => assetCreationFee * satsPerCoin;
+
+  // in coins
+  int get assetCreationFee {
+    switch (type) {
+      case SymbolType.main:
+        return 500;
+      case SymbolType.sub:
+        return 100;
+      case SymbolType.qualifier:
+        return 1000;
+      case SymbolType.qualifierSub:
+        return 100;
+      case SymbolType.restricted:
+        return 1500;
+      case SymbolType.channel:
+        return 100;
+      case SymbolType.unique:
+        return 5;
+      default:
+        return 500;
+    }
+  }
+
+  String get assetCreationName {
+    switch (type) {
+      case SymbolType.main:
+        return 'Main Asset';
+      case SymbolType.sub:
+        return 'Sub Asset';
+      case SymbolType.qualifier:
+        return 'Qualifier Asset';
+      case SymbolType.qualifierSub:
+        return 'Qualifier Sub Asset';
+      case SymbolType.restricted:
+        return 'Restricted Asset';
+      case SymbolType.channel:
+        return 'Channel Asset';
+      case SymbolType.unique:
+        return 'NFT';
+      default:
+        return 'Asset';
+    }
+  }
+
+  String get fullname {
+    if (type == SymbolType.main) {
+      return name;
+    }
+    if (type == SymbolType.restricted) {
+      return (r'$' + name);
+    } else if (type == SymbolType.qualifier) {
+      return (r'#' + name);
+    } else if (type == SymbolType.qualifierSub) {
+      return (parentName + '#' + name);
+    } else if (type == SymbolType.sub) {
+      return (parentName + '/' + name);
+    } else if (type == SymbolType.unique) {
+      return (parentName + '#' + name);
+    } else if (type == SymbolType.channel) {
+      return (parentName + '~' + name);
+    } else {
+      return name;
+    }
+  }
 }
 
 class SimpleCreateFormState extends SimpleCreateFormCubitState {
@@ -66,107 +132,7 @@ class SimpleCreateFormState extends SimpleCreateFormCubitState {
     super.unsigned,
     super.signed,
     super.txHash,
-    super.checkout,
+    super.fee,
     super.isSubmitting,
   });
-}
-
-class SimpleCreateCheckoutForm with EquatableMixin {
-  final Widget? icon;
-  final String? symbol;
-  final String displaySymbol;
-  final String? subSymbol;
-  final String? paymentSymbol;
-  final double? left;
-  final Iterable<Iterable<String>> items;
-  final Iterable<Iterable<String>>? fees;
-  final String? total;
-  final String? confirm;
-  final Function? buttonAction;
-  final String? buttonWord;
-  final Widget? button;
-  final String loadingMessage;
-  final int? playcount;
-  final SendEstimate? estimate;
-
-  const SimpleCreateCheckoutForm({
-    this.icon,
-    this.left,
-    this.symbol = '#MoonTree',
-    this.displaySymbol = 'MoonTree',
-    this.subSymbol = 'Main/',
-    this.paymentSymbol = 'RVN',
-    this.items = exampleItems,
-    this.fees = exampleFees,
-    this.total = '101',
-    this.buttonAction,
-    this.buttonWord = 'Submit',
-    this.loadingMessage = 'Createing Transaction',
-    this.confirm,
-    this.button,
-    this.playcount = 2,
-    this.estimate,
-  });
-
-  @override
-  List<Object?> get props => <Object?>[
-        icon,
-        symbol,
-        displaySymbol,
-        subSymbol,
-        paymentSymbol,
-        left,
-        items,
-        fees,
-        total,
-        confirm,
-        buttonAction,
-        buttonWord,
-        button,
-        loadingMessage,
-        playcount,
-        estimate,
-      ];
-
-  static const Iterable<Iterable<String>> exampleItems = <List<String>>[
-    <String>['Short Text', 'aligned right'],
-    <String>['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
-    <String>[
-      'Multiline (2) - Limited',
-      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
-      '2'
-    ],
-    <String>[
-      'Multiline (5)',
-      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
-      '5'
-    ]
-  ];
-  static const Iterable<Iterable<String>> exampleFees = <List<String>>[
-    <String>['Transaction', '1'],
-    <String>['Sub Asset', '100'],
-    <String>['long quantity', '21,000,000.00000000']
-  ];
-
-  bool get disabled => estimate!.fees == 0;
-
-  SimpleCreateCheckoutForm newEstimate(SendEstimate sendEstimate) =>
-      SimpleCreateCheckoutForm(
-        icon: this.icon,
-        symbol: this.symbol,
-        displaySymbol: this.displaySymbol,
-        subSymbol: this.subSymbol,
-        paymentSymbol: this.paymentSymbol,
-        left: this.left,
-        items: this.items,
-        fees: this.fees,
-        total: this.total,
-        confirm: this.confirm,
-        buttonAction: this.buttonAction,
-        buttonWord: this.buttonWord,
-        button: this.button,
-        loadingMessage: this.loadingMessage,
-        playcount: this.playcount,
-        estimate: sendEstimate,
-      );
 }

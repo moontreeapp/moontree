@@ -8,7 +8,6 @@ import 'package:wallet_utils/src/utilities/validation.dart' show coinsPerChain;
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_front/domain/utils/alphacon.dart';
 import 'package:client_front/domain/utils/transformers.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
@@ -19,6 +18,7 @@ import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/selection_control.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
@@ -469,7 +469,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
       //      : null,
       //  note: state.note != '' ? state.note : null,
       //);
-      //_confirmSend(sendRequest, cubit);
+      _confirmSend(cubit);
     }
   }
 
@@ -479,17 +479,14 @@ class _SimpleCreateState extends State<SimpleCreate> {
   /// should notes be in a separate proclaim? makes this simpler, but its nice
   /// to have it all in one place as in transaction.note....
 
-  void _confirmSend(
-      SendRequest sendRequest, SimpleCreateFormCubit cubit) async {
-    //streams.spend.make.add(sendRequest); // using cubit instead, poorly
-    /*
+  void _confirmSend(SimpleCreateFormCubit cubit) async {
     await cubit.updateUnsignedTransaction(
-      sendAllCoinFlag: cubit.state.security.isCoin && sendRequest.sendAll,
-      symbol: cubit.state.security.symbol,
+      symbol: cubit.state.name,
       wallet: Current.wallet,
       chain: Current.chain,
       net: Current.net,
     );
+    /*
     // this check should live in repository or something, todo: fix
     if (cubit.state.unsigned == null) {
       streams.app.behavior.snack.add(Snack(
@@ -512,25 +509,18 @@ class _SimpleCreateState extends State<SimpleCreate> {
     //));
     cubit.update(
         checkout: SimpleCreateCheckoutForm(
-      symbol: sendRequest.security!.symbol,
-      displaySymbol: sendRequest.security!.name,
+      symbol: cubit.state.name,
+      displaySymbol: '',
       subSymbol: '',
       paymentSymbol: pros.securities.currentCoin.symbol,
-      items: <List<String>>[
-        <String>['To', sendRequest.nameController],
-        if (addressName != '') <String>['Known As', addressName],
-        <String>[
-          'Amount',
-          if (sendRequest.sendAll)
-            'calculating amount...'
-          else
-            sendRequest.visibleAmount
-        ],
-        if (!<String?>['', null].contains(sendRequest.memo))
-          <String>['Memo', sendRequest.memo!],
-        if (!<String?>['', null].contains(sendRequest.note))
-          <String>['Note', sendRequest.note!],
-      ],
+      items: {
+        'Quantity': cubit.state.quantity.toString(),
+        'Decimal Places': cubit.state.decimals.toString(),
+        if (!['', null].contains(cubit.state.memo)) ...{
+          'Memo': cubit.state.memo
+        },
+        'Reissuable': cubit.state.reissuable ? 'yes' : 'no',
+      },
       fees: <List<String>>[
         <String>['Transaction Fee', 'calculating fee...']
       ],
@@ -570,11 +560,12 @@ class _SimpleCreateState extends State<SimpleCreate> {
     //  creation: false,
     //));
 
+    */
     setState(() => clicked = false);
     await cubit.sign();
     final validateMsg = await cubit.verifyTransaction();
     if (validateMsg.item1) {
-      sail.to('/wallet/send/checkout');
+      sail.to('/manage/create/checkout');
     } else {
       streams.app.behavior.snack.add(Snack(
           message: 'unable to generate transaction',
@@ -582,7 +573,6 @@ class _SimpleCreateState extends State<SimpleCreate> {
           copy: validateMsg.item2,
           label: 'copy'));
     }
-    */
   }
 
   void _produceAssetModal(SimpleCreateFormCubit cubit) =>

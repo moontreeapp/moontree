@@ -182,6 +182,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         txb.signRaw(
           vin: e.item1,
           keyPair: keyPair!,
+          // note for swaps: hashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
           hashType: null,
           prevOutScriptOverride: unsigned.vinScriptOverride[e.item1]?.hexBytes,
           asset: unsigned.vinAssets[e.item1],

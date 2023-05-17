@@ -190,7 +190,8 @@ class IconComponents {
     Chain? chain,
     Net? net,
   ]) =>
-      Symbol.generate(asset ?? '', chain ?? Chain.ravencoin, net ?? Net.main)
+      Symbol.generate(asset ?? '', chain ?? pros.settings.chain,
+              net ?? pros.settings.net)
           .symbolType;
 
   Widget assetFromCacheOrGenerate({

@@ -261,6 +261,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
               await switchWallet(wallet.id);
               setState(() {});
               sail.menu(open: false);
+              sail.to(components.cubits.location.state.path,
+                  replaceOverride: true);
               return;
             },
             // todo: show chain icons for what blockchains this wallet has assets on here
@@ -393,6 +395,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                           in pros.wallets.ordered + pros.wallets.ordered) {
                         if (next) {
                           await switchWallet(wallet.id);
+                          sail.to(components.cubits.location.state.path,
+                              replaceOverride: true);
                           break;
                         }
                         if (Current.walletId == wallet.id) {

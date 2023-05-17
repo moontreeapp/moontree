@@ -173,6 +173,14 @@ class Sail {
       frontPath: '/wallet/send/checkout',
       backPath: '/',
     ),
+    '/manage/create/checkout': Manifest(
+      title: 'Checkout',
+      section: Section.manage,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/manage/create/checkout',
+      backPath: '/',
+    ),
     '/manage/holdings': Manifest(
       title: 'Manage', // gets overridden with wallet name
       section: Section.manage,

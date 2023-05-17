@@ -27,7 +27,7 @@ class SimpleReissueCheckout extends StatelessWidget {
   //late bool disabled = false;
   // on cubit?
   late DateTime startTime;
-  late SimpleSendFormState state; // remove in uiv3
+  late SimpleSendFormState state;
   late BuildContext context;
 
   @override
