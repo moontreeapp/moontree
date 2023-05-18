@@ -8,26 +8,29 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 
-class UnsignedTransactionRequest extends _i1.SerializableEntity {
-  UnsignedTransactionRequest({
+class AssetCreationRequest extends _i1.SerializableEntity {
+  AssetCreationRequest({
     this.id,
     required this.myH106s,
     required this.myPubkeys,
     this.feeRateKb,
     this.changeSource,
     this.opReturnMemo,
-    required this.eachOutputAddress,
-    required this.eachOutputAsset,
-    required this.eachOutputAmount,
-    required this.eachOutputAssetMemo,
-    required this.eachOutputAssetMemoTimestamp,
+    required this.assetType,
+    required this.asset,
+    this.parentAsset,
+    this.divisibility,
+    this.amount,
+    required this.reissuable,
+    this.associatedData,
+    this.verifierString,
   });
 
-  factory UnsignedTransactionRequest.fromJson(
+  factory AssetCreationRequest.fromJson(
     Map<String, dynamic> jsonSerialization,
     _i1.SerializationManager serializationManager,
   ) {
-    return UnsignedTransactionRequest(
+    return AssetCreationRequest(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
       myH106s: serializationManager
           .deserialize<List<String>>(jsonSerialization['myH106s']),
@@ -39,17 +42,22 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
           .deserialize<String?>(jsonSerialization['changeSource']),
       opReturnMemo: serializationManager
           .deserialize<String?>(jsonSerialization['opReturnMemo']),
-      eachOutputAddress: serializationManager
-          .deserialize<List<String>>(jsonSerialization['eachOutputAddress']),
-      eachOutputAsset: serializationManager
-          .deserialize<List<String?>>(jsonSerialization['eachOutputAsset']),
-      eachOutputAmount: serializationManager
-          .deserialize<List<int>>(jsonSerialization['eachOutputAmount']),
-      eachOutputAssetMemo: serializationManager
-          .deserialize<List<String?>>(jsonSerialization['eachOutputAssetMemo']),
-      eachOutputAssetMemoTimestamp:
-          serializationManager.deserialize<List<int?>>(
-              jsonSerialization['eachOutputAssetMemoTimestamp']),
+      assetType:
+          serializationManager.deserialize<int>(jsonSerialization['assetType']),
+      asset:
+          serializationManager.deserialize<String>(jsonSerialization['asset']),
+      parentAsset: serializationManager
+          .deserialize<String?>(jsonSerialization['parentAsset']),
+      divisibility: serializationManager
+          .deserialize<int?>(jsonSerialization['divisibility']),
+      amount:
+          serializationManager.deserialize<int?>(jsonSerialization['amount']),
+      reissuable: serializationManager
+          .deserialize<bool>(jsonSerialization['reissuable']),
+      associatedData: serializationManager
+          .deserialize<String?>(jsonSerialization['associatedData']),
+      verifierString: serializationManager
+          .deserialize<String?>(jsonSerialization['verifierString']),
     );
   }
 
@@ -68,15 +76,21 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
 
   String? opReturnMemo;
 
-  List<String> eachOutputAddress;
+  int assetType;
 
-  List<String?> eachOutputAsset;
+  String asset;
 
-  List<int> eachOutputAmount;
+  String? parentAsset;
 
-  List<String?> eachOutputAssetMemo;
+  int? divisibility;
 
-  List<int?> eachOutputAssetMemoTimestamp;
+  int? amount;
+
+  bool reissuable;
+
+  String? associatedData;
+
+  String? verifierString;
 
   @override
   Map<String, dynamic> toJson() {
@@ -87,11 +101,14 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
       'feeRateKb': feeRateKb,
       'changeSource': changeSource,
       'opReturnMemo': opReturnMemo,
-      'eachOutputAddress': eachOutputAddress,
-      'eachOutputAsset': eachOutputAsset,
-      'eachOutputAmount': eachOutputAmount,
-      'eachOutputAssetMemo': eachOutputAssetMemo,
-      'eachOutputAssetMemoTimestamp': eachOutputAssetMemoTimestamp,
+      'assetType': assetType,
+      'asset': asset,
+      'parentAsset': parentAsset,
+      'divisibility': divisibility,
+      'amount': amount,
+      'reissuable': reissuable,
+      'associatedData': associatedData,
+      'verifierString': verifierString,
     };
   }
 }

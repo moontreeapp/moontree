@@ -6,6 +6,8 @@ class SimpleCreateFormCubitState extends Equatable {
   final String parentName;
   final String name;
   final String memo;
+  final String assetMemo;
+  final String verifierString;
   final int quantity;
   final int decimals;
   final bool reissuable;
@@ -21,6 +23,8 @@ class SimpleCreateFormCubitState extends Equatable {
     this.parentName = '',
     this.name = '',
     this.memo = '',
+    this.assetMemo = '',
+    this.verifierString = '',
     this.quantity = 0,
     this.decimals = 0,
     this.reissuable = true,
@@ -36,6 +40,7 @@ class SimpleCreateFormCubitState extends Equatable {
   String toString() =>
       'SpendForm(type=$type, parentName=$parentName, name=$name, '
       'quantity=$quantity, decimals=$decimals, reissuable=$reissuable, '
+      'memo=$memo, assetMemo=$assetMemo, verifierString=$verifierString, '
       'unsigned=$unsigned, signed=$signed, txHash=$txHash, fee=$fee, '
       'changeAddress=$changeAddress, '
       'isSubmitting=$isSubmitting)';
@@ -46,6 +51,8 @@ class SimpleCreateFormCubitState extends Equatable {
         parentName,
         name,
         memo,
+        assetMemo,
+        verifierString,
         quantity,
         decimals,
         reissuable,
@@ -133,6 +140,8 @@ class SimpleCreateFormState extends SimpleCreateFormCubitState {
     super.name,
     super.quantity,
     super.memo,
+    super.assetMemo,
+    super.verifierString,
     super.decimals,
     super.reissuable,
     super.changeAddress,

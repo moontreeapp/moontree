@@ -33,12 +33,12 @@ class _SimpleCreateState extends State<SimpleCreate> {
   //Map<String, dynamic> data = <String, dynamic>{};
   final TextEditingController parentNameController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController memoController = TextEditingController();
+  final TextEditingController assetMemoController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController decimalsController = TextEditingController();
   final FocusNode parentNameFocus = FocusNode();
   final FocusNode nameFocus = FocusNode();
-  final FocusNode memoFocus = FocusNode();
+  final FocusNode assetMemoFocus = FocusNode();
   final FocusNode quantityFocus = FocusNode();
   final FocusNode decimalsFocus = FocusNode();
   final FocusNode previewFocus = FocusNode();
@@ -55,12 +55,12 @@ class _SimpleCreateState extends State<SimpleCreate> {
   void dispose() {
     parentNameController.dispose();
     nameController.dispose();
-    memoController.dispose();
+    assetMemoController.dispose();
     quantityController.dispose();
     decimalsController.dispose();
     parentNameFocus.dispose();
     nameFocus.dispose();
-    memoFocus.dispose();
+    assetMemoFocus.dispose();
     quantityFocus.dispose();
     decimalsFocus.dispose();
     previewFocus.dispose();
@@ -117,13 +117,13 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         ? TextSelection.collapsed(offset: state.name.length)
                         : nameController.selection);
           }
-          if (state.memo.length > 0) {
-            memoController.value = TextEditingValue(
-                text: state.memo,
-                selection:
-                    memoController.selection.baseOffset > state.memo.length
-                        ? TextSelection.collapsed(offset: state.memo.length)
-                        : memoController.selection);
+          if (state.assetMemo.length > 0) {
+            assetMemoController.value = TextEditingValue(
+                text: state.assetMemo,
+                selection: assetMemoController.selection.baseOffset >
+                        state.assetMemo.length
+                    ? TextSelection.collapsed(offset: state.assetMemo.length)
+                    : assetMemoController.selection);
           }
           if (isNFT(state.type)) {
             quantityController.text = '1';
@@ -285,16 +285,16 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         onPressed: () => _produceDecimalsModal(cubit)),
                 onChanged: (String newValue) {
                   cubit.update(decimals: int.parse(decimalsController.text));
-                  FocusScope.of(context).requestFocus(memoFocus);
+                  FocusScope.of(context).requestFocus(assetMemoFocus);
                 },
               ),
               TextFieldFormatted(
-                  focusNode: memoFocus,
-                  controller: memoController,
+                  focusNode: assetMemoFocus,
+                  controller: assetMemoController,
                   textInputAction: TextInputAction.next,
                   labelText: 'Memo',
                   hintText: 'IPFS',
-                  helperText: memoFocus.hasFocus
+                  helperText: assetMemoFocus.hasFocus
                       ? 'will be saved on the blockchain'
                       : null,
                   helperStyle: Theme.of(context)
@@ -306,13 +306,13 @@ class _SimpleCreateState extends State<SimpleCreate> {
                                 icon: const Icon(Icons.paste_rounded,
                                     color: AppColors.black60),
                                 onPressed: () async => cubit.update(
-                                    memo:
+                                    assetMemo:
                                         (await Clipboard.getData('text/plain'))
                                                 ?.text ??
                                             '')),*/
-                  onChanged: (String value) => cubit.update(memo: value),
+                  onChanged: (String value) => cubit.update(assetMemo: value),
                   onEditingComplete: () {
-                    cubit.update(memo: memoController.text);
+                    cubit.update(assetMemo: assetMemoController.text);
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
               Padding(
@@ -337,7 +337,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   cubit.update(
                     parentName: parentNameController.text,
                     name: nameController.text,
-                    memo: memoController.text,
+                    assetMemo: assetMemoController.text,
                     quantity: int.parse(quantityController.text),
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
@@ -412,9 +412,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
     return name.isAssetPath;
   }
 
-  bool _validateMemo([String? memo]) =>
-      (memo ?? memoController.text).isIpfs ||
-      (memo ?? memoController.text).isMemo;
+  bool _validateMemo([String? assetMemo]) =>
+      (assetMemo ?? assetMemoController.text).isIpfs ||
+      (assetMemo ?? assetMemoController.text).isMemo;
 
   bool _validateQuantity(SimpleCreateFormState state, [String? quantity]) {
     quantity = (quantity ?? quantityController.text);
@@ -457,15 +457,15 @@ class _SimpleCreateState extends State<SimpleCreate> {
       //  feeRate: state.fee,
       //  security: state.security,
       //  assetMemo: state.security != pros.securities.currentCoin &&
-      //          state.memo != '' &&
-      //          state.memo.isIpfs
-      //      ? state.memo
+      //          state.assetMemo != '' &&
+      //          state.assetMemo.isIpfs
+      //      ? state.assetMemo
       //      : null,
-      //  //TODO: Currently memos are only for non-asset transactions
-      //  memo: state.security == pros.securities.currentCoin &&
-      //          state.memo != '' &&
-      //          _validateMemo(state.memo)
-      //      ? state.memo
+      //  //TODO: Currently assetMemos are only for non-asset transactions
+      //  assetMemo: state.security == pros.securities.currentCoin &&
+      //          state.assetMemo != '' &&
+      //          _validateMemo(state.assetMemo)
+      //      ? state.assetMemo
       //      : null,
       //  note: state.note != '' ? state.note : null,
       //);
@@ -481,7 +481,6 @@ class _SimpleCreateState extends State<SimpleCreate> {
 
   void _confirmSend(SimpleCreateFormCubit cubit) async {
     await cubit.updateUnsignedTransaction(
-      symbol: cubit.state.name,
       wallet: Current.wallet,
       chain: Current.chain,
       net: Current.net,
@@ -516,8 +515,8 @@ class _SimpleCreateState extends State<SimpleCreate> {
       items: {
         'Quantity': cubit.state.quantity.toString(),
         'Decimal Places': cubit.state.decimals.toString(),
-        if (!['', null].contains(cubit.state.memo)) ...{
-          'Memo': cubit.state.memo
+        if (!['', null].contains(cubit.state.assetMemo)) ...{
+          'Memo': cubit.state.assetMemo
         },
         'Reissuable': cubit.state.reissuable ? 'yes' : 'no',
       },
@@ -542,9 +541,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
         fees: 0,
         //utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
         security: cubit.state.security,
-        //assetMemo: Uint8List.fromList(cubit.state.memo
+        //assetMemo: Uint8List.fromList(cubit.state.assetMemo
         //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
-        memo: cubit.state.memo, // todo: correct?memo,
+        assetMemo: cubit.state.assetMemo, // todo: correct?assetMemo,
         creation: false,
       ),
     ));
@@ -554,9 +553,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
     //  fees: 412000, // estimate. server doesn't tell us yet
     //  utxos: null, // in string form at cubit.state.unsigned.vinPrivateKeySource
     //  security: cubit.state.security,
-    //  //assetMemo: Uint8List.fromList(cubit.state.memo
+    //  //assetMemo: Uint8List.fromList(cubit.state.assetMemo
     //  //    .codeUnits), // todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
-    //  memo: cubit.state.memo, // todo: correct?memo,
+    //  assetMemo: cubit.state.assetMemo, // todo: correct?assetMemo,
     //  creation: false,
     //));
 

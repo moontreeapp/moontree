@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:client_front/application/utilities.dart';
+import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:tuple/tuple.dart';
 import 'package:equatable/equatable.dart';
 import 'package:collection/collection.dart';
@@ -16,7 +17,6 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
-import 'package:client_front/infrastructure/repos/unsigned.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
 
@@ -34,6 +34,8 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     String? parentName,
     String? name,
     String? memo,
+    String? assetMemo,
+    String? verifierString,
     int? quantity,
     int? decimals,
     bool? reissuable,
@@ -49,6 +51,8 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         parentName: parentName ?? state.parentName,
         name: name ?? state.name,
         memo: memo ?? state.memo,
+        assetMemo: assetMemo ?? state.assetMemo,
+        verifierString: verifierString ?? state.verifierString,
         quantity: quantity ?? state.quantity,
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
@@ -62,7 +66,6 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
 
   // need set unsigned tx
   Future<void> updateUnsignedTransaction({
-    required String symbol,
     required Wallet wallet,
     required Chain chain,
     required Net net,
@@ -71,21 +74,21 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     final changeAddress =
         (await ReceiveRepo(wallet: wallet, change: true).fetch())
             .address(chain, net);
-    List<UnsignedTransactionResult> unsigned = await UnsignedTransactionRepo(
+    List<UnsignedTransactionResult> unsigned = await UnsignedCreateRepo(
       wallet: wallet,
-      symbol: symbol,
-      security: Security(
-          symbol: symbol,
-          securityType: SecurityType.asset,
-          chain: chain,
-          net: net),
-      feeRate: state.feeRate == standardFee ? state.feeRate : null,
-      sats: state.assetCreationFeeSats,
-      changeAddress: changeAddress,
-      address: changeAddress,
-      memo: state.memo,
       chain: chain,
       net: net,
+      feeRate: state.feeRate == standardFee ? state.feeRate : null,
+      changeAddress: changeAddress,
+      quantity: state.quantity,
+      divisibility: state.decimals,
+      memo: state.memo,
+      assetMemo: state.assetMemo,
+      verifierString: state.verifierString,
+      parentSymbol: state.parentName,
+      symbol: state.name,
+      reissuable: state.reissuable,
+      symbolType: state.type ?? SymbolType.main,
     ).fetch(only: true);
     update(
       unsigned: unsigned,

@@ -177,7 +177,7 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                                         onTap: () {
                                           if (snack?.copy != null) {
                                             Clipboard.setData(ClipboardData(
-                                                text: snack!.copy));
+                                                text: snack!.copy!));
                                           }
                                           components.cubits.snackbar.clear();
                                         },
