@@ -53,7 +53,7 @@ class PageStructure extends StatelessWidget {
                 if (firstLowerChildren != null)
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    //crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Row(children: <Widget>[
                         for (final Widget child in (widthSpacer == null

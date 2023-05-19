@@ -1,4 +1,4 @@
-package com.moontree.client_front
+package com.moontree.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

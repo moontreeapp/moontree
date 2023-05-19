@@ -106,7 +106,6 @@ class _LoginNativeState extends State<LoginNative> {
         ],
         firstLowerChildren: <Widget>[
           (needsConsent ? UlaMessage() : const SizedBox(height: 100)),
-          const SizedBox(height: 24),
         ],
         secondLowerChildren: <Widget>[
           BottomButton(

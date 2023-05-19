@@ -42,12 +42,14 @@ dependencies:
   hive: ^2.2.3
   intersperse: ^2.0.0
   intl: ^0.17.0
-  local_auth: ^2.1.2
+  local_auth: ^2.1.6
+  #local_auth_android: ^1.0.28 # not pulling this version automatically
   lottie: ^1.4.3
   material_design_icons_flutter: ^5.0.6996
   path_provider: ^2.0.11 # to get the correct path to store our file
   permission_handler: ^10.1.0 # to handle the permissions to read and write files
-  platform_device_id: ^1.0.1
+  #platform_device_id: ^1.0.1 # fails on dart 3.0
+  device_info_plus: ^9.0.1
   proclaim: ^4.1.1
   collection: ^1.17.1
   crypto: ^3.0.2
