@@ -9,8 +9,7 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/theme/extensions.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:wallet_utils/wallet_utils.dart'
-    show SatsToAmountExtension, satsPerCoin;
+import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
 
 class SimpleCreateCheckout extends StatelessWidget {
   const SimpleCreateCheckout({Key? key}) : super(key: key);

@@ -139,7 +139,7 @@ class SubscriptionService {
     List<String> roots = [];
     List<String> h160s = [];
     if (wallet is LeaderWallet) {
-      roots = await (wallet as LeaderWallet).roots;
+      roots = await (wallet).roots;
     } else if (wallet is SingleWallet) {
       h160s = wallet.addresses.map((e) => e.h160AsString).toList();
     }

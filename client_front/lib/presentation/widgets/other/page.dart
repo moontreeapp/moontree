@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
-import 'package:client_front/presentation/services/services.dart' show screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 

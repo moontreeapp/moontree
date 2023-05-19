@@ -2,7 +2,6 @@ import 'package:client_back/server/src/protocol/protocol.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet_utils/wallet_utils.dart';
-import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
@@ -62,10 +61,8 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
         confirmed: holdingView?.satsConfirmed ?? 0,
         unconfirmed: holdingView?.satsUnconfirmed ?? 0);
     int holdingSat = 0;
-    if (holdingBalance != null) {
-      holding = holdingBalance.amount;
-      holdingSat = holdingBalance.value;
-    }
+    holding = holdingBalance.amount;
+    holdingSat = holdingBalance.value;
     int amountSat = amount.asSats;
     if (holding - amount == 0) {
       amountSat = holdingSat;

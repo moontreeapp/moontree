@@ -1,18 +1,13 @@
-import 'dart:math';
 import 'package:collection/src/iterable_extensions.dart' show IterableExtension;
-import 'package:rxdart/rxdart.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_back/server/src/protocol/comm_transaction_view.dart';
-import 'package:client_front/infrastructure/repos/transactions.dart';
-import 'package:client_front/infrastructure/repos/mempool_transactions.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/circulating_sats.dart';
 import 'package:client_front/application/common.dart';
 import 'package:client_front/application/infrastructure/location/cubit.dart';
-import 'package:client_front/presentation/utils/animation.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 

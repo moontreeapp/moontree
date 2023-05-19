@@ -169,14 +169,14 @@ class MainMenu extends StatelessWidget {
                 svg: SvgPicture.asset('assets/icons/custom/mobile/import.svg'),
                 name: 'Import',
                 link: '/restore/import'),
-          if (false && // not yet supported
-              !services.developer.developerMode &&
-              Current.balanceRVN.value > 0)
-            MenuLink(
-              icon: MdiIcons.broom,
-              name: 'Sweep',
-              link: '/sweep',
-            ),
+          //if (false && // not yet supported
+          //    !services.developer.developerMode &&
+          //    Current.balanceRVN.value > 0)
+          //  MenuLink(
+          //    icon: MdiIcons.broom,
+          //    name: 'Sweep',
+          //    link: '/sweep',
+          //  ),
           if (services.developer.developerMode)
             MenuLink(
               icon: MdiIcons.shieldKey,
@@ -293,22 +293,22 @@ class RestoreMenu extends StatelessWidget {
               svg: SvgPicture.asset('assets/icons/custom/mobile/import.svg'),
               name: 'Import',
               link: '/restore/import'),
-          if (false // not yet supported
-          )
-            MenuLink(
-                icon: MdiIcons.keyMinus,
-                svg: SvgPicture.asset('assets/icons/custom/mobile/export.svg'),
-                name: 'Export',
-                link: '/restore/export',
-                disabled: !services.developer.advancedDeveloperMode),
-          if (false && // not yet supported
-              services.developer.developerMode &&
-              (pros.securities.currentCoin.balance?.value ?? 0) > 0)
-            MenuLink(
-              icon: MdiIcons.broom,
-              name: 'Sweep',
-              link: '/sweep',
-            ),
+          //if (false // not yet supported
+          //)
+          //  MenuLink(
+          //      icon: MdiIcons.keyMinus,
+          //      svg: SvgPicture.asset('assets/icons/custom/mobile/export.svg'),
+          //      name: 'Export',
+          //      link: '/restore/export',
+          //      disabled: !services.developer.advancedDeveloperMode),
+          //if (false && // not yet supported
+          //    services.developer.developerMode &&
+          //    (pros.securities.currentCoin.balance?.value ?? 0) > 0)
+          //  MenuLink(
+          //    icon: MdiIcons.broom,
+          //    name: 'Sweep',
+          //    link: '/sweep',
+          //  ),
         ],
       );
 }
@@ -356,12 +356,12 @@ class SettingsMenu extends StatelessWidget {
           //    name: 'Addresses',
           //    link: '/addresses',
           //  ),
-          if (false) // not necessary anymore with new serverside backend
-            MenuLink(
-              icon: MdiIcons.pickaxe,
-              name: 'Mining',
-              link: '/setting/mining',
-            ),
+          //if (false) // not necessary anymore with new serverside backend
+          //  MenuLink(
+          //    icon: MdiIcons.pickaxe,
+          //    name: 'Mining',
+          //    link: '/setting/mining',
+          //  ),
           if (services.developer.developerMode)
             MenuLink(
               icon: MdiIcons.database,

@@ -3,17 +3,17 @@ description: Ravencoin wallet backend library
 version: 1.0.0
 
 environment:
-  sdk: '>=2.15.0 <3.0.0'
+  sdk: '>=2.15.0 <4.0.0'
 
 dependencies:
   bs58: ^1.0.2
   bs58check: ^1.0.2
-  collection: ^1.16.0
+  collection: ^1.17.1
   crypto: ^3.0.2
   encrypt: ^5.0.1
   equatable: ^2.0.5
   hive: ^2.2.3
-  ordered_set: ^5.0.0
+  ordered_set: ^5.0.1
   pointycastle: ^3.6.2
   quiver: ^3.1.0
   rxdart: ^0.27.5
@@ -25,9 +25,9 @@ dependencies:
   #serverpod_client: ^0.9.20
   serverpod_client: ^1.1.0
   electrum_adapter: ^2.0.4
-  proclaim: ^4.0.3
-  wallet_utils: ^3.0.16
-  moontree_utils: ^1.0.29
+  proclaim: ^4.1.1
+  wallet_utils: ^3.1.1
+  moontree_utils: ^1.1.1
   date_format: ^2.0.7
   bip39: ^1.0.6
   convert: ^3.0.2

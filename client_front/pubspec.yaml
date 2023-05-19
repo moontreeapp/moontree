@@ -48,8 +48,8 @@ dependencies:
   path_provider: ^2.0.11 # to get the correct path to store our file
   permission_handler: ^10.1.0 # to handle the permissions to read and write files
   platform_device_id: ^1.0.1
-  proclaim: ^4.0.3
-  collection: ^1.16.0
+  proclaim: ^4.1.1
+  collection: ^1.17.1
   crypto: ^3.0.2
   image: ^3.2.2
   tuple: ^2.0.0
@@ -72,8 +72,8 @@ dependencies:
   # client_back:
   #   git: https://github.com/moontreeapp/client_back.git
   electrum_adapter: ^2.0.4
-  wallet_utils: ^3.0.16
-  moontree_utils: ^1.0.29
+  wallet_utils: ^3.1.1
+  moontree_utils: ^1.1.1
   #serverpod_flutter: ^0.9.21
   serverpod_flutter: ^1.1.0
 
