@@ -6,8 +6,7 @@ import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
 import 'package:client_front/presentation/services/services.dart' show sail;
 
-Future<void> login(
-  BuildContext context, {
+Future<void> login({
   String? password,
   String? key,
 }) async {
@@ -27,14 +26,14 @@ Future<void> login(
   await setupSubscription(wallet: Current.wallet);
 
   // go to home
-  postLogin(context);
+  postLogin();
 
   /// here we can put logic to migrate database on new version or something:
   //services.version.snapshot?.currentBuild == '17' &&
   //(services.version.snapshot?.buildUpdated ?? false);
 }
 
-void postLogin(BuildContext context) {
+void postLogin() {
   if (Current.wallet is LeaderWallet && !Current.wallet.backedUp) {
     sail.to('/wallet/holdings', replaceOverride: true);
     sail.to('/backup/intro', arguments: <String, bool>{'fadeIn': true});

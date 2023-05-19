@@ -12,7 +12,8 @@ class SimpleCreateFormCubitState extends Equatable {
   final int decimals;
   final bool reissuable;
   final String changeAddress;
-  final List<UnsignedTransactionResult>? unsigned;
+  final AssetMetadata? metadataView;
+  final UnsignedTransactionResult? unsigned;
   final List<wutx.Transaction>? signed;
   final List<String>? txHash;
   final int? fee;
@@ -29,6 +30,7 @@ class SimpleCreateFormCubitState extends Equatable {
     this.decimals = 0,
     this.reissuable = true,
     this.changeAddress = '',
+    this.metadataView,
     this.unsigned,
     this.signed,
     this.txHash,
@@ -42,7 +44,7 @@ class SimpleCreateFormCubitState extends Equatable {
       'quantity=$quantity, decimals=$decimals, reissuable=$reissuable, '
       'memo=$memo, assetMemo=$assetMemo, verifierString=$verifierString, '
       'unsigned=$unsigned, signed=$signed, txHash=$txHash, fee=$fee, '
-      'changeAddress=$changeAddress, '
+      'changeAddress=$changeAddress, metadataView=$metadataView, '
       'isSubmitting=$isSubmitting)';
 
   @override
@@ -57,6 +59,7 @@ class SimpleCreateFormCubitState extends Equatable {
         decimals,
         reissuable,
         changeAddress,
+        metadataView,
         unsigned,
         signed,
         txHash,
@@ -145,6 +148,7 @@ class SimpleCreateFormState extends SimpleCreateFormCubitState {
     super.decimals,
     super.reissuable,
     super.changeAddress,
+    super.metadataView,
     super.unsigned,
     super.signed,
     super.txHash,

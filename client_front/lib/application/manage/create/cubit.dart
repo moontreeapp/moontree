@@ -1,4 +1,6 @@
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_front/application/utilities.dart';
+import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:tuple/tuple.dart';
 import 'package:equatable/equatable.dart';
@@ -38,7 +40,8 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     int? decimals,
     bool? reissuable,
     String? changeAddress,
-    List<UnsignedTransactionResult>? unsigned,
+    AssetMetadata? metadataView,
+    UnsignedTransactionResult? unsigned,
     List<wutx.Transaction>? signed,
     List<String>? txHash,
     int? fee,
@@ -55,12 +58,28 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
         changeAddress: changeAddress ?? state.changeAddress,
+        metadataView: metadataView ?? state.metadataView,
         unsigned: unsigned ?? state.unsigned,
         signed: signed ?? state.signed,
         txHash: txHash ?? state.txHash,
         fee: fee ?? state.fee,
         isSubmitting: isSubmitting ?? state.isSubmitting,
       ));
+
+  Future<void> updateName(String symbol) async => update(
+        metadataView: await (getMetadataView(symbol: symbol)),
+        name: symbol,
+        isSubmitting: false,
+      );
+
+  Future<AssetMetadata?> getMetadataView({String? symbol}) async =>
+      (await AssetMetadataHistoryRepo(
+                  security: Security(
+                      symbol: symbol ?? state.name,
+                      chain: pros.settings.chain,
+                      net: pros.settings.net))
+              .get())
+          .firstOrNull;
 
   // need set unsigned tx
   Future<void> updateUnsignedTransaction({
@@ -72,7 +91,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     final changeAddress =
         (await ReceiveRepo(wallet: wallet, change: true).fetch())
             .address(chain, net);
-    List<UnsignedTransactionResult> unsigned = await UnsignedCreateRepo(
+    UnsignedTransactionResult unsigned = await UnsignedCreateRepo(
       wallet: wallet,
       chain: chain,
       net: net,
@@ -104,8 +123,8 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     /// sum the vinAmounts that are evr
     int getCoinInput() => [
           for (final x in IterableZip([
-            state.unsigned![index].vinAssets,
-            state.unsigned![index].vinAmounts,
+            state.unsigned!.vinAssets,
+            state.unsigned!.vinAmounts,
           ]))
             x[0] == null ? x[1] : 0
         ].sum() as int;
@@ -176,7 +195,8 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     Future<bool> getChangeAddressVerification(int coinInput, int fee) async {
       // verify all addresses
       // get change amount(s) here too
-      for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
+      for (final UnsignedTransactionResult unsigned
+          in state.unsigned != null ? [state.unsigned!] : []) {
         for (final cs in unsigned.changeSource) {
           /* kralverde -
           Just fyi it can also be wallet_key:index just like the vin source
@@ -334,7 +354,8 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
   /// convert to TransactionBuilder object, inspect
   Future<bool> sign() async {
     List<wutx.Transaction> txs = [];
-    for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
+    for (final UnsignedTransactionResult unsigned
+        in state.unsigned != null ? [state.unsigned!] : []) {
       final txb = TransactionBuilder.fromRawInfo(
           unsigned.rawHex,
           unsigned.vinScriptOverride.map((String? e) => e?.hexBytes),

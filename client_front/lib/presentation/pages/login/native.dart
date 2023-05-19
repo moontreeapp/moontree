@@ -144,7 +144,7 @@ class _LoginNativeState extends State<LoginNative> {
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
-      login(context);
+      login();
     } else {
       /// this is a pretty wild edge case:
       /// they were able to set nativeSecurity up but now its not working anymore

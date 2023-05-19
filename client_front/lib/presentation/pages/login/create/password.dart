@@ -247,7 +247,7 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
     //  playCount: 4,
     //);
     await setupWallets();
-    login(context, password: password.text);
+    login(password: password.text);
     components.cubits.loadingView.hide();
   }
 }

@@ -7,7 +7,7 @@ import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
-class UnsignedCreateRepo extends Repository<List<UnsignedTransactionResult>> {
+class UnsignedCreateRepo extends Repository<UnsignedTransactionResult> {
   late Wallet wallet;
   late Chain chain;
   late Net net;
@@ -44,33 +44,29 @@ class UnsignedCreateRepo extends Repository<List<UnsignedTransactionResult>> {
     this.wallet = wallet ?? Current.wallet;
   }
 
-  static List<UnsignedTransactionResult> generateFallback(String error) => [
-        UnsignedTransactionResult(
-            error: error,
-            rawHex: '',
-            vinPrivateKeySource: [],
-            vinLockingScriptType: [],
-            changeSource: [],
-            vinScriptOverride: [],
-            vinAssets: [],
-            vinAmounts: [],
-            targetFee: 0)
-      ];
+  static UnsignedTransactionResult generateFallback(String error) =>
+      UnsignedTransactionResult(
+          error: error,
+          rawHex: '',
+          vinPrivateKeySource: [],
+          vinLockingScriptType: [],
+          changeSource: [],
+          vinScriptOverride: [],
+          vinAssets: [],
+          vinAmounts: [],
+          targetFee: 0);
 
   @override
-  bool detectServerError(dynamic resultServer) =>
-      (resultServer.length == 1 && resultServer.first.error != null) ||
-      resultServer.length >= 1 && !resultServer.every((e) => e.error == null);
+  bool detectServerError(dynamic resultServer) => resultServer.error != null;
 
   @override
-  bool detectLocalError(dynamic resultLocal) => resultLocal.length == 0;
+  bool detectLocalError(dynamic resultLocal) => resultLocal.error != null;
 
   @override
-  String extractError(dynamic resultServer) => resultServer.first.error!;
+  String extractError(dynamic resultServer) => resultServer.error!;
 
   @override
-  Future<List<UnsignedTransactionResult>> fromServer() async =>
-      UnsignedCreateCall(
+  Future<UnsignedTransactionResult> fromServer() async => UnsignedCreateCall(
         wallet: wallet,
         chain: chain,
         net: net,
@@ -90,7 +86,7 @@ class UnsignedCreateRepo extends Repository<List<UnsignedTransactionResult>> {
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  List<UnsignedTransactionResult>? fromLocal() => null;
+  UnsignedTransactionResult? fromLocal() => null;
 
   /// don't save or retrieve unsigned tx, make them anew everytime
   @override

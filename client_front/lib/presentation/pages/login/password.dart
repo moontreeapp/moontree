@@ -92,7 +92,9 @@ class _LoginPasswordState extends State<LoginPassword> {
         salt: key,
         saltedHashedPassword: await getLatestSaltedHashedPassword())) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await initiateLogin(key);
+        if (mounted) {
+          await initiateLogin(key);
+        }
       });
     }
   }
@@ -272,7 +274,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     //  print(e);
     //}
     // create ciphers for wallets we have
-    login(context, password: providedPassword);
+    login(password: providedPassword);
     if (refresh) {
       streams.app.behavior.snack
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));

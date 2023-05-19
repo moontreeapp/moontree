@@ -187,7 +187,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
         );
         await setupWallets();
       }
-      login(context);
+      login();
       //}, title: 'Creating Wallet', msg: 'one moment please');
 
       components.cubits.loadingView.hide();

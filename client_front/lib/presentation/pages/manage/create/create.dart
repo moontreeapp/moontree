@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_utils/src/utilities/validation.dart' show coinsPerChain;
+import 'package:wallet_utils/src/utilities/validation.dart'
+    show coinsPerChain, ravenNames;
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -205,12 +206,20 @@ class _SimpleCreateState extends State<SimpleCreate> {
                 hintText: "what's the name of this asset?",
                 errorText: nameController.text == ''
                     ? null
-                    : (isSub(state.type) && parentNameController.text == ''
-                            ? _validateNameOnly(state)
-                            : _validateName(state))
-                        ? null
-                        : '${isNFT(state.type) ? '1' : '3'}-${parentNameController.text == '' ? '30' : (30 - parentNameController.text.length).toString()} characters, special chars allowed: . _',
-                onChanged: (String value) => cubit.update(name: value),
+                    : nameController.text.contains(ravenNames) ||
+                            state.metadataView != null
+                        ? 'name not available'
+                        : (isSub(state.type) && parentNameController.text == ''
+                                ? _validateNameOnly(state)
+                                : _validateName(state))
+                            ? null
+                            : '${isNFT(state.type) ? '1' : '3'}-${parentNameController.text == '' ? '30' : (30 - parentNameController.text.length).toString()} characters, special chars allowed: . _',
+                onChanged: (String value) {
+                  if (value.length > 2 ||
+                      (isNFT(state.type) && value.length > 0)) {
+                    cubit.updateName(value);
+                  }
+                },
                 onEditingComplete: () {
                   cubit.update(name: nameController.text);
                   FocusScope.of(context).requestFocus(quantityFocus);

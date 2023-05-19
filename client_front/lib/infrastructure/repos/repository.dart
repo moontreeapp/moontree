@@ -57,6 +57,7 @@ class Repository<T> {
       final resultServer = await fromServer();
       if (detectServerError(resultServer)) {
         errors[RepoSource.server] = extractError(resultServer);
+        results = fallback(errors[RepoSource.server]!);
       } else {
         source = RepoSource.server;
         results = resultServer;

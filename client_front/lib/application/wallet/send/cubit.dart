@@ -78,10 +78,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
 
   // needed for validation of divisibility
   Future<void> setMetadataView({Security? security}) async => set(
-        metadataView: (await AssetMetadataHistoryRepo(
-                    security: security ?? state.security)
-                .get())
-            .firstOrNull,
+        metadataView: await (getMetadataView(security: security)),
         isSubmitting: false,
       );
   Future<AssetMetadata?> getMetadataView({Security? security}) async =>
