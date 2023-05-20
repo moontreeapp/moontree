@@ -370,7 +370,7 @@ class Sail {
     if (forceFullScreen) {
       components.cubits.frontContainer
           .setHeightTo(height: FrontContainerHeight.max);
-      components.cubits.navbar.setHeightTo(height: NavbarHeight.mid);
+      components.cubits.navbar.setHeightTo(height: NavbarHeight.max);
     }
   }
 

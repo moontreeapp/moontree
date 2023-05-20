@@ -5,7 +5,6 @@ import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:tuple/tuple.dart';
 import 'package:equatable/equatable.dart';
 import 'package:collection/collection.dart';
-import 'package:collection/src/iterable_zip.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -46,6 +45,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     List<String>? txHash,
     int? fee,
     bool? isSubmitting,
+    bool respectMetadata = false,
   }) =>
       emit(SimpleCreateFormState(
         type: type ?? state.type,
@@ -58,7 +58,9 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
         changeAddress: changeAddress ?? state.changeAddress,
-        metadataView: metadataView ?? state.metadataView,
+        metadataView: respectMetadata
+            ? metadataView
+            : (metadataView ?? state.metadataView),
         unsigned: unsigned ?? state.unsigned,
         signed: signed ?? state.signed,
         txHash: txHash ?? state.txHash,
@@ -69,6 +71,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
   Future<void> updateName(String symbol) async => update(
         metadataView: await (getMetadataView(symbol: symbol)),
         name: symbol,
+        respectMetadata: true,
         isSubmitting: false,
       );
 
@@ -256,6 +259,9 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
             // if not burn, or change, or my address, where is this going?
             print('this case should have been caught above '
                 'so this should never happen');
+            // I think what is happening is that we don't make sure to derive a
+            // new address so we don't necessarily have the right list above.
+            // we need to verify this is correct instead of trusting the server.
             coinChange += x.value ?? 0;
             //return false;
           }
