@@ -83,9 +83,11 @@ class UnsignedCreateCall extends ServerCall {
               reissuable: reissuable,
               parentAsset: parentSymbol,
               divisibility: divisibility,
-              amount: quantity,
-              associatedData: assetMemo,
+              amount: quantity! * satsPerCoin,
               verifierString: verifierString,
+              associatedData: assetMemo == "" || assetMemo == null
+                  ? null
+                  : assetMemo!.utf8ToHex,
               opReturnMemo: memo == "" || memo == null
                   ? null
                   : memo!.utf8ToHex, // should be hex string

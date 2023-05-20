@@ -426,6 +426,16 @@ class Sail {
 
   String? get latestLocation => components.cubits.location.state.path;
 
+  void refreshHomeCubits(String location) {
+    if (location == '/wallet/holdings') {
+      components.cubits.holdingsView.setHoldingViews(force: true);
+    } else if (location == '/manage/holdings') {
+      components.cubits.manageHoldingsView.setHoldingViews(force: true);
+    } else if (location == '/swap/holdings') {
+      //pass
+    }
+  }
+
   void updateCubits(
     String location,
     Manifest manifest, {
@@ -459,6 +469,7 @@ class Sail {
     Future.delayed(animation.slideDuration).then((_) async {
       components.cubits.extraContainer.set(child: manifest.extraChild);
     });
+    refreshHomeCubits(location);
   }
 
   /// mutates history state

@@ -147,7 +147,7 @@ class SimpleCreateCheckout extends StatelessWidget {
                                 Text(
                                   state.fee == null
                                       ? 'Calculating...'
-                                      : '${state.assetCreationFeeSats + state.fee!} ${pros.settings.chain.symbol}',
+                                      : '${(state.assetCreationFeeSats + state.fee!).asCoin} ${pros.settings.chain.symbol}',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ])),
@@ -246,7 +246,6 @@ class SubmitButton extends StatelessWidget {
             );
             () async {
               await components.cubits.simpleCreateForm.broadcast();
-              sail.home();
             }();
             await Future.delayed(Duration(seconds: 3));
             components.cubits.loadingView.hide();

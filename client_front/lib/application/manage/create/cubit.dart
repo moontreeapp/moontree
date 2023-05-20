@@ -167,7 +167,18 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
           //    }
           //  }
           //}
-          if (addressData?.address == state.changeAddress) {
+          if (Current.chainNet.chaindata
+              .burnAddresses()
+              .contains(addressData?.address)) {
+            // next
+          } else if (addressData?.address == state.changeAddress) {
+            return true;
+          } else if (Current.wallet.addresses
+              .map((e) => e.address(Current.chain, Current.net))
+              .contains(addressData?.address)) {
+            return true;
+          } else {
+            // what is going on?
             return true;
           }
         }
@@ -176,16 +187,6 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         return true;
       }
       return false;
-    }
-
-    bool getTargetAddressVerificationForAll(int fee) {
-      // do this once on the last tx
-      if (index == state.signed!.length - 1) {
-        return [
-          for (final s in state.signed!) getTargetAddressVerification(s, fee)
-        ].every((i) => i);
-      }
-      return true;
     }
 
     /// coin: should be coinInput - fee - target (if any)
@@ -209,20 +210,24 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
             //print(Current.chainNet.addressFromH160String(cs));
             //print(h160ToAddress(
             //    cs.hexBytes, Current.chainNet.chaindata.p2pkhPrefix));
+            // if it's not my changeAddress,
+            // and not one of my addresses,
+            // and not a burn address... what is it?
             if (state.changeAddress !=
-                Current.chainNet.addressFromH160String(cs)) {
-              /* where is this going? why are we sending anything to an address
-              that is neither the specified changeAddress or the target address?
-              so we fail here if we don't recognize the address.
-              notice: if we were not to specify a changeAddress we would merely
-              trust the server. this is possible because the server doesn't 
-              require us to specify it, but we always do. cubit requires it.*/
+                    Current.chainNet.addressFromH160String(cs) &&
+                !Current.wallet.addresses
+                    .map((e) => e.address(Current.chain, Current.net))
+                    .contains(Current.chainNet.addressFromH160String(cs)) &&
+                Current.chainNet.chaindata
+                    .burnAddresses()
+                    .contains(Current.chainNet.addressFromH160String(cs))) {
               return false;
             }
           }
         }
       }
       int coinChange = 0;
+      int burnFee = 0;
       // //int assetChange = 0;
       for (final x in signed.outs) {
         if (x.script != null) {
@@ -237,21 +242,28 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
           final addressData = tryGuessAddressFromOpList(
               opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
               Current.chainNet.constants);
-          if (addressData?.address == state.changeAddress) {
+          if (Current.chainNet.chaindata
+              .burnAddresses()
+              .contains(addressData?.address)) {
+            burnFee += x.value ?? 0;
+          } else if (addressData?.address == state.changeAddress) {
             coinChange += x.value ?? 0;
-            // //if (x.value == 0 || x.value == null) {
-            // //  final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
-            // //  assetChange += nameSats[state.security.symbol] ?? 0;
-            // //}
+          } else if (Current.wallet.addresses
+              .map((e) => e.address(Current.chain, Current.net))
+              .contains(addressData?.address)) {
+            coinChange += x.value ?? 0;
           } else {
-            // why doesn't the server send back to the changeAddress we specified?
-            return false;
+            // if not burn, or change, or my address, where is this going?
+            print('this case should have been caught above '
+                'so this should never happen');
+            coinChange += x.value ?? 0;
+            //return false;
           }
         }
       }
       if (state.signed!.length == 1) {
         // verify amounts
-        if (coinInput - fee - coinChange != 0) {
+        if (coinInput - fee - coinChange - burnFee != 0) {
           return false;
         }
       }
@@ -259,25 +271,11 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       return true;
     }
 
-    Future<bool> getChangeAddressVerificationForAll() async {
-      // do this once on the last tx
-      if (index == state.signed!.length - 1) {
-        return [
-          for (final _ in state.signed!)
-            await getChangeAddressVerification(0, 0)
-        ].every((i) => i);
-      }
-      return true;
-    }
-
     final coinInput = getCoinInput();
     final fee = getCoinFee(coinInput);
-    final targetAddressVerified = state.signed!.length == 1
-        ? getTargetAddressVerification(signed, fee)
-        : getTargetAddressVerificationForAll(fee);
-    final changeAddressVerified = state.signed!.length == 1
-        ? await getChangeAddressVerification(coinInput, fee)
-        : await getChangeAddressVerificationForAll();
+    final targetAddressVerified = getTargetAddressVerification(signed, fee);
+    final changeAddressVerified =
+        await getChangeAddressVerification(coinInput, fee);
     return TransactionComponents(
         coinInput: coinInput,
         fee: fee,
