@@ -82,7 +82,7 @@ class WalletHoldings extends StatelessWidget {
                             scrollController: ScrollController(),
                             header: 'Get Started',
                             message:
-                                'Use the Import or Receive button to add ${pros.settings.chain.title} & assets to your wallet.'));
+                                'Use the Import feature in the menu or Receive button below to add ${pros.settings.chain.title} & assets to your wallet.'));
                   } else {
                     return RefreshIndicator(
                         onRefresh: () => refresh(cubit),

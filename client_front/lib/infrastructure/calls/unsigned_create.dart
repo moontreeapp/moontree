@@ -59,6 +59,7 @@ class UnsignedCreateCall extends ServerCall {
               myPubkeys: roots,
               feeRateKb: feeRatePerByte == null ? null : feeRatePerByte * 1000,
               changeSource: changeAddress,
+              lockedUtxos: [], // for swaps, currently unused
               assetType: (SymbolType symbolType) {
                 switch (symbolType) {
                   case SymbolType.main:

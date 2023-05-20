@@ -24,6 +24,7 @@ class AssetCreationRequest extends _i1.SerializableEntity {
     required this.reissuable,
     this.associatedData,
     this.verifierString,
+    this.lockedUtxos,
   });
 
   factory AssetCreationRequest.fromJson(
@@ -58,6 +59,8 @@ class AssetCreationRequest extends _i1.SerializableEntity {
           .deserialize<String?>(jsonSerialization['associatedData']),
       verifierString: serializationManager
           .deserialize<String?>(jsonSerialization['verifierString']),
+      lockedUtxos: serializationManager
+          .deserialize<List<String>?>(jsonSerialization['lockedUtxos']),
     );
   }
 
@@ -92,6 +95,8 @@ class AssetCreationRequest extends _i1.SerializableEntity {
 
   String? verifierString;
 
+  List<String>? lockedUtxos;
+
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -109,6 +114,7 @@ class AssetCreationRequest extends _i1.SerializableEntity {
       'reissuable': reissuable,
       'associatedData': associatedData,
       'verifierString': verifierString,
+      'lockedUtxos': lockedUtxos,
     };
   }
 }

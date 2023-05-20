@@ -1,10 +1,7 @@
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
-import 'package:client_front/application/utilities.dart';
-import 'package:client_front/infrastructure/repos/asset_metadata.dart';
-import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:tuple/tuple.dart';
-import 'package:equatable/equatable.dart';
+import 'package:quiver/iterables.dart';
 import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -15,6 +12,10 @@ import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
+import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
+import 'package:client_front/application/utilities.dart';
+import 'package:client_front/infrastructure/repos/asset_metadata.dart';
+import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
@@ -376,7 +377,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       final List<String> walletRoots =
           await (Current.wallet as LeaderWallet).roots;
       for (final Tuple2<int, String> e
-          in unsigned.vinPrivateKeySource.enumeratedTuple<String>()) {
+          in unsigned.vinPrivateKeySource.enumeratedTupleFromList<String>()) {
         if (e.item2.contains(':')) {
           final walletPubKeyAndDerivationIndex = e.item2.split(':');
           // todo Current.wallet must be LeaderWallet, if not err?
@@ -465,4 +466,14 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       }
     }
   }
+}
+
+extension EnumeratedIteratable on Iterable<dynamic> {
+  Iterable<Tuple2<int, T>> enumeratedTupleFromList<T>() => <Tuple2<int, T>>[
+        for (List<dynamic> x in zip(<Iterable<dynamic>>[
+          mapIndexed<int>((int index, dynamic element) => index),
+          this as List<T?>
+        ]))
+          Tuple2<int, T>(x[0] as int, x[1] as T)
+      ];
 }

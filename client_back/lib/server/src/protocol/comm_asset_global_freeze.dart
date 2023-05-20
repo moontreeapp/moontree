@@ -8,27 +8,24 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 
-class UnsignedTransactionRequest extends _i1.SerializableEntity {
-  UnsignedTransactionRequest({
+class AssetGlobalFreezeRequest extends _i1.SerializableEntity {
+  AssetGlobalFreezeRequest({
     this.id,
     required this.myH106s,
     required this.myPubkeys,
     this.feeRateKb,
     this.changeSource,
     this.opReturnMemo,
-    required this.eachOutputAddress,
-    required this.eachOutputAsset,
-    required this.eachOutputAmount,
-    required this.eachOutputAssetMemo,
-    required this.eachOutputAssetMemoTimestamp,
+    required this.asset,
+    required this.isFrozen,
     this.lockedUtxos,
   });
 
-  factory UnsignedTransactionRequest.fromJson(
+  factory AssetGlobalFreezeRequest.fromJson(
     Map<String, dynamic> jsonSerialization,
     _i1.SerializationManager serializationManager,
   ) {
-    return UnsignedTransactionRequest(
+    return AssetGlobalFreezeRequest(
       id: serializationManager.deserialize<int?>(jsonSerialization['id']),
       myH106s: serializationManager
           .deserialize<List<String>>(jsonSerialization['myH106s']),
@@ -40,17 +37,10 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
           .deserialize<String?>(jsonSerialization['changeSource']),
       opReturnMemo: serializationManager
           .deserialize<String?>(jsonSerialization['opReturnMemo']),
-      eachOutputAddress: serializationManager
-          .deserialize<List<String>>(jsonSerialization['eachOutputAddress']),
-      eachOutputAsset: serializationManager
-          .deserialize<List<String?>>(jsonSerialization['eachOutputAsset']),
-      eachOutputAmount: serializationManager
-          .deserialize<List<int>>(jsonSerialization['eachOutputAmount']),
-      eachOutputAssetMemo: serializationManager
-          .deserialize<List<String?>>(jsonSerialization['eachOutputAssetMemo']),
-      eachOutputAssetMemoTimestamp:
-          serializationManager.deserialize<List<int?>>(
-              jsonSerialization['eachOutputAssetMemoTimestamp']),
+      asset:
+          serializationManager.deserialize<String>(jsonSerialization['asset']),
+      isFrozen:
+          serializationManager.deserialize<bool>(jsonSerialization['isFrozen']),
       lockedUtxos: serializationManager
           .deserialize<List<String>?>(jsonSerialization['lockedUtxos']),
     );
@@ -71,15 +61,9 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
 
   String? opReturnMemo;
 
-  List<String> eachOutputAddress;
+  String asset;
 
-  List<String?> eachOutputAsset;
-
-  List<int> eachOutputAmount;
-
-  List<String?> eachOutputAssetMemo;
-
-  List<int?> eachOutputAssetMemoTimestamp;
+  bool isFrozen;
 
   List<String>? lockedUtxos;
 
@@ -92,11 +76,8 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
       'feeRateKb': feeRateKb,
       'changeSource': changeSource,
       'opReturnMemo': opReturnMemo,
-      'eachOutputAddress': eachOutputAddress,
-      'eachOutputAsset': eachOutputAsset,
-      'eachOutputAmount': eachOutputAmount,
-      'eachOutputAssetMemo': eachOutputAssetMemo,
-      'eachOutputAssetMemoTimestamp': eachOutputAssetMemoTimestamp,
+      'asset': asset,
+      'isFrozen': isFrozen,
       'lockedUtxos': lockedUtxos,
     };
   }
