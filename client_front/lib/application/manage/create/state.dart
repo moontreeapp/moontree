@@ -114,7 +114,9 @@ class SimpleCreateFormCubitState extends Equatable {
     }
   }
 
-  String get fullname {
+  String get fullname => getFullname(parentName: parentName, name: name);
+
+  String getFullname({required String parentName, required String name}) {
     if (type == SymbolType.main) {
       return name;
     }

@@ -68,8 +68,12 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         isSubmitting: isSubmitting ?? state.isSubmitting,
       ));
 
-  Future<void> updateName(String symbol) async => update(
-        metadataView: await (getMetadataView(symbol: symbol)),
+  Future<void> updateName(String symbol, {String? parentName}) async => update(
+        metadataView: await (getMetadataView(
+            symbol: state.getFullname(
+          parentName: parentName ?? state.parentName,
+          name: symbol,
+        ))),
         name: symbol,
         respectMetadata: true,
         isSubmitting: false,

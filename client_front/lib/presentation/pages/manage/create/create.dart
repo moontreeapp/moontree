@@ -215,9 +215,19 @@ class _SimpleCreateState extends State<SimpleCreate> {
                             ? null
                             : '${isNFT(state.type) ? '1' : '3'}-${parentNameController.text == '' ? '30' : (30 - parentNameController.text.length).toString()} characters, special chars allowed: . _',
                 onChanged: (String value) {
-                  if (value.length > 2 ||
-                      (isNFT(state.type) && value.length > 0)) {
-                    cubit.updateName(value);
+                  if (isSub(state.type)) {
+                    if (value.length > 2 ||
+                        (isNFT(state.type) && value.length > 0)) {
+                      cubit.updateName(value);
+                    } else {
+                      cubit.update(name: value);
+                    }
+                  } else {
+                    if (value.length > 2) {
+                      cubit.updateName(value);
+                    } else {
+                      cubit.update(name: value);
+                    }
                   }
                 },
                 onEditingComplete: () {
@@ -597,6 +607,12 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         chain: pros.settings.chain,
                         net: pros.settings.net);
                 cubit.update(parentName: sec.symbol);
+                if (isSub(cubit.state.type) &&
+                    (cubit.state.name.length > 2 ||
+                        (isNFT(cubit.state.type) &&
+                            cubit.state.name.length > 0))) {
+                  cubit.updateName(cubit.state.name, parentName: sec.symbol);
+                }
               },
               leading: components.icons.assetAvatar(name,
                   height: 24, width: 24, net: pros.settings.net),
