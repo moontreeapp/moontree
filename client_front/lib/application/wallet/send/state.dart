@@ -2,7 +2,7 @@ part of 'cubit.dart';
 
 @immutable
 class SimpleSendFormState extends CubitState {
-  final AssetMetadata? metadataView;
+  final AssetMetadataResponse? metadataView;
   final Security security;
   final String address;
   final String changeAddress;
@@ -64,7 +64,7 @@ class SimpleSendFormState extends CubitState {
       metadataView: null, security: pros.securities.currentCoin);
 
   SimpleSendFormState load({
-    AssetMetadata? metadataView,
+    AssetMetadataResponse? metadataView,
     Security? security,
     String? address,
     double? amount,

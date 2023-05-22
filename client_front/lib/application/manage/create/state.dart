@@ -12,7 +12,7 @@ class SimpleCreateFormCubitState extends Equatable {
   final int decimals;
   final bool reissuable;
   final String changeAddress;
-  final AssetMetadata? metadataView;
+  final AssetMetadataResponse? metadataView;
   final UnsignedTransactionResult? unsigned;
   final List<wutx.Transaction>? signed;
   final List<String>? txHash;

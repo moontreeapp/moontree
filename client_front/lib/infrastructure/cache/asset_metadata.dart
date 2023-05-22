@@ -1,6 +1,6 @@
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/protocol.dart'
-    show AssetMetadata;
+    show AssetMetadataResponse;
 import 'package:client_front/infrastructure/cache/cache.dart';
 
 class AssetsCache {
@@ -9,7 +9,7 @@ class AssetsCache {
     required String symbol,
     required Chain chain,
     required Net net,
-    required Iterable<AssetMetadata> records,
+    required Iterable<AssetMetadataResponse> records,
   }) async =>
       Cache.save(
         records,
@@ -20,12 +20,12 @@ class AssetsCache {
       );
 
   /// gets list of AssetMetadata objects from cache
-  static Iterable<AssetMetadata>? get({
+  static Iterable<AssetMetadataResponse>? get({
     required String symbol,
     required Chain chain,
     required Net net,
   }) =>
       pros.cache.byAssetMetadata
           .getAll(symbol, chain, net)
-          .map((e) => Cache.read<AssetMetadata>(e));
+          .map((e) => Cache.read<AssetMetadataResponse>(e));
 }

@@ -9,7 +9,7 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
 import 'package:client_back/server/src/protocol/comm_int.dart' as _i3;
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart'
+import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart'
     as _i4;
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart'
     as _i5;
@@ -64,12 +64,12 @@ class _EndpointMetadata extends _i1.EndpointRef {
   /// metadata, so we're set up to easily pivot to that scenario. Furthermore,
   /// most the other endpoints return lists so the front end is used to it.
   /// Of course maybe we'd just make a different endpoint for history, but idk.
-  _i2.Future<List<_i4.AssetMetadata>> get({
+  _i2.Future<_i4.AssetMetadataResponse> get({
     required String symbol,
     required String chainName,
     int? height,
   }) =>
-      caller.callServerEndpoint<List<_i4.AssetMetadata>>(
+      caller.callServerEndpoint<_i4.AssetMetadataResponse>(
         'metadata',
         'get',
         {

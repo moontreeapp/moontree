@@ -2,7 +2,7 @@ part of 'cubit.dart';
 
 @immutable
 class ManageHoldingViewState extends CubitState {
-  final AssetMetadata? metadataView;
+  final AssetMetadataResponse? metadataView;
   final Wallet? wallet;
   final Security security;
   final bool isSubmitting;
@@ -54,7 +54,7 @@ class ManageHoldingViewState extends CubitState {
   ManageHoldingViewState load({
     List<TransactionView>? transactionViews,
     List<TransactionView>? mempoolViews,
-    AssetMetadata? metadataView,
+    AssetMetadataResponse? metadataView,
     Wallet? wallet,
     Security? security,
     bool? end,

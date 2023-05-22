@@ -4,7 +4,7 @@ part of 'cubit.dart';
 class WalletHoldingViewState extends CubitState {
   final List<TransactionView> transactionViews;
   final List<TransactionView> mempoolViews;
-  final AssetMetadata? metadataView;
+  final AssetMetadataResponse? metadataView;
   final Wallet? wallet;
   final Security security;
   final bool end;
@@ -79,7 +79,7 @@ class WalletHoldingViewState extends CubitState {
   WalletHoldingViewState load({
     List<TransactionView>? transactionViews,
     List<TransactionView>? mempoolViews,
-    AssetMetadata? metadataView,
+    AssetMetadataResponse? metadataView,
     Wallet? wallet,
     Security? security,
     bool? end,

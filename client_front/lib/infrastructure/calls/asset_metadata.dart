@@ -22,8 +22,8 @@ class AssetMetadataHistoryCall extends ServerCall {
     this.symbol = symbol ?? pros.securities.coinOf(this.chain, this.net).symbol;
   }
 
-  Future<List<server.AssetMetadata>> assetMetadataHistoryBy({
-    //server.AssetMetadata
+  Future<server.AssetMetadataResponse> assetMetadataHistoryBy({
+    //server.AssetMetadataResponse
     required String symbol,
     required Chaindata chain,
   }) async =>
@@ -33,40 +33,36 @@ class AssetMetadataHistoryCall extends ServerCall {
             height: null,
           ));
 
-  Future<List<server.AssetMetadata>> call() async {
+  Future<server.AssetMetadataResponse> call() async {
     if (symbol == pros.securities.coinOf(chain, net).symbol) {
       switch (symbol) {
         case 'EVR':
-          return [
-            server.AssetMetadata(
-              reissuable: false,
-              totalSupply: coinsPerChain,
-              divisibility: 8,
-              frozen: false,
-              voutId: 0,
-            )
-          ];
+          return server.AssetMetadataResponse(
+            reissuable: false,
+            totalSupply: coinsPerChain,
+            divisibility: 8,
+            frozen: false,
+          );
         default:
           //case 'RVN':
-          return [
-            server.AssetMetadata(
-              reissuable: false,
-              totalSupply: coinsPerChain,
-              divisibility: 8,
-              frozen: false,
-              voutId: 0,
-            )
-          ];
+          return server.AssetMetadataResponse(
+            reissuable: false,
+            totalSupply: coinsPerChain,
+            divisibility: 8,
+            frozen: false,
+          );
       }
     }
-    final List<server.AssetMetadata> history = mockFlag
+    final server.AssetMetadataResponse history = mockFlag
 
         /// MOCK SERVER
         ? await Future.delayed(Duration(seconds: 1), spoof)
 
         /// SERVER
         : await assetMetadataHistoryBy(
-            symbol: symbol, chain: ChainNet(chain, net).chaindata);
+            symbol: symbol,
+            chain: ChainNet(chain, net).chaindata,
+          );
 
     //if (history.length == 1 /*&& history.first.error != null*/) {
     //  // handle
@@ -76,16 +72,11 @@ class AssetMetadataHistoryCall extends ServerCall {
   }
 }
 
-List<server.AssetMetadata> spoof() {
-  final views = <server.AssetMetadata>[
-    server.AssetMetadata(
-      reissuable: false,
-      totalSupply: 100,
-      divisibility: 4,
-      frozen: false,
-      voutId: 1,
-    ),
-  ];
-
-  return views;
+server.AssetMetadataResponse spoof() {
+  return server.AssetMetadataResponse(
+    reissuable: false,
+    totalSupply: 100,
+    divisibility: 4,
+    frozen: false,
+  );
 }

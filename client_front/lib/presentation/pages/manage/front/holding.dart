@@ -121,7 +121,7 @@ class MetadataView extends StatelessWidget {
     return BlocBuilder<ManageHoldingViewCubit, ManageHoldingViewState>(
         builder: (BuildContext context, ManageHoldingViewState state) {
       //final Asset securityAsset = cubit.state.security.asset!;
-      final AssetMetadata? securityAsset = state.metadataView;
+      final AssetMetadataResponse? securityAsset = state.metadataView;
 
       List<Widget> children = <Widget>[];
       //if (securityAsset.primaryMetadata == null &&

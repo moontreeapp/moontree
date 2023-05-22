@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:tuple/tuple.dart';
 import 'package:equatable/equatable.dart';
@@ -42,7 +43,7 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
 
   @override
   void set({
-    AssetMetadata? metadataView,
+    AssetMetadataResponse? metadataView,
     Security? security,
     String? address,
     double? amount,
@@ -81,10 +82,9 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
         metadataView: await (getMetadataView(security: security)),
         isSubmitting: false,
       );
-  Future<AssetMetadata?> getMetadataView({Security? security}) async =>
+  Future<AssetMetadataResponse?> getMetadataView({Security? security}) async =>
       (await AssetMetadataHistoryRepo(security: security ?? state.security)
-              .get())
-          .firstOrNull;
+          .get());
 
   Future<void> setUnsignedTransaction({
     bool sendAllCoinFlag = false,

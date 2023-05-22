@@ -313,7 +313,7 @@ class MetadataView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final Asset securityAsset = cubit.state.security.asset!;
-    final AssetMetadata? securityAsset = cubit.state.metadataView;
+    final AssetMetadataResponse? securityAsset = cubit.state.metadataView;
 
     List<Widget> children = <Widget>[];
     //if (securityAsset.primaryMetadata == null &&

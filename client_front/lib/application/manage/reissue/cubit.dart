@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
@@ -42,7 +43,7 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
 
   @override
   void set({
-    AssetMetadata? metadataView,
+    AssetMetadataResponse? metadataView,
     Security? security,
     String? address,
     double? amount,
@@ -79,15 +80,13 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
   // needed for validation of divisibility
   Future<void> setMetadataView({Security? security}) async => set(
         metadataView: (await AssetMetadataHistoryRepo(
-                    security: security ?? state.security)
-                .get())
-            .firstOrNull,
+                security: security ?? state.security)
+            .get()),
         isSubmitting: false,
       );
-  Future<AssetMetadata?> getMetadataView({Security? security}) async =>
+  Future<AssetMetadataResponse?> getMetadataView({Security? security}) async =>
       (await AssetMetadataHistoryRepo(security: security ?? state.security)
-              .get())
-          .firstOrNull;
+          .get());
 
   Future<void> setUnsignedTransaction({
     bool sendAllCoinFlag = false,

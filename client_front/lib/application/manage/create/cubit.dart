@@ -1,3 +1,4 @@
+import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:tuple/tuple.dart';
 import 'package:quiver/iterables.dart';
 import 'package:collection/collection.dart';
@@ -40,7 +41,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     int? decimals,
     bool? reissuable,
     String? changeAddress,
-    AssetMetadata? metadataView,
+    AssetMetadataResponse? metadataView,
     UnsignedTransactionResult? unsigned,
     List<wutx.Transaction>? signed,
     List<String>? txHash,
@@ -80,14 +81,13 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         isSubmitting: false,
       );
 
-  Future<AssetMetadata?> getMetadataView({String? symbol}) async =>
+  Future<AssetMetadataResponse?> getMetadataView({String? symbol}) async =>
       (await AssetMetadataHistoryRepo(
-                  security: Security(
-                      symbol: symbol ?? state.name,
-                      chain: pros.settings.chain,
-                      net: pros.settings.net))
-              .get())
-          .firstOrNull;
+              security: Security(
+                  symbol: symbol ?? state.name,
+                  chain: pros.settings.chain,
+                  net: pros.settings.net))
+          .get());
 
   // need set unsigned tx
   Future<void> updateUnsignedTransaction({

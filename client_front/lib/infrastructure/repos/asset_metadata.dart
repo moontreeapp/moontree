@@ -1,12 +1,12 @@
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/protocol.dart'
-    show AssetMetadata;
+    show AssetMetadataResponse;
 import 'package:client_front/infrastructure/cache/asset_metadata.dart';
 import 'package:client_front/infrastructure/calls/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 
-class AssetMetadataHistoryRepo extends Repository<Iterable<AssetMetadata>> {
+class AssetMetadataHistoryRepo extends Repository<AssetMetadataResponse> {
   late String symbol;
   late Chain chain;
   late Net net;
@@ -23,33 +23,39 @@ class AssetMetadataHistoryRepo extends Repository<Iterable<AssetMetadata>> {
         security?.symbol ??
         pros.securities.coinOf(this.chain, this.net).symbol;
   }
-  static Iterable<AssetMetadata> generateFallback([String? error]) =>
-      <AssetMetadata>[];
+  static AssetMetadataResponse generateFallback([String? error]) =>
+      AssetMetadataResponse(
+        error: 'generated fallback metadata',
+        reissuable: false,
+        totalSupply: 0,
+        divisibility: 0,
+        frozen: false,
+      );
 
   @override
-  bool detectServerError(dynamic resultServer) => resultServer.length == 0;
+  bool detectServerError(dynamic resultServer) => resultServer.error != null;
 
   @override
-  bool detectLocalError(dynamic resultLocal) => resultLocal.length == 0;
+  bool detectLocalError(dynamic resultLocal) => resultLocal == null;
 
   @override
   String extractError(dynamic resultServer) => 'no result';
 
   @override
-  Future<Iterable<AssetMetadata>> fromServer() async =>
+  Future<AssetMetadataResponse> fromServer() async =>
       AssetMetadataHistoryCall(chain: chain, net: net, symbol: symbol)();
 
   /// server does not give null, local does because local null always indicates
   /// error (missing data), whereas empty might indicate empty data.
   @override
-  Iterable<AssetMetadata>? fromLocal() =>
-      AssetsCache.get(chain: chain, net: net, symbol: symbol);
+  AssetMetadataResponse? fromLocal() =>
+      AssetsCache.get(chain: chain, net: net, symbol: symbol)?.firstOrNull;
 
   @override
   Future<void> save() async => AssetsCache.put(
         symbol: symbol,
         chain: chain,
         net: net,
-        records: results,
+        records: [results],
       );
 }

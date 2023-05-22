@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:collection/src/iterable_extensions.dart' show IterableExtension;
 import 'package:rxdart/rxdart.dart';
 import 'package:bloc/bloc.dart';
@@ -41,7 +42,7 @@ class WalletHoldingViewCubit extends Cubit<WalletHoldingViewState>
   void set({
     List<TransactionView>? transactionViews,
     List<TransactionView>? mempoolViews,
-    AssetMetadata? metadataView,
+    AssetMetadataResponse? metadataView,
     Wallet? wallet,
     Security? security,
     bool? end,
@@ -92,8 +93,7 @@ class WalletHoldingViewCubit extends Cubit<WalletHoldingViewState>
       submitting();
       final metadataView = (await AssetMetadataHistoryRepo(
         security: state.security,
-      ).get())
-          .firstOrNull;
+      ).get());
       if (checkCleared && cleared) {
         return;
       }
@@ -226,7 +226,7 @@ class WalletHoldingViewCubit extends Cubit<WalletHoldingViewState>
 
   bool get nullCacheView {
     //final Asset? securityAsset = state.security.asset;
-    final AssetMetadata? securityAsset = state.metadataView;
+    final AssetMetadataResponse? securityAsset = state.metadataView;
     return securityAsset == null;
   }
 
