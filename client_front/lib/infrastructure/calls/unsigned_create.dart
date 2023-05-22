@@ -84,7 +84,7 @@ class UnsignedCreateCall extends ServerCall {
               reissuable: reissuable,
               parentAsset: parentSymbol,
               divisibility: divisibility,
-              amount: quantity! * satsPerCoin,
+              amount: quantity!, // in sats
               verifierString: verifierString,
               associatedData: assetMemo == "" || assetMemo == null
                   ? null

@@ -69,6 +69,8 @@ class SimpleReissueFormCubitState extends Equatable {
 
   FeeRate? get feeRate => standardFee;
 
+  double get quantityCoin => quantity.asCoin;
+
   int get assetCreationFeeSats => assetCreationFee * satsPerCoin;
 
   // in coins

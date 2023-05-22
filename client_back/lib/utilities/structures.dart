@@ -217,7 +217,9 @@ class Symbol {
   factory Symbol.generate(String symbol, Chain chain, Net net) =>
       chain == Chain.ravencoin ? SymbolRVN(symbol) : SymbolEVR(symbol);
 
-  /// required API ///
+  /* required API */
+
+  /// returns the parent symbol of this sub asset or null if it is not a sub
   String? get parentSymbol {
     switch (symbolType) {
       case SymbolType.sub:
@@ -240,6 +242,7 @@ class Symbol {
     }
   }
 
+  /// returns the sub symbol of this asset or null if it is not a sub
   String? get shortName {
     switch (symbolType) {
       case SymbolType.sub:

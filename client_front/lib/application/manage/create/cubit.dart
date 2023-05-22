@@ -8,7 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 //    show StringBytesExtension, EnumeratedIteratable;
 import 'package:wallet_utils/wallet_utils.dart'
-    show ECPair, FeeRate, TransactionBuilder, satsPerCoin, standardFee;
+    show
+        ECPair,
+        FeeRate,
+        SatsToAmountExtension,
+        AmountToSatsExtension,
+        TransactionBuilder,
+        satsPerCoin,
+        standardFee;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -38,6 +45,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     String? assetMemo,
     String? verifierString,
     int? quantity,
+    double? quantityCoin,
     int? decimals,
     bool? reissuable,
     String? changeAddress,
@@ -56,7 +64,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         memo: memo ?? state.memo,
         assetMemo: assetMemo ?? state.assetMemo,
         verifierString: verifierString ?? state.verifierString,
-        quantity: quantity ?? state.quantity,
+        quantity: quantity ?? (quantityCoin?.asSats) ?? state.quantity,
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
         changeAddress: changeAddress ?? state.changeAddress,
@@ -81,13 +89,18 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         isSubmitting: false,
       );
 
-  Future<AssetMetadataResponse?> getMetadataView({String? symbol}) async =>
-      (await AssetMetadataHistoryRepo(
-              security: Security(
-                  symbol: symbol ?? state.name,
-                  chain: pros.settings.chain,
-                  net: pros.settings.net))
-          .get());
+  Future<AssetMetadataResponse?> getMetadataView({String? symbol}) async {
+    final metadata = await AssetMetadataHistoryRepo(
+            security: Security(
+                symbol: symbol ?? state.name,
+                chain: pros.settings.chain,
+                net: pros.settings.net))
+        .get();
+    if (metadata.error == null) {
+      return metadata;
+    }
+    return null;
+  }
 
   // need set unsigned tx
   Future<void> updateUnsignedTransaction({

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet_utils/src/utilities/validation.dart'
-    show coinsPerChain, ravenNames;
+    show coinsPerChain, ravenNames, satsPerCoin;
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -129,16 +129,20 @@ class _SimpleCreateState extends State<SimpleCreate> {
           if (isNFT(state.type)) {
             quantityController.text = '1';
             decimalsController.text = '0';
-            cubit.update(quantity: 1, decimals: 0); //reissuable: false
+            cubit.update(
+              quantity: 1 * satsPerCoin,
+              decimals: 0,
+              //reissuable: false?
+            );
           } else {
             if (state.quantity.toString().length > 0 && state.quantity != 0) {
+              final quant = state.quantityCoin.toString().replaceAll('.0', '');
               quantityController.value = TextEditingValue(
-                  text: state.quantity.toString(),
-                  selection: quantityController.selection.baseOffset >
-                          state.quantity.toString().length
-                      ? TextSelection.collapsed(
-                          offset: state.quantity.toString().length)
-                      : quantityController.selection);
+                  text: quant,
+                  selection:
+                      quantityController.selection.baseOffset > quant.length
+                          ? TextSelection.collapsed(offset: quant.length)
+                          : quantityController.selection);
             }
             if (state.decimals.toString().length > 0) {
               decimalsController.value = TextEditingValue(
@@ -260,7 +264,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         : 'too large',
                 onChanged: (String value) {
                   try {
-                    cubit.update(quantity: int.parse(value));
+                    cubit.update(quantityCoin: double.parse(value));
                   } catch (e) {
                     cubit.update(quantity: 0);
                   }
@@ -269,7 +273,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   if (_validateQuantity(state)) {
                     try {
                       cubit.update(
-                          quantity: int.parse(quantityController.text));
+                          quantityCoin: double.parse(quantityController.text));
                     } catch (e) {
                       cubit.update(quantity: 0);
                     }
@@ -357,7 +361,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     parentName: parentNameController.text,
                     name: nameController.text,
                     assetMemo: assetMemoController.text,
-                    quantity: int.parse(quantityController.text),
+                    quantityCoin: double.parse(quantityController.text),
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
                   );
@@ -654,7 +658,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                cubit.state.quantity.toString(),
+                cubit.state.quantityCoin.toString(),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               Text(

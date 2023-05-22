@@ -22,6 +22,7 @@ import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:wallet_utils/wallet_utils.dart';
 
 class SimpleReissue extends StatefulWidget {
   const SimpleReissue({Key? key}) : super(key: key);
@@ -129,16 +130,16 @@ class _SimpleReissueState extends State<SimpleReissue> {
           if (isNFT(state.type)) {
             quantityController.text = '1';
             decimalsController.text = '0';
-            cubit.update(quantity: 1, decimals: 0); //reissuable: false
+            cubit.update(quantity: 1 * satsPerCoin, decimals: 0);
           } else {
             if (state.quantity.toString().length > 0 && state.quantity != 0) {
+              final quant = state.quantityCoin.toString().replaceAll('.0', '');
               quantityController.value = TextEditingValue(
-                  text: state.quantity.toString(),
-                  selection: quantityController.selection.baseOffset >
-                          state.quantity.toString().length
-                      ? TextSelection.collapsed(
-                          offset: state.quantity.toString().length)
-                      : quantityController.selection);
+                  text: quant,
+                  selection:
+                      quantityController.selection.baseOffset > quant.length
+                          ? TextSelection.collapsed(offset: quant.length)
+                          : quantityController.selection);
             }
             if (state.decimals.toString().length > 0) {
               decimalsController.value = TextEditingValue(
@@ -260,7 +261,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                         : 'too large',
                 onChanged: (String value) {
                   try {
-                    cubit.update(quantity: int.parse(value));
+                    cubit.update(quantityCoin: double.parse(value));
                   } catch (e) {
                     cubit.update(quantity: 0);
                   }
@@ -269,7 +270,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   if (_validateQuantity(state)) {
                     try {
                       cubit.update(
-                          quantity: int.parse(quantityController.text));
+                          quantityCoin: double.parse(quantityController.text));
                     } catch (e) {
                       cubit.update(quantity: 0);
                     }
@@ -357,7 +358,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                     parentName: parentNameController.text,
                     name: nameController.text,
                     assetMemo: assetMemoController.text,
-                    quantity: int.parse(quantityController.text),
+                    quantityCoin: double.parse(quantityController.text),
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
                   );
@@ -584,7 +585,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
     await cubit.sign();
     final validateMsg = await cubit.verifyTransaction();
     if (validateMsg.item1) {
-      sail.to('/manage/create/checkout');
+      sail.to('/manage/reissue/checkout');
     } else {
       streams.app.behavior.snack.add(Snack(
           message: 'unable to generate transaction',
@@ -655,7 +656,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                cubit.state.quantity.toString(),
+                cubit.state.quantityCoin.toString(),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               Text(

@@ -1,23 +1,25 @@
-import 'package:client_back/utilities/structures.dart';
-import 'package:client_front/domain/utils/alphacon.dart';
+import 'package:tuple/tuple.dart';
+import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intersperse/intersperse.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/streams/streams.dart';
+import 'package:client_back/utilities/structures.dart';
+import 'package:client_front/domain/utils/alphacon.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
-import 'package:client_front/presentation/services/services.dart'
-    show sail, screen;
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/shadows.dart' as shadows;
+import 'package:client_front/presentation/services/services.dart'
+    show sail, screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:tuple/tuple.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 TextStyle style(BuildContext context, Snack? snack) => snack?.positive ?? true
     ? Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.white)
@@ -445,13 +447,13 @@ class NavbarActions extends StatelessWidget {
                                               Expanded(
                                                   child: BottomButton(
                                                 label: 'reissue',
-                                                enabled: false,
-                                                onPressed: () {},
+                                                enabled: true,
+                                                onPressed: _gotoReissue,
                                               ))
                                             else
                                               Expanded(
                                                   child: BottomButton(
-                                                label: 'create',
+                                                label: 'create?',
                                                 enabled: false,
                                                 onPressed: () {},
                                               ))
@@ -473,6 +475,33 @@ class NavbarActions extends StatelessWidget {
                                 .intersperse(const SizedBox(width: 16))
                                 .toList(),
                           ))));
+
+  Future<void> _gotoReissue() async {
+    final cubit = components.cubits.simpleReissueForm;
+    final symbol = Symbol(components.cubits.location.state.symbol!);
+    final metadata = await cubit.getMetadataView(symbol: symbol.symbol);
+    if (metadata != null) {
+      cubit.update(
+        type: symbol.symbolType,
+        parentName: symbol.parentSymbol,
+        name: symbol.shortName ?? symbol.symbol,
+        memo:
+            null /* not implemented on front end yet, and not available in metadata object, you'd have to go get the VoutId */,
+        assetMemo:
+            (metadata.mempoolAssociatedData ?? metadata.associatedData) != null
+                ? (metadata.mempoolAssociatedData ?? metadata.associatedData)!
+                    .toBs58() //.toHex()
+                : null,
+        verifierString:
+            metadata.mempoolVerifierString ?? metadata.verifierString,
+        quantity: metadata.mempoolTotalSupply ?? metadata.totalSupply,
+        decimals: metadata.mempoolDivisibility ?? metadata.divisibility,
+        reissuable: metadata.mempoolReissuable ?? metadata.reissuable,
+        metadataView: metadata,
+      );
+      sail.to('/manage/reissue');
+    }
+  }
 
   void _produceCreateModal(BuildContext context) {
     final imageDetails = ImageDetails(
