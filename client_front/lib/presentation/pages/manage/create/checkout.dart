@@ -81,10 +81,16 @@ class SimpleCreateCheckout extends StatelessWidget {
                               left: 'Decimal Places',
                               right: state.decimals.toString(),
                               style: Theme.of(context).textTheme.checkoutItem),
-                          if (!['', null].contains(state.memo))
+                          if (!['', null].contains(state.assetMemo))
                             CheckoutItem(
                                 left: 'IPFS / Data',
-                                right: state.memo.cutOutMiddle(),
+                                right: state.assetMemo?.cutOutMiddle() ?? '',
+                                style:
+                                    Theme.of(context).textTheme.checkoutItem),
+                          if (!['', null].contains(state.memo))
+                            CheckoutItem(
+                                left: 'Return Memo',
+                                right: state.memo?.cutOutMiddle() ?? '',
                                 style:
                                     Theme.of(context).textTheme.checkoutItem),
                           CheckoutItem(

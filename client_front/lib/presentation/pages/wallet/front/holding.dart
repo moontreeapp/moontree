@@ -320,8 +320,10 @@ class MetadataView extends StatelessWidget {
     //    securityAsset.hasData &&
     //    securityAsset.data!.isIpfs) {
     if (securityAsset != null) {
-      if (securityAsset.associatedData != null) {
-        if (securityAsset.associatedData!.toHex().isIpfs) {
+      final associatedData =
+          securityAsset.mempoolAssociatedData ?? securityAsset.associatedData;
+      if (associatedData != null) {
+        if (associatedData.toHex().isIpfs) {
           return Container(
             alignment: Alignment.topCenter,
             height:
@@ -341,7 +343,7 @@ class MetadataView extends StatelessWidget {
                     'BROWSER': () {
                       Navigator.of(context).pop();
                       launchUrl(Uri.parse(
-                          'https://ipfs.io/ipfs/${securityAsset.associatedData!.toHex()}'));
+                          'https://ipfs.io/ipfs/${associatedData.toHex()}'));
                     },
                   },
                 ),
@@ -350,9 +352,7 @@ class MetadataView extends StatelessWidget {
           );
         } else {
           // not ipfs - show whatever it is. todo: handle image etc here.
-          children = <Widget>[
-            SelectableText(securityAsset.associatedData!.toHex())
-          ];
+          children = <Widget>[SelectableText(associatedData.toHex())];
         }
       } else {
         // no associated data - show details
@@ -365,7 +365,9 @@ class MetadataView extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             trailing: SelectableText(
-              securityAsset.totalSupply.asCoin.toSatsCommaString(),
+              (securityAsset.mempoolTotalSupply ?? securityAsset.totalSupply)
+                  .asCoin
+                  .toSatsCommaString(),
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
@@ -375,7 +377,7 @@ class MetadataView extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             trailing: SelectableText(
-              '${securityAsset.divisibility}',
+              '${(securityAsset.mempoolDivisibility ?? securityAsset.divisibility)}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
@@ -385,7 +387,7 @@ class MetadataView extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             trailing: SelectableText(
-              '${securityAsset.reissuable ? 'yes' : 'no'}',
+              '${(securityAsset.mempoolReissuable ?? securityAsset.reissuable) ? 'yes' : 'no'}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
@@ -395,7 +397,7 @@ class MetadataView extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             trailing: SelectableText(
-              '${securityAsset.frozen ? 'yes' : 'no'}',
+              '${(securityAsset.mempoolFrozen ?? securityAsset.frozen) ? 'yes' : 'no'}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),

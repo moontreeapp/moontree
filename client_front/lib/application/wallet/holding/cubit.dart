@@ -98,7 +98,7 @@ class WalletHoldingViewCubit extends Cubit<WalletHoldingViewState>
         return;
       }
       if (state.security.isCoin) {
-        metadataView?.totalSupply = (await CirculatingSatsRepo(
+        metadataView.totalSupply = (await CirculatingSatsRepo(
           security: state.security,
         ).get())
             .value;

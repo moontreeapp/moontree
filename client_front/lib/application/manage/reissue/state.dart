@@ -5,12 +5,12 @@ class SimpleReissueFormCubitState extends Equatable {
   final SymbolType? type;
   final String parentName;
   final String name;
-  final String memo;
-  final String assetMemo;
-  final String verifierString;
   final int quantity;
   final int decimals;
   final bool reissuable;
+  final String? memo;
+  final String? assetMemo;
+  final String? verifierString;
   final String changeAddress;
   final AssetMetadataResponse? metadataView;
   final UnsignedTransactionResult? unsigned;
@@ -23,12 +23,12 @@ class SimpleReissueFormCubitState extends Equatable {
     required this.type,
     this.parentName = '',
     this.name = '',
-    this.memo = '',
-    this.assetMemo = '',
-    this.verifierString = '',
     this.quantity = 0,
     this.decimals = 0,
     this.reissuable = true,
+    this.memo,
+    this.assetMemo,
+    this.verifierString,
     this.changeAddress = '',
     this.metadataView,
     this.unsigned,
@@ -52,12 +52,12 @@ class SimpleReissueFormCubitState extends Equatable {
         type,
         parentName,
         name,
-        memo,
-        assetMemo,
-        verifierString,
         quantity,
         decimals,
         reissuable,
+        memo,
+        assetMemo,
+        verifierString,
         changeAddress,
         metadataView,
         unsigned,
@@ -146,11 +146,11 @@ class SimpleReissueFormState extends SimpleReissueFormCubitState {
     super.parentName,
     super.name,
     super.quantity,
+    super.decimals,
+    super.reissuable,
     super.memo,
     super.assetMemo,
     super.verifierString,
-    super.decimals,
-    super.reissuable,
     super.changeAddress,
     super.metadataView,
     super.unsigned,

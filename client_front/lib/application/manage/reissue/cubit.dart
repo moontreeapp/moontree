@@ -21,9 +21,9 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
 import 'package:client_front/application/utilities.dart';
-import 'package:client_front/infrastructure/repos/asset_metadata.dart';
-import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
+import 'package:client_front/infrastructure/repos/asset_metadata.dart';
+import 'package:client_front/infrastructure/repos/unsigned_reissue.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
 
@@ -40,13 +40,13 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
     SymbolType? type,
     String? parentName,
     String? name,
-    String? memo,
-    String? assetMemo,
-    String? verifierString,
     int? quantity,
     double? quantityCoin,
     int? decimals,
     bool? reissuable,
+    String? memo,
+    String? assetMemo,
+    String? verifierString,
     String? changeAddress,
     AssetMetadataResponse? metadataView,
     UnsignedTransactionResult? unsigned,
@@ -60,12 +60,12 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
         type: type ?? state.type,
         parentName: parentName ?? state.parentName,
         name: name ?? state.name,
-        memo: memo ?? state.memo,
-        assetMemo: assetMemo ?? state.assetMemo,
-        verifierString: verifierString ?? state.verifierString,
         quantity: quantity ?? (quantityCoin?.asSats) ?? state.quantity,
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
+        memo: memo ?? state.memo,
+        assetMemo: assetMemo ?? state.assetMemo,
+        verifierString: verifierString ?? state.verifierString,
         changeAddress: changeAddress ?? state.changeAddress,
         metadataView: respectMetadata
             ? metadataView
@@ -111,7 +111,7 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
     final changeAddress =
         (await ReceiveRepo(wallet: wallet, change: true).fetch())
             .address(chain, net);
-    UnsignedTransactionResult unsigned = await UnsignedCreateRepo(
+    UnsignedTransactionResult unsigned = await UnsignedReissueRepo(
       wallet: wallet,
       chain: chain,
       net: net,
@@ -122,10 +122,8 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
       memo: state.memo,
       assetMemo: state.assetMemo,
       verifierString: state.verifierString,
-      parentSymbol: state.parentName,
-      symbol: state.name,
+      symbol: state.fullname,
       reissuable: state.reissuable,
-      symbolType: state.type ?? SymbolType.main,
     ).fetch(only: true);
     update(
       unsigned: unsigned,

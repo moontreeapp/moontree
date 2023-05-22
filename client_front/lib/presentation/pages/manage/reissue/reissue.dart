@@ -119,12 +119,12 @@ class _SimpleReissueState extends State<SimpleReissue> {
                         ? TextSelection.collapsed(offset: state.name.length)
                         : nameController.selection);
           }
-          if (state.assetMemo.length > 0) {
+          if (state.assetMemo != null) {
             assetMemoController.value = TextEditingValue(
-                text: state.assetMemo,
+                text: state.assetMemo!,
                 selection: assetMemoController.selection.baseOffset >
-                        state.assetMemo.length
-                    ? TextSelection.collapsed(offset: state.assetMemo.length)
+                        state.assetMemo!.length
+                    ? TextSelection.collapsed(offset: state.assetMemo!.length)
                     : assetMemoController.selection);
           }
           if (isNFT(state.type)) {
@@ -159,7 +159,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   focusNode: parentNameFocus,
                   controller: parentNameController,
                   readOnly: true,
-                  enabled: true,
+                  enabled: false,
                   textInputAction: TextInputAction.next,
                   labelText: 'Parent Asset',
                   hintText: "what asset is this asset a part of?",
@@ -181,8 +181,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                           //Icon(Icons.expand_more_rounded,
                           //    color: AppColors.black60)
                           ),
-                      onPressed: () => _produceAssetModal(cubit)),
-                  onTap: () => _produceAssetModal(cubit),
+                      onPressed: () {}),
                   onChanged: (String value) {},
                   onEditingComplete: () async {
                     FocusScope.of(context).requestFocus(nameFocus);
@@ -191,11 +190,13 @@ class _SimpleReissueState extends State<SimpleReissue> {
               TextFieldFormatted(
                 focusNode: nameFocus,
                 controller: nameController,
+                enabled: false,
+                readOnly: true,
+                autocorrect: false,
                 textInputAction: TextInputAction.next,
                 selectionControls: CustomMaterialTextSelectionControls(
                     context: components.routes.routeContext,
                     offset: Offset.zero),
-                autocorrect: false,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter(
                     RegExp(r'[a-zA-Z0-9._#]'),
@@ -204,37 +205,9 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   UpperCaseTextFormatter(),
                 ],
                 labelText: 'Name',
-                hintText: "what's the name of this asset?",
                 errorText: nameController.text == ''
-                    ? null
-                    : nameController.text.contains(ravenNames) ||
-                            state.metadataView != null
-                        ? 'name not available'
-                        : (isSub(state.type) && parentNameController.text == ''
-                                ? _validateNameOnly(state)
-                                : _validateName(state))
-                            ? null
-                            : '${isNFT(state.type) ? '1' : '3'}-${parentNameController.text == '' ? '30' : (30 - parentNameController.text.length).toString()} characters, special chars allowed: . _',
-                onChanged: (String value) {
-                  if (isSub(state.type)) {
-                    if (value.length > 2 ||
-                        (isNFT(state.type) && value.length > 0)) {
-                      cubit.updateName(value);
-                    } else {
-                      cubit.update(name: value);
-                    }
-                  } else {
-                    if (value.length > 2) {
-                      cubit.updateName(value);
-                    } else {
-                      cubit.update(name: value);
-                    }
-                  }
-                },
-                onEditingComplete: () {
-                  cubit.update(name: nameController.text);
-                  FocusScope.of(context).requestFocus(quantityFocus);
-                },
+                    ? 'something went wrong, asset name missing'
+                    : null,
               ),
               TextFieldFormatted(
                 focusNode: quantityFocus,
@@ -256,9 +229,13 @@ class _SimpleReissueState extends State<SimpleReissue> {
                 hintText: 'how many coins should be minted?',
                 errorText: quantityController.text == ''
                     ? null
-                    : _validateQuantity(state)
-                        ? null
-                        : 'too large',
+                    : !_validateQuantityInt(state)
+                        ? 'quantity must be an integer'
+                        : !_validateQuantityLargeEnough(state)
+                            ? 'too small'
+                            : !_validateQuantitySmallEnough(state)
+                                ? 'too large'
+                                : null,
                 onChanged: (String value) {
                   try {
                     cubit.update(quantityCoin: double.parse(value));
@@ -304,7 +281,9 @@ class _SimpleReissueState extends State<SimpleReissue> {
                             ),
                         onPressed: () => _produceDecimalsModal(cubit)),
                 onChanged: (String newValue) {
-                  cubit.update(decimals: int.parse(decimalsController.text));
+                  if (_validateDecimals(state, newValue)) {
+                    cubit.update(decimals: int.parse(decimalsController.text));
+                  }
                   FocusScope.of(context).requestFocus(assetMemoFocus);
                 },
               ),
@@ -451,7 +430,78 @@ class _SimpleReissueState extends State<SimpleReissue> {
       if (isNFT(state.type)) {
         return intQ == 1; // rvn && evr match?
       }
+      return intQ <= coinsPerChain && // rvn && evr match?
+          (intQ * satsPerCoin >=
+              (state.metadataView!.mempoolTotalSupply ??
+                  state.metadataView!.totalSupply)); // quantity can't go down
+    } catch (e) {
+      return false;
+    }
+  }
+
+  bool _validateQuantityInt(SimpleReissueFormState state, [String? quantity]) {
+    quantity = (quantity ?? quantityController.text);
+    if (quantity.contains('.') ||
+        quantity.contains(',') ||
+        quantity.contains('-') ||
+        quantity.contains(' ')) {
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateQuantityLargeEnough(
+    SimpleReissueFormState state, [
+    String? quantity,
+  ]) {
+    quantity = (quantity ?? quantityController.text);
+    int intQ;
+    try {
+      intQ = int.parse(quantity);
+      return intQ * satsPerCoin >=
+          (state.metadataView!.mempoolTotalSupply ??
+              state.metadataView!.totalSupply); // quantity can't go down
+    } catch (e) {
+      return false;
+    }
+  }
+
+  bool _validateQuantitySmallEnough(
+    SimpleReissueFormState state, [
+    String? quantity,
+  ]) {
+    quantity = (quantity ?? quantityController.text);
+
+    int intQ;
+    try {
+      intQ = int.parse(quantity);
+      if (isNFT(state.type)) {
+        return intQ == 1; // rvn && evr match?
+      }
       return intQ <= coinsPerChain; // rvn && evr match?
+    } catch (e) {
+      return false;
+    }
+  }
+
+  bool _validateDecimals(SimpleReissueFormState state, [String? decimals]) {
+    decimals = (decimals ?? decimalsController.text);
+    if (decimals.contains('.') ||
+        decimals.contains(',') ||
+        decimals.contains('-') ||
+        decimals.contains(' ')) {
+      return false;
+    }
+    int intD;
+    try {
+      intD = int.parse(decimals);
+      if (isNFT(state.type)) {
+        return intD == 0; // rvn && evr match?
+      }
+      return intD <= 8 && // rvn && evr match?
+          (intD >=
+              (state.metadataView!.mempoolDivisibility ??
+                  state.metadataView!.divisibility)); // decimals can't go down
     } catch (e) {
       return false;
     }
@@ -461,6 +511,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
       _validateParentName(state) &&
       _validateName(state) &&
       _validateQuantity(state) &&
+      _validateDecimals(state) &&
       _validateMemo();
 
   void _startSend(SimpleReissueFormCubit cubit, SimpleReissueFormState state) {
@@ -629,6 +680,8 @@ class _SimpleReissueState extends State<SimpleReissue> {
     final imageDetails = ImageDetails(
         foreground: AppColors.rgb(AppColors.primary),
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
+    final divisibility = cubit.state.metadataView!.mempoolDivisibility ??
+        cubit.state.metadataView!.divisibility;
     components.cubits.bottomModalSheet.show(children: <Widget>[
       for (final decimal in [
         Tuple2<String, int>('', 0),
@@ -640,7 +693,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
         Tuple2<String, int>('.000000', 6),
         Tuple2<String, int>('.0000000', 7),
         Tuple2<String, int>('.00000000', 8),
-      ])
+      ].where((t) => t.item2 >= divisibility))
         ListTile(
           onTap: () {
             context.read<BottomModalSheetCubit>().hide();
@@ -656,7 +709,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                cubit.state.quantityCoin.toString(),
+                cubit.state.quantityCoin.toString().replaceAll('.0', ''),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               Text(

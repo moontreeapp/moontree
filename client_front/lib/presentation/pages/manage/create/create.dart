@@ -118,12 +118,12 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         ? TextSelection.collapsed(offset: state.name.length)
                         : nameController.selection);
           }
-          if (state.assetMemo.length > 0) {
+          if (state.assetMemo != null) {
             assetMemoController.value = TextEditingValue(
-                text: state.assetMemo,
+                text: state.assetMemo!,
                 selection: assetMemoController.selection.baseOffset >
-                        state.assetMemo.length
-                    ? TextSelection.collapsed(offset: state.assetMemo.length)
+                        state.assetMemo!.length
+                    ? TextSelection.collapsed(offset: state.assetMemo!.length)
                     : assetMemoController.selection);
           }
           if (isNFT(state.type)) {
@@ -658,7 +658,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                cubit.state.quantityCoin.toString(),
+                cubit.state.quantityCoin.toString().replaceAll('.0', ''),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               Text(
