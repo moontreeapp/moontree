@@ -1,202 +1,128 @@
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
-import 'package:client_front/application/utilities.dart';
+import 'package:tuple/tuple.dart';
+import 'package:quiver/iterables.dart';
 import 'package:collection/collection.dart';
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:tuple/tuple.dart';
+//    show StringBytesExtension, EnumeratedIteratable;
 import 'package:wallet_utils/wallet_utils.dart'
     show ECPair, FeeRate, TransactionBuilder, satsPerCoin, standardFee;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
-import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
-import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
+import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
+import 'package:client_front/application/utilities.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
-import 'package:client_front/infrastructure/calls/broadcast.dart';
+import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:client_front/infrastructure/repos/unsigned.dart';
-import 'package:client_front/application/common.dart';
+import 'package:client_front/infrastructure/calls/broadcast.dart';
 
 part 'state.dart';
 
-class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
-    with SetCubitMixin {
-  SimpleReissueFormCubit() : super(SimpleReissueFormState.initial());
+class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
+  SimpleReissueFormCubit() : super(SimpleReissueFormState());
 
-  @override
-  Future<void> reset() async => emit(SimpleReissueFormState.initial());
+  void reset() => emit(SimpleReissueFormState());
 
-  @override
-  SimpleReissueFormState submitting() => state.load(isSubmitting: true);
+  void submitting() => update(isSubmitting: true);
 
-  @override
-  Future<void> enter() async {
-    emit(submitting());
-    emit(state);
-  }
-
-  @override
-  void set({
-    AssetMetadataResponse? metadataView,
-    Security? security,
-    String? address,
-    double? amount,
-    FeeRate? fee,
+  void update({
+    SymbolType? type,
+    String? parentName,
+    String? name,
     String? memo,
-    String? note,
+    String? assetMemo,
+    String? verifierString,
+    int? quantity,
+    int? decimals,
+    bool? reissuable,
     String? changeAddress,
-    String? addressName,
-    List<UnsignedTransactionResult>? unsigned,
+    AssetMetadataResponse? metadataView,
+    UnsignedTransactionResult? unsigned,
     List<wutx.Transaction>? signed,
     List<String>? txHash,
-    SimpleReissueCheckoutForm? checkout,
+    int? fee,
     bool? isSubmitting,
-  }) {
-    //emit(submitting());
-    emit(state.load(
-      metadataView: metadataView,
-      security: security,
-      address: address,
-      amount: amount,
-      fee: fee,
-      memo: memo,
-      note: note,
-      changeAddress: changeAddress,
-      addressName: addressName,
-      unsigned: unsigned,
-      signed: signed,
-      txHash: txHash,
-      checkout: checkout,
-      isSubmitting: isSubmitting,
-    ));
-  }
+    bool respectMetadata = false,
+  }) =>
+      emit(SimpleReissueFormState(
+        type: type ?? state.type,
+        parentName: parentName ?? state.parentName,
+        name: name ?? state.name,
+        memo: memo ?? state.memo,
+        assetMemo: assetMemo ?? state.assetMemo,
+        verifierString: verifierString ?? state.verifierString,
+        quantity: quantity ?? state.quantity,
+        decimals: decimals ?? state.decimals,
+        reissuable: reissuable ?? state.reissuable,
+        changeAddress: changeAddress ?? state.changeAddress,
+        metadataView: respectMetadata
+            ? metadataView
+            : (metadataView ?? state.metadataView),
+        unsigned: unsigned ?? state.unsigned,
+        signed: signed ?? state.signed,
+        txHash: txHash ?? state.txHash,
+        fee: fee ?? state.fee,
+        isSubmitting: isSubmitting ?? state.isSubmitting,
+      ));
 
-  // needed for validation of divisibility
-  Future<void> setMetadataView({Security? security}) async => set(
-        metadataView: (await AssetMetadataHistoryRepo(
-                security: security ?? state.security)
-            .get()),
+  Future<void> updateName(String symbol, {String? parentName}) async => update(
+        metadataView: await (getMetadataView(
+            symbol: state.getFullname(
+          parentName: parentName ?? state.parentName,
+          name: symbol,
+        ))),
+        name: symbol,
+        respectMetadata: true,
         isSubmitting: false,
       );
-  Future<AssetMetadataResponse?> getMetadataView({Security? security}) async =>
-      (await AssetMetadataHistoryRepo(security: security ?? state.security)
+
+  Future<AssetMetadataResponse?> getMetadataView({String? symbol}) async =>
+      (await AssetMetadataHistoryRepo(
+              security: Security(
+                  symbol: symbol ?? state.name,
+                  chain: pros.settings.chain,
+                  net: pros.settings.net))
           .get());
 
-  Future<void> setUnsignedTransaction({
-    bool sendAllCoinFlag = false,
-    Wallet? wallet,
-    String? symbol,
-    Chain? chain,
-    Net? net,
+  // need set unsigned tx
+  Future<void> updateUnsignedTransaction({
+    required Wallet wallet,
+    required Chain chain,
+    required Net net,
   }) async {
-    set(
-      isSubmitting: true,
-    );
-    chain ??= Current.chain;
-    net ??= Current.net;
+    update(isSubmitting: true);
     final changeAddress =
         (await ReceiveRepo(wallet: wallet, change: true).fetch())
             .address(chain, net);
-    List<UnsignedTransactionResult> unsigned = await UnsignedTransactionRepo(
+    UnsignedTransactionResult unsigned = await UnsignedCreateRepo(
       wallet: wallet,
-      symbol: symbol ?? state.security.symbol,
-      security: state.security,
-      // server decides fast:
-      feeRate: state.fee == standardFee ? state.fee : null,
-      sats: sendAllCoinFlag ? -1 : state.sats,
-      changeAddress: changeAddress,
-      address: state.address,
-      memo: state.memo,
       chain: chain,
       net: net,
-
-      /// todo: eventually we'll make a system to have accounts serverside, and
-      ///       this will be relevant. until then, keep it as a reminder
-      //String? addressName,
+      feeRate: state.feeRate == standardFee ? state.feeRate : null,
+      changeAddress: changeAddress,
+      quantity: state.quantity,
+      divisibility: state.decimals,
+      memo: state.memo,
+      assetMemo: state.assetMemo,
+      verifierString: state.verifierString,
+      parentSymbol: state.parentName,
+      symbol: state.name,
+      reissuable: state.reissuable,
+      symbolType: state.type ?? SymbolType.main,
     ).fetch(only: true);
-    set(
+    update(
       unsigned: unsigned,
       changeAddress: changeAddress,
       isSubmitting: false,
     );
   }
 
-  /// convert to TransactionBuilder object, inspect
-  Future<bool> sign() async {
-    List<wutx.Transaction> txs = [];
-    for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
-      final txb = TransactionBuilder.fromRawInfo(
-          unsigned.rawHex,
-          unsigned.vinScriptOverride.map((String? e) => e?.hexBytes),
-          unsigned.vinLockingScriptType.map((e) =>
-              e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
-          state.security.chainNet.network);
-      // this map reduces the time to sign large tx in half (for mining wallets)
-      Map<String, ECPair?> keyPairByPath = {};
-      ECPair? keyPair;
-      final List<String> walletRoots =
-          await (Current.wallet as LeaderWallet).roots;
-      for (final Tuple2<int, String> e
-          in unsigned.vinPrivateKeySource.enumeratedTuple<String>()) {
-        if (e.item2.contains(':')) {
-          final walletPubKeyAndDerivationIndex = e.item2.split(':');
-          // todo Current.wallet must be LeaderWallet, if not err?
-          final NodeExposure nodeExposure =
-              walletPubKeyAndDerivationIndex[0] == walletRoots[0]
-                  ? NodeExposure.external
-                  : NodeExposure.internal;
-          keyPairByPath[
-                  '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
-              await services.wallet.getAddressKeypair(
-                  await services.wallet.leader.deriveAddressByIndex(
-            wallet: Current.wallet as LeaderWallet,
-            exposure: nodeExposure,
-            hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
-            chain: state.security.chain,
-            net: state.security.net,
-          ));
-          keyPair = keyPairByPath[
-              '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
-        } else {
-          /// case for SingleWallet
-          /// in theory we shouldn't have to use the h160 to figureout which
-          /// address since the current wallet is the one that made this
-          /// transaction, it should always match the h160 provided
-          if (e.item2 !=
-              (Current.wallet as SingleWallet).addresses.first.h160AsString) {
-            throw Exception(
-                ("Single wallet signing erorr: wallet doens't match h160 returned from server\n"
-                    "h160: ${e.item2}"
-                    "local: ${(Current.wallet as SingleWallet).addresses.first.h160AsString}"));
-          }
-          keyPair ??= await services.wallet.getAddressKeypair(
-              (Current.wallet as SingleWallet).addresses.first);
-        }
-        txb.signRaw(
-          vin: e.item1,
-          keyPair: keyPair!,
-          hashType: null,
-          prevOutScriptOverride: unsigned.vinScriptOverride[e.item1]?.hexBytes,
-          asset: unsigned.vinAssets[e.item1],
-          assetAmount: unsigned.vinAmounts[e.item1],
-          assetLiteral: Current.chainNet.chaindata.assetLiteral,
-        );
-      }
-      final tx = txb.build();
-      txs.add(tx);
-    }
-    set(signed: txs);
-    // compare this against parsed fee amount to verify fee.
-    return false;
-  }
-
-  /// parse transaction to verify elements within
+  /// supports verifyTransaction
+  /// /// parse transaction to verify elements within
   Future<TransactionComponents> processHex(
     int index,
     wutx.Transaction signed,
@@ -204,8 +130,8 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
     /// sum the vinAmounts that are evr
     int getCoinInput() => [
           for (final x in IterableZip([
-            state.unsigned![index].vinAssets,
-            state.unsigned![index].vinAmounts,
+            state.unsigned!.vinAssets,
+            state.unsigned!.vinAmounts,
           ]))
             x[0] == null ? x[1] : 0
         ].sum() as int;
@@ -224,34 +150,7 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
       return coinFee;
     }
 
-    Map<String, int> _parseAsset(maybeOpRVNAssetTuplePtr, opCodes) {
-      // this part doesn't work, so we do it manually below
-      //final assetTransferData = parseAssetTransfer(
-      //    opCodes.sublist(maybeOpRVNAssetTuplePtr), x.script!);
-      final assetPortion = opCodes.sublist(maybeOpRVNAssetTuplePtr)[1].item3;
-      final type = assetPortion[3];
-      final assetNameLength = assetPortion[4];
-      if (assetPortion.length >= 5 + assetNameLength) {
-        final assetName =
-            utf8.decode(assetPortion.sublist(5, 5 + assetNameLength));
-        if (state.security.symbol == assetName) {
-          if (type == 0x6f) {
-            // Ownership creation
-            return {assetName: coin};
-          } else if (assetPortion.length >= 13 + assetNameLength) {
-            return {
-              assetName: assetPortion
-                  .sublist(5 + assetNameLength, 13 + assetNameLength)
-                  .buffer
-                  .asByteData()
-                  .getUint64(0, Endian.little)
-            };
-          }
-        }
-      }
-      return {'': 0};
-    }
-
+    /// verify the asset is getting sent to an address we own
     bool getTargetAddressVerification(wutx.Transaction signed, int fee) {
       for (final x in signed.outs) {
         if (x.script != null) {
@@ -266,22 +165,28 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
           final addressData = tryGuessAddressFromOpList(
               opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
               Current.chainNet.constants);
-          if (addressData?.address == state.address) {
-            if (state.signed!.length == 1) {
-              if (state.security.isCoin) {
-                if ((!state.checkout!.estimate!.sendAll &&
-                        x.value == state.sats) ||
-                    (state.checkout!.estimate!.sendAll &&
-                        x.value == state.sats - fee)) {
-                  return true;
-                }
-              } else {
-                final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
-                if (nameSats[state.security.symbol] == state.sats) {
-                  return true;
-                }
-              }
-            }
+
+          //if (addressData?.address == state.address) {
+          //  if (state.signed!.length == 1) {
+          //    final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
+          //    if (nameSats[Current.chainNet.symbol] == state.sats) {
+          //      return true;
+          //    }
+          //  }
+          //}
+          if (Current.chainNet.chaindata
+              .burnAddresses()
+              .contains(addressData?.address)) {
+            // next
+          } else if (addressData?.address == state.changeAddress) {
+            return true;
+          } else if (Current.wallet.addresses
+              .map((e) => e.address(Current.chain, Current.net))
+              .contains(addressData?.address)) {
+            return true;
+          } else {
+            // what is going on?
+            return true;
           }
         }
       }
@@ -291,16 +196,6 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
       return false;
     }
 
-    bool getTargetAddressVerificationForAll(int fee) {
-      // do this once on the last tx
-      if (index == state.signed!.length - 1) {
-        return [
-          for (final s in state.signed!) getTargetAddressVerification(s, fee)
-        ].every((i) => i);
-      }
-      return true;
-    }
-
     /// coin: should be coinInput - fee - target (if any)
     /// any asset: assetInput - target
     /// also verify that every address other than the one that matches
@@ -308,7 +203,8 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
     Future<bool> getChangeAddressVerification(int coinInput, int fee) async {
       // verify all addresses
       // get change amount(s) here too
-      for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
+      for (final UnsignedTransactionResult unsigned
+          in state.unsigned != null ? [state.unsigned!] : []) {
         for (final cs in unsigned.changeSource) {
           /* kralverde -
           Just fyi it can also be wallet_key:index just like the vin source
@@ -321,20 +217,24 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
             //print(Current.chainNet.addressFromH160String(cs));
             //print(h160ToAddress(
             //    cs.hexBytes, Current.chainNet.chaindata.p2pkhPrefix));
+            // if it's not my changeAddress,
+            // and not one of my addresses,
+            // and not a burn address... what is it?
             if (state.changeAddress !=
-                Current.chainNet.addressFromH160String(cs)) {
-              /* where is this going? why are we sending anything to an address
-              that is neither the specified changeAddress or the target address?
-              so we fail here if we don't recognize the address.
-              notice: if we were not to specify a changeAddress we would merely
-              trust the server. this is possible because the server doesn't 
-              require us to specify it, but we always do. cubit requires it.*/
+                    Current.chainNet.addressFromH160String(cs) &&
+                !Current.wallet.addresses
+                    .map((e) => e.address(Current.chain, Current.net))
+                    .contains(Current.chainNet.addressFromH160String(cs)) &&
+                Current.chainNet.chaindata
+                    .burnAddresses()
+                    .contains(Current.chainNet.addressFromH160String(cs))) {
               return false;
             }
           }
         }
       }
       int coinChange = 0;
+      int burnFee = 0;
       // //int assetChange = 0;
       for (final x in signed.outs) {
         if (x.script != null) {
@@ -349,75 +249,43 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
           final addressData = tryGuessAddressFromOpList(
               opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
               Current.chainNet.constants);
-          if (state.address == state.changeAddress) {
+          if (Current.chainNet.chaindata
+              .burnAddresses()
+              .contains(addressData?.address)) {
+            burnFee += x.value ?? 0;
+          } else if (addressData?.address == state.changeAddress) {
             coinChange += x.value ?? 0;
-          } else if (addressData?.address != state.address) {
+          } else if (Current.wallet.addresses
+              .map((e) => e.address(Current.chain, Current.net))
+              .contains(addressData?.address)) {
             coinChange += x.value ?? 0;
-            // //if (x.value == 0 || x.value == null) {
-            // //  final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
-            // //  assetChange += nameSats[state.security.symbol] ?? 0;
-            // //}
+          } else {
+            // if not burn, or change, or my address, where is this going?
+            print('this case should have been caught above '
+                'so this should never happen');
+            // I think what is happening is that we don't make sure to derive a
+            // new address so we don't necessarily have the right list above.
+            // we need to verify this is correct instead of trusting the server.
+            coinChange += x.value ?? 0;
+            //return false;
           }
         }
       }
       if (state.signed!.length == 1) {
         // verify amounts
-        if (state.security.isCoin) {
-          if (state.address == state.changeAddress) {
-            coinChange -= state.sats;
-          }
-          if (state.checkout!.estimate!.sendAll) {
-            if (coinChange > 0) {
-              return false;
-            }
-          } else {
-            if (coinInput - fee - state.sats - coinChange != 0) {
-              return false;
-            }
-          }
-        } else {
-          if (coinInput - fee - coinChange != 0) {
-            return false;
-          }
-          /*
-        kralverde — Today at 10:48 AM
-          Yeah for the vins, the tx would fail if they aren’t ours and the 
-          asset/amount are pulled directly from the db
-        meta stack — Today at 10:51 AM
-          true I was just trying to to verify that the 
-          `assetInput - assetSent == assetChange` to make sure the client is
-          getting all the change they deserve back, but I can't verify that
-          without determining the assetInput used, but since the server could
-          lie about tx data there's no way to guarantee it.
-        if (assetInput - state.sats - assetChange != 0) {
+        if (coinInput - fee - coinChange - burnFee != 0) {
           return false;
-        }
-        */
         }
       }
       // no errors found
       return true;
     }
 
-    Future<bool> getChangeAddressVerificationForAll() async {
-      // do this once on the last tx
-      if (index == state.signed!.length - 1) {
-        return [
-          for (final _ in state.signed!)
-            await getChangeAddressVerification(0, 0)
-        ].every((i) => i);
-      }
-      return true;
-    }
-
     final coinInput = getCoinInput();
     final fee = getCoinFee(coinInput);
-    final targetAddressVerified = state.signed!.length == 1
-        ? getTargetAddressVerification(signed, fee)
-        : getTargetAddressVerificationForAll(fee);
-    final changeAddressVerified = state.signed!.length == 1
-        ? await getChangeAddressVerification(coinInput, fee)
-        : await getChangeAddressVerificationForAll();
+    final targetAddressVerified = getTargetAddressVerification(signed, fee);
+    final changeAddressVerified =
+        await getChangeAddressVerification(coinInput, fee);
     return TransactionComponents(
         coinInput: coinInput,
         fee: fee,
@@ -439,7 +307,9 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
       // which should be equal to next condition, by the way.
       if (state.fee == standardFee) {
         if (!(transactionComponents.fee <=
-            state.fee.rate * indexSigned.item2.fee(goal: state.fee) * 1.01)) {
+            state.feeRate!.rate *
+                indexSigned.item2.fee(goal: state.feeRate) *
+                1.01)) {
           return Tuple2(false, 'fee does not match specified fee rate');
         }
       } else {
@@ -447,8 +317,8 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
         // so if we specify the server rate we want to make sure it's still no
         // larger than our rate or its the minimumFee
         if (!(transactionComponents.fee <=
-                state.fee.rate *
-                    indexSigned.item2.fee(goal: state.fee) *
+                state.feeRate!.rate *
+                    indexSigned.item2.fee(goal: state.feeRate) *
                     1.01 ||
             transactionComponents.fee <= FeeRate.minimumFee)) {
           return Tuple2(false, 'fee does not match server rate');
@@ -485,26 +355,79 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
     //    //transactionComponents.changeAmount == transactionComponents.totalOut - transactionComponents.sendAmount - transactionComponents.fee
     //    );
     // update checkout struct to update checkout page
-    set(
-      checkout: state.checkout!.newEstimate(
-        SendEstimate(
-          state.sats,
-          sendAll: state.checkout!.estimate!.sendAll,
-          fees: fees,
-          security: state.security,
-          memo: state.memo,
-          creation: false,
-
-          /// not necessary
-          /// in string form at cubit.state.unsigned.vinPrivateKeySource
-          //utxos: null,
-          /// todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
-          //assetMemo: Uint8List.fromList(cubit.state.memo
-          //    .codeUnits),
-        ),
-      ),
-    );
+    update(fee: fees);
     return Tuple2(true, 'success');
+  }
+
+  /// convert to TransactionBuilder object, inspect
+  Future<bool> sign() async {
+    List<wutx.Transaction> txs = [];
+    for (final UnsignedTransactionResult unsigned
+        in state.unsigned != null ? [state.unsigned!] : []) {
+      final txb = TransactionBuilder.fromRawInfo(
+          unsigned.rawHex,
+          unsigned.vinScriptOverride.map((String? e) => e?.hexBytes),
+          unsigned.vinLockingScriptType.map((e) =>
+              e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
+          pros.settings.chainNet.network);
+      // this map reduces the time to sign large tx in half (for mining wallets)
+      Map<String, ECPair?> keyPairByPath = {};
+      ECPair? keyPair;
+      final List<String> walletRoots =
+          await (Current.wallet as LeaderWallet).roots;
+      for (final Tuple2<int, String> e
+          in unsigned.vinPrivateKeySource.enumeratedTupleFromList<String>()) {
+        if (e.item2.contains(':')) {
+          final walletPubKeyAndDerivationIndex = e.item2.split(':');
+          // todo Current.wallet must be LeaderWallet, if not err?
+          final NodeExposure nodeExposure =
+              walletPubKeyAndDerivationIndex[0] == walletRoots[0]
+                  ? NodeExposure.external
+                  : NodeExposure.internal;
+          keyPairByPath[
+                  '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
+              await services.wallet.getAddressKeypair(
+                  await services.wallet.leader.deriveAddressByIndex(
+            wallet: Current.wallet as LeaderWallet,
+            exposure: nodeExposure,
+            hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
+            chain: pros.settings.chain,
+            net: pros.settings.net,
+          ));
+          keyPair = keyPairByPath[
+              '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
+        } else {
+          /// case for SingleWallet
+          /// in theory we shouldn't have to use the h160 to figureout which
+          /// address since the current wallet is the one that made this
+          /// transaction, it should always match the h160 provided
+          if (e.item2 !=
+              (Current.wallet as SingleWallet).addresses.first.h160AsString) {
+            throw Exception(
+                ("Single wallet signing erorr: wallet doens't match h160 returned from server\n"
+                    "h160: ${e.item2}"
+                    "local: ${(Current.wallet as SingleWallet).addresses.first.h160AsString}"));
+          }
+          keyPair ??= await services.wallet.getAddressKeypair(
+              (Current.wallet as SingleWallet).addresses.first);
+        }
+        txb.signRaw(
+          vin: e.item1,
+          keyPair: keyPair!,
+          // note for swaps: hashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+          hashType: null,
+          prevOutScriptOverride: unsigned.vinScriptOverride[e.item1]?.hexBytes,
+          asset: unsigned.vinAssets[e.item1],
+          assetAmount: unsigned.vinAmounts[e.item1],
+          assetLiteral: Current.chainNet.chaindata.assetLiteral,
+        );
+      }
+      final tx = txb.build();
+      txs.add(tx);
+    }
+    update(signed: txs);
+    // compare this against parsed fee amount to verify fee.
+    return false;
   }
 
   /// actually commit transaction
@@ -521,17 +444,13 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
       /// todo: do repo pattern I guess..
       final broadcastResult = (await BroadcastTransactionCall(
         rawTransactionHex: signed.toHex(),
-        chain: state.security.chain,
-        net: state.security.net,
+        chain: pros.settings.chain,
+        net: pros.settings.net,
       )());
 
       // todo: should we do more validation on the txHash?
       if (broadcastResult.value != null && broadcastResult.error == null) {
-        set(txHash: [...state.txHash ?? [], broadcastResult.value!]);
-        // todo: save note by this txHash here
-        // should this be in a repo?
-        pros.notes.save(
-            Note(note: state.note, transactionId: broadcastResult.value!));
+        update(txHash: [...state.txHash ?? [], broadcastResult.value!]);
         Future.delayed(Duration(seconds: 2)).then((_) =>
             streams.app.behavior.snack.add(Snack(
                 positive: true,
@@ -541,9 +460,19 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState>
         Future.delayed(Duration(seconds: 2)).then((_) =>
             streams.app.behavior.snack.add(Snack(
                 positive: false,
-                message: 'Unable to Reissue, Try again Later',
+                message: 'Unable to Send, Try again Later',
                 copy: broadcastResult.error)));
       }
     }
   }
+}
+
+extension EnumeratedIteratable2 on Iterable<dynamic> {
+  Iterable<Tuple2<int, T>> enumeratedTupleFromList<T>() => <Tuple2<int, T>>[
+        for (List<dynamic> x in zip(<Iterable<dynamic>>[
+          mapIndexed<int>((int index, dynamic element) => index),
+          this as List<T?>
+        ]))
+          Tuple2<int, T>(x[0] as int, x[1] as T)
+      ];
 }

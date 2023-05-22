@@ -1,212 +1,160 @@
 part of 'cubit.dart';
 
 @immutable
-class SimpleReissueFormState extends CubitState {
-  final AssetMetadataResponse? metadataView;
-  final Security security;
-  final String address;
-  final String changeAddress;
-  final double amount;
-  final FeeRate fee;
+class SimpleReissueFormCubitState extends Equatable {
+  final SymbolType? type;
+  final String parentName;
+  final String name;
   final String memo;
-  final String note;
-  final String addressName;
-  final List<UnsignedTransactionResult>? unsigned;
+  final String assetMemo;
+  final String verifierString;
+  final int quantity;
+  final int decimals;
+  final bool reissuable;
+  final String changeAddress;
+  final AssetMetadataResponse? metadataView;
+  final UnsignedTransactionResult? unsigned;
   final List<wutx.Transaction>? signed;
   final List<String>? txHash;
-  final SimpleReissueCheckoutForm? checkout;
+  final int? fee;
   final bool isSubmitting;
 
-  const SimpleReissueFormState({
-    required this.metadataView,
-    required this.security,
-    this.address = '',
-    this.changeAddress = '',
-    this.amount = 0.0,
-    this.fee = standardFee,
+  const SimpleReissueFormCubitState({
+    required this.type,
+    this.parentName = '',
+    this.name = '',
     this.memo = '',
-    this.note = '',
-    this.addressName = '',
+    this.assetMemo = '',
+    this.verifierString = '',
+    this.quantity = 0,
+    this.decimals = 0,
+    this.reissuable = true,
+    this.changeAddress = '',
+    this.metadataView,
     this.unsigned,
     this.signed,
     this.txHash,
-    this.checkout,
+    this.fee,
     this.isSubmitting = false,
   });
 
   @override
   String toString() =>
-      'SpendForm(security=$security, address=$address, amount=$amount, '
-      'fee=$fee, note=$note, addressName=$addressName, unsigned=$unsigned, '
-      'signed=$signed, txHash=$txHash, changeAddress=$changeAddress, '
-      'checkout=$checkout, metadataView=$metadataView, '
+      'SpendForm(type=$type, parentName=$parentName, name=$name, '
+      'quantity=$quantity, decimals=$decimals, reissuable=$reissuable, '
+      'memo=$memo, assetMemo=$assetMemo, verifierString=$verifierString, '
+      'unsigned=$unsigned, signed=$signed, txHash=$txHash, fee=$fee, '
+      'changeAddress=$changeAddress, metadataView=$metadataView, '
       'isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
-        metadataView,
-        security,
-        address,
-        amount,
-        fee,
+        type,
+        parentName,
+        name,
         memo,
-        note,
+        assetMemo,
+        verifierString,
+        quantity,
+        decimals,
+        reissuable,
         changeAddress,
-        addressName,
+        metadataView,
         unsigned,
         signed,
         txHash,
-        checkout,
+        fee,
         isSubmitting,
       ];
 
-  factory SimpleReissueFormState.initial() => SimpleReissueFormState(
-      metadataView: null, security: pros.securities.currentCoin);
+  FeeRate? get feeRate => standardFee;
 
-  SimpleReissueFormState load({
-    AssetMetadataResponse? metadataView,
-    Security? security,
-    String? address,
-    double? amount,
-    FeeRate? fee,
-    String? memo,
-    String? note,
-    String? changeAddress,
-    String? addressName,
-    List<UnsignedTransactionResult>? unsigned,
-    List<wutx.Transaction>? signed,
-    List<String>? txHash,
-    SimpleReissueCheckoutForm? checkout,
-    bool? isSubmitting,
-  }) =>
-      SimpleReissueFormState(
-        metadataView: metadataView ?? this.metadataView,
-        security: security ?? this.security,
-        address: address ?? this.address,
-        amount: amount ?? this.amount,
-        fee: fee ?? this.fee,
-        memo: memo ?? this.memo,
-        note: note ?? this.note,
-        changeAddress: changeAddress ?? this.changeAddress,
-        addressName: addressName ?? this.addressName,
-        unsigned: unsigned ?? this.unsigned,
-        signed: signed ?? this.signed,
-        txHash: txHash ?? this.txHash,
-        checkout: checkout ?? this.checkout,
-        isSubmitting: isSubmitting ?? this.isSubmitting,
-      );
+  int get assetCreationFeeSats => assetCreationFee * satsPerCoin;
 
-  String get fiatRepresentation {
-    try {
-      return services.conversion.securityAsReadable(
-        sats,
-        symbol: security.symbol,
-        asUSD: true,
-      );
-    } catch (e) {
-      return '';
+  // in coins
+  int get assetCreationFee {
+    switch (type) {
+      case SymbolType.main:
+        return 500;
+      case SymbolType.sub:
+        return 100;
+      case SymbolType.qualifier:
+        return 1000;
+      case SymbolType.qualifierSub:
+        return 100;
+      case SymbolType.restricted:
+        return 1500;
+      case SymbolType.channel:
+        return 100;
+      case SymbolType.unique:
+        return 5;
+      default:
+        return 500;
     }
   }
 
-  int get sats => (amount * satsPerCoin).round(); //amount.asSats;
+  String get assetCreationName {
+    switch (type) {
+      case SymbolType.main:
+        return 'Main Asset';
+      case SymbolType.sub:
+        return 'Sub Asset';
+      case SymbolType.qualifier:
+        return 'Qualifier Asset';
+      case SymbolType.qualifierSub:
+        return 'Qualifier Sub Asset';
+      case SymbolType.restricted:
+        return 'Restricted Asset';
+      case SymbolType.channel:
+        return 'Channel Asset';
+      case SymbolType.unique:
+        return 'NFT';
+      default:
+        return 'Asset';
+    }
+  }
+
+  String get fullname => getFullname(parentName: parentName, name: name);
+
+  String getFullname({required String parentName, required String name}) {
+    if (type == SymbolType.main) {
+      return name;
+    }
+    if (type == SymbolType.restricted) {
+      return (r'$' + name);
+    } else if (type == SymbolType.qualifier) {
+      return (r'#' + name);
+    } else if (type == SymbolType.qualifierSub) {
+      return (parentName + '#' + name);
+    } else if (type == SymbolType.sub) {
+      return (parentName + '/' + name);
+    } else if (type == SymbolType.unique) {
+      return (parentName + '#' + name);
+    } else if (type == SymbolType.channel) {
+      return (parentName + '~' + name);
+    } else {
+      return name;
+    }
+  }
 }
 
-class SimpleReissueCheckoutForm with EquatableMixin {
-  final Widget? icon;
-  final String? symbol;
-  final String displaySymbol;
-  final String? subSymbol;
-  final String? paymentSymbol;
-  final double? left;
-  final Iterable<Iterable<String>> items;
-  final Iterable<Iterable<String>>? fees;
-  final String? total;
-  final String? confirm;
-  final Function? buttonAction;
-  final String? buttonWord;
-  final Widget? button;
-  final String loadingMessage;
-  final int? playcount;
-  final SendEstimate? estimate;
-
-  const SimpleReissueCheckoutForm({
-    this.icon,
-    this.left,
-    this.symbol = '#MoonTree',
-    this.displaySymbol = 'MoonTree',
-    this.subSymbol = 'Main/',
-    this.paymentSymbol = 'RVN',
-    this.items = exampleItems,
-    this.fees = exampleFees,
-    this.total = '101',
-    this.buttonAction,
-    this.buttonWord = 'Submit',
-    this.loadingMessage = 'Reissueing Transaction',
-    this.confirm,
-    this.button,
-    this.playcount = 2,
-    this.estimate,
+class SimpleReissueFormState extends SimpleReissueFormCubitState {
+  SimpleReissueFormState({
+    super.type = null,
+    super.parentName,
+    super.name,
+    super.quantity,
+    super.memo,
+    super.assetMemo,
+    super.verifierString,
+    super.decimals,
+    super.reissuable,
+    super.changeAddress,
+    super.metadataView,
+    super.unsigned,
+    super.signed,
+    super.txHash,
+    super.fee,
+    super.isSubmitting,
   });
-
-  @override
-  List<Object?> get props => <Object?>[
-        icon,
-        symbol,
-        displaySymbol,
-        subSymbol,
-        paymentSymbol,
-        left,
-        items,
-        fees,
-        total,
-        confirm,
-        buttonAction,
-        buttonWord,
-        button,
-        loadingMessage,
-        playcount,
-        estimate,
-      ];
-
-  static const Iterable<Iterable<String>> exampleItems = <List<String>>[
-    <String>['Short Text', 'aligned right'],
-    <String>['Too Long Text (~20+ chars)', 'QmXwHQ43NrZPq123456789'],
-    <String>[
-      'Multiline (2) - Limited',
-      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
-      '2'
-    ],
-    <String>[
-      'Multiline (5)',
-      '(#KYC && #COOLDUDE) || (#OVERRIDE || #MOONTREE) && (!! #IRS)',
-      '5'
-    ]
-  ];
-  static const Iterable<Iterable<String>> exampleFees = <List<String>>[
-    <String>['Transaction', '1'],
-    <String>['Sub Asset', '100'],
-    <String>['long amount', '21,000,000.00000000']
-  ];
-
-  bool get disabled => estimate!.fees == 0;
-
-  SimpleReissueCheckoutForm newEstimate(SendEstimate sendEstimate) =>
-      SimpleReissueCheckoutForm(
-        icon: this.icon,
-        symbol: this.symbol,
-        displaySymbol: this.displaySymbol,
-        subSymbol: this.subSymbol,
-        paymentSymbol: this.paymentSymbol,
-        left: this.left,
-        items: this.items,
-        fees: this.fees,
-        total: this.total,
-        confirm: this.confirm,
-        buttonAction: this.buttonAction,
-        buttonWord: this.buttonWord,
-        button: this.button,
-        loadingMessage: this.loadingMessage,
-        playcount: this.playcount,
-        estimate: sendEstimate,
-      );
 }

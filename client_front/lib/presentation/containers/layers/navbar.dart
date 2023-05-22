@@ -485,11 +485,12 @@ class NavbarActions extends StatelessWidget {
         Tuple2('Main', SymbolType.main),
         Tuple2('Sub', SymbolType.sub),
         Tuple2('NFT', SymbolType.unique),
-        Tuple2('Channel', SymbolType.channel),
-        Tuple2('Restricted', SymbolType.restricted),
-        Tuple2('Qualifier', SymbolType.qualifier),
-        Tuple2('Sub Qualifier', SymbolType.qualifierSub),
-        //['Admin', SymbolType.admin],
+
+        /// hide these until we're ready to add verifierString support etc.
+        // Tuple2('Channel', SymbolType.channel),
+        // Tuple2('Restricted', SymbolType.restricted),
+        // Tuple2('Qualifier', SymbolType.qualifier),
+        // Tuple2('Sub Qualifier', SymbolType.qualifierSub),
       ])
         ListTile(
           onTap: () {
