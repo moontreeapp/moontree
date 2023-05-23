@@ -16,13 +16,13 @@ DONE - integrate krals latest things
 
 DONE - hide restricted and others
 
-create reissue 
+DONE - create reissue 
 
-test reissue 
+DONE - test reissue 
 
 fix middle button (to work on manage)
 
-fix send so that it is never default
+fix send so that it is never disabled
 
 fix send so it gives modal error if no value or not connected on click
 
