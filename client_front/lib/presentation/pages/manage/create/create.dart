@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet_utils/src/utilities/validation.dart'
-    show coinsPerChain, ravenNames, satsPerCoin;
+    show coinsPerChain, ravenNames, evrmoreNames, satsPerCoin;
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -210,8 +210,11 @@ class _SimpleCreateState extends State<SimpleCreate> {
                 hintText: "what's the name of this asset?",
                 errorText: nameController.text == ''
                     ? null
-                    : nameController.text.contains(ravenNames) ||
-                            state.metadataView != null
+                    : state.metadataView != null ||
+                            (Current.chain == Chain.ravencoin &&
+                                nameController.text.contains(ravenNames)) ||
+                            (Current.chain == Chain.evrmore &&
+                                nameController.text.contains(evrmoreNames))
                         ? 'name not available'
                         : (isSub(state.type) && parentNameController.text == ''
                                 ? _validateNameOnly(state)
