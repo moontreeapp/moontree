@@ -72,7 +72,7 @@ class SimpleReissueCheckout extends StatelessWidget {
                               right: state.fullname,
                               style: Theme.of(context).textTheme.checkoutItem),
                           CheckoutItemReissue(
-                              left: 'Quantity',
+                              left: 'Additional Quantity',
                               right: state.quantityCoin
                                   .toCommaString()
                                   .replaceAll('.0', ''),
@@ -123,8 +123,8 @@ class SimpleReissueCheckout extends StatelessWidget {
                                     Theme.of(context).textTheme.checkoutFees),
                             const SizedBox(height: 14),
                             CheckoutItemReissue(
-                                left: state.assetCreationName,
-                                right: state.assetCreationFee.toCommaString(),
+                                left: state.assetReissueName,
+                                right: state.assetReissueFee.toCommaString(),
                                 style: Theme.of(context).textTheme.checkoutItem,
                                 fee: true),
                             CheckoutItemReissue(
@@ -155,7 +155,7 @@ class SimpleReissueCheckout extends StatelessWidget {
                                 Text(
                                   state.fee == null
                                       ? 'Calculating...'
-                                      : '${(state.assetCreationFeeSats + state.fee!).asCoin} ${pros.settings.chain.symbol}',
+                                      : '${(state.assetReissueFeeSats + state.fee!).asCoin} ${pros.settings.chain.symbol}',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ])),
@@ -246,15 +246,15 @@ class SubmitButtonReissue extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BottomButton(
         enabled: true,
-        label: 'Create',
+        label: 'Reissue',
         onPressed: () async {
           if (DateTime.now().difference(startTime).inMilliseconds > 500) {
             components.cubits.loadingView.show(
-              title: 'Sending',
+              title: 'Reissuing',
               msg: 'broadcasting transaction',
             );
             () async {
-              await components.cubits.simpleCreateForm.broadcast();
+              await components.cubits.simpleReissueForm.broadcast();
             }();
             await Future.delayed(Duration(seconds: 3));
             components.cubits.loadingView.hide();

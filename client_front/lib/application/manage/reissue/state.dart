@@ -71,31 +71,12 @@ class SimpleReissueFormCubitState extends Equatable {
 
   double get quantityCoin => quantity.asCoin;
 
-  int get assetCreationFeeSats => assetCreationFee * satsPerCoin;
+  int get assetReissueFeeSats => assetReissueFee * satsPerCoin;
 
   // in coins
-  int get assetCreationFee {
-    switch (type) {
-      case SymbolType.main:
-        return 500;
-      case SymbolType.sub:
-        return 100;
-      case SymbolType.qualifier:
-        return 1000;
-      case SymbolType.qualifierSub:
-        return 100;
-      case SymbolType.restricted:
-        return 1500;
-      case SymbolType.channel:
-        return 100;
-      case SymbolType.unique:
-        return 5;
-      default:
-        return 500;
-    }
-  }
+  int get assetReissueFee => 100;
 
-  String get assetCreationName {
+  String get assetReissueName {
     switch (type) {
       case SymbolType.main:
         return 'Main Asset';

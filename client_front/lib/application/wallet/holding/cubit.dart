@@ -93,7 +93,7 @@ class WalletHoldingViewCubit extends Cubit<WalletHoldingViewState>
       submitting();
       final metadataView = (await AssetMetadataHistoryRepo(
         security: state.security,
-      ).get());
+      ).fetch());
       if (checkCleared && cleared) {
         return;
       }

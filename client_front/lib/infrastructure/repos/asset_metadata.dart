@@ -6,6 +6,12 @@ import 'package:client_front/infrastructure/calls/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/repository.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 
+/*
+kralverde — Server definitions of metadata memos
+Associated data is whatever is associated with the asset (ipfs hash). 
+Asset memo is only for asset transfers, and memo is for OP_RETURN messages
+*/
+
 class AssetMetadataHistoryRepo extends Repository<AssetMetadataResponse> {
   late String symbol;
   late Chain chain;

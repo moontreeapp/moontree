@@ -225,17 +225,16 @@ class _SimpleReissueState extends State<SimpleReissue> {
                     allow: true,
                   )
                 ],
-                labelText: 'Quantity',
-                hintText: 'how many coins should be minted?',
+                labelText: 'Additional Quantity',
+                hintText:
+                    'currently exists: ${state.metadataView?.mempoolTotalSupply?.asCoin ?? state.metadataView?.totalSupply.asCoin ?? 'unknown'}',
                 errorText: quantityController.text == ''
                     ? null
                     : !_validateQuantityInt(state)
                         ? 'quantity must be an integer'
-                        : !_validateQuantityLargeEnough(state)
-                            ? 'too small'
-                            : !_validateQuantitySmallEnough(state)
-                                ? 'too large'
-                                : null,
+                        : !_validateQuantitySmallEnough(state)
+                            ? 'too large'
+                            : null,
                 onChanged: (String value) {
                   try {
                     cubit.update(quantityCoin: double.parse(value));
@@ -430,10 +429,10 @@ class _SimpleReissueState extends State<SimpleReissue> {
       if (isNFT(state.type)) {
         return intQ == 1; // rvn && evr match?
       }
-      return intQ <= coinsPerChain && // rvn && evr match?
-          (intQ * satsPerCoin >=
+      return intQ * satsPerCoin +
               (state.metadataView!.mempoolTotalSupply ??
-                  state.metadataView!.totalSupply)); // quantity can't go down
+                  state.metadataView!.totalSupply) <=
+          coinsPerChain * satsPerCoin; // rvn && evr match?
     } catch (e) {
       return false;
     }
@@ -450,22 +449,6 @@ class _SimpleReissueState extends State<SimpleReissue> {
     return true;
   }
 
-  bool _validateQuantityLargeEnough(
-    SimpleReissueFormState state, [
-    String? quantity,
-  ]) {
-    quantity = (quantity ?? quantityController.text);
-    int intQ;
-    try {
-      intQ = int.parse(quantity);
-      return intQ * satsPerCoin >=
-          (state.metadataView!.mempoolTotalSupply ??
-              state.metadataView!.totalSupply); // quantity can't go down
-    } catch (e) {
-      return false;
-    }
-  }
-
   bool _validateQuantitySmallEnough(
     SimpleReissueFormState state, [
     String? quantity,
@@ -478,7 +461,10 @@ class _SimpleReissueState extends State<SimpleReissue> {
       if (isNFT(state.type)) {
         return intQ == 1; // rvn && evr match?
       }
-      return intQ <= coinsPerChain; // rvn && evr match?
+      return intQ * satsPerCoin +
+              (state.metadataView!.mempoolTotalSupply ??
+                  state.metadataView!.totalSupply) <=
+          coinsPerChain * satsPerCoin; // rvn && evr match?
     } catch (e) {
       return false;
     }

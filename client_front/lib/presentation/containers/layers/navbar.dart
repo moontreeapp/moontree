@@ -487,14 +487,22 @@ class NavbarActions extends StatelessWidget {
         name: symbol.shortName ?? symbol.symbol,
         memo:
             null /* not implemented on front end yet, and not available in metadata object, you'd have to go get the VoutId */,
-        assetMemo:
-            (metadata.mempoolAssociatedData ?? metadata.associatedData) != null
-                ? (metadata.mempoolAssociatedData ?? metadata.associatedData)!
-                    .toBs58() //.toHex()
-                : null,
+        assetMemo: (metadata.mempoolAssociatedData ??
+                    metadata.associatedData) !=
+                null
+            ? (metadata.mempoolAssociatedData ?? metadata.associatedData)!
+                .toBs58() //.toHex()
+            /*
+            kralverde — 
+            Traditionally, it’s b58, but for txids we want toHex. I think
+            there’s code to convert based on the type somewhere in the client
+            code...
+            */
+            : null,
         verifierString:
             metadata.mempoolVerifierString ?? metadata.verifierString,
-        quantity: metadata.mempoolTotalSupply ?? metadata.totalSupply,
+        // don't include quantity because on reissue, quantity is additive.
+        //quantity: metadata.mempoolTotalSupply ?? metadata.totalSupply,
         decimals: metadata.mempoolDivisibility ?? metadata.divisibility,
         reissuable: metadata.mempoolReissuable ?? metadata.reissuable,
         metadataView: metadata,
