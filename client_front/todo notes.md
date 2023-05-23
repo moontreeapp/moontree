@@ -20,10 +20,12 @@ DONE - create reissue
 
 DONE - test reissue 
 
-fix middle button (to work on manage)
+DONE - fix middle button (to work on manage)
 
-fix send so that it is never disabled
+DONE - fix send so that it is never disabled
 
-fix send so it gives modal error if no value or not connected on click
+DONE - fix send so it gives modal error if no value or not connected on click
 
-put verifierString on restircted
+DONE - put verifierString on restircted
+
+clean up manage icon 

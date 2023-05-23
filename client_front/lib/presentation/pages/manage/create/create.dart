@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:client_front/presentation/pages/manage/manage.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
   final TextEditingController assetMemoController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController decimalsController = TextEditingController();
+  final TextEditingController verifierController = TextEditingController();
   final FocusNode parentNameFocus = FocusNode();
   final FocusNode nameFocus = FocusNode();
   final FocusNode assetMemoFocus = FocusNode();
@@ -44,6 +46,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
   final FocusNode decimalsFocus = FocusNode();
   final FocusNode previewFocus = FocusNode();
   final FocusNode reissuableFocus = FocusNode();
+  final FocusNode verifierFocus = FocusNode();
   final ScrollController scrollController = ScrollController();
   bool clicked = false;
 
@@ -59,12 +62,14 @@ class _SimpleCreateState extends State<SimpleCreate> {
     assetMemoController.dispose();
     quantityController.dispose();
     decimalsController.dispose();
+    verifierController.dispose();
     parentNameFocus.dispose();
     nameFocus.dispose();
     assetMemoFocus.dispose();
     quantityFocus.dispose();
     decimalsFocus.dispose();
     previewFocus.dispose();
+    verifierFocus.dispose();
     super.dispose();
   }
 
@@ -125,6 +130,15 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         state.assetMemo!.length
                     ? TextSelection.collapsed(offset: state.assetMemo!.length)
                     : assetMemoController.selection);
+          }
+          if (isRestricted(state.type) && state.verifierString != null) {
+            final verifierString = state.verifierString.toString();
+            verifierController.value = TextEditingValue(
+                text: verifierString,
+                selection: verifierController.selection.baseOffset >
+                        verifierString.length
+                    ? TextSelection.collapsed(offset: verifierString.length)
+                    : verifierController.selection);
           }
           if (isNFT(state.type)) {
             quantityController.text = '1';
@@ -311,9 +325,82 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         onPressed: () => _produceDecimalsModal(cubit)),
                 onChanged: (String newValue) {
                   cubit.update(decimals: int.parse(decimalsController.text));
-                  FocusScope.of(context).requestFocus(assetMemoFocus);
+                  if (isRestricted(state.type)) {
+                    FocusScope.of(context).requestFocus(verifierFocus);
+                  } else {
+                    FocusScope.of(context).requestFocus(assetMemoFocus);
+                  }
                 },
               ),
+              if (isRestricted(state.type))
+                Container(
+                    height: 200,
+                    child: TextFieldFormatted(
+                        focusNode: verifierFocus,
+                        selectionControls: CustomMaterialTextSelectionControls(
+                            context: components.routes.routeContext,
+                            offset: const Offset(0, 20)),
+                        autocorrect: false,
+                        controller: verifierController,
+                        obscureText: false,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 12,
+                        textInputAction: TextInputAction.next,
+                        // interferes with voice - one word at a time:
+                        //inputFormatters: <TextInputFormatter>[LowerCaseTextFormatter()],
+                        labelText: 'Verifier String',
+                        hintText: '#MYRESTRICTEDASSET',
+                        // fix if necessary:
+                        // (no listener to set state on hasFocus status change)
+                        helperText: !verifierFocus.hasFocus
+                            ? null
+                            : 'how this asset is restricted',
+                        errorText:
+                            verifierController.text == '' || _validateVerifier()
+                                ? null
+                                : 'not a valid verifier',
+                        suffixIcon: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              IconButton(
+                                  icon: const Icon(Icons.paste_rounded,
+                                      color: AppColors.black60),
+                                  onPressed: () async {
+                                    Future<String> getClip() async {
+                                      if (Platform.isIOS) {
+                                        return '';
+                                      }
+                                      final ClipboardData? clip =
+                                          await Clipboard.getData('text/plain');
+                                      if (clip != null) {
+                                        return clip.text ?? '';
+                                      }
+                                      return '';
+                                    }
+
+                                    final String clip = await getClip();
+                                    cubit.update(verifierString: clip);
+                                  }),
+                              IconButton(
+                                  icon: Icon(Icons.clear_rounded,
+                                      color: verifierController.text != ''
+                                          ? AppColors.black60
+                                          : AppColors.black12),
+                                  onPressed: () =>
+                                      cubit.update(verifierString: '')),
+                            ]),
+                        onChanged: (String value) {
+                          if (_validateVerifier(value)) {
+                            cubit.update(verifierString: value);
+                          }
+                        },
+                        onEditingComplete: () {
+                          if (_validateVerifier()) {
+                            cubit.update(
+                                verifierString: verifierController.text);
+                          }
+                          FocusScope.of(context).requestFocus(assetMemoFocus);
+                        })),
               TextFieldFormatted(
                   focusNode: assetMemoFocus,
                   controller: assetMemoController,
@@ -442,6 +529,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
       (assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text).isMemo;
 
+  bool _validateVerifier([String? value]) =>
+      (value ?? verifierController.text).isQualifierString; // is this the same?
+
   bool _validateQuantity(SimpleCreateFormState state, [String? quantity]) {
     quantity = (quantity ?? quantityController.text);
     if (quantity.contains('.') ||
@@ -466,6 +556,8 @@ class _SimpleCreateState extends State<SimpleCreate> {
       _validateParentName(state) &&
       _validateName(state) &&
       _validateQuantity(state) &&
+      (!isRestricted(state.type) ||
+          (isRestricted(state.type) && _validateVerifier())) &&
       _validateMemo();
 
   void _startSend(SimpleCreateFormCubit cubit, SimpleCreateFormState state) {

@@ -227,7 +227,12 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                                             MainAxisAlignment.spaceAround,
                                         children: <Widget>[
                                           SectionIcon(section: Section.wallet),
-                                          SectionIcon(section: Section.scan),
+                                          SectionIcon(
+                                              section: Section.scan,
+                                              preNavHook: () {
+                                                sail.to('/wallet/holdings',
+                                                    section: Section.wallet);
+                                              }),
                                           SectionIcon(section: Section.manage),
                                         ],
                                       ))
@@ -340,7 +345,8 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
 
 class SectionIcon extends StatefulWidget {
   final Section section;
-  const SectionIcon({super.key, required this.section});
+  final Function? preNavHook;
+  const SectionIcon({super.key, required this.section, this.preNavHook});
 
   @override
   _SectionIconState createState() => _SectionIconState();
@@ -362,7 +368,12 @@ class _SectionIconState extends State<SectionIcon> {
           LocationCubitState>(
       builder: (BuildContext context, LocationCubitState state) =>
           GestureDetector(
-              onTap: () => sail.to(null, section: widget.section),
+              onTap: () {
+                if (widget.preNavHook != null) {
+                  widget.preNavHook!();
+                }
+                sail.to(null, section: widget.section);
+              },
               child: SvgPicture.asset(
                   'assets/icons/custom/mobile/${widget.section.name}'
                   '${state.section == widget.section ? '-active' : ''}.svg')));
@@ -378,103 +389,101 @@ class NavbarActions extends StatelessWidget {
           BlocBuilder<ConnectionStatusCubit, ConnectionStatusCubitState>(
               builder: (BuildContext context,
                       ConnectionStatusCubitState connectionState) =>
-                  BlocBuilder<WalletHoldingsViewCubit, WalletHoldingsViewState>(
-                      builder: (BuildContext context,
-                              WalletHoldingsViewState holdingState) =>
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: ((locationState.section == Section.wallet
-                                    ? <Widget>[
-                                        /// never show import for this button
-                                        //if (components.cubits.holdingsView.state
-                                        //            .holdingsViews.length ==
-                                        //        1 &&
-                                        //    components.cubits.holdingsView.state
-                                        //            .holdingsViews.first.sats ==
-                                        //        0)
-                                        //  Expanded(
-                                        //      child: BottomButton(
-                                        //    label: 'import',
-                                        //    enabled: true,
-                                        //    onPressed: () =>
-                                        //        sail.to('/restore/import'),
-                                        //  ))
-                                        //else
-                                        Expanded(
-                                            child: BottomButton(
-                                          label: 'send',
-                                          enabled:
-                                              connectionState.isConnected &&
-                                                  !components
-                                                      .cubits
-                                                      .holdingsView
-                                                      .walletEmptyCoin,
-                                          disabledOnPressed: () {
-                                            if (!connectionState.isConnected) {
-                                              streams.app.behavior.snack.add(Snack(
-                                                  message:
-                                                      'Not connected to network'));
-                                            } else if (components.cubits
-                                                .holdingsView.walletEmptyCoin) {
-                                              streams.app.behavior.snack.add(Snack(
-                                                  message:
-                                                      'This wallet has no coin, unable to send.'));
-                                            }
-                                          },
-                                          onPressed: () =>
-                                              sail.to('/wallet/send'),
-                                        )),
-                                        Expanded(
-                                            child: BottomButton(
-                                          label: 'receive',
-                                          onPressed: () => sail.to('/receive'),
-                                        ))
-                                      ]
-                                    : locationState.section == Section.manage
-                                        ? <Widget>[
-                                            if (locationState.path ==
-                                                '/manage/holdings')
-                                              Expanded(
-                                                  child: BottomButton(
-                                                label: 'create',
-                                                enabled: true,
-                                                onPressed: () =>
-                                                    _produceCreateModal(
-                                                        context),
-                                              ))
-                                            else if (locationState.path ==
-                                                '/manage/holding')
-                                              Expanded(
-                                                  child: BottomButton(
-                                                label: 'reissue',
-                                                enabled: true,
-                                                onPressed: _gotoReissue,
-                                              ))
-                                            else
-                                              Expanded(
-                                                  child: BottomButton(
-                                                label: 'create?',
-                                                enabled: false,
-                                                onPressed: () {},
-                                              ))
-                                          ]
-                                        : <Widget>[
-                                            Expanded(
-                                                child: BottomButton(
-                                              enabled: false,
-                                              label: 'buy',
-                                              onPressed: () {},
-                                            )),
-                                            Expanded(
-                                                child: BottomButton(
-                                              label: 'sell',
-                                              enabled: false,
-                                              onPressed: () {},
-                                            ))
-                                          ]))
-                                .intersperse(const SizedBox(width: 16))
-                                .toList(),
-                          ))));
+                  //BlocBuilder<WalletHoldingsViewCubit, WalletHoldingsViewState>(
+                  //    builder: (BuildContext context,
+                  //            WalletHoldingsViewState holdingState) =>
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: ((locationState.section == Section.wallet
+                            ? <Widget>[
+                                /// never show import for this button
+                                //if (components.cubits.holdingsView.state
+                                //            .holdingsViews.length ==
+                                //        1 &&
+                                //    components.cubits.holdingsView.state
+                                //            .holdingsViews.first.sats ==
+                                //        0)
+                                //  Expanded(
+                                //      child: BottomButton(
+                                //    label: 'import',
+                                //    enabled: true,
+                                //    onPressed: () =>
+                                //        sail.to('/restore/import'),
+                                //  ))
+                                //else
+                                Expanded(
+                                    child: BottomButton(
+                                  label: 'send',
+                                  enabled: connectionState.isConnected,
+                                  disabledOnPressed: () {
+                                    if (!connectionState.isConnected) {
+                                      streams.app.behavior.snack.add(Snack(
+                                          message: 'Not connected to network'));
+                                    }
+                                  },
+                                  onPressed: () {
+                                    if (components
+                                        .cubits.holdingsView.walletEmptyCoin) {
+                                      streams.app.behavior.snack.add(Snack(
+                                          delay: 0,
+                                          message:
+                                              'This wallet has no coin, unable to send.'));
+                                    } else {
+                                      sail.to('/wallet/send');
+                                    }
+                                  },
+                                )),
+                                Expanded(
+                                    child: BottomButton(
+                                  label: 'receive',
+                                  onPressed: () => sail.to('/receive'),
+                                ))
+                              ]
+                            : locationState.section == Section.manage
+                                ? <Widget>[
+                                    if (locationState.path ==
+                                        '/manage/holdings')
+                                      Expanded(
+                                          child: BottomButton(
+                                        label: 'create',
+                                        enabled: true,
+                                        onPressed: () =>
+                                            _produceCreateModal(context),
+                                      ))
+                                    else if (locationState.path ==
+                                        '/manage/holding')
+                                      Expanded(
+                                          child: BottomButton(
+                                        label: 'reissue',
+                                        enabled: true,
+                                        onPressed: _gotoReissue,
+                                      ))
+                                    else
+                                      Expanded(
+                                          child: BottomButton(
+                                        label: 'create?',
+                                        enabled: false,
+                                        onPressed: () {},
+                                      ))
+                                  ]
+                                : <Widget>[
+                                    Expanded(
+                                        child: BottomButton(
+                                      enabled: false,
+                                      label: 'buy',
+                                      onPressed: () {},
+                                    )),
+                                    Expanded(
+                                        child: BottomButton(
+                                      label: 'sell',
+                                      enabled: false,
+                                      onPressed: () {},
+                                    ))
+                                  ]))
+                        .intersperse(const SizedBox(width: 16))
+                        .toList(),
+                    //)
+                  )));
 
   Future<void> _gotoReissue() async {
     final cubit = components.cubits.simpleReissueForm;
