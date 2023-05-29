@@ -57,6 +57,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
 
   @override
   void dispose() {
+    components.cubits.simpleReissueForm.reset();
     parentNameController.dispose();
     nameController.dispose();
     assetMemoController.dispose();
@@ -110,21 +111,12 @@ class _SimpleReissueState extends State<SimpleReissue> {
   }
 
   void setQuantity(SimpleReissueFormState state) {
-    if (state.quantity.toString().length > 0 && state.quantity != 0) {
-      var quant = state.quantityCoin.toString();
-      if (quant.endsWith('.0')) {
-        quant = quant.replaceAll('.0', '');
-      }
-      quantityController.value = TextEditingValue(
-          text: quant,
-          selection: quantityController.selection.baseOffset < quant.length &&
-                  quantityController.text.startsWith('.') &&
-                  quant.startsWith('0.')
-              ? TextSelection.collapsed(offset: quant.length)
-              : quantityController.selection.baseOffset > quant.length
-                  ? TextSelection.collapsed(offset: quant.length)
-                  : quantityController.selection);
-    }
+    quantityController.value = TextEditingValue(
+        text: state.quantityCoinString,
+        selection: quantityController.selection.baseOffset >
+                state.quantityCoinString.length
+            ? TextSelection.collapsed(offset: state.quantityCoinString.length)
+            : quantityController.selection);
   }
 
   @override
@@ -262,7 +254,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                 //],
                 labelText: 'Additional Quantity',
                 hintText: 'currently exists: ${getCurrentlyExists(state)}',
-                errorText: quantityController.text == ''
+                errorText: ['', '.'].contains(quantityController.text)
                     ? null
                     : !_validateQuantityPositive()
                         ? 'quantity must be a whole number'
@@ -288,13 +280,14 @@ class _SimpleReissueState extends State<SimpleReissue> {
                                 : quantityController.selection);
                     setState(() {});
                   } else {
-                    final correctValue = _validateQuantityDivisibility(state);
+                    final correctValue = _correctQuantityDivisibility(state);
                     if (correctValue != value) {
                       final rightSide = value.split('.')[1].length;
                       if (rightSide <= 8) {
                         cubit.update(
-                            decimals: rightSide,
-                            quantityCoin: double.parse(value));
+                          decimals: rightSide,
+                          quantityCoinString: value,
+                        );
                       } else {
                         quantityController.value = TextEditingValue(
                             text: correctValue,
@@ -313,7 +306,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                       }
                     } else {
                       try {
-                        cubit.update(quantityCoin: double.parse(value));
+                        cubit.update(quantityCoinString: value);
                       } catch (e) {
                         cubit.update(quantity: 0);
                       }
@@ -323,8 +316,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                 onEditingComplete: () {
                   if (_validateQuantity(state)) {
                     try {
-                      cubit.update(
-                          quantityCoin: double.parse(quantityController.text));
+                      cubit.update(quantityCoinString: quantityController.text);
                     } catch (e) {
                       cubit.update(quantity: 0);
                     }
@@ -487,10 +479,11 @@ class _SimpleReissueState extends State<SimpleReissue> {
                     parentName: parentNameController.text,
                     name: nameController.text,
                     assetMemo: assetMemoController.text,
-                    quantityCoin: double.parse(quantityController.text),
+                    quantityCoinString: quantityController.text,
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
                   );
+                  //cubit.updateQuantity();
                   setState(() {
                     clicked = true;
                   });
@@ -568,25 +561,17 @@ class _SimpleReissueState extends State<SimpleReissue> {
 
   bool _validateQuantity(SimpleReissueFormState state, [String? quantity]) {
     quantity = (quantity ?? quantityController.text);
-    if ( //quantity.contains('.') ||
-        quantity.contains(',') ||
-            quantity.contains('-') ||
-            quantity.contains(' ')) {
+    if (!_validateQuantityPositive(quantity)) {
       return false;
     }
-    double doubleQ;
-    try {
-      doubleQ = double.parse(quantity);
-      if (isNFT(state.type)) {
-        return doubleQ == 1; // rvn && evr match?
-      }
-      return doubleQ * satsPerCoin +
-              (state.metadataView!.mempoolTotalSupply ??
-                  state.metadataView!.totalSupply) <=
-          coinsPerChain * satsPerCoin; // rvn && evr match?
-    } catch (e) {
+    if (!_validateQuantitySmallEnough(state, quantity)) {
       return false;
     }
+    // necessary?
+    if (_correctQuantityDivisibility(state, quantity) != quantity) {
+      return false;
+    }
+    return true;
   }
 
   bool _validateQuantityPositive([String? quantity]) {
@@ -605,13 +590,16 @@ class _SimpleReissueState extends State<SimpleReissue> {
     String? quantity,
   ]) {
     quantity = (quantity ?? quantityController.text);
-
     double doubleQ;
     try {
       doubleQ = double.parse(quantity);
       if (isNFT(state.type)) {
         return doubleQ == 1; // rvn && evr match?
       }
+      final y = doubleQ * satsPerCoin +
+          (state.metadataView!.mempoolTotalSupply ??
+              state.metadataView!.totalSupply);
+      final x = coinsPerChain * satsPerCoin;
       return doubleQ * satsPerCoin +
               (state.metadataView!.mempoolTotalSupply ??
                   state.metadataView!.totalSupply) <=
@@ -621,7 +609,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
     }
   }
 
-  String _validateQuantityDivisibility(
+  String _correctQuantityDivisibility(
     SimpleReissueFormState state, [
     String? quantity,
   ]) {
@@ -801,36 +789,6 @@ class _SimpleReissueState extends State<SimpleReissue> {
           label: 'copy'));
     }
   }
-
-  void _produceAssetModal(SimpleReissueFormCubit cubit) =>
-      components.cubits.bottomModalSheet.show(children: <Widget>[
-        for (String name in Current.holdingNames
-            .where((String item) => item.isAdmin)
-            .map((e) => Symbol(e).toMainSymbol!))
-          ListTile(
-              onTap: () {
-                context.read<BottomModalSheetCubit>().hide();
-                final sec = pros.securities.ofCurrent(name) ??
-                    Security(
-                        symbol: '',
-                        chain: pros.settings.chain,
-                        net: pros.settings.net);
-                cubit.update(parentName: sec.symbol);
-                if (isSub(cubit.state.type) &&
-                    (cubit.state.name.length > 2 ||
-                        (isNFT(cubit.state.type) &&
-                            cubit.state.name.length > 0))) {
-                  cubit.updateName(cubit.state.name, parentName: sec.symbol);
-                }
-              },
-              leading: components.icons.assetAvatar(name,
-                  height: 24, width: 24, net: pros.settings.net),
-              title: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(symbolName(name),
-                      style: Theme.of(context).textTheme.bodyLarge)))
-      ]);
 
   void _produceDecimalsModal(SimpleReissueFormCubit cubit) {
     final imageDetails = ImageDetails(

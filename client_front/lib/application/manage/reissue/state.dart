@@ -6,6 +6,7 @@ class SimpleReissueFormCubitState extends Equatable {
   final String parentName;
   final String name;
   final int quantity; // sats
+  final String quantityCoinString; // coin
   final int decimals;
   final bool reissuable;
   final String? memo;
@@ -24,6 +25,7 @@ class SimpleReissueFormCubitState extends Equatable {
     this.parentName = '',
     this.name = '',
     this.quantity = 0,
+    this.quantityCoinString = '',
     this.decimals = 0,
     this.reissuable = true,
     this.memo,
@@ -41,7 +43,7 @@ class SimpleReissueFormCubitState extends Equatable {
   @override
   String toString() =>
       'SpendForm(type=$type, parentName=$parentName, name=$name, '
-      'quantity=$quantity, decimals=$decimals, reissuable=$reissuable, '
+      'quantity=$quantity, quantityCoinString=$quantityCoinString, decimals=$decimals, reissuable=$reissuable, '
       'memo=$memo, assetMemo=$assetMemo, verifierString=$verifierString, '
       'unsigned=$unsigned, signed=$signed, txHash=$txHash, fee=$fee, '
       'changeAddress=$changeAddress, metadataView=$metadataView, '
@@ -53,6 +55,7 @@ class SimpleReissueFormCubitState extends Equatable {
         parentName,
         name,
         quantity,
+        quantityCoinString,
         decimals,
         reissuable,
         memo,
@@ -127,6 +130,7 @@ class SimpleReissueFormState extends SimpleReissueFormCubitState {
     super.parentName,
     super.name,
     super.quantity,
+    super.quantityCoinString,
     super.decimals,
     super.reissuable,
     super.memo,

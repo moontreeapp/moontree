@@ -9,11 +9,12 @@ import 'package:moontree_utils/moontree_utils.dart';
 //    show StringBytesExtension, EnumeratedIteratable;
 import 'package:wallet_utils/wallet_utils.dart'
     show
+        AmountToSatsExtension,
         ECPair,
         FeeRate,
         SatsToAmountExtension,
-        AmountToSatsExtension,
         TransactionBuilder,
+        coinsPerChain,
         satsPerCoin,
         standardFee;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
@@ -29,6 +30,39 @@ import 'package:client_front/infrastructure/calls/broadcast.dart';
 
 part 'state.dart';
 
+/// coin number as string to sats as int
+/// maximum int:  9,223,372,036,854,775,807
+/// satsPerChain: 2,100,000,000,000,000,000
+/// 21,000,000,000
+int? asCoinToSats(String? text) {
+  if (text == null) {
+    return null;
+  }
+  text = text.replaceAll(',', '').replaceAll(' ', '').replaceAll('-', '');
+  if (RegExp(r'^(\d*(\.\d{0,8})?|\.\d{0,8})$').hasMatch(text)) {
+    if (text.contains('.')) {
+      final leftRight = text.split('.');
+      final left = leftRight[0];
+      // check to see if the left alone is too large before checking stuff in
+      // the range of possibly BigInt
+      if (left != '' && int.parse(left) > coinsPerChain) {
+        return null;
+      }
+      final right = leftRight[1]; // only 1 period due to regex above.
+      final value = int.parse(left + right + ('0' * (8 - right.length)));
+      if (value > int.parse(coinsPerChain.toString() + ('0' * 8))) {
+        return null;
+      }
+      return value;
+    }
+    if (text != '' && int.parse(text) > coinsPerChain) {
+      return null; // too large
+    }
+    return int.parse(text + ('0' * 8));
+  }
+  return null;
+}
+
 class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
   SimpleReissueFormCubit() : super(SimpleReissueFormState());
 
@@ -41,7 +75,7 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
     String? parentName,
     String? name,
     int? quantity,
-    double? quantityCoin,
+    String? quantityCoinString,
     int? decimals,
     bool? reissuable,
     String? memo,
@@ -60,7 +94,10 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
         type: type ?? state.type,
         parentName: parentName ?? state.parentName,
         name: name ?? state.name,
-        quantity: quantity ?? (quantityCoin?.asSats) ?? state.quantity,
+        quantity: quantity ??
+            asCoinToSats(state.quantityCoinString) ??
+            state.quantity,
+        quantityCoinString: quantityCoinString ?? state.quantityCoinString,
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
         memo: memo ?? state.memo,
@@ -76,6 +113,11 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
         fee: fee ?? state.fee,
         isSubmitting: isSubmitting ?? state.isSubmitting,
       ));
+
+  // occurs on move to next page...
+  //Future<void> updateQuantity() async => update(
+  //      quantity: asCoinToSats(state.quantityCoinString),
+  //    );
 
   Future<void> updateName(String symbol, {String? parentName}) async => update(
         metadataView: await (getMetadataView(
