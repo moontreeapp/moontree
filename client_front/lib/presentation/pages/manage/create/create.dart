@@ -264,14 +264,14 @@ class _SimpleCreateState extends State<SimpleCreate> {
                 enabled: !isNFT(state.type),
                 keyboardType: const TextInputType.numberWithOptions(
                   signed: false,
-                  decimal: false,
+                  decimal: true,
                 ),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter(
-                    RegExp(r'^[1-9]\d*$'),
-                    allow: true,
-                  )
-                ],
+                //inputFormatters: <TextInputFormatter>[
+                //  FilteringTextInputFormatter(
+                //    RegExp(r'^[1-9]\d*$'),
+                //    allow: true,
+                //  )
+                //],
                 labelText: 'Quantity',
                 hintText: 'how many coins should be minted?',
                 errorText: quantityController.text == ''
@@ -726,46 +726,49 @@ class _SimpleCreateState extends State<SimpleCreate> {
     final imageDetails = ImageDetails(
         foreground: AppColors.rgb(AppColors.primary),
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
-    components.cubits.bottomModalSheet.show(children: <Widget>[
-      for (final decimal in [
-        Tuple2<String, int>('', 0),
-        Tuple2<String, int>('.0', 1),
-        Tuple2<String, int>('.00', 2),
-        Tuple2<String, int>('.000', 3),
-        Tuple2<String, int>('.0000', 4),
-        Tuple2<String, int>('.00000', 5),
-        Tuple2<String, int>('.000000', 6),
-        Tuple2<String, int>('.0000000', 7),
-        Tuple2<String, int>('.00000000', 8),
-      ])
-        ListTile(
-          onTap: () {
-            context.read<BottomModalSheetCubit>().hide();
-            cubit.update(decimals: decimal.item2);
-          },
-          leading: components.icons.assetFromCacheOrGenerate(
-              asset: decimal.item2.toString() + 'ABC',
-              height: 24,
-              width: 24,
-              imageDetails: imageDetails,
-              assetType: SymbolType.main),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                cubit.state.quantityCoin.toString().replaceAll('.0', ''),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              Text(
-                decimal.item1,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: AppColors.primary),
-              ),
-            ],
-          ),
-        )
-    ]);
+    components.cubits.bottomModalSheet.show(
+      childrenHeight: 55,
+      children: <Widget>[
+        for (final decimal in [
+          Tuple2<String, int>('', 0),
+          Tuple2<String, int>('.0', 1),
+          Tuple2<String, int>('.00', 2),
+          Tuple2<String, int>('.000', 3),
+          Tuple2<String, int>('.0000', 4),
+          Tuple2<String, int>('.00000', 5),
+          Tuple2<String, int>('.000000', 6),
+          Tuple2<String, int>('.0000000', 7),
+          Tuple2<String, int>('.00000000', 8),
+        ])
+          ListTile(
+            onTap: () {
+              context.read<BottomModalSheetCubit>().hide();
+              cubit.update(decimals: decimal.item2);
+            },
+            leading: components.icons.assetFromCacheOrGenerate(
+                asset: decimal.item2.toString() + 'ABC',
+                height: 24,
+                width: 24,
+                imageDetails: imageDetails,
+                assetType: SymbolType.main),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  cubit.state.quantityCoin.toString().replaceAll('.0', ''),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Text(
+                  decimal.item1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: AppColors.primary),
+                ),
+              ],
+            ),
+          )
+      ], //+[SizedBox(height: 1)]
+    );
   }
 }

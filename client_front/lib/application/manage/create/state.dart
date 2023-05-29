@@ -5,7 +5,7 @@ class SimpleCreateFormCubitState extends Equatable {
   final SymbolType? type;
   final String parentName;
   final String name;
-  final int quantity;
+  final int quantity; // sats
   final int decimals;
   final bool reissuable;
   final String? memo;

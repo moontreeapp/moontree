@@ -98,6 +98,35 @@ class _SimpleReissueState extends State<SimpleReissue> {
   bool isNFT(SymbolType? type) => type == SymbolType.unique;
   bool isChannel(SymbolType? type) => type == SymbolType.channel;
 
+  String getCurrentlyExists(SimpleReissueFormState state) {
+    final String x =
+        state.metadataView?.mempoolTotalSupply?.asCoin.toString() ??
+            state.metadataView?.totalSupply.asCoin.toString() ??
+            'unknown';
+    if (x.endsWith('.0')) {
+      return x.replaceAll('.0', '');
+    }
+    return x;
+  }
+
+  void setQuantity(SimpleReissueFormState state) {
+    if (state.quantity.toString().length > 0 && state.quantity != 0) {
+      var quant = state.quantityCoin.toString();
+      if (quant.endsWith('.0')) {
+        quant = quant.replaceAll('.0', '');
+      }
+      quantityController.value = TextEditingValue(
+          text: quant,
+          selection: quantityController.selection.baseOffset < quant.length &&
+                  quantityController.text.startsWith('.') &&
+                  quant.startsWith('0.')
+              ? TextSelection.collapsed(offset: quant.length)
+              : quantityController.selection.baseOffset > quant.length
+                  ? TextSelection.collapsed(offset: quant.length)
+                  : quantityController.selection);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final SimpleReissueFormCubit cubit = components.cubits.simpleReissueForm;
@@ -145,15 +174,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
             decimalsController.text = '0';
             cubit.update(quantity: 1 * satsPerCoin, decimals: 0);
           } else {
-            if (state.quantity.toString().length > 0 && state.quantity != 0) {
-              final quant = state.quantityCoin.toString().replaceAll('.0', '');
-              quantityController.value = TextEditingValue(
-                  text: quant,
-                  selection:
-                      quantityController.selection.baseOffset > quant.length
-                          ? TextSelection.collapsed(offset: quant.length)
-                          : quantityController.selection);
-            }
+            setQuantity(state);
             if (state.decimals.toString().length > 0) {
               decimalsController.value = TextEditingValue(
                   text: state.decimals.toString(),
@@ -230,29 +251,73 @@ class _SimpleReissueState extends State<SimpleReissue> {
                 enabled: !isNFT(state.type),
                 keyboardType: const TextInputType.numberWithOptions(
                   signed: false,
-                  decimal: false,
+                  decimal: true,
                 ),
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter(
-                    RegExp(r'^[1-9]\d*$'),
-                    allow: true,
-                  )
-                ],
+                //inputFormatters: <TextInputFormatter>[
+                //  FilteringTextInputFormatter(
+                //    //RegExp(r'^[1-9]\d*$'),
+                //    RegExp(r'^[1-9]\d*(\.\d+)?$'),
+                //    allow: true,
+                //  )
+                //],
                 labelText: 'Additional Quantity',
-                hintText:
-                    'currently exists: ${state.metadataView?.mempoolTotalSupply?.asCoin ?? state.metadataView?.totalSupply.asCoin ?? 'unknown'}',
+                hintText: 'currently exists: ${getCurrentlyExists(state)}',
                 errorText: quantityController.text == ''
                     ? null
-                    : !_validateQuantityInt(state)
-                        ? 'quantity must be an integer'
+                    : !_validateQuantityPositive()
+                        ? 'quantity must be a whole number'
                         : !_validateQuantitySmallEnough(state)
                             ? 'too large'
                             : null,
                 onChanged: (String value) {
-                  try {
-                    cubit.update(quantityCoin: double.parse(value));
-                  } catch (e) {
-                    cubit.update(quantity: 0);
+                  if (value.split('.').length > 2) {
+                    final correctValue =
+                        value.split('.')[0] + '.' + value.split('.')[1];
+                    quantityController.value = TextEditingValue(
+                        text: correctValue,
+                        selection: quantityController.selection.baseOffset <
+                                    correctValue.length &&
+                                quantityController.text.startsWith('.') &&
+                                correctValue.startsWith('0.')
+                            ? TextSelection.collapsed(
+                                offset: correctValue.length)
+                            : quantityController.selection.baseOffset >
+                                    correctValue.length
+                                ? TextSelection.collapsed(
+                                    offset: correctValue.length)
+                                : quantityController.selection);
+                    setState(() {});
+                  } else {
+                    final correctValue = _validateQuantityDivisibility(state);
+                    if (correctValue != value) {
+                      final rightSide = value.split('.')[1].length;
+                      if (rightSide <= 8) {
+                        cubit.update(
+                            decimals: rightSide,
+                            quantityCoin: double.parse(value));
+                      } else {
+                        quantityController.value = TextEditingValue(
+                            text: correctValue,
+                            selection: quantityController.selection.baseOffset <
+                                        correctValue.length &&
+                                    quantityController.text.startsWith('.') &&
+                                    correctValue.startsWith('0.')
+                                ? TextSelection.collapsed(
+                                    offset: correctValue.length)
+                                : quantityController.selection.baseOffset >
+                                        correctValue.length
+                                    ? TextSelection.collapsed(
+                                        offset: correctValue.length)
+                                    : quantityController.selection);
+                        setState(() {});
+                      }
+                    } else {
+                      try {
+                        cubit.update(quantityCoin: double.parse(value));
+                      } catch (e) {
+                        cubit.update(quantity: 0);
+                      }
+                    }
                   }
                 },
                 onEditingComplete: () {
@@ -503,19 +568,19 @@ class _SimpleReissueState extends State<SimpleReissue> {
 
   bool _validateQuantity(SimpleReissueFormState state, [String? quantity]) {
     quantity = (quantity ?? quantityController.text);
-    if (quantity.contains('.') ||
+    if ( //quantity.contains('.') ||
         quantity.contains(',') ||
-        quantity.contains('-') ||
-        quantity.contains(' ')) {
+            quantity.contains('-') ||
+            quantity.contains(' ')) {
       return false;
     }
-    int intQ;
+    double doubleQ;
     try {
-      intQ = int.parse(quantity);
+      doubleQ = double.parse(quantity);
       if (isNFT(state.type)) {
-        return intQ == 1; // rvn && evr match?
+        return doubleQ == 1; // rvn && evr match?
       }
-      return intQ * satsPerCoin +
+      return doubleQ * satsPerCoin +
               (state.metadataView!.mempoolTotalSupply ??
                   state.metadataView!.totalSupply) <=
           coinsPerChain * satsPerCoin; // rvn && evr match?
@@ -524,12 +589,12 @@ class _SimpleReissueState extends State<SimpleReissue> {
     }
   }
 
-  bool _validateQuantityInt(SimpleReissueFormState state, [String? quantity]) {
+  bool _validateQuantityPositive([String? quantity]) {
     quantity = (quantity ?? quantityController.text);
-    if (quantity.contains('.') ||
+    if ( //quantity.contains('.') ||
         quantity.contains(',') ||
-        quantity.contains('-') ||
-        quantity.contains(' ')) {
+            quantity.contains('-') ||
+            quantity.contains(' ')) {
       return false;
     }
     return true;
@@ -541,19 +606,33 @@ class _SimpleReissueState extends State<SimpleReissue> {
   ]) {
     quantity = (quantity ?? quantityController.text);
 
-    int intQ;
+    double doubleQ;
     try {
-      intQ = int.parse(quantity);
+      doubleQ = double.parse(quantity);
       if (isNFT(state.type)) {
-        return intQ == 1; // rvn && evr match?
+        return doubleQ == 1; // rvn && evr match?
       }
-      return intQ * satsPerCoin +
+      return doubleQ * satsPerCoin +
               (state.metadataView!.mempoolTotalSupply ??
                   state.metadataView!.totalSupply) <=
           coinsPerChain * satsPerCoin; // rvn && evr match?
     } catch (e) {
       return false;
     }
+  }
+
+  String _validateQuantityDivisibility(
+    SimpleReissueFormState state, [
+    String? quantity,
+  ]) {
+    quantity = (quantity ?? quantityController.text);
+    if (quantity.contains('.')) {
+      final leftRight = quantity.split('.');
+      if (leftRight[1].length > state.decimals) {
+        return leftRight[0] + '.' + leftRight[1].substring(0, state.decimals);
+      }
+    }
+    return quantity;
   }
 
   bool _validateDecimals(SimpleReissueFormState state, [String? decimals]) {
@@ -759,46 +838,49 @@ class _SimpleReissueState extends State<SimpleReissue> {
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
     final divisibility = cubit.state.metadataView!.mempoolDivisibility ??
         cubit.state.metadataView!.divisibility;
-    components.cubits.bottomModalSheet.show(children: <Widget>[
-      for (final decimal in [
-        Tuple2<String, int>('', 0),
-        Tuple2<String, int>('.0', 1),
-        Tuple2<String, int>('.00', 2),
-        Tuple2<String, int>('.000', 3),
-        Tuple2<String, int>('.0000', 4),
-        Tuple2<String, int>('.00000', 5),
-        Tuple2<String, int>('.000000', 6),
-        Tuple2<String, int>('.0000000', 7),
-        Tuple2<String, int>('.00000000', 8),
-      ].where((t) => t.item2 >= divisibility))
-        ListTile(
-          onTap: () {
-            context.read<BottomModalSheetCubit>().hide();
-            cubit.update(decimals: decimal.item2);
-          },
-          leading: components.icons.assetFromCacheOrGenerate(
-              asset: decimal.item2.toString() + 'ABC',
-              height: 24,
-              width: 24,
-              imageDetails: imageDetails,
-              assetType: SymbolType.main),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                cubit.state.quantityCoin.toString().replaceAll('.0', ''),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              Text(
-                decimal.item1,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: AppColors.primary),
-              ),
-            ],
-          ),
-        )
-    ]);
+    components.cubits.bottomModalSheet.show(
+      childrenHeight: 55,
+      children: <Widget>[
+        for (final decimal in [
+          Tuple2<String, int>('', 0),
+          Tuple2<String, int>('.0', 1),
+          Tuple2<String, int>('.00', 2),
+          Tuple2<String, int>('.000', 3),
+          Tuple2<String, int>('.0000', 4),
+          Tuple2<String, int>('.00000', 5),
+          Tuple2<String, int>('.000000', 6),
+          Tuple2<String, int>('.0000000', 7),
+          Tuple2<String, int>('.00000000', 8),
+        ].where((t) => t.item2 >= divisibility))
+          ListTile(
+            onTap: () {
+              context.read<BottomModalSheetCubit>().hide();
+              cubit.update(decimals: decimal.item2);
+            },
+            leading: components.icons.assetFromCacheOrGenerate(
+                asset: decimal.item2.toString() + 'ABC',
+                height: 24,
+                width: 24,
+                imageDetails: imageDetails,
+                assetType: SymbolType.main),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  cubit.state.quantityCoin.toString().replaceAll('.0', ''),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Text(
+                  decimal.item1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: AppColors.primary),
+                ),
+              ],
+            ),
+          )
+      ],
+    );
   }
 }
