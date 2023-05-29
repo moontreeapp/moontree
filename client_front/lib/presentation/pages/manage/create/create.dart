@@ -23,6 +23,7 @@ import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:wallet_utils/wallet_utils.dart';
 
 class SimpleCreate extends StatefulWidget {
   const SimpleCreate({Key? key}) : super(key: key);
@@ -156,9 +157,12 @@ class _SimpleCreateState extends State<SimpleCreate> {
             cubit.update(
               quantity: 1 * satsPerCoin,
               decimals: 0,
-              //reissuable: false?
+              reissuable: false,
             );
           } else {
+            if (isQualifier(state.type) || isChannel(state.type)) {
+              cubit.update(reissuable: false);
+            }
             setQuantity(state);
             if (state.decimals.toString().length > 0) {
               decimalsController.value = TextEditingValue(
@@ -477,16 +481,37 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
               Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: SwtichChoice(
-                    label: 'Reissuable',
-                    description:
-                        "A reissuable asset's quantity and decimal places can increase in the future.",
-                    hideDescription: true,
-                    initial: cubit.state.reissuable,
-                    onChanged: (bool value) async =>
-                        cubit.update(reissuable: value),
-                  )),
+                  padding: const EdgeInsets.only(left: 8),
+                  child: isNFT(state.type)
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            'NFT assets are not reissuable',
+                            textAlign: TextAlign.center,
+                          ))
+                      : isQualifier(state.type)
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                'Qualifier assets are not reissuable',
+                                textAlign: TextAlign.center,
+                              ))
+                          : isChannel(state.type)
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    'Message Channel assets are not reissuable',
+                                    textAlign: TextAlign.center,
+                                  ))
+                              : SwtichChoice(
+                                  label: 'Reissuable',
+                                  description:
+                                      "A reissuable asset's quantity and decimal places can increase in the future.",
+                                  hideDescription: true,
+                                  initial: cubit.state.reissuable,
+                                  onChanged: (bool value) async =>
+                                      cubit.update(reissuable: value),
+                                )),
             ],
             firstLowerChildren: <Widget>[
               BottomButton(
