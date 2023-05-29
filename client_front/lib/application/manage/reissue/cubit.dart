@@ -9,12 +9,10 @@ import 'package:moontree_utils/moontree_utils.dart';
 //    show StringBytesExtension, EnumeratedIteratable;
 import 'package:wallet_utils/wallet_utils.dart'
     show
-        AmountToSatsExtension,
         ECPair,
         FeeRate,
         SatsToAmountExtension,
         TransactionBuilder,
-        coinsPerChain,
         satsPerCoin,
         standardFee;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
@@ -29,39 +27,6 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
 
 part 'state.dart';
-
-/// coin number as string to sats as int
-/// maximum int:  9,223,372,036,854,775,807
-/// satsPerChain: 2,100,000,000,000,000,000
-/// 21,000,000,000
-int? asCoinToSats(String? text) {
-  if (text == null) {
-    return null;
-  }
-  text = text.replaceAll(',', '').replaceAll(' ', '').replaceAll('-', '');
-  if (RegExp(r'^(\d*(\.\d{0,8})?|\.\d{0,8})$').hasMatch(text)) {
-    if (text.contains('.')) {
-      final leftRight = text.split('.');
-      final left = leftRight[0];
-      // check to see if the left alone is too large before checking stuff in
-      // the range of possibly BigInt
-      if (left != '' && int.parse(left) > coinsPerChain) {
-        return null;
-      }
-      final right = leftRight[1]; // only 1 period due to regex above.
-      final value = int.parse(left + right + ('0' * (8 - right.length)));
-      if (value > int.parse(coinsPerChain.toString() + ('0' * 8))) {
-        return null;
-      }
-      return value;
-    }
-    if (text != '' && int.parse(text) > coinsPerChain) {
-      return null; // too large
-    }
-    return int.parse(text + ('0' * 8));
-  }
-  return null;
-}
 
 class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
   SimpleReissueFormCubit() : super(SimpleReissueFormState());

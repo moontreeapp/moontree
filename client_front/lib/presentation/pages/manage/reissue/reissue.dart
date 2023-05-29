@@ -596,10 +596,6 @@ class _SimpleReissueState extends State<SimpleReissue> {
       if (isNFT(state.type)) {
         return doubleQ == 1; // rvn && evr match?
       }
-      final y = doubleQ * satsPerCoin +
-          (state.metadataView!.mempoolTotalSupply ??
-              state.metadataView!.totalSupply);
-      final x = coinsPerChain * satsPerCoin;
       return doubleQ * satsPerCoin +
               (state.metadataView!.mempoolTotalSupply ??
                   state.metadataView!.totalSupply) <=

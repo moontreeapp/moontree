@@ -12,7 +12,6 @@ import 'package:wallet_utils/wallet_utils.dart'
         ECPair,
         FeeRate,
         SatsToAmountExtension,
-        AmountToSatsExtension,
         TransactionBuilder,
         satsPerCoin,
         standardFee;
@@ -20,7 +19,6 @@ import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
 import 'package:client_front/infrastructure/repos/unsigned_create.dart';
@@ -42,7 +40,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     String? parentName,
     String? name,
     int? quantity,
-    double? quantityCoin,
+    String? quantityCoinString,
     int? decimals,
     bool? reissuable,
     String? memo,
@@ -64,7 +62,10 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         memo: memo ?? state.memo,
         assetMemo: assetMemo ?? state.assetMemo,
         verifierString: verifierString ?? state.verifierString,
-        quantity: quantity ?? (quantityCoin?.asSats) ?? state.quantity,
+        quantity: quantity ??
+            asCoinToSats(state.quantityCoinString) ??
+            state.quantity,
+        quantityCoinString: quantityCoinString ?? state.quantityCoinString,
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
         changeAddress: changeAddress ?? state.changeAddress,
@@ -77,6 +78,11 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         fee: fee ?? state.fee,
         isSubmitting: isSubmitting ?? state.isSubmitting,
       ));
+
+  // occurs on move to next page...
+  //Future<void> updateQuantity() async => update(
+  //      quantity: asCoinToSats(state.quantityCoinString),
+  //    );
 
   Future<void> updateName(String symbol, {String? parentName}) async => update(
         metadataView: await (getMetadataView(

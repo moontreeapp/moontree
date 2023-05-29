@@ -43,7 +43,8 @@ class SimpleReissueFormCubitState extends Equatable {
   @override
   String toString() =>
       'SpendForm(type=$type, parentName=$parentName, name=$name, '
-      'quantity=$quantity, quantityCoinString=$quantityCoinString, decimals=$decimals, reissuable=$reissuable, '
+      'quantity=$quantity, quantityCoinString=$quantityCoinString, '
+      'decimals=$decimals, reissuable=$reissuable, '
       'memo=$memo, assetMemo=$assetMemo, verifierString=$verifierString, '
       'unsigned=$unsigned, signed=$signed, txHash=$txHash, fee=$fee, '
       'changeAddress=$changeAddress, metadataView=$metadataView, '

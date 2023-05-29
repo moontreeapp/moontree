@@ -57,6 +57,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
 
   @override
   void dispose() {
+    components.cubits.simpleCreateForm.reset();
     parentNameController.dispose();
     nameController.dispose();
     assetMemoController.dispose();
@@ -97,6 +98,15 @@ class _SimpleCreateState extends State<SimpleCreate> {
   bool isRestricted(SymbolType? type) => type == SymbolType.restricted;
   bool isNFT(SymbolType? type) => type == SymbolType.unique;
   bool isChannel(SymbolType? type) => type == SymbolType.channel;
+
+  void setQuantity(SimpleCreateFormState state) {
+    quantityController.value = TextEditingValue(
+        text: state.quantityCoinString,
+        selection: quantityController.selection.baseOffset >
+                state.quantityCoinString.length
+            ? TextSelection.collapsed(offset: state.quantityCoinString.length)
+            : quantityController.selection);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,15 +159,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
               //reissuable: false?
             );
           } else {
-            if (state.quantity.toString().length > 0 && state.quantity != 0) {
-              final quant = state.quantityCoin.toString().replaceAll('.0', '');
-              quantityController.value = TextEditingValue(
-                  text: quant,
-                  selection:
-                      quantityController.selection.baseOffset > quant.length
-                          ? TextSelection.collapsed(offset: quant.length)
-                          : quantityController.selection);
-            }
+            setQuantity(state);
             if (state.decimals.toString().length > 0) {
               decimalsController.value = TextEditingValue(
                   text: state.decimals.toString(),
@@ -274,23 +276,69 @@ class _SimpleCreateState extends State<SimpleCreate> {
                 //],
                 labelText: 'Quantity',
                 hintText: 'how many coins should be minted?',
-                errorText: quantityController.text == ''
+                errorText: ['', '.'].contains(quantityController.text)
                     ? null
-                    : _validateQuantity(state)
-                        ? null
-                        : 'too large',
+                    : !_validateQuantityPositive()
+                        ? 'quantity must be a whole number'
+                        : !_validateQuantitySmallEnough(state)
+                            ? 'too large'
+                            : null,
                 onChanged: (String value) {
-                  try {
-                    cubit.update(quantityCoin: double.parse(value));
-                  } catch (e) {
-                    cubit.update(quantity: 0);
+                  if (value.split('.').length > 2) {
+                    final correctValue =
+                        value.split('.')[0] + '.' + value.split('.')[1];
+                    quantityController.value = TextEditingValue(
+                        text: correctValue,
+                        selection: quantityController.selection.baseOffset <
+                                    correctValue.length &&
+                                quantityController.text.startsWith('.') &&
+                                correctValue.startsWith('0.')
+                            ? TextSelection.collapsed(
+                                offset: correctValue.length)
+                            : quantityController.selection.baseOffset >
+                                    correctValue.length
+                                ? TextSelection.collapsed(
+                                    offset: correctValue.length)
+                                : quantityController.selection);
+                    setState(() {});
+                  } else {
+                    final correctValue = _correctQuantityDivisibility(state);
+                    if (correctValue != value) {
+                      final rightSide = value.split('.')[1].length;
+                      if (rightSide <= 8) {
+                        cubit.update(
+                          decimals: rightSide,
+                          quantityCoinString: value,
+                        );
+                      } else {
+                        quantityController.value = TextEditingValue(
+                            text: correctValue,
+                            selection: quantityController.selection.baseOffset <
+                                        correctValue.length &&
+                                    quantityController.text.startsWith('.') &&
+                                    correctValue.startsWith('0.')
+                                ? TextSelection.collapsed(
+                                    offset: correctValue.length)
+                                : quantityController.selection.baseOffset >
+                                        correctValue.length
+                                    ? TextSelection.collapsed(
+                                        offset: correctValue.length)
+                                    : quantityController.selection);
+                        setState(() {});
+                      }
+                    } else {
+                      try {
+                        cubit.update(quantityCoinString: value);
+                      } catch (e) {
+                        cubit.update(quantity: 0);
+                      }
+                    }
                   }
                 },
                 onEditingComplete: () {
                   if (_validateQuantity(state)) {
                     try {
-                      cubit.update(
-                          quantityCoin: double.parse(quantityController.text));
+                      cubit.update(quantityCoinString: quantityController.text);
                     } catch (e) {
                       cubit.update(quantity: 0);
                     }
@@ -451,7 +499,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     parentName: parentNameController.text,
                     name: nameController.text,
                     assetMemo: assetMemoController.text,
-                    quantityCoin: double.parse(quantityController.text),
+                    quantityCoinString: quantityController.text,
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
                   );
@@ -534,22 +582,59 @@ class _SimpleCreateState extends State<SimpleCreate> {
 
   bool _validateQuantity(SimpleCreateFormState state, [String? quantity]) {
     quantity = (quantity ?? quantityController.text);
-    if (quantity.contains('.') ||
-        quantity.contains(',') ||
-        quantity.contains('-') ||
-        quantity.contains(' ')) {
+    if (!_validateQuantityPositive(quantity)) {
       return false;
     }
-    int intQ;
+    if (!_validateQuantitySmallEnough(state, quantity)) {
+      return false;
+    }
+    // necessary?
+    if (_correctQuantityDivisibility(state, quantity) != quantity) {
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateQuantityPositive([String? quantity]) {
+    quantity = (quantity ?? quantityController.text);
+    if ( //quantity.contains('.') ||
+        quantity.contains(',') ||
+            quantity.contains('-') ||
+            quantity.contains(' ')) {
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateQuantitySmallEnough(
+    SimpleCreateFormState state, [
+    String? quantity,
+  ]) {
+    quantity = (quantity ?? quantityController.text);
+    double doubleQ;
     try {
-      intQ = int.parse(quantity);
+      doubleQ = double.parse(quantity);
       if (isNFT(state.type)) {
-        return intQ == 1; // rvn && evr match?
+        return doubleQ == 1; // rvn && evr match?
       }
-      return intQ <= coinsPerChain; // rvn && evr match?
+      return doubleQ <= coinsPerChain; // rvn && evr match?
     } catch (e) {
       return false;
     }
+  }
+
+  String _correctQuantityDivisibility(
+    SimpleCreateFormState state, [
+    String? quantity,
+  ]) {
+    quantity = (quantity ?? quantityController.text);
+    if (quantity.contains('.')) {
+      final leftRight = quantity.split('.');
+      if (leftRight[1].length > state.decimals) {
+        return leftRight[0] + '.' + leftRight[1].substring(0, state.decimals);
+      }
+    }
+    return quantity;
   }
 
   bool _allValidation(SimpleCreateFormState state) =>
