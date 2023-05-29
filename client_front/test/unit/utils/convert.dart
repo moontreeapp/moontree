@@ -1,5 +1,4 @@
-import 'package:client_front/application/manage/reissue/cubit.dart'
-    show asCoinToSats;
+import 'package:client_front/application/utilities.dart' show asCoinToSats;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

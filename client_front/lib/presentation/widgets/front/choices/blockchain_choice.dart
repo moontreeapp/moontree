@@ -237,7 +237,10 @@ void navToBlockchain([BuildContext? context, Function? then]) {
         components.cubits.bottomModalSheet.hide();
         sail.home();
       },
-      second: then,
+      second: then ??
+          () => sail.refreshHomeCubits(sail.locationFromSector(
+                  components.cubits.location.state.sector) ??
+              ''),
     ));
     //Navigator.of(components.routes.routeContext!)
     //    .pushNamed('/settings/network/blockchain');

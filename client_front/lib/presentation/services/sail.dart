@@ -339,18 +339,24 @@ class Sail {
     String location = _handleHistoryRemoval();
     final manifest = destinationMap[location]!;
     updateCubits(location, manifest, back: true);
-    print(
-        'components.routes.navigatorKey.currentState ${components.routes.navigatorKey.currentState}');
+    //print(
+    //    'components.routes.navigatorKey.currentState ${components.routes.navigatorKey.currentState}');
     components.routes.navigatorKey.currentState!.pop(); // ? should we do this?
     return location;
   }
 
-  void home({bool forceFullScreen = true}) {
-    void perSection({Section? section}) {
+  String? locationFromSector(Section? section) {
+    //Section? section = components.cubits.location.state.sector;
+    return initialPaths[section];
+    //return '/${section.name}/holdings';
+  }
+
+  String home({bool forceFullScreen = true}) {
+    String perSection({Section? section}) {
       if (section == null) {
-        section == Section.wallet;
+        section = Section.wallet;
       }
-      final String location = '/${section!.name}/holdings';
+      final String location = locationFromSector(section)!;
       if (components.cubits.location.state.path != location) {
         if (destinationHistory[section]!.contains(location)) {
           while (
@@ -361,9 +367,10 @@ class Sail {
           to(location);
         }
       }
+      return location;
     }
 
-    perSection(section: components.cubits.location.state.sector);
+    final loc = perSection(section: components.cubits.location.state.sector);
     if (components.cubits.location.state.menuOpen) {
       menu(open: false);
     }
@@ -372,6 +379,7 @@ class Sail {
           .setHeightTo(height: FrontContainerHeight.max);
       components.cubits.navbar.setHeightTo(height: NavbarHeight.max);
     }
+    return loc;
   }
 
   String? to(
