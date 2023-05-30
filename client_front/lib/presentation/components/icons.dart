@@ -368,7 +368,7 @@ class IconComponents {
                   .copyWith(
                       fontSize: (height + width) * .3,
                       color: AppColors.white87))),
-      if (indicator != null) indicator,
+      //if (indicator != null) indicator, // don't include indicator
     ]);
     if (cacheKey != null) {
       cache[cacheKey] = ret;

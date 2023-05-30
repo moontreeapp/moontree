@@ -1,3 +1,4 @@
+import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_front/application/wallet/send/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
@@ -49,40 +50,46 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     controller.forward();
-
+    final symbolType =
+        Symbol(widget.symbol).symbolType.name.toCapitalizedWord();
     return Column(
-      children: <Widget>[icon, subHeader],
+      children: <Widget>[
+        GestureDetector(
+          onTap: () async {
+            if (services.developer.developerMode) {
+              controller.reverse();
+              await Future<void>.delayed(const Duration(milliseconds: 240));
+              setState(() => front = !front);
+            }
+          },
+          child: Column(
+            // used to push it down because we hid stuff and want to center:
+            children: <Widget>[
+              if (symbolType == 'Main')
+                SizedBox(height: .015.ofMediaHeight(context)),
+              Hero(
+                tag: widget.symbol.toLowerCase(),
+                child: components.icons.assetAvatar(
+                  widget.symbol,
+                  size: .0631.ofMediaHeight(context),
+                  net: pros.settings.net,
+                ),
+              ),
+            ],
+          ),
+        ),
+        FadeTransition(opacity: animation, child: Column(children: belowIcon)),
+        if (symbolType != 'Main')
+          Text(
+            widget.symbol == Current.coin.symbol ? 'Coin' : '$symbolType asset',
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(color: AppColors.white60),
+          )
+      ],
     );
   }
-
-  Widget get icon => GestureDetector(
-        onTap: () async {
-          if (services.developer.developerMode) {
-            controller.reverse();
-            await Future<void>.delayed(const Duration(milliseconds: 240));
-            setState(() => front = !front);
-          }
-        },
-        child:
-
-            /// used to push it down because we hid stuff and want to cetner:
-            Column(
-          children: <Widget>[
-            SizedBox(height: .015.ofMediaHeight(context)),
-            Hero(
-              tag: widget.symbol.toLowerCase(),
-              child: components.icons.assetAvatar(
-                widget.symbol,
-                size: .0631.ofMediaHeight(context),
-                net: pros.settings.net,
-              ),
-            ),
-          ],
-        ),
-      );
-
-  Widget get subHeader =>
-      FadeTransition(opacity: animation, child: Column(children: belowIcon));
 
   List<Widget> get belowIcon {
     final List<Widget> ret = <Widget>[
