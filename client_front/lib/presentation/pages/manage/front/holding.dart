@@ -262,10 +262,13 @@ class MetadataView extends StatelessWidget {
               cubit.state.security.isCoin ? 'Currency:' : 'Asset:',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            trailing: SelectableText(
-              cubit.state.security.symbol,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            trailing: Container(
+                alignment: Alignment.centerRight,
+                width: services.screen.width * .5,
+                child: SelectableText(
+                  cubit.state.security.symbol,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                )),
           ),
           ListTile(
             title: Text(
