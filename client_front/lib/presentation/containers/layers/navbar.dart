@@ -5,9 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
-import 'package:client_back/streams/streams.dart';
-import 'package:client_back/utilities/structures.dart';
 import 'package:client_front/domain/utils/alphacon.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/theme/colors.dart';
@@ -422,13 +421,7 @@ class NavbarActions extends StatelessWidget {
                                     }
                                   },
                                   onPressed: () {
-                                    if (components
-                                        .cubits.holdingsView.walletEmptyCoin) {
-                                      streams.app.behavior.snack.add(Snack(
-                                          delay: 0,
-                                          message:
-                                              'This wallet has no coin, unable to send.'));
-                                    } else {
+                                    if (_ableToSend(action: 'send')) {
                                       sail.to('/wallet/send');
                                     }
                                   },
@@ -445,18 +438,25 @@ class NavbarActions extends StatelessWidget {
                                         '/manage/holdings')
                                       Expanded(
                                           child: BottomButton(
-                                        label: 'create',
-                                        enabled: true,
-                                        onPressed: () =>
-                                            _produceCreateModal(context),
-                                      ))
+                                              label: 'create',
+                                              enabled: true,
+                                              onPressed: () {
+                                                if (_ableToSend(
+                                                    action: 'create')) {
+                                                  _produceCreateModal(context);
+                                                }
+                                              }))
                                     else if (locationState.path ==
                                         '/manage/holding')
                                       Expanded(
                                           child: BottomButton(
                                         label: 'reissue',
                                         enabled: true,
-                                        onPressed: _gotoReissue,
+                                        onPressed: () {
+                                          if (_ableToSend(action: 'reissue')) {
+                                            _gotoReissue();
+                                          }
+                                        },
                                       ))
                                     else
                                       Expanded(
@@ -518,6 +518,21 @@ class NavbarActions extends StatelessWidget {
       );
       sail.to('/manage/reissue');
     }
+  }
+
+  bool _ableToSend({String action = 'send'}) {
+    if (components.cubits.holdingsView.walletEmptyCoin) {
+      streams.app.behavior.snack.add(Snack(
+          delay: 0,
+          positive: false,
+          message:
+              (components.cubits.holdingsView.state.holdingsViews.length <= 1
+                      ? 'Empty wallet'
+                      : 'No ${pros.settings.chainNet.symbol}') +
+                  ', unable to $action.'));
+      return false;
+    }
+    return true;
   }
 
   void _produceCreateModal(BuildContext context) {
