@@ -1,3 +1,4 @@
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -326,6 +327,7 @@ class MetadataView extends StatelessWidget {
               if (!associatedData.toBs58().isIpfs &&
                   !associatedData.toHex().isIpfs)
                 ListTile(
+                  dense: true,
                   title: Text(
                     'Memo:',
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -427,6 +429,7 @@ class MetadataView extends StatelessWidget {
       // no associated data - show details
       children = <Widget>[
         ListTile(
+          dense: true,
           title: Text(
             cubit.state.security.isCoin ? 'Currency:' : 'Asset:',
             style: Theme.of(context).textTheme.bodyLarge,
@@ -441,6 +444,7 @@ class MetadataView extends StatelessWidget {
           ),
         ),
         ListTile(
+          dense: true,
           title: Text(
             'Asset Type:',
             style: Theme.of(context).textTheme.bodyLarge,
@@ -453,6 +457,7 @@ class MetadataView extends StatelessWidget {
           ),
         ),
         ListTile(
+          dense: true,
           title: Text(
             cubit.state.security.isCoin
                 ? 'Cirulcating Supply:'
@@ -467,6 +472,7 @@ class MetadataView extends StatelessWidget {
           ),
         ),
         ListTile(
+          dense: true,
           title: Text(
             'Divisibility:',
             style: Theme.of(context).textTheme.bodyLarge,
@@ -477,6 +483,7 @@ class MetadataView extends StatelessWidget {
           ),
         ),
         ListTile(
+          dense: true,
           title: Text(
             'Reissuable:',
             style: Theme.of(context).textTheme.bodyLarge,
@@ -487,6 +494,7 @@ class MetadataView extends StatelessWidget {
           ),
         ),
         ListTile(
+          dense: true,
           title: Text(
             'Frozen:',
             style: Theme.of(context).textTheme.bodyLarge,
@@ -518,11 +526,23 @@ class MetadataView extends StatelessWidget {
     //    SelectableText(securityAsset.primaryMetadata!.data ?? '')
     //  ];
     //}
+    //return RefreshIndicator(
+    //    onRefresh: () => refresh(),
+    //    child: ListView(
+    //      padding: const EdgeInsets.all(10.0),
+    //      children: children,
+    //    ));
     return RefreshIndicator(
         onRefresh: () => refresh(),
-        child: ListView(
-          padding: const EdgeInsets.all(10.0),
+        child: //ListView(
+            //padding: const EdgeInsets.all(10.0), children: children)
+            ScrollablePageStructure(
+          headerSpace: 0,
+          heightSpacer: SizedBox(height: 0),
           children: children,
+          leftPadding: 0,
+          rightPadding: 0,
+          topPadding: 16,
         ));
   }
 }

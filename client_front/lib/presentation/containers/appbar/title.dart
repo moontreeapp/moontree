@@ -848,15 +848,31 @@ class WalletNameText extends StatelessWidget {
                   components.cubits.title.update(editable: true);
                 }
               },
-              child: Text(title,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                        color: AppColors.white,
-                        fontWeight: title.length >= 25
-                            ? FontWeights.bold
-                            : FontWeights.semiBold,
-                      ))));
+              child: components.cubits.title.showWalletName
+                  ? Text(title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style:
+                          Theme.of(context).textTheme.displayMedium!.copyWith(
+                                color: AppColors.white,
+                                fontWeight: title.length >= 25
+                                    ? FontWeights.bold
+                                    : FontWeights.semiBold,
+                              ))
+                  : FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.center,
+                      child: Text(title,
+                          maxLines: 1,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(
+                                color: AppColors.white,
+                                fontWeight: title.length >= 25
+                                    ? FontWeights.bold
+                                    : FontWeights.semiBold,
+                              )))));
     }
     return WalletNameTextField(text: title);
   }

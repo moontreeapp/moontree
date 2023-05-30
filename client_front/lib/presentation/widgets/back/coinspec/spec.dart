@@ -109,9 +109,9 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   }
 
   Widget specBottom(int holdingSat, int amountSat) {
-    if (widget.pageTitle == 'Asset') {
-      return AssetSpecBottom(symbol: symbol);
-    }
+    //if (widget.pageTitle == 'Asset') {
+    //  return AssetSpecBottom(symbol: symbol);
+    //}
     if (widget.cubit != null && widget.pageTitle == 'Send') {
       return Padding(
           padding: EdgeInsets.only(
