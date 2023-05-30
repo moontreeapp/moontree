@@ -50,8 +50,10 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     controller.forward();
-    final symbolType =
-        Symbol(widget.symbol).symbolType.name.toCapitalizedWord();
+    print(widget.symbol);
+    final symbolType = '${Symbol(widget.symbol).symbolTypeName} asset'
+        .replaceAll('NFT asset', 'NFT');
+
     return Column(
       children: <Widget>[
         GestureDetector(
@@ -65,7 +67,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
           child: Column(
             // used to push it down because we hid stuff and want to center:
             children: <Widget>[
-              if (symbolType == 'Main')
+              if (symbolType == 'Main asset')
                 SizedBox(height: .015.ofMediaHeight(context)),
               Hero(
                 tag: widget.symbol.toLowerCase(),
@@ -79,9 +81,9 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
           ),
         ),
         FadeTransition(opacity: animation, child: Column(children: belowIcon)),
-        if (symbolType != 'Main')
+        if (symbolType != 'Main asset')
           Text(
-            widget.symbol == Current.coin.symbol ? 'Coin' : '$symbolType asset',
+            widget.symbol == Current.coin.symbol ? 'Coin' : symbolType,
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium!

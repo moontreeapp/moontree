@@ -1,5 +1,6 @@
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
+import 'package:moontree_utils/extensions/extensions.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 class AssetHolding {
@@ -293,7 +294,8 @@ class Symbol {
     return SymbolType.main;
   }
 
-  String get symbolTypeName => symbolType.name;
+  String get symbolTypeName =>
+      symbolType.name.toCapitalizedWord().replaceAll('Unique', 'NFT');
 
   String get baseSymbol => symbol.startsWith('#') || symbol.startsWith(r'$')
       ? symbol.substring(1, symbol.length)
