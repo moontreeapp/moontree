@@ -328,6 +328,15 @@ class SettingsMenu extends StatelessWidget {
             name: 'Security',
             link: '/setting/security',
           ),
+          if (pros.settings.hiddenAssets.isNotEmpty)
+            MenuLink(
+              //icon: Icons.remove_red_eye_outlined,
+              //icon: Icons.visibility_off_rounded,
+              icon: Icons.visibility_off_outlined,
+              //svg: SvgPicture.asset('assets/icons/custom/mobile/security.svg'),
+              name: 'Hidden Assets',
+              link: '/setting/hidden/assets',
+            ),
           /*
           if (!pros.settings.authMethodIsNativeSecurity)
             MenuLink(

@@ -14,7 +14,6 @@ import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/services/transaction/maker.dart';
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/repos/unsigned.dart';

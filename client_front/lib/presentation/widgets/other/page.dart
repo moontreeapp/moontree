@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:client_front/presentation/components/components.dart'
@@ -144,10 +145,12 @@ class ScrollablePageStructure extends StatelessWidget {
           slivers: <Widget>[
             SliverToBoxAdapter(
               child: SizedBox(
-                height: components.cubits.frontContainer.state.height -
-                    16 -
-                    headerSpace -
-                    100,
+                height: max(
+                    components.cubits.frontContainer.state.height -
+                        16 -
+                        headerSpace -
+                        100,
+                    0),
                 child: ListView(
                   children: [
                     for (final child in (heightSpacer == null

@@ -146,8 +146,8 @@ List<AssetHolding> assetHoldings(Iterable<BalanceView> holdings) {
           restricted: symbolType == SymbolType.restricted ? balance : null,
           qualifier: symbolType == SymbolType.qualifier ? balance : null,
           qualifierSub: symbolType == SymbolType.qualifierSub ? balance : null,
-          coin: symbolType == SecurityType.coin ? balance : null,
-          fiat: symbolType == SecurityType.fiat ? balance : null,
+          //coin: symbolType == SecurityType.coin ? balance : null,
+          //fiat: symbolType == SecurityType.fiat ? balance : null,
         );
       } else {
         balancesOther[baseSymbol] = AssetHolding.fromAssetHolding(
@@ -157,8 +157,8 @@ List<AssetHolding> assetHoldings(Iterable<BalanceView> holdings) {
           restricted: symbolType == SymbolType.restricted ? balance : null,
           qualifier: symbolType == SymbolType.qualifier ? balance : null,
           qualifierSub: symbolType == SymbolType.qualifierSub ? balance : null,
-          coin: symbolType == SecurityType.coin ? balance : null,
-          fiat: symbolType == SecurityType.fiat ? balance : null,
+          //coin: symbolType == SecurityType.coin ? balance : null,
+          //fiat: symbolType == SecurityType.fiat ? balance : null,
         );
       }
     }

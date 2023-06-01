@@ -4,6 +4,20 @@ import 'package:moontree_utils/extensions/extensions.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 class AssetHolding {
+  final String symbol;
+  final BalanceView? main;
+  final BalanceView? admin;
+  final BalanceView? restricted;
+  final BalanceView? restrictedAdmin;
+  final BalanceView? nft;
+  final BalanceView? channel;
+  final BalanceView? sub;
+  final BalanceView? subAdmin;
+  final BalanceView? qualifier;
+  final BalanceView? qualifierSub;
+  final BalanceView? coin;
+  final BalanceView? fiat;
+
   AssetHolding({
     required this.symbol,
     Chain? chain,
@@ -21,7 +35,8 @@ class AssetHolding {
     this.coin,
     this.fiat,
   }) {
-    symbolSymbol = Symbol(symbol)(chain ?? Chain.ravencoin, net ?? Net.main);
+    symbolSymbol =
+        Symbol(symbol)(chain ?? pros.settings.chain, net ?? pros.settings.net);
   }
 
   late Symbol symbolSymbol;
@@ -57,20 +72,6 @@ class AssetHolding {
         coin: coin ?? existing.coin,
         fiat: fiat ?? existing.fiat,
       );
-
-  final String symbol;
-  final BalanceView? main;
-  final BalanceView? admin;
-  final BalanceView? restricted;
-  final BalanceView? restrictedAdmin;
-  final BalanceView? nft;
-  final BalanceView? channel;
-  final BalanceView? sub;
-  final BalanceView? subAdmin;
-  final BalanceView? qualifier;
-  final BalanceView? qualifierSub;
-  final BalanceView? coin;
-  final BalanceView? fiat;
 
   @override
   String toString() => 'AssetHolding('
@@ -201,12 +202,19 @@ class AssetHolding {
               ((element?.satsConfirmed ?? 0) +
                   (element?.satsUnconfirmed ?? 0)) +
               previousValue);
+
+  Security get security => Security(
+      symbol: symbol,
+      chain: symbolSymbol.chain ?? pros.settings.chain,
+      net: symbolSymbol.net ?? pros.settings.net);
 }
 
 class Symbol {
   final String symbol;
+  final Chain? chain;
+  final Net? net;
 
-  Symbol(this.symbol) {
+  Symbol(this.symbol, {this.chain, this.net}) {
     if (!symbol.isAssetPath && !coins.contains(symbol)) {
       throw Exception('invalid symbol');
     }
@@ -216,9 +224,15 @@ class Symbol {
   Symbol call(Chain chain, Net net) => Symbol.generate(symbol, chain, net);
 
   factory Symbol.generate(String symbol, Chain chain, Net net) =>
-      chain == Chain.ravencoin ? SymbolRVN(symbol) : SymbolEVR(symbol);
+      chain == Chain.ravencoin
+          ? SymbolRVN(symbol, chain, net)
+          : SymbolEVR(symbol, chain, net);
 
   /* required API */
+
+  bool get isCoin =>
+      (chain == Chain.ravencoin && symbol == 'RVN') ||
+      (chain == Chain.evrmore && symbol == 'EVR');
 
   /// returns the parent symbol of this sub asset or null if it is not a sub
   String? get parentSymbol {
@@ -349,14 +363,15 @@ class Symbol {
 }
 
 class SymbolEVR extends Symbol {
-  SymbolEVR(symbol) : super(symbol);
+  SymbolEVR(symbol, chain, net) : super(symbol, chain: chain, net: net);
   static const String coinSymbol = 'EVR';
   // put differences or additions here, and add to base as overrideable method
 }
 
 class SymbolRVN extends Symbol {
-  SymbolRVN(symbol) : super(symbol);
+  SymbolRVN(symbol, chain, net) : super(symbol, chain: chain, net: net);
   static const String coinSymbol = 'RVN';
+
   // put differences or additions here, and add to base as overrideable method
 }
 

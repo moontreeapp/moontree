@@ -54,6 +54,7 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/setting/database': (BuildContext context) => const DatabaseSettings(),
   '/setting/mining': (BuildContext context) => const MiningSetting(),
   '/setting/security': (BuildContext context) => const SecuritySettings(),
+  '/setting/hidden/assets': (BuildContext context) => const HiddenAssets(),
   '/network/blockchain': (BuildContext context) => const BlockchainSettings(),
   '/scan': (BuildContext context) => const ScanQRPage(),
   '/send/checkout': (BuildContext context) => SimpleSendCheckout(

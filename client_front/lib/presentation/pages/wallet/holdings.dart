@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/client_back.dart';
+import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/application/cubits.dart';
 import 'package:client_front/presentation/theme/fonts.dart';
@@ -117,6 +118,7 @@ class _HoldingsView extends State<HoldingsView> {
   ScrollController scrollController = ScrollController();
   final Security currentCrypto = pros.securities.currentCoin;
   final Wallet wallet = Current.wallet;
+  List<AssetHolding> _hiddenAssets = [];
 
   @override
   void initState() {
@@ -143,6 +145,13 @@ class _HoldingsView extends State<HoldingsView> {
 
   void _togglePath() {
     widget.cubit.update(showPath: !widget.cubit.state.showPath);
+  }
+
+  Future<void> _hideAsset(AssetHolding holding, Security security) async {
+    await pros.settings.addAllHiddenAssets([security]);
+    _hiddenAssets.add(holding);
+    // show that it's hidden
+    setState(() {});
   }
 
   void _toggleSearch() {
@@ -179,36 +188,50 @@ class _HoldingsView extends State<HoldingsView> {
             onChanged: (_) => setState(() {}),
             onEditingComplete: () =>
                 widget.cubit.update(showSearchBar: false)));
-    for (final AssetHolding holding in widget.cubit.state.assetHoldings) {
-      final ListTile thisHolding = ListTile(
-          //dense: true,
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () async => onTap(widget.cubit.state.ranWallet, holding),
-          onLongPress: _togglePath,
-          leading: leadingIcon(holding),
-          title: title(holding, currentCrypto),
-          trailing: services.developer.developerMode == true
-              ? ((holding.symbol == currentCrypto.symbol) // && !isEmpty
-                  ? GestureDetector(
-                      onTap: () => _toggleSearch(),
-                      child: searchController.text == ''
-                          ? const Icon(Icons.search)
-                          : const Icon(
-                              Icons.search,
-                              shadows: <Shadow>[
-                                Shadow(
-                                    color: AppColors.black12,
-                                    offset: Offset(1, 1),
-                                    blurRadius: 1),
-                                Shadow(
-                                    color: AppColors.black12,
-                                    offset: Offset(1, 2),
-                                    blurRadius: 2)
-                              ],
-                            ))
-                  : null)
-              : null);
+    for (final AssetHolding holding in widget.cubit.state.assetHoldings
+        .where((e) => !pros.settings.hiddenAssets.contains(
+              e.security,
+            ))) {
+      final Widget thisHolding = Visibility(
+          visible: !_hiddenAssets.contains(holding),
+          child: ListTile(
+              //dense: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+              onTap: () async => onTap(widget.cubit.state.ranWallet, holding),
+              onLongPress: () {
+                if (!holding.symbolSymbol.isCoin) {
+                  _hideAsset(holding, holding.security);
+                  streams.app.behavior.snack.add(Snack(
+                    positive: true,
+                    message: 'Asset has been hidden',
+                    delay: 0,
+                  ));
+                }
+              },
+              leading: leadingIcon(holding),
+              title: title(holding, currentCrypto),
+              trailing: services.developer.developerMode == true
+                  ? ((holding.symbol == currentCrypto.symbol) // && !isEmpty
+                      ? GestureDetector(
+                          onTap: () => _toggleSearch(),
+                          child: searchController.text == ''
+                              ? const Icon(Icons.search)
+                              : const Icon(
+                                  Icons.search,
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                        color: AppColors.black12,
+                                        offset: Offset(1, 1),
+                                        blurRadius: 1),
+                                    Shadow(
+                                        color: AppColors.black12,
+                                        offset: Offset(1, 2),
+                                        blurRadius: 2)
+                                  ],
+                                ))
+                      : null)
+                  : null));
       if (holding.symbol == currentCrypto.symbol) {
         //if (pros.securities.coinSymbols.contains(holding.symbol)) {
         rvnHolding.add(Column(
@@ -432,23 +455,24 @@ class _HoldingsView extends State<HoldingsView> {
               //tag: holding.symbol.toLowerCase(),
               //child:
               components.icons.assetAvatar(
-                  holding.admin != null
-                      ? holding.adminSymbol!
-                      : holding.restricted != null
-                          ? holding.restrictedSymbol!
-                          : holding.qualifier != null
-                              ? holding.qualifierSymbol!
-                              : holding.channel != null
-                                  ? holding.channelSymbol!
-                                  : holding.nft != null
-                                      ? holding.nftSymbol!
-                                      : holding.subAdmin != null
-                                          ? holding.subAdminSymbol!
-                                          : holding.sub != null
-                                              ? holding.subSymbol!
-                                              : holding.qualifierSub != null
-                                                  ? holding.qualifierSubSymbol!
-                                                  : holding.symbol,
+                  //holding.admin != null
+                  //    ? holding.adminSymbol!
+                  //    : holding.restricted != null
+                  //        ? holding.restrictedSymbol!
+                  //        : holding.qualifier != null
+                  //            ? holding.qualifierSymbol!
+                  //            : holding.channel != null
+                  //                ? holding.channelSymbol!
+                  //                : holding.nft != null
+                  //                    ? holding.nftSymbol!
+                  //                    : holding.subAdmin != null
+                  //                        ? holding.subAdminSymbol!
+                  //                        : holding.sub != null
+                  //                            ? holding.subSymbol!
+                  //                            : holding.qualifierSub != null
+                  //                                ? holding.qualifierSubSymbol!
+                  //                                : holding.symbol,
+                  holding.symbol,
                   net: pros.settings.net))
       //)
       ;
