@@ -23,10 +23,8 @@ class WalletHoldingsViewCubit extends Cubit<WalletHoldingsViewState> {
             assetHoldings: [],
             ranWallet: null,
             ranChainNet: null,
-            search: '',
             showUSD: false,
             showPath: false,
-            showSearchBar: false,
             startedDerive: {},
             isSubmitting: true));
 
@@ -45,10 +43,8 @@ class WalletHoldingsViewCubit extends Cubit<WalletHoldingsViewState> {
     List<AssetHolding>? assetHoldings,
     Wallet? ranWallet,
     ChainNet? ranChainNet,
-    String? search,
     bool? showUSD,
     bool? showPath,
-    bool? showSearchBar,
     Map<ChainNet, List<Wallet>>? startedDerive,
     bool? isSubmitting,
   }) {
@@ -57,10 +53,8 @@ class WalletHoldingsViewCubit extends Cubit<WalletHoldingsViewState> {
       assetHoldings: assetHoldings ?? state.assetHoldings,
       ranWallet: ranWallet ?? state.ranWallet,
       ranChainNet: ranChainNet ?? state.ranChainNet,
-      search: search ?? state.search,
       showUSD: showUSD ?? state.showUSD,
       showPath: showPath ?? state.showPath,
-      showSearchBar: showSearchBar ?? state.showSearchBar,
       startedDerive: startedDerive ?? state.startedDerive,
       isSubmitting: isSubmitting ?? state.isSubmitting,
     ));
@@ -161,5 +155,5 @@ class WalletHoldingsViewCubit extends Cubit<WalletHoldingsViewState> {
   bool get walletEmptyCoin =>
       state.holdingsViews.where((e) => e.isCoin).map((e) => e.sats).sum == 0;
 
-// we want to group certain assets into one view so we arrange them into this:
+  // we want to group certain assets into one view so we arrange them into this:
 }

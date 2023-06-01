@@ -7,6 +7,7 @@ export 'package:client_front/application/containers/extra/cubit.dart';
 export 'package:client_front/application/containers/front/cubit.dart';
 export 'package:client_front/application/infrastructure/connection/cubit.dart';
 export 'package:client_front/application/infrastructure/location/cubit.dart';
+export 'package:client_front/application/infrastructure/search/cubit.dart';
 export 'package:client_front/application/layers/loading/cubit.dart';
 export 'package:client_front/application/layers/modal/bottom/cubit.dart';
 export 'package:client_front/application/layers/modal/message/cubit.dart';

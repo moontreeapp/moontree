@@ -34,4 +34,5 @@ class LocationCubit extends Cubit<LocationCubitState> {
   void reset() => emit(LocationState());
 
   bool get menuOpen => state.menuOpen;
+  bool get showSearchButton => state.showSearchButton;
 }

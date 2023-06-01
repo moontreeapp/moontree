@@ -6,10 +6,8 @@ abstract class WalletHoldingsViewCubitState extends CubitState {
   final List<AssetHolding> assetHoldings;
   final Wallet? ranWallet;
   final ChainNet? ranChainNet;
-  final String search;
   final bool showUSD;
   final bool showPath;
-  final bool showSearchBar;
   final Map<ChainNet, List<Wallet>> startedDerive;
   final bool isSubmitting;
   // for holdingsViews so that we never hit the endpoint multiple times with
@@ -20,10 +18,8 @@ abstract class WalletHoldingsViewCubitState extends CubitState {
     required this.assetHoldings,
     required this.ranWallet,
     required this.ranChainNet,
-    required this.search,
     required this.showUSD,
     required this.showPath,
-    required this.showSearchBar,
     required this.startedDerive,
     required this.isSubmitting,
   });
@@ -34,11 +30,9 @@ abstract class WalletHoldingsViewCubitState extends CubitState {
       'assetHoldings=$assetHoldings, '
       'ranWallet=$ranWallet, '
       'ranChainNet=$ranChainNet, '
-      'search=$search, '
       'showUSD=$showUSD, '
       'showPath=$showPath, '
-      'showSearchBar=$showSearchBar, '
-      'showSearchBar=$startedDerive, '
+      'startedDerive=$startedDerive, '
       'isSubmitting=$isSubmitting)';
 
   @override
@@ -47,10 +41,8 @@ abstract class WalletHoldingsViewCubitState extends CubitState {
         assetHoldings,
         ranWallet,
         ranChainNet,
-        search,
         showUSD,
         showPath,
-        showSearchBar,
         startedDerive,
         isSubmitting,
       ];
@@ -62,10 +54,8 @@ class WalletHoldingsViewState extends WalletHoldingsViewCubitState {
     required super.assetHoldings,
     required super.ranWallet,
     required super.ranChainNet,
-    required super.search,
     required super.showUSD,
     required super.showPath,
-    required super.showSearchBar,
     required super.startedDerive,
     required super.isSubmitting,
   });

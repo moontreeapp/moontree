@@ -189,6 +189,8 @@ class MoontreeAppState extends State<MoontreeApp> {
                     create: (context) => components.cubits.import),
                 BlocProvider<LocationCubit>(
                     create: (context) => components.cubits.location),
+                BlocProvider<SearchCubit>(
+                    create: (context) => components.cubits.search),
                 BlocProvider<ConnectionStatusCubit>(
                     create: (context) => components.cubits.connection),
                 BlocProvider<ReceiveViewCubit>(

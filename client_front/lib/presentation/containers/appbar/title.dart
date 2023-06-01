@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:client_front/application/containers/front/cubit.dart';
+import 'package:client_front/application/infrastructure/search/cubit.dart';
+import 'package:client_front/application/wallet/holdings/cubit.dart';
 import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -373,79 +375,92 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
     //} else {
     //  anima = slowAnimation;
     //}
+    final SearchCubit searchCubit = components.cubits.search;
     return BlocBuilder<TitleCubit, TitleCubitState>(
         builder: (context, state) => AnimatedBuilder(
             animation: slowAnimation,
             builder: (context, child) {
-              return GestureDetector(
-                  onTap: () async {
-                    if (components.cubits.title.showWalletName) {
-                      showWallets();
-                    }
-                    //if (!dropDownActive) {
-                    //  dropDownActive = true;
-                    //  setWalletsSecurities();
-                    //  await walletSelection();
-                    //}
-                  },
-                  onDoubleTap: () async {
-                    if (components.cubits.title.showWalletName) {
-                      bool next = false;
-                      for (final Wallet wallet
-                          in pros.wallets.ordered + pros.wallets.ordered) {
-                        if (next) {
-                          await switchWallet(wallet.id);
-                          sail.to(components.cubits.location.state.path,
-                              replaceOverride: true);
-                          break;
-                        }
-                        if (Current.walletId == wallet.id) {
-                          next = true;
-                        }
+              return BlocBuilder<SearchCubit, SearchCubitState>(
+                  builder: (BuildContext context, SearchCubitState _) {
+                return GestureDetector(
+                    onTap: () async {
+                      if (components.cubits.title.showWalletName &&
+                          !searchCubit.state.show) {
+                        showWallets();
                       }
-                      setState(() {}); // recalculates the name of the wallet.
-                      sail.menu(open: false);
-                    }
-                  },
-                  child:
-                      //FadeTransition(
-                      //    opacity: anima,
-                      //    child:
-                      Container(
-                          width: screen.width -
-                              ((16 + 40 + 16) + //left lead
-                                  (16 + 28 + 16) // right connection
-                              ),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                WalletNameText(
-                                    title: cubit.title,
-                                    editable: state.editable),
-                                BlocBuilder<FrontContainerCubit,
-                                        FrontContainerCubitState>(
-                                    builder: (context, state) {
-                                  if (state.menuOpen) {
-                                    return FadeIn(
-                                        child: IconButton(
-                                      onPressed: () => showWallets(),
-                                      icon:
-                                          //const Icon(
-                                          //  Icons.expand_more_rounded,
-                                          //  color: Colors.white,
-                                          //)
-                                          Container(
-                                              height: 24,
-                                              width: 24,
-                                              child: SvgPicture.asset(
-                                                  'assets/icons/custom/white/chevron-down.svg')),
-                                    ));
-                                  }
-                                  return SizedBox.shrink();
-                                }),
-                              ])));
-            })); // AnimatedBuilder, FadeTransition
-
+                      //if (!dropDownActive) {
+                      //  dropDownActive = true;
+                      //  setWalletsSecurities();
+                      //  await walletSelection();
+                      //}
+                    },
+                    onDoubleTap: () async {
+                      if (components.cubits.title.showWalletName &&
+                          !searchCubit.state.show) {
+                        bool next = false;
+                        for (final Wallet wallet
+                            in pros.wallets.ordered + pros.wallets.ordered) {
+                          if (next) {
+                            await switchWallet(wallet.id);
+                            sail.to(components.cubits.location.state.path,
+                                replaceOverride: true);
+                            break;
+                          }
+                          if (Current.walletId == wallet.id) {
+                            next = true;
+                          }
+                        }
+                        setState(() {}); // recalculates the name of the wallet.
+                        sail.menu(open: false);
+                      }
+                    },
+                    child:
+                        //FadeTransition(
+                        //    opacity: anima,
+                        //    child:
+                        Container(
+                            width: screen.width -
+                                ((16 + 40 + 16) + //left lead
+                                    (16 + 28 + 16) + // right connection
+                                    (components.cubits.location.state.path ==
+                                            '/wallet/holdings'
+                                        ? (28 + 16)
+                                        : 0) // search bar
+                                ),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  if (searchCubit.state.showSearchButton &&
+                                      searchCubit.state.show)
+                                    SearchTextField(cubit: searchCubit)
+                                  else
+                                    WalletNameText(
+                                        title: cubit.title,
+                                        editable: state.editable),
+                                  BlocBuilder<FrontContainerCubit,
+                                          FrontContainerCubitState>(
+                                      builder: (context, state) {
+                                    if (state.menuOpen) {
+                                      return FadeIn(
+                                          child: IconButton(
+                                        onPressed: () => showWallets(),
+                                        icon:
+                                            //const Icon(
+                                            //  Icons.expand_more_rounded,
+                                            //  color: Colors.white,
+                                            //)
+                                            Container(
+                                                height: 24,
+                                                width: 24,
+                                                child: SvgPicture.asset(
+                                                    'assets/icons/custom/white/chevron-down.svg')),
+                                      ));
+                                    }
+                                    return SizedBox.shrink();
+                                  }),
+                                ])));
+              });
+            }));
 /*
     if (streams.app.loc.page.value == 'Splash') {
       slowController.forward(from: 0.0);
@@ -948,6 +963,80 @@ class WalletNameTextFieldState extends State<WalletNameTextField> {
                             ? FontWeights.bold
                             : FontWeights.semiBold,
                       )))
+        ]));
+  }
+}
+
+class SearchTextField extends StatefulWidget {
+  final SearchCubit cubit;
+  const SearchTextField({Key? key, required this.cubit}) : super(key: key);
+
+  @override
+  SearchTextFieldState createState() => SearchTextFieldState();
+}
+
+class SearchTextFieldState extends State<SearchTextField> {
+  final TextEditingController searchController = TextEditingController();
+  final FocusNode focus = FocusNode();
+
+  void initState() {
+    super.initState();
+    focus.addListener(() {
+      print(focus.hasFocus);
+      if (!focus.hasFocus) {
+        components.cubits.title.update(editable: false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    focus.requestFocus();
+    searchController.value = TextEditingValue(
+        text: widget.cubit.state.text,
+        selection: searchController.selection.baseOffset >
+                widget.cubit.state.text.length
+            ? TextSelection.collapsed(offset: widget.cubit.state.text.length)
+            : searchController.selection);
+    return Container(
+        width: screen.width -
+            ((16 + 40 + 16) + //left lead
+                (16 + 24 + 16) +
+                (16 + 28 + 16) // right connection
+            ),
+        child: Overlay(initialEntries: [
+          OverlayEntry(
+              builder: (BuildContext context) => TextField(
+                    controller: searchController,
+                    focusNode: focus,
+                    maxLines: 1,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.done,
+                    cursorColor: AppColors.white87,
+                    showCursor: true,
+                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                          color: AppColors.white,
+                          fontWeight: searchController.text.length >= 25
+                              ? FontWeights.bold
+                              : FontWeights.semiBold,
+                        ),
+                    decoration: InputDecoration(
+                      border:
+                          InputBorder.none, // Set border to InputBorder.none
+                    ),
+                    onChanged: (value) =>
+                        widget.cubit.update(text: value.toUpperCase()),
+                    onSubmitted: (value) async => widget.cubit
+                        .update(text: value.toUpperCase(), show: false),
+                    onEditingComplete: () => widget.cubit.update(show: false),
+                  ))
         ]));
   }
 }

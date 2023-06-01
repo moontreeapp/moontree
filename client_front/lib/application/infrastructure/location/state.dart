@@ -75,6 +75,8 @@ abstract class LocationCubitState extends Equatable {
         '/login/native',
         '/login/password',
       ].contains(path);
+
+  bool get showSearchButton => path == '/wallet/holdings' && !menuOpen;
 }
 
 class LocationState extends LocationCubitState {

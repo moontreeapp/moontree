@@ -18,6 +18,7 @@ class GlobalCubits {
   final LoginCubit login = LoginCubit();
   final ImportFormCubit import = ImportFormCubit();
   final ReceiveViewCubit receiveView = ReceiveViewCubit();
+  final SearchCubit search = SearchCubit();
 
   /// containers
   final BackContainerCubit backContainer = BackContainerCubit();
