@@ -1,13 +1,10 @@
 import 'dart:io' show Platform;
-import 'package:client_front/presentation/pages/manage/manage.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_utils/src/utilities/validation.dart'
-    show coinsPerChain, ravenNames, evrmoreNames, satsPerCoin;
-import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/domain/utils/alphacon.dart';
@@ -833,30 +830,42 @@ class _SimpleCreateState extends State<SimpleCreate> {
       ]);
 
   void _produceDecimalsModal(SimpleCreateFormCubit cubit) {
+    String generateDecs(String start, int totalCount) {
+      String appendZeros(String start, int totalCount) =>
+          start +
+          [for (final _ in range(totalCount - start.length)) '0'].join();
+
+      if (start.length > totalCount) {
+        return '.' + start.substring(0, totalCount);
+      }
+      if (start.length < totalCount) {
+        return '.' + appendZeros(start, totalCount);
+      }
+      return '.' + start;
+    }
+
     final imageDetails = ImageDetails(
         foreground: AppColors.rgb(AppColors.primary),
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
+    final head = cubit.state.quantityCoinString.toString().split('.').first;
+    final tail = cubit.state.quantityCoinString.toString().split('.').length > 1
+        ? cubit.state.quantityCoinString.toString().split('.').last
+        : '';
     components.cubits.bottomModalSheet.show(
       childrenHeight: 55,
       children: <Widget>[
-        for (final decimal in [
-          Tuple2<String, int>('', 0),
-          Tuple2<String, int>('.0', 1),
-          Tuple2<String, int>('.00', 2),
-          Tuple2<String, int>('.000', 3),
-          Tuple2<String, int>('.0000', 4),
-          Tuple2<String, int>('.00000', 5),
-          Tuple2<String, int>('.000000', 6),
-          Tuple2<String, int>('.0000000', 7),
-          Tuple2<String, int>('.00000000', 8),
-        ])
+        for (final decimal in range(8))
           ListTile(
             onTap: () {
               context.read<BottomModalSheetCubit>().hide();
-              cubit.update(decimals: decimal.item2);
+              cubit.update(
+                  decimals: decimal,
+                  quantityCoinString: decimal < tail.length
+                      ? head + '.' + tail.substring(0, decimal)
+                      : null);
             },
             leading: components.icons.assetFromCacheOrGenerate(
-                asset: decimal.item2.toString() + 'ABC',
+                asset: decimal.toString() + 'ABC',
                 height: 24,
                 width: 24,
                 imageDetails: imageDetails,
@@ -869,7 +878,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 Text(
-                  decimal.item1,
+                  generateDecs(tail, decimal),
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

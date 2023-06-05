@@ -560,12 +560,13 @@ class NavbarActions extends StatelessWidget {
             cubit.update(type: symbolType.item2);
             sail.to('/manage/create');
           },
-          leading: components.icons.generateIndicator(
-                  name: 'ASSET',
-                  imageDetails: imageDetails,
-                  height: 24,
-                  width: 24,
-                  assetType: symbolType.item2) ??
+          leading:
+              //components.icons.generateIndicator(
+              //        name: 'ASSET',
+              //        imageDetails: imageDetails,
+              //        height: 24,
+              //        width: 24,
+              //        assetType: symbolType.item2) ??
               components.icons.assetFromCacheOrGenerate(
                   asset: 'ASSET',
                   height: 24,
