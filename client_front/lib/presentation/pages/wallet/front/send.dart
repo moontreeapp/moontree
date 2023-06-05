@@ -756,8 +756,7 @@ class _SimpleSendState extends State<SimpleSend> {
                 context.read<BottomModalSheetCubit>().hide();
                 final sec = pros.securities.ofCurrent(nameSymbol(name)) ??
                     pros.securities.currentCoin;
-                cubit.set(security: sec);
-                cubit.setMetadataView(security: sec);
+                cubit.setSecurity(sec);
               },
               leading: components.icons.assetAvatar(
                   name == 'Ravencoin'

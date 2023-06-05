@@ -420,9 +420,15 @@ class NavbarActions extends StatelessWidget {
                                           message: 'Not connected to network'));
                                     }
                                   },
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (_ableToSend(action: 'send')) {
-                                      sail.to('/wallet/send');
+                                      //await components.cubits.simpleSendForm
+                                      //    .setSecurity(components.cubits
+                                      //        .transactionsView.state.security);
+                                      sail.to('/wallet/send', arguments: {
+                                        'security': components.cubits
+                                            .transactionsView.state.security
+                                      });
                                     }
                                   },
                                 )),

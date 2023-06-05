@@ -76,6 +76,11 @@ class SimpleSendFormCubit extends Cubit<SimpleSendFormState>
     ));
   }
 
+  Future<void> setSecurity(Security security) async {
+    set(security: security);
+    await setMetadataView(security: security);
+  }
+
   // needed for validation of divisibility
   Future<void> setMetadataView({Security? security}) async => set(
         metadataView: await (getMetadataView(security: security)),

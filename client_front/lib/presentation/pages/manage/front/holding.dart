@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_back/server/src/protocol/protocol.dart';
 import 'package:client_front/application/manage/holding/cubit.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';

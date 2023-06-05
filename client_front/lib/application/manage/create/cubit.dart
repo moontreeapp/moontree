@@ -491,7 +491,7 @@ extension EnumeratedIteratable on Iterable<dynamic> {
   Iterable<Tuple2<int, T>> enumeratedTupleFromList<T>() => <Tuple2<int, T>>[
         for (List<dynamic> x in zip(<Iterable<dynamic>>[
           mapIndexed<int>((int index, dynamic element) => index),
-          this as List<T?>
+          this as List<T>
         ]))
           Tuple2<int, T>(x[0] as int, x[1] as T)
       ];
