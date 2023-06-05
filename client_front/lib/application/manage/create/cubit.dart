@@ -396,7 +396,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       final List<String> walletRoots =
           await (Current.wallet as LeaderWallet).roots;
       for (final Tuple2<int, String> e
-          in unsigned.vinPrivateKeySource.enumeratedTupleFromList<String>()) {
+          in unsigned.vinPrivateKeySource.enumeratedTuple<String>()) {
         if (e.item2.contains(':')) {
           final walletPubKeyAndDerivationIndex = e.item2.split(':');
           // todo Current.wallet must be LeaderWallet, if not err?
@@ -485,14 +485,4 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       }
     }
   }
-}
-
-extension EnumeratedIteratable on Iterable<dynamic> {
-  Iterable<Tuple2<int, T>> enumeratedTupleFromList<T>() => <Tuple2<int, T>>[
-        for (List<dynamic> x in zip(<Iterable<dynamic>>[
-          mapIndexed<int>((int index, dynamic element) => index),
-          this as List<T>
-        ]))
-          Tuple2<int, T>(x[0] as int, x[1] as T)
-      ];
 }
