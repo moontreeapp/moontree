@@ -154,6 +154,13 @@ class _HoldingsView extends State<HoldingsView> {
     setState(() {});
   }
 
+  Future<void> _unhideAsset(AssetHolding holding, Security security) async {
+    await pros.settings.removeAllHiddenAssets([security]);
+    _hiddenAssets.remove(holding);
+    // show that it's hidden
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return flutter_bloc.BlocBuilder<SearchCubit, SearchCubitState>(
@@ -180,13 +187,12 @@ class _HoldingsView extends State<HoldingsView> {
               onLongPress: () {
                 if (!holding.symbolSymbol.isCoin) {
                   _hideAsset(holding, holding.security);
-                  final snack = Snack(
+                  streams.app.behavior.snack.add(Snack(
                       positive: true,
                       message: 'Asset has been hidden',
                       delay: 0,
-                      callback: () async => await pros.settings
-                          .removeAllHiddenAssets([holding.security]));
-                  streams.app.behavior.snack.add(snack);
+                      label: 'undo',
+                      callback: () => _unhideAsset(holding, holding.security)));
                 }
               },
               leading: leadingIcon(holding),

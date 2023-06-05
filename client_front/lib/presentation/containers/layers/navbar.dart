@@ -622,7 +622,10 @@ class SnackContents extends StatelessWidget {
           children: [
             SizedBox(width: screen.width - 32 - 40, child: snackMsg),
             GestureDetector(
-                onTap: snack?.callback,
+                onTap: () async {
+                  await snack!.callback!();
+                  components.cubits.snackbar.clear();
+                },
                 behavior: HitTestBehavior.opaque,
                 child: SizedBox(
                     width: 40,
