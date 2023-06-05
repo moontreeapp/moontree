@@ -615,6 +615,26 @@ class SnackContents extends StatelessWidget {
                 ))
           ]);
     }
+    if (snack!.callback != null && snack!.label != null) {
+      return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(width: screen.width - 32 - 40, child: snackMsg),
+            GestureDetector(
+                onTap: snack?.callback,
+                behavior: HitTestBehavior.opaque,
+                child: SizedBox(
+                    width: 40,
+                    child: Text(
+                      snack!.label!,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: snackStyle,
+                    )))
+          ]);
+    }
     return snackMsg;
   }
 }

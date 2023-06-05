@@ -170,15 +170,23 @@ class _HoldingsView extends State<HoldingsView> {
               //dense: true,
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-              onTap: () async => onTap(widget.cubit.state.ranWallet, holding),
+              onTap: () {
+                if (components.cubits.location.menuOpened) {
+                  sail.menu(open: false);
+                } else {
+                  onTap(widget.cubit.state.ranWallet, holding);
+                }
+              },
               onLongPress: () {
                 if (!holding.symbolSymbol.isCoin) {
                   _hideAsset(holding, holding.security);
-                  streams.app.behavior.snack.add(Snack(
-                    positive: true,
-                    message: 'Asset has been hidden',
-                    delay: 0,
-                  ));
+                  final snack = Snack(
+                      positive: true,
+                      message: 'Asset has been hidden',
+                      delay: 0,
+                      callback: () async => await pros.settings
+                          .removeAllHiddenAssets([holding.security]));
+                  streams.app.behavior.snack.add(snack);
                 }
               },
               leading: leadingIcon(holding),

@@ -83,13 +83,12 @@ class SwapSideStreams {
 
 class Snack with EquatableMixin {
   final String message;
-  // not used
   final bool positive;
-  //final String? details; // if they click on the message, popup details
-  final String? label; // link label
+  final String? label; // link, copy, or callback label
   final String? link;
-  final String? copy;
   final Map<String, dynamic>? arguments;
+  final String? copy;
+  final Function()? callback;
   final bool showOnLogin;
   final int seconds;
   final int delay;
@@ -97,11 +96,11 @@ class Snack with EquatableMixin {
   Snack({
     required this.message,
     this.positive = true,
-    //this.details,
     this.label,
     this.link,
-    this.copy,
     this.arguments,
+    this.copy,
+    this.callback,
     this.showOnLogin = false,
     this.seconds = 5,
     this.delay = 1,
@@ -111,11 +110,11 @@ class Snack with EquatableMixin {
   List<Object?> get props => [
         message,
         positive,
-        //details,
         label,
         link,
-        copy,
         arguments,
+        copy,
+        callback,
         showOnLogin,
         seconds,
         delay,
@@ -123,7 +122,7 @@ class Snack with EquatableMixin {
 
   @override
   String toString() {
-    return 'Snack(message: $message, positive: $positive, ' //details: $details,
+    return 'Snack(message: $message, positive: $positive, callback: $callback,'
         'label: $label, link: $link, copy: $copy, arguments: $arguments, '
         'showOnLogin: $showOnLogin, seconds: $seconds, delay: $delay)';
   }
