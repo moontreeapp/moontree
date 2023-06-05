@@ -1,3 +1,4 @@
+import 'package:client_front/presentation/theme/extensions.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -355,10 +356,9 @@ class MetadataView extends StatelessWidget {
                         2,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 16),
-                      child: components.buttons.actionButtonSoft(
-                        context,
-                        label: 'View Data',
-                        onPressed: () {
+                      child: BasicTextButton(
+                        text: 'View Data',
+                        onTap: () {
                           print(associatedData.toBs58());
                           //components.cubits.extraContainer
                           //    .set(child: SizedBox());
@@ -397,10 +397,9 @@ class MetadataView extends StatelessWidget {
                         2,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 16),
-                      child: components.buttons.actionButtonSoft(
-                        context,
-                        label: 'View Data',
-                        onPressed: () {
+                      child: BasicTextButton(
+                        text: 'View Data',
+                        onTap: () {
                           print(associatedData.toHex());
                           //components.cubits.extraContainer
                           //    .set(child: SizedBox());
@@ -597,4 +596,23 @@ double getOpacityFromController(
     return 0;
   }
   return opacity;
+}
+
+class BasicTextButton extends StatelessWidget {
+  final String text;
+  final Function()? onTap;
+
+  const BasicTextButton({
+    super.key,
+    required this.text,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+      onTap: onTap,
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.link,
+      ));
 }
