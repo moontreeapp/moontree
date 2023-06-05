@@ -1,6 +1,5 @@
 import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:tuple/tuple.dart';
-import 'package:quiver/iterables.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';

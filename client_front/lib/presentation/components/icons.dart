@@ -331,8 +331,9 @@ class IconComponents {
           foreground,
           background,
         );
-    final Widget? indicator =
-        generateIndicator(name: asset, imageDetails: imageDetails);
+    // indicator removed
+    //final Widget? indicator =
+    //    generateIndicator(name: asset, imageDetails: imageDetails);
     final Stack ret =
         Stack(alignment: Alignment.bottomRight, children: <Widget>[
       Container(

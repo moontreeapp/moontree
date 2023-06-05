@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:client_front/application/containers/front/cubit.dart';
 import 'package:client_front/application/infrastructure/search/cubit.dart';
-import 'package:client_front/application/wallet/holdings/cubit.dart';
 import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

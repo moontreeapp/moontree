@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';

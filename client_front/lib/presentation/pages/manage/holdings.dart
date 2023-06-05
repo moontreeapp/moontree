@@ -404,37 +404,38 @@ List<Widget> assetOptions({
       for (List x
           in zipIterable([names.toList(), behaviors.toList(), values.toList()]))
         ListTile(
-          onTap: () {
-            if (onTap != null) {
-              onTap();
-            }
-            (x[1] as void Function())(); // behavior
-          },
-          leading: components.icons.assetAvatar(
-              {
-                'main': symbol,
-                'sub': symbol,
-                'sub admin': symbol,
-                'admin': '$symbol!',
-                'restricted': '\$$symbol',
-                'restricted admin': '\$$symbol',
-                'qualifier': '#$symbol',
-                'sub qualifier': '#$symbol',
-                'nft': symbol,
-                'channel': symbol,
-              }[(x[0] as String)]!,
-              size: 24),
-          title: Text((x[0] as String).toTitleCase(),
-              style: Theme.of(context ?? components.routes.context!)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(color: AppColors.black87)),
-          trailing: (x[2] as String) != null
-              ? Text((x[2] as String),
-                  style: Theme.of(context!).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeights.bold,
-                      letterSpacing: 0.1,
-                      color: AppColors.black60))
-              : null,
-        ),
+            onTap: () {
+              if (onTap != null) {
+                onTap();
+              }
+              (x[1] as void Function())(); // behavior
+            },
+            leading: components.icons.assetAvatar(
+                {
+                  'main': symbol,
+                  'sub': symbol,
+                  'sub admin': symbol,
+                  'admin': '$symbol!',
+                  'restricted': '\$$symbol',
+                  'restricted admin': '\$$symbol',
+                  'qualifier': '#$symbol',
+                  'sub qualifier': '#$symbol',
+                  'nft': symbol,
+                  'channel': symbol,
+                }[(x[0] as String)]!,
+                size: 24),
+            title: Text((x[0] as String).toTitleCase(),
+                style: Theme.of(context ?? components.routes.context!)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(color: AppColors.black87)),
+            trailing: //(x[2] as String) != null
+                //?
+                Text((x[2] as String),
+                    style: Theme.of(context!).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeights.bold,
+                        letterSpacing: 0.1,
+                        color: AppColors.black60))
+            //: null,
+            ),
     ];
