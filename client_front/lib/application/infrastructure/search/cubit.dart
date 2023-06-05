@@ -17,6 +17,6 @@ class SearchCubit extends Cubit<SearchCubitState> {
 
   void toggleSearch() => update(text: '', show: !state.show);
 
-  bool get show => state.show;
-  bool get showSearchButton => state.showSearchButton;
+  bool get shown => state.show;
+  bool get searchButtonShown => state.searchButtonShown;
 }

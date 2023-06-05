@@ -430,8 +430,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  if (searchCubit.state.showSearchButton &&
-                                      searchCubit.state.show)
+                                  if (searchCubit.searchButtonShown &&
+                                      searchCubit.shown)
                                     SearchTextField(cubit: searchCubit)
                                   else
                                     WalletNameText(
@@ -984,7 +984,7 @@ class SearchTextFieldState extends State<SearchTextField> {
     focus.addListener(() {
       print(focus.hasFocus);
       if (!focus.hasFocus) {
-        components.cubits.title.update(editable: false);
+        widget.cubit.reset();
       }
     });
   }
@@ -1036,6 +1036,7 @@ class SearchTextFieldState extends State<SearchTextField> {
                     onSubmitted: (value) async => widget.cubit
                         .update(text: value.toUpperCase(), show: false),
                     onEditingComplete: () => widget.cubit.update(show: false),
+                    onTapOutside: (_) => widget.cubit.reset(),
                   ))
         ]));
   }

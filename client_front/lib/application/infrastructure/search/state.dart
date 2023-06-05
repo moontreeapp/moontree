@@ -9,7 +9,7 @@ abstract class SearchCubitState extends Equatable {
   @override
   List<Object?> get props => [text, show];
 
-  bool get showSearchButton => components.cubits.location.showSearchButton;
+  bool get searchButtonShown => components.cubits.location.searchButtonShown;
 }
 
 class SearchState extends SearchCubitState {

@@ -24,7 +24,7 @@ class CustomAppBar extends StatelessWidget {
                   AppBarLeft(),
                   Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                     ...[
-                      state.showSearchButton
+                      state.searchButtonShown
                           ? SearchIndicator()
                           : SizedBox.shrink()
                     ], // only show on
