@@ -25,7 +25,7 @@ class HiddenAssetsState extends State<HiddenAssets> {
       rightPadding: 0,
       topPadding: 0,
       children: <Widget>[
-        for (final Security security in pros.settings.hiddenAssets)
+        for (final Security security in pros.settings.hiddenAssets) ...[
           ListTile(
             //dense: true,
             contentPadding:
@@ -42,7 +42,9 @@ class HiddenAssetsState extends State<HiddenAssets> {
             leading: leadingIcon(security),
             title: title(security, currentCrypto),
             trailing: Icon(Icons.visibility_off_outlined),
-          )
+          ),
+          const Divider(height: 1)
+        ]
       ],
     );
   }
