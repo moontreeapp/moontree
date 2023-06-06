@@ -260,6 +260,7 @@ class SubmitButtonReissue extends StatelessWidget {
             components.cubits.loadingView.hide();
             await Future.delayed(Duration(milliseconds: 50));
             sail.home();
+            sail.to('/wallet/holdings');
           }
         },
       );
