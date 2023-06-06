@@ -15,6 +15,7 @@ class LocationCubit extends Cubit<LocationCubitState> {
     Section? section,
     String? symbol,
     bool? menuOpen,
+    bool? dataTab,
   }) {
     final newState = LocationState(
       path: path ?? state.path,
@@ -24,6 +25,7 @@ class LocationCubit extends Cubit<LocationCubitState> {
           : state.sector,
       symbol: symbol ?? state.symbol,
       menuOpen: menuOpen ?? state.menuOpen,
+      dataTab: dataTab ?? state.dataTab,
     );
     for (final hook in hooks) {
       hook(state, newState);

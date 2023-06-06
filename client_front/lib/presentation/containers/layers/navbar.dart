@@ -409,30 +409,43 @@ class NavbarActions extends StatelessWidget {
                                 //        sail.to('/restore/import'),
                                 //  ))
                                 //else
-                                Expanded(
-                                    child: BottomButton(
-                                  label: 'send',
-                                  enabled: connectionState.isConnected,
-                                  disabledOnPressed: () {
-                                    if (!connectionState.isConnected) {
-                                      streams.app.behavior.snack.add(Snack(
-                                          message: 'Not connected to network'));
-                                    }
-                                  },
-                                  onPressed: () async {
-                                    if (_ableToSend(action: 'send')) {
-                                      sail.to('/wallet/send', arguments: {
-                                        'security': components.cubits
-                                            .transactionsView.state.security
-                                      });
-                                    }
-                                  },
-                                )),
-                                Expanded(
-                                    child: BottomButton(
-                                  label: 'receive',
-                                  onPressed: () => sail.to('/receive'),
-                                ))
+
+                                // should only be on data tab.
+                                if (locationState.path == '/wallet/holding' &&
+                                    _ableTo(action: 'reissue', snack: false))
+                                  Expanded(
+                                      child: BottomButton(
+                                    label: 'reissue',
+                                    enabled: true,
+                                    onPressed: _gotoReissue,
+                                  ))
+                                else ...[
+                                  Expanded(
+                                      child: BottomButton(
+                                    label: 'send',
+                                    enabled: connectionState.isConnected,
+                                    disabledOnPressed: () {
+                                      if (!connectionState.isConnected) {
+                                        streams.app.behavior.snack.add(Snack(
+                                            message:
+                                                'Not connected to network'));
+                                      }
+                                    },
+                                    onPressed: () async {
+                                      if (_ableTo(action: 'send')) {
+                                        sail.to('/wallet/send', arguments: {
+                                          'security': components.cubits
+                                              .transactionsView.state.security
+                                        });
+                                      }
+                                    },
+                                  )),
+                                  Expanded(
+                                      child: BottomButton(
+                                    label: 'receive',
+                                    onPressed: () => sail.to('/receive'),
+                                  ))
+                                ]
                               ]
                             : locationState.section == Section.manage
                                 ? <Widget>[
@@ -443,8 +456,7 @@ class NavbarActions extends StatelessWidget {
                                               label: 'create',
                                               enabled: true,
                                               onPressed: () {
-                                                if (_ableToSend(
-                                                    action: 'create')) {
+                                                if (_ableTo(action: 'create')) {
                                                   _produceCreateModal(context);
                                                 }
                                               }))
@@ -455,7 +467,7 @@ class NavbarActions extends StatelessWidget {
                                         label: 'reissue',
                                         enabled: true,
                                         onPressed: () {
-                                          if (_ableToSend(action: 'reissue')) {
+                                          if (_ableTo(action: 'reissue')) {
                                             _gotoReissue();
                                           }
                                         },
@@ -522,8 +534,23 @@ class NavbarActions extends StatelessWidget {
     }
   }
 
-  bool _ableToSend({String action = 'send'}) {
-    if (components.cubits.holdingsView.walletEmptyCoin) {
+  bool _ableTo({String action = 'send', bool snack = true}) {
+    var extraCondition = true;
+    if (action == 'reissue') {
+      final symbol = components.cubits.location.state.symbol;
+      extraCondition = components.cubits.location.state.dataTab &&
+          Symbol(symbol!)().isReissuableType &&
+          (components.cubits.holdingsView.state.assetHoldings
+                  .where((element) => element.symbol == symbol)
+                  .firstOrNull
+                  ?.typesView
+                  .contains('Admin') ??
+              false);
+    }
+    if (!components.cubits.holdingsView.walletEmptyCoin && extraCondition) {
+      return true;
+    }
+    if (snack) {
       streams.app.behavior.snack.add(Snack(
           delay: 0,
           positive: false,
@@ -532,9 +559,8 @@ class NavbarActions extends StatelessWidget {
                       ? 'Empty wallet'
                       : 'No ${pros.settings.chainNet.symbol}') +
                   ', unable to $action.'));
-      return false;
     }
-    return true;
+    return false;
   }
 
   void _produceCreateModal(BuildContext context) {

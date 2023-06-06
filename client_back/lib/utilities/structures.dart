@@ -221,7 +221,11 @@ class Symbol {
   }
   static const coins = [SymbolRVN.coinSymbol, SymbolEVR.coinSymbol];
 
-  Symbol call(Chain chain, Net net) => Symbol.generate(symbol, chain, net);
+  Symbol call([Chain? chain, Net? net]) => Symbol.generate(
+        symbol,
+        chain ?? pros.settings.chain,
+        net ?? pros.settings.net,
+      );
 
   factory Symbol.generate(String symbol, Chain chain, Net net) =>
       chain == Chain.ravencoin
@@ -233,6 +237,9 @@ class Symbol {
   bool get isCoin =>
       (chain == Chain.ravencoin && symbol == 'RVN') ||
       (chain == Chain.evrmore && symbol == 'EVR');
+
+  bool get isReissuableType =>
+      !isCoin && !isAdmin && !isQualifier && !isNFT && !isChannel;
 
   /// returns the parent symbol of this sub asset or null if it is not a sub
   String? get parentSymbol {

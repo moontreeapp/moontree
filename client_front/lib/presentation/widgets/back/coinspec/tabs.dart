@@ -3,6 +3,8 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/application/cubits.dart';
 //import '../../../pages/wallet/transactions/bloc.dart';
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class CoinSpecTabs extends StatefulWidget {
   const CoinSpecTabs({
@@ -40,6 +42,7 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
     if (widget.walletCubit != null) {
       widget.walletCubit!.state.currentTab
           .add(CoinSpecTabs.tabIndex[tabController.index]);
+      components.cubits.location.update(dataTab: tabController.index == 1);
     }
   }
 

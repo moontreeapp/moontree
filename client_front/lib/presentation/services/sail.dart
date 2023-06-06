@@ -436,8 +436,12 @@ class Sail {
   /// so far nothing has to react in realtime to the path so, it's just a var.
   /// if/when we need it to notify things, we'll add it to a stream.
   void broadcast(String location, Manifest manifest, String? symbol) =>
-      components.cubits.location
-          .update(path: location, section: manifest.section, symbol: symbol);
+      components.cubits.location.update(
+        path: location,
+        section: manifest.section,
+        symbol: symbol,
+        dataTab: false,
+      );
 
   String? get latestLocation => components.cubits.location.state.path;
 
