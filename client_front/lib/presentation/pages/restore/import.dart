@@ -298,7 +298,9 @@ class WordInput extends StatelessWidget {
           labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
           hintText: 'Please enter seed words, a WIF, or a private key.',
           helperText: state.importFormatDetected == 'Unknown'
-              ? null
+              ? state.words.split(' ').length == 12
+                  ? 'unrecognized'
+                  : null
               : state.importFormatDetected,
           errorText: state.submittedAttempt
               ? state.importFormatDetected == 'Unknown'
@@ -338,8 +340,11 @@ class WordInput extends StatelessWidget {
                         .set(words: '', importFormatDetected: '')),
               ]),
           onChanged: (String value) {
-            components.cubits.import.set(submittedAttempt: false, words: value);
-            components.cubits.import.enableImport();
+            if (value.split(' ').length == 12) {
+              components.cubits.import
+                  .set(submittedAttempt: false, words: value);
+              components.cubits.import.enableImport();
+            }
           },
           onEditingComplete: () {
             components.cubits.import.enableImport();

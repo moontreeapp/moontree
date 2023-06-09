@@ -362,19 +362,21 @@ class _SectionIconState extends State<SectionIcon> {
   }
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<LocationCubit,
-          LocationCubitState>(
-      builder: (BuildContext context, LocationCubitState state) =>
-          GestureDetector(
-              onTap: () {
-                if (widget.preNavHook != null) {
-                  widget.preNavHook!();
-                }
-                sail.to(null, section: widget.section);
-              },
-              child: SvgPicture.asset(
-                  'assets/icons/custom/mobile/${widget.section.name}'
-                  '${state.section == widget.section ? '-active' : ''}.svg')));
+  Widget build(BuildContext context) =>
+      BlocBuilder<LocationCubit, LocationCubitState>(
+          builder: (BuildContext context, LocationCubitState state) =>
+              GestureDetector(
+                  onTap: () {
+                    if (widget.preNavHook != null) {
+                      widget.preNavHook!();
+                    }
+                    sail.to(null, section: widget.section);
+                  },
+                  child: SvgPicture.asset(
+                    'assets/icons/custom/mobile/${widget.section.name}'
+                    '${state.section == widget.section ? '-active' : ''}.svg',
+                    //height: 48,
+                  )));
 }
 
 class NavbarActions extends StatelessWidget {
