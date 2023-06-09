@@ -21,6 +21,30 @@ import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:wallet_utils/wallet_utils.dart';
 
+extension StringNumericExtension on String {
+  /// takes a numeric string and inserts commas
+  String toCommaString({String comma = ','}) {
+    final List strs = split('.');
+    final String str = strs[0];
+    int i = 0;
+    String ret = '';
+    for (final String c in str.split('').reversed) {
+      if (i == 3) {
+        ret = '$c$comma$ret';
+        i = 1;
+      } else {
+        ret = '$c$ret';
+        i += 1;
+      }
+    }
+    if (contains('.')) {
+      return '$ret.${strs.last}';
+    } else {
+      return ret;
+    }
+  }
+}
+
 class SimpleCreate extends StatefulWidget {
   const SimpleCreate({Key? key}) : super(key: key);
 
@@ -97,11 +121,14 @@ class _SimpleCreateState extends State<SimpleCreate> {
   bool isChannel(SymbolType? type) => type == SymbolType.channel;
 
   void setQuantity(SimpleCreateFormState state) {
+    final visualValue = state.quantityCoinString.toCommaString();
     quantityController.value = TextEditingValue(
-        text: state.quantityCoinString,
+        text: visualValue,
         selection: quantityController.selection.baseOffset >
-                state.quantityCoinString.length
-            ? TextSelection.collapsed(offset: state.quantityCoinString.length)
+                visualValue.length -
+                    ((visualValue.split(',').length - 1) -
+                        (quantityController.text.split(',').length - 1))
+            ? TextSelection.collapsed(offset: visualValue.length)
             : quantityController.selection);
   }
 
@@ -284,9 +311,11 @@ class _SimpleCreateState extends State<SimpleCreate> {
                             ? 'too large'
                             : null,
                 onChanged: (String value) {
+                  value = value.replaceAll(',', '');
                   if (value.split('.').length > 2) {
                     final correctValue =
-                        value.split('.')[0] + '.' + value.split('.')[1];
+                        (value.split('.')[0] + '.' + value.split('.')[1])
+                            .toCommaString();
                     quantityController.value = TextEditingValue(
                         text: correctValue,
                         selection: quantityController.selection.baseOffset <
@@ -303,32 +332,34 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     setState(() {});
                   } else {
                     final correctValue = _correctQuantityDivisibility(state);
-                    if (correctValue != value) {
+                    if (correctValue != value && value.split('.').length > 1) {
                       final rightSide = value.split('.')[1].length;
                       if (rightSide <= 8) {
                         cubit.update(
                           decimals: rightSide,
-                          quantityCoinString: value,
+                          quantityCoinString: value.replaceAll(',', ''),
                         );
                       } else {
+                        final correctedValue = correctValue.toCommaString();
                         quantityController.value = TextEditingValue(
-                            text: correctValue,
+                            text: correctedValue,
                             selection: quantityController.selection.baseOffset <
-                                        correctValue.length &&
+                                        correctedValue.length &&
                                     quantityController.text.startsWith('.') &&
-                                    correctValue.startsWith('0.')
+                                    correctedValue.startsWith('0.')
                                 ? TextSelection.collapsed(
-                                    offset: correctValue.length)
+                                    offset: correctedValue.length)
                                 : quantityController.selection.baseOffset >
-                                        correctValue.length
+                                        correctedValue.length
                                     ? TextSelection.collapsed(
-                                        offset: correctValue.length)
+                                        offset: correctedValue.length)
                                     : quantityController.selection);
                         setState(() {});
                       }
                     } else {
                       try {
-                        cubit.update(quantityCoinString: value);
+                        cubit.update(
+                            quantityCoinString: value.replaceAll(',', ''));
                       } catch (e) {
                         cubit.update(quantity: 0);
                       }
@@ -338,7 +369,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
                 onEditingComplete: () {
                   if (_validateQuantity(state)) {
                     try {
-                      cubit.update(quantityCoinString: quantityController.text);
+                      cubit.update(
+                          quantityCoinString:
+                              quantityController.text.replaceAll(',', ''));
                     } catch (e) {
                       cubit.update(quantity: 0);
                     }
@@ -520,7 +553,8 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     parentName: parentNameController.text,
                     name: nameController.text,
                     assetMemo: assetMemoController.text,
-                    quantityCoinString: quantityController.text,
+                    quantityCoinString:
+                        quantityController.text.replaceAll(',', ''),
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
                   );
@@ -619,9 +653,8 @@ class _SimpleCreateState extends State<SimpleCreate> {
   bool _validateQuantityPositive([String? quantity]) {
     quantity = (quantity ?? quantityController.text);
     if ( //quantity.contains('.') ||
-        quantity.contains(',') ||
-            quantity.contains('-') ||
-            quantity.contains(' ')) {
+        //quantity.contains(',') ||
+        quantity.contains('-') || quantity.contains(' ')) {
       return false;
     }
     return true;
@@ -631,7 +664,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
     SimpleCreateFormState state, [
     String? quantity,
   ]) {
-    quantity = (quantity ?? quantityController.text);
+    quantity = (quantity ?? quantityController.text).replaceAll(',', '');
     double doubleQ;
     try {
       doubleQ = double.parse(quantity);
