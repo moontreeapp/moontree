@@ -846,9 +846,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
     final imageDetails = ImageDetails(
         foreground: AppColors.rgb(AppColors.primary),
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
-    final head = quantityController.text.toString().split('.').first;
-    final tail = quantityController.text.toString().split('.').length > 1
-        ? quantityController.text.toString().split('.').last
+    final head = cubit.state.quantityCoinString.toString().split('.').first;
+    final tail = cubit.state.quantityCoinString.toString().split('.').length > 1
+        ? cubit.state.quantityCoinString.toString().split('.').last
         : '';
     components.cubits.bottomModalSheet.show(
       childrenHeight: 55,
