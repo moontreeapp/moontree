@@ -62,7 +62,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         assetMemo: assetMemo ?? state.assetMemo,
         verifierString: verifierString ?? state.verifierString,
         quantity: quantity ??
-            asCoinToSats(state.quantityCoinString) ??
+            asCoinToSats(state.quantityCoinString.replaceAll(',', '')) ??
             state.quantity,
         quantityCoinString: quantityCoinString ?? state.quantityCoinString,
         decimals: decimals ?? state.decimals,
