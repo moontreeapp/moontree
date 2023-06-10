@@ -102,19 +102,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
         selection: quantityController.selection.baseOffset >
                 state.quantityCoinString.length
             ? TextSelection.collapsed(offset: state.quantityCoinString.length)
-            : state.quantityCoinString
-                        .split('')
-                        .where((e) => e == ',')
-                        .length ==
-                    quantityController.text
-                            .split('')
-                            .where((e) => e == ',')
-                            .length +
-                        1
-                ? quantityController.selection.copyWith(
-                    baseOffset: quantityController.selection.baseOffset + 1,
-                    extentOffset: quantityController.selection.extentOffset + 1)
-                : quantityController.selection);
+            : quantityController.selection);
   }
 
   @override
@@ -298,8 +286,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                 onChanged: (String value) {
                   if (value.split('.').length > 2) {
                     final correctValue =
-                        (value.split('.')[0] + '.' + value.split('.')[1])
-                            .toCommaString();
+                        value.split('.')[0] + '.' + value.split('.')[1];
                     quantityController.value = TextEditingValue(
                         text: correctValue,
                         selection: quantityController.selection.baseOffset <
@@ -312,35 +299,16 @@ class _SimpleCreateState extends State<SimpleCreate> {
                                     correctValue.length
                                 ? TextSelection.collapsed(
                                     offset: correctValue.length)
-                                : correctValue
-                                            .split('')
-                                            .where((e) => e == ',')
-                                            .length ==
-                                        quantityController.text
-                                                .split('')
-                                                .where((e) => e == ',')
-                                                .length +
-                                            1
-                                    ? quantityController.selection.copyWith(
-                                        baseOffset: quantityController
-                                                .selection.baseOffset +
-                                            1,
-                                        extentOffset: quantityController
-                                                .selection.extentOffset +
-                                            1)
-                                    : quantityController.selection);
+                                : quantityController.selection);
                     setState(() {});
                   } else {
-                    final correctValue =
-                        _correctQuantityDivisibility(state).toCommaString();
-                    if ((correctValue != value ||
-                            correctValue != value.replaceAll(',', '')) &&
-                        value.split('.').length > 1) {
+                    final correctValue = _correctQuantityDivisibility(state);
+                    if (correctValue != value) {
                       final rightSide = value.split('.')[1].length;
                       if (rightSide <= 8) {
                         cubit.update(
                           decimals: rightSide,
-                          quantityCoinString: correctValue,
+                          quantityCoinString: value,
                         );
                       } else {
                         quantityController.value = TextEditingValue(
@@ -355,28 +323,12 @@ class _SimpleCreateState extends State<SimpleCreate> {
                                         correctValue.length
                                     ? TextSelection.collapsed(
                                         offset: correctValue.length)
-                                    : correctValue
-                                                .split('')
-                                                .where((e) => e == ',')
-                                                .length ==
-                                            quantityController.text
-                                                    .split('')
-                                                    .where((e) => e == ',')
-                                                    .length +
-                                                1
-                                        ? quantityController.selection.copyWith(
-                                            baseOffset: quantityController
-                                                    .selection.baseOffset +
-                                                1,
-                                            extentOffset: quantityController
-                                                    .selection.extentOffset +
-                                                1)
-                                        : quantityController.selection);
+                                    : quantityController.selection);
                         setState(() {});
                       }
                     } else {
                       try {
-                        cubit.update(quantityCoinString: value.toCommaString());
+                        cubit.update(quantityCoinString: value);
                       } catch (e) {
                         cubit.update(quantity: 0);
                       }
@@ -568,7 +520,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     parentName: parentNameController.text,
                     name: nameController.text,
                     assetMemo: assetMemoController.text,
-                    quantityCoinString: quantityController.text.toCommaString(),
+                    quantityCoinString: quantityController.text,
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
                   );
@@ -667,8 +619,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
   bool _validateQuantityPositive([String? quantity]) {
     quantity = (quantity ?? quantityController.text);
     if ( //quantity.contains('.') ||
-        //quantity.contains(',') ||
-        quantity.contains('-') || quantity.contains(' ')) {
+        quantity.contains(',') ||
+            quantity.contains('-') ||
+            quantity.contains(' ')) {
       return false;
     }
     return true;
@@ -678,7 +631,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
     SimpleCreateFormState state, [
     String? quantity,
   ]) {
-    quantity = (quantity ?? quantityController.text).replaceAll(',', '');
+    quantity = (quantity ?? quantityController.text);
     double doubleQ;
     try {
       doubleQ = double.parse(quantity);
@@ -893,9 +846,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
     final imageDetails = ImageDetails(
         foreground: AppColors.rgb(AppColors.primary),
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
-    final head = cubit.state.quantityCoinString.toString().split('.').first;
-    final tail = cubit.state.quantityCoinString.toString().split('.').length > 1
-        ? cubit.state.quantityCoinString.toString().split('.').last
+    final head = quantityController.text.toString().split('.').first;
+    final tail = quantityController.text.toString().split('.').length > 1
+        ? quantityController.text.toString().split('.').last
         : '';
     components.cubits.bottomModalSheet.show(
       childrenHeight: 55,
@@ -920,7 +873,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  cubit.state.quantityCoin.toString().replaceAll('.0', ''),
+                  head,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 Text(
