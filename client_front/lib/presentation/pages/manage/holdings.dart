@@ -350,10 +350,13 @@ class _HoldingsView extends State<HoldingsView> {
                 child: Text(
                     holding.symbol == currentCrypto.symbol
                         ? symbolName(holding.symbol)
-                        : services.developer.developerMode &&
-                                widget.cubit.state.showPath
+                        : pros.settings.fullAssetsShown
                             ? holding.symbol
                             : holding.last,
+                    //: services.developer.developerMode &&
+                    //        widget.cubit.state.showPath
+                    //    ? holding.symbol
+                    //    : holding.last,
                     style: Theme.of(context).textTheme.bodyLarge),
               )),
         ]),

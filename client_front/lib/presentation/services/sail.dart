@@ -285,6 +285,13 @@ class Sail {
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/setting/security',
     ),
+    '/setting/preferences': Manifest(
+      title: 'Preferences',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/setting/preferences',
+    ),
     '/setting/hidden/assets': Manifest(
       title: 'Hidden Assets',
       section: Section.settings,

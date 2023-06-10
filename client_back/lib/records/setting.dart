@@ -58,5 +58,6 @@ class Setting with EquatableMixin {
         SettingName.mode_dev: FeatureLevel,
         SettingName.tutorial_status: List, //<TutorialStatus>, <String>
         SettingName.hidden_assets: List, //<Security>
+        SettingName.full_assets: bool,
       }[name];
 }

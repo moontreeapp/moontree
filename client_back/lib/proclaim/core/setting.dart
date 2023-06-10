@@ -47,6 +47,8 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
             name: SettingName.tutorial_status, value: <TutorialStatus>[]),
         SettingName.hidden_assets:
             const Setting(name: SettingName.hidden_assets, value: <Security>[]),
+        SettingName.full_assets:
+            const Setting(name: SettingName.full_assets, value: false),
       }.map((SettingName settingName, Setting setting) =>
           MapEntry<String, Setting>(settingName.name, setting));
 
@@ -157,4 +159,12 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
 
   Future<Change<Setting>?> resetHiddenAssets() async =>
       setHiddenAssets(<Security>[]);
+
+  bool get fullAssetsShown =>
+      primaryIndex.getOne(SettingName.full_assets)!.value;
+
+  Future<Change<Setting>?> showFullAssets([bool? value]) async => save(Setting(
+        name: SettingName.full_assets,
+        value: value ?? !fullAssetsShown,
+      ));
 }

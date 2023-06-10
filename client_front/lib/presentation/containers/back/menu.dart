@@ -328,6 +328,11 @@ class SettingsMenu extends StatelessWidget {
             name: 'Security',
             link: '/setting/security',
           ),
+          MenuLink(
+            icon: Icons.build_rounded,
+            name: 'Preferences',
+            link: '/setting/preferences',
+          ),
           if (pros.settings.hiddenAssets.isNotEmpty)
             MenuLink(
               //icon: Icons.remove_red_eye_outlined,
@@ -343,7 +348,6 @@ class SettingsMenu extends StatelessWidget {
               icon: Icons.lock_rounded,
               name: 'Password',
               link: '/settings/password/change',
-            ),
             */
           /*
           MenuLink(
@@ -451,8 +455,11 @@ class MenuLink extends StatelessWidget {
             : svg != null
                 ? svg
                 : icon != null
-                    ? Icon(icon,
-                        color: disabled ? AppColors.white60 : Colors.white)
+                    ? Container(
+                        width: 32,
+                        alignment: Alignment.center,
+                        child: Icon(icon,
+                            color: disabled ? AppColors.white60 : Colors.white))
                     : image!,
         title: Text(name,
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(

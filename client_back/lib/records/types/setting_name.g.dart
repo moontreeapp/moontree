@@ -47,6 +47,8 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         return SettingName.tutorial_status;
       case 16:
         return SettingName.hidden_assets;
+      case 17:
+        return SettingName.full_assets;
       default:
         return SettingName.version_database;
     }
@@ -105,6 +107,9 @@ class SettingNameAdapter extends TypeAdapter<SettingName> {
         break;
       case SettingName.hidden_assets:
         writer.writeByte(16);
+        break;
+      case SettingName.full_assets:
+        writer.writeByte(17);
         break;
     }
   }

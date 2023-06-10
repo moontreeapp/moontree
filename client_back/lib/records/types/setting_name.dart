@@ -78,4 +78,7 @@ enum SettingName {
 
   @HiveField(16)
   hidden_assets,
+
+  @HiveField(17)
+  full_assets,
 }
