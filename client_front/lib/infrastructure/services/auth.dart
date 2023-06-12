@@ -106,6 +106,7 @@ class LocalAuthApi {
         reason = AuthenticationResult.success;
         return true;
       }
+      print(_auth);
       reason = AuthenticationResult.failure;
     } on PlatformException catch (e) {
       /*

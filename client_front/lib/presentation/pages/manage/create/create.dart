@@ -45,11 +45,34 @@ class _SimpleCreateState extends State<SimpleCreate> {
   final FocusNode reissuableFocus = FocusNode();
   final FocusNode verifierFocus = FocusNode();
   final ScrollController scrollController = ScrollController();
+  final SimpleCreateFormCubit cubit = components.cubits.simpleCreateForm;
+
   bool clicked = false;
+  void lookUpName() {
+    if (nameFocus.hasFocus) {
+      cubit.updateName('');
+    } else {
+      final value = nameController.text;
+      if (isSub(cubit.state.type)) {
+        if (value.length > 2 || (isNFT(cubit.state.type) && value.length > 0)) {
+          cubit.updateName(value);
+        } else {
+          cubit.update(name: value);
+        }
+      } else {
+        if (value.length > 2) {
+          cubit.updateName(value);
+        } else {
+          cubit.update(name: value);
+        }
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    nameFocus.addListener(() => lookUpName());
   }
 
   @override
@@ -107,7 +130,6 @@ class _SimpleCreateState extends State<SimpleCreate> {
 
   @override
   Widget build(BuildContext context) {
-    final SimpleCreateFormCubit cubit = components.cubits.simpleCreateForm;
     //data = populateData(context, data); // why
     return GestureDetector(
       onTap: () {
@@ -224,7 +246,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                 ],
                 labelText: 'Name',
                 hintText: "what's the name of this asset?",
-                errorText: nameController.text == ''
+                errorText: nameFocus.hasFocus || nameController.text == ''
                     ? null
                     : state.metadataView != null ||
                             (Current.chain == Chain.ravencoin &&
@@ -237,22 +259,6 @@ class _SimpleCreateState extends State<SimpleCreate> {
                                 : _validateName(state))
                             ? null
                             : '${isNFT(state.type) ? '1' : '3'}-${parentNameController.text == '' ? '30' : (30 - parentNameController.text.length).toString()} characters, special chars allowed: . _',
-                onChanged: (String value) {
-                  if (isSub(state.type)) {
-                    if (value.length > 2 ||
-                        (isNFT(state.type) && value.length > 0)) {
-                      cubit.updateName(value);
-                    } else {
-                      cubit.update(name: value);
-                    }
-                  } else {
-                    if (value.length > 2) {
-                      cubit.updateName(value);
-                    } else {
-                      cubit.update(name: value);
-                    }
-                  }
-                },
                 onEditingComplete: () {
                   cubit.update(name: nameController.text);
                   FocusScope.of(context).requestFocus(quantityFocus);
@@ -806,37 +812,40 @@ class _SimpleCreateState extends State<SimpleCreate> {
     }
   }
 
-  void _produceAssetModal(SimpleCreateFormCubit cubit) =>
-      components.cubits.bottomModalSheet.show(children: <Widget>[
-        for (String name in Current.holdingNames
-            .where((String item) => item.isAdmin)
-            .map((e) => Symbol(e).toMainSymbol!))
-          ListTile(
-              onTap: () {
-                context.read<BottomModalSheetCubit>().hide();
-                final sec = pros.securities.ofCurrent(name) ??
-                    Security(
-                        symbol: '',
-                        chain: pros.settings.chain,
-                        net: pros.settings.net);
-                cubit.update(parentName: sec.symbol);
-                if (isSub(cubit.state.type) &&
-                    (cubit.state.name.length > 2 ||
-                        (isNFT(cubit.state.type) &&
-                            cubit.state.name.length > 0))) {
-                  cubit.updateName(cubit.state.name, parentName: sec.symbol);
-                }
-              },
-              leading: components.icons.assetAvatar(name,
-                  height: 24, width: 24, net: pros.settings.net),
-              title: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(symbolName(name),
-                      style: Theme.of(context).textTheme.bodyLarge)))
-      ]);
+  void _produceAssetModal(SimpleCreateFormCubit cubit) {
+    FocusScope.of(context).unfocus();
+    components.cubits.bottomModalSheet.show(children: <Widget>[
+      for (String name in Current.holdingNames
+          .where((String item) => item.isAdmin)
+          .map((e) => Symbol(e).toMainSymbol!))
+        ListTile(
+            onTap: () {
+              context.read<BottomModalSheetCubit>().hide();
+              final sec = pros.securities.ofCurrent(name) ??
+                  Security(
+                      symbol: '',
+                      chain: pros.settings.chain,
+                      net: pros.settings.net);
+              cubit.update(parentName: sec.symbol);
+              if (isSub(cubit.state.type) &&
+                  (cubit.state.name.length > 2 ||
+                      (isNFT(cubit.state.type) &&
+                          cubit.state.name.length > 0))) {
+                cubit.updateName(cubit.state.name, parentName: sec.symbol);
+              }
+            },
+            leading: components.icons.assetAvatar(name,
+                height: 24, width: 24, net: pros.settings.net),
+            title: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(symbolName(name),
+                    style: Theme.of(context).textTheme.bodyLarge)))
+    ]);
+  }
 
   void _produceDecimalsModal(SimpleCreateFormCubit cubit) {
+    FocusScope.of(context).unfocus();
     String generateDecs(String start, int totalCount) {
       String appendZeros(String start, int totalCount) =>
           start +

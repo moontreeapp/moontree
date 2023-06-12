@@ -806,6 +806,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
   }
 
   void _produceDecimalsModal(SimpleReissueFormCubit cubit) {
+    FocusScope.of(context).unfocus();
     String generateDecs(String start, int totalCount) {
       String appendZeros(String start, int totalCount) =>
           start +

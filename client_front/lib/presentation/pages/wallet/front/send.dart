@@ -744,57 +744,62 @@ class _SimpleSendState extends State<SimpleSend> {
     }
   }
 
-  void _produceAssetModal(SimpleSendFormCubit cubit) =>
-      components.cubits.bottomModalSheet.show(children: <Widget>[
-        for (String name in Current.holdingNames
-                .where(
-                    (String item) => item == pros.securities.currentCoin.symbol)
-                .toList() +
-            Current.holdingNames
-                .where(
-                    (String item) => item != pros.securities.currentCoin.symbol)
-                .toList())
-          ListTile(
-              onTap: () {
-                context.read<BottomModalSheetCubit>().hide();
-                final sec = pros.securities.ofCurrent(nameSymbol(name)) ??
-                    pros.securities.currentCoin;
-                cubit.setSecurity(sec);
-              },
-              leading: components.icons.assetAvatar(
-                  name == 'Ravencoin'
-                      ? pros.securities.RVN.symbol
-                      : name == 'Evrmore'
-                          ? pros.securities.EVR.symbol
-                          : name,
-                  height: 24,
-                  width: 24,
-                  net: pros.settings.net),
-              title: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(symbolName(name),
-                      style: Theme.of(context).textTheme.bodyLarge)))
-      ]);
-
-  void _produceFeeModal(SimpleSendFormCubit cubit) =>
-      components.cubits.bottomModalSheet.show(children: <Widget>[
-        for (final fees.FeeConcept feeConcept in <fees.FeeConcept>[
-          fees.fast,
-          fees.standard
-        ])
-          ListTile(
+  void _produceAssetModal(SimpleSendFormCubit cubit) {
+    FocusScope.of(context).unfocus();
+    components.cubits.bottomModalSheet.show(children: <Widget>[
+      for (String name in Current.holdingNames
+              .where(
+                  (String item) => item == pros.securities.currentCoin.symbol)
+              .toList() +
+          Current.holdingNames
+              .where(
+                  (String item) => item != pros.securities.currentCoin.symbol)
+              .toList())
+        ListTile(
             onTap: () {
               context.read<BottomModalSheetCubit>().hide();
-              cubit.set(fee: feeConcept.feeRate);
+              final sec = pros.securities.ofCurrent(nameSymbol(name)) ??
+                  pros.securities.currentCoin;
+              cubit.setSecurity(sec);
             },
-            leading: feeConcept.icon,
-            title: Text(feeConcept.title,
-                style: Theme.of(context).textTheme.bodyLarge),
-          )
-      ]);
+            leading: components.icons.assetAvatar(
+                name == 'Ravencoin'
+                    ? pros.securities.RVN.symbol
+                    : name == 'Evrmore'
+                        ? pros.securities.EVR.symbol
+                        : name,
+                height: 24,
+                width: 24,
+                net: pros.settings.net),
+            title: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(symbolName(name),
+                    style: Theme.of(context).textTheme.bodyLarge)))
+    ]);
+  }
+
+  void _produceFeeModal(SimpleSendFormCubit cubit) {
+    FocusScope.of(context).unfocus();
+    components.cubits.bottomModalSheet.show(children: <Widget>[
+      for (final fees.FeeConcept feeConcept in <fees.FeeConcept>[
+        fees.fast,
+        fees.standard
+      ])
+        ListTile(
+          onTap: () {
+            context.read<BottomModalSheetCubit>().hide();
+            cubit.set(fee: feeConcept.feeRate);
+          },
+          leading: feeConcept.icon,
+          title: Text(feeConcept.title,
+              style: Theme.of(context).textTheme.bodyLarge),
+        )
+    ]);
+  }
 
   Future<String> _produceScanModal() async {
+    FocusScope.of(context).unfocus();
     components.cubits.bottomModalSheet.show(
         childrenHeight: screen.frontContainer.midHeight ~/ 1,
         fullscreen: false,

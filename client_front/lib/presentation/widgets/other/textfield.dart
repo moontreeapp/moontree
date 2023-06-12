@@ -229,6 +229,10 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
         //key: widget.key,
         decoration: decoration,
         onTap: widget.onTap ?? () => setState(() {}), // solves #594
+        onTapOutside: (_) =>
+            (widget.focusNode ?? FocusScope.of(context)).unfocus(),
+        //onTapOutside: (_) => FocusScope.of(context).unfocus(),
+        //onTapOutside: (_) => widget.cubit.reset(),
         controller: widget.controller,
         focusNode: widget.focusNode,
         keyboardType: widget.keyboardType,
