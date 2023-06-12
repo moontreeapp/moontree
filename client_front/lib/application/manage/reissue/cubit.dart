@@ -1,4 +1,3 @@
-import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -17,6 +16,7 @@ import 'package:wallet_utils/wallet_utils.dart'
 import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
+import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
@@ -64,8 +64,12 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
         quantityCoinString: quantityCoinString ?? state.quantityCoinString,
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
-        memo: memo ?? state.memo,
-        assetMemo: assetMemo ?? state.assetMemo,
+        // if the asset memo isn't ipfs or txid it should be opReturnMemo.
+        memo: memo ?? assetMemoIsMemoOrNull(assetMemo) ?? state.memo,
+        // verify the asset memo is ipfs or txid first
+        assetMemo:
+            (assetMemoIsMemoOrNull(assetMemo) == null ? assetMemo : null) ??
+                state.assetMemo,
         verifierString: verifierString ?? state.verifierString,
         changeAddress: changeAddress ?? state.changeAddress,
         metadataView: respectMetadata
@@ -82,6 +86,9 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
   //Future<void> updateQuantity() async => update(
   //      quantity: asCoinToSats(state.quantityCoinString),
   //    );
+
+  String? assetMemoIsMemoOrNull(String? assetMemo) =>
+      assetMemo?.utf8ToHex.toByteData.lengthInBytes != 34 ? assetMemo : null;
 
   Future<void> updateName(String symbol, {String? parentName}) async => update(
         metadataView: await (getMetadataView(

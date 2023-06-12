@@ -18,6 +18,8 @@ class ServerCall {
       //SocketException: HTTP connection timed out after 0:00:20.000000, host: 24.199.68.139, port: 8080
       recreateClient();
       return await f();
+
+      /// ServerpodClientException (ServerpodClientException: Internal server error. Call log id: 676, statusCode = 500)
     }
   }
 }

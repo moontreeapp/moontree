@@ -45,6 +45,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
   final FocusNode reissuableFocus = FocusNode();
   final FocusNode verifierFocus = FocusNode();
   final ScrollController scrollController = ScrollController();
+  final SimpleReissueFormCubit cubit = components.cubits.simpleReissueForm;
   bool clicked = false;
 
   @override
@@ -71,15 +72,23 @@ class _SimpleReissueState extends State<SimpleReissue> {
     super.dispose();
   }
 
-  void _announceNoCoin(SimpleReissueFormState state) => !_allValidation(state)
+  void _announceNoCoin(SimpleReissueFormState state) => clicked
       ? streams.app.behavior.snack.add(Snack(
-          message: 'please fill out form',
+          message: 'Generating transaction, please wait',
           positive: false,
+          delay: 0,
         ))
-      : streams.app.behavior.snack.add(Snack(
-          message: 'No coin in wallet - unable to pay fees',
-          positive: false,
-        ));
+      : !_allValidation(state)
+          ? streams.app.behavior.snack.add(Snack(
+              message: 'Please fill out form',
+              positive: false,
+              delay: 0,
+            ))
+          : streams.app.behavior.snack.add(Snack(
+              message: 'No coin in wallet - unable to pay fees',
+              positive: false,
+              delay: 0,
+            ));
 
   bool isSub(SymbolType? type) => [
         SymbolType.sub,
@@ -138,7 +147,6 @@ class _SimpleReissueState extends State<SimpleReissue> {
 
   @override
   Widget build(BuildContext context) {
-    final SimpleReissueFormCubit cubit = components.cubits.simpleReissueForm;
     //data = populateData(context, data); // why
     return GestureDetector(
       onTap: () {
@@ -459,7 +467,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                       .textTheme
                       .bodySmall!
                       .copyWith(height: .7, color: AppColors.primary),
-                  errorText: _validateMemo() ? null : 'too long',
+                  errorText: _validateGenericMemo() ? null : 'too long',
                   /*suffixIcon: IconButton(
                                 icon: const Icon(Icons.paste_rounded,
                                     color: AppColors.black60),
@@ -468,9 +476,16 @@ class _SimpleReissueState extends State<SimpleReissue> {
                                         (await Clipboard.getData('text/plain'))
                                                 ?.text ??
                                             '')),*/
-                  onChanged: (String value) => cubit.update(assetMemo: value),
+                  onChanged: (String value) =>
+                      cubit.assetMemoIsMemoOrNull(value) == null
+                          ? cubit.update(assetMemo: value)
+                          : null,
                   onEditingComplete: () {
-                    cubit.update(assetMemo: assetMemoController.text);
+                    if (assetMemoController.text == '' ||
+                        cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
+                            null) {
+                      cubit.update(assetMemo: assetMemoController.text);
+                    }
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
               Padding(
@@ -495,10 +510,18 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   cubit.update(
                     parentName: parentNameController.text,
                     name: nameController.text,
-                    assetMemo: assetMemoController.text,
                     quantityCoinString: quantityController.text,
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
+
+                    /// we don't capture opReturnMemo separate from assetMemo
+                    /// so we set the correct memo based on what was entered
+                    assetMemo: _validateAssetMemo(assetMemoController.text)
+                        ? assetMemoController.text
+                        : null,
+                    memo: !_validateAssetMemo(assetMemoController.text)
+                        ? assetMemoController.text
+                        : null,
                   );
                   //cubit.updateQuantity();
                   setState(() {
@@ -572,9 +595,15 @@ class _SimpleReissueState extends State<SimpleReissue> {
     return name.isAssetPath;
   }
 
-  bool _validateMemo([String? assetMemo]) =>
+  bool _validateGenericMemo([String? assetMemo]) =>
       (assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text).isMemo;
+
+  bool _validateAssetMemo([String? assetMemo]) =>
+      (assetMemo ?? assetMemoController.text).isIpfs ||
+      (assetMemo ?? assetMemoController.text) == '' ||
+      cubit.assetMemoIsMemoOrNull(assetMemo ?? assetMemoController.text) ==
+          null;
 
   bool _validateQuantity(SimpleReissueFormState state, [String? quantity]) {
     quantity = (quantity ?? quantityController.text);
@@ -671,11 +700,11 @@ class _SimpleReissueState extends State<SimpleReissue> {
       _validateDecimals(state) &&
       (!isRestricted(state.type) ||
           (isRestricted(state.type) && _validateVerifier())) &&
-      _validateMemo();
+      _validateGenericMemo();
 
   void _startSend(SimpleReissueFormCubit cubit, SimpleReissueFormState state) {
     final bool vAddress = nameController.text != '';
-    final bool vMemo = _validateMemo();
+    final bool vMemo = _validateGenericMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       //final SendRequest sendRequest = SendRequest(

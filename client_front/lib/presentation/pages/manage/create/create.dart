@@ -94,15 +94,23 @@ class _SimpleCreateState extends State<SimpleCreate> {
     super.dispose();
   }
 
-  void _announceNoCoin(SimpleCreateFormState state) => !_allValidation(state)
+  void _announceNoCoin(SimpleCreateFormState state) => clicked
       ? streams.app.behavior.snack.add(Snack(
-          message: 'please fill out form',
+          message: 'Generating transaction, please wait',
           positive: false,
+          delay: 0,
         ))
-      : streams.app.behavior.snack.add(Snack(
-          message: 'No coin in wallet - unable to pay fees',
-          positive: false,
-        ));
+      : !_allValidation(state)
+          ? streams.app.behavior.snack.add(Snack(
+              message: 'Please fill out form',
+              positive: false,
+              delay: 0,
+            ))
+          : streams.app.behavior.snack.add(Snack(
+              message: 'No coin in wallet - unable to pay fees',
+              positive: false,
+              delay: 0,
+            ));
 
   bool isSub(SymbolType? type) => [
         SymbolType.sub,
@@ -473,7 +481,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                       .textTheme
                       .bodySmall!
                       .copyWith(height: .7, color: AppColors.primary),
-                  errorText: _validateMemo() ? null : 'too long',
+                  errorText: _validateGenericMemo() ? null : 'too long',
                   /*suffixIcon: IconButton(
                                 icon: const Icon(Icons.paste_rounded,
                                     color: AppColors.black60),
@@ -482,9 +490,16 @@ class _SimpleCreateState extends State<SimpleCreate> {
                                         (await Clipboard.getData('text/plain'))
                                                 ?.text ??
                                             '')),*/
-                  onChanged: (String value) => cubit.update(assetMemo: value),
+                  onChanged: (String value) =>
+                      cubit.assetMemoIsMemoOrNull(value) == null
+                          ? cubit.update(assetMemo: value)
+                          : null,
                   onEditingComplete: () {
-                    cubit.update(assetMemo: assetMemoController.text);
+                    if (assetMemoController.text == '' ||
+                        cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
+                            null) {
+                      cubit.update(assetMemo: assetMemoController.text);
+                    }
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
               if (!isNFT(state.type) &&
@@ -533,10 +548,18 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   cubit.update(
                     parentName: parentNameController.text,
                     name: nameController.text,
-                    assetMemo: assetMemoController.text,
                     quantityCoinString: quantityController.text,
                     decimals: int.parse(decimalsController.text),
                     //reissuable: reissuableController.text,
+
+                    /// we don't capture opReturnMemo separate from assetMemo
+                    /// so we set the correct memo based on what was entered
+                    assetMemo: _validateAssetMemo(assetMemoController.text)
+                        ? assetMemoController.text
+                        : null,
+                    memo: !_validateAssetMemo(assetMemoController.text)
+                        ? assetMemoController.text
+                        : null,
                   );
                   setState(() {
                     clicked = true;
@@ -608,9 +631,17 @@ class _SimpleCreateState extends State<SimpleCreate> {
     return name.isAssetPath;
   }
 
-  bool _validateMemo([String? assetMemo]) =>
+  bool _validateGenericMemo([String? assetMemo]) =>
       (assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text).isMemo;
+
+  bool _validateAssetMemo([String? assetMemo]) {
+    print((assetMemo ?? assetMemoController.text).isIpfs);
+    return (assetMemo ?? assetMemoController.text).isIpfs ||
+        (assetMemo ?? assetMemoController.text) == '' ||
+        cubit.assetMemoIsMemoOrNull(assetMemo ?? assetMemoController.text) ==
+            null;
+  }
 
   bool _validateVerifier([String? value]) =>
       (value ?? verifierController.text).isQualifierString; // is this the same?
@@ -621,6 +652,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
       return false;
     }
     if (!_validateQuantitySmallEnough(state, quantity)) {
+      return false;
+    }
+    if (!_validateQuantityBigEnough(state, quantity)) {
       return false;
     }
     // necessary?
@@ -639,6 +673,23 @@ class _SimpleCreateState extends State<SimpleCreate> {
       return false;
     }
     return true;
+  }
+
+  bool _validateQuantityBigEnough(
+    SimpleCreateFormState state, [
+    String? quantity,
+  ]) {
+    quantity = (quantity ?? quantityController.text);
+    double doubleQ;
+    try {
+      doubleQ = double.parse(quantity);
+      if (isNFT(state.type)) {
+        return doubleQ == 1; // rvn && evr match?
+      }
+      return doubleQ > 0;
+    } catch (e) {
+      return false;
+    }
   }
 
   bool _validateQuantitySmallEnough(
@@ -678,11 +729,11 @@ class _SimpleCreateState extends State<SimpleCreate> {
       _validateQuantity(state) &&
       (!isRestricted(state.type) ||
           (isRestricted(state.type) && _validateVerifier())) &&
-      _validateMemo();
+      _validateGenericMemo();
 
   void _startSend(SimpleCreateFormCubit cubit, SimpleCreateFormState state) {
     final bool vAddress = nameController.text != '';
-    final bool vMemo = _validateMemo();
+    final bool vMemo = _validateGenericMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
       //final SendRequest sendRequest = SendRequest(

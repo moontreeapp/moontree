@@ -1,4 +1,3 @@
-import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -17,6 +16,7 @@ import 'package:wallet_utils/wallet_utils.dart'
 import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
+import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart';
 import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:client_front/infrastructure/repos/asset_metadata.dart';
@@ -24,6 +24,8 @@ import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
+import 'package:bs58check/bs58check.dart' as bs58check;
+import 'dart:typed_data';
 
 part 'state.dart';
 
@@ -58,8 +60,12 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         type: type ?? state.type,
         parentName: parentName ?? state.parentName,
         name: name ?? state.name,
-        memo: memo ?? state.memo,
-        assetMemo: assetMemo ?? state.assetMemo,
+        // if the asset memo isn't ipfs or txid it should be opReturnMemo.
+        memo: memo ?? assetMemoIsMemoOrNull(assetMemo) ?? state.memo,
+        // verify the asset memo is ipfs or txid first
+        assetMemo:
+            (assetMemoIsMemoOrNull(assetMemo) == null ? assetMemo : null) ??
+                state.assetMemo,
         verifierString: verifierString ?? state.verifierString,
         quantity: quantity ??
             asCoinToSats(state.quantityCoinString.replaceAll(',', '')) ??
@@ -77,6 +83,15 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         fee: fee ?? state.fee,
         isSubmitting: isSubmitting ?? state.isSubmitting,
       ));
+
+  String? assetMemoIsMemoOrNull(String? assetMemo) =>
+      (assetMemo?.startsWith('Qm') ?? false)
+          ? assetMemo?.base58Decode.length != 34
+              ? assetMemo
+              : null
+          : assetMemo?.utf8ToHex.toByteData.lengthInBytes != 34
+              ? assetMemo
+              : null;
 
   // occurs on move to next page...
   //Future<void> updateQuantity() async => update(

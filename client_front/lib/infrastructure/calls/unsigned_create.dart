@@ -88,7 +88,8 @@ class UnsignedCreateCall extends ServerCall {
               verifierString: verifierString,
               associatedData: assetMemo == "" || assetMemo == null
                   ? null
-                  : assetMemo!.utf8ToHex,
+                  : assetMemo!
+                      .base58Decode.toEncodedString, //assetMemo!.utf8ToHex,
               opReturnMemo: memo == "" || memo == null
                   ? null
                   : memo!.utf8ToHex, // should be hex string

@@ -41,6 +41,9 @@ class MempoolTransactionHistoryCall extends ServerCall {
     required List<String> roots,
     required List<ByteData> h160s,
   }) async =>
+
+      /// we get an error if it's a brand new asset and is still in the mempool
+      // ServerpodClientException (ServerpodClientException: Internal server error. Call log id: 676, statusCode = 500)
       await runCall(() async => await client.mempoolTransactions.get(
             symbol: symbol,
             backFromHeight: height,
