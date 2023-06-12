@@ -3,6 +3,8 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 part 'state.dart';
 
@@ -25,6 +27,12 @@ class TitleCubit extends Cubit<TitleCubitState> {
       '/wallet/holding', /*'/manage/holding'*/ // show Manage
     ].contains(sail.latestLocation)) {
       return Current.holding.shortName;
+    }
+    if (sail.latestLocation == '/manage/create') {
+      return '${state.title ?? 'Create'} ${components.cubits.simpleCreateForm.state.assetCreationName}';
+    }
+    if (sail.latestLocation == '/manage/reissue') {
+      return '${state.title ?? 'Reissue'} ${components.cubits.simpleReissueForm.state.assetReissueName}';
     }
     return state.title ?? sail.latestLocation ?? ' ';
   }

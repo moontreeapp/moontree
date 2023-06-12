@@ -540,14 +540,16 @@ class NavbarActions extends StatelessWidget {
     var extraCondition = true;
     if (action == 'reissue') {
       final symbol = components.cubits.location.state.symbol;
-      extraCondition = components.cubits.location.state.dataTab &&
-          Symbol(symbol!)().isReissuableType &&
-          (components.cubits.holdingsView.state.assetHoldings
-                  .where((element) => element.symbol == symbol)
-                  .firstOrNull
-                  ?.typesView
-                  .contains('Admin') ??
-              false);
+      extraCondition =
+          components.cubits.location.state.path == '/manage/holding' ||
+              (components.cubits.location.state.dataTab &&
+                  Symbol(symbol!)().isReissuableType &&
+                  (components.cubits.holdingsView.state.assetHoldings
+                          .where((element) => element.symbol == symbol)
+                          .firstOrNull
+                          ?.typesView
+                          .contains('Admin') ??
+                      false));
     }
     if (!components.cubits.holdingsView.walletEmptyCoin && extraCondition) {
       return true;
@@ -615,6 +617,7 @@ class NavbarActions extends StatelessWidget {
 class SnackContents extends StatelessWidget {
   final Snack? snack;
   const SnackContents({Key? key, required this.snack}) : super(key: key);
+  final double labelSize = 50;
 
   @override
   Widget build(BuildContext context) {
@@ -634,15 +637,15 @@ class SnackContents extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(width: screen.width - 32 - 40, child: snackMsg),
+            SizedBox(width: screen.width - 32 - labelSize, child: snackMsg),
             SizedBox(
-                width: 40,
+                width: labelSize,
                 child: Text(
-                  snack!.label ?? 'copy',
+                  (snack!.label ?? 'copy').toUpperCase(),
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: snackStyle,
+                  style: snackStyle.copyWith(color: AppColors.primaryDisabled),
                 ))
           ]);
     }
@@ -651,7 +654,7 @@ class SnackContents extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(width: screen.width - 32 - 40, child: snackMsg),
+            SizedBox(width: screen.width - 32 - labelSize, child: snackMsg),
             GestureDetector(
                 onTap: () async {
                   await snack!.callback!();
@@ -659,13 +662,14 @@ class SnackContents extends StatelessWidget {
                 },
                 behavior: HitTestBehavior.opaque,
                 child: SizedBox(
-                    width: 40,
+                    width: labelSize,
                     child: Text(
-                      snack!.label!,
+                      snack!.label!.toUpperCase(),
                       textAlign: TextAlign.right,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: snackStyle,
+                      style:
+                          snackStyle.copyWith(color: AppColors.primaryDisabled),
                     )))
           ]);
     }

@@ -172,6 +172,9 @@ class _SimpleSendState extends State<SimpleSend> {
               // instead of using balances, which is unreliable, use holdingView
               final BalanceView? holdingView = components.cubits.holdingsView
                   .holdingsViewFor(state.security.symbol);
+              if (holdingView == null) {
+                return SizedBox.shrink();
+              }
               holdingBalance = Balance(
                   walletId: Current.walletId,
                   security: state.security,

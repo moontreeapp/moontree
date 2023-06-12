@@ -1,3 +1,4 @@
+import 'package:client_back/streams/app.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
@@ -180,6 +181,8 @@ class _VerifySeedState extends State<VerifySeed> {
     //    streams.app.behavior.snack.add(Snack(message: 'Successfully Verified Backup'));
     //  }
     //}
+    streams.app.behavior.snack
+        .add(Snack(message: 'Successfully Verified Backup'));
     streams.app.wallet.refresh.add(true);
   }
 }

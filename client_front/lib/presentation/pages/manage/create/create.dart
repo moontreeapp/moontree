@@ -258,128 +258,133 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   FocusScope.of(context).requestFocus(quantityFocus);
                 },
               ),
-              TextFieldFormatted(
-                focusNode: quantityFocus,
-                controller: quantityController,
-                textInputAction: TextInputAction.next,
-                readOnly: isNFT(state.type),
-                enabled: !isNFT(state.type),
-                keyboardType: const TextInputType.numberWithOptions(
-                  signed: false,
-                  decimal: true,
-                ),
-                //inputFormatters: <TextInputFormatter>[
-                //  FilteringTextInputFormatter(
-                //    RegExp(r'^[1-9]\d*$'),
-                //    allow: true,
-                //  )
-                //],
-                labelText: 'Quantity',
-                hintText: 'how many coins should be minted?',
-                errorText: ['', '.'].contains(quantityController.text)
-                    ? null
-                    : !_validateQuantityPositive()
-                        ? 'quantity must be a whole number'
-                        : !_validateQuantitySmallEnough(state)
-                            ? 'too large'
-                            : null,
-                onChanged: (String value) {
-                  if (value.split('.').length > 2) {
-                    final correctValue =
-                        value.split('.')[0] + '.' + value.split('.')[1];
-                    quantityController.value = TextEditingValue(
-                        text: correctValue,
-                        selection: quantityController.selection.baseOffset <
-                                    correctValue.length &&
-                                quantityController.text.startsWith('.') &&
-                                correctValue.startsWith('0.')
-                            ? TextSelection.collapsed(
-                                offset: correctValue.length)
-                            : quantityController.selection.baseOffset >
-                                    correctValue.length
-                                ? TextSelection.collapsed(
-                                    offset: correctValue.length)
-                                : quantityController.selection);
-                    setState(() {});
-                  } else {
-                    final correctValue = _correctQuantityDivisibility(state);
-                    if (correctValue != value) {
-                      final rightSide = value.split('.')[1].length;
-                      if (rightSide <= 8) {
-                        cubit.update(
-                          decimals: rightSide,
-                          quantityCoinString: value,
-                        );
-                      } else {
-                        quantityController.value = TextEditingValue(
-                            text: correctValue,
-                            selection: quantityController.selection.baseOffset <
-                                        correctValue.length &&
-                                    quantityController.text.startsWith('.') &&
-                                    correctValue.startsWith('0.')
-                                ? TextSelection.collapsed(
-                                    offset: correctValue.length)
-                                : quantityController.selection.baseOffset >
-                                        correctValue.length
-                                    ? TextSelection.collapsed(
-                                        offset: correctValue.length)
-                                    : quantityController.selection);
-                        setState(() {});
-                      }
+              if (!isNFT(state.type))
+                TextFieldFormatted(
+                  focusNode: quantityFocus,
+                  controller: quantityController,
+                  textInputAction: TextInputAction.next,
+                  readOnly: isNFT(state.type),
+                  enabled: !isNFT(state.type),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    signed: false,
+                    decimal: true,
+                  ),
+                  //inputFormatters: <TextInputFormatter>[
+                  //  FilteringTextInputFormatter(
+                  //    RegExp(r'^[1-9]\d*$'),
+                  //    allow: true,
+                  //  )
+                  //],
+                  labelText: 'Quantity',
+                  hintText: 'how many coins should be minted?',
+                  errorText: ['', '.'].contains(quantityController.text)
+                      ? null
+                      : !_validateQuantityPositive()
+                          ? 'quantity must be a whole number'
+                          : !_validateQuantitySmallEnough(state)
+                              ? 'too large'
+                              : null,
+                  onChanged: (String value) {
+                    if (value.split('.').length > 2) {
+                      final correctValue =
+                          value.split('.')[0] + '.' + value.split('.')[1];
+                      quantityController.value = TextEditingValue(
+                          text: correctValue,
+                          selection: quantityController.selection.baseOffset <
+                                      correctValue.length &&
+                                  quantityController.text.startsWith('.') &&
+                                  correctValue.startsWith('0.')
+                              ? TextSelection.collapsed(
+                                  offset: correctValue.length)
+                              : quantityController.selection.baseOffset >
+                                      correctValue.length
+                                  ? TextSelection.collapsed(
+                                      offset: correctValue.length)
+                                  : quantityController.selection);
+                      setState(() {});
                     } else {
+                      final correctValue = _correctQuantityDivisibility(state);
+                      if (correctValue != value) {
+                        final rightSide = value.split('.')[1].length;
+                        if (rightSide <= 8) {
+                          cubit.update(
+                            decimals: rightSide,
+                            quantityCoinString: value,
+                          );
+                        } else {
+                          quantityController.value = TextEditingValue(
+                              text: correctValue,
+                              selection: quantityController
+                                              .selection.baseOffset <
+                                          correctValue.length &&
+                                      quantityController.text.startsWith('.') &&
+                                      correctValue.startsWith('0.')
+                                  ? TextSelection.collapsed(
+                                      offset: correctValue.length)
+                                  : quantityController.selection.baseOffset >
+                                          correctValue.length
+                                      ? TextSelection.collapsed(
+                                          offset: correctValue.length)
+                                      : quantityController.selection);
+                          setState(() {});
+                        }
+                      } else {
+                        try {
+                          cubit.update(quantityCoinString: value);
+                        } catch (e) {
+                          cubit.update(quantity: 0);
+                        }
+                      }
+                    }
+                  },
+                  onEditingComplete: () {
+                    if (_validateQuantity(state)) {
                       try {
-                        cubit.update(quantityCoinString: value);
+                        cubit.update(
+                            quantityCoinString: quantityController.text);
                       } catch (e) {
                         cubit.update(quantity: 0);
                       }
                     }
-                  }
-                },
-                onEditingComplete: () {
-                  if (_validateQuantity(state)) {
-                    try {
-                      cubit.update(quantityCoinString: quantityController.text);
-                    } catch (e) {
-                      cubit.update(quantity: 0);
-                    }
-                  }
 
-                  //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
-                  //FocusScope.of(context).requestFocus(sendFeeFocusNode);
-                  FocusScope.of(context).unfocus();
-                },
-              ),
-              TextFieldFormatted(
-                onTap: isNFT(state.type)
-                    ? null
-                    : () => _produceDecimalsModal(cubit),
-                focusNode: decimalsFocus,
-                controller: decimalsController,
-                readOnly: true,
-                enabled: !isNFT(state.type),
-                textInputAction: TextInputAction.next,
-                labelText: 'Decimals',
-                hintText: 'to how many decimal places is each coin divisible?',
-                suffixIcon: isNFT(state.type)
-                    ? null
-                    : IconButton(
-                        icon: Padding(
-                            padding: const EdgeInsets.only(right: 14),
-                            child: SvgPicture.asset(
-                                'assets/icons/custom/black/chevron-down.svg')
-                            //Icon(Icons.expand_more_rounded,
-                            //    color: AppColors.black60)
-                            ),
-                        onPressed: () => _produceDecimalsModal(cubit)),
-                onChanged: (String newValue) {
-                  cubit.update(decimals: int.parse(decimalsController.text));
-                  if (isRestricted(state.type)) {
-                    FocusScope.of(context).requestFocus(verifierFocus);
-                  } else {
-                    FocusScope.of(context).requestFocus(assetMemoFocus);
-                  }
-                },
-              ),
+                    //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
+                    //FocusScope.of(context).requestFocus(sendFeeFocusNode);
+                    FocusScope.of(context).unfocus();
+                  },
+                ),
+              if (!isNFT(state.type))
+                TextFieldFormatted(
+                  onTap: isNFT(state.type)
+                      ? null
+                      : () => _produceDecimalsModal(cubit),
+                  focusNode: decimalsFocus,
+                  controller: decimalsController,
+                  readOnly: true,
+                  enabled: !isNFT(state.type),
+                  textInputAction: TextInputAction.next,
+                  labelText: 'Decimals',
+                  hintText:
+                      'to how many decimal places is each coin divisible?',
+                  suffixIcon: isNFT(state.type)
+                      ? null
+                      : IconButton(
+                          icon: Padding(
+                              padding: const EdgeInsets.only(right: 14),
+                              child: SvgPicture.asset(
+                                  'assets/icons/custom/black/chevron-down.svg')
+                              //Icon(Icons.expand_more_rounded,
+                              //    color: AppColors.black60)
+                              ),
+                          onPressed: () => _produceDecimalsModal(cubit)),
+                  onChanged: (String newValue) {
+                    cubit.update(decimals: int.parse(decimalsController.text));
+                    if (isRestricted(state.type)) {
+                      FocusScope.of(context).requestFocus(verifierFocus);
+                    } else {
+                      FocusScope.of(context).requestFocus(assetMemoFocus);
+                    }
+                  },
+                ),
               if (isRestricted(state.type))
                 Container(
                     height: 200,
@@ -476,38 +481,41 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     cubit.update(assetMemo: assetMemoController.text);
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
-              Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: isNFT(state.type)
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            'NFT assets are not reissuable',
-                            textAlign: TextAlign.center,
-                          ))
-                      : isQualifier(state.type)
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                'Qualifier assets are not reissuable',
-                                textAlign: TextAlign.center,
-                              ))
-                          : isChannel(state.type)
-                              ? Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    'Message Channel assets are not reissuable',
-                                    textAlign: TextAlign.center,
-                                  ))
-                              : SwtichChoice(
-                                  label: 'Reissuable',
-                                  description:
-                                      "A reissuable asset's quantity and decimal places can increase in the future.",
-                                  hideDescription: true,
-                                  initial: cubit.state.reissuable,
-                                  onChanged: (bool value) async =>
-                                      cubit.update(reissuable: value),
-                                )),
+              if (!isNFT(state.type) &&
+                  !isQualifier(state.type) &&
+                  !isChannel(state.type))
+                Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: isNFT(state.type)
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              'NFT assets are not reissuable',
+                              textAlign: TextAlign.center,
+                            ))
+                        : isQualifier(state.type)
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  'Qualifier assets are not reissuable',
+                                  textAlign: TextAlign.center,
+                                ))
+                            : isChannel(state.type)
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      'Message Channel assets are not reissuable',
+                                      textAlign: TextAlign.center,
+                                    ))
+                                : SwtichChoice(
+                                    label: 'Reissuable',
+                                    description:
+                                        "A reissuable asset's quantity and decimal places can increase in the future.",
+                                    hideDescription: true,
+                                    initial: cubit.state.reissuable,
+                                    onChanged: (bool value) async =>
+                                        cubit.update(reissuable: value),
+                                  )),
             ],
             firstLowerChildren: <Widget>[
               BottomButton(

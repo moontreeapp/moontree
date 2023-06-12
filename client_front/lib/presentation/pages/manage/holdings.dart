@@ -113,7 +113,13 @@ class _HoldingsView extends State<HoldingsView> {
         //dense: true,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        onTap: () async => onTap(widget.cubit.state.ranWallet, holding),
+        onTap: () async {
+          if (components.cubits.location.menuOpened) {
+            sail.menu(open: false);
+          } else {
+            onTap(widget.cubit.state.ranWallet, holding);
+          }
+        },
         onLongPress: _togglePath,
         leading: leadingIcon(holding),
         title: title(holding, currentCrypto),

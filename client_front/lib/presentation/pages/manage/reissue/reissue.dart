@@ -107,6 +107,26 @@ class _SimpleReissueState extends State<SimpleReissue> {
     return x;
   }
 
+  bool quantityAtMax(SimpleReissueFormState state) =>
+      (state.metadataView?.mempoolTotalSupply ??
+              state.metadataView?.totalSupply ??
+              0) ==
+          coinsPerChain.asSats ||
+      (isNFT(state.type) &&
+          (state.metadataView?.mempoolTotalSupply ??
+                  state.metadataView?.totalSupply ??
+                  0) ==
+              satsPerCoin);
+
+  bool divisibilityAtMax(SimpleReissueFormState state) =>
+      (state.metadataView?.mempoolDivisibility ??
+              state.metadataView?.divisibility) ==
+          8 ||
+      (isNFT(state.type) &&
+          (state.metadataView?.mempoolDivisibility ??
+                  state.metadataView?.divisibility) ==
+              0);
+
   void setQuantity(SimpleReissueFormState state) {
     quantityController.value = TextEditingValue(
         text: state.quantityCoinString,
@@ -236,8 +256,8 @@ class _SimpleReissueState extends State<SimpleReissue> {
                 focusNode: quantityFocus,
                 controller: quantityController,
                 textInputAction: TextInputAction.next,
-                readOnly: isNFT(state.type),
-                enabled: !isNFT(state.type),
+                readOnly: isNFT(state.type) || quantityAtMax(state),
+                enabled: !isNFT(state.type) || !quantityAtMax(state),
                 keyboardType: const TextInputType.numberWithOptions(
                   signed: false,
                   decimal: true,
@@ -331,7 +351,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                 focusNode: decimalsFocus,
                 controller: decimalsController,
                 readOnly: true,
-                enabled: !isNFT(state.type),
+                enabled: !isNFT(state.type) || !divisibilityAtMax(state),
                 textInputAction: TextInputAction.next,
                 labelText: 'Decimals',
                 hintText: 'to how many decimal places is each coin divisible?',

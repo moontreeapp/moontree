@@ -287,7 +287,8 @@ class SimpleSendCheckout extends StatelessWidget {
             await Future.delayed(Duration(seconds: 3));
             components.cubits.loadingView.hide();
             await Future.delayed(Duration(milliseconds: 50));
-            sail.home();
+            //sail.home();
+            sail.directlyTohome();
           }
         },
       );

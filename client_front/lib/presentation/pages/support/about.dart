@@ -66,7 +66,7 @@ class _AboutState extends State<About> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  '© 2022 Moontree, LLC',
+                  '© ${DateTime.now().year} Moontree, LLC',
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

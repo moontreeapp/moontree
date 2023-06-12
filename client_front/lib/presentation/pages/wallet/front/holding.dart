@@ -164,15 +164,17 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
                             await Future.delayed(
                               Duration(seconds: 5),
                               () async {
-                                // if max hasn't changed after 5 seconds
-                                if (mounted &&
-                                    maxScroll ==
-                                        scrollController
-                                            .position.maxScrollExtent) {
-                                  // call it again
-                                  await cubit.addSetTransactionViews(
-                                      force: true);
-                                }
+                                try {
+                                  // if max hasn't changed after 5 seconds
+                                  if (mounted &&
+                                      maxScroll ==
+                                          scrollController
+                                              .position.maxScrollExtent) {
+                                    // call it again
+                                    await cubit.addSetTransactionViews(
+                                        force: true);
+                                  }
+                                } catch (e) {}
                               },
                             ).then((value) => timedCalling = false);
                           }

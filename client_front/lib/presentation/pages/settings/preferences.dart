@@ -13,9 +13,9 @@ class Preferences extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         SwtichChoice(
-          label: 'Show Full Assets',
+          label: 'Show Full Asset Names',
           description:
-              'Assets can have long names such as MOONTREE/SUBASSET. The full name can be shown by default, or just SUBASSET.',
+              'Assets can have long names such as MOONTREE/SUBASSET. Toggle on to show full asset names.',
           hideDescription: true,
           initial: pros.settings.fullAssetsShown,
           onChanged: (bool value) => pros.settings.showFullAssets(value),

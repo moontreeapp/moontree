@@ -365,6 +365,31 @@ class Sail {
     //return '/${section.name}/holdings';
   }
 
+  String directlyTohome({bool forceFullScreen = true}) {
+    String perSection({Section? section}) {
+      if (section == null) {
+        section = Section.wallet;
+      }
+      final String location = locationFromSector(section)!;
+      if (components.cubits.location.state.path != location) {
+        destinationHistory == [];
+        to(location, replaceOverride: true);
+      }
+      return location;
+    }
+
+    final loc = perSection(section: components.cubits.location.state.sector);
+    if (components.cubits.location.state.menuOpen) {
+      menu(open: false);
+    }
+    if (forceFullScreen) {
+      components.cubits.frontContainer
+          .setHeightTo(height: FrontContainerHeight.max);
+      components.cubits.navbar.setHeightTo(height: NavbarHeight.max);
+    }
+    return loc;
+  }
+
   String home({bool forceFullScreen = true}) {
     String perSection({Section? section}) {
       if (section == null) {
