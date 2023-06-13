@@ -459,10 +459,16 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   controller: assetMemoController,
                   textInputAction: TextInputAction.next,
                   labelText: 'Memo',
-                  hintText: 'IPFS',
-                  helperText: assetMemoFocus.hasFocus
-                      ? 'will be saved on the blockchain'
-                      : null,
+                  hintText: 'IPFS ("Qm...")',
+                  helperText: assetMemoController.text == ''
+                      ? null
+                      : cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
+                              null
+                          ? 'ipfs recognized\n\nmemo will be saved on the asset'
+                          : 'ipfs not recognized\n\nmemo will be saved on the transaction\n\n(memo will NOT be saved on the asset)',
+                  //assetMemoFocus.hasFocus
+                  //    ? 'will be saved on the blockchain'
+                  //    : null,
                   helperStyle: Theme.of(context)
                       .textTheme
                       .bodySmall!
@@ -518,7 +524,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                     /// so we set the correct memo based on what was entered
                     assetMemo: _validateAssetMemo(assetMemoController.text)
                         ? assetMemoController.text
-                        : null,
+                        : '',
                     memo: !_validateAssetMemo(assetMemoController.text)
                         ? assetMemoController.text
                         : null,
@@ -600,7 +606,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
       (assetMemo ?? assetMemoController.text).isMemo;
 
   bool _validateAssetMemo([String? assetMemo]) =>
-      (assetMemo ?? assetMemoController.text).isIpfs ||
+      //(assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text) == '' ||
       cubit.assetMemoIsMemoOrNull(assetMemo ?? assetMemoController.text) ==
           null;

@@ -63,7 +63,14 @@ class UnsignedReissueCall extends ServerCall {
               verifierString: verifierString,
               associatedData: assetMemo == "" || assetMemo == null
                   ? null
-                  : assetMemo!.utf8ToHex,
+                  : () {
+                      try {
+                        return assetMemo!.base58Decode.toEncodedString;
+                      } catch (e) {
+                        return null;
+                      }
+                    }(),
+
               opReturnMemo: memo == "" || memo == null
                   ? null
                   : memo!.utf8ToHex, // should be hex string

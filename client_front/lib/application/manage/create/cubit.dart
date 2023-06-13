@@ -12,7 +12,8 @@ import 'package:wallet_utils/wallet_utils.dart'
         SatsToAmountExtension,
         TransactionBuilder,
         satsPerCoin,
-        standardFee;
+        standardFee,
+        StringValidationExtension;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -24,8 +25,6 @@ import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
-import 'package:bs58check/bs58check.dart' as bs58check;
-import 'dart:typed_data';
 
 part 'state.dart';
 
@@ -60,12 +59,18 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         type: type ?? state.type,
         parentName: parentName ?? state.parentName,
         name: name ?? state.name,
+
+        /// all this is handled on the front end
         // if the asset memo isn't ipfs or txid it should be opReturnMemo.
-        memo: memo ?? assetMemoIsMemoOrNull(assetMemo) ?? state.memo,
+        //memo: memo ?? assetMemoIsMemoOrNull(assetMemo) ?? state.memo,
         // verify the asset memo is ipfs or txid first
-        assetMemo:
-            (assetMemoIsMemoOrNull(assetMemo) == null ? assetMemo : null) ??
-                state.assetMemo,
+        //assetMemo:
+        //    (assetMemoIsMemoOrNull(assetMemo) == null ? assetMemo : null) ??
+        //        state.assetMemo,
+        memo: memo ?? state.memo,
+        assetMemo: assetMemo ?? state.assetMemo,
+
+        /// the rest
         verifierString: verifierString ?? state.verifierString,
         quantity: quantity ??
             asCoinToSats(state.quantityCoinString.replaceAll(',', '')) ??
@@ -85,7 +90,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       ));
 
   String? assetMemoIsMemoOrNull(String? assetMemo) =>
-      (assetMemo?.startsWith('Qm') ?? false)
+      ((assetMemo?.startsWith('Qm') ?? false) && (assetMemo?.isIpfs ?? false))
           ? assetMemo?.base58Decode.length != 34
               ? assetMemo
               : null

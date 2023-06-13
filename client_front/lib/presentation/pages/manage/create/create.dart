@@ -168,6 +168,16 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     ? TextSelection.collapsed(offset: state.assetMemo!.length)
                     : assetMemoController.selection);
           }
+
+          /// we just save to assetMemo until we hit preview...
+          //if (state.memo != null) {
+          //  assetMemoController.value = TextEditingValue(
+          //      text: state.memo!,
+          //      selection: assetMemoController.selection.baseOffset >
+          //              state.memo!.length
+          //          ? TextSelection.collapsed(offset: state.memo!.length)
+          //          : assetMemoController.selection);
+          //}
           if (isRestricted(state.type) && state.verifierString != null) {
             final verifierString = state.verifierString.toString();
             verifierController.value = TextEditingValue(
@@ -473,10 +483,16 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   controller: assetMemoController,
                   textInputAction: TextInputAction.next,
                   labelText: 'Memo',
-                  hintText: 'IPFS',
-                  helperText: assetMemoFocus.hasFocus
-                      ? 'will be saved on the blockchain'
-                      : null,
+                  hintText: 'IPFS ("Qm...")',
+                  helperText: assetMemoController.text == ''
+                      ? null
+                      : cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
+                              null
+                          ? 'ipfs recognized\n\nmemo will be saved on the asset'
+                          : 'ipfs not recognized\n\nmemo will be saved on the transaction\n\n(memo will NOT be saved on the asset)',
+                  //helperText: assetMemoFocus.hasFocus
+                  //    ? 'will be saved on the blockchain'
+                  //    : null,
                   helperStyle: Theme.of(context)
                       .textTheme
                       .bodySmall!
@@ -490,16 +506,13 @@ class _SimpleCreateState extends State<SimpleCreate> {
                                         (await Clipboard.getData('text/plain'))
                                                 ?.text ??
                                             '')),*/
-                  onChanged: (String value) =>
-                      cubit.assetMemoIsMemoOrNull(value) == null
-                          ? cubit.update(assetMemo: value)
-                          : null,
+                  onChanged: (String value) => cubit.update(assetMemo: value),
                   onEditingComplete: () {
-                    if (assetMemoController.text == '' ||
-                        cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
-                            null) {
-                      cubit.update(assetMemo: assetMemoController.text);
-                    }
+                    cubit.update(assetMemo: assetMemoController.text);
+                    //if (assetMemoController.text == '' ||
+                    //    cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
+                    //        null) {
+                    //}
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
               if (!isNFT(state.type) &&
@@ -556,7 +569,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     /// so we set the correct memo based on what was entered
                     assetMemo: _validateAssetMemo(assetMemoController.text)
                         ? assetMemoController.text
-                        : null,
+                        : '',
                     memo: !_validateAssetMemo(assetMemoController.text)
                         ? assetMemoController.text
                         : null,
@@ -635,13 +648,11 @@ class _SimpleCreateState extends State<SimpleCreate> {
       (assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text).isMemo;
 
-  bool _validateAssetMemo([String? assetMemo]) {
-    print((assetMemo ?? assetMemoController.text).isIpfs);
-    return (assetMemo ?? assetMemoController.text).isIpfs ||
-        (assetMemo ?? assetMemoController.text) == '' ||
-        cubit.assetMemoIsMemoOrNull(assetMemo ?? assetMemoController.text) ==
-            null;
-  }
+  bool _validateAssetMemo([String? assetMemo]) =>
+      //(assetMemo ?? assetMemoController.text).isIpfs ||
+      (assetMemo ?? assetMemoController.text) == '' ||
+      cubit.assetMemoIsMemoOrNull(assetMemo ?? assetMemoController.text) ==
+          null;
 
   bool _validateVerifier([String? value]) =>
       (value ?? verifierController.text).isQualifierString; // is this the same?

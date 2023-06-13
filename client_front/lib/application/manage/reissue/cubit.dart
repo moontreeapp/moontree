@@ -12,7 +12,8 @@ import 'package:wallet_utils/wallet_utils.dart'
         SatsToAmountExtension,
         TransactionBuilder,
         satsPerCoin,
-        standardFee;
+        standardFee,
+        StringValidationExtension;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -64,12 +65,18 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
         quantityCoinString: quantityCoinString ?? state.quantityCoinString,
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
+
+        /// all this is handled on the front end
         // if the asset memo isn't ipfs or txid it should be opReturnMemo.
-        memo: memo ?? assetMemoIsMemoOrNull(assetMemo) ?? state.memo,
+        //memo: memo ?? assetMemoIsMemoOrNull(assetMemo) ?? state.memo,
         // verify the asset memo is ipfs or txid first
-        assetMemo:
-            (assetMemoIsMemoOrNull(assetMemo) == null ? assetMemo : null) ??
-                state.assetMemo,
+        //assetMemo:
+        //    (assetMemoIsMemoOrNull(assetMemo) == null ? assetMemo : null) ??
+        //        state.assetMemo,
+        memo: memo ?? state.memo,
+        assetMemo: assetMemo ?? state.assetMemo,
+
+        /// the rest
         verifierString: verifierString ?? state.verifierString,
         changeAddress: changeAddress ?? state.changeAddress,
         metadataView: respectMetadata
@@ -88,7 +95,13 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
   //    );
 
   String? assetMemoIsMemoOrNull(String? assetMemo) =>
-      assetMemo?.utf8ToHex.toByteData.lengthInBytes != 34 ? assetMemo : null;
+      ((assetMemo?.startsWith('Qm') ?? false) && (assetMemo?.isIpfs ?? false))
+          ? assetMemo?.base58Decode.length != 34
+              ? assetMemo
+              : null
+          : assetMemo?.utf8ToHex.toByteData.lengthInBytes != 34
+              ? assetMemo
+              : null;
 
   Future<void> updateName(String symbol, {String? parentName}) async => update(
         metadataView: await (getMetadataView(
