@@ -1,4 +1,3 @@
-import 'package:client_front/application/manage/create/decode.dart';
 import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -99,14 +98,6 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
               ? assetMemo
               : null;
 
-  String? decodeAssetMemo2([String? assetMemo]) {
-    final x = decodeCID(assetMemo!);
-    print(x);
-    print(x.length);
-    print(x.lengthInBytes);
-    print(x.toEncodedString);
-  }
-
   String? decodeAssetMemo([String? assetMemo]) {
     assetMemo ??= state.assetMemo;
     if (assetMemo == null) {
@@ -124,7 +115,14 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
           return encoded.toEncodedString;
         }
       } catch (e) {
-        print('unrecognized');
+        try {
+          final encoded = assetMemo.substring(5).base32Decode;
+          if (encoded.length == 34) {
+            return encoded.toEncodedString;
+          }
+        } catch (e) {
+          print('unrecognized');
+        }
       }
     }
     return null;

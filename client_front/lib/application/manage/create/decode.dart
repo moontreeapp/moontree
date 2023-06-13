@@ -1,143 +1,184 @@
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:convert/convert.dart';
+import 'package:multibase/multibase.dart';
+import 'package:multicodec/multicodec.dart';
+import 'package:dart_multihash/dart_multihash.dart';
+import 'package:base58/base58.dart';
 
-extension BigIntExtensions on BigInt {
-  List<int> toRadixList(int radix, {int? width}) {
-    final List<int> result = [];
+class BaseCID {
+  late int _version;
+  late String _codec;
+  late List<int> _multihash;
 
-    BigInt value = this;
-    final BigInt bigRadix = BigInt.from(radix);
-    final BigInt? bigWidth = width != null ? BigInt.from(width) : null;
+  BaseCID(int version, String codec, List<int> multihash) {
+    _version = version;
+    _codec = codec;
+    _multihash = multihash;
+  }
 
-    while (value > BigInt.zero) {
-      BigInt digit = value % bigRadix;
-      value ~/= bigRadix;
+  int get version => _version;
 
-      if (bigWidth != null) {
-        digit = digit.toUnsigned(bigWidth.toInt());
+  String get codec => _codec;
+
+  List<int> get multihash => _multihash;
+
+  List<int> get buffer {
+    throw UnimplementedError();
+  }
+
+  String encode() {
+    throw UnimplementedError();
+  }
+
+  @override
+  String toString() {
+    String truncate(List<int> data, int length) {
+      if (data.length > length) {
+        return data.sublist(0, length).toString() + '..';
+      } else {
+        return data.toString();
       }
-
-      result.add(digit.toInt());
     }
 
-    return result.reversed.toList();
+    final truncateLength = 20;
+    return '${this.runtimeType}(version: $_version, codec: $_codec, multihash: ${truncate(_multihash, truncateLength)})';
+  }
+
+  @override
+  bool operator ==(other) {
+    return (other is BaseCID) &&
+        (_version == other.version) &&
+        (_codec == other.codec) &&
+        (_multihash == other.multihash);
   }
 }
 
-Uint8List base58Decode(String input) {
-  const String base58Alphabet =
-      '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-  int base = base58Alphabet.length;
+class CIDv0 extends BaseCID {
+  static const String CODEC = 'dag-pb';
 
-  BigInt result = BigInt.zero;
-  int leadingZerosCount = 0;
+  CIDv0(List<int> multihash) : super(0, CODEC, multihash);
 
-  for (int i = 0; i < input.length; i++) {
-    int charIndex = base58Alphabet.indexOf(input[i]);
-    if (charIndex == -1) {
-      throw FormatException('Invalid character at index $i');
+  @override
+  List<int> get buffer => multihash;
+
+  @override
+  String encode() {
+    return Base58Encoder().convert(buffer);
+  }
+
+  CIDv1 toV1() {
+    return CIDv1(_codec, _multihash);
+  }
+}
+
+class CIDv1 extends BaseCID {
+  CIDv1(String codec, List<int> multihash) : super(1, codec, multihash);
+
+  @override
+  List<int> get buffer {
+    final data = _version.toBytes() + multicodec.addPrefix(_codec, _multihash);
+    return List<int>.from(data);
+  }
+
+  String encode({String encoding = 'base58btc'}) {
+    return MultibaseCodec(encoding).encode(buffer);
+  }
+
+  CIDv0 toV0() {
+    if (_codec != CIDv0.CODEC) {
+      throw ArgumentError(
+          'CIDv1 can only be converted for codec ${CIDv0.CODEC}');
+    }
+    return CIDv0(_multihash);
+  }
+}
+
+BaseCID makeCID(dynamic arg1, [dynamic arg2, dynamic arg3]) {
+  if (arg3 != null) {
+    final version = arg1 as int;
+    final codec = arg2 as String;
+    final multihash = arg3 as List<int>;
+
+    if (version != 0 && version != 1) {
+      throw ArgumentError('Version should be 0 or 1, $version was provided');
     }
 
-    result = result * BigInt.from(base) + BigInt.from(charIndex);
+    if (!Multicodec.isCodec(codec)) {
+      throw ArgumentError('Invalid codec $codec provided, please check');
+    }
 
-    if (input[i] == '1') {
-      leadingZerosCount++;
+    if (!(multihash is String) && !(multihash is List<int>)) {
+      throw ArgumentError(
+          'Invalid type for multihash provided, should be String or List<int>');
+    }
+
+    if (version == 0) {
+      if (codec != CIDv0.CODEC) {
+        throw ArgumentError(
+            'Codec for version 0 can only be ${CIDv0.CODEC}, found: $codec');
+      }
+      return CIDv0(multihash as List<int>);
     } else {
-      leadingZerosCount = 0;
+      return CIDv1(codec, multihash as List<int>);
     }
-  }
+  } else if (arg2 != null) {
+    final data = arg1 as dynamic;
 
-  Uint8List decodedBytes = Uint8List.fromList(
-      result.toUnsigned(leadingZerosCount * 8).toRadixList(256));
-  return decodedBytes;
-}
-
-Uint8List base32Decode(String input) {
-  const String base32Alphabet = 'abcdefghijklmnopqrstuvwxyz234567';
-
-  int bits = 0;
-  int bitsRemaining = 0;
-  List<int> bytes = [];
-
-  for (int i = 0; i < input.length; i++) {
-    int value = base32Alphabet.indexOf(input[i]);
-    if (value == -1) {
-      throw FormatException('Invalid character at index $i');
+    if (data is String) {
+      return fromString(data);
+    } else if (data is List<int>) {
+      return fromBytes(data);
+    } else {
+      throw ArgumentError(
+          'Invalid argument passed, expected: String or List<int>, found: ${data.runtimeType}');
     }
-    bits |= value;
-    bitsRemaining += 5;
-    if (bitsRemaining >= 8) {
-      bytes.add(bits >> (bitsRemaining - 8));
-      bits &= (1 << (bitsRemaining - 8)) - 1;
-      bitsRemaining -= 8;
-    }
-  }
-
-  int paddingBytes = (bitsRemaining ~/ 5) * 8 ~/ 5;
-  if (paddingBytes > 0) {
-    bytes.add(bits << (8 - bitsRemaining));
-    bytes = bytes.sublist(0, bytes.length - paddingBytes);
-  }
-
-  return Uint8List.fromList(bytes);
-}
-
-Uint8List decodeCID(String cid) {
-  if (cid.length == 46 && cid.startsWith('Qm')) {
-    return base58Decode(cid);
-  }
-
-  String multibasePrefix = cid[0];
-  String encodedString = cid.substring(1);
-
-  Uint8List decodedBytes;
-
-  switch (multibasePrefix) {
-    case 'b': // Base16
-      //  decodedBytes = Uint8List.fromList(hex.decode(encodedString));
-      decodedBytes = base32Decode(encodedString.substring(3));
-      break;
-    case 'f': // Base16 uppercase
-      decodedBytes =
-          Uint8List.fromList(hex.decode(encodedString.toUpperCase()));
-      break;
-    case 'z': // Base58 with sha256 multihash
-      decodedBytes = base58Decode(encodedString);
-      break;
-    case 'v': // Base32 with sha256 multihash
-      decodedBytes = base32Decode(encodedString);
-      break;
-    default:
-      throw FormatException('Unsupported multibase encoding: $multibasePrefix');
-  }
-
-  if (decodedBytes[0] == 0x12) {
-    throw FormatException('Invalid CID: CIDv0 may not be multibase encoded');
-  }
-
-  return decodedBytes;
-}
-
-void main() {
-  String cid = "bafybeibml5uieyxa5tufngvg7fgwbkwvlsuntwbxgtskoqynbt7wlchmfm";
-
-  Uint8List decodedCID = decodeCID(cid);
-
-  if (decodedCID.length == 34 && decodedCID[0] == 0x12) {
-    // CIDv0
-    print("CIDv0");
-    // Decode multihash, multicodec, etc.
   } else {
-    // CIDv1
-    print("CIDv1");
-    int version = decodedCID[0];
-    if (version == 1) {
-      // Decode multihash, multicodec, etc.
-    } else if (version <= 0) {
-      throw FormatException('Malformed CID');
-    } else {
-      throw FormatException('CID version $version is reserved');
+    throw ArgumentError('Invalid number of arguments, expected 1 or 3');
+  }
+}
+
+bool isCID(dynamic cidStr) {
+  try {
+    makeCID(cidStr);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+BaseCID fromString(String cidStr) {
+  final cidBytes = cidStr.codeUnits;
+  return fromBytes(cidBytes);
+}
+
+BaseCID fromBytes(List<int> cidBytes) {
+  if (cidBytes.length < 2) {
+    throw ArgumentError('Argument length cannot be zero');
+  }
+
+  if (cidBytes[0] != 0 && Multibase.isEncoded(cidBytes)) {
+    final cid = MultibaseDecoder().convert(cidBytes);
+    if (cid.length < 2) {
+      throw ArgumentError('CID length is invalid');
+    }
+
+    final data = cid.sublist(1);
+    final version = int.parse(cid[0].toString());
+    final codec = Multicodec.getCodec(data);
+    final multihash = multicodec.removePrefix(data);
+    return makeCID(version, codec, multihash);
+  } else if (cidBytes[0] == 0 || cidBytes[0] == 1) {
+    final version = cidBytes[0];
+    final data = cidBytes.sublist(1);
+    final codec = Multicodec.getCodec(data);
+    final multihash = multicodec.removePrefix(data);
+    return makeCID(version, codec, multihash);
+  } else {
+    try {
+      final version = 0;
+      final codec = CIDv0.CODEC;
+      final multihash = Base58Decoder().convert(cidBytes);
+      return CIDv0(multihash);
+    } catch (e) {
+      throw ArgumentError('Multihash is not a valid base58 encoded multihash');
     }
   }
 }
