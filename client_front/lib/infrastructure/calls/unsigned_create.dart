@@ -87,19 +87,9 @@ class UnsignedCreateCall extends ServerCall {
               amount: quantity!, // in sats
               verifierString: verifierString,
               // already decoded
-              associatedData: assetMemo == "" || assetMemo == null
-                  ? null
-                  : () {
-                      try {
-                        return assetMemo!.base58Decode.toEncodedString;
-                      } catch (e) {
-                        return null;
-                      }
-                    }(),
-              // already decoded
-              opReturnMemo: memo == "" || memo == null
-                  ? null
-                  : memo!.utf8ToHex, // should be hex string
+              associatedData: assetMemo,
+              // already encoded as hex string
+              opReturnMemo: memo,
             ),
           ));
 

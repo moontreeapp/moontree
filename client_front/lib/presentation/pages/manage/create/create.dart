@@ -486,10 +486,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   hintText: 'IPFS ("Qm...")',
                   helperText: assetMemoController.text == ''
                       ? null
-                      : cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
-                              null
-                          ? 'ipfs recognized\n\nmemo will be saved on the asset'
-                          : 'ipfs not recognized\n\nmemo will be saved on the transaction\n\n(memo will NOT be saved on the asset)',
+                      : cubit.decodeAssetMemo(assetMemoController.text) == null
+                          ? 'ipfs not recognized\n\nmemo will be saved on the transaction\n\n(memo will NOT be saved on the asset)'
+                          : 'ipfs recognized\n\nmemo will be saved on the asset',
                   //helperText: assetMemoFocus.hasFocus
                   //    ? 'will be saved on the blockchain'
                   //    : null,
@@ -509,11 +508,6 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   onChanged: (String value) => cubit.update(assetMemo: value),
                   onEditingComplete: () {
                     cubit.update(assetMemo: assetMemoController.text);
-                    print(cubit.decodeAssetMemo(assetMemoController.text));
-                    //if (assetMemoController.text == '' ||
-                    //    cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
-                    //        null) {
-                    //}
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
               if (!isNFT(state.type) &&
@@ -564,16 +558,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     name: nameController.text,
                     quantityCoinString: quantityController.text,
                     decimals: int.parse(decimalsController.text),
+                    assetMemo: assetMemoController.text,
+                    //memo: null, // ignored
                     //reissuable: reissuableController.text,
-
-                    /// we don't capture opReturnMemo separate from assetMemo
-                    /// so we set the correct memo based on what was entered
-                    assetMemo: _validateAssetMemo(assetMemoController.text)
-                        ? assetMemoController.text
-                        : '',
-                    memo: !_validateAssetMemo(assetMemoController.text)
-                        ? assetMemoController.text
-                        : null,
                   );
                   setState(() {
                     clicked = true;
@@ -652,8 +639,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
   bool _validateAssetMemo([String? assetMemo]) =>
       //(assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text) == '' ||
-      cubit.assetMemoIsMemoOrNull(assetMemo ?? assetMemoController.text) ==
-          null;
+      cubit.decodeAssetMemo(assetMemo ?? assetMemoController.text) != null;
 
   bool _validateVerifier([String? value]) =>
       (value ?? verifierController.text).isQualifierString; // is this the same?

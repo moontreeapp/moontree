@@ -17,6 +17,7 @@ class SimpleReissueCheckout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime startTime = DateTime.now();
+    final SimpleReissueFormCubit cubit = components.cubits.simpleReissueForm;
     return BlocBuilder<SimpleReissueFormCubit, SimpleReissueFormState>(
       builder: (BuildContext context, SimpleReissueFormState state) {
         return CustomScrollView(
@@ -83,7 +84,9 @@ class SimpleReissueCheckout extends StatelessWidget {
                               style: Theme.of(context).textTheme.checkoutItem),
                           if (!['', null].contains(state.assetMemo))
                             CheckoutItemReissue(
-                                left: 'IPFS / Data',
+                                left: cubit.assetMemoIsMemo
+                                    ? 'Return Memo'
+                                    : 'IPFS / Data',
                                 right: state.assetMemo?.cutOutMiddle() ?? '',
                                 style:
                                     Theme.of(context).textTheme.checkoutItem),

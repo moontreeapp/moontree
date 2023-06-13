@@ -139,7 +139,9 @@ class _LoginNativeState extends State<LoginNative> {
     final bool validate = await localAuthApi.authenticate(
         skip: devFlags.contains(DevFlag.skipPin));
     streams.app.auth.authenticating.add(false);
-    setState(() => enabled = false);
+    if (mounted) {
+      setState(() => enabled = false);
+    }
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (!consented) {
         consented = await consentToAgreements(await getId());

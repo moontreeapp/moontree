@@ -59,18 +59,8 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         type: type ?? state.type,
         parentName: parentName ?? state.parentName,
         name: name ?? state.name,
-
-        /// all this is handled on the front end
-        // if the asset memo isn't ipfs or txid it should be opReturnMemo.
-        //memo: memo ?? assetMemoIsMemoOrNull(assetMemo) ?? state.memo,
-        // verify the asset memo is ipfs or txid first
-        //assetMemo:
-        //    (assetMemoIsMemoOrNull(assetMemo) == null ? assetMemo : null) ??
-        //        state.assetMemo,
-        memo: memo ?? state.memo,
+        memo: memo ?? state.memo, // this is never used - totally ignored.
         assetMemo: assetMemo ?? state.assetMemo,
-
-        /// the rest
         verifierString: verifierString ?? state.verifierString,
         quantity: quantity ??
             asCoinToSats(state.quantityCoinString.replaceAll(',', '')) ??
@@ -89,18 +79,9 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         isSubmitting: isSubmitting ?? state.isSubmitting,
       ));
 
-  String? assetMemoIsMemoOrNull(String? assetMemo) =>
-      ((assetMemo?.startsWith('Qm') ?? false) && (assetMemo?.isIpfs ?? false))
-          ? assetMemo?.base58Decode.length != 34
-              ? assetMemo
-              : null
-          : assetMemo?.utf8ToHex.toByteData.lengthInBytes != 34
-              ? assetMemo
-              : null;
-
   String? decodeAssetMemo([String? assetMemo]) {
     assetMemo ??= state.assetMemo;
-    if (assetMemo == null) {
+    if (assetMemo == null || assetMemo == '') {
       return null;
     }
     try {
@@ -109,24 +90,32 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         return encoded.toEncodedString;
       }
     } catch (e) {
-      try {
-        final encoded = assetMemo.base32Decode;
-        if (encoded.length == 34) {
-          return encoded.toEncodedString;
-        }
-      } catch (e) {
-        try {
-          final encoded = assetMemo.substring(5).base32Decode;
-          if (encoded.length == 34) {
-            return encoded.toEncodedString;
-          }
-        } catch (e) {
-          print('unrecognized');
-        }
-      }
+      print('unrecognized');
     }
     return null;
   }
+
+  String? encodeAssetMemoAsMemo() => state.assetMemo?.utf8ToHex;
+
+  String? encodeMemo([String? memo]) {
+    memo ??= state.memo;
+    if (memo == null || memo == '') {
+      if (decodeAssetMemo() == null) {
+        memo = state.assetMemo;
+      }
+      if (memo == null || memo == '') {
+        return null;
+      }
+    }
+    try {
+      return memo.utf8ToHex;
+    } catch (e) {
+      print('unable to hex encode memo');
+    }
+    return null;
+  }
+
+  bool get assetMemoIsMemo => decodeAssetMemo(state.assetMemo) == null;
 
   // occurs on move to next page...
   //Future<void> updateQuantity() async => update(
@@ -175,8 +164,8 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       changeAddress: changeAddress,
       quantity: state.quantity,
       divisibility: state.decimals,
-      memo: state.memo,
-      assetMemo: state.assetMemo,
+      memo: assetMemoIsMemo ? encodeAssetMemoAsMemo() : state.memo?.utf8ToHex,
+      assetMemo: decodeAssetMemo(state.assetMemo),
       verifierString: state.verifierString,
       parentSymbol: state.parentName,
       symbol: state.name,

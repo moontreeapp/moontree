@@ -61,19 +61,10 @@ class UnsignedReissueCall extends ServerCall {
               divisibility: divisibility,
               amount: quantity!, // in sats
               verifierString: verifierString,
-              associatedData: assetMemo == "" || assetMemo == null
-                  ? null
-                  : () {
-                      try {
-                        return assetMemo!.base58Decode.toEncodedString;
-                      } catch (e) {
-                        return null;
-                      }
-                    }(),
-
-              opReturnMemo: memo == "" || memo == null
-                  ? null
-                  : memo!.utf8ToHex, // should be hex string
+              // already decoded
+              associatedData: assetMemo,
+              // already encoded as hex string
+              opReturnMemo: memo,
             ),
           ));
 

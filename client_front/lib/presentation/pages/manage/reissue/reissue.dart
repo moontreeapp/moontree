@@ -462,10 +462,9 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   hintText: 'IPFS ("Qm...")',
                   helperText: assetMemoController.text == ''
                       ? null
-                      : cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
-                              null
-                          ? 'ipfs recognized\n\nmemo will be saved on the asset'
-                          : 'ipfs not recognized\n\nmemo will be saved on the transaction\n\n(memo will NOT be saved on the asset)',
+                      : cubit.decodeAssetMemo(assetMemoController.text) == null
+                          ? 'ipfs not recognized\n\nmemo will be saved on the transaction\n\n(memo will NOT be saved on the asset)'
+                          : 'ipfs recognized\n\nmemo will be saved on the asset',
                   //assetMemoFocus.hasFocus
                   //    ? 'will be saved on the blockchain'
                   //    : null,
@@ -482,16 +481,9 @@ class _SimpleReissueState extends State<SimpleReissue> {
                                         (await Clipboard.getData('text/plain'))
                                                 ?.text ??
                                             '')),*/
-                  onChanged: (String value) =>
-                      cubit.assetMemoIsMemoOrNull(value) == null
-                          ? cubit.update(assetMemo: value)
-                          : null,
+                  onChanged: (String value) => cubit.update(assetMemo: value),
                   onEditingComplete: () {
-                    if (assetMemoController.text == '' ||
-                        cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
-                            null) {
-                      cubit.update(assetMemo: assetMemoController.text);
-                    }
+                    cubit.update(assetMemo: assetMemoController.text);
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
               Padding(
@@ -518,16 +510,9 @@ class _SimpleReissueState extends State<SimpleReissue> {
                     name: nameController.text,
                     quantityCoinString: quantityController.text,
                     decimals: int.parse(decimalsController.text),
+                    assetMemo: assetMemoController.text,
+                    //memo: null, // ignored
                     //reissuable: reissuableController.text,
-
-                    /// we don't capture opReturnMemo separate from assetMemo
-                    /// so we set the correct memo based on what was entered
-                    assetMemo: _validateAssetMemo(assetMemoController.text)
-                        ? assetMemoController.text
-                        : '',
-                    memo: !_validateAssetMemo(assetMemoController.text)
-                        ? assetMemoController.text
-                        : null,
                   );
                   //cubit.updateQuantity();
                   setState(() {
@@ -608,8 +593,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
   bool _validateAssetMemo([String? assetMemo]) =>
       //(assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text) == '' ||
-      cubit.assetMemoIsMemoOrNull(assetMemo ?? assetMemoController.text) ==
-          null;
+      cubit.decodeAssetMemo(assetMemo ?? assetMemoController.text) != null;
 
   bool _validateQuantity(SimpleReissueFormState state, [String? quantity]) {
     quantity = (quantity ?? quantityController.text);

@@ -65,18 +65,8 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
         quantityCoinString: quantityCoinString ?? state.quantityCoinString,
         decimals: decimals ?? state.decimals,
         reissuable: reissuable ?? state.reissuable,
-
-        /// all this is handled on the front end
-        // if the asset memo isn't ipfs or txid it should be opReturnMemo.
-        //memo: memo ?? assetMemoIsMemoOrNull(assetMemo) ?? state.memo,
-        // verify the asset memo is ipfs or txid first
-        //assetMemo:
-        //    (assetMemoIsMemoOrNull(assetMemo) == null ? assetMemo : null) ??
-        //        state.assetMemo,
         memo: memo ?? state.memo,
         assetMemo: assetMemo ?? state.assetMemo,
-
-        /// the rest
         verifierString: verifierString ?? state.verifierString,
         changeAddress: changeAddress ?? state.changeAddress,
         metadataView: respectMetadata
@@ -93,15 +83,43 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
   //Future<void> updateQuantity() async => update(
   //      quantity: asCoinToSats(state.quantityCoinString),
   //    );
+  String? decodeAssetMemo([String? assetMemo]) {
+    assetMemo ??= state.assetMemo;
+    if (assetMemo == null || assetMemo == '') {
+      return null;
+    }
+    try {
+      final encoded = assetMemo.base58Decode;
+      if (encoded.length == 34) {
+        return encoded.toEncodedString;
+      }
+    } catch (e) {
+      print('unrecognized');
+    }
+    return null;
+  }
 
-  String? assetMemoIsMemoOrNull(String? assetMemo) =>
-      ((assetMemo?.startsWith('Qm') ?? false) && (assetMemo?.isIpfs ?? false))
-          ? assetMemo?.base58Decode.length != 34
-              ? assetMemo
-              : null
-          : assetMemo?.utf8ToHex.toByteData.lengthInBytes != 34
-              ? assetMemo
-              : null;
+  String? encodeAssetMemoAsMemo() => state.assetMemo?.utf8ToHex;
+
+  String? encodeMemo([String? memo]) {
+    memo ??= state.memo;
+    if (memo == null || memo == '') {
+      if (decodeAssetMemo() == null) {
+        memo = state.assetMemo;
+      }
+      if (memo == null || memo == '') {
+        return null;
+      }
+    }
+    try {
+      return memo.utf8ToHex;
+    } catch (e) {
+      print('unable to hex encode memo');
+    }
+    return null;
+  }
+
+  bool get assetMemoIsMemo => decodeAssetMemo(state.assetMemo) == null;
 
   Future<void> updateName(String symbol, {String? parentName}) async => update(
         metadataView: await (getMetadataView(
@@ -145,8 +163,8 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
       changeAddress: changeAddress,
       quantity: state.quantity,
       divisibility: state.decimals,
-      memo: state.memo,
-      assetMemo: state.assetMemo,
+      memo: assetMemoIsMemo ? encodeAssetMemoAsMemo() : state.memo?.utf8ToHex,
+      assetMemo: decodeAssetMemo(state.assetMemo),
       verifierString: state.verifierString,
       symbol: state.fullname,
       reissuable: state.reissuable,

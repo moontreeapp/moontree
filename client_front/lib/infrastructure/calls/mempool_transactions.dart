@@ -69,32 +69,38 @@ class MempoolTransactionHistoryCall extends ServerCall {
       //  roots = wallet.roots; ?? await Current.wallet.roots;
     }
     roots ??= await Current.wallet.roots;
-    final List<server.TransactionView> history = mockFlag
+    try {
+      final List<server.TransactionView> history = mockFlag
 
-        /// MOCK SERVER
-        ? await Future.delayed(Duration(seconds: 1), spoof)
+          /// MOCK SERVER
+          ? await Future.delayed(Duration(seconds: 1), spoof)
 
-        /// SERVER
-        : await transactionHistoryBy(
-            symbol: serverSymbol,
-            height: height,
-            chain: ChainNet(chain, net).chaindata,
-            roots: roots,
-            h160s: roots.isEmpty
-                ? Current.wallet.addresses.map((e) => e.h160AsByteData).toList()
-                : []);
+          /// SERVER
+          : await transactionHistoryBy(
+              symbol: serverSymbol,
+              height: height,
+              chain: ChainNet(chain, net).chaindata,
+              roots: roots,
+              h160s: roots.isEmpty
+                  ? Current.wallet.addresses
+                      .map((e) => e.h160AsByteData)
+                      .toList()
+                  : []);
 
-    if (history.length == 1 && history.first.error != null) {
-      // handle
-      return [];
+      if (history.length == 1 && history.first.error != null) {
+        // handle
+        return [];
+      }
+
+      for (final txView in history) {
+        txView.chain = chain.name + '_' + net.name + 'net';
+        txView.symbol = symbol;
+      }
+
+      return history;
+    } catch (e) {
+      return error();
     }
-
-    for (final txView in history) {
-      txView.chain = chain.name + '_' + net.name + 'net';
-      txView.symbol = symbol;
-    }
-
-    return history;
   }
 }
 
@@ -255,3 +261,32 @@ List<server.TransactionView> spoof() {
 
   return views + views;
 }
+
+List<server.TransactionView> error() => <server.TransactionView>[
+      server.TransactionView(
+          error: 'presumably not in mempool yet - server errored',
+          // send transaction
+          symbol: null,
+          chain: null,
+          containsAssets: false,
+          consolidation: true,
+          hash: ByteData(0),
+          datetime: DateTime.now(),
+          height: 0,
+          fee: 0,
+          vsize: 0,
+          iProvided: 0,
+          //otherProvided: 4 * satsPerCoin,
+          iReceived: 0,
+          //otherReceived: 10 * satsPerCoin,
+          issueMainBurned: 0,
+          reissueBurned: 0,
+          issueSubBurned: 0,
+          issueUniqueBurned: 0,
+          issueMessageBurned: 0,
+          issueQualifierBurned: 0,
+          issueSubQualifierBurned: 0,
+          issueRestrictedBurned: 0,
+          addTagBurned: 0,
+          burnBurned: 0),
+    ];

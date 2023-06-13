@@ -17,6 +17,7 @@ class SimpleCreateCheckout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime startTime = DateTime.now();
+    final SimpleCreateFormCubit cubit = components.cubits.simpleCreateForm;
     return BlocBuilder<SimpleCreateFormCubit, SimpleCreateFormState>(
       builder: (BuildContext context, SimpleCreateFormState state) {
         return CustomScrollView(
@@ -83,7 +84,9 @@ class SimpleCreateCheckout extends StatelessWidget {
                               style: Theme.of(context).textTheme.checkoutItem),
                           if (!['', null].contains(state.assetMemo))
                             CheckoutItem(
-                                left: 'IPFS / Data',
+                                left: cubit.assetMemoIsMemo
+                                    ? 'Return Memo'
+                                    : 'IPFS / Data',
                                 right: state.assetMemo?.cutOutMiddle() ?? '',
                                 style:
                                     Theme.of(context).textTheme.checkoutItem),
