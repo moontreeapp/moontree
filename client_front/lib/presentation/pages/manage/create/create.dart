@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:client_front/application/manage/create/decoded.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -509,6 +510,8 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   onChanged: (String value) => cubit.update(assetMemo: value),
                   onEditingComplete: () {
                     cubit.update(assetMemo: assetMemoController.text);
+                    print(cubit.decodeAssetMemo2(assetMemoController.text));
+                    test();
                     //if (assetMemoController.text == '' ||
                     //    cubit.assetMemoIsMemoOrNull(assetMemoController.text) ==
                     //        null) {

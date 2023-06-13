@@ -1,3 +1,4 @@
+import 'package:client_front/application/manage/create/decode.dart';
 import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -97,6 +98,37 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
           : assetMemo?.utf8ToHex.toByteData.lengthInBytes != 34
               ? assetMemo
               : null;
+
+  String? decodeAssetMemo2([String? assetMemo]) {
+    final x = decodeCID(assetMemo!);
+    print(x);
+    print(x.length);
+    print(x.lengthInBytes);
+    print(x.toEncodedString);
+  }
+
+  String? decodeAssetMemo([String? assetMemo]) {
+    assetMemo ??= state.assetMemo;
+    if (assetMemo == null) {
+      return null;
+    }
+    try {
+      final encoded = assetMemo.base58Decode;
+      if (encoded.length == 34) {
+        return encoded.toEncodedString;
+      }
+    } catch (e) {
+      try {
+        final encoded = assetMemo.base32Decode;
+        if (encoded.length == 34) {
+          return encoded.toEncodedString;
+        }
+      } catch (e) {
+        print('unrecognized');
+      }
+    }
+    return null;
+  }
 
   // occurs on move to next page...
   //Future<void> updateQuantity() async => update(

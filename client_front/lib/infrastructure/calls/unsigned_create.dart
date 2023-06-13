@@ -86,6 +86,7 @@ class UnsignedCreateCall extends ServerCall {
               divisibility: divisibility,
               amount: quantity!, // in sats
               verifierString: verifierString,
+              // already decoded
               associatedData: assetMemo == "" || assetMemo == null
                   ? null
                   : () {
@@ -95,6 +96,7 @@ class UnsignedCreateCall extends ServerCall {
                         return null;
                       }
                     }(),
+              // already decoded
               opReturnMemo: memo == "" || memo == null
                   ? null
                   : memo!.utf8ToHex, // should be hex string
