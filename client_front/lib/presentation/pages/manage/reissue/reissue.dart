@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:client_front/presentation/utils/formatters.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -266,17 +267,11 @@ class _SimpleReissueState extends State<SimpleReissue> {
                 textInputAction: TextInputAction.next,
                 readOnly: isNFT(state.type) || quantityAtMax(state),
                 enabled: !isNFT(state.type) || !quantityAtMax(state),
+                inputFormatters: [QuantityInputFormatter()],
                 keyboardType: const TextInputType.numberWithOptions(
                   signed: false,
                   decimal: true,
                 ),
-                //inputFormatters: <TextInputFormatter>[
-                //  FilteringTextInputFormatter(
-                //    //RegExp(r'^[1-9]\d*$'),
-                //    RegExp(r'^[1-9]\d*(\.\d+)?$'),
-                //    allow: true,
-                //  )
-                //],
                 labelText: 'Additional Quantity',
                 hintText: 'currently exists: ${getCurrentlyExists(state)}',
                 errorText: ['', '.'].contains(quantityController.text)
@@ -508,7 +503,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   cubit.update(
                     parentName: parentNameController.text,
                     name: nameController.text,
-                    quantityCoinString: quantityController.text,
+                    quantityCoinString: quantityController.textWithoutCommas,
                     decimals: int.parse(decimalsController.text),
                     assetMemo: assetMemoController.text,
                     //memo: null, // ignored
@@ -613,9 +608,8 @@ class _SimpleReissueState extends State<SimpleReissue> {
   bool _validateQuantityPositive([String? quantity]) {
     quantity = (quantity ?? quantityController.text);
     if ( //quantity.contains('.') ||
-        quantity.contains(',') ||
-            quantity.contains('-') ||
-            quantity.contains(' ')) {
+        //quantity.contains(',') ||
+        quantity.contains('-') || quantity.contains(' ')) {
       return false;
     }
     return true;
@@ -628,7 +622,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
     quantity = (quantity ?? quantityController.text);
     double doubleQ;
     try {
-      doubleQ = double.parse(quantity);
+      doubleQ = double.parse(quantity.replaceAll(',', ''));
       if (isNFT(state.type)) {
         return doubleQ == 1; // rvn && evr match?
       }
@@ -649,9 +643,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
     if (quantity.contains('.')) {
       final leftRight = quantity.split('.');
       if (leftRight[1].length > state.decimals) {
-        return leftRight[0] +
-            '.' +
-            leftRight[1].substring(0, state.decimals + 1);
+        return leftRight[0] + '.' + leftRight[1].substring(0, state.decimals);
       }
     }
     return quantity;

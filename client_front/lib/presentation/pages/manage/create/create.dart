@@ -1,10 +1,11 @@
 import 'dart:io' show Platform;
-import 'package:intl/intl.dart';
+import 'package:client_front/presentation/utils/formatters.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/domain/utils/alphacon.dart';
@@ -20,108 +21,6 @@ import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:wallet_utils/wallet_utils.dart';
-
-extension NumberEditingController on TextEditingController {
-  String get textWithoutCommas => text.replaceAll(',', '');
-}
-
-//class NumberInputFormatter extends TextInputFormatter {
-//  @override
-//  TextEditingValue formatEditUpdate(
-//      TextEditingValue oldValue, TextEditingValue newValue) {
-//    if (newValue.text.isEmpty) {
-//      return newValue.copyWith(text: '');
-//    }
-//
-//    final formatter = NumberFormat('#,###.##');
-//    final parsedValue = double.tryParse(newValue.text.replaceAll(',', ''));
-//
-//    if (parsedValue != null) {
-//      final newString = formatter.format(parsedValue);
-//      return newValue.copyWith(text: newString);
-//    }
-//
-//    return oldValue;
-//  }
-//}
-//class NumberInputFormatter extends TextInputFormatter {
-//  @override
-//  TextEditingValue formatEditUpdate(
-//      TextEditingValue oldValue, TextEditingValue newValue) {
-//    if (newValue.text.isEmpty) {
-//      return newValue.copyWith(text: '');
-//    }
-//
-//    final formatter = NumberFormat('#,###.##');
-//    final parsedValue = double.tryParse(newValue.text.replaceAll(',', ''));
-//    final selectionIndex = newValue.selection.baseOffset;
-//
-//    if (parsedValue != null) {
-//      final newString = formatter.format(parsedValue);
-//      final newSelectionIndex =
-//          selectionIndex + (newString.length - newValue.text.length);
-//      try {
-//        return TextEditingValue(
-//          text: newString,
-//          selection: TextSelection.collapsed(offset: newSelectionIndex),
-//        );
-//      } catch (e) {
-//        return newValue.copyWith(text: newString);
-//      }
-//    }
-//
-//    return oldValue;
-//  }
-//}
-//
-class NumberInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.text.isEmpty) {
-      return newValue.copyWith(text: '');
-    }
-
-    final formatter = NumberFormat('#,###.##', 'en_US');
-    final parsedValue = double.tryParse(newValue.text.replaceAll(',', ''));
-
-    if (parsedValue != null) {
-      final newString = formatter.format(parsedValue);
-      final selectionIndex = newValue.selection.baseOffset;
-      final decimalSeparator = formatter.symbols.DECIMAL_SEP;
-
-      if (newValue.text.contains(decimalSeparator)) {
-        final decimalIndex = newValue.text.indexOf(decimalSeparator);
-        final diff = newString.length - newValue.text.length;
-
-        final newSelectionIndex =
-            selectionIndex + diff + (selectionIndex > decimalIndex ? 0 : 1);
-
-        try {
-          return TextEditingValue(
-            text: newString,
-            selection: TextSelection.collapsed(offset: newSelectionIndex),
-          );
-        } catch (_) {
-          return newValue.copyWith(text: newString);
-        }
-      }
-      try {
-        return TextEditingValue(
-          text: newString,
-          selection: TextSelection.collapsed(
-            offset: selectionIndex + (newString.length - newValue.text.length),
-          ),
-        );
-      } catch (_) {
-        return newValue.copyWith(text: newString);
-      }
-    }
-
-    return oldValue;
-  }
-}
 
 class SimpleCreate extends StatefulWidget {
   const SimpleCreate({Key? key}) : super(key: key);
@@ -391,17 +290,11 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   textInputAction: TextInputAction.next,
                   readOnly: isNFT(state.type),
                   enabled: !isNFT(state.type),
-                  // inputFormatters: [NumberInputFormatter()],
+                  inputFormatters: [QuantityInputFormatter()],
                   keyboardType: const TextInputType.numberWithOptions(
                     signed: false,
                     decimal: true,
                   ),
-                  //inputFormatters: <TextInputFormatter>[
-                  //  FilteringTextInputFormatter(
-                  //    RegExp(r'^[1-9]\d*$'),
-                  //    allow: true,
-                  //  )
-                  //],
                   labelText: 'Quantity',
                   hintText: 'how many coins should be minted?',
                   errorText: ['', '.'].contains(quantityController.text)

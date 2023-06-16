@@ -6,6 +6,7 @@ class SimpleSendFormState extends CubitState {
   final Security security;
   final String address;
   final String changeAddress;
+  final String amountStr;
   final double amount;
   final FeeRate fee;
   final String memo;
@@ -22,6 +23,7 @@ class SimpleSendFormState extends CubitState {
     required this.security,
     this.address = '',
     this.changeAddress = '',
+    this.amountStr = '',
     this.amount = 0.0,
     this.fee = standardFee,
     this.memo = '',
@@ -37,16 +39,17 @@ class SimpleSendFormState extends CubitState {
   @override
   String toString() =>
       'SpendForm(security=$security, address=$address, amount=$amount, '
-      'fee=$fee, note=$note, addressName=$addressName, unsigned=$unsigned, '
-      'signed=$signed, txHash=$txHash, changeAddress=$changeAddress, '
-      'checkout=$checkout, metadataView=$metadataView, '
-      'isSubmitting=$isSubmitting)';
+      'amountStr=$amountStr, fee=$fee, note=$note, addressName=$addressName, '
+      'unsigned=$unsigned, signed=$signed, txHash=$txHash, '
+      'changeAddress=$changeAddress, checkout=$checkout, '
+      'metadataView=$metadataView, isSubmitting=$isSubmitting)';
 
   @override
   List<Object?> get props => <Object?>[
         metadataView,
         security,
         address,
+        amountStr,
         amount,
         fee,
         memo,
@@ -67,6 +70,7 @@ class SimpleSendFormState extends CubitState {
     AssetMetadataResponse? metadataView,
     Security? security,
     String? address,
+    String? amountStr,
     double? amount,
     FeeRate? fee,
     String? memo,
@@ -83,6 +87,7 @@ class SimpleSendFormState extends CubitState {
         metadataView: metadataView ?? this.metadataView,
         security: security ?? this.security,
         address: address ?? this.address,
+        amountStr: amountStr ?? this.amountStr,
         amount: amount ?? this.amount,
         fee: fee ?? this.fee,
         memo: memo ?? this.memo,

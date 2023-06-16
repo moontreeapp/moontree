@@ -157,7 +157,8 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
     return widget.pageTitle == 'Send'
         ? GestureDetector(
             child: text,
-            onTap: () => widget.cubit?.set(amount: holding.toDouble()))
+            onTap: () => widget.cubit
+                ?.set(amountStr: holding, amount: holding.toDouble()))
         : text;
   }
 

@@ -74,9 +74,7 @@ class SimpleReissueCheckout extends StatelessWidget {
                               style: Theme.of(context).textTheme.checkoutItem),
                           CheckoutItemReissue(
                               left: 'Additional Quantity',
-                              right: state.quantityCoin
-                                  .toCommaString()
-                                  .replaceAll('.0', ''),
+                              right: state.quantityCoin.toCommaString(),
                               style: Theme.of(context).textTheme.checkoutItem),
                           CheckoutItemReissue(
                               left: 'Decimal Places',

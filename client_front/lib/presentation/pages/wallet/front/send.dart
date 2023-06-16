@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'dart:async';
+import 'package:client_front/presentation/utils/formatters.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:intersperse/intersperse.dart';
@@ -63,6 +64,7 @@ class _SimpleSendState extends State<SimpleSend> {
   bool clicked = false;
   bool validatedAddress = true;
   late Balance holdingBalance;
+  bool populated = false;
 
   void scrollToItem(FocusNode focusNode, double offset, [double returnTo = 0]) {
     if (focusNode.hasFocus) {
@@ -146,17 +148,29 @@ class _SimpleSendState extends State<SimpleSend> {
     }
   }
 
+  void setQuantity(SimpleSendFormState state) {
+    sendAmount.value = TextEditingValue(
+        text: state.amountStr,
+        selection: sendAmount.selection.baseOffset > state.amountStr.length
+            ? TextSelection.collapsed(offset: state.amountStr.length)
+            : sendAmount.selection);
+  }
+
   @override
   Widget build(BuildContext context) {
     final SimpleSendFormCubit cubit =
         BlocProvider.of<SimpleSendFormCubit>(context);
+
     data = populateData(context, data);
     if (data['openQR'] == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         cubit.set(address: (await _produceScanModal()));
       });
     }
-    populateFromData(cubit);
+    if (!populated) {
+      populateFromData(cubit);
+      populated = true;
+    }
     return GestureDetector(
         onTap: () {
           // getting error on back button.
@@ -183,20 +197,7 @@ class _SimpleSendState extends State<SimpleSend> {
               // carry on
               sendAsset.text = state.security.name;
               if (state.amount > 0) {
-                final String text = enforceDivisibility(
-                  _asDoubleString(state.amount),
-                  divisibility: state.security.divisibility,
-                );
-                sendAmount.value = TextEditingValue(
-                    text: text,
-                    selection: sendAmount.selection.baseOffset > text.length ||
-                            (sendAmount.selection.baseOffset == 2 &&
-
-                                /// this is the case that they typed .x and it replaced it with 0.x
-                                text.length == 3 &&
-                                text.startsWith('0.'))
-                        ? TextSelection.collapsed(offset: text.length)
-                        : sendAmount.selection);
+                setQuantity(state);
               }
               if (state.memo.length > 0) {
                 sendMemo.value = TextEditingValue(
@@ -309,15 +310,18 @@ class _SimpleSendState extends State<SimpleSend> {
                           controller: sendAmount,
                           textInputAction: TextInputAction.next,
                           keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
+                            signed: false,
+                            decimal: true,
+                          ),
                           inputFormatters: <TextInputFormatter>[
-                            //DecimalTextInputFormatter(decimalRange: divisibility)
-                            FilteringTextInputFormatter(
-                                //RegExp(r'[.0-9]'),
-                                RegExp(r'^[0-9]*(\.[0-9]{0,' +
-                                    '${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8}' +
-                                    r'})?'),
-                                allow: true)
+                            QuantityInputFormatter(),
+                            ////DecimalTextInputFormatter(decimalRange: divisibility)
+                            //FilteringTextInputFormatter(
+                            //    //RegExp(r'[.0-9]'),
+                            //    RegExp(r'^[0-9]*(\.[0-9]{0,' +
+                            //        '${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8}' +
+                            //        r'})?'),
+                            //    allow: true)
                           ],
                           labelText: 'Amount',
                           hintText: 'Quantity',
@@ -331,6 +335,9 @@ class _SimpleSendState extends State<SimpleSend> {
                             if (_asDouble(x) > holdingBalance.amount) {
                               return 'too large';
                             }
+                            if (!_validateDivisibility(x)) {
+                              return 'too many decimal places';
+                            }
                             if (x.isNumeric) {
                               final num? y = x.toNum();
                               if (y != null && y.isRVNAmount) {
@@ -338,7 +345,7 @@ class _SimpleSendState extends State<SimpleSend> {
                               }
                             }
                             return 'Unrecognized Amount';
-                          }(sendAmount.text),
+                          }(sendAmount.textWithoutCommas),
                           // put ability to put it in as USD here
                           /* // functionality has been moved to header
                                   suffixText: sendAll ? "don't send all" : 'send all',
@@ -360,19 +367,24 @@ class _SimpleSendState extends State<SimpleSend> {
                                   */
                           onChanged: (String value) {
                             try {
-                              cubit.set(amount: double.parse(value));
+                              cubit.set(
+                                  amountStr: value,
+                                  amount:
+                                      double.parse(value.replaceAll(',', '')));
                             } catch (e) {
-                              cubit.set(amount: 0);
+                              cubit.set(amountStr: '', amount: 0);
                             }
                           },
                           onEditingComplete: () {
                             String value = sendAmount.text;
                             try {
-                              cubit.set(amount: double.parse(value));
+                              cubit.set(
+                                  amountStr: value,
+                                  amount:
+                                      double.parse(value.replaceAll(',', '')));
                             } catch (e) {
-                              cubit.set(amount: 0);
+                              cubit.set(amountStr: '', amount: 0);
                             }
-
                             //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
                             //FocusScope.of(context).requestFocus(sendFeeFocusNode);
                             FocusScope.of(context).unfocus();
@@ -563,11 +575,11 @@ class _SimpleSendState extends State<SimpleSend> {
   //    .getOne(Current.walletId, pros.securities.currentCoin) !=
   //null;
 
-  bool _validateDivisibility() =>
+  bool _validateDivisibility([String? value]) =>
       (components.cubits.simpleSendForm.state.metadataView?.divisibility ??
           8) >=
-      (sendAmount.text.contains('.')
-          ? sendAmount.text.split('.').last.length
+      ((value ?? sendAmount.text).contains('.')
+          ? (value ?? sendAmount.text).split('.').last.length
           : 0);
 
   bool _fieldValidation() =>
@@ -577,26 +589,27 @@ class _SimpleSendState extends State<SimpleSend> {
       _verifyMemo();
 
   bool _holdingValidation(SimpleSendFormState state) {
-    if (_asDouble(sendAmount.text) == 0.0) {
+    final quantity = sendAmount.textWithoutCommas;
+    if (_asDouble(quantity) == 0.0) {
       return false;
     }
     if (holdingBalance.security.isCoin) {
       // we have enough coin for the send and minimum fee estimate
       // actaully don't do this because we can send all.
-      if (holdingBalance.amount == double.parse(sendAmount.text)) {
+      if (holdingBalance.amount == double.parse(quantity)) {
         return true;
       }
       // if not sending all:
-      return holdingBalance.amount > double.parse(sendAmount.text) + 0.0021;
+      return holdingBalance.amount > double.parse(quantity) + 0.0021;
     } else {
       final BalanceView? holdingView =
           components.cubits.holdingsView.holdingsViewFor(Current.coin.symbol);
       // we have enough asset for the send and enough coin for minimum fee
-      return holdingBalance.amount >= double.parse(sendAmount.text) &&
+      return holdingBalance.amount >= double.parse(quantity) &&
           holdingView!.satsConfirmed + holdingView.satsUnconfirmed > 210000;
     }
     //return (state.security.balance?.amount ?? 0) >=
-    //    double.parse(sendAmount.text);
+    //    double.parse(sendAmount.textWithoutCommas);
   }
 
   bool _allValidation(SimpleSendFormState state) =>
@@ -607,7 +620,7 @@ class _SimpleSendState extends State<SimpleSend> {
     final bool vMemo = _verifyMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
-      if (holdingBalance.amount >= double.parse(sendAmount.text)) {
+      if (holdingBalance.amount >= double.parse(sendAmount.textWithoutCommas)) {
         final SendRequest sendRequest = SendRequest(
           sendAll: holdingBalance.amount == state.amount,
           wallet: Current.wallet,
@@ -758,9 +771,8 @@ class _SimpleSendState extends State<SimpleSend> {
         ListTile(
             onTap: () {
               context.read<BottomModalSheetCubit>().hide();
-              final sec = pros.securities.ofCurrent(nameSymbol(name)) ??
-                  pros.securities.currentCoin;
-              cubit.setSecurity(sec);
+              cubit.setSecurity(pros.securities.ofCurrent(nameSymbol(name)) ??
+                  pros.securities.currentCoin);
             },
             leading: components.icons.assetAvatar(
                 name == 'Ravencoin'

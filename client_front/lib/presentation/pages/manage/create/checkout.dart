@@ -74,9 +74,7 @@ class SimpleCreateCheckout extends StatelessWidget {
                               style: Theme.of(context).textTheme.checkoutItem),
                           CheckoutItem(
                               left: 'Quantity',
-                              right: state.quantityCoin
-                                  .toCommaString()
-                                  .replaceAll('.0', ''),
+                              right: state.quantityCoin.toCommaString(),
                               style: Theme.of(context).textTheme.checkoutItem),
                           CheckoutItem(
                               left: 'Decimal Places',
