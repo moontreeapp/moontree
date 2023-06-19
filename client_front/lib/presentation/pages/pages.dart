@@ -31,8 +31,7 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/wallet/holding/transaction': (BuildContext context) =>
       const TransactionPage(),
   '/wallet/send': (BuildContext context) => const SimpleSend(),
-  '/wallet/send/checkout': (BuildContext context) =>
-      SimpleSendCheckout(transactionType: TransactionType.spend),
+  '/wallet/send/checkout': (BuildContext context) => SimpleSendCheckout(),
   '/manage/holdings': (BuildContext context) => const ManageHoldings(),
   '/manage/holding': (BuildContext context) => const ManageHolding(),
   '/manage/create': (BuildContext context) => const SimpleCreate(),
@@ -58,9 +57,6 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/setting/hidden/assets': (BuildContext context) => const HiddenAssets(),
   '/network/blockchain': (BuildContext context) => const BlockchainSettings(),
   '/scan': (BuildContext context) => const ScanQRPage(),
-  '/send/checkout': (BuildContext context) => SimpleSendCheckout(
-        transactionType: TransactionType.spend,
-      ),
 };
 
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;

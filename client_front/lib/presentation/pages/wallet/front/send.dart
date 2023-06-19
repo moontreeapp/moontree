@@ -1,8 +1,5 @@
 import 'dart:io' show Platform;
 import 'dart:async';
-import 'package:client_front/presentation/utils/formatters.dart';
-import 'package:client_front/presentation/widgets/front_curve.dart';
-import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,11 +13,13 @@ import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_front/domain/concepts/fee.dart' as fees;
-import 'package:client_front/domain/utils/params.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/application/wallet/send/cubit.dart';
 import 'package:client_front/application/layers/modal/bottom/cubit.dart';
+import 'package:client_front/presentation/utils/formatters.dart';
+import 'package:client_front/presentation/widgets/front_curve.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/pages/wallet/scan.dart';
 import 'package:client_front/presentation/services/services.dart';
 import 'package:client_front/presentation/widgets/other/selection_control.dart';
@@ -192,8 +191,8 @@ class _SimpleSendState extends State<SimpleSend> {
               holdingBalance = Balance(
                   walletId: Current.walletId,
                   security: state.security,
-                  confirmed: holdingView?.satsConfirmed ?? 0,
-                  unconfirmed: holdingView?.satsUnconfirmed ?? 0);
+                  confirmed: holdingView.satsConfirmed,
+                  unconfirmed: holdingView.satsUnconfirmed);
               // carry on
               sendAsset.text = state.security.name;
               if (state.amount > 0) {
@@ -240,7 +239,7 @@ class _SimpleSendState extends State<SimpleSend> {
                           readOnly: true,
                           textInputAction: TextInputAction.next,
                           prefixIcon:
-                              PrefixAssetCoinIcon(symbol: holdingView!.symbol),
+                              PrefixAssetCoinIcon(symbol: holdingView.symbol),
 
                           //decoration: styles.decorations.textField(context,
                           //    focusNode: sendAssetFocusNode,

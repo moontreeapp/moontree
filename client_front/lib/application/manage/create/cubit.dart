@@ -12,8 +12,7 @@ import 'package:wallet_utils/wallet_utils.dart'
         SatsToAmountExtension,
         TransactionBuilder,
         satsPerCoin,
-        standardFee,
-        StringValidationExtension;
+        standardFee;
 import 'package:wallet_utils/src/transaction.dart' as wutx;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';

@@ -12,13 +12,8 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
-enum TransactionType { spend, create, reissue, export }
-
 class SimpleSendCheckout extends StatelessWidget {
-  final TransactionType? transactionType;
-
-  SimpleSendCheckout({required this.transactionType, Key? key})
-      : super(key: key);
+  SimpleSendCheckout({Key? key}) : super(key: key);
 
   String getRightTotal(String x, SimpleSendFormState state) {
     if ((state.checkout!.estimate?.fees ?? 0) > 0) {
