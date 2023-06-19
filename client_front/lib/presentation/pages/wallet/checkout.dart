@@ -1,18 +1,16 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart';
+import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_front/application/wallet/send/cubit.dart';
 import 'package:client_front/presentation/services/services.dart';
-import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intersperse/intersperse.dart';
-import 'package:moontree_utils/moontree_utils.dart';
-import 'package:client_back/client_back.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
 import 'package:client_front/presentation/theme/extensions.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:wallet_utils/wallet_utils.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 enum TransactionType { spend, create, reissue, export }
 

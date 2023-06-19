@@ -1,15 +1,15 @@
-import 'package:client_front/application/manage/reissue/cubit.dart';
-import 'package:client_front/presentation/services/services.dart';
-import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
 import 'package:client_back/client_back.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
+import 'package:client_front/application/manage/reissue/cubit.dart';
 import 'package:client_front/presentation/theme/extensions.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:wallet_utils/wallet_utils.dart' show SatsToAmountExtension;
+import 'package:client_front/presentation/services/services.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class SimpleReissueCheckout extends StatelessWidget {
   const SimpleReissueCheckout({Key? key}) : super(key: key);
