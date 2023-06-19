@@ -641,7 +641,7 @@ class SnackContents extends StatelessWidget {
             SizedBox(
                 width: labelSize,
                 child: Text(
-                  (snack!.label ?? 'copy').toUpperCase(),
+                  (snack!.label ?? 'copy').toTitleCase(),
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -664,7 +664,7 @@ class SnackContents extends StatelessWidget {
                 child: SizedBox(
                     width: labelSize,
                     child: Text(
-                      snack!.label!.toUpperCase(),
+                      snack!.label!.toTitleCase(),
                       textAlign: TextAlign.right,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
