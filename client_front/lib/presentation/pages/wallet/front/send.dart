@@ -188,6 +188,7 @@ class _SimpleSendState extends State<SimpleSend> {
               if (holdingView == null) {
                 return SizedBox.shrink();
               }
+              final isNFT = Symbol(state.security.symbol).isNFT;
               holdingBalance = Balance(
                   walletId: Current.walletId,
                   security: state.security,
@@ -197,6 +198,8 @@ class _SimpleSendState extends State<SimpleSend> {
               sendAsset.text = state.security.name;
               if (state.amount > 0) {
                 setQuantity(state);
+              } else if (isNFT) {
+                cubit.set(amountStr: '1', amount: 1);
               }
               if (state.memo.length > 0) {
                 sendMemo.value = TextEditingValue(
@@ -221,6 +224,92 @@ class _SimpleSendState extends State<SimpleSend> {
                         : sendAddress.selection);
               }
               sendFee.text = state.fee.name!;
+              final amountWidget = TextFieldFormatted(
+                key: Key('sendAmount'),
+                focusNode: sendAmountFocusNode,
+                controller: sendAmount,
+                textInputAction: TextInputAction.next,
+                readOnly: isNFT,
+                enabled: !isNFT,
+                keyboardType: const TextInputType.numberWithOptions(
+                  signed: false,
+                  decimal: true,
+                ),
+                inputFormatters: <TextInputFormatter>[
+                  QuantityInputFormatter(),
+                  ////DecimalTextInputFormatter(decimalRange: divisibility)
+                  //FilteringTextInputFormatter(
+                  //    //RegExp(r'[.0-9]'),
+                  //    RegExp(r'^[0-9]*(\.[0-9]{0,' +
+                  //        '${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8}' +
+                  //        r'})?'),
+                  //    allow: true)
+                ],
+                labelText: 'Amount',
+                hintText: 'Quantity',
+                errorText: (String x) {
+                  if (x == '') {
+                    return null;
+                  }
+                  if (x == '0') {
+                    return 'must be greater than 0';
+                  }
+                  if (_asDouble(x) > holdingBalance.amount) {
+                    return 'too large';
+                  }
+                  if (!_validateDivisibility(x)) {
+                    return 'too many decimal places';
+                  }
+                  if (x.isNumeric) {
+                    final num? y = x.toNum();
+                    if (y != null && y.isRVNAmount) {
+                      return null;
+                    }
+                  }
+                  return 'Unrecognized Amount';
+                }(sendAmount.textWithoutCommas),
+                // put ability to put it in as USD here
+                /* // functionality has been moved to header
+                                  suffixText: sendAll ? "don't send all" : 'send all',
+                                  suffixStyle: Theme.of(context).textTheme.bodySmall,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                        sendAll ? Icons.not_interested : Icons.all_inclusive,
+                                        color: Color(0xFF606060)),
+                                    onPressed: () {
+                                      if (!sendAll) {
+                                        sendAll = true;
+                                        sendAmount.text = holding.toString();
+                                      } else {
+                                        sendAll = false;
+                                        sendAmount.text = '';
+                                      }
+                                    },
+                                  ),
+                                  */
+                onChanged: (String value) {
+                  try {
+                    cubit.set(
+                        amountStr: value,
+                        amount: double.parse(value.replaceAll(',', '')));
+                  } catch (e) {
+                    cubit.set(amountStr: '', amount: 0);
+                  }
+                },
+                onEditingComplete: () {
+                  String value = sendAmount.text;
+                  try {
+                    cubit.set(
+                        amountStr: value,
+                        amount: double.parse(value.replaceAll(',', '')));
+                  } catch (e) {
+                    cubit.set(amountStr: '', amount: 0);
+                  }
+                  //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
+                  //FocusScope.of(context).requestFocus(sendFeeFocusNode);
+                  FocusScope.of(context).unfocus();
+                },
+              );
               return Stack(
                 children: <Widget>[
                   ListView(
@@ -303,92 +392,16 @@ class _SimpleSendState extends State<SimpleSend> {
                                 .requestFocus(sendAmountFocusNode);
                           },
                         ),
-                        TextFieldFormatted(
-                          key: Key('sendAmount'),
-                          focusNode: sendAmountFocusNode,
-                          controller: sendAmount,
-                          textInputAction: TextInputAction.next,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            signed: false,
-                            decimal: true,
-                          ),
-                          inputFormatters: <TextInputFormatter>[
-                            QuantityInputFormatter(),
-                            ////DecimalTextInputFormatter(decimalRange: divisibility)
-                            //FilteringTextInputFormatter(
-                            //    //RegExp(r'[.0-9]'),
-                            //    RegExp(r'^[0-9]*(\.[0-9]{0,' +
-                            //        '${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8}' +
-                            //        r'})?'),
-                            //    allow: true)
-                          ],
-                          labelText: 'Amount',
-                          hintText: 'Quantity',
-                          errorText: (String x) {
-                            if (x == '') {
-                              return null;
-                            }
-                            if (x == '0') {
-                              return 'must be greater than 0';
-                            }
-                            if (_asDouble(x) > holdingBalance.amount) {
-                              return 'too large';
-                            }
-                            if (!_validateDivisibility(x)) {
-                              return 'too many decimal places';
-                            }
-                            if (x.isNumeric) {
-                              final num? y = x.toNum();
-                              if (y != null && y.isRVNAmount) {
-                                return null;
-                              }
-                            }
-                            return 'Unrecognized Amount';
-                          }(sendAmount.textWithoutCommas),
-                          // put ability to put it in as USD here
-                          /* // functionality has been moved to header
-                                  suffixText: sendAll ? "don't send all" : 'send all',
-                                  suffixStyle: Theme.of(context).textTheme.bodySmall,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                        sendAll ? Icons.not_interested : Icons.all_inclusive,
-                                        color: Color(0xFF606060)),
-                                    onPressed: () {
-                                      if (!sendAll) {
-                                        sendAll = true;
-                                        sendAmount.text = holding.toString();
-                                      } else {
-                                        sendAll = false;
-                                        sendAmount.text = '';
-                                      }
-                                    },
-                                  ),
-                                  */
-                          onChanged: (String value) {
-                            try {
-                              cubit.set(
-                                  amountStr: value,
-                                  amount:
-                                      double.parse(value.replaceAll(',', '')));
-                            } catch (e) {
-                              cubit.set(amountStr: '', amount: 0);
-                            }
-                          },
-                          onEditingComplete: () {
-                            String value = sendAmount.text;
-                            try {
-                              cubit.set(
-                                  amountStr: value,
-                                  amount:
-                                      double.parse(value.replaceAll(',', '')));
-                            } catch (e) {
-                              cubit.set(amountStr: '', amount: 0);
-                            }
-                            //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
-                            //FocusScope.of(context).requestFocus(sendFeeFocusNode);
-                            FocusScope.of(context).unfocus();
-                          },
-                        ),
+                        if (isNFT) // also do this for admins? probably not.
+                          GestureDetector(
+                            onTap: () => streams.app.behavior.snack.add(Snack(
+                              message: 'Non-Fungible Tokens are singluar',
+                              delay: 0,
+                            )),
+                            child: amountWidget,
+                          )
+                        else
+                          amountWidget,
                         TextFieldFormatted(
                           key: Key('sendFee'),
                           onTap: () => _produceFeeModal(cubit),
