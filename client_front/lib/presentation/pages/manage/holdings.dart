@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
+import 'package:client_front/presentation/utils/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:moontree_utils/moontree_utils.dart';
@@ -107,54 +108,67 @@ class _HoldingsView extends State<HoldingsView> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> assetHoldings = <Widget>[];
-    for (final AssetHolding holding in widget.cubit.state.assetHoldings) {
-      final ListTile thisHolding = ListTile(
-        //dense: true,
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        onTap: () async {
-          if (components.cubits.location.menuOpened) {
-            sail.menu(open: false);
-          } else {
-            onTap(widget.cubit.state.ranWallet, holding);
-          }
-        },
-        onLongPress: _togglePath,
-        leading: leadingIcon(holding),
-        title: title(holding, currentCrypto),
-      );
-      if (searchController.text == '' ||
-          holding.symbol.contains(searchController.text.toUpperCase())) {
-        assetHoldings.add(thisHolding);
-        assetHoldings.add(const Divider(height: 1));
+    return flutter_bloc.BlocBuilder<LocationCubit, LocationCubitState>(builder:
+        (BuildContext locationContext, LocationCubitState locationState) {
+      final List<Widget> assetHoldings = <Widget>[];
+      for (final AssetHolding holding in widget.cubit.state.assetHoldings) {
+        final ListTile thisHolding = ListTile(
+          //dense: true,
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          onTap: () async {
+            if (components.cubits.location.menuOpened) {
+              sail.menu(open: false);
+            } else {
+              onTap(widget.cubit.state.ranWallet, holding);
+            }
+          },
+          onLongPress: _togglePath,
+          leading: leadingIcon(holding),
+          title: title(holding, currentCrypto),
+        );
+        if (searchController.text == '' ||
+            holding.symbol.contains(searchController.text.toUpperCase())) {
+          assetHoldings.add(thisHolding);
+          assetHoldings.add(const Divider(height: 1));
+        }
       }
-    }
 
-    final ListView listView = ListView(
-        padding: EdgeInsets.zero,
-        controller: scrollController,
-        physics: const ClampingScrollPhysics(),
-        children: <Widget>[
-          ...assetHoldings,
-          ...<Widget>[components.empty.blankNavArea(context)]
-        ]);
-    //if (services.developer.advancedDeveloperMode == true) {
-    //  return RefreshIndicator(
-    //    onRefresh: () async {
-    //      streams.app.behavior.snack.add(Snack(message: 'Resyncing...'));
-    //      await services.client.resetMemoryAndConnection();
-    //      setState(() {});
-    //    },
-    //    child: listView,
-    //  );
-    //}
-    return GestureDetector(
-      onTap: () async {
-        refresh(widget.cubit);
-      },
-      child: listView,
-    );
+      final ListView listView = ListView(
+          padding: EdgeInsets.zero,
+          controller: scrollController,
+          physics: locationState.menuOpen
+              ? const NeverScrollableScrollPhysics()
+              : const ClampingScrollPhysics(),
+          children: <Widget>[
+            ...assetHoldings,
+            ...<Widget>[components.empty.blankNavArea(context)]
+          ]);
+      //if (services.developer.advancedDeveloperMode == true) {
+      //  return RefreshIndicator(
+      //    onRefresh: () async {
+      //      streams.app.behavior.snack.add(Snack(message: 'Resyncing...'));
+      //      await services.client.resetMemoryAndConnection();
+      //      setState(() {});
+      //    },
+      //    child: listView,
+      //  );
+      //}
+
+      // this seems to make the animations jumpy...
+      if (locationState.menuOpen) {
+        if (mounted) {
+          scrollController.jumpTo(0);
+        }
+      }
+
+      return GestureDetector(
+        onTap: () async {
+          refresh(widget.cubit);
+        },
+        child: listView,
+      );
+    });
   }
 
   void navigate(BalanceView balance, {Wallet? wallet}) {

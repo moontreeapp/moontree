@@ -165,88 +165,103 @@ class _HoldingsView extends State<HoldingsView> {
   Widget build(BuildContext context) {
     return flutter_bloc.BlocBuilder<SearchCubit, SearchCubitState>(
         builder: (BuildContext context, SearchCubitState state) {
-      final List<Widget> rvnHolding = <Widget>[];
-      final List<Widget> assetHoldings = <Widget>[];
-      for (final AssetHolding holding in widget.cubit.state.assetHoldings
-          .where((e) => !pros.settings.hiddenAssets.contains(
-                e.security,
-              ))) {
-        final Widget thisHolding = Visibility(
-            visible: !_hiddenAssets.contains(holding),
-            child: ListTile(
-              //dense: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-              onTap: () {
-                if (components.cubits.location.menuOpened) {
-                  sail.menu(open: false);
-                } else {
-                  onTap(widget.cubit.state.ranWallet, holding);
-                }
-              },
-              onLongPress: () {
-                if (!holding.symbolSymbol.isCoin) {
-                  _hideAsset(holding, holding.security);
-                  streams.app.behavior.snack.add(Snack(
-                      positive: true,
-                      message: 'Asset has been hidden',
-                      delay: 0,
-                      label: 'undo',
-                      callback: () => _unhideAsset(holding, holding.security)));
-                }
-              },
-              leading: leadingIcon(holding),
-              title: title(holding, currentCrypto),
+      return flutter_bloc.BlocBuilder<LocationCubit, LocationCubitState>(
+          builder:
+              (BuildContext locationContext, LocationCubitState locationState) {
+        final List<Widget> rvnHolding = <Widget>[];
+        final List<Widget> assetHoldings = <Widget>[];
+        for (final AssetHolding holding in widget.cubit.state.assetHoldings
+            .where((e) => !pros.settings.hiddenAssets.contains(
+                  e.security,
+                ))) {
+          final Widget thisHolding = Visibility(
+              visible: !_hiddenAssets.contains(holding),
+              child: ListTile(
+                //dense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+                onTap: () {
+                  if (components.cubits.location.menuOpened) {
+                    sail.menu(open: false);
+                  } else {
+                    onTap(widget.cubit.state.ranWallet, holding);
+                  }
+                },
+                onLongPress: () {
+                  if (!holding.symbolSymbol.isCoin) {
+                    _hideAsset(holding, holding.security);
+                    streams.app.behavior.snack.add(Snack(
+                        positive: true,
+                        message: 'Asset has been hidden',
+                        delay: 0,
+                        label: 'undo',
+                        callback: () =>
+                            _unhideAsset(holding, holding.security)));
+                  }
+                },
+                leading: leadingIcon(holding),
+                title: title(holding, currentCrypto),
+              ));
+          if (holding.symbol == currentCrypto.symbol) {
+            //if (pros.securities.coinSymbols.contains(holding.symbol)) {
+            rvnHolding.add(thisHolding);
+            rvnHolding.add(const Divider(
+              height: 1,
+              indent: 70,
+              endIndent: 0,
             ));
-        if (holding.symbol == currentCrypto.symbol) {
-          //if (pros.securities.coinSymbols.contains(holding.symbol)) {
-          rvnHolding.add(thisHolding);
-          rvnHolding.add(const Divider(
-            height: 1,
-            indent: 70,
-            endIndent: 0,
-          ));
-        } else {
-          if (state.text == '' || holding.symbol.contains(state.text)) {
-            assetHoldings.add(thisHolding);
-            assetHoldings.add(const Divider(height: 1));
+          } else {
+            if (state.text == '' || holding.symbol.contains(state.text)) {
+              assetHoldings.add(thisHolding);
+              assetHoldings.add(const Divider(height: 1));
+            }
           }
         }
-      }
 
-      /// this case is when we haven't started downloading anything yet.
-      if (rvnHolding.isEmpty && assetHoldings.isEmpty) {
-        rvnHolding.add(Shimmer.fromColors(
-            baseColor: AppColors.primaries[0],
-            highlightColor: Colors.white,
-            child: components.empty.holdingPlaceholder(context)));
-      }
+        /// this case is when we haven't started downloading anything yet.
+        if (rvnHolding.isEmpty && assetHoldings.isEmpty) {
+          rvnHolding.add(Shimmer.fromColors(
+              baseColor: AppColors.primaries[0],
+              highlightColor: Colors.white,
+              child: components.empty.holdingPlaceholder(context)));
+        }
 
-      final ListView listView = ListView(
-          padding: EdgeInsets.zero,
-          controller: scrollController,
-          physics: const ClampingScrollPhysics(),
-          children: <Widget>[
-            ...rvnHolding,
-            ...assetHoldings,
-            ...<Widget>[components.empty.blankNavArea(context)]
-          ]);
-      //if (services.developer.advancedDeveloperMode == true) {
-      //  return RefreshIndicator(
-      //    onRefresh: () async {
-      //      streams.app.behavior.snack.add(Snack(message: 'Resyncing...'));
-      //      await services.client.resetMemoryAndConnection();
-      //      setState(() {});
-      //    },
-      //    child: listView,
-      //  );
-      //}
-      return GestureDetector(
-        onTap: () async {
-          refresh(widget.cubit);
-        },
-        child: listView,
-      );
+        final ListView listView = ListView(
+            padding: EdgeInsets.zero,
+            controller: scrollController,
+            physics: locationState.menuOpen
+                ? const NeverScrollableScrollPhysics()
+                : const ClampingScrollPhysics(),
+            children: <Widget>[
+              ...rvnHolding,
+              ...assetHoldings,
+              ...<Widget>[components.empty.blankNavArea(context)]
+            ]);
+        //if (services.developer.advancedDeveloperMode == true) {
+        //  return RefreshIndicator(
+        //    onRefresh: () async {
+        //      streams.app.behavior.snack.add(Snack(message: 'Resyncing...'));
+        //      await services.client.resetMemoryAndConnection();
+        //      setState(() {});
+        //    },
+        //    child: listView,
+        //  );
+        //}
+
+        // this seems to make the animations jumpy...
+        if (locationState.menuOpen) {
+          if (mounted) {
+            scrollController.jumpTo(0);
+          }
+        }
+
+        return GestureDetector(
+          onTap: () async {
+            refresh(widget.cubit);
+          },
+          child: listView,
+        );
+      });
     });
   }
 

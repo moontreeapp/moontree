@@ -434,11 +434,18 @@ class Sail {
       throw Exception('must supply location or section');
     }
     var addToDestinationHistory = true;
-    if (location == null && destinationHistory[section]!.isNotEmpty) {
-      location = destinationHistory[section]!.last;
-      addToDestinationHistory = false;
-    } else {
-      location ??= initialPaths[section]!;
+    if (location == null) {
+      if (sectionHistory.last != section!) {
+        if (destinationHistory[sectionHistory.last]?.length == 1) {
+          destinationHistory[sectionHistory.last]!.removeLast();
+        }
+      }
+      if (destinationHistory[section]!.isNotEmpty) {
+        location = destinationHistory[section]!.last;
+        addToDestinationHistory = false;
+      } else {
+        location ??= initialPaths[section]!;
+      }
     }
     final manifest = destinationMap[location];
     if (manifest == null) {
