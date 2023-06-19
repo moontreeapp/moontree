@@ -64,40 +64,37 @@ class SimpleReissueCheckout extends StatelessWidget {
                         children: <Widget>[
                           if (state.parentName != '')
                             CheckoutItemReissue(
-                                left: 'Parent Asset',
-                                right: state.parentName,
-                                style:
-                                    Theme.of(context).textTheme.checkoutItem),
+                              left: 'Parent Asset',
+                              right: state.parentName,
+                            ),
                           CheckoutItemReissue(
-                              left: 'Asset',
-                              right: state.fullname,
-                              style: Theme.of(context).textTheme.checkoutItem),
+                            left: 'Asset',
+                            right: state.fullname,
+                          ),
                           CheckoutItemReissue(
-                              left: 'Additional Quantity',
-                              right: state.quantityCoin.toCommaString(),
-                              style: Theme.of(context).textTheme.checkoutItem),
+                            left: 'Additional Quantity',
+                            right: state.quantityCoin.toCommaString(),
+                          ),
                           CheckoutItemReissue(
-                              left: 'Decimal Places',
-                              right: state.decimals.toString(),
-                              style: Theme.of(context).textTheme.checkoutItem),
+                            left: 'Decimal Places',
+                            right: state.decimals.toString(),
+                          ),
                           if (!['', null].contains(state.assetMemo))
                             CheckoutItemReissue(
-                                left: cubit.assetMemoIsMemo
-                                    ? 'Return Memo'
-                                    : 'IPFS / Data',
-                                right: state.assetMemo?.cutOutMiddle() ?? '',
-                                style:
-                                    Theme.of(context).textTheme.checkoutItem),
+                              left: cubit.assetMemoIsMemo
+                                  ? 'Return Memo'
+                                  : 'IPFS / Data',
+                              right: state.assetMemo?.cutOutMiddle() ?? '',
+                            ),
                           if (!['', null].contains(state.memo))
                             CheckoutItemReissue(
-                                left: 'Return Memo',
-                                right: state.memo?.cutOutMiddle() ?? '',
-                                style:
-                                    Theme.of(context).textTheme.checkoutItem),
+                              left: 'Return Memo',
+                              right: state.memo?.cutOutMiddle() ?? '',
+                            ),
                           CheckoutItemReissue(
-                              left: 'Reissuable',
-                              right: state.reissuable ? 'yes' : 'no',
-                              style: Theme.of(context).textTheme.checkoutItem),
+                            left: 'Reissuable',
+                            right: state.reissuable ? 'yes' : 'no',
+                          ),
                         ],
                       )),
                   const SizedBox(height: 16),
@@ -126,14 +123,12 @@ class SimpleReissueCheckout extends StatelessWidget {
                             CheckoutItemReissue(
                                 left: state.assetReissueName,
                                 right: state.assetReissueFee.toCommaString(),
-                                style: Theme.of(context).textTheme.checkoutItem,
                                 fee: true),
                             CheckoutItemReissue(
                                 left: 'Standard Transaction',
                                 right: state.fee == null
                                     ? 'Calculating...'
                                     : '${state.fee!.asCoin}',
-                                style: Theme.of(context).textTheme.checkoutItem,
                                 fee: true),
                           ],
                         ],
@@ -192,13 +187,11 @@ class SimpleReissueCheckout extends StatelessWidget {
 class CheckoutItemReissue extends StatelessWidget {
   final String left;
   final String right;
-  final TextStyle? style;
   final bool fee;
 
   const CheckoutItemReissue({
     required this.left,
     required this.right,
-    this.style,
     this.fee = false,
   });
 
@@ -213,20 +206,22 @@ class CheckoutItemReissue extends StatelessWidget {
               width: (screen.width - 16 - 16 - 8) * .5,
               child: Text(
                 left,
-                style: style,
+                style: Theme.of(context).textTheme.checkoutItem,
                 overflow: TextOverflow.fade,
                 softWrap: false,
                 maxLines: 1,
               ),
             ),
             if (fee || right.length < 21)
-              Text(right, style: style, textAlign: TextAlign.right)
+              Text(right,
+                  style: Theme.of(context).textTheme.checkoutItem,
+                  textAlign: TextAlign.right)
             else
               SizedBox(
                 width: (screen.width - 16 - 16 - 8) * (1 - .5),
                 child: Text(
                   "$right${fee ? ' ${pros.settings.chain.symbol}' : ''}",
-                  style: style,
+                  style: Theme.of(context).textTheme.checkoutItem,
                   textAlign: TextAlign.right,
                   overflow: TextOverflow.fade,
                   softWrap: false,

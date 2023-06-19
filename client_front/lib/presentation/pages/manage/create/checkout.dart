@@ -16,7 +16,6 @@ class SimpleCreateCheckout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime startTime = DateTime.now();
     final SimpleCreateFormCubit cubit = components.cubits.simpleCreateForm;
     return BlocBuilder<SimpleCreateFormCubit, SimpleCreateFormState>(
       builder: (BuildContext context, SimpleCreateFormState state) {
@@ -64,40 +63,37 @@ class SimpleCreateCheckout extends StatelessWidget {
                         children: <Widget>[
                           if (state.parentName != '')
                             CheckoutItem(
-                                left: 'Parent Asset',
-                                right: state.parentName,
-                                style:
-                                    Theme.of(context).textTheme.checkoutItem),
+                              left: 'Parent Asset',
+                              right: state.parentName,
+                            ),
                           CheckoutItem(
-                              left: 'Asset',
-                              right: state.fullname,
-                              style: Theme.of(context).textTheme.checkoutItem),
+                            left: 'Asset',
+                            right: state.fullname,
+                          ),
                           CheckoutItem(
-                              left: 'Quantity',
-                              right: state.quantityCoin.toCommaString(),
-                              style: Theme.of(context).textTheme.checkoutItem),
+                            left: 'Quantity',
+                            right: state.quantityCoin.toCommaString(),
+                          ),
                           CheckoutItem(
-                              left: 'Decimal Places',
-                              right: state.decimals.toString(),
-                              style: Theme.of(context).textTheme.checkoutItem),
+                            left: 'Decimal Places',
+                            right: state.decimals.toString(),
+                          ),
                           if (!['', null].contains(state.assetMemo))
                             CheckoutItem(
-                                left: cubit.assetMemoIsMemo
-                                    ? 'Return Memo'
-                                    : 'IPFS / Data',
-                                right: state.assetMemo?.cutOutMiddle() ?? '',
-                                style:
-                                    Theme.of(context).textTheme.checkoutItem),
+                              left: cubit.assetMemoIsMemo
+                                  ? 'Return Memo'
+                                  : 'IPFS / Data',
+                              right: state.assetMemo?.cutOutMiddle() ?? '',
+                            ),
                           if (!['', null].contains(state.memo))
                             CheckoutItem(
-                                left: 'Return Memo',
-                                right: state.memo?.cutOutMiddle() ?? '',
-                                style:
-                                    Theme.of(context).textTheme.checkoutItem),
+                              left: 'Return Memo',
+                              right: state.memo?.cutOutMiddle() ?? '',
+                            ),
                           CheckoutItem(
-                              left: 'Reissuable',
-                              right: state.reissuable ? 'yes' : 'no',
-                              style: Theme.of(context).textTheme.checkoutItem),
+                            left: 'Reissuable',
+                            right: state.reissuable ? 'yes' : 'no',
+                          ),
                         ],
                       )),
                   const SizedBox(height: 16),
@@ -126,14 +122,12 @@ class SimpleCreateCheckout extends StatelessWidget {
                             CheckoutItem(
                                 left: state.assetCreationName,
                                 right: state.assetCreationFee.toCommaString(),
-                                style: Theme.of(context).textTheme.checkoutItem,
                                 fee: true),
                             CheckoutItem(
                                 left: 'Standard Transaction',
                                 right: state.fee == null
                                     ? 'Calculating...'
                                     : '${state.fee!.asCoin}',
-                                style: Theme.of(context).textTheme.checkoutItem,
                                 fee: true),
                           ],
                         ],
@@ -171,7 +165,7 @@ class SimpleCreateCheckout extends StatelessWidget {
                             Expanded(
                               child: SubmitButton(
                                 state: state,
-                                startTime: startTime,
+                                startTime: DateTime.now(),
                               ),
                             ),
                           ],
@@ -192,13 +186,11 @@ class SimpleCreateCheckout extends StatelessWidget {
 class CheckoutItem extends StatelessWidget {
   final String left;
   final String right;
-  final TextStyle? style;
   final bool fee;
 
   const CheckoutItem({
     required this.left,
     required this.right,
-    this.style,
     this.fee = false,
   });
 
@@ -213,20 +205,22 @@ class CheckoutItem extends StatelessWidget {
               width: (screen.width - 16 - 16 - 8) * .5,
               child: Text(
                 left,
-                style: style,
+                style: Theme.of(context).textTheme.checkoutItem,
                 overflow: TextOverflow.fade,
                 softWrap: false,
                 maxLines: 1,
               ),
             ),
             if (fee || right.length < 21)
-              Text(right, style: style, textAlign: TextAlign.right)
+              Text(right,
+                  style: Theme.of(context).textTheme.checkoutItem,
+                  textAlign: TextAlign.right)
             else
               SizedBox(
                 width: (screen.width - 16 - 16 - 8) * (1 - .5),
                 child: Text(
                   "$right${fee ? ' ${pros.settings.chain.symbol}' : ''}",
-                  style: style,
+                  style: Theme.of(context).textTheme.checkoutItem,
                   textAlign: TextAlign.right,
                   overflow: TextOverflow.fade,
                   softWrap: false,
