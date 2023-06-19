@@ -479,7 +479,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   controller: assetMemoController,
                   textInputAction: TextInputAction.next,
                   labelText: 'Memo',
-                  hintText: 'IPFS ("Qm...")',
+                  hintText: 'IPFS',
                   helperText: assetMemoController.text == ''
                       ? null
                       : cubit.decodeAssetMemo(assetMemoController.text) == null
@@ -546,7 +546,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
               BottomButton(
                 enabled: _allValidation(state) && !clicked,
                 focusNode: previewFocus,
-                label: !clicked ? 'Preview' : 'Generating Transaction...',
+                label: !clicked ? 'Preview' : 'Preparing Preview...',
                 disabledOnPressed: () => _announceNoCoin(state),
                 onPressed: () {
                   cubit.update(

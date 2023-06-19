@@ -32,7 +32,7 @@ class SimpleReissueCheckout extends StatelessWidget {
                     dense: true,
                     visualDensity: VisualDensity.compact,
                     leading: components.icons.assetAvatar(
-                      state.name.toUpperCase(),
+                      state.fullname.toUpperCase(),
                       chain: pros.settings.chain,
                       net: pros.settings.net,
                     ),
@@ -252,7 +252,7 @@ class SubmitButtonReissue extends StatelessWidget {
           if (DateTime.now().difference(startTime).inMilliseconds > 500) {
             components.cubits.loadingView.show(
               title: 'Reissuing',
-              msg: 'broadcasting transaction',
+              msg: state.assetReissueName,
             );
             () async {
               await components.cubits.simpleReissueForm.broadcast();

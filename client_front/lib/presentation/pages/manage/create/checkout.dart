@@ -32,7 +32,7 @@ class SimpleCreateCheckout extends StatelessWidget {
                     dense: true,
                     visualDensity: VisualDensity.compact,
                     leading: components.icons.assetAvatar(
-                      state.name.toUpperCase(),
+                      state.fullname.toUpperCase(),
                       chain: pros.settings.chain,
                       net: pros.settings.net,
                     ),
@@ -250,8 +250,8 @@ class SubmitButton extends StatelessWidget {
         onPressed: () async {
           if (DateTime.now().difference(startTime).inMilliseconds > 500) {
             components.cubits.loadingView.show(
-              title: 'Sending',
-              msg: 'broadcasting transaction',
+              title: 'Create',
+              msg: state.assetCreationName,
             );
             () async {
               await components.cubits.simpleCreateForm.broadcast();

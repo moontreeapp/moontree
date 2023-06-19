@@ -497,7 +497,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
               BottomButton(
                 enabled: _allValidation(state) && !clicked,
                 focusNode: previewFocus,
-                label: !clicked ? 'Preview' : 'Generating Transaction...',
+                label: !clicked ? 'Preview' : 'Preparing Preview...',
                 disabledOnPressed: () => _announceNoCoin(state),
                 onPressed: () {
                   cubit.update(
