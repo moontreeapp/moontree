@@ -39,7 +39,7 @@ class ScanQRPage extends StatelessWidget {
     return SizedBox.shrink();
   }
 
-  Future<String> _produceScanModal() async {
+  Future<void> _produceScanModal() async {
     components.cubits.bottomModalSheet.show(
         childrenHeight: screen.frontContainer.midHeight ~/ 1,
         fullscreen: false,
@@ -53,7 +53,6 @@ class ScanQRPage extends StatelessWidget {
         ]);
     //components.cubits.bottomModalSheet.reset();
     /* return await value produced */
-    return '';
   }
 }
 

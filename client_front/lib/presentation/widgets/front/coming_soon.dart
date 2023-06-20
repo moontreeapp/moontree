@@ -33,12 +33,14 @@ class ComingSoonPlaceholder extends StatelessWidget {
         children: <Widget>[
           Column(
             children: <Widget>[
-              for (final int _ in range(19))
+              for (final int _ in range(19)) ...[
+                SizedBox(height: 8),
                 placeholderType == PlaceholderType.wallet
                     ? components.empty.holdingPlaceholder(context)
                     : placeholderType == PlaceholderType.asset
                         ? components.empty.assetPlaceholder(context)
-                        : components.empty.swapPlaceholder(context)
+                        : components.empty.swapPlaceholder(context),
+              ]
             ],
           ),
           Column(children: <Widget>[

@@ -65,6 +65,7 @@ Future<void> switchWallet(String walletId) async {
   //  await services.client.disconnect();
   //  await services.client.createClient();
   //}
+  components.cubits.holdingsView.update(isSubmitting: true);
   await pros.settings.setCurrentWalletId(walletId);
   components.cubits.holdingsView
       .setHoldingViews(wallet: Current.wallet, force: true);

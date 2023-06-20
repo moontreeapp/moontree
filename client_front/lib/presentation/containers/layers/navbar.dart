@@ -370,7 +370,11 @@ class _SectionIconState extends State<SectionIcon> {
                     if (widget.preNavHook != null) {
                       widget.preNavHook!();
                     }
-                    sail.to(null, section: widget.section);
+                    sail.to(
+                      null,
+                      section: widget.section,
+                      //addToHistory: widget.section == Section.scan,
+                    );
                   },
                   child: SvgPicture.asset(
                     'assets/icons/custom/mobile/${widget.section.name}'

@@ -823,6 +823,9 @@ class _SimpleSendState extends State<SimpleSend> {
   }
 
   Future<String> _produceScanModal() async {
+    if (components.cubits.location.state.path == '/wallet/holdings') {
+      return '';
+    }
     FocusScope.of(context).unfocus();
     components.cubits.bottomModalSheet.show(
         childrenHeight: screen.frontContainer.midHeight ~/ 1,

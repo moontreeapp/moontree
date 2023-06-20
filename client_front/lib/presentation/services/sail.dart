@@ -541,7 +541,11 @@ class Sail {
       sectionHistory.add(destSection);
     }
     if (addToDestinationHistory) {
+      /// this removes the duplicate entries but appearently we rely on those...
+      //if (destinationHistory[destSection]!.isEmpty ||
+      //    destinationHistory[destSection]!.last != location) {
       destinationHistory[destSection]!.add(location);
+      //}
     }
   }
 
