@@ -115,6 +115,7 @@ class ScrollablePageStructure extends StatelessWidget {
   final double topPadding;
   final Widget? heightSpacer;
   final Widget? widthSpacer;
+  final ScrollController? scrollController;
 
   const ScrollablePageStructure({
     super.key,
@@ -122,6 +123,7 @@ class ScrollablePageStructure extends StatelessWidget {
     this.firstLowerChildren,
     this.secondLowerChildren,
     this.thirdLowerChildren,
+    this.scrollController,
     this.headerSpace = 0,
     this.heightSpacer = const SizedBox(height: 16),
     this.widthSpacer = const SizedBox(width: 16),
@@ -152,6 +154,8 @@ class ScrollablePageStructure extends StatelessWidget {
                         100,
                     0),
                 child: ListView(
+                  controller: scrollController,
+                  physics: const ClampingScrollPhysics(),
                   children: [
                     for (final child in (heightSpacer == null
                         ? children

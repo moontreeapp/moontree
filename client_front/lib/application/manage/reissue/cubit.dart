@@ -162,7 +162,7 @@ class SimpleReissueFormCubit extends Cubit<SimpleReissueFormState> {
       changeAddress: changeAddress,
       quantity: state.quantity,
       divisibility: state.decimals,
-      memo: assetMemoIsMemo ? encodeAssetMemoAsMemo() : state.memo?.utf8ToHex,
+      memo: state.memo?.utf8ToHex,
       assetMemo: decodeAssetMemo(state.assetMemo),
       verifierString: state.verifierString,
       symbol: state.fullname,

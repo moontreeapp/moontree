@@ -163,7 +163,11 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
       changeAddress: changeAddress,
       quantity: state.quantity,
       divisibility: state.decimals,
-      memo: assetMemoIsMemo ? encodeAssetMemoAsMemo() : state.memo?.utf8ToHex,
+
+      /// old way: allow the user to enter it into one field
+      //memo: assetMemoIsMemo ? encodeAssetMemoAsMemo() : state.memo?.utf8ToHex,
+      //assetMemo: decodeAssetMemo(state.assetMemo),
+      memo: state.memo?.utf8ToHex,
       assetMemo: decodeAssetMemo(state.assetMemo),
       verifierString: state.verifierString,
       parentSymbol: state.parentName,

@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:client_front/presentation/utils/animation.dart';
 import 'package:client_front/presentation/utils/formatters.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,8 @@ import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/selection_control.dart';
-import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/services/services.dart'
+    show sail, screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:wallet_utils/wallet_utils.dart';
@@ -49,13 +51,34 @@ class _SimpleReissueState extends State<SimpleReissue> {
   final SimpleReissueFormCubit cubit = components.cubits.simpleReissueForm;
   bool clicked = false;
 
+  void scrollUp() {
+    setState(() {});
+
+    if (assetMemoFocus.hasFocus) {
+      scrollController.animateTo(
+        screen.frontContainer.midHeight / 3,
+        duration: fadeDuration,
+        curve: Curves.easeInOutCubic,
+      );
+    } else {
+      scrollController.animateTo(
+        0,
+        duration: fadeDuration,
+        curve: Curves.easeInOutCubic,
+      );
+    }
+    Future.delayed(fadeDuration, () => print(scrollController.positions));
+  }
+
   @override
   void initState() {
     super.initState();
+    assetMemoFocus.addListener(scrollUp);
   }
 
   @override
   void dispose() {
+    assetMemoFocus.removeListener(scrollUp);
     components.cubits.simpleReissueForm.reset();
     parentNameController.dispose();
     nameController.dispose();
@@ -204,8 +227,10 @@ class _SimpleReissueState extends State<SimpleReissue> {
             }
           }
           return ScrollablePageStructure(
-            headerSpace: Platform.isIOS ? 16 : 8,
+            headerSpace: Platform.isIOS ? 8 : 0,
+            scrollController: scrollController,
             children: <Widget>[
+              SizedBox(height: 8),
               if (isSub(state.type))
                 TextFieldFormatted(
                   focusNode: parentNameFocus,
@@ -301,8 +326,9 @@ class _SimpleReissueState extends State<SimpleReissue> {
                     setState(() {});
                   } else {
                     final correctValue = _correctQuantityDivisibility(state);
+                    final rightSide =
+                        value.contains('.') ? value.split('.')[1].length : 0;
                     if (correctValue != value) {
-                      final rightSide = value.split('.')[1].length;
                       if (rightSide <= 8) {
                         cubit.update(
                           decimals: rightSide,
@@ -326,9 +352,12 @@ class _SimpleReissueState extends State<SimpleReissue> {
                       }
                     } else {
                       try {
-                        cubit.update(quantityCoinString: value);
+                        cubit.update(
+                          decimals: rightSide,
+                          quantityCoinString: value,
+                        );
                       } catch (e) {
-                        cubit.update(quantity: 0);
+                        cubit.update(decimals: rightSide, quantity: 0);
                       }
                     }
                   }
@@ -454,33 +483,49 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   controller: assetMemoController,
                   textInputAction: TextInputAction.next,
                   labelText: 'Memo',
-                  hintText: 'IPFS ("Qm...")',
+                  hintText: 'IPFS',
                   helperText: assetMemoController.text == ''
                       ? null
-                      : cubit.decodeAssetMemo(assetMemoController.text) == null
-                          ? 'ipfs not recognized\n\nmemo will be saved on the transaction\n\n(memo will NOT be saved on the asset)'
-                          : 'ipfs recognized\n\nmemo will be saved on the asset',
-                  //assetMemoFocus.hasFocus
-                  //    ? 'will be saved on the blockchain'
-                  //    : null,
+                      : 'ipfs v0 cid supported: "Qm..."',
                   helperStyle: Theme.of(context)
                       .textTheme
                       .bodySmall!
                       .copyWith(height: .7, color: AppColors.primary),
-                  errorText: _validateGenericMemo() ? null : 'too long',
-                  /*suffixIcon: IconButton(
-                                icon: const Icon(Icons.paste_rounded,
-                                    color: AppColors.black60),
-                                onPressed: () async => cubit.update(
-                                    assetMemo:
-                                        (await Clipboard.getData('text/plain'))
-                                                ?.text ??
-                                            '')),*/
+                  errorText:
+                      assetMemoController.text == '' && !assetMemoFocus.hasFocus
+                          ? null
+                          : _validateAssetMemo(assetMemoController.text)
+                              ? null
+                              : 'not recognized',
                   onChanged: (String value) => cubit.update(assetMemo: value),
                   onEditingComplete: () {
                     cubit.update(assetMemo: assetMemoController.text);
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
+
+              /// for future use - advanced option let them use opreturn memos
+              //TextFieldFormatted(
+              //  focusNode: memoFocus,
+              //  controller: memoController,
+              //  textInputAction: TextInputAction.next,
+              //  labelText: 'Transaction Memo',
+              //  hintText: 'for something...',
+              //  helperText: memoController.text == ''
+              //      ? null
+              //      : 'memo will be saved on the transaction',
+              //  //assetMemoFocus.hasFocus
+              //  //    ? 'will be saved on the blockchain'
+              //  //    : null,
+              //  helperStyle: Theme.of(context)
+              //      .textTheme
+              //      .bodySmall!
+              //      .copyWith(height: .7, color: AppColors.primary),
+              //  errorText: _validateGenericMemo() ? null : 'too long',
+              //  onChanged: (String value) => cubit.update(memo: value),
+              //  onEditingComplete: () {
+              //    cubit.update(memo: memoController.text);
+              //    FocusScope.of(context).requestFocus(reissuableFocus);
+              //  }),
               Padding(
                   padding: const EdgeInsets.only(left: 16),
                   child: SwtichChoice(
@@ -492,6 +537,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                     onChanged: (bool value) async =>
                         cubit.update(reissuable: value),
                   )),
+              SizedBox(height: screen.frontContainer.midHeight / 2),
             ],
             firstLowerChildren: <Widget>[
               BottomButton(
@@ -586,7 +632,6 @@ class _SimpleReissueState extends State<SimpleReissue> {
       (assetMemo ?? assetMemoController.text).isMemo;
 
   bool _validateAssetMemo([String? assetMemo]) =>
-      //(assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text) == '' ||
       cubit.decodeAssetMemo(assetMemo ?? assetMemoController.text) != null;
 
@@ -680,6 +725,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
       _validateName(state) &&
       _validateQuantity(state) &&
       _validateDecimals(state) &&
+      _validateAssetMemo() &&
       (!isRestricted(state.type) ||
           (isRestricted(state.type) && _validateVerifier())) &&
       _validateGenericMemo();
@@ -818,11 +864,17 @@ class _SimpleReissueState extends State<SimpleReissue> {
 
   void _produceDecimalsModal(SimpleReissueFormCubit cubit) {
     FocusScope.of(context).unfocus();
-    String generateDecs(String start, int totalCount) {
+    String generateDecs(String start, int totalCount, String head) {
       String appendZeros(String start, int totalCount) =>
           start +
           [for (final _ in range(totalCount - start.length)) '0'].join();
 
+      if (totalCount == 0) {
+        if (head == '') {
+          return '.';
+        }
+        return '';
+      }
       if (start.length > totalCount) {
         return '.' + start.substring(0, totalCount);
       }
@@ -844,15 +896,13 @@ class _SimpleReissueState extends State<SimpleReissue> {
     components.cubits.bottomModalSheet.show(
       childrenHeight: 55,
       children: <Widget>[
-        for (final decimal in range(8).where((t) => t >= divisibility))
+        for (final decimal in range(9).where((t) => t >= divisibility))
           ListTile(
             onTap: () {
               context.read<BottomModalSheetCubit>().hide();
               cubit.update(
                   decimals: decimal,
-                  quantityCoinString: decimal < tail.length
-                      ? head + '.' + tail.substring(0, decimal)
-                      : null);
+                  quantityCoinString: head + generateDecs(tail, decimal, head));
             },
             leading: components.icons.assetFromCacheOrGenerate(
                 asset: decimal.toString() + 'ABC',
@@ -868,7 +918,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 Text(
-                  generateDecs(tail, decimal),
+                  generateDecs(tail, decimal, head),
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

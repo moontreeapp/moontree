@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'dart:async';
+import 'package:client_front/presentation/utils/animation.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -70,11 +71,11 @@ class _SimpleSendState extends State<SimpleSend> {
       setState(() {});
       scrollController.animateTo(
           offset, //scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
+          duration: fadeDuration,
           curve: Curves.easeInOutCubic);
     } else {
       scrollController.animateTo(returnTo,
-          duration: Duration(milliseconds: 300), curve: Curves.easeInOutCubic);
+          duration: fadeDuration, curve: Curves.easeInOutCubic);
     }
   }
 

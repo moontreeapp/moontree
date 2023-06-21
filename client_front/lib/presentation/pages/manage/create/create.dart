@@ -74,10 +74,13 @@ class _SimpleCreateState extends State<SimpleCreate> {
   void initState() {
     super.initState();
     nameFocus.addListener(() => lookUpName());
+    assetMemoFocus.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
+    nameFocus.removeListener(() => lookUpName());
+    assetMemoFocus.removeListener(() => setState(() {}));
     components.cubits.simpleCreateForm.reset();
     parentNameController.dispose();
     nameController.dispose();
@@ -324,8 +327,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
                       setState(() {});
                     } else {
                       final correctValue = _correctQuantityDivisibility(state);
+                      final rightSide =
+                          value.contains('.') ? value.split('.')[1].length : 0;
                       if (correctValue != value) {
-                        final rightSide = value.split('.')[1].length;
                         if (rightSide <= 8) {
                           cubit.update(
                             decimals: rightSide,
@@ -350,9 +354,10 @@ class _SimpleCreateState extends State<SimpleCreate> {
                         }
                       } else {
                         try {
-                          cubit.update(quantityCoinString: value);
+                          cubit.update(
+                              decimals: rightSide, quantityCoinString: value);
                         } catch (e) {
-                          cubit.update(quantity: 0);
+                          cubit.update(decimals: 0, quantity: 0);
                         }
                       }
                     }
@@ -482,30 +487,46 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   hintText: 'IPFS',
                   helperText: assetMemoController.text == ''
                       ? null
-                      : cubit.decodeAssetMemo(assetMemoController.text) == null
-                          ? 'ipfs not recognized\n\nmemo will be saved on the transaction\n\n(memo will NOT be saved on the asset)'
-                          : 'ipfs recognized\n\nmemo will be saved on the asset',
-                  //helperText: assetMemoFocus.hasFocus
-                  //    ? 'will be saved on the blockchain'
-                  //    : null,
+                      : 'ipfs v0 cid supported: "Qm..."',
                   helperStyle: Theme.of(context)
                       .textTheme
                       .bodySmall!
                       .copyWith(height: .7, color: AppColors.primary),
-                  errorText: _validateGenericMemo() ? null : 'too long',
-                  /*suffixIcon: IconButton(
-                                icon: const Icon(Icons.paste_rounded,
-                                    color: AppColors.black60),
-                                onPressed: () async => cubit.update(
-                                    assetMemo:
-                                        (await Clipboard.getData('text/plain'))
-                                                ?.text ??
-                                            '')),*/
+                  errorText:
+                      assetMemoController.text == '' || assetMemoFocus.hasFocus
+                          ? null
+                          : _validateAssetMemo(assetMemoController.text)
+                              ? null
+                              : 'not recognized',
                   onChanged: (String value) => cubit.update(assetMemo: value),
                   onEditingComplete: () {
                     cubit.update(assetMemo: assetMemoController.text);
                     FocusScope.of(context).requestFocus(reissuableFocus);
                   }),
+
+              /// for future use - advanced option let them use opreturn memos
+              //TextFieldFormatted(
+              //  focusNode: memoFocus,
+              //  controller: memoController,
+              //  textInputAction: TextInputAction.next,
+              //  labelText: 'Transaction Memo',
+              //  hintText: 'for something...',
+              //  helperText: memoController.text == ''
+              //      ? null
+              //      : 'memo will be saved on the transaction',
+              //  //assetMemoFocus.hasFocus
+              //  //    ? 'will be saved on the blockchain'
+              //  //    : null,
+              //  helperStyle: Theme.of(context)
+              //      .textTheme
+              //      .bodySmall!
+              //      .copyWith(height: .7, color: AppColors.primary),
+              //  errorText: _validateGenericMemo() ? null : 'too long',
+              //  onChanged: (String value) => cubit.update(memo: value),
+              //  onEditingComplete: () {
+              //    cubit.update(memo: memoController.text);
+              //    FocusScope.of(context).requestFocus(reissuableFocus);
+              //  }),
               if (!isNFT(state.type) &&
                   !isQualifier(state.type) &&
                   !isChannel(state.type))
@@ -633,7 +654,6 @@ class _SimpleCreateState extends State<SimpleCreate> {
       (assetMemo ?? assetMemoController.text).isMemo;
 
   bool _validateAssetMemo([String? assetMemo]) =>
-      //(assetMemo ?? assetMemoController.text).isIpfs ||
       (assetMemo ?? assetMemoController.text) == '' ||
       cubit.decodeAssetMemo(assetMemo ?? assetMemoController.text) != null;
 
@@ -720,6 +740,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
       _validateParentName(state) &&
       _validateName(state) &&
       _validateQuantity(state) &&
+      _validateAssetMemo() &&
       (!isRestricted(state.type) ||
           (isRestricted(state.type) && _validateVerifier())) &&
       _validateGenericMemo();
@@ -890,11 +911,17 @@ class _SimpleCreateState extends State<SimpleCreate> {
 
   void _produceDecimalsModal(SimpleCreateFormCubit cubit) {
     FocusScope.of(context).unfocus();
-    String generateDecs(String start, int totalCount) {
+    String generateDecs(String start, int totalCount, String head) {
       String appendZeros(String start, int totalCount) =>
           start +
           [for (final _ in range(totalCount - start.length)) '0'].join();
 
+      if (totalCount == 0) {
+        if (head == '') {
+          return '.';
+        }
+        return '';
+      }
       if (start.length > totalCount) {
         return '.' + start.substring(0, totalCount);
       }
@@ -914,15 +941,13 @@ class _SimpleCreateState extends State<SimpleCreate> {
     components.cubits.bottomModalSheet.show(
       childrenHeight: 55,
       children: <Widget>[
-        for (final decimal in range(8))
+        for (final decimal in range(9))
           ListTile(
             onTap: () {
               context.read<BottomModalSheetCubit>().hide();
               cubit.update(
                   decimals: decimal,
-                  quantityCoinString: decimal < tail.length
-                      ? head + '.' + tail.substring(0, decimal)
-                      : null);
+                  quantityCoinString: head + generateDecs(tail, decimal, head));
             },
             leading: components.icons.assetFromCacheOrGenerate(
                 asset: decimal.toString() + 'ABC',
@@ -938,7 +963,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 Text(
-                  generateDecs(tail, decimal),
+                  generateDecs(tail, decimal, head),
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!
