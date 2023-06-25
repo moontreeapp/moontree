@@ -16,9 +16,7 @@ class Repository<T> {
   /// fetches values from server; if that fails, from cache; saves results
   /// and any errors encountered to self. saves to cache automatically.
   Future<T> fetch({bool only = false}) async {
-    final resultServer = await fromServer();
-    if (detectServerError(resultServer)) {
-      errors[RepoSource.server] = extractError(resultServer);
+    Future<T?> handleError() async {
       print(errors);
       if (only) {
         results = fallback(errors[RepoSource.server]!);
@@ -36,6 +34,22 @@ class Repository<T> {
         source = RepoSource.local;
         results = resultLocal;
       }
+      return null;
+    }
+
+    var resultServer;
+    bool connErr = false;
+    try {
+      resultServer = await fromServer();
+    } catch (e) {
+      connErr = true;
+    }
+    if (connErr) {
+      errors[RepoSource.server] = 'Connection Error';
+      handleError();
+    } else if (detectServerError(resultServer)) {
+      errors[RepoSource.server] = extractError(resultServer);
+      handleError();
     } else {
       source = RepoSource.server;
       results = resultServer;
