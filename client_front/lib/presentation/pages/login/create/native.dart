@@ -211,8 +211,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
     }
   }
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
+  bool isConnected() => components.cubits.connection.isConnected;
 
   /// nativeSecurity has it's own timeout...
   bool readyToUnlock() =>

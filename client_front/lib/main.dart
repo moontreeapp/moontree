@@ -231,6 +231,8 @@ class HomePage extends StatelessWidget {
             ],
       ),
     );
+    //todo fix - not a real solution
+    //components.cubits.connection.update(status: ConnectionStatus.connected);
     return GestureDetector(
         onTap: () => streams.app.active.tap.add(null),
         behavior: HitTestBehavior.translucent,

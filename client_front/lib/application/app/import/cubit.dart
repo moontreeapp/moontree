@@ -97,7 +97,6 @@ class ImportFormCubit extends Cubit<ImportFormState> with SetCubitMixin {
     }
     final ImportFrom importFrom = ImportFrom(text: importRequest!.text);
     if (importFrom.importFormat != ImportFormat.invalid) {
-      streams.client.busy.add(true);
       final Tuple3<List<bool>, List<String?>, List<String?>> tuple3 =
           await importFrom.handleImport(
         importRequest.getEntropy,

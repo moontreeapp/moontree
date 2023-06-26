@@ -18,6 +18,7 @@ Future<void> login({
   services.cipher.cleanupCiphers();
   services.cipher.loginTime();
   streams.app.loc.splash.add(false); // trigger to refresh app bar again
+  print(streams.app.loc.splash.value);
   streams.app.auth.logout.add(false);
   streams.app.auth.verify.add(true);
 

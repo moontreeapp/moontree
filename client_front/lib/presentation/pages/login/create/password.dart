@@ -188,8 +188,7 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
     });
   }
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
+  bool isConnected() => components.cubits.connection.isConnected;
 
   bool validate() {
     return passwordText == null &&

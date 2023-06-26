@@ -27,6 +27,9 @@ class ConnectionLight extends StatelessWidget {
               print('testing done here');
               streams.app.behavior.snack.add(
                   Snack(message: state.status.name, label: "ok", copy: 'abc'));
+              streams.app.behavior.snack.add(Snack(
+                message: pros.settings.chain.name,
+              ));
             },
             onTap: navToBlockchain,
             child: AnimatedContainer(

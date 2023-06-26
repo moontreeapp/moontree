@@ -20,6 +20,8 @@ import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class LoginNative extends StatefulWidget {
   const LoginNative({Key? key}) : super(key: key ?? defaultKey);
@@ -178,8 +180,7 @@ class _LoginNativeState extends State<LoginNative> {
     }
   }
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
+  bool isConnected() => components.cubits.connection.isConnected;
 
   /// nativeSecurity has it's own timeout...
   bool readyToUnlock() =>

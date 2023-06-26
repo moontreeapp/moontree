@@ -52,7 +52,6 @@ class LeaderWalletService {
   ///     already saved the most recent status nothing will happen.
   Future<void> newLeaderProcess(LeaderWallet leader) async {
     newLeaderProcessRunning = true;
-    streams.client.busy.add(true);
     await deriveMoreAddresses(leader);
   }
 

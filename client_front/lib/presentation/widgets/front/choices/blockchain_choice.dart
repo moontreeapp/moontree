@@ -73,11 +73,6 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               controller: choiceController,
               readOnly: true,
               labelText: 'Blockchain',
-              //helperText: services.client.connectionStatus &&
-              //        streams.client.connected.value ==
-              //            ConnectionStatus.connected
-              //    ? 'Connected'
-              //    : null,
               helperStyle: Theme.of(context)
                   .textTheme
                   .bodySmall!
@@ -110,8 +105,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
 bool isSelected(Chain chain, Net net) =>
     pros.settings.chain == chain && pros.settings.net == net;
 
-bool isConnected() =>
-    streams.client.connected.value == ConnectionStatus.connected;
+bool isConnected() => components.cubits.connection.isConnected;
 
 void produceBlockchainModal({
   BuildContext? context,
@@ -192,7 +186,7 @@ Future<void> changeChainNet(
   //      'Connecting to ${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}',
   //  returnHome: false,
   //);
-  streams.client.busy.add(true);
+  components.cubits.connection.update(busy: true);
   // reset subscriptions to point to this chain
   await subscription.setupSubscription(
     wallet: pros.wallets.currentWallet,
@@ -200,6 +194,7 @@ Future<void> changeChainNet(
     net: value.net,
   );
   await services.client.switchNetworks(chain: value.chain, net: value.net);
+  components.cubits.connection.update(busy: false);
   streams.app.behavior.snack.add(Snack(message: 'Successfully connected'));
   await components.cubits.holdingsView.setHoldingViews(force: true);
   components.cubits.loadingView.hide();

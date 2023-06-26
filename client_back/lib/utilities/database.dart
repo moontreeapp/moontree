@@ -58,9 +58,10 @@ Future<void> eraseAddressData({bool quick = false}) async {
   }
 }
 
+// not using electrum anymore
 void resetInMemoryState() {
-  services.client.subscribe.unsubscribeAssetsAll();
-  services.client.subscribe.subscriptionHandlesAsset.clear();
+  //services.client.subscribe.unsubscribeAssetsAll();
+  //services.client.subscribe.subscriptionHandlesAsset.clear();
 }
 
 Future<void> deleteDatabase() async {

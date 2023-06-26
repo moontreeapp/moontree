@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:client_front/application/infrastructure/connection/cubit.dart';
 import 'package:serverpod_client/serverpod_client.dart';
 import 'package:client_back/client_back.dart';
@@ -14,6 +16,7 @@ class SubscriptionService {
   late server.ConnectivityMonitor monitor;
   bool isConnected = false;
   late StreamingConnectionHandler connectionHandler;
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   SubscriptionService() : client = server.Client('$moontreeUrl/');
 
@@ -24,31 +27,27 @@ class SubscriptionService {
     //    disconnectOnLostInternetConnection: true);
     connectionHandler = StreamingConnectionHandler(
       client: client,
-      listener: (connectionState) {
+      listener: (StreamingConnectionHandlerState connectionState) {
         print('connection state: ${connectionState.status}');
-        if (connectionState.status == StreamingConnectionStatus.connected) {
-          if (!streams.app.loc.splash.value) {
-            //streams.client.connected.add(ConnectionStatus.connected);
+        if (!streams.app.loc.splash.value) {
+          if (connectionState.status == StreamingConnectionStatus.connected) {
             components.cubits.connection
                 .update(status: ConnectionStatus.connected);
-          }
-        } else if (connectionState.status ==
-                StreamingConnectionStatus.connecting ||
-            connectionState.status ==
-                StreamingConnectionStatus.waitingToRetry) {
-          if (!streams.app.loc.splash.value) {
+          } else if ([
+            StreamingConnectionStatus.connecting,
+            StreamingConnectionStatus.waitingToRetry,
+          ].contains(connectionState.status)) {
             components.cubits.connection
                 .update(status: ConnectionStatus.connecting);
-          }
-        } else if (connectionState.status ==
-            StreamingConnectionStatus.disconnected) {
-          if (!streams.app.loc.splash.value) {
+          } else if (connectionState.status ==
+              StreamingConnectionStatus.disconnected) {
             components.cubits.connection
                 .update(status: ConnectionStatus.disconnected);
           }
         }
       },
     );
+
     connectionHandler.connect();
     await setupListeners();
   }
@@ -104,6 +103,26 @@ class SubscriptionService {
     } catch (e) {
       print(e);
     }
+
+    listeners.add(streams.app.loc.splash.listen((bool value) {
+      if (!value) {
+        if (connectionHandler.status.status ==
+            StreamingConnectionStatus.connected) {
+          components.cubits.connection
+              .update(status: ConnectionStatus.connected);
+        } else if ([
+          StreamingConnectionStatus.connecting,
+          StreamingConnectionStatus.waitingToRetry
+        ].contains(connectionHandler.status.status)) {
+          components.cubits.connection
+              .update(status: ConnectionStatus.connecting);
+        } else if (connectionHandler.status.status ==
+            StreamingConnectionStatus.disconnected) {
+          components.cubits.connection
+              .update(status: ConnectionStatus.disconnected);
+        }
+      }
+    }));
   }
 
   Future<void> specifySubscription({

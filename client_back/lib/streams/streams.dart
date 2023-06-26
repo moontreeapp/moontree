@@ -8,6 +8,5 @@ import 'password.dart';
 class streams {
   static final AppStreams app = AppStreams();
   static final CipherStreams cipher = CipherStreams();
-  static final ClientStreams client = ClientStreams();
   static final PasswordStreams password = PasswordStreams();
 }

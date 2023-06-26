@@ -27,6 +27,8 @@ import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class LoginPassword extends StatefulWidget {
   const LoginPassword({Key? key}) : super(key: key ?? defaultKey);
@@ -178,8 +180,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     });
   }
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
+  bool isConnected() => components.cubits.connection.isConnected;
 
   Future<bool> validate() async => services.password.validate.password(
       password: password.text,
@@ -280,7 +281,8 @@ class _LoginPasswordState extends State<LoginPassword> {
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));
 
       /// erase all history stuff
-      await services.client.resetMemoryAndConnection(keepBalances: false);
+      //await services.client.resetMemoryAndConnection(keepBalances: false);
+
       streams.app.wallet.refresh.add(true);
     }
   }
