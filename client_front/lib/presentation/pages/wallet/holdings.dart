@@ -251,7 +251,10 @@ class _HoldingsView extends State<HoldingsView> {
         // this seems to make the animations jumpy...
         if (locationState.menuOpen) {
           if (mounted) {
-            scrollController.jumpTo(0);
+            if (scrollController.hasClients &&
+                scrollController.position.maxScrollExtent > 0) {
+              scrollController.jumpTo(0);
+            }
           }
         }
 

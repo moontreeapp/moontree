@@ -28,6 +28,7 @@ class SubscriptionService {
         print('connection state: ${connectionState.status}');
         if (connectionState.status == StreamingConnectionStatus.connected) {
           if (!streams.app.loc.splash.value) {
+            //streams.client.connected.add(ConnectionStatus.connected);
             components.cubits.connection
                 .update(status: ConnectionStatus.connected);
           }

@@ -29,3 +29,29 @@ DONE - fix send so it gives modal error if no value or not connected on click
 DONE - put verifierString on restircted
 
 clean up manage icon 
+
+--------
+
+connection light
+
+create on main assets page
+
+send disabled on no coin
+
+make x go out on search on empty text
+
+animations 
+
+ipfs memo thing:
+
+on active state: show helper texct 'eg. "Qm..."' on tap display helper text. 
+
+If they put in type something in "invalid ipfs (v0)"
+
+
+search: 
+
+don't clear on magnifying glass
+
+x always wipes the list and goes home
+
