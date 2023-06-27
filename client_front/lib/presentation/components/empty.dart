@@ -117,8 +117,8 @@ class EmptyComponents {
     bool holding = false,
   }) =>
       Container(
-          height: 72,
-          padding: const EdgeInsets.only(top: 8.0, left: 16),
+          height: 64,
+          padding: const EdgeInsets.only(top: 0, left: 16),
           child: Row(children: <Widget>[
             Container(
               height: 40,

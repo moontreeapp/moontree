@@ -1,17 +1,16 @@
-import 'package:client_front/application/utilities.dart';
+import 'package:client_front/presentation/theme/extensions.dart';
+import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
-import 'package:wallet_utils/src/utilities/validation_ext.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_back/server/src/protocol/asset_metadata_class.dart';
 import 'package:client_back/server/src/protocol/protocol.dart';
 import 'package:client_front/domain/utils/extensions.dart';
-import 'package:client_front/application/extra/cubit.dart';
-import 'package:client_front/application/front/cubit.dart';
-import 'package:client_front/application/transactions/cubit.dart';
+import 'package:client_front/application/containers/extra/cubit.dart';
+import 'package:client_front/application/containers/front/cubit.dart';
+import 'package:client_front/application/wallet/holding/cubit.dart';
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:client_front/presentation/widgets/back/coinspec/tabs.dart';
 import 'package:client_front/presentation/widgets/front/lists/transactions.dart';
@@ -97,8 +96,8 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
 
   @override
   Widget build(BuildContext context) {
-    final TransactionsViewCubit cubit =
-        BlocProvider.of<TransactionsViewCubit>(context);
+    final WalletHoldingViewCubit cubit =
+        BlocProvider.of<WalletHoldingViewCubit>(context);
     // first set the wallet and security so we can set the coinspec
     cubit.set(
         wallet: pros.wallets.currentWallet,
@@ -112,9 +111,9 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
     if (!pros.wallets.currentWallet.minerMode) {
       cubit.setInitial();
     }
-    return BlocBuilder<TransactionsViewCubit, TransactionsViewState>(
+    return BlocBuilder<WalletHoldingViewCubit, WalletHoldingViewState>(
         bloc: cubit..enter(),
-        builder: (BuildContext context, TransactionsViewState state) =>
+        builder: (BuildContext context, WalletHoldingViewState state) =>
             Container(
                 color: Colors.transparent,
                 height: services.screen.frontContainer.maxHeight,
@@ -165,15 +164,17 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
                             await Future.delayed(
                               Duration(seconds: 5),
                               () async {
-                                // if max hasn't changed after 5 seconds
-                                if (mounted &&
-                                    maxScroll ==
-                                        scrollController
-                                            .position.maxScrollExtent) {
-                                  // call it again
-                                  await cubit.addSetTransactionViews(
-                                      force: true);
-                                }
+                                try {
+                                  // if max hasn't changed after 5 seconds
+                                  if (mounted &&
+                                      maxScroll ==
+                                          scrollController
+                                              .position.maxScrollExtent) {
+                                    // call it again
+                                    await cubit.addSetTransactionViews(
+                                        force: true);
+                                  }
+                                } catch (e) {}
                               },
                             ).then((value) => timedCalling = false);
                           }
@@ -241,7 +242,7 @@ class CoinDetailsGlidingSheet extends StatefulWidget {
     required this.scrollController,
     Key? key,
   }) : super(key: key);
-  final TransactionsViewCubit cubit;
+  final WalletHoldingViewCubit cubit;
   final Widget? cachedMetadataView;
   final DraggableScrollableController dController;
   final ScrollController scrollController;
@@ -269,7 +270,7 @@ class _CoinDetailsGlidingSheetState extends State<CoinDetailsGlidingSheet> {
       alignment: Alignment.topCenter,
       children: <Widget>[
         //if (widget.cachedMetadataView != null) // always show the tabs, but maybe grey out data if it's not populated
-        CoinSpecTabs(cubit: widget.cubit),
+        CoinSpecTabs(walletCubit: widget.cubit),
         Padding(
             padding: EdgeInsets.only(
                 top: /*widget.cachedMetadataView != null ?*/ 48 /*: 0*/),
@@ -303,7 +304,7 @@ class MetaDataWidget extends StatelessWidget {
 }
 
 class MetadataView extends StatelessWidget {
-  final TransactionsViewCubit cubit;
+  final WalletHoldingViewCubit cubit;
   const MetadataView({Key? key, required this.cubit}) : super(key: key);
 
   Future<void> refresh() async {
@@ -315,94 +316,197 @@ class MetadataView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final Asset securityAsset = cubit.state.security.asset!;
-    final AssetMetadata? securityAsset = cubit.state.metadataView;
+    final AssetMetadataResponse? securityAsset = cubit.state.metadataView;
 
     List<Widget> children = <Widget>[];
     //if (securityAsset.primaryMetadata == null &&
     //    securityAsset.hasData &&
     //    securityAsset.data!.isIpfs) {
     if (securityAsset != null) {
-      if (securityAsset.associatedData != null) {
-        if (securityAsset.associatedData!.toHex().isIpfs) {
-          return Container(
-            alignment: Alignment.topCenter,
-            height:
-                (cubit.state.scrollObserver.value.ofMediaHeight(context) + 32) /
-                    2,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: components.buttons.actionButtonSoft(
-                context,
-                label: 'View Data',
-                onPressed: () => components.message.giveChoices(
-                  context,
-                  title: 'View Data',
-                  content: 'View data in external browser?',
-                  behaviors: <String, void Function()>{
-                    'CANCEL': Navigator.of(context).pop,
-                    'BROWSER': () {
-                      Navigator.of(context).pop();
-                      launchUrl(Uri.parse(
-                          'https://ipfs.io/ipfs/${securityAsset.associatedData!.toHex()}'));
-                    },
-                  },
+      final associatedData =
+          securityAsset.mempoolAssociatedData ?? securityAsset.associatedData;
+      final associatedMemo = associatedData != null
+          ? <Widget>[
+              if (!associatedData.toBs58().isIpfs &&
+                  !associatedData.toHex().isIpfs)
+                ListTile(
+                  dense: true,
+                  title: Text(
+                    'Memo:',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  trailing: Container(
+                    width: services.screen.width * .5,
+                    child: SelectableText(
+                      associatedData.toBs58(),
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          );
-        } else {
-          // not ipfs - show whatever it is. todo: handle image etc here.
-          children = <Widget>[
-            SelectableText(securityAsset.associatedData!.toHex())
-          ];
-        }
-      } else {
-        // no associated data - show details
-        children = <Widget>[
-          ListTile(
-            title: Text(
-              cubit.state.security.isCoin
-                  ? 'Cirulcating Supply:'
-                  : 'Total Supply:',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            trailing: SelectableText(
-              securityAsset.totalSupply.asCoin.toSatsCommaString(),
-              style: Theme.of(context).textTheme.bodyText1,
+              if (associatedData.toBs58().isIpfs)
+                ListTile(
+                  title: Text(
+                    'Memo:',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  trailing: Container(
+                    alignment: Alignment.centerRight,
+                    width: services.screen.width * .5,
+                    height: (cubit.state.scrollObserver.value
+                                .ofMediaHeight(context) +
+                            32) /
+                        2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: BasicTextButton(
+                        text: 'View Data',
+                        onTap: () {
+                          print(associatedData.toBs58());
+                          //components.cubits.extraContainer
+                          //    .set(child: SizedBox());
+                          //components.message.giveChoices(
+                          //  components.routes.context!,
+                          //  title: 'View Data',
+                          //  content: 'View data in external browser?',
+                          //  behaviors: <String, void Function()>{
+                          //    'CANCEL':
+                          //        () {}, //Navigator.of(components.routes.context!).pop,
+                          //    'BROWSER': () {
+                          //      //Navigator.of(components.routes.context!).pop();
+                          streams.app.loc.browsing.add(true);
+                          launchUrl(Uri.parse(
+                              'https://ipfs.io/ipfs/${associatedData.toBs58()}'));
+                          //    },
+                          //  },
+                          //);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              if (associatedData.toHex().isIpfs)
+                ListTile(
+                  title: Text(
+                    'Memo:',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  trailing: Container(
+                    alignment: Alignment.centerRight,
+                    width: services.screen.width * .5,
+                    height: (cubit.state.scrollObserver.value
+                                .ofMediaHeight(context) +
+                            32) /
+                        2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: BasicTextButton(
+                        text: 'View Data',
+                        onTap: () {
+                          print(associatedData.toHex());
+                          //components.cubits.extraContainer
+                          //    .set(child: SizedBox());
+                          //components.message.giveChoices(
+                          //  components.routes.context!,
+                          //  title: 'View Data',
+                          //  content: 'View data in external browser?',
+                          //  behaviors: <String, void Function()>{
+                          //    'CANCEL':
+                          //        () {}, //Navigator.of(components.routes.context!).pop,
+                          //    'BROWSER': () {
+                          //      //Navigator.of(components.routes.context!).pop();
+                          streams.app.loc.browsing.add(true);
+                          launchUrl(Uri.parse(
+                              'https://ipfs.io/ipfs/${associatedData.toHex()}'));
+                          //    },
+                          //  },
+                          //);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+            ]
+          : <Widget>[];
+      // no associated data - show details
+      children = <Widget>[
+        ListTile(
+          dense: true,
+          title: Text(
+            cubit.state.security.isCoin ? 'Currency:' : 'Asset:',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          trailing: Container(
+            alignment: Alignment.centerRight,
+            width: services.screen.width * .5,
+            child: SelectableText(
+              cubit.state.security.symbol,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
-          ListTile(
-            title: Text(
-              'Divisibility:',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            trailing: SelectableText(
-              '${securityAsset.divisibility}',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+        ),
+        ListTile(
+          dense: true,
+          title: Text(
+            'Asset Type:',
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
-          ListTile(
-            title: Text(
-              'Reissuable:',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            trailing: SelectableText(
-              '${securityAsset.reissuable ? 'yes' : 'no'}',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+          trailing: SelectableText(
+            cubit.state.security.isCoin
+                ? 'Currency'
+                : Symbol(cubit.state.security.symbol).symbolTypeName,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
-          ListTile(
-            title: Text(
-              'Frozen:',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            trailing: SelectableText(
-              '${securityAsset.frozen ? 'yes' : 'no'}',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+        ),
+        ListTile(
+          dense: true,
+          title: Text(
+            cubit.state.security.isCoin
+                ? 'Cirulcating Supply:'
+                : 'Total Supply:',
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
-        ];
-      }
+          trailing: SelectableText(
+            (securityAsset.mempoolTotalSupply ?? securityAsset.totalSupply)
+                .asCoin
+                .toSatsCommaString(),
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        ListTile(
+          dense: true,
+          title: Text(
+            'Divisibility:',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          trailing: SelectableText(
+            '${(securityAsset.mempoolDivisibility ?? securityAsset.divisibility)}',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        ListTile(
+          dense: true,
+          title: Text(
+            'Reissuable:',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          trailing: SelectableText(
+            '${(securityAsset.mempoolReissuable ?? securityAsset.reissuable) ? 'yes' : 'no'}',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        ListTile(
+          dense: true,
+          title: Text(
+            'Frozen:',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          trailing: SelectableText(
+            '${(securityAsset.mempoolFrozen ?? securityAsset.frozen) ? 'yes' : 'no'}',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+        if (associatedMemo.isNotEmpty) ...associatedMemo
+      ];
     } else {
       // asset metadata not found
     }
@@ -423,10 +527,24 @@ class MetadataView extends StatelessWidget {
     //    SelectableText(securityAsset.primaryMetadata!.data ?? '')
     //  ];
     //}
+    //return RefreshIndicator(
+    //    onRefresh: () => refresh(),
+    //    child: ListView(
+    //      padding: const EdgeInsets.all(10.0),
+    //      children: children,
+    //    ));
     return RefreshIndicator(
         onRefresh: () => refresh(),
-        child:
-            ListView(padding: const EdgeInsets.all(10.0), children: children));
+        child: //ListView(
+            //padding: const EdgeInsets.all(10.0), children: children)
+            ScrollablePageStructure(
+          headerSpace: 0,
+          heightSpacer: SizedBox(height: 0),
+          children: children,
+          leftPadding: 0,
+          rightPadding: 0,
+          topPadding: 16,
+        ));
   }
 }
 
@@ -437,7 +555,7 @@ class TransactionsContent extends StatelessWidget {
     this.scrollController, {
     Key? key,
   }) : super(key: key);
-  final TransactionsViewCubit cubit;
+  final WalletHoldingViewCubit cubit;
   final Widget? cachedMetadataView;
   final ScrollController scrollController;
 
@@ -480,4 +598,23 @@ double getOpacityFromController(
     return 0;
   }
   return opacity;
+}
+
+class BasicTextButton extends StatelessWidget {
+  final String text;
+  final Function()? onTap;
+
+  const BasicTextButton({
+    super.key,
+    required this.text,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+      onTap: onTap,
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.link,
+      ));
 }

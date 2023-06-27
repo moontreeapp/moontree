@@ -3,3 +3,4 @@ export 'toolbar.dart';
 export 'locked.dart';
 export 'speech_bubble.dart';
 export 'textfield.dart';
+export 'prefix.dart';

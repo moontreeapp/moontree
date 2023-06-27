@@ -6,7 +6,8 @@ import 'package:integration_test/integration_test.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   await integrationDriver(
-    onScreenshot: (String screenshotName, List<int> screenshotBytes) async {
+    onScreenshot: (String screenshotName, List<int> screenshotBytes,
+        [Map<String, Object?>? _]) async {
       final File image = File('$screenshotName.png');
       image.writeAsBytesSync(screenshotBytes);
       // Return false if the screenshot is invalid.

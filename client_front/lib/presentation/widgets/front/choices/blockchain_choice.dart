@@ -1,4 +1,3 @@
-import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
@@ -74,14 +73,9 @@ class _BlockchainChoice extends State<BlockchainChoice> {
               controller: choiceController,
               readOnly: true,
               labelText: 'Blockchain',
-              //helperText: services.client.connectionStatus &&
-              //        streams.client.connected.value ==
-              //            ConnectionStatus.connected
-              //    ? 'Connected'
-              //    : null,
               helperStyle: Theme.of(context)
                   .textTheme
-                  .caption!
+                  .bodySmall!
                   .copyWith(height: .8, color: AppColors.primary),
               alwaysShowHelper: showHelper,
               textInputAction: TextInputAction.next,
@@ -111,8 +105,7 @@ class _BlockchainChoice extends State<BlockchainChoice> {
 bool isSelected(Chain chain, Net net) =>
     pros.settings.chain == chain && pros.settings.net == net;
 
-bool isConnected() =>
-    streams.client.connected.value == ConnectionStatus.connected;
+bool isConnected() => components.cubits.connection.isConnected;
 
 void produceBlockchainModal({
   BuildContext? context,
@@ -167,7 +160,7 @@ List<Widget> blockchainOptions({
             title: Text(x.name,
                 style: Theme.of(context ?? components.routes.context!)
                     .textTheme
-                    .bodyText1!
+                    .bodyLarge!
                     .copyWith(color: AppColors.black87)),
             trailing: isSelected(x.chain, x.net) && isConnected()
                 ? const Icon(Icons.check_rounded, color: AppColors.primary)
@@ -193,7 +186,7 @@ Future<void> changeChainNet(
   //      'Connecting to ${value.chain.name.toTitleCase()}${value.net == Net.test ? ' ${value.net.name.toTitleCase()}' : ''}',
   //  returnHome: false,
   //);
-  streams.client.busy.add(true);
+  components.cubits.connection.update(busy: true);
   // reset subscriptions to point to this chain
   await subscription.setupSubscription(
     wallet: pros.wallets.currentWallet,
@@ -201,6 +194,7 @@ Future<void> changeChainNet(
     net: value.net,
   );
   await services.client.switchNetworks(chain: value.chain, net: value.net);
+  components.cubits.connection.update(busy: false);
   streams.app.behavior.snack.add(Snack(message: 'Successfully connected'));
   await components.cubits.holdingsView.setHoldingViews(force: true);
   components.cubits.loadingView.hide();
@@ -238,7 +232,10 @@ void navToBlockchain([BuildContext? context, Function? then]) {
         components.cubits.bottomModalSheet.hide();
         sail.home();
       },
-      second: then,
+      second: then ??
+          () => sail.refreshHomeCubits(sail.locationFromSector(
+                  components.cubits.location.state.sector) ??
+              ''),
     ));
     //Navigator.of(components.routes.routeContext!)
     //    .pushNamed('/settings/network/blockchain');

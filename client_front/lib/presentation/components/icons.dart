@@ -157,8 +157,8 @@ class IconComponents {
         width: width,
       );
 
-  Widget _assetAvatarEVR({double? height, double? width}) =>
-      assets.icons.evrmore(height: 24, width: 24, circled: true);
+  Widget _assetAvatarEVR({double? height, double? width}) => assets.icons
+      .evrmore(height: height ?? 24, width: width ?? 24, circled: true);
 
   Widget _assetAvatarMoontree({double? height, double? width}) => Image.asset(
         'assets/logo/moontree.png',
@@ -190,7 +190,8 @@ class IconComponents {
     Chain? chain,
     Net? net,
   ]) =>
-      Symbol.generate(asset ?? '', chain ?? Chain.ravencoin, net ?? Net.main)
+      Symbol.generate(asset ?? '', chain ?? pros.settings.chain,
+              net ?? pros.settings.net)
           .symbolType;
 
   Widget assetFromCacheOrGenerate({
@@ -330,8 +331,9 @@ class IconComponents {
           foreground,
           background,
         );
-    final Widget? indicator =
-        generateIndicator(name: asset, imageDetails: imageDetails);
+    // indicator removed
+    //final Widget? indicator =
+    //    generateIndicator(name: asset, imageDetails: imageDetails);
     final Stack ret =
         Stack(alignment: Alignment.bottomRight, children: <Widget>[
       Container(
@@ -363,11 +365,11 @@ class IconComponents {
           }(),
               style: Theme.of(components.routes.routeContext!)
                   .textTheme
-                  .headline1!
+                  .displayLarge!
                   .copyWith(
                       fontSize: (height + width) * .3,
                       color: AppColors.white87))),
-      if (indicator != null) indicator,
+      //if (indicator != null) indicator, // don't include indicator
     ]);
     if (cacheKey != null) {
       cache[cacheKey] = ret;

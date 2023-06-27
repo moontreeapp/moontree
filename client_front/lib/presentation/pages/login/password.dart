@@ -22,11 +22,13 @@ import 'package:client_front/infrastructure/services/wallet.dart'
         updateEnumLowerCase,
         updateWalletNames,
         updateWalletsToSecureStorage;
-import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class LoginPassword extends StatefulWidget {
   const LoginPassword({Key? key}) : super(key: key ?? defaultKey);
@@ -92,7 +94,9 @@ class _LoginPasswordState extends State<LoginPassword> {
         salt: key,
         saltedHashedPassword: await getLatestSaltedHashedPassword())) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await initiateLogin(key);
+        if (mounted) {
+          await initiateLogin(key);
+        }
       });
     }
   }
@@ -176,8 +180,7 @@ class _LoginPasswordState extends State<LoginPassword> {
     });
   }
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
+  bool isConnected() => components.cubits.connection.isConnected;
 
   Future<bool> validate() async => services.password.validate.password(
       password: password.text,
@@ -272,13 +275,14 @@ class _LoginPasswordState extends State<LoginPassword> {
     //  print(e);
     //}
     // create ciphers for wallets we have
-    login(context, password: providedPassword);
+    login(password: providedPassword);
     if (refresh) {
       streams.app.behavior.snack
           .add(Snack(message: 'Resyncing wallet...', showOnLogin: true));
 
       /// erase all history stuff
-      await services.client.resetMemoryAndConnection(keepBalances: false);
+      //await services.client.resetMemoryAndConnection(keepBalances: false);
+
       streams.app.wallet.refresh.add(true);
     }
   }

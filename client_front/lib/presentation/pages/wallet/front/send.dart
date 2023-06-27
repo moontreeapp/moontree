@@ -1,7 +1,6 @@
 import 'dart:io' show Platform;
 import 'dart:async';
-import 'package:client_front/presentation/widgets/front_curve.dart';
-import 'package:client_front/presentation/widgets/other/buttons.dart';
+import 'package:client_front/presentation/utils/animation.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,19 +14,18 @@ import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_front/domain/concepts/fee.dart' as fees;
-import 'package:client_front/domain/utils/params.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:client_front/application/send/cubit.dart';
-import 'package:client_front/application/modal/bottom/cubit.dart';
+import 'package:client_front/application/wallet/send/cubit.dart';
+import 'package:client_front/application/layers/modal/bottom/cubit.dart';
+import 'package:client_front/presentation/utils/formatters.dart';
+import 'package:client_front/presentation/widgets/front_curve.dart';
+import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/pages/wallet/scan.dart';
 import 'package:client_front/presentation/services/services.dart';
 import 'package:client_front/presentation/widgets/other/selection_control.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/components/shadows.dart' as shadows;
-import 'package:client_front/presentation/components/styles/styles.dart'
-    as styles;
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
@@ -66,17 +64,18 @@ class _SimpleSendState extends State<SimpleSend> {
   bool clicked = false;
   bool validatedAddress = true;
   late Balance holdingBalance;
+  bool populated = false;
 
   void scrollToItem(FocusNode focusNode, double offset, [double returnTo = 0]) {
     if (focusNode.hasFocus) {
       setState(() {});
       scrollController.animateTo(
           offset, //scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
+          duration: fadeDuration,
           curve: Curves.easeInOutCubic);
     } else {
       scrollController.animateTo(returnTo,
-          duration: Duration(milliseconds: 300), curve: Curves.easeInOutCubic);
+          duration: fadeDuration, curve: Curves.easeInOutCubic);
     }
   }
 
@@ -149,12 +148,29 @@ class _SimpleSendState extends State<SimpleSend> {
     }
   }
 
+  void setQuantity(SimpleSendFormState state) {
+    sendAmount.value = TextEditingValue(
+        text: state.amountStr,
+        selection: sendAmount.selection.baseOffset > state.amountStr.length
+            ? TextSelection.collapsed(offset: state.amountStr.length)
+            : sendAmount.selection);
+  }
+
   @override
   Widget build(BuildContext context) {
     final SimpleSendFormCubit cubit =
         BlocProvider.of<SimpleSendFormCubit>(context);
+
     data = populateData(context, data);
-    populateFromData(cubit);
+    if (data['openQR'] == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        cubit.set(address: (await _produceScanModal()));
+      });
+    }
+    if (!populated) {
+      populateFromData(cubit);
+      populated = true;
+    }
     return GestureDetector(
         onTap: () {
           // getting error on back button.
@@ -170,28 +186,21 @@ class _SimpleSendState extends State<SimpleSend> {
               // instead of using balances, which is unreliable, use holdingView
               final BalanceView? holdingView = components.cubits.holdingsView
                   .holdingsViewFor(state.security.symbol);
+              if (holdingView == null) {
+                return SizedBox.shrink();
+              }
+              final isNFT = Symbol(state.security.symbol).isNFT;
               holdingBalance = Balance(
                   walletId: Current.walletId,
                   security: state.security,
-                  confirmed: holdingView?.satsConfirmed ?? 0,
-                  unconfirmed: holdingView?.satsUnconfirmed ?? 0);
+                  confirmed: holdingView.satsConfirmed,
+                  unconfirmed: holdingView.satsUnconfirmed);
               // carry on
               sendAsset.text = state.security.name;
               if (state.amount > 0) {
-                final String text = enforceDivisibility(
-                  _asDoubleString(state.amount),
-                  divisibility: state.security.divisibility,
-                );
-                sendAmount.value = TextEditingValue(
-                    text: text,
-                    selection: sendAmount.selection.baseOffset > text.length ||
-                            (sendAmount.selection.baseOffset == 2 &&
-
-                                /// this is the case that they typed .x and it replaced it with 0.x
-                                text.length == 3 &&
-                                text.startsWith('0.'))
-                        ? TextSelection.collapsed(offset: text.length)
-                        : sendAmount.selection);
+                setQuantity(state);
+              } else if (isNFT) {
+                cubit.set(amountStr: '1', amount: 1);
               }
               if (state.memo.length > 0) {
                 sendMemo.value = TextEditingValue(
@@ -216,6 +225,92 @@ class _SimpleSendState extends State<SimpleSend> {
                         : sendAddress.selection);
               }
               sendFee.text = state.fee.name!;
+              final amountWidget = TextFieldFormatted(
+                key: Key('sendAmount'),
+                focusNode: sendAmountFocusNode,
+                controller: sendAmount,
+                textInputAction: TextInputAction.next,
+                readOnly: isNFT,
+                enabled: !isNFT,
+                keyboardType: const TextInputType.numberWithOptions(
+                  signed: false,
+                  decimal: true,
+                ),
+                inputFormatters: <TextInputFormatter>[
+                  QuantityInputFormatter(),
+                  ////DecimalTextInputFormatter(decimalRange: divisibility)
+                  //FilteringTextInputFormatter(
+                  //    //RegExp(r'[.0-9]'),
+                  //    RegExp(r'^[0-9]*(\.[0-9]{0,' +
+                  //        '${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8}' +
+                  //        r'})?'),
+                  //    allow: true)
+                ],
+                labelText: 'Amount',
+                hintText: 'Quantity',
+                errorText: (String x) {
+                  if (x == '') {
+                    return null;
+                  }
+                  if (x == '0') {
+                    return 'must be greater than 0';
+                  }
+                  if (_asDouble(x) > holdingBalance.amount) {
+                    return 'too large';
+                  }
+                  if (!_validateDivisibility(x)) {
+                    return 'too many decimal places';
+                  }
+                  if (x.isNumeric) {
+                    final num? y = x.toNum();
+                    if (y != null && y.isRVNAmount) {
+                      return null;
+                    }
+                  }
+                  return 'Unrecognized Amount';
+                }(sendAmount.textWithoutCommas),
+                // put ability to put it in as USD here
+                /* // functionality has been moved to header
+                                  suffixText: sendAll ? "don't send all" : 'send all',
+                                  suffixStyle: Theme.of(context).textTheme.bodySmall,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                        sendAll ? Icons.not_interested : Icons.all_inclusive,
+                                        color: Color(0xFF606060)),
+                                    onPressed: () {
+                                      if (!sendAll) {
+                                        sendAll = true;
+                                        sendAmount.text = holding.toString();
+                                      } else {
+                                        sendAll = false;
+                                        sendAmount.text = '';
+                                      }
+                                    },
+                                  ),
+                                  */
+                onChanged: (String value) {
+                  try {
+                    cubit.set(
+                        amountStr: value,
+                        amount: double.parse(value.replaceAll(',', '')));
+                  } catch (e) {
+                    cubit.set(amountStr: '', amount: 0);
+                  }
+                },
+                onEditingComplete: () {
+                  String value = sendAmount.text;
+                  try {
+                    cubit.set(
+                        amountStr: value,
+                        amount: double.parse(value.replaceAll(',', '')));
+                  } catch (e) {
+                    cubit.set(amountStr: '', amount: 0);
+                  }
+                  //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
+                  //FocusScope.of(context).requestFocus(sendFeeFocusNode);
+                  FocusScope.of(context).unfocus();
+                },
+              );
               return Stack(
                 children: <Widget>[
                   ListView(
@@ -233,14 +328,9 @@ class _SimpleSendState extends State<SimpleSend> {
                           controller: sendAsset,
                           readOnly: true,
                           textInputAction: TextInputAction.next,
-                          prefixIcon: SizedBox(
-                              height: 16,
-                              width: 16,
-                              child: Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: components.icons.assetAvatar(
-                                      holdingView!.symbol,
-                                      net: pros.settings.net))),
+                          prefixIcon:
+                              PrefixAssetCoinIcon(symbol: holdingView.symbol),
+
                           //decoration: styles.decorations.textField(context,
                           //    focusNode: sendAssetFocusNode,
                           //    labelText: 'Asset',
@@ -303,81 +393,16 @@ class _SimpleSendState extends State<SimpleSend> {
                                 .requestFocus(sendAmountFocusNode);
                           },
                         ),
-                        TextFieldFormatted(
-                          key: Key('sendAmount'),
-                          focusNode: sendAmountFocusNode,
-                          controller: sendAmount,
-                          textInputAction: TextInputAction.next,
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
-                          inputFormatters: <TextInputFormatter>[
-                            //DecimalTextInputFormatter(decimalRange: divisibility)
-                            FilteringTextInputFormatter(
-                                //RegExp(r'[.0-9]'),
-                                RegExp(r'^[0-9]*(\.[0-9]{0,' +
-                                    '${components.cubits.simpleSendForm.state.metadataView?.divisibility ?? 8}' +
-                                    r'})?'),
-                                allow: true)
-                          ],
-                          labelText: 'Amount',
-                          hintText: 'Quantity',
-                          errorText: (String x) {
-                            if (x == '') {
-                              return null;
-                            }
-                            if (x == '0') {
-                              return 'must be greater than 0';
-                            }
-                            if (_asDouble(x) > holdingBalance.amount) {
-                              return 'too large';
-                            }
-                            if (x.isNumeric) {
-                              final num? y = x.toNum();
-                              if (y != null && y.isRVNAmount) {
-                                return null;
-                              }
-                            }
-                            return 'Unrecognized Amount';
-                          }(sendAmount.text),
-                          // put ability to put it in as USD here
-                          /* // functionality has been moved to header
-                                  suffixText: sendAll ? "don't send all" : 'send all',
-                                  suffixStyle: Theme.of(context).textTheme.caption,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                        sendAll ? Icons.not_interested : Icons.all_inclusive,
-                                        color: Color(0xFF606060)),
-                                    onPressed: () {
-                                      if (!sendAll) {
-                                        sendAll = true;
-                                        sendAmount.text = holding.toString();
-                                      } else {
-                                        sendAll = false;
-                                        sendAmount.text = '';
-                                      }
-                                    },
-                                  ),
-                                  */
-                          onChanged: (String value) {
-                            try {
-                              cubit.set(amount: double.parse(value));
-                            } catch (e) {
-                              cubit.set(amount: 0);
-                            }
-                          },
-                          onEditingComplete: () {
-                            String value = sendAmount.text;
-                            try {
-                              cubit.set(amount: double.parse(value));
-                            } catch (e) {
-                              cubit.set(amount: 0);
-                            }
-
-                            //// causes error on ios. as the keyboard becomes dismissed the bottom modal sheet is attempting to appear, they collide.
-                            //FocusScope.of(context).requestFocus(sendFeeFocusNode);
-                            FocusScope.of(context).unfocus();
-                          },
-                        ),
+                        if (isNFT) // also do this for admins? probably not.
+                          GestureDetector(
+                            onTap: () => streams.app.behavior.snack.add(Snack(
+                              message: 'Non-Fungible Tokens are singluar',
+                              delay: 0,
+                            )),
+                            child: amountWidget,
+                          )
+                        else
+                          amountWidget,
                         TextFieldFormatted(
                           key: Key('sendFee'),
                           onTap: () => _produceFeeModal(cubit),
@@ -423,7 +448,7 @@ class _SimpleSendState extends State<SimpleSend> {
                                 : null,
                             helperStyle: Theme.of(context)
                                 .textTheme
-                                .caption!
+                                .bodySmall!
                                 .copyWith(height: .7, color: AppColors.primary),
                             errorText: _verifyMemo() ? null : 'too long',
                             /*suffixIcon: IconButton(
@@ -452,7 +477,7 @@ class _SimpleSendState extends State<SimpleSend> {
                                 : null,
                             helperStyle: Theme.of(context)
                                 .textTheme
-                                .caption!
+                                .bodySmall!
                                 .copyWith(height: .7, color: AppColors.primary),
                             /*suffixIcon: IconButton(
                                 icon: const Icon(Icons.paste_rounded,
@@ -563,11 +588,11 @@ class _SimpleSendState extends State<SimpleSend> {
   //    .getOne(Current.walletId, pros.securities.currentCoin) !=
   //null;
 
-  bool _validateDivisibility() =>
+  bool _validateDivisibility([String? value]) =>
       (components.cubits.simpleSendForm.state.metadataView?.divisibility ??
           8) >=
-      (sendAmount.text.contains('.')
-          ? sendAmount.text.split('.').last.length
+      ((value ?? sendAmount.text).contains('.')
+          ? (value ?? sendAmount.text).split('.').last.length
           : 0);
 
   bool _fieldValidation() =>
@@ -577,26 +602,27 @@ class _SimpleSendState extends State<SimpleSend> {
       _verifyMemo();
 
   bool _holdingValidation(SimpleSendFormState state) {
-    if (_asDouble(sendAmount.text) == 0.0) {
+    final quantity = sendAmount.textWithoutCommas;
+    if (_asDouble(quantity) == 0.0) {
       return false;
     }
     if (holdingBalance.security.isCoin) {
       // we have enough coin for the send and minimum fee estimate
       // actaully don't do this because we can send all.
-      if (holdingBalance.amount == double.parse(sendAmount.text)) {
+      if (holdingBalance.amount == double.parse(quantity)) {
         return true;
       }
       // if not sending all:
-      return holdingBalance.amount > double.parse(sendAmount.text) + 0.0021;
+      return holdingBalance.amount > double.parse(quantity) + 0.0021;
     } else {
       final BalanceView? holdingView =
           components.cubits.holdingsView.holdingsViewFor(Current.coin.symbol);
       // we have enough asset for the send and enough coin for minimum fee
-      return holdingBalance.amount >= double.parse(sendAmount.text) &&
+      return holdingBalance.amount >= double.parse(quantity) &&
           holdingView!.satsConfirmed + holdingView.satsUnconfirmed > 210000;
     }
     //return (state.security.balance?.amount ?? 0) >=
-    //    double.parse(sendAmount.text);
+    //    double.parse(sendAmount.textWithoutCommas);
   }
 
   bool _allValidation(SimpleSendFormState state) =>
@@ -607,7 +633,7 @@ class _SimpleSendState extends State<SimpleSend> {
     final bool vMemo = _verifyMemo();
     if (vAddress && vMemo) {
       FocusScope.of(context).unfocus();
-      if (holdingBalance.amount >= double.parse(sendAmount.text)) {
+      if (holdingBalance.amount >= double.parse(sendAmount.textWithoutCommas)) {
         final SendRequest sendRequest = SendRequest(
           sendAll: holdingBalance.amount == state.amount,
           wallet: Current.wallet,
@@ -744,58 +770,64 @@ class _SimpleSendState extends State<SimpleSend> {
     }
   }
 
-  void _produceAssetModal(SimpleSendFormCubit cubit) =>
-      components.cubits.bottomModalSheet.show(children: <Widget>[
-        for (String name in Current.holdingNames
-                .where(
-                    (String item) => item == pros.securities.currentCoin.symbol)
-                .toList() +
-            Current.holdingNames
-                .where(
-                    (String item) => item != pros.securities.currentCoin.symbol)
-                .toList())
-          ListTile(
-              onTap: () {
-                context.read<BottomModalSheetCubit>().hide();
-                final sec = pros.securities.ofCurrent(nameSymbol(name)) ??
-                    pros.securities.currentCoin;
-                cubit.set(security: sec);
-                cubit.setMetadataView(security: sec);
-              },
-              leading: components.icons.assetAvatar(
-                  name == 'Ravencoin'
-                      ? pros.securities.RVN.symbol
-                      : name == 'Evrmore'
-                          ? pros.securities.EVR.symbol
-                          : name,
-                  height: 24,
-                  width: 24,
-                  net: pros.settings.net),
-              title: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(symbolName(name),
-                      style: Theme.of(context).textTheme.bodyText1)))
-      ]);
-
-  void _produceFeeModal(SimpleSendFormCubit cubit) =>
-      components.cubits.bottomModalSheet.show(children: <Widget>[
-        for (final fees.FeeConcept feeConcept in <fees.FeeConcept>[
-          fees.fast,
-          fees.standard
-        ])
-          ListTile(
+  void _produceAssetModal(SimpleSendFormCubit cubit) {
+    FocusScope.of(context).unfocus();
+    components.cubits.bottomModalSheet.show(children: <Widget>[
+      for (String name in Current.holdingNames
+              .where(
+                  (String item) => item == pros.securities.currentCoin.symbol)
+              .toList() +
+          Current.holdingNames
+              .where(
+                  (String item) => item != pros.securities.currentCoin.symbol)
+              .toList())
+        ListTile(
             onTap: () {
               context.read<BottomModalSheetCubit>().hide();
-              cubit.set(fee: feeConcept.feeRate);
+              cubit.setSecurity(pros.securities.ofCurrent(nameSymbol(name)) ??
+                  pros.securities.currentCoin);
             },
-            leading: feeConcept.icon,
-            title: Text(feeConcept.title,
-                style: Theme.of(context).textTheme.bodyText1),
-          )
-      ]);
+            leading: components.icons.assetAvatar(
+                name == 'Ravencoin'
+                    ? pros.securities.RVN.symbol
+                    : name == 'Evrmore'
+                        ? pros.securities.EVR.symbol
+                        : name,
+                height: 24,
+                width: 24,
+                net: pros.settings.net),
+            title: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(symbolName(name),
+                    style: Theme.of(context).textTheme.bodyLarge)))
+    ]);
+  }
+
+  void _produceFeeModal(SimpleSendFormCubit cubit) {
+    FocusScope.of(context).unfocus();
+    components.cubits.bottomModalSheet.show(children: <Widget>[
+      for (final fees.FeeConcept feeConcept in <fees.FeeConcept>[
+        fees.fast,
+        fees.standard
+      ])
+        ListTile(
+          onTap: () {
+            context.read<BottomModalSheetCubit>().hide();
+            cubit.set(fee: feeConcept.feeRate);
+          },
+          leading: feeConcept.icon,
+          title: Text(feeConcept.title,
+              style: Theme.of(context).textTheme.bodyLarge),
+        )
+    ]);
+  }
 
   Future<String> _produceScanModal() async {
+    if (components.cubits.location.state.path == '/wallet/holdings') {
+      return '';
+    }
+    FocusScope.of(context).unfocus();
     components.cubits.bottomModalSheet.show(
         childrenHeight: screen.frontContainer.midHeight ~/ 1,
         fullscreen: false,

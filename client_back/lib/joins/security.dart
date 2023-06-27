@@ -17,7 +17,8 @@ extension SecurityHasOneUSDRate on Security {
 
 extension SecurityMayHaveAName on Security {
   String get name => symbolName(symbol);
-  String get shortName => symbolName(symbol).split('/').last;
+  String get shortName =>
+      symbolName(symbol).split('/').last.split('~').last.split('#').last;
 }
 
 extension SecurityHasADivisibility on Security {

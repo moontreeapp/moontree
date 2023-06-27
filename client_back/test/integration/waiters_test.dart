@@ -1,4 +1,3 @@
-import 'package:client_back/utilities/rate.dart';
 import 'package:test/test.dart';
 
 import 'package:proclaim/map_source.dart';

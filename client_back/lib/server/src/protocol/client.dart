@@ -8,20 +8,28 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'comm_int.dart' as _i3;
-import 'asset_metadata_class.dart' as _i4;
-import 'comm_balance_view.dart' as _i5;
-import 'dart:typed_data' as _i6;
-import 'comm_transaction_view.dart' as _i7;
-import 'comm_string.dart' as _i8;
-import 'comm_transaction_details_view.dart'
+import 'package:client_back/server/src/protocol/comm_int.dart' as _i3;
+import 'package:client_back/server/src/protocol/comm_asset_metadata_response.dart'
+    as _i4;
+import 'package:client_back/server/src/protocol/comm_unsigned_transaction_result_class.dart'
+    as _i5;
+import 'package:client_back/server/src/protocol/comm_asset_create.dart' as _i6;
+import 'package:client_back/server/src/protocol/comm_asset_reissue.dart' as _i7;
+import 'package:client_back/server/src/protocol/comm_asset_global_freeze.dart'
+    as _i8;
+import 'package:client_back/server/src/protocol/comm_asset_tag_address.dart'
     as _i9;
-import 'comm_unsigned_transaction_result_class.dart'
-    as _i10;
-import 'comm_unsigned_transaction_request_class.dart'
-    as _i11;
-import 'dart:io' as _i12;
-import 'protocol.dart' as _i13;
+import 'package:client_back/server/src/protocol/comm_balance_view.dart' as _i10;
+import 'dart:typed_data' as _i11;
+import 'package:client_back/server/src/protocol/comm_transaction_view.dart'
+    as _i12;
+import 'package:client_back/server/src/protocol/comm_string.dart' as _i13;
+import 'package:client_back/server/src/protocol/comm_transaction_details_view.dart'
+    as _i14;
+import 'package:client_back/server/src/protocol/comm_unsigned_transaction_request_class.dart'
+    as _i15;
+import 'dart:io' as _i16;
+import 'protocol.dart' as _i17;
 
 class _EndpointAddresses extends _i1.EndpointRef {
   _EndpointAddresses(_i1.EndpointCaller caller) : super(caller);
@@ -56,12 +64,12 @@ class _EndpointMetadata extends _i1.EndpointRef {
   /// metadata, so we're set up to easily pivot to that scenario. Furthermore,
   /// most the other endpoints return lists so the front end is used to it.
   /// Of course maybe we'd just make a different endpoint for history, but idk.
-  _i2.Future<List<_i4.AssetMetadata>> get({
+  _i2.Future<_i4.AssetMetadataResponse> get({
     required String symbol,
     required String chainName,
     int? height,
   }) =>
-      caller.callServerEndpoint<List<_i4.AssetMetadata>>(
+      caller.callServerEndpoint<_i4.AssetMetadataResponse>(
         'metadata',
         'get',
         {
@@ -72,18 +80,98 @@ class _EndpointMetadata extends _i1.EndpointRef {
       );
 }
 
+class _EndpointCreateAsset extends _i1.EndpointRef {
+  _EndpointCreateAsset(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'createAsset';
+
+  _i2.Future<_i5.UnsignedTransactionResult> generateAssetCreationTransaction({
+    required _i6.AssetCreationRequest request,
+    required String chainName,
+  }) =>
+      caller.callServerEndpoint<_i5.UnsignedTransactionResult>(
+        'createAsset',
+        'generateAssetCreationTransaction',
+        {
+          'request': request,
+          'chainName': chainName,
+        },
+      );
+}
+
+class _EndpointReissueAsset extends _i1.EndpointRef {
+  _EndpointReissueAsset(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'reissueAsset';
+
+  _i2.Future<_i5.UnsignedTransactionResult> generateAssetReissueTransaction({
+    required _i7.AssetReissueRequest request,
+    required String chainName,
+  }) =>
+      caller.callServerEndpoint<_i5.UnsignedTransactionResult>(
+        'reissueAsset',
+        'generateAssetReissueTransaction',
+        {
+          'request': request,
+          'chainName': chainName,
+        },
+      );
+}
+
+class _EndpointFreezeRestrictedAsset extends _i1.EndpointRef {
+  _EndpointFreezeRestrictedAsset(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'freezeRestrictedAsset';
+
+  _i2.Future<_i5.UnsignedTransactionResult> generateGlobalFreezeTransaction({
+    required _i8.AssetGlobalFreezeRequest request,
+    required String chainName,
+  }) =>
+      caller.callServerEndpoint<_i5.UnsignedTransactionResult>(
+        'freezeRestrictedAsset',
+        'generateGlobalFreezeTransaction',
+        {
+          'request': request,
+          'chainName': chainName,
+        },
+      );
+}
+
+class _EndpointTagAddress extends _i1.EndpointRef {
+  _EndpointTagAddress(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'tagAddress';
+
+  _i2.Future<_i5.UnsignedTransactionResult> generateAddressTagTransaction({
+    required _i9.AssetAddressTagRequest request,
+    required String chainName,
+  }) =>
+      caller.callServerEndpoint<_i5.UnsignedTransactionResult>(
+        'tagAddress',
+        'generateAddressTagTransaction',
+        {
+          'request': request,
+          'chainName': chainName,
+        },
+      );
+}
+
 class _EndpointBalances extends _i1.EndpointRef {
   _EndpointBalances(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'balances';
 
-  _i2.Future<List<_i5.BalanceView>> get({
+  _i2.Future<List<_i10.BalanceView>> get({
     required String chainName,
     required List<String> xpubkeys,
-    required List<_i6.ByteData> h160s,
+    required List<_i11.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i5.BalanceView>>(
+      caller.callServerEndpoint<List<_i10.BalanceView>>(
         'balances',
         'get',
         {
@@ -189,14 +277,14 @@ class _EndpointMempoolTransactions extends _i1.EndpointRef {
   @override
   String get name => 'mempoolTransactions';
 
-  _i2.Future<List<_i7.TransactionView>> get({
+  _i2.Future<List<_i12.TransactionView>> get({
     String? symbol,
     int? backFromHeight,
     required String chainName,
     required List<String> xpubkeys,
-    required List<_i6.ByteData> h160s,
+    required List<_i11.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i7.TransactionView>>(
+      caller.callServerEndpoint<List<_i12.TransactionView>>(
         'mempoolTransactions',
         'get',
         {
@@ -215,11 +303,11 @@ class _EndpointBroadcastTransaction extends _i1.EndpointRef {
   @override
   String get name => 'broadcastTransaction';
 
-  _i2.Future<_i8.CommString> get({
+  _i2.Future<_i13.CommString> get({
     required String rawTransactionHex,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i8.CommString>(
+      caller.callServerEndpoint<_i13.CommString>(
         'broadcastTransaction',
         'get',
         {
@@ -242,11 +330,11 @@ class _EndpointTransactionDetails extends _i1.EndpointRef {
   @override
   String get name => 'transactionDetails';
 
-  _i2.Future<_i9.TransactionDetailsView> get({
-    required _i6.ByteData hash,
+  _i2.Future<_i14.TransactionDetailsView> get({
+    required _i11.ByteData hash,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<_i9.TransactionDetailsView>(
+      caller.callServerEndpoint<_i14.TransactionDetailsView>(
         'transactionDetails',
         'get',
         {
@@ -262,14 +350,14 @@ class _EndpointTransactions extends _i1.EndpointRef {
   @override
   String get name => 'transactions';
 
-  _i2.Future<List<_i7.TransactionView>> get({
+  _i2.Future<List<_i12.TransactionView>> get({
     String? symbol,
     int? backFromHeight,
     required String chainName,
     required List<String> xpubkeys,
-    required List<_i6.ByteData> h160s,
+    required List<_i11.ByteData> h160s,
   }) =>
-      caller.callServerEndpoint<List<_i7.TransactionView>>(
+      caller.callServerEndpoint<List<_i12.TransactionView>>(
         'transactions',
         'get',
         {
@@ -288,11 +376,11 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
   @override
   String get name => 'unsignedTransaction';
 
-  _i2.Future<List<_i10.UnsignedTransactionResult>> generateUnsignedTransaction({
-    required _i11.UnsignedTransactionRequest request,
+  _i2.Future<List<_i5.UnsignedTransactionResult>> generateUnsignedTransaction({
+    required _i15.UnsignedTransactionRequest request,
     required String chainName,
   }) =>
-      caller.callServerEndpoint<List<_i10.UnsignedTransactionResult>>(
+      caller.callServerEndpoint<List<_i5.UnsignedTransactionResult>>(
         'unsignedTransaction',
         'generateUnsignedTransaction',
         {
@@ -305,16 +393,20 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i12.SecurityContext? context,
+    _i16.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i13.Protocol(),
+          _i17.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {
     addresses = _EndpointAddresses(this);
     metadata = _EndpointMetadata(this);
+    createAsset = _EndpointCreateAsset(this);
+    reissueAsset = _EndpointReissueAsset(this);
+    freezeRestrictedAsset = _EndpointFreezeRestrictedAsset(this);
+    tagAddress = _EndpointTagAddress(this);
     balances = _EndpointBalances(this);
     circulatingSats = _EndpointCirculatingSats(this);
     consent = _EndpointConsent(this);
@@ -332,6 +424,14 @@ class Client extends _i1.ServerpodClient {
   late final _EndpointAddresses addresses;
 
   late final _EndpointMetadata metadata;
+
+  late final _EndpointCreateAsset createAsset;
+
+  late final _EndpointReissueAsset reissueAsset;
+
+  late final _EndpointFreezeRestrictedAsset freezeRestrictedAsset;
+
+  late final _EndpointTagAddress tagAddress;
 
   late final _EndpointBalances balances;
 
@@ -361,6 +461,10 @@ class Client extends _i1.ServerpodClient {
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
         'addresses': addresses,
         'metadata': metadata,
+        'createAsset': createAsset,
+        'reissueAsset': reissueAsset,
+        'freezeRestrictedAsset': freezeRestrictedAsset,
+        'tagAddress': tagAddress,
         'balances': balances,
         'circulatingSats': circulatingSats,
         'consent': consent,

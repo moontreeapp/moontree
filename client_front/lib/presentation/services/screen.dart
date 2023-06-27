@@ -35,7 +35,7 @@ class Screen {
     return Screen(
       width: width,
       app: app,
-      navbar: Navbar.init(height),
+      navbar: Navbar.init(height, statusBarHeight),
       frontContainer: FrontPageContainer.init(height, app),
       backContainer: BackPageContainer.init(height, app),
       buttonHeight: height * (40 / 760),
@@ -78,7 +78,8 @@ class App {
 
 class Navbar {
   static const double _maxHeightPercentage = 0.1552631579;
-  static const double _midHeightPercentage = 0.09473684211;
+  static const double _midHeightPercentage = 0.0915;
+  //static const double _midHeightPercentage = 0.09473684211;
   final double maxHeight;
   final double midHeight;
 
@@ -87,7 +88,7 @@ class Navbar {
     required this.midHeight,
   });
 
-  factory Navbar.init(double height) => Navbar(
+  factory Navbar.init(double height, double statusBarHeight) => Navbar(
         maxHeight: height * _maxHeightPercentage,
         midHeight: height * _midHeightPercentage,
       );

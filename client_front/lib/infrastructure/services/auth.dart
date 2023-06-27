@@ -106,6 +106,13 @@ class LocalAuthApi {
         reason = AuthenticationResult.success;
         return true;
       }
+      /* 
+      by the way, there seems to be no way to tell if the user cancelled the
+      login or if the system had some other kind of failure. that is, no way to 
+      tell using this _auth object alone. you could set a flag in the android / 
+      ios code (which you would have to manage) and check it but that's a lot of
+      work in order to differentiate and give the user a nice message.
+      */
       reason = AuthenticationResult.failure;
     } on PlatformException catch (e) {
       /*

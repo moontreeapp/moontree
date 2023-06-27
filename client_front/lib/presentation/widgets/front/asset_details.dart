@@ -37,9 +37,9 @@ class _AssetDetails extends State<AssetDetails> {
                 ListTile(
                   dense: true,
                   title:
-                      Text(text, style: Theme.of(context).textTheme.bodyText1),
+                      Text(text, style: Theme.of(context).textTheme.bodyLarge),
                   trailing: Text(element(text),
-                      style: Theme.of(context).textTheme.bodyText1),
+                      style: Theme.of(context).textTheme.bodyLarge),
                 ),
             ] +
             <Widget>[
@@ -52,7 +52,7 @@ class _AssetDetails extends State<AssetDetails> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text('Verifier',
-                          style: Theme.of(context).textTheme.bodyText1),
+                          style: Theme.of(context).textTheme.bodyLarge),
                       SizedBox(
                         width:
                             (MediaQuery.of(context).size.width - 16 - 16 - 8) /
@@ -75,7 +75,7 @@ class _AssetDetails extends State<AssetDetails> {
                             overflow: TextOverflow.fade,
                             softWrap: true,
                             maxLines: 100,
-                            style: Theme.of(context).textTheme.bodyText1),
+                            style: Theme.of(context).textTheme.bodyLarge),
                       )
                     ],
                   ),
@@ -88,9 +88,9 @@ class _AssetDetails extends State<AssetDetails> {
                 ListTile(
                   dense: true,
                   title: Text('TXID',
-                      style: Theme.of(context).textTheme.bodyText1),
+                      style: Theme.of(context).textTheme.bodyLarge),
                   trailing: Text(element('TXID'),
-                      style: Theme.of(context).textTheme.bodyText1),
+                      style: Theme.of(context).textTheme.bodyLarge),
                 )
             ] +
             <Widget>[
@@ -98,9 +98,9 @@ class _AssetDetails extends State<AssetDetails> {
                 ListTile(
                   dense: true,
                   title:
-                      Text(text, style: Theme.of(context).textTheme.bodyText1),
+                      Text(text, style: Theme.of(context).textTheme.bodyLarge),
                   trailing: Text(element(text),
-                      style: Theme.of(context).textTheme.bodyText1),
+                      style: Theme.of(context).textTheme.bodyLarge),
                 ),
             ],
       );
@@ -150,7 +150,7 @@ class _AssetDetails extends State<AssetDetails> {
             },
           },
         ),
-        title: Text(text, style: Theme.of(context).textTheme.bodyText1),
+        title: Text(text, style: Theme.of(context).textTheme.bodyLarge),
         trailing: Text(element(text), style: Theme.of(context).textTheme.link),
       );
 }

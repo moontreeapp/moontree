@@ -1,11 +1,9 @@
-import 'dart:math';
-
+import 'package:client_back/streams/app.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_back/streams/app.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
@@ -84,7 +82,7 @@ class _VerifySeedState extends State<VerifySeed> {
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
-                        .subtitle1!
+                        .titleMedium!
                         .copyWith(color: AppColors.black),
                   ))),
           Container(height: 48),
@@ -183,6 +181,8 @@ class _VerifySeedState extends State<VerifySeed> {
     //    streams.app.behavior.snack.add(Snack(message: 'Successfully Verified Backup'));
     //  }
     //}
+    streams.app.behavior.snack
+        .add(Snack(message: 'Successfully Verified Backup'));
     streams.app.wallet.refresh.add(true);
   }
 }

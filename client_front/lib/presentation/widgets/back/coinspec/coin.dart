@@ -1,5 +1,6 @@
+import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:moontree_utils/moontree_utils.dart';
-import 'package:client_front/application/send/cubit.dart';
+import 'package:client_front/application/wallet/send/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
@@ -49,40 +50,48 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     controller.forward();
+    print(widget.symbol);
+    final symbolType = '${Symbol(widget.symbol).symbolTypeName} asset'
+        .replaceAll('NFT asset', 'NFT');
 
     return Column(
-      children: <Widget>[icon, subHeader],
+      children: <Widget>[
+        GestureDetector(
+          onTap: () async {
+            if (services.developer.developerMode) {
+              controller.reverse();
+              await Future<void>.delayed(const Duration(milliseconds: 240));
+              setState(() => front = !front);
+            }
+          },
+          child: Column(
+            // used to push it down because we hid stuff and want to center:
+            children: <Widget>[
+              if (symbolType == 'Main asset')
+                SizedBox(height: .015.ofMediaHeight(context)),
+              Hero(
+                tag: widget.symbol.toLowerCase(),
+                child: components.icons.assetAvatar(
+                  widget.symbol,
+                  size: .0631.ofMediaHeight(context),
+                  net: pros.settings.net,
+                ),
+              ),
+            ],
+          ),
+        ),
+        FadeTransition(opacity: animation, child: Column(children: belowIcon)),
+        if (symbolType != 'Main asset')
+          Text(
+            widget.symbol == Current.coin.symbol ? 'Coin' : symbolType,
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(color: AppColors.white60),
+          )
+      ],
     );
   }
-
-  Widget get icon => GestureDetector(
-        onTap: () async {
-          if (services.developer.developerMode) {
-            controller.reverse();
-            await Future<void>.delayed(const Duration(milliseconds: 240));
-            setState(() => front = !front);
-          }
-        },
-        child:
-
-            /// used to push it down because we hid stuff and want to cetner:
-            Column(
-          children: <Widget>[
-            SizedBox(height: .015.ofMediaHeight(context)),
-            Hero(
-              tag: widget.symbol.toLowerCase(),
-              child: components.icons.assetAvatar(
-                widget.symbol,
-                size: .0631.ofMediaHeight(context),
-                net: pros.settings.net,
-              ),
-            ),
-          ],
-        ),
-      );
-
-  Widget get subHeader =>
-      FadeTransition(opacity: animation, child: Column(children: belowIcon));
 
   List<Widget> get belowIcon {
     final List<Widget> ret = <Widget>[
@@ -106,17 +115,17 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
             ),
             style: Theme.of(context)
                 .textTheme
-                .bodyText1!
+                .bodyLarge!
                 .copyWith(color: AppColors.white87)),
       ]);
     } else if (front && widget.totalSupply != null) {
-      ret.addAll(<Widget>[
-        Text('Total Supply',
-            style: Theme.of(context)
-                .textTheme
-                .bodyText1!
-                .copyWith(color: AppColors.white)),
-      ]);
+      //ret.addAll(<Widget>[
+      //  Text('Total Supply',
+      //      style: Theme.of(context)
+      //          .textTheme
+      //          .bodyLarge!
+      //          .copyWith(color: AppColors.white)),
+      //]);
     }
     return ret;
   }
@@ -142,13 +151,14 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
       widget.totalSupply ?? holding,
       style: Theme.of(context)
           .textTheme
-          .headline1!
+          .displayLarge!
           .copyWith(color: AppColors.white87),
     );
     return widget.pageTitle == 'Send'
         ? GestureDetector(
             child: text,
-            onTap: () => widget.cubit?.set(amount: holding.toDouble()))
+            onTap: () => widget.cubit
+                ?.set(amountStr: holding, amount: holding.toDouble()))
         : text;
   }
 
@@ -158,7 +168,7 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
             : widget.symbol,
         style: Theme.of(context)
             .textTheme
-            .bodyText1!
+            .bodyLarge!
             .copyWith(color: AppColors.white),
       );
 }

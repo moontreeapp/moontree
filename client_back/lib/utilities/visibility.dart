@@ -18,6 +18,4 @@ void printFullState() {
   print('vins ${pros.vins.records.length}');
   print('vouts ${pros.vouts.records.length}');
   print('wallets ${pros.wallets.records.length}');
-  print(
-      'subscribe subscriptionHandlesAsset ${services.client.subscribe.subscriptionHandlesAsset}');
 }

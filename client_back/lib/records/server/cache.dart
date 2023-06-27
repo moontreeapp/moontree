@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:client_back/client_back.dart';
-import 'package:client_back/server/src/protocol/protocol.dart' as protocol;
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:client_back/records/_type_id.dart';

@@ -1,10 +1,7 @@
 import 'package:client_back/server/src/protocol/protocol.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 import 'package:wallet_utils/wallet_utils.dart';
-import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
@@ -64,10 +61,8 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
         confirmed: holdingView?.satsConfirmed ?? 0,
         unconfirmed: holdingView?.satsUnconfirmed ?? 0);
     int holdingSat = 0;
-    if (holdingBalance != null) {
-      holding = holdingBalance.amount;
-      holdingSat = holdingBalance.value;
-    }
+    holding = holdingBalance.amount;
+    holdingSat = holdingBalance.value;
     int amountSat = amount.asSats;
     if (holding - amount == 0) {
       amountSat = holdingSat;
@@ -80,9 +75,9 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
     } catch (e) {
       visibleFiatAmount = '';
     }
-    //return flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
+    //return flutter_bloc.BlocBuilder<WalletHoldingsViewCubit, WalletHoldingsViewState>(
     //   //bloc: cubit..enter(),
-    //    builder: (BuildContext context, HoldingsViewState state) {
+    //    builder: (BuildContext context, WalletHoldingsViewState state) {
     return Container(
       padding: EdgeInsets.only(top: .021.ofMediaHeight(context)),
       //height: widget.pageTitle == 'Send' ? 209 : 201,
@@ -100,10 +95,11 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
               symbol: symbol,
               holdingSat: holdingSat,
               totalSupply: widget.pageTitle == 'Asset'
-                  ? pros.assets.primaryIndex
-                      .getOne(symbol, pros.settings.chain, pros.settings.net)
-                      ?.amount
-                      .toSatsCommaString()
+                  ? symbol
+                  //? pros.assets.primaryIndex
+                  //    .getOne(symbol, pros.settings.chain, pros.settings.net)
+                  //    ?.amount
+                  //    .toSatsCommaString()
                   : null),
           widget.bottom ?? specBottom(holdingSat, amountSat),
         ],
@@ -113,9 +109,9 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
   }
 
   Widget specBottom(int holdingSat, int amountSat) {
-    if (widget.pageTitle == 'Asset') {
-      return AssetSpecBottom(symbol: symbol);
-    }
+    //if (widget.pageTitle == 'Asset') {
+    //  return AssetSpecBottom(symbol: symbol);
+    //}
     if (widget.cubit != null && widget.pageTitle == 'Send') {
       return Padding(
           padding: EdgeInsets.only(
@@ -126,7 +122,7 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                 Text('Remaining:',
                     style: Theme.of(context)
                         .textTheme
-                        .bodyText2!
+                        .bodyMedium!
                         .copyWith(color: AppColors.offWhite)),
                 Text(
                     services.conversion.securityAsReadable(
@@ -135,11 +131,11 @@ class _CoinSpecState extends State<CoinSpec> with TickerProviderStateMixin {
                     style: (holding - amount) >= 0
                         ? Theme.of(context)
                             .textTheme
-                            .bodyText2!
+                            .bodyMedium!
                             .copyWith(color: AppColors.offWhite)
                         : Theme.of(context)
                             .textTheme
-                            .bodyText2!
+                            .bodyMedium!
                             .copyWith(color: AppColors.error))
               ]));
     }

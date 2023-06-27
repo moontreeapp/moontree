@@ -1,7 +1,6 @@
-import 'package:client_front/presentation/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_front/application/loading/cubit.dart';
+import 'package:client_front/application/layers/loading/cubit.dart';
 import 'package:client_front/presentation/utils/animation.dart';
 import 'package:client_front/presentation/services/services.dart' as uiservices;
 import 'package:client_front/presentation/widgets/front_curve.dart'
@@ -97,10 +96,10 @@ class LoadingContent extends StatelessWidget {
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(title, style: Theme.of(context).textTheme.headline1),
+            Text(title, style: Theme.of(context).textTheme.displayLarge),
             const SizedBox(height: 32),
             if (msg != null)
-              Text(msg!, style: Theme.of(context).textTheme.headline2),
+              Text(msg!, style: Theme.of(context).textTheme.displayMedium),
             const SizedBox(height: 16),
             Lottie.asset(
               'assets/spinner/moontree_spinner_v2_002_1_recolored.json',

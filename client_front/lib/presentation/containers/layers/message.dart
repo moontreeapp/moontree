@@ -1,4 +1,4 @@
-import 'package:client_front/application/modal/message/cubit.dart';
+import 'package:client_front/application/layers/modal/message/cubit.dart';
 import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,7 +59,9 @@ class MessageModalLayerState extends State<MessageModalLayer>
                           title: state.title == null
                               ? null
                               : Text(state.title!,
-                                  style: Theme.of(context).textTheme.headline2),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displayMedium),
                           content: state.child != null && state.content != null
                               ? Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -74,7 +76,7 @@ class MessageModalLayerState extends State<MessageModalLayer>
                                             maxLines: 10,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyText2!
+                                                .bodyMedium!
                                                 .copyWith(
                                                     color: AppColors.black38))),
                                     state.child!,
@@ -93,7 +95,7 @@ class MessageModalLayerState extends State<MessageModalLayer>
                                               maxLines: 10,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyText2!
+                                                  .bodyMedium!
                                                   .copyWith(
                                                       color:
                                                           AppColors.black38)))
@@ -105,7 +107,7 @@ class MessageModalLayerState extends State<MessageModalLayer>
                                   child: Text(key,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .button!
+                                          .labelLarge!
                                           .copyWith(
                                               fontWeight: FontWeights.semiBold,
                                               color: AppColors.primary)))

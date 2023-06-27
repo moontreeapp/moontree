@@ -21,7 +21,7 @@ class ButtonStyleComponents {
                     ? AppColors.white
                     : soft
                         ? AppColors.primaries[3]
-                        : Theme.of(context).backgroundColor,
+                        : Theme.of(context).colorScheme.background,
             width: 2, //soft ? 1 : 2,
             style: BorderStyle.solid)),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
@@ -35,7 +35,7 @@ class ButtonStyleComponents {
   }) =>
       ButtonStyle(
         textStyle:
-            MaterialStateProperty.all(Theme.of(context).textTheme.bodyText1),
+            MaterialStateProperty.all(Theme.of(context).textTheme.bodyLarge),
         foregroundColor: MaterialStateProperty.all(AppColors.black),
         backgroundColor: MaterialStateProperty.all(
             chosen ? AppColors.primaries[1] : AppColors.primaries[0]),

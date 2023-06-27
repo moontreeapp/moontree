@@ -21,6 +21,7 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
     required this.eachOutputAmount,
     required this.eachOutputAssetMemo,
     required this.eachOutputAssetMemoTimestamp,
+    this.lockedUtxos,
   });
 
   factory UnsignedTransactionRequest.fromJson(
@@ -50,9 +51,14 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
       eachOutputAssetMemoTimestamp:
           serializationManager.deserialize<List<int?>>(
               jsonSerialization['eachOutputAssetMemoTimestamp']),
+      lockedUtxos: serializationManager
+          .deserialize<List<String>?>(jsonSerialization['lockedUtxos']),
     );
   }
 
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
   int? id;
 
   List<String> myH106s;
@@ -75,6 +81,8 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
 
   List<int?> eachOutputAssetMemoTimestamp;
 
+  List<String>? lockedUtxos;
+
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -89,6 +97,7 @@ class UnsignedTransactionRequest extends _i1.SerializableEntity {
       'eachOutputAmount': eachOutputAmount,
       'eachOutputAssetMemo': eachOutputAssetMemo,
       'eachOutputAssetMemoTimestamp': eachOutputAssetMemoTimestamp,
+      'lockedUtxos': lockedUtxos,
     };
   }
 }

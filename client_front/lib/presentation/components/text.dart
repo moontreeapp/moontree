@@ -11,7 +11,7 @@ class TextComponents {
         textAlign: TextAlign.center,
         style: Theme.of(components.routes.context!)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: AppColors.error),
       );
 }

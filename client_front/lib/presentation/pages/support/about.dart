@@ -37,7 +37,7 @@ class _AboutState extends State<About> {
               '@moontreewallet',
               style: Theme.of(context)
                   .textTheme
-                  .subtitle1!
+                  .titleMedium!
                   .copyWith(color: AppColors.primary),
             ),
           ),
@@ -51,7 +51,7 @@ class _AboutState extends State<About> {
                   '$VERSION_TRACK: ' +
                       services.version
                           .byPlatform(Platform.isIOS ? 'ios' : 'android'),
-                  style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
                       color: AppColors.black60,
                       fontWeight: FontWeights.semiBold),
                 ),
@@ -66,10 +66,10 @@ class _AboutState extends State<About> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  '© 2022 Moontree, LLC',
+                  '© ${DateTime.now().year} Moontree, LLC',
                   style: Theme.of(context)
                       .textTheme
-                      .subtitle1!
+                      .titleMedium!
                       .copyWith(color: AppColors.black60),
                 )
               ]),

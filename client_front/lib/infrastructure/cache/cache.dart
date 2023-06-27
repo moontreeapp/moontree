@@ -14,7 +14,6 @@ import 'package:client_back/server/serverv2_client.dart'
     show SerializableEntity;
 import 'package:client_back/server/src/protocol/protocol.dart' show Protocol;
 import 'package:moontree_utils/extensions/bytedata.dart';
-import 'package:moontree_utils/extensions/string.dart';
 
 class Cache {
   /// saves records to cache

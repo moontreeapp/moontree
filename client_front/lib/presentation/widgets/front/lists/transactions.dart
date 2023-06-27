@@ -13,7 +13,7 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
 
 class TransactionList extends StatefulWidget {
-  final TransactionsViewCubit? cubit;
+  final WalletHoldingViewCubit? cubit;
   final Iterable<TransactionView>? mempool;
   final Iterable<TransactionView>? transactions;
   final String? symbol;
@@ -198,23 +198,23 @@ class _TransactionListState extends State<TransactionList> {
                                           transactionView.height <= 0
                                               ? Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1!
+                                                  .bodyLarge!
                                                   .copyWith(
                                                       color: AppColors.disabled)
                                               : Theme.of(context)
                                                   .textTheme
-                                                  .bodyText1),
+                                                  .bodyLarge),
                                   Text(
                                       '${transactionView.formattedDatetime} ${transactionView.type.specialPaddedDisplay(transactionView.feeOnly, transactionView.consolidationToSelf)}',
                                       style: transactionView.height <= 0
                                           ? Theme.of(context)
                                               .textTheme
-                                              .bodyText1!
+                                              .bodyLarge!
                                               .copyWith(
                                                   color: AppColors.disabled)
                                           : Theme.of(context)
                                               .textTheme
-                                              .bodyText2!
+                                              .bodyMedium!
                                               .copyWith(
                                                   color: AppColors.black60)),
                                 ]),

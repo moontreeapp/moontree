@@ -8,7 +8,7 @@ void initTriggers(HiveLoadingStep step) {
     //triggers.leader.init();
     ////triggers.setting.init();
     triggers.app.init();
-    //triggers.rate.init(RVNtoFiat());
+    triggers.rate.init(RVNtoFiat());
   }
   if (<HiveLoadingStep>[HiveLoadingStep.all, HiveLoadingStep.login]
       .contains(step)) {

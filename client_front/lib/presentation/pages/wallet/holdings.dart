@@ -1,22 +1,21 @@
 // ignore_for_file: avoid_print
-
 import 'dart:async';
-import 'package:client_front/presentation/theme/fonts.dart';
-import 'package:client_front/presentation/utils/ext.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
-import 'package:moontree_utils/moontree_utils.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/client_back.dart';
+import 'package:client_back/streams/app.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/application/cubits.dart';
+import 'package:client_front/presentation/theme/fonts.dart';
+import 'package:client_front/presentation/utils/ext.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
-import 'package:client_front/presentation/components/components.dart'
-    as components;
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/services/services.dart' show sail;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class WalletHoldings extends StatelessWidget {
   const WalletHoldings({Key? key}) : super(key: key ?? defaultKey);
@@ -40,7 +39,7 @@ class WalletHoldings extends StatelessWidget {
   //    title: Text('WhaleStreet'),
   //  ),
   //),
-  Future<void> refresh(HoldingsViewCubit cubit) async {
+  Future<void> refresh(WalletHoldingsViewCubit cubit) async {
     //cubit.update(isSubmitting: true);
     await cubit.setHoldingViews(force: true);
   }
@@ -54,7 +53,7 @@ class WalletHoldings extends StatelessWidget {
         }
       });
     }
-    final HoldingsViewCubit cubit = components.cubits.holdingsView;
+    final WalletHoldingsViewCubit cubit = components.cubits.holdingsView;
     if (cubit.state.ranWallet != Current.wallet ||
         cubit.state.ranChainNet != pros.settings.chainNet) {
       cubit.update(isSubmitting: true);
@@ -62,9 +61,10 @@ class WalletHoldings extends StatelessWidget {
     cubit.setHoldingViews();
     return GestureDetector(
         onTap: () => refresh(cubit), //FocusScope.of(context).unfocus(),
-        child: flutter_bloc.BlocBuilder<HoldingsViewCubit, HoldingsViewState>(
+        child: flutter_bloc.BlocBuilder<WalletHoldingsViewCubit,
+                WalletHoldingsViewState>(
             bloc: cubit..enter(),
-            builder: (BuildContext context, HoldingsViewState state) {
+            builder: (BuildContext context, WalletHoldingsViewState state) {
               if (state.isSubmitting == true) {
                 return RefreshIndicator(
                     onRefresh: () => refresh(cubit),
@@ -83,7 +83,7 @@ class WalletHoldings extends StatelessWidget {
                             scrollController: ScrollController(),
                             header: 'Get Started',
                             message:
-                                'Use the Import or Receive button to add ${pros.settings.chain.title} & assets to your wallet.'));
+                                'Use the Import feature in the menu or Receive button below to add ${pros.settings.chain.title} & assets to your wallet.'));
                   } else {
                     return RefreshIndicator(
                         onRefresh: () => refresh(cubit),
@@ -106,7 +106,7 @@ class WalletHoldings extends StatelessWidget {
 }
 
 class HoldingsView extends StatefulWidget {
-  final HoldingsViewCubit cubit;
+  final WalletHoldingsViewCubit cubit;
   const HoldingsView({required this.cubit, super.key});
 
   @override
@@ -114,10 +114,10 @@ class HoldingsView extends StatefulWidget {
 }
 
 class _HoldingsView extends State<HoldingsView> {
-  TextEditingController searchController = TextEditingController();
   ScrollController scrollController = ScrollController();
   final Security currentCrypto = pros.securities.currentCoin;
   final Wallet wallet = Current.wallet;
+  List<AssetHolding> _hiddenAssets = [];
 
   @override
   void initState() {
@@ -126,10 +126,11 @@ class _HoldingsView extends State<HoldingsView> {
 
   @override
   void dispose() {
+    scrollController.dispose();
     super.dispose();
   }
 
-  Future<void> refresh(HoldingsViewCubit cubit) async =>
+  Future<void> refresh(WalletHoldingsViewCubit cubit) async =>
       await cubit.setHoldingViews(force: true);
 
   void _toggleUSD() {
@@ -146,126 +147,125 @@ class _HoldingsView extends State<HoldingsView> {
     widget.cubit.update(showPath: !widget.cubit.state.showPath);
   }
 
-  void _toggleSearch() {
-    widget.cubit.update(showSearchBar: !widget.cubit.state.showSearchBar);
+  Future<void> _hideAsset(AssetHolding holding, Security security) async {
+    await pros.settings.addAllHiddenAssets([security]);
+    _hiddenAssets.add(holding);
+    // show that it's hidden
+    setState(() {});
+  }
+
+  Future<void> _unhideAsset(AssetHolding holding, Security security) async {
+    await pros.settings.removeAllHiddenAssets([security]);
+    _hiddenAssets.remove(holding);
+    // show that it's hidden
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> rvnHolding = <Widget>[];
-    final List<Widget> assetHoldings = <Widget>[];
-    final Padding searchBar = Padding(
-        padding: const EdgeInsets.only(top: 1, bottom: 16, left: 16, right: 16),
-        child: TextFieldFormatted(
-            controller: TextEditingController(),
-            //focusedErrorBorder: InputBorder.none,
-            //errorBorder: InputBorder.none,
-            //focusedBorder: InputBorder.none,
-            //enabledBorder: InputBorder.none,
-            //disabledBorder: InputBorder.none,
-            contentPadding:
-                const EdgeInsets.only(left: 16, top: 16, bottom: 16),
-            autocorrect: false,
-            textInputAction: TextInputAction.done,
-            labelText: 'Search',
-            suffixIcon: IconButton(
-              icon: const Padding(
-                  padding: const EdgeInsets.only(right: 14),
-                  child: Icon(Icons.clear_rounded, color: AppColors.black38)),
-              onPressed: () => setState(() {
-                searchController.text = '';
-                widget.cubit.update(showSearchBar: false);
-              }),
-            ),
-            onChanged: (_) => setState(() {}),
-            onEditingComplete: () =>
-                widget.cubit.update(showSearchBar: false)));
-    for (final AssetHolding holding in widget.cubit.state.assetHoldings) {
-      final ListTile thisHolding = ListTile(
-          //dense: true,
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          onTap: () async => onTap(widget.cubit.state.ranWallet, holding),
-          onLongPress: _togglePath,
-          leading: leadingIcon(holding),
-          title: title(holding, currentCrypto),
-          trailing: services.developer.developerMode == true
-              ? ((holding.symbol == currentCrypto.symbol) // && !isEmpty
-                  ? GestureDetector(
-                      onTap: () => _toggleSearch(),
-                      child: searchController.text == ''
-                          ? const Icon(Icons.search)
-                          : const Icon(
-                              Icons.search,
-                              shadows: <Shadow>[
-                                Shadow(
-                                    color: AppColors.black12,
-                                    offset: Offset(1, 1),
-                                    blurRadius: 1),
-                                Shadow(
-                                    color: AppColors.black12,
-                                    offset: Offset(1, 2),
-                                    blurRadius: 2)
-                              ],
-                            ))
-                  : null)
-              : null);
-      if (holding.symbol == currentCrypto.symbol) {
-        //if (pros.securities.coinSymbols.contains(holding.symbol)) {
-        rvnHolding.add(Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            thisHolding,
-            if (widget.cubit.state.showSearchBar /*&& !isEmpty*/) searchBar,
-          ],
-        ));
-        rvnHolding.add(const Divider(
-          height: 1,
-          indent: 70,
-          endIndent: 0,
-        ));
-      } else {
-        if (searchController.text == '' ||
-            holding.symbol.contains(searchController.text.toUpperCase())) {
-          assetHoldings.add(thisHolding);
-          assetHoldings.add(const Divider(height: 1));
+    return flutter_bloc.BlocBuilder<SearchCubit, SearchCubitState>(
+        builder: (BuildContext context, SearchCubitState state) {
+      return flutter_bloc.BlocBuilder<LocationCubit, LocationCubitState>(
+          builder:
+              (BuildContext locationContext, LocationCubitState locationState) {
+        final List<Widget> rvnHolding = <Widget>[];
+        final List<Widget> assetHoldings = <Widget>[];
+        for (final AssetHolding holding in widget.cubit.state.assetHoldings
+            .where((e) => !pros.settings.hiddenAssets.contains(
+                  e.security,
+                ))) {
+          final Widget thisHolding = Visibility(
+              visible: !_hiddenAssets.contains(holding),
+              child: ListTile(
+                //dense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+                onTap: () {
+                  if (components.cubits.location.menuOpened) {
+                    sail.menu(open: false);
+                  } else {
+                    onTap(widget.cubit.state.ranWallet, holding);
+                  }
+                },
+                onLongPress: () {
+                  if (!holding.symbolSymbol.isCoin) {
+                    _hideAsset(holding, holding.security);
+                    streams.app.behavior.snack.add(Snack(
+                        positive: true,
+                        message: 'Asset has been hidden',
+                        delay: 0,
+                        label: 'undo',
+                        callback: () =>
+                            _unhideAsset(holding, holding.security)));
+                  }
+                },
+                leading: leadingIcon(holding),
+                title: title(holding, currentCrypto),
+              ));
+          if (holding.symbol == currentCrypto.symbol) {
+            //if (pros.securities.coinSymbols.contains(holding.symbol)) {
+            rvnHolding.add(thisHolding);
+            rvnHolding.add(const Divider(
+              height: 1,
+              indent: 70,
+              endIndent: 0,
+            ));
+          } else {
+            if (state.text == '' || holding.symbol.contains(state.text)) {
+              assetHoldings.add(thisHolding);
+              assetHoldings.add(const Divider(height: 1));
+            }
+          }
         }
-      }
-    }
 
-    /// this case is when we haven't started downloading anything yet.
-    if (rvnHolding.isEmpty && assetHoldings.isEmpty) {
-      rvnHolding.add(Shimmer.fromColors(
-          baseColor: AppColors.primaries[0],
-          highlightColor: Colors.white,
-          child: components.empty.holdingPlaceholder(context)));
-    }
+        /// this case is when we haven't started downloading anything yet.
+        if (rvnHolding.isEmpty && assetHoldings.isEmpty) {
+          rvnHolding.add(Shimmer.fromColors(
+              baseColor: AppColors.primaries[0],
+              highlightColor: Colors.white,
+              child: components.empty.holdingPlaceholder(context)));
+        }
 
-    final ListView listView = ListView(
-        padding: EdgeInsets.zero,
-        controller: scrollController,
-        physics: const ClampingScrollPhysics(),
-        children: <Widget>[
-          ...rvnHolding,
-          ...assetHoldings,
-          ...<Widget>[components.empty.blankNavArea(context)]
-        ]);
-    //if (services.developer.advancedDeveloperMode == true) {
-    //  return RefreshIndicator(
-    //    onRefresh: () async {
-    //      streams.app.behavior.snack.add(Snack(message: 'Resyncing...'));
-    //      await services.client.resetMemoryAndConnection();
-    //      setState(() {});
-    //    },
-    //    child: listView,
-    //  );
-    //}
-    return GestureDetector(
-      onTap: () async {
-        refresh(widget.cubit);
-      },
-      child: listView,
-    );
+        final ListView listView = ListView(
+            padding: EdgeInsets.zero,
+            controller: scrollController,
+            physics: locationState.menuOpen
+                ? const NeverScrollableScrollPhysics()
+                : const ClampingScrollPhysics(),
+            children: <Widget>[
+              ...rvnHolding,
+              ...assetHoldings,
+              ...<Widget>[components.empty.blankNavArea(context)]
+            ]);
+        //if (services.developer.advancedDeveloperMode == true) {
+        //  return RefreshIndicator(
+        //    onRefresh: () async {
+        //      streams.app.behavior.snack.add(Snack(message: 'Resyncing...'));
+        //      await services.client.resetMemoryAndConnection();
+        //      setState(() {});
+        //    },
+        //    child: listView,
+        //  );
+        //}
+
+        // this seems to make the animations jumpy...
+        if (locationState.menuOpen) {
+          if (mounted) {
+            if (scrollController.hasClients &&
+                scrollController.position.maxScrollExtent > 0) {
+              scrollController.jumpTo(0);
+            }
+          }
+        }
+
+        return GestureDetector(
+          onTap: () async {
+            refresh(widget.cubit);
+          },
+          child: listView,
+        );
+      });
+    });
   }
 
   void navigate(BalanceView balance, {Wallet? wallet}) {
@@ -433,23 +433,24 @@ class _HoldingsView extends State<HoldingsView> {
               //tag: holding.symbol.toLowerCase(),
               //child:
               components.icons.assetAvatar(
-                  holding.admin != null
-                      ? holding.adminSymbol!
-                      : holding.restricted != null
-                          ? holding.restrictedSymbol!
-                          : holding.qualifier != null
-                              ? holding.qualifierSymbol!
-                              : holding.channel != null
-                                  ? holding.channelSymbol!
-                                  : holding.nft != null
-                                      ? holding.nftSymbol!
-                                      : holding.subAdmin != null
-                                          ? holding.subAdminSymbol!
-                                          : holding.sub != null
-                                              ? holding.subSymbol!
-                                              : holding.qualifierSub != null
-                                                  ? holding.qualifierSubSymbol!
-                                                  : holding.symbol,
+                  //holding.admin != null
+                  //    ? holding.adminSymbol!
+                  //    : holding.restricted != null
+                  //        ? holding.restrictedSymbol!
+                  //        : holding.qualifier != null
+                  //            ? holding.qualifierSymbol!
+                  //            : holding.channel != null
+                  //                ? holding.channelSymbol!
+                  //                : holding.nft != null
+                  //                    ? holding.nftSymbol!
+                  //                    : holding.subAdmin != null
+                  //                        ? holding.subAdminSymbol!
+                  //                        : holding.sub != null
+                  //                            ? holding.subSymbol!
+                  //                            : holding.qualifierSub != null
+                  //                                ? holding.qualifierSubSymbol!
+                  //                                : holding.symbol,
+                  holding.symbol,
                   net: pros.settings.net))
       //)
       ;
@@ -467,11 +468,14 @@ class _HoldingsView extends State<HoldingsView> {
                 child: Text(
                     holding.symbol == currentCrypto.symbol
                         ? symbolName(holding.symbol)
-                        : services.developer.developerMode &&
-                                widget.cubit.state.showPath
+                        : pros.settings.fullAssetsShown
                             ? holding.symbol
                             : holding.last,
-                    style: Theme.of(context).textTheme.bodyText1),
+                    //: services.developer.developerMode &&
+                    //        widget.cubit.state.showPath
+                    //    ? holding.symbol
+                    //    : holding.last,
+                    style: Theme.of(context).textTheme.bodyLarge),
               )),
         ]),
         Text(
@@ -498,7 +502,7 @@ class _HoldingsView extends State<HoldingsView> {
                       asUSD: widget.cubit.state.showUSD),
           style: Theme.of(context)
               .textTheme
-              .bodyText2!
+              .bodyMedium!
               .copyWith(color: AppColors.black60),
         ),
       ]);
@@ -541,14 +545,12 @@ List<Widget> assetOptions({
           title: Text((x[0] as String).toTitleCase(),
               style: Theme.of(context ?? components.routes.context!)
                   .textTheme
-                  .bodyText1!
+                  .bodyLarge!
                   .copyWith(color: AppColors.black87)),
-          trailing: (x[2] as String) != null
-              ? Text((x[2] as String),
-                  style: Theme.of(context!).textTheme.bodyText2!.copyWith(
-                      fontWeight: FontWeights.bold,
-                      letterSpacing: 0.1,
-                      color: AppColors.black60))
-              : null,
+          trailing: Text((x[2] as String),
+              style: Theme.of(context!).textTheme.bodyMedium!.copyWith(
+                  fontWeight: FontWeights.bold,
+                  letterSpacing: 0.1,
+                  color: AppColors.black60)),
         ),
     ];

@@ -163,6 +163,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
             prefixIcon: widget.prefixIcon,
           )
         : InputDecoration(
+            enabled: widget.enabled ?? true,
             prefixIcon: widget.prefixIcon,
             focusedErrorBorder: widget.focusedErrorBorder ??
                 OutlineInputBorder(
@@ -187,7 +188,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
                 OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                     borderSide: const BorderSide(color: AppColors.black12)),
-            labelStyle: Theme.of(context).textTheme.subtitle1!.copyWith(
+            labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
                 color: (widget.enabled ?? true) ? null : AppColors.black38),
             alignLabelWithHint: true,
             floatingLabelStyle: widget.focusNode?.hasFocus ?? false
@@ -216,18 +217,22 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
             suffixStyle: widget.suffixStyle,
             errorStyle: Theme.of(context)
                 .textTheme
-                .caption!
+                .bodySmall!
                 .copyWith(height: .8, color: AppColors.error),
             helperStyle: widget.helperStyle ??
                 Theme.of(context)
                     .textTheme
-                    .caption!
+                    .bodySmall!
                     .copyWith(height: .8, color: AppColors.primary),
           );
     final TextField text = TextField(
         //key: widget.key,
         decoration: decoration,
         onTap: widget.onTap ?? () => setState(() {}), // solves #594
+        onTapOutside: (_) =>
+            (widget.focusNode ?? FocusScope.of(context)).unfocus(),
+        //onTapOutside: (_) => FocusScope.of(context).unfocus(),
+        //onTapOutside: (_) => widget.cubit.reset(),
         controller: widget.controller,
         focusNode: widget.focusNode,
         keyboardType: widget.keyboardType,

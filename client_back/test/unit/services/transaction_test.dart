@@ -1,10 +1,8 @@
 // dart test .\test\unit\services\transaction_test.dart
 import 'package:client_back/client_back.dart';
-import 'package:client_back/services/transaction/transaction.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 import 'package:test/test.dart';
 
-import 'package:client_back/services/transaction/maker.dart';
 import '../../fixtures/fixtures.dart' as fixtures;
 
 const connectionTimeout = Duration(seconds: 5);

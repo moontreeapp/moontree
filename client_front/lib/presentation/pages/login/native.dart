@@ -16,10 +16,12 @@ import 'package:client_front/infrastructure/services/dev.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show populateWalletsWithSensitives;
 import 'package:client_front/infrastructure/services/services.dart';
-import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class LoginNative extends StatefulWidget {
   const LoginNative({Key? key}) : super(key: key ?? defaultKey);
@@ -106,7 +108,6 @@ class _LoginNativeState extends State<LoginNative> {
         ],
         firstLowerChildren: <Widget>[
           (needsConsent ? UlaMessage() : const SizedBox(height: 100)),
-          const SizedBox(height: 24),
         ],
         secondLowerChildren: <Widget>[
           BottomButton(
@@ -140,12 +141,14 @@ class _LoginNativeState extends State<LoginNative> {
     final bool validate = await localAuthApi.authenticate(
         skip: devFlags.contains(DevFlag.skipPin));
     streams.app.auth.authenticating.add(false);
-    setState(() => enabled = false);
+    if (mounted) {
+      setState(() => enabled = false);
+    }
     if (await services.password.lockout.handleVerificationAttempt(validate)) {
       if (!consented) {
         consented = await consentToAgreements(await getId());
       }
-      login(context);
+      login();
     } else {
       /// this is a pretty wild edge case:
       /// they were able to set nativeSecurity up but now its not working anymore
@@ -177,8 +180,7 @@ class _LoginNativeState extends State<LoginNative> {
     }
   }
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
+  bool isConnected() => components.cubits.connection.isConnected;
 
   /// nativeSecurity has it's own timeout...
   bool readyToUnlock() =>

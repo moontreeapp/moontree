@@ -1,26 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
-import 'package:client_front/main.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_back/streams/app.dart';
-import 'package:client_back/services/consent.dart';
-import 'package:client_front/infrastructure/services/password.dart';
 import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/domain/utils/auth.dart';
-import 'package:client_front/domain/utils/device.dart';
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/shadows.dart' as shadows;
 import 'package:client_front/infrastructure/services/services.dart';
-import 'package:client_front/presentation/services/services.dart' show sail;
-import 'package:client_front/presentation/services/sail.dart' show Sail;
 import 'package:client_front/presentation/services/services.dart' as uiservices;
-import 'package:client_front/presentation/components/components.dart'
-    as components;
-import 'package:path_provider/path_provider.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key ?? defaultKey);
@@ -78,7 +66,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
     // put here or on login screen. here seems better for now.
     await HIVE_INIT.setupWaiters1();
-    await services.client.createClient();
+    //await services.client.createClient(); // why?
     await HIVE_INIT.setupDatabase2();
     await HIVE_INIT.setupWaiters2();
     //sendPort.send(hiveBox);

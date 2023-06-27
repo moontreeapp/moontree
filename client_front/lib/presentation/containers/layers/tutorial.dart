@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_front/application/tutorial/cubit.dart';
+import 'package:client_front/application/layers/tutorial/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/presentation/pages/appbar/connection.dart';
+import 'package:client_front/presentation/containers/appbar/connection.dart';
 import 'package:client_front/presentation/widgets/other/speech_bubble.dart';
 import 'package:client_front/presentation/widgets/other/other.dart';
 import 'package:client_front/presentation/components/components.dart'
@@ -63,7 +63,7 @@ class TutorialBlockchain extends StatelessWidget {
               nipOffCenter: 86,
               child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Text('Tap to switch Blockchains',
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
               ]),
             ),
           )));
@@ -87,7 +87,7 @@ class TutorialWallet extends StatelessWidget {
                     Text('Wallet 1',
                         style: Theme.of(context)
                             .textTheme
-                            .headline2!
+                            .displayMedium!
                             .copyWith(color: AppColors.white))
                   ]),
                   actions: <Widget>[])),
@@ -98,7 +98,7 @@ class TutorialWallet extends StatelessWidget {
               nipOffCenter: -70,
               child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Text('Tap to switch Wallets',
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
               ]),
             ),
           )));

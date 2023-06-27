@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:client_front/application/utilities.dart';
-import 'package:client_front/application/navbar/cubit.dart';
-import 'package:client_front/application/location/cubit.dart';
+import 'package:client_front/application/layers/navbar/cubit.dart';
+import 'package:client_front/application/infrastructure/location/cubit.dart';
 import 'package:client_front/presentation/pages/wallet/front/holding.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
@@ -33,9 +33,10 @@ class Sail {
   static const Map<Section, String> initialPaths = {
     Section.login: initialPath,
     Section.wallet: '/wallet/holdings',
-    Section.manage: '/manage',
-    Section.swap: '/swap',
+    Section.manage: '/manage/holdings',
+    Section.swap: '/swap/holdings',
     Section.settings: '/menu',
+    Section.scan: '/scan',
   };
 
   static const Map<String, Manifest> destinationMap = {
@@ -148,12 +149,12 @@ class Sail {
       frontPath: '/wallet/holding/transaction',
       backPath: '/',
     ),
-    '/wallet/receive': Manifest(
+    '/receive': Manifest(
       title: 'Receive',
       section: Section.wallet,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
-      frontPath: '/wallet/receive',
+      frontPath: '/receive',
       backPath: '/',
     ),
     '/wallet/send': Manifest(
@@ -172,28 +173,60 @@ class Sail {
       frontPath: '/wallet/send/checkout',
       backPath: '/',
     ),
-    //'/wallet/send/scan': Manifest(
-    //  title: 'Scan QR Code',
-    //  section: Section.wallet,
-    //  frontHeight: FrontContainerHeight.max,
-    //  navbarHeight: NavbarHeight.hidden,
-    //  frontPath: '/',
-    //  backPath: '/wallet/send/scan',
-    //),
-    '/manage': Manifest(
-      title: 'Manage',
+    '/manage/create/checkout': Manifest(
+      title: 'Checkout',
+      section: Section.manage,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/manage/create/checkout',
+      backPath: '/',
+    ),
+    '/manage/holdings': Manifest(
+      title: 'Manage', // gets overridden with wallet name
       section: Section.manage,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.max,
-      frontPath: '/manage',
+      frontPath: '/manage/holdings',
       backPath: '/menu',
     ),
-    '/swap': Manifest(
+    '/manage/holding': Manifest(
+      title: 'Manage', // gets overridden with holding name
+      section: Section.manage,
+      frontHeight: FrontContainerHeight.mid,
+      navbarHeight: NavbarHeight.mid,
+      frontPath: '/manage/holding',
+      backPath: '/manage/holding/coinspec',
+    ),
+    '/manage/create': Manifest(
+      title: 'Create',
+      section: Section.manage,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/manage/create',
+      backPath: '/manage/create/coinspec',
+    ),
+    '/manage/reissue': Manifest(
+      title: 'Reissue',
+      section: Section.manage,
+      frontHeight: FrontContainerHeight.mid,
+      navbarHeight: NavbarHeight.hidden, // should be replaced with 'preview'
+      frontPath: '/manage/reissue',
+      backPath: '/manage/reissue/coinspec',
+    ),
+    '/manage/reissue/checkout': Manifest(
+      title: 'Checkout',
+      section: Section.manage,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/manage/reissue/checkout',
+      backPath: '/',
+    ),
+    '/swap/holdings': Manifest(
       title: 'Swap',
       section: Section.swap,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.max,
-      frontPath: '/swap',
+      frontPath: '/swap/holdings',
       backPath: '/menu',
     ),
     '/restore/import': Manifest(
@@ -252,12 +285,33 @@ class Sail {
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/setting/security',
     ),
+    '/setting/preferences': Manifest(
+      title: 'Preferences',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/setting/preferences',
+    ),
+    '/setting/hidden/assets': Manifest(
+      title: 'Hidden Assets',
+      section: Section.settings,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/setting/hidden/assets',
+    ),
     '/network/blockchain': Manifest(
       title: 'Blockchain Settings',
       section: Section.settings,
       frontHeight: FrontContainerHeight.max,
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/network/blockchain',
+    ),
+    '/scan': Manifest(
+      title: 'Send',
+      section: Section.scan,
+      frontHeight: FrontContainerHeight.max,
+      navbarHeight: NavbarHeight.hidden,
+      frontPath: '/scan',
     ),
   };
 
@@ -271,7 +325,8 @@ class Sail {
           Section.wallet: [],
           Section.manage: [],
           Section.swap: [],
-          Section.settings: []
+          Section.settings: [],
+          Section.scan: [],
         };
 
   void menu({bool? open}) async {
@@ -298,35 +353,72 @@ class Sail {
     String location = _handleHistoryRemoval();
     final manifest = destinationMap[location]!;
     updateCubits(location, manifest, back: true);
-    print(
-        'components.routes.navigatorKey.currentState ${components.routes.navigatorKey.currentState}');
+    //print(
+    //    'components.routes.navigatorKey.currentState ${components.routes.navigatorKey.currentState}');
     components.routes.navigatorKey.currentState!.pop(); // ? should we do this?
     return location;
   }
 
-  void home({
-    String location = '/wallet/holdings',
-    bool forceFullScreen = true,
-  }) {
-    if (components.cubits.location.state.path != '/wallet/holdings') {
-      // if /wallet/holdings in DestinationHistory
-      if (destinationHistory[Section.wallet]!.contains(location)) {
-        while (back() != location &&
-            destinationHistory[Section.wallet]!.length > 0) {
-          print('going back');
-        }
-      } else {
-        to(location);
+  String? locationFromSector(Section? section) {
+    //Section? section = components.cubits.location.state.sector;
+    return initialPaths[section];
+    //return '/${section.name}/holdings';
+  }
+
+  String directlyTohome({bool forceFullScreen = true}) {
+    String perSection({Section? section}) {
+      if (section == null) {
+        section = Section.wallet;
       }
+      final String location = locationFromSector(section)!;
+      if (components.cubits.location.state.path != location) {
+        destinationHistory == [];
+        to(location, replaceOverride: true);
+      }
+      return location;
     }
+
+    final loc = perSection(section: components.cubits.location.state.sector);
     if (components.cubits.location.state.menuOpen) {
       menu(open: false);
     }
     if (forceFullScreen) {
       components.cubits.frontContainer
           .setHeightTo(height: FrontContainerHeight.max);
-      components.cubits.navbar.setHeightTo(height: NavbarHeight.mid);
+      components.cubits.navbar.setHeightTo(height: NavbarHeight.max);
     }
+    return loc;
+  }
+
+  String home({bool forceFullScreen = true}) {
+    String perSection({Section? section}) {
+      if (section == null) {
+        section = Section.wallet;
+      }
+      final String location = locationFromSector(section)!;
+      if (components.cubits.location.state.path != location) {
+        if (destinationHistory[section]!.contains(location)) {
+          while (
+              back() != location && destinationHistory[section]!.length > 0) {
+            print('going back');
+          }
+        } else {
+          to(location);
+        }
+      }
+      return location;
+    }
+
+    final loc = perSection(section: components.cubits.location.state.sector);
+    if (components.cubits.location.state.menuOpen) {
+      menu(open: false);
+    }
+    if (forceFullScreen) {
+      components.cubits.frontContainer
+          .setHeightTo(height: FrontContainerHeight.max);
+      components.cubits.navbar.setHeightTo(height: NavbarHeight.max);
+    }
+    return loc;
   }
 
   String? to(
@@ -342,11 +434,18 @@ class Sail {
       throw Exception('must supply location or section');
     }
     var addToDestinationHistory = true;
-    if (location == null && destinationHistory[section]!.isNotEmpty) {
-      location = destinationHistory[section]!.last;
-      addToDestinationHistory = false;
-    } else {
-      location ??= initialPaths[section]!;
+    if (location == null) {
+      if (sectionHistory.last != section!) {
+        if (destinationHistory[sectionHistory.last]?.length == 1) {
+          destinationHistory[sectionHistory.last]!.removeLast();
+        }
+      }
+      if (destinationHistory[section]!.isNotEmpty) {
+        location = destinationHistory[section]!.last;
+        addToDestinationHistory = false;
+      } else {
+        location ??= initialPaths[section]!;
+      }
     }
     final manifest = destinationMap[location];
     if (manifest == null) {
@@ -376,10 +475,24 @@ class Sail {
   /// so far nothing has to react in realtime to the path so, it's just a var.
   /// if/when we need it to notify things, we'll add it to a stream.
   void broadcast(String location, Manifest manifest, String? symbol) =>
-      components.cubits.location
-          .update(path: location, section: manifest.section, symbol: symbol);
+      components.cubits.location.update(
+        path: location,
+        section: manifest.section,
+        symbol: symbol,
+        dataTab: false,
+      );
 
   String? get latestLocation => components.cubits.location.state.path;
+
+  void refreshHomeCubits(String location) {
+    if (location == '/wallet/holdings') {
+      components.cubits.holdingsView.setHoldingViews(force: true);
+    } else if (location == '/manage/holdings') {
+      components.cubits.manageHoldingsView.setHoldingViews(force: true);
+    } else if (location == '/swap/holdings') {
+      //pass
+    }
+  }
 
   void updateCubits(
     String location,
@@ -399,7 +512,8 @@ class Sail {
     components.cubits.title.update(title: manifest.title);
     // if we're going back home and we came from the menu then show the menu
     if (back &&
-        ['/wallet/holdings', '/manage', '/swap'].contains(location) &&
+        ['/wallet/holdings', '/manage/holdings', '/swap/holdings']
+            .contains(location) &&
         components.cubits.location.state.menuOpen) {
       components.cubits.frontContainer
           .setHeightTo(height: FrontContainerHeight.min);
@@ -413,6 +527,7 @@ class Sail {
     Future.delayed(animation.slideDuration).then((_) async {
       components.cubits.extraContainer.set(child: manifest.extraChild);
     });
+    refreshHomeCubits(location);
   }
 
   /// mutates history state
@@ -426,7 +541,11 @@ class Sail {
       sectionHistory.add(destSection);
     }
     if (addToDestinationHistory) {
+      /// this removes the duplicate entries but appearently we rely on those...
+      //if (destinationHistory[destSection]!.isEmpty ||
+      //    destinationHistory[destSection]!.last != location) {
       destinationHistory[destSection]!.add(location);
+      //}
     }
   }
 

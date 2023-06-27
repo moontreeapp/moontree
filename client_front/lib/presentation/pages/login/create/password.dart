@@ -13,7 +13,7 @@ import 'package:client_front/infrastructure/services/wallet.dart'
     show populateWalletsWithSensitives, saveSecret, setupWallets;
 import 'package:client_front/infrastructure/services/storage.dart'
     show SecureStorage;
-import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/widgets/login/components.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
@@ -188,8 +188,7 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
     });
   }
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
+  bool isConnected() => components.cubits.connection.isConnected;
 
   bool validate() {
     return passwordText == null &&
@@ -247,7 +246,7 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
     //  playCount: 4,
     //);
     await setupWallets();
-    login(context, password: password.text);
+    login(password: password.text);
     components.cubits.loadingView.hide();
   }
 }

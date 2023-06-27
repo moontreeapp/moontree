@@ -1,7 +1,5 @@
 import 'dart:typed_data';
-import 'package:tuple/tuple.dart';
-import 'package:moontree_utils/moontree_utils.dart'
-    show StringBytesExtension, ToStringMixin;
+import 'package:moontree_utils/moontree_utils.dart' show ToStringMixin;
 import 'package:wallet_utils/wallet_utils.dart' as wu;
 import 'package:client_back/client_back.dart';
 

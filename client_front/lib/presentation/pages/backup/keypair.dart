@@ -7,7 +7,6 @@ import 'package:client_back/client_back.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
 import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
 
 class ShowKeypair extends StatefulWidget {
   final dynamic data;
@@ -84,7 +83,7 @@ class _ShowKeypairState extends State<ShowKeypair>
                 //          textAlign: TextAlign.center,
                 //          style: Theme.of(context)
                 //              .textTheme
-                //              .subtitle1!
+                //              .titleMedium!
                 //              .copyWith(color: AppColors.black),
                 //        )),
                 //  )
@@ -99,7 +98,7 @@ class _ShowKeypairState extends State<ShowKeypair>
                       textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
-                          .subtitle1!
+                          .titleMedium!
                           .copyWith(color: AppColors.black),
                     )),
                 Container(
@@ -110,7 +109,7 @@ class _ShowKeypairState extends State<ShowKeypair>
                       textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
-                          .subtitle1!
+                          .titleMedium!
                           .copyWith(color: AppColors.error),
                     )),
                 Container(

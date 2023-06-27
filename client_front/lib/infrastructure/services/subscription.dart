@@ -1,4 +1,6 @@
-import 'package:client_front/application/connection/cubit.dart';
+import 'dart:async';
+
+import 'package:client_front/application/infrastructure/connection/cubit.dart';
 import 'package:serverpod_client/serverpod_client.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/serverv2_client.dart' as server;
@@ -14,6 +16,7 @@ class SubscriptionService {
   late server.ConnectivityMonitor monitor;
   bool isConnected = false;
   late StreamingConnectionHandler connectionHandler;
+  List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   SubscriptionService() : client = server.Client('$moontreeUrl/');
 
@@ -24,31 +27,32 @@ class SubscriptionService {
     //    disconnectOnLostInternetConnection: true);
     connectionHandler = StreamingConnectionHandler(
       client: client,
-      listener: (connectionState) {
-        print('connection state: ${connectionState.status}');
-        if (connectionState.status == StreamingConnectionStatus.connected) {
-          if (!streams.app.loc.splash.value) {
+      listener: (StreamingConnectionHandlerState connectionState) {
+        print('connection state: ${connectionState.status.name}');
+        if (!streams.app.loc.splash.value) {
+          if (connectionState.status == StreamingConnectionStatus.connected) {
             components.cubits.connection
                 .update(status: ConnectionStatus.connected);
-          }
-        } else if (connectionState.status ==
-                StreamingConnectionStatus.connecting ||
-            connectionState.status ==
-                StreamingConnectionStatus.waitingToRetry) {
-          if (!streams.app.loc.splash.value) {
+          } else if ([
+            StreamingConnectionStatus.connecting,
+            StreamingConnectionStatus.waitingToRetry,
+          ].contains(connectionState.status)) {
             components.cubits.connection
                 .update(status: ConnectionStatus.connecting);
-          }
-        } else if (connectionState.status ==
-            StreamingConnectionStatus.disconnected) {
-          if (!streams.app.loc.splash.value) {
+          } else if (connectionState.status ==
+              StreamingConnectionStatus.disconnected) {
             components.cubits.connection
                 .update(status: ConnectionStatus.disconnected);
           }
         }
       },
     );
-    connectionHandler.connect();
+    print('connecting!');
+    try {
+      connectionHandler.connect();
+    } catch (e) {
+      print(e);
+    }
     await setupListeners();
   }
 
@@ -78,15 +82,15 @@ class SubscriptionService {
         ///   {"id":null,"chainName":"evrmore_mainnet","height":107222}
         // if height do x
         // if balance update do y, etc.
-        print(message);
+        //print(message);
         if (message is protocol.NotifyChainStatus) {
-          print('status! ${message.toJson()}');
+          //print('status! ${message.toJson()}');
         } else if (message is protocol.NotifyChainHeight) {
           if (message.height > 0) {
             await pros.blocks.save(Block.fromNotification(message));
-            print('pros.blocks.records ${pros.blocks.records.first}');
+            //print('pros.blocks.records ${pros.blocks.records.first}');
           } else {
-            print('message was weird: ${message.toJson()}');
+            //print('message was weird: ${message.toJson()}');
           }
         } else if (message is protocol.NotifyChainH160Balance) {
           // print('H160 (SingleWallet) balance updated!');
@@ -103,6 +107,26 @@ class SubscriptionService {
     } catch (e) {
       print(e);
     }
+
+    listeners.add(streams.app.loc.splash.listen((bool value) {
+      if (!value) {
+        if (connectionHandler.status.status ==
+            StreamingConnectionStatus.connected) {
+          components.cubits.connection
+              .update(status: ConnectionStatus.connected);
+        } else if ([
+          StreamingConnectionStatus.connecting,
+          StreamingConnectionStatus.waitingToRetry
+        ].contains(connectionHandler.status.status)) {
+          components.cubits.connection
+              .update(status: ConnectionStatus.connecting);
+        } else if (connectionHandler.status.status ==
+            StreamingConnectionStatus.disconnected) {
+          components.cubits.connection
+              .update(status: ConnectionStatus.disconnected);
+        }
+      }
+    }));
   }
 
   Future<void> specifySubscription({
@@ -139,7 +163,7 @@ class SubscriptionService {
     List<String> roots = [];
     List<String> h160s = [];
     if (wallet is LeaderWallet) {
-      roots = await (wallet as LeaderWallet).roots;
+      roots = await (wallet).roots;
     } else if (wallet is SingleWallet) {
       h160s = wallet.addresses.map((e) => e.h160AsString).toList();
     }

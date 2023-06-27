@@ -16,29 +16,29 @@ class SupportPage extends StatelessWidget {
         children: <Widget>[
           Text(
             'Ravencoin',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
           Text(
             'Join the Ravencoin Discord for general Ravencoin discussions.',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
           const Divider(indent: 0),
           Text(
             'Evrmore',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
           Text(
             'Join the Evrmore Discord for general Evrmore discussions.',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
           const Divider(indent: 0),
           Text(
             'Moontree',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
           Text(
             'Join the Moontree Discord, where you can see frequently asked questions, find solutions and request help.',
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           )
         ],
         firstLowerChildren: <Widget>[

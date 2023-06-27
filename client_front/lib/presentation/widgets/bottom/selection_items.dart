@@ -6,17 +6,12 @@ import 'dart:math';
 
 import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:moontree_utils/moontree_utils.dart';
 import 'package:client_back/client_back.dart';
-import 'package:client_back/streams/app.dart';
+import 'package:client_front/presentation/theme/theme.dart';
+import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:client_front/presentation/theme/theme.dart';
-import 'package:client_front/domain/utils/extensions.dart';
-
-import 'package:client_front/domain/utils/alphacon.dart';
 
 enum SelectionOption {
   // list of my assets

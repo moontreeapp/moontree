@@ -16,7 +16,7 @@ class CustomTheme with ChangeNotifier {
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
-      backgroundColor: AppColors.primary,
+      colorScheme: AppColors.colorScheme,
       primaryColor: AppColors.primary,
       disabledColor: AppColors.disabled,
       fontFamily: 'Nunito',
@@ -38,15 +38,45 @@ class CustomTheme with ChangeNotifier {
         selectionColor: AppColors.disabled,
       ),
       textTheme: TextTheme(
-        headline1: AppText.h1,
-        headline2: AppText.h2,
-        subtitle1: AppText.subtitle1,
-        subtitle2: AppText.subtitle2,
-        bodyText1: AppText.body1,
-        bodyText2: AppText.body2,
-        caption: AppText.caption,
-        button: AppText.button,
-        overline: AppText.overline,
+        displayLarge: AppText.h1,
+        displayMedium: AppText.h2,
+        displaySmall: AppText.h2,
+        titleLarge: AppText.titleMedium,
+        titleMedium: AppText.titleMedium,
+        titleSmall: AppText.titleSmall,
+        bodyLarge: AppText.body1,
+        bodyMedium: AppText.body2,
+        bodySmall: AppText.bodySmall,
+        labelLarge: AppText.button,
+        labelSmall: AppText.overline,
+        /*(
+            displayLarge == null &&
+            displayMedium == null &&
+            displaySmall == null &&
+            headlineMedium == null &&
+            headlineSmall == null &&
+            titleLarge == null &&
+            titleMedium == null &&
+            titleSmall == null &&
+            bodyLarge == null &&
+            bodyMedium == null &&
+            bodySmall == null &&
+            labelLarge == null &&
+            labelSmall == null) ||
+         (
+          headline1 == null &&
+          headline2 == null &&
+          headline3 == null &&
+          headline4 == null &&
+          headline5 == null &&
+          headline6 == null &&
+          subtitle1 == null &&
+          subtitle2 == null &&
+          bodyText1 == null &&
+          bodyText2 == null &&
+          caption == null &&
+          button == null &&
+          overline == null),*/
       ),
 
       /// part of `routes` solution rather than the `onGenerateRoute` in main

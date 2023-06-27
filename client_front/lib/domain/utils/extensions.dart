@@ -72,7 +72,11 @@ extension RelativeHeightDoble on num {
   static double get appBarHeight => 56.0;
 
   double get systemBarHeight =>
-      MediaQueryData.fromWindow(ui.window).viewPadding.top;
+      // deprecated
+      //MediaQueryData.fromView(ui.window).viewPadding.top;
+      MediaQueryData.fromView(ui.PlatformDispatcher.instance.views.first)
+          .viewPadding
+          .top;
 
   double get optionalAndroidNav => Platform.isAndroid ? 48.0 : 0.0;
 }

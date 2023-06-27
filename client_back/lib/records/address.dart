@@ -3,7 +3,6 @@ import 'package:client_back/utilities/conversion.dart';
 import 'package:convert/convert.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import 'package:moontree_utils/extensions/string.dart';
 import 'package:moontree_utils/extensions/uint8list.dart';
 import 'package:wallet_utils/src/utilities/address.dart';
 import 'package:client_back/records/types/chain.dart';

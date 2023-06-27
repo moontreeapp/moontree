@@ -151,13 +151,20 @@ class MoontreeAppState extends State<MoontreeApp> {
               providers: [
                 BlocProvider<SimpleSendFormCubit>(
                     create: (context) => components.cubits.simpleSendForm),
-                BlocProvider<TransactionsViewCubit>(
+                BlocProvider<SimpleReissueFormCubit>(
+                    create: (context) => components.cubits.simpleReissueForm),
+                BlocProvider<SimpleCreateFormCubit>(
+                    create: (context) => components.cubits.simpleCreateForm),
+                BlocProvider<WalletHoldingViewCubit>(
                     create: (context) => components.cubits.transactionsView),
                 BlocProvider<TransactionViewCubit>(
                     create: (context) => components.cubits.transactionView),
-                BlocProvider<HoldingsViewCubit>(
+                BlocProvider<WalletHoldingsViewCubit>(
                     create: (context) => components.cubits.holdingsView),
-                // v2
+                BlocProvider<ManageHoldingsViewCubit>(
+                    create: (context) => components.cubits.manageHoldingsView),
+                BlocProvider<ManageHoldingViewCubit>(
+                    create: (context) => components.cubits.manageHoldingView),
                 BlocProvider<TitleCubit>(
                     create: (context) => components.cubits.title),
                 BlocProvider<BackContainerCubit>(
@@ -182,6 +189,8 @@ class MoontreeAppState extends State<MoontreeApp> {
                     create: (context) => components.cubits.import),
                 BlocProvider<LocationCubit>(
                     create: (context) => components.cubits.location),
+                BlocProvider<SearchCubit>(
+                    create: (context) => components.cubits.search),
                 BlocProvider<ConnectionStatusCubit>(
                     create: (context) => components.cubits.connection),
                 BlocProvider<ReceiveViewCubit>(
@@ -222,6 +231,8 @@ class HomePage extends StatelessWidget {
             ],
       ),
     );
+    //todo fix - not a real solution
+    //components.cubits.connection.update(status: ConnectionStatus.connected);
     return GestureDetector(
         onTap: () => streams.app.active.tap.add(null),
         behavior: HitTestBehavior.translucent,

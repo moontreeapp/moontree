@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'package:client_front/application/modal/bottom/cubit.dart';
 import 'package:client_front/presentation/services/services.dart';
-import 'package:client_front/presentation/widgets/front_curve.dart';
 import 'package:flutter/material.dart';
+import 'package:client_front/application/infrastructure/location/cubit.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
@@ -12,6 +11,50 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/qrcode.dart';
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
+
+class ScanQRPage extends StatelessWidget {
+  const ScanQRPage({Key? key}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    //_produceScanModal().then((value) {
+    //  sail.to('/wallet/send');
+    //  BlocProvider.of<SimpleSendFormCubit>(context).set(address: value);
+    //});
+    //return ScanQR();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // sail home first to get back button to work right. if this was going to
+      // be a permanent feature we'd find a better solution, but since it's a
+      // placeholder, and will be replaced by swap, we'll leave it this way.
+      sail.to(
+        '/wallet/holdings',
+        section: Section.wallet,
+        replaceOverride: true,
+      );
+      sail.to(
+        '/wallet/send',
+        arguments: {'openQR': true},
+        section: Section.wallet,
+      );
+    });
+    return SizedBox.shrink();
+  }
+
+  Future<void> _produceScanModal() async {
+    components.cubits.bottomModalSheet.show(
+        childrenHeight: screen.frontContainer.midHeight ~/ 1,
+        fullscreen: false,
+        color: Colors.transparent,
+        children: <Widget>[
+          Container(
+            alignment: Alignment.topCenter,
+            height: screen.frontContainer.midHeight,
+            child: ScanQR(),
+          ),
+        ]);
+    //components.cubits.bottomModalSheet.reset();
+    /* return await value produced */
+  }
+}
 
 class ScanQR extends StatefulWidget {
   const ScanQR({Key? key}) : super(key: key);
@@ -67,12 +110,12 @@ class _ScanQRState extends State<ScanQR> {
             Container(
                 height: 56,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).backgroundColor,
+                  color: Theme.of(context).colorScheme.background,
                   borderRadius: shapes.topRoundedBorder16,
                 ),
                 child: Center(
                     child: Text('Point your camera at a QR code',
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             fontWeight: FontWeights.bold,
                             letterSpacing: 0.14,
                             color: AppColors.offWhite)))),

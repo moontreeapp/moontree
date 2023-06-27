@@ -26,11 +26,11 @@ class _ShowAuthenticationChoice extends State<ShowAuthenticationChoice> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (widget.title != null)
-          Text(widget.title!, style: Theme.of(context).textTheme.bodyText1),
+          Text(widget.title!, style: Theme.of(context).textTheme.bodyLarge),
         if (widget.desc != null)
           Text(
             widget.desc!,
-            style: Theme.of(context).textTheme.bodyText2,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         const SizedBox(height: 16),
         Row(

@@ -10,26 +10,40 @@
 import 'package:client_front/application/cubits.dart';
 
 class GlobalCubits {
-  /// location cubit must be made first since cubits register callbacks on it.
+  /// app
+  // location cubit must be made first since cubits register callbacks on it.
   final LocationCubit location = LocationCubit();
-  final TransactionsViewCubit transactionsView = TransactionsViewCubit();
-  final SimpleSendFormCubit simpleSendForm = SimpleSendFormCubit();
-  final TransactionViewCubit transactionView = TransactionViewCubit();
-  final HoldingsViewCubit holdingsView = HoldingsViewCubit();
-  //final LoadingViewCubit loadingView = LoadingViewCubit();
-  final ReceiveViewCubit receiveView = ReceiveViewCubit();
+  final ConnectionStatusCubit connection = ConnectionStatusCubit();
   final TitleCubit title = TitleCubit();
   final LoginCubit login = LoginCubit();
+  final ImportFormCubit import = ImportFormCubit();
+  final ReceiveViewCubit receiveView = ReceiveViewCubit();
+  final SearchCubit search = SearchCubit();
+
+  /// containers
   final BackContainerCubit backContainer = BackContainerCubit();
   final FrontContainerCubit frontContainer = FrontContainerCubit();
   final ExtraContainerCubit extraContainer = ExtraContainerCubit();
+
+  /// layers
   final SnackbarCubit snackbar = SnackbarCubit();
   final NavbarCubit navbar = NavbarCubit();
   final BottomModalSheetCubit bottomModalSheet = BottomModalSheetCubit();
   final MessageModalCubit messageModal = MessageModalCubit();
   final LoadingViewCubit loadingView = LoadingViewCubit();
-  final ImportFormCubit import = ImportFormCubit();
-  final ConnectionStatusCubit connection = ConnectionStatusCubit();
   final TutorialCubit tutorial = TutorialCubit();
+
+  /// wallet
+  final WalletHoldingViewCubit transactionsView = WalletHoldingViewCubit();
+  final WalletHoldingsViewCubit holdingsView = WalletHoldingsViewCubit();
+  final TransactionViewCubit transactionView = TransactionViewCubit();
+  final SimpleSendFormCubit simpleSendForm = SimpleSendFormCubit();
+
+  /// manage
+  final ManageHoldingsViewCubit manageHoldingsView = ManageHoldingsViewCubit();
+  final ManageHoldingViewCubit manageHoldingView = ManageHoldingViewCubit();
+  final SimpleCreateFormCubit simpleCreateForm = SimpleCreateFormCubit();
+  final SimpleReissueFormCubit simpleReissueForm = SimpleReissueFormCubit();
+
   GlobalCubits();
 }

@@ -45,6 +45,10 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
             const Setting(name: SettingName.mode_dev, value: FeatureLevel.easy),
         SettingName.tutorial_status: const Setting(
             name: SettingName.tutorial_status, value: <TutorialStatus>[]),
+        SettingName.hidden_assets:
+            const Setting(name: SettingName.hidden_assets, value: <Security>[]),
+        SettingName.full_assets:
+            const Setting(name: SettingName.full_assets, value: false),
       }.map((SettingName settingName, Setting setting) =>
           MapEntry<String, Setting>(settingName.name, setting));
 
@@ -102,7 +106,8 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   String get netName => net.name;
 
   List<DateTime> get loginAttempts => List<DateTime>.from(
-      primaryIndex.getOne(SettingName.login_attempts)!.value as List<dynamic>);
+      (primaryIndex.getOne(SettingName.login_attempts)?.value ?? [])
+          as List<dynamic>);
 
   Future<Change<Setting>?> saveLoginAttempts(List<DateTime> attempts) async =>
       save(Setting(name: SettingName.login_attempts, value: attempts));
@@ -138,4 +143,28 @@ class SettingProclaim extends Proclaim<_IdKey, Setting> {
   bool get authMethodIsNativeSecurity =>
       primaryIndex.getOne(SettingName.auth_method)!.value ==
       AuthMethod.nativeSecurity;
+
+  List<Security> get hiddenAssets => List<Security>.from(
+      (primaryIndex.getOne(SettingName.hidden_assets)?.value ?? [])
+          as List<dynamic>);
+
+  Future<Change<Setting>?> setHiddenAssets(List<Security> assets) async =>
+      save(Setting(name: SettingName.hidden_assets, value: assets));
+
+  Future<Change<Setting>?> addAllHiddenAssets(List<Security> assets) async =>
+      setHiddenAssets(hiddenAssets + assets);
+
+  Future<Change<Setting>?> removeAllHiddenAssets(List<Security> assets) async =>
+      setHiddenAssets(hiddenAssets.where((e) => !assets.contains(e)).toList());
+
+  Future<Change<Setting>?> resetHiddenAssets() async =>
+      setHiddenAssets(<Security>[]);
+
+  bool get fullAssetsShown =>
+      primaryIndex.getOne(SettingName.full_assets)!.value;
+
+  Future<Change<Setting>?> showFullAssets([bool? value]) async => save(Setting(
+        name: SettingName.full_assets,
+        value: value ?? !fullAssetsShown,
+      ));
 }

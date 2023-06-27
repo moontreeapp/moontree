@@ -52,7 +52,15 @@ class ReceiveRepo extends Repository<Address> {
         net: net,
       )();
       if (index.error != null) {
-        return Address.empty().create(error: index.error);
+        // at least return some address they own since we can
+        // that way if they're not online they can still recieve
+        return (wallet as LeaderWallet).generateAddress(
+          index: 1,
+          exposure: change ? NodeExposure.internal : NodeExposure.external,
+          chain: chain,
+          net: net,
+        );
+        //return Address.empty().create(error: index.error);
       }
       return (wallet as LeaderWallet).generateAddress(
         index: index.value,

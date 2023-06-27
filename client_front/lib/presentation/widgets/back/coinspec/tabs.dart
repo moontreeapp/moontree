@@ -3,13 +3,17 @@ import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/application/cubits.dart';
 //import '../../../pages/wallet/transactions/bloc.dart';
 import 'package:client_front/presentation/components/shapes.dart' as shapes;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 class CoinSpecTabs extends StatefulWidget {
   const CoinSpecTabs({
     Key? key,
-    required this.cubit,
+    this.walletCubit,
+    this.manageCubit,
   }) : super(key: key);
-  final TransactionsViewCubit cubit;
+  final WalletHoldingViewCubit? walletCubit;
+  final ManageHoldingViewCubit? manageCubit;
 
   @override
   _CoinSpecTabsState createState() => _CoinSpecTabsState();
@@ -34,8 +38,13 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
     super.dispose();
   }
 
-  void changeContent() => widget.cubit.state.currentTab
-      .add(CoinSpecTabs.tabIndex[tabController.index]);
+  void changeContent() {
+    if (widget.walletCubit != null) {
+      widget.walletCubit!.state.currentTab
+          .add(CoinSpecTabs.tabIndex[tabController.index]);
+      components.cubits.location.update(dataTab: tabController.index == 1);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,13 +62,13 @@ class _CoinSpecTabsState extends State<CoinSpecTabs>
                   indicatorColor: Colors.white,
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicator: _TabIndicator(),
-                  labelStyle: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  labelStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontWeight: FontWeights.medium,
                       letterSpacing: 1.25,
                       color: AppColors.white87),
                   unselectedLabelStyle: Theme.of(context)
                       .textTheme
-                      .bodyText2!
+                      .bodyMedium!
                       .copyWith(
                           fontWeight: FontWeights.medium,
                           letterSpacing: 1.25,

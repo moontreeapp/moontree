@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
-import 'package:client_front/application/navbar/cubit.dart';
-import 'package:client_front/application/utilities.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,11 +8,10 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/services/import.dart';
 import 'package:client_back/services/wallet/constants.dart';
 import 'package:client_front/domain/utils/log.dart';
-import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/services/storage.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show getEntropy, saveSecret;
-import 'package:client_front/application/import/cubit.dart';
+import 'package:client_front/application/app/import/cubit.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
@@ -39,7 +36,6 @@ class Import extends StatelessWidget {
   final TextEditingController words = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController salt = TextEditingController();
-  late BuildContext buildContext;
 
   Future<String> getClip() async {
     if (Platform.isIOS) {
@@ -52,55 +48,52 @@ class Import extends StatelessWidget {
     return '';
   }
 
-  void focusSubmit() async {
-    FocusScope.of(buildContext).requestFocus(submitFocus);
+  void focusSubmit(BuildContext context) async {
+    FocusScope.of(context).requestFocus(submitFocus);
   }
 
   @override
-  Widget build(BuildContext context) {
-    buildContext = context;
-    return FutureBuilder<String>(
-        future: getClip(),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) =>
-            BlocBuilder<ImportFormCubit, ImportFormState>(
-                builder: (context, state) {
-              words.value = TextEditingValue(
-                  text: state.words,
-                  selection: words.selection.baseOffset > state.words.length
-                      ? TextSelection.collapsed(offset: state.words.length)
-                      : words.selection);
-              return PageStructure(
-                  children: <Widget>[
-                    if (state.file == null)
-                      WordInput(
-                        clip: snapshot.data,
-                        state: state,
-                        words: words,
-                        wordsFocus: wordsFocus,
-                      )
-                    else
-                      FilePicked(state: state),
-                  ],
-                  firstLowerChildren: state.file == null
-                      ? <Widget>[
-                          if (services.developer.advancedDeveloperMode &&
-                              !Platform.isIOS &&
-                              words.text == '')
-                            FileButton(),
-                          SubmitButton(state: state, submitFocus: submitFocus),
-                        ]
-                      : <Widget>[
-                          SubmitButton(
-                              label: 'Import File',
-                              state: state,
-                              submitFocus: submitFocus)
-                        ]);
-            }));
-    //body(snapshot.data as String?)),
-  }
+  Widget build(BuildContext context) => FutureBuilder<String>(
+      future: getClip(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) =>
+          BlocBuilder<ImportFormCubit, ImportFormState>(
+              builder: (context, state) {
+            words.value = TextEditingValue(
+                text: state.words,
+                selection: words.selection.baseOffset > state.words.length
+                    ? TextSelection.collapsed(offset: state.words.length)
+                    : words.selection);
+            return PageStructure(
+                children: <Widget>[
+                  if (state.file == null)
+                    WordInput(
+                      clip: snapshot.data,
+                      state: state,
+                      words: words,
+                      wordsFocus: wordsFocus,
+                    )
+                  else
+                    FilePicked(state: state),
+                ],
+                firstLowerChildren: state.file == null
+                    ? <Widget>[
+                        if (services.developer.advancedDeveloperMode &&
+                            !Platform.isIOS &&
+                            words.text == '')
+                          FileButton(),
+                        SubmitButton(state: state, submitFocus: submitFocus),
+                      ]
+                    : <Widget>[
+                        SubmitButton(
+                            label: 'Import File',
+                            state: state,
+                            submitFocus: submitFocus)
+                      ]);
+          }));
+  //body(snapshot.data as String?)),
 
-  Future<void> requestPassword() async => showDialog(
-      context: buildContext,
+  Future<void> requestPassword(BuildContext context) async => showDialog(
+      context: context,
       builder: (BuildContext context) {
         streams.app.behavior.scrim.add(true);
         return AlertDialog(
@@ -129,8 +122,8 @@ class Import extends StatelessWidget {
         );
       }).then((dynamic value) => streams.app.behavior.scrim.add(false));
 
-  Future<void> requestSalt() async => showDialog(
-      context: buildContext,
+  Future<void> requestSalt(BuildContext context) async => showDialog(
+      context: context,
       builder: (BuildContext context) {
         streams.app.behavior.scrim.add(true);
         return AlertDialog(
@@ -158,8 +151,8 @@ class Import extends StatelessWidget {
         );
       }).then((dynamic value) => streams.app.behavior.scrim.add(false));
 
-  Future<void> attemptImport([String? importData]) async {
-    FocusScope.of(buildContext).unfocus();
+  Future<void> attemptImport(BuildContext context, [String? importData]) async {
+    FocusScope.of(context).unfocus();
     String text = (importData ?? words.text).trim();
     String resp = text;
     bool encrypted = true;
@@ -193,8 +186,8 @@ class Import extends StatelessWidget {
           // ask for password, make cipher, pass that cipher in.
           // what if it's not the latest cipher type? just try all cipher types...
           for (final CipherType cipherType in services.cipher.allCipherTypes) {
-            await requestPassword();
-            await requestSalt();
+            await requestPassword(context);
+            await requestSalt(context);
             // cancelled
             if (password.text == '' && salt.text == '') {
               break;
@@ -237,7 +230,7 @@ class Import extends StatelessWidget {
           }
           if (resp == text && encrypted) {
             showDialog(
-                    context: buildContext,
+                    context: context,
                     builder: (BuildContext context) {
                       streams.app.behavior.scrim.add(true);
                       return const AlertDialog(
@@ -301,7 +294,9 @@ class WordInput extends StatelessWidget {
           labelText: wordsFocus.hasFocus ? 'Seed | WIF | Key' : null,
           hintText: 'Please enter seed words, a WIF, or a private key.',
           helperText: state.importFormatDetected == 'Unknown'
-              ? null
+              ? state.words.split(' ').length == 12
+                  ? 'unrecognized'
+                  : null
               : state.importFormatDetected,
           errorText: state.submittedAttempt
               ? state.importFormatDetected == 'Unknown'
@@ -341,13 +336,16 @@ class WordInput extends StatelessWidget {
                         .set(words: '', importFormatDetected: '')),
               ]),
           onChanged: (String value) {
-            components.cubits.import.set(submittedAttempt: false, words: value);
-            components.cubits.import.enableImport();
+            if (value.split(' ').length == 12) {
+              components.cubits.import
+                  .set(submittedAttempt: false, words: value);
+              components.cubits.import.enableImport();
+            }
           },
           onEditingComplete: () {
             components.cubits.import.enableImport();
             (context.findAncestorWidgetOfExactType<Import>() as Import)
-                .focusSubmit();
+                .focusSubmit(context);
           }));
 }
 
@@ -372,14 +370,18 @@ class SubmitButton extends StatelessWidget {
         components.cubits.import.set(submittedAttempt: true);
         if (state.importEnabled) {
           await (context.findAncestorWidgetOfExactType<Import>() as Import)
-              .attemptImport(components.cubits.import.state.file?.content ??
-                  components.cubits.import.state.words);
+              .attemptImport(
+                  context,
+                  components.cubits.import.state.file?.content ??
+                      components.cubits.import.state.words);
         } else {
           components.cubits.import.enableImport();
           if (components.cubits.import.state.importEnabled) {
             await (context.findAncestorWidgetOfExactType<Import>() as Import)
-                .attemptImport(components.cubits.import.state.file?.content ??
-                    components.cubits.import.state.words);
+                .attemptImport(
+                    context,
+                    components.cubits.import.state.file?.content ??
+                        components.cubits.import.state.words);
           }
         }
       });
@@ -403,9 +405,9 @@ class FilePicked extends StatelessWidget {
               leading:
                   const Icon(Icons.attachment_rounded, color: Colors.black),
               title: Text(state.file!.filename,
-                  style: Theme.of(context).textTheme.bodyText1),
+                  style: Theme.of(context).textTheme.bodyLarge),
               subtitle: Text('${state.file!.size.toString()} KB',
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       height: 1,
                       fontWeight: FontWeights.semiBold,
                       color: AppColors.black38)),

@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // identifying the widget from inside the test suite,
               // and reading the text.
               key: const Key('counter'),
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),

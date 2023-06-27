@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'package:client_front/presentation/services/services.dart';
+//import 'package:client_front/presentation/services/services.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 //import 'package:screenshot_callback/screenshot_callback.dart';
-import 'package:client_back/client_back.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/infrastructure/services/wallet.dart'
     show getSecret;
@@ -17,7 +16,7 @@ import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/pages/backup/types.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/widgets/other/page.dart';
-import 'package:client_front/presentation/widgets/widgets.dart';
+//import 'package:client_front/presentation/widgets/widgets.dart';
 
 class BackupSeed extends StatefulWidget {
   final dynamic data;
@@ -77,41 +76,41 @@ class _BackupSeedState extends State<BackupSeed>
   bool get smallScreen => MediaQuery.of(context).size.height < 640;
 
   Future<List<String>> auth() async {
-    if (/*services.password.askCondition*/ false) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      //produceBlockchainModal(context: components.routes.routeContext!);
-      //components.cubits.bottomModalSheet.show(children: [
-      showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        backgroundColor: Colors.white,
-        builder: (context) => Container(
-            height: screen.app.height / 2,
-            width: screen.width,
-            alignment: Alignment.center,
-            child: VerifyAuthentication(
-              buttonLabel: 'Show Seed',
-              intro: Container(
-                  //height: 48,
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    'Your wallet is valuable.\nPlease create a backup!',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle1!
-                        .copyWith(color: AppColors.black),
-                  )),
-              auto: true,
-              asLoginTime: true,
-            )),
-      );
-
-      //]);
-      components.cubits.title.update(editable: false);
-    }
+    //if (/*services.password.askCondition*/ false) {
+    //  ScaffoldMessenger.of(context).clearSnackBars();
+    //  //produceBlockchainModal(context: components.routes.routeContext!);
+    //  //components.cubits.bottomModalSheet.show(children: [
+    //  showModalBottomSheet(
+    //    context: context,
+    //    shape: RoundedRectangleBorder(
+    //      borderRadius: BorderRadius.circular(10.0),
+    //    ),
+    //    backgroundColor: Colors.white,
+    //    builder: (context) => Container(
+    //        height: screen.app.height / 2,
+    //        width: screen.width,
+    //        alignment: Alignment.center,
+    //        child: VerifyAuthentication(
+    //          buttonLabel: 'Show Seed',
+    //          intro: Container(
+    //              //height: 48,
+    //              alignment: Alignment.topCenter,
+    //              child: Text(
+    //                'Your wallet is valuable.\nPlease create a backup!',
+    //                textAlign: TextAlign.center,
+    //                style: Theme.of(context)
+    //                    .textTheme
+    //                    .titleMedium!
+    //                    .copyWith(color: AppColors.black),
+    //              )),
+    //          auto: true,
+    //          asLoginTime: true,
+    //        )),
+    //  );
+    //
+    //  //]);
+    //  components.cubits.title.update(editable: false);
+    //}
     return await getSecret;
   }
 
@@ -137,7 +136,7 @@ class _BackupSeedState extends State<BackupSeed>
                 //              textAlign: TextAlign.center,
                 //              style: Theme.of(context)
                 //                  .textTheme
-                //                  .subtitle1!
+                //                  .titleMedium!
                 //                  .copyWith(color: AppColors.black),
                 //            )),
                 //        auto: true,
@@ -250,7 +249,7 @@ class BackupInstructions extends StatelessWidget {
         textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: AppColors.black),
       ));
 }
@@ -266,7 +265,7 @@ class BackupWarning extends StatelessWidget {
         textAlign: TextAlign.center,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: AppColors.error),
       ));
 }

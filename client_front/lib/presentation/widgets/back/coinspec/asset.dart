@@ -29,7 +29,7 @@ class _AssetSpecBottomState extends State<AssetSpecBottom> {
             Text('${widget.symbol}/',
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText2!
+                    .bodyMedium!
                     .copyWith(color: AppColors.offWhite))
           else
             Container(),

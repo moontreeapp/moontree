@@ -75,4 +75,10 @@ enum SettingName {
 
   @HiveField(15)
   tutorial_status,
+
+  @HiveField(16)
+  hidden_assets,
+
+  @HiveField(17)
+  full_assets,
 }

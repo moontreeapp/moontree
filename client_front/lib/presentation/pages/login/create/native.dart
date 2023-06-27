@@ -18,7 +18,7 @@ import 'package:client_front/infrastructure/services/storage.dart'
 import 'package:client_front/infrastructure/services/wallet.dart'
     show saveSecret, setupWallets;
 import 'package:client_front/infrastructure/services/dev.dart';
-import 'package:client_front/application/login/cubit.dart';
+import 'package:client_front/application/app/login/cubit.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 import 'package:client_front/presentation/widgets/login/components.dart';
@@ -95,7 +95,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
                       textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
-                          .subtitle1!
+                          .titleMedium!
                           .copyWith(color: AppColors.black),
                     )),
                 if (snapshot.hasData && !snapshot.data!)
@@ -107,7 +107,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
                       child: Text(
                         'Please setup Face, Fingerprints, Pattern, PIN, or Password',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             color: AppColors.black,
                             fontWeight: FontWeight.w600),
                       )),
@@ -187,7 +187,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
         );
         await setupWallets();
       }
-      login(context);
+      login();
       //}, title: 'Creating Wallet', msg: 'one moment please');
 
       components.cubits.loadingView.hide();
@@ -211,8 +211,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
     }
   }
 
-  bool isConnected() =>
-      streams.client.connected.value == ConnectionStatus.connected;
+  bool isConnected() => components.cubits.connection.isConnected;
 
   /// nativeSecurity has it's own timeout...
   bool readyToUnlock() =>

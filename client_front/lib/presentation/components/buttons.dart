@@ -132,7 +132,7 @@ class ButtonComponents {
               number?.toString() ?? '',
               style: Theme.of(context)
                   .textTheme
-                  .bodyText2!
+                  .bodyMedium!
                   .copyWith(color: AppColors.black60),
             )),
         SizedBox(
@@ -147,7 +147,7 @@ class ButtonComponents {
                 fit: BoxFit.fitWidth,
                 child: Text(
                   label.toLowerCase(),
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 )),
           ),
         )

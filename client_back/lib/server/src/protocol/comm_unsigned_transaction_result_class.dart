@@ -37,7 +37,7 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
       vinAmounts: serializationManager
           .deserialize<List<int>>(jsonSerialization['vinAmounts']),
       vinPrivateKeySource: serializationManager
-          .deserialize<List<String>>(jsonSerialization['vinPrivateKeySource']),
+          .deserialize<List<String?>>(jsonSerialization['vinPrivateKeySource']),
       vinLockingScriptType: serializationManager
           .deserialize<List<int>>(jsonSerialization['vinLockingScriptType']),
       vinScriptOverride: serializationManager
@@ -49,6 +49,9 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
     );
   }
 
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
   int? id;
 
   String? error;
@@ -59,7 +62,7 @@ class UnsignedTransactionResult extends _i1.SerializableEntity {
 
   List<int> vinAmounts;
 
-  List<String> vinPrivateKeySource;
+  List<String?> vinPrivateKeySource;
 
   List<int> vinLockingScriptType;
 

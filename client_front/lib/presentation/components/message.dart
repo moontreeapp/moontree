@@ -26,7 +26,8 @@ class MessageComponents {
               shape: shapes.rounded8,
               title: title == null
                   ? null
-                  : Text(title, style: Theme.of(context).textTheme.headline2),
+                  : Text(title,
+                      style: Theme.of(context).textTheme.displayMedium),
               content: child != null && content != null
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
@@ -40,7 +41,7 @@ class MessageComponents {
                                 maxLines: 10,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyText2!
+                                    .bodyMedium!
                                     .copyWith(color: AppColors.black38))),
                         child,
                       ],
@@ -56,7 +57,7 @@ class MessageComponents {
                                   maxLines: 10,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .bodyText2!
+                                      .bodyMedium!
                                       .copyWith(color: AppColors.black38)))
                           : null),
               actions: <Widget>[
@@ -64,9 +65,12 @@ class MessageComponents {
                   TextButton(
                       onPressed: behaviors[key],
                       child: Text(key,
-                          style: Theme.of(context).textTheme.button!.copyWith(
-                              fontWeight: FontWeights.semiBold,
-                              color: AppColors.primary)))
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(
+                                  fontWeight: FontWeights.semiBold,
+                                  color: AppColors.primary)))
               ]);
         }).then((dynamic value) => streams.app.behavior.scrim.add(false));
   }

@@ -1,12 +1,8 @@
-import 'package:client_back/records/security.dart';
-import 'package:client_back/server/src/protocol/comm_balance_view.dart';
-import 'package:client_front/application/location/cubit.dart';
-import 'package:client_front/application/transactions/cubit.dart';
+import 'package:client_front/application/infrastructure/location/cubit.dart';
+import 'package:client_front/application/wallet/holding/cubit.dart';
 import 'package:client_front/presentation/pages/wallet/front/holding.dart';
 import 'package:client_front/presentation/widgets/back/coinspec/spec.dart';
 import 'package:flutter/material.dart';
-import 'package:client_front/presentation/theme/colors.dart';
-import 'package:client_front/presentation/utils/ext.dart';
 import 'package:client_front/presentation/services/services.dart' show screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
@@ -41,7 +37,7 @@ class CoinDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TransactionsViewCubit cubit = components.cubits.transactionsView;
+    final WalletHoldingViewCubit cubit = components.cubits.transactionsView;
     final LocationCubit locCubit = components.cubits.location;
     final double minHeight = screen.frontContainer.midHeightPercentage * 1 +
         (48 / screen.frontContainer.maxHeight);

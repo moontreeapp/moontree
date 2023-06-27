@@ -1,14 +1,16 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
+import 'package:client_front/presentation/pages/wallet/scan.dart';
 import 'package:flutter/material.dart';
 import 'package:client_front/presentation/pages/splash.dart';
 import 'package:client_front/presentation/pages/login/login.dart';
-import 'package:client_front/presentation/widgets/front/verify.dart';
 import 'package:client_front/presentation/pages/wallet/wallet.dart';
+import 'package:client_front/presentation/pages/manage/manage.dart';
 import 'package:client_front/presentation/pages/backup/backup.dart';
 import 'package:client_front/presentation/pages/restore/restore.dart';
 import 'package:client_front/presentation/pages/settings/settings.dart';
 import 'package:client_front/presentation/pages/support/support.dart';
+import 'package:client_front/presentation/widgets/front/verify.dart';
 
 final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/': (BuildContext context) => const PreLogin(),
@@ -23,14 +25,21 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/login/verify': (BuildContext context) => const VerifyAuthentication(),
   '/login/modify/password': (BuildContext context) =>
       const ChangeLoginPassword(),
-  '/wallet/receive': (BuildContext context) => const Receive(),
+  '/receive': (BuildContext context) => const Receive(),
   '/wallet/holdings': (BuildContext context) => const WalletHoldings(),
   '/wallet/holding': (BuildContext context) => const WalletHolding(),
   '/wallet/holding/transaction': (BuildContext context) =>
       const TransactionPage(),
   '/wallet/send': (BuildContext context) => const SimpleSend(),
-  '/wallet/send/checkout': (BuildContext context) =>
-      SimpleSendCheckout(transactionType: TransactionType.spend),
+  '/wallet/send/checkout': (BuildContext context) => SimpleSendCheckout(),
+  '/manage/holdings': (BuildContext context) => const ManageHoldings(),
+  '/manage/holding': (BuildContext context) => const ManageHolding(),
+  '/manage/create': (BuildContext context) => const SimpleCreate(),
+  '/manage/create/checkout': (BuildContext context) =>
+      const SimpleCreateCheckout(),
+  '/manage/reissue': (BuildContext context) => const SimpleReissue(),
+  '/manage/reissue/checkout': (BuildContext context) =>
+      const SimpleReissueCheckout(),
   '/backup/intro': (BuildContext context) => const BackupIntro(),
   '/backup/keypair': (BuildContext context) => const ShowKeypair(),
   '/backup/seed': (BuildContext context) => const BackupSeed(),
@@ -44,10 +53,10 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/setting/database': (BuildContext context) => const DatabaseSettings(),
   '/setting/mining': (BuildContext context) => const MiningSetting(),
   '/setting/security': (BuildContext context) => const SecuritySettings(),
+  '/setting/preferences': (BuildContext context) => const Preferences(),
+  '/setting/hidden/assets': (BuildContext context) => const HiddenAssets(),
   '/network/blockchain': (BuildContext context) => const BlockchainSettings(),
-  '/send/checkout': (BuildContext context) => SimpleSendCheckout(
-        transactionType: TransactionType.spend,
-      ),
+  '/scan': (BuildContext context) => const ScanQRPage(),
 };
 
 Map<String, Widget Function(BuildContext)> get routes => _staticRoutes;

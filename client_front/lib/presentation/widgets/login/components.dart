@@ -1,14 +1,15 @@
-import 'package:client_back/services/consent.dart';
-import 'package:client_front/application/login/cubit.dart';
-import 'package:client_front/presentation/theme/theme.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:client_back/services/consent.dart';
+import 'package:client_front/application/app/login/cubit.dart';
+import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/domain/utils/extensions.dart';
+import 'package:client_front/presentation/services/services.dart' show screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:url_launcher/url_launcher.dart';
 
 class MoontreeLogo extends StatelessWidget {
   const MoontreeLogo({super.key});
@@ -26,7 +27,7 @@ class WelcomeMessage extends StatelessWidget {
   Widget build(BuildContext context) => Text(text,
       style: Theme.of(context)
           .textTheme
-          .headline1
+          .displayLarge
           ?.copyWith(color: AppColors.black60));
 }
 
@@ -46,22 +47,24 @@ class AggrementCheckbox extends StatelessWidget {
 class UlaMessage extends StatelessWidget {
   const UlaMessage({super.key});
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(
+  Widget build(BuildContext context) => Container(
+        width: screen.width - 16 - 16,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Container(
+              width: 28,
+              child: AggrementCheckbox(),
+            ),
+            Container(
+              width: screen.width - 16 - 16 - 28 - 28,
               alignment: Alignment.center,
-              width: 18,
-              child: AggrementCheckbox()),
-          Container(
-              alignment: Alignment.center,
-              width: .70.ofMediaWidth(context),
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   style: Theme.of(components.routes.routeContext!)
                       .textTheme
-                      .bodyText2,
+                      .bodyMedium,
                   children: <TextSpan>[
                     const TextSpan(text: "I agree to Moontree's\n"),
                     TextSpan(
@@ -87,21 +90,22 @@ class UlaMessage extends StatelessWidget {
                           }),
                     const TextSpan(text: ',\n and '),
                     TextSpan(
-                        text: 'Risk Disclosure',
-                        style: Theme.of(components.routes.routeContext!)
-                            .textTheme
-                            .underlinedLink,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrl(Uri.parse(documentEndpoint(
-                                ConsentDocument.risk_disclosures)));
-                          }),
+                      text: 'Risk Disclosure',
+                      style: Theme.of(components.routes.routeContext!)
+                          .textTheme
+                          .underlinedLink,
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          launchUrl(Uri.parse(documentEndpoint(
+                              ConsentDocument.risk_disclosures)));
+                        },
+                    ),
                   ],
                 ),
-              )),
-          const SizedBox(
-            width: 18,
-          ),
-        ],
+              ),
+            ),
+            SizedBox(width: 28)
+          ],
+        ),
       );
 }

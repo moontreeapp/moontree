@@ -16,6 +16,7 @@ import 'package:client_front/infrastructure/services/storage.dart'
 import 'package:client_front/domain/utils/data.dart';
 import 'package:client_front/domain/utils/extensions.dart';
 import 'package:client_front/presentation/widgets/widgets.dart';
+import 'package:client_front/presentation/services/services.dart' show sail;
 
 class VerifyAuthentication extends StatelessWidget {
   final String buttonLabel;
@@ -203,7 +204,7 @@ class AuthenticateByNative extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context)
               .textTheme
-              .subtitle1!
+              .titleMedium!
               .copyWith(color: AppColors.black),
         )),
       ],
@@ -230,12 +231,13 @@ class AuthenticateByNative extends StatelessWidget {
     } else {
       if (localAuthApi.reason == AuthenticationResult.error) {
         streams.app.behavior.snack.add(Snack(
-          message: 'Unknown login error: please set a pin on the device.',
+          message: 'Login error: please set a pin on the device.',
         ));
       } else if (localAuthApi.reason == AuthenticationResult.failure) {
         streams.app.behavior.snack.add(Snack(
-          message: 'Unknown login error: please try again.',
+          message: 'Login error: please try again.',
         ));
+        sail.back();
       }
     }
   }
