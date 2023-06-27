@@ -215,7 +215,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
             }
           }
           return ScrollablePageStructure(
-            headerSpace: Platform.isIOS ? 16 : 8,
+            headerSpace: Platform.isIOS ? 0 : 8,
             children: <Widget>[
               if (isSub(state.type))
                 TextFieldFormatted(

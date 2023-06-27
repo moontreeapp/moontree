@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intersperse/intersperse.dart';
@@ -154,6 +155,7 @@ class ScrollablePageStructure extends StatelessWidget {
                         100,
                     0),
                 child: ListView(
+                  padding: Platform.isIOS ? EdgeInsets.only(top: 8) : null,
                   controller: scrollController,
                   physics: const ClampingScrollPhysics(),
                   children: [

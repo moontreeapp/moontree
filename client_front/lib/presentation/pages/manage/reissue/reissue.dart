@@ -227,7 +227,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
             }
           }
           return ScrollablePageStructure(
-            headerSpace: Platform.isIOS ? 8 : 0,
+            headerSpace: Platform.isIOS ? 0 : 0,
             scrollController: scrollController,
             children: <Widget>[
               SizedBox(height: 8),
