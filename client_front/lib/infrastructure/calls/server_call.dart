@@ -16,6 +16,7 @@ class ServerCall {
       return await f();
     } catch (e) {
       //SocketException: HTTP connection timed out after 0:00:20.000000, host: 24.199.68.139, port: 8080
+      print('recreating client');
       recreateClient();
       return await f();
 

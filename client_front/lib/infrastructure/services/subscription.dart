@@ -28,7 +28,7 @@ class SubscriptionService {
     connectionHandler = StreamingConnectionHandler(
       client: client,
       listener: (StreamingConnectionHandlerState connectionState) {
-        print('connection state: ${connectionState.status}');
+        print('connection state: ${connectionState.status.name}');
         if (!streams.app.loc.splash.value) {
           if (connectionState.status == StreamingConnectionStatus.connected) {
             components.cubits.connection
@@ -47,8 +47,12 @@ class SubscriptionService {
         }
       },
     );
-
-    connectionHandler.connect();
+    print('connecting!');
+    try {
+      connectionHandler.connect();
+    } catch (e) {
+      print(e);
+    }
     await setupListeners();
   }
 
@@ -78,15 +82,15 @@ class SubscriptionService {
         ///   {"id":null,"chainName":"evrmore_mainnet","height":107222}
         // if height do x
         // if balance update do y, etc.
-        print(message);
+        //print(message);
         if (message is protocol.NotifyChainStatus) {
-          print('status! ${message.toJson()}');
+          //print('status! ${message.toJson()}');
         } else if (message is protocol.NotifyChainHeight) {
           if (message.height > 0) {
             await pros.blocks.save(Block.fromNotification(message));
-            print('pros.blocks.records ${pros.blocks.records.first}');
+            //print('pros.blocks.records ${pros.blocks.records.first}');
           } else {
-            print('message was weird: ${message.toJson()}');
+            //print('message was weird: ${message.toJson()}');
           }
         } else if (message is protocol.NotifyChainH160Balance) {
           // print('H160 (SingleWallet) balance updated!');
