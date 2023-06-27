@@ -484,9 +484,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                   textInputAction: TextInputAction.next,
                   labelText: 'Memo',
                   hintText: 'IPFS',
-                  helperText: assetMemoController.text == ''
-                      ? null
-                      : 'ipfs v0 cid supported: "Qm..."',
+                  helperText: assetMemoFocus.hasFocus ? 'eg. "Qm..."' : null,
                   helperStyle: Theme.of(context)
                       .textTheme
                       .bodySmall!
@@ -496,7 +494,7 @@ class _SimpleReissueState extends State<SimpleReissue> {
                           ? null
                           : _validateAssetMemo(assetMemoController.text)
                               ? null
-                              : 'not recognized',
+                              : 'invalid ipfs',
                   onChanged: (String value) => cubit.update(assetMemo: value),
                   onEditingComplete: () {
                     cubit.update(assetMemo: assetMemoController.text);

@@ -2,7 +2,7 @@ refactor everything in services that should be in cubits into cubits
 
 ---
 
-allow login even if internet down
+DONE - allow login even if internet down
 
 rename transactions to wallet holding cubit (currently unused)
 
@@ -28,30 +28,19 @@ DONE - fix send so it gives modal error if no value or not connected on click
 
 DONE - put verifierString on restircted
 
-clean up manage icon 
+DONE -clean up manage icon 
 
 --------
 
-connection light
+DONE - connection light
 
-create on main assets page
+DONE - create on main assets page
 
-send disabled on no coin
-
-make x go out on search on empty text
-
-animations 
-
-ipfs memo thing:
-
-on active state: show helper texct 'eg. "Qm..."' on tap display helper text. 
-
-If they put in type something in "invalid ipfs (v0)"
-
+DONE ipfs memo thing:
+DONE - on active state: show helper texct 'eg. "Qm..."' on tap display helper text. 
+DONE - If they put in type something in "invalid ipfs (v0)"
 
 search: 
-
-don't clear on magnifying glass
-
-x always wipes the list and goes home
+DONE - don't clear on magnifying glass
+DONE - x always wipes the list and goes home
 

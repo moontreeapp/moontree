@@ -22,10 +22,17 @@ class SearchIndicator extends StatelessWidget {
                     child: IconButton(
                       splashRadius: 16,
                       padding: EdgeInsets.zero,
-                      icon: !components.cubits.search.state.show
-                          ? Icon(Icons.search_rounded, color: Colors.white)
-                          : Icon(Icons.close_rounded, color: Colors.white),
-                      onPressed: components.cubits.search.toggleSearch,
+                      icon: components.cubits.search.shown
+                          ? Icon(Icons.close_rounded, color: Colors.white)
+                          : Icon(Icons.search_rounded, color: Colors.white),
+                      onPressed: () {
+                        if (components.cubits.search.shown) {
+                          FocusScope.of(context).unfocus();
+                          components.cubits.search.reset();
+                        } else {
+                          components.cubits.search.update(show: true);
+                        }
+                      },
                     )),
               ));
 }

@@ -332,6 +332,7 @@ class Symbol {
   bool get isAdmin =>
       symbolType == SymbolType.admin || symbolType == SymbolType.subAdmin;
   bool get isSubAdmin => symbolType == SymbolType.subAdmin;
+  //bool get isQualifierSub => symbolType == SymbolType.qualifierSub; // not necessary
   bool get isQualifier =>
       symbolType == SymbolType.qualifier ||
       symbolType == SymbolType.qualifierSub;

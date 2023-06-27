@@ -417,14 +417,71 @@ class NavbarActions extends StatelessWidget {
                                 //else
 
                                 // should only be on data tab.
-                                if (locationState.path == '/wallet/holding' &&
-                                    _ableTo(action: 'reissue', snack: false))
-                                  Expanded(
-                                      child: BottomButton(
-                                    label: 'reissue',
-                                    enabled: true,
-                                    onPressed: _gotoReissue,
-                                  ))
+                                if (locationState.path == '/wallet/holding')
+                                  ...() {
+                                    final ableToReissue = _ableTo(
+                                      action: 'reissue',
+                                      snack: false,
+                                    );
+                                    final ableToCreateSub = _ableTo(
+                                      action: 'createSub',
+                                      snack: false,
+                                    );
+                                    List ret = [];
+                                    if (ableToCreateSub)
+                                      ret.add(Expanded(
+                                          child: BottomButton(
+                                        label: 'create',
+                                        enabled: true,
+                                        onPressed: () => _produceCreateModal(
+                                            context,
+                                            parent: components
+                                                .cubits.location.state.symbol,
+                                            skipMain: components.cubits.location
+                                                    .symbol?.isMain ??
+                                                false),
+                                      )));
+                                    if (ableToReissue)
+                                      ret.add(Expanded(
+                                          child: BottomButton(
+                                        label: 'reissue',
+                                        enabled: true,
+                                        onPressed: _gotoReissue,
+                                      )));
+                                    if (ret.isNotEmpty) {
+                                      return ret;
+                                    }
+                                    return [
+                                      Expanded(
+                                          child: BottomButton(
+                                        label: 'send',
+                                        enabled: connectionState.isConnected,
+                                        disabledOnPressed: () {
+                                          if (!connectionState.isConnected) {
+                                            streams.app.behavior.snack.add(Snack(
+                                                message:
+                                                    'Not connected to network'));
+                                          }
+                                        },
+                                        onPressed: () async {
+                                          if (_ableTo(action: 'send')) {
+                                            sail.to('/wallet/send', arguments: {
+                                              'security': components
+                                                  .cubits
+                                                  .transactionsView
+                                                  .state
+                                                  .security
+                                            });
+                                          }
+                                        },
+                                      )),
+                                      Expanded(
+                                          child: BottomButton(
+                                        label: 'receive',
+                                        onPressed: () => sail.to('/receive'),
+                                      ))
+                                    ];
+                                  }()
                                 else ...[
                                   Expanded(
                                       child: BottomButton(
@@ -451,7 +508,7 @@ class NavbarActions extends StatelessWidget {
                                     label: 'receive',
                                     onPressed: () => sail.to('/receive'),
                                   ))
-                                ]
+                                ],
                               ]
                             : locationState.section == Section.manage
                                 ? <Widget>[
@@ -467,7 +524,25 @@ class NavbarActions extends StatelessWidget {
                                                 }
                                               }))
                                     else if (locationState.path ==
-                                        '/manage/holding')
+                                        '/manage/holding') ...[
+                                      Expanded(
+                                          child: BottomButton(
+                                        label: 'create',
+                                        enabled: true,
+                                        onPressed: () {
+                                          if (_ableTo(action: 'createSub')) {
+                                            _produceCreateModal(context,
+                                                parent: components.cubits
+                                                    .location.state.symbol,
+                                                skipMain: components
+                                                        .cubits
+                                                        .location
+                                                        .symbol
+                                                        ?.isMain ??
+                                                    false);
+                                          }
+                                        },
+                                      )),
                                       Expanded(
                                           child: BottomButton(
                                         label: 'reissue',
@@ -478,7 +553,7 @@ class NavbarActions extends StatelessWidget {
                                           }
                                         },
                                       ))
-                                    else
+                                    ] else
                                       Expanded(
                                           child: BottomButton(
                                         label: 'create?',
@@ -543,13 +618,25 @@ class NavbarActions extends StatelessWidget {
   bool _ableTo({String action = 'send', bool snack = true}) {
     var extraCondition = true;
     if (action == 'reissue') {
-      final symbol = components.cubits.location.state.symbol;
+      final symbol = components.cubits.location.symbol!;
       extraCondition =
           components.cubits.location.state.path == '/manage/holding' ||
               (components.cubits.location.state.dataTab &&
-                  Symbol(symbol!)().isReissuableType &&
+                  symbol.isReissuableType &&
                   (components.cubits.holdingsView.state.assetHoldings
-                          .where((element) => element.symbol == symbol)
+                          .where((element) => element.symbol == symbol.symbol)
+                          .firstOrNull
+                          ?.typesView
+                          .contains('Admin') ??
+                      false));
+    } else if (action == 'createSub') {
+      final symbol = components.cubits.location.symbol!;
+      extraCondition =
+          components.cubits.location.state.path == '/manage/holding' ||
+              (components.cubits.location.state.dataTab &&
+                  (symbol.isMain || symbol.isQualifier || symbol.isSub) &&
+                  (components.cubits.holdingsView.state.assetHoldings
+                          .where((element) => element.symbol == symbol.symbol)
                           .firstOrNull
                           ?.typesView
                           .contains('Admin') ??
@@ -571,7 +658,8 @@ class NavbarActions extends StatelessWidget {
     return false;
   }
 
-  void _produceCreateModal(BuildContext context) {
+  void _produceCreateModal(BuildContext context,
+      {String? parent, bool skipMain = false}) {
     final imageDetails = ImageDetails(
         foreground: AppColors.rgb(AppColors.primary),
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
@@ -579,7 +667,7 @@ class NavbarActions extends StatelessWidget {
     final cubit = components.cubits.simpleCreateForm;
     modal.show(children: [
       for (final Tuple2<String, SymbolType> symbolType in [
-        Tuple2('Main', SymbolType.main),
+        if (!skipMain) Tuple2('Main', SymbolType.main),
         Tuple2('Sub', SymbolType.sub),
         Tuple2('NFT', SymbolType.unique),
 
@@ -593,7 +681,7 @@ class NavbarActions extends StatelessWidget {
           onTap: () {
             modal.hide();
             cubit.reset();
-            cubit.update(type: symbolType.item2);
+            cubit.update(type: symbolType.item2, parentName: parent);
             sail.to('/manage/create');
           },
           leading:

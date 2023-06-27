@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:client_front/application/containers/front/cubit.dart';
 import 'package:client_front/application/infrastructure/search/cubit.dart';
+import 'package:client_front/presentation/utils/animation.dart';
 import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -1005,6 +1006,7 @@ class SearchTextFieldState extends State<SearchTextField> {
             ? TextSelection.collapsed(offset: widget.cubit.state.text.length)
             : searchController.selection);
     return Container(
+        padding: EdgeInsets.only(top: 6),
         width: screen.width -
             ((16 + 40 + 16) + //left lead
                 (16 + 24 + 16) +
@@ -1035,7 +1037,12 @@ class SearchTextFieldState extends State<SearchTextField> {
                     onSubmitted: (value) async => widget.cubit
                         .update(text: value.toUpperCase(), show: false),
                     onEditingComplete: () => widget.cubit.update(show: false),
-                    onTapOutside: (_) => widget.cubit.reset(),
+                    onTapOutside: (_) async {
+                      FocusScope.of(context).unfocus();
+                      // must wait in case they click the x button
+                      await Future.delayed(fadeDuration)
+                          .then((value) => widget.cubit.update(show: false));
+                    },
                   ))
         ]));
   }
