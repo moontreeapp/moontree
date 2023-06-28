@@ -1,3 +1,4 @@
+import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:tuple/tuple.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import 'package:client_front/presentation/services/services.dart'
     show sail, screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
+import 'package:wallet_utils/wallet_utils.dart';
 
 TextStyle style(BuildContext context, Snack? snack) => snack?.positive ?? true
     ? Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.white)
@@ -665,11 +667,15 @@ class NavbarActions extends StatelessWidget {
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
     final modal = components.cubits.bottomModalSheet;
     final cubit = components.cubits.simpleCreateForm;
+    final hasAdmins = Current.holdingNames
+        .where((String item) => item.isAdmin)
+        .map((e) => Symbol(e).toMainSymbol!)
+        .isNotEmpty;
     modal.show(children: [
-      for (final Tuple2<String, SymbolType> symbolType in [
-        if (!skipMain) Tuple2('Main', SymbolType.main),
-        Tuple2('Sub', SymbolType.sub),
-        Tuple2('NFT', SymbolType.unique),
+      for (final Tuple3<String, SymbolType, double> symbolType in [
+        if (!skipMain) Tuple3('Main', SymbolType.main, 500 + 1),
+        if (hasAdmins) Tuple3('Sub', SymbolType.sub, 100 + 1),
+        if (hasAdmins) Tuple3('NFT', SymbolType.unique, 5 + 1),
 
         /// hide these until we're ready to add verifierString support etc.
         // Tuple2('Channel', SymbolType.channel),
@@ -681,8 +687,22 @@ class NavbarActions extends StatelessWidget {
           onTap: () {
             modal.hide();
             cubit.reset();
-            cubit.update(type: symbolType.item2, parentName: parent);
-            sail.to('/manage/create');
+            if (components.cubits.holdingsView.walletCoin < symbolType.item3) {
+              final amount = (symbolType.item3 -
+                      components.cubits.holdingsView.walletCoin.floor())
+                  .toInt();
+              final coin = Current.chainNet.symbol;
+              final mintMsg = ('${symbolType.item1 == 'NFT' ? 'an' : 'a'} '
+                  '${symbolType.item1} '
+                  '${symbolType.item1 == 'NFT' ? '' : 'asset'}');
+              streams.app.behavior.snack.add(Snack(
+                delay: 0,
+                message: 'You need $amount more $coin to mint $mintMsg.',
+              ));
+            } else {
+              cubit.update(type: symbolType.item2, parentName: parent);
+              sail.to('/manage/create');
+            }
           },
           leading:
               //components.icons.generateIndicator(

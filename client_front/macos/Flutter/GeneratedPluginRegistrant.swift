@@ -11,7 +11,7 @@ import firebase_core
 import firebase_crashlytics
 import firebase_messaging
 import flutter_secure_storage_macos
-import path_provider_foundation
+import path_provider_macos
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
