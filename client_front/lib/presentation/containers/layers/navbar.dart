@@ -617,32 +617,43 @@ class NavbarActions extends StatelessWidget {
     }
   }
 
+  bool get _inManage =>
+      components.cubits.location.state.path == '/manage/holding';
+  bool _hasAtLeastCoin(double coin) =>
+      components.cubits.holdingsView.walletCoin >= coin;
+
+  bool get _hasAdmins => components.cubits.holdingsView.state.assetHoldings
+      .map((e) => e.typesView)
+      .contains('Admin');
+  //bool get _hasAdmins => Current.holdingNames
+  //    .where((String item) => item.isAdmin)
+  //    .map((e) => Symbol(e).toMainSymbol!)
+  //    .isNotEmpty;
+
+  bool _hasAdminOf(Symbol symbol) =>
+      (components.cubits.holdingsView.state.assetHoldings
+              .where((element) => element.symbol == symbol.symbol)
+              .firstOrNull
+              ?.typesView
+              .contains('Admin') ??
+          false);
+
   bool _ableTo({String action = 'send', bool snack = true}) {
     var extraCondition = true;
     if (action == 'reissue') {
       final symbol = components.cubits.location.symbol!;
-      extraCondition =
-          components.cubits.location.state.path == '/manage/holding' ||
-              (components.cubits.location.state.dataTab &&
+      extraCondition = _inManage ||
+          (components.cubits.location.state.dataTab &&
                   symbol.isReissuableType &&
-                  (components.cubits.holdingsView.state.assetHoldings
-                          .where((element) => element.symbol == symbol.symbol)
-                          .firstOrNull
-                          ?.typesView
-                          .contains('Admin') ??
-                      false));
+                  _hasAdminOf(symbol)) &&
+              _hasAtLeastCoin(101);
     } else if (action == 'createSub') {
       final symbol = components.cubits.location.symbol!;
-      extraCondition =
-          components.cubits.location.state.path == '/manage/holding' ||
-              (components.cubits.location.state.dataTab &&
+      extraCondition = _inManage ||
+          (components.cubits.location.state.dataTab &&
                   (symbol.isMain || symbol.isQualifier || symbol.isSub) &&
-                  (components.cubits.holdingsView.state.assetHoldings
-                          .where((element) => element.symbol == symbol.symbol)
-                          .firstOrNull
-                          ?.typesView
-                          .contains('Admin') ??
-                      false));
+                  _hasAdminOf(symbol)) &&
+              _hasAtLeastCoin(101);
     }
     if (!components.cubits.holdingsView.walletEmptyCoin && extraCondition) {
       return true;
@@ -667,10 +678,8 @@ class NavbarActions extends StatelessWidget {
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
     final modal = components.cubits.bottomModalSheet;
     final cubit = components.cubits.simpleCreateForm;
-    final hasAdmins = Current.holdingNames
-        .where((String item) => item.isAdmin)
-        .map((e) => Symbol(e).toMainSymbol!)
-        .isNotEmpty;
+    final hasAdmins = _hasAdmins;
+
     modal.show(children: [
       for (final Tuple3<String, SymbolType, double> symbolType in [
         if (!skipMain) Tuple3('Main', SymbolType.main, 500 + 1),
@@ -687,11 +696,11 @@ class NavbarActions extends StatelessWidget {
           onTap: () {
             modal.hide();
             cubit.reset();
-            if (components.cubits.holdingsView.walletCoin < symbolType.item3) {
+            if (!_hasAtLeastCoin(symbolType.item3)) {
+              final coin = Current.chainNet.symbol;
               final amount = (symbolType.item3 -
                       components.cubits.holdingsView.walletCoin.floor())
                   .toInt();
-              final coin = Current.chainNet.symbol;
               final mintMsg = ('${symbolType.item1 == 'NFT' ? 'an' : 'a'} '
                   '${symbolType.item1} '
                   '${symbolType.item1 == 'NFT' ? '' : 'asset'}');
