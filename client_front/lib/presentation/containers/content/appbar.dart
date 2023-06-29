@@ -13,6 +13,12 @@ import 'package:client_front/presentation/components/components.dart'
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({Key? key}) : super(key: key);
 
+  /// don't display search indicator if they have no assets. assetHoldings
+  /// contains the base currency too, so just check to see if they have 2 or
+  /// more items.
+  bool get _hasAssets =>
+      components.cubits.holdingsView.state.assetHoldings.length > 1;
+
   @override
   Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
@@ -24,7 +30,7 @@ class CustomAppBar extends StatelessWidget {
                   AppBarLeft(),
                   Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                     ...[
-                      state.searchButtonShown
+                      state.searchButtonShown && _hasAssets
                           ? SearchIndicator()
                           : SizedBox.shrink()
                     ], // only show on

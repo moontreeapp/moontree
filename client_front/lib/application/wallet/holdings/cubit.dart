@@ -12,6 +12,8 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/application/wallet/holdings/derive.dart';
 import 'package:client_front/application/common.dart';
 import 'package:client_front/presentation/utils/ext.dart';
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 part 'state.dart';
 
@@ -99,12 +101,13 @@ class WalletHoldingsViewCubit extends Cubit<WalletHoldingsViewState> {
       }
       update(
         holdingsViews: holdingViews.toList(),
-        assetHoldings: assetHoldings(holdingViews),
+        assetHoldings: assetHoldings(holdingViews, chainNet),
         ranWallet: wallet,
         ranChainNet: chainNet,
         startedDerive: startedDerive,
         isSubmitting: false,
       );
+      components.cubits.location.refresh();
     }
   }
 
