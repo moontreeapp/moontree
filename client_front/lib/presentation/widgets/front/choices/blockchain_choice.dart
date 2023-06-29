@@ -227,16 +227,18 @@ void navToBlockchain([BuildContext? context, Function? then]) {
         .clearSnackBars();
     //produceBlockchainModal(context: components.routes.routeContext!);
     components.cubits.bottomModalSheet.show(
-        children: blockchainOptions(
-      onTap: () {
-        components.cubits.bottomModalSheet.hide();
-        sail.home();
-      },
-      second: then ??
-          () => sail.refreshHomeCubits(sail.locationFromSector(
-                  components.cubits.location.state.sector) ??
-              ''),
-    ));
+      childrenHeight: 52,
+      children: blockchainOptions(
+        onTap: () {
+          components.cubits.bottomModalSheet.hide();
+          sail.home();
+        },
+        second: then ??
+            () => sail.refreshHomeCubits(sail.locationFromSector(
+                    components.cubits.location.state.sector) ??
+                ''),
+      ),
+    );
     //Navigator.of(components.routes.routeContext!)
     //    .pushNamed('/settings/network/blockchain');
     // we'd really like to trigger this whenever we lose focus of it...

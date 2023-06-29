@@ -22,7 +22,7 @@ class BottomModalSheet extends StatelessWidget {
             final DraggableScrollableController draggableScrollController =
                 DraggableScrollableController();
             final double childrenPixels =
-                (state.children.length * state.childrenHeight + 16) /
+                ((state.children.length - 1) * state.childrenHeight + 16) /
                     screen.app.height;
             final double minExtent =
                 min(childrenPixels, screen.frontContainer.midHeightPercentage);

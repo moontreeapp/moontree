@@ -272,6 +272,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                 //Icon(Icons.wallet_rounded,
                 //    color: wallet == Current.wallet ? AppColors.primary : null),
                 Container(
+                    height: 24,
                     child: SvgPicture.asset(
                         'assets/icons/custom/mobile/wallet${wallet == Current.wallet ? '-active' : ''}.svg')),
             title: Text(wallet.name,
@@ -358,9 +359,9 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
       ];
 
   void showWallets() {
-    components.cubits.bottomModalSheet.show(children: walletOptions(onTap: () {
-      components.cubits.bottomModalSheet.hide();
-    }));
+    components.cubits.bottomModalSheet.show(
+      children: walletOptions(onTap: components.cubits.bottomModalSheet.hide),
+    );
     // we'd really like to trigger this whenever we lose focus of it...
     components.cubits.title.update(editable: false);
   }
