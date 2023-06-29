@@ -1,4 +1,7 @@
+import 'package:client_front/domain/concepts/concepts.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:client_front/presentation/utils/animation.dart';
+import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:tuple/tuple.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
@@ -131,6 +134,7 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                 slide = (screen.navbar.midHeight / maxHeight) *
                     animationController.value;
               }
+
               return Transform(
                   alignment: Alignment.bottomCenter,
                   transform: Matrix4.identity()..translate(0.0, slide, 0.0),
@@ -221,21 +225,8 @@ class _NavbarState extends State<Navbar> with TickerProviderStateMixin {
                                   const SizedBox(height: 16),
                                   Padding(
                                       padding: EdgeInsets.zero,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: <Widget>[
-                                          SectionIcon(section: Section.wallet),
-                                          SectionIcon(
-                                              section: Section.scan,
-                                              preNavHook: () {
-                                                sail.to('/wallet/holdings',
-                                                    section: Section.wallet);
-                                              }),
-                                          SectionIcon(section: Section.manage),
-                                        ],
-                                      ))
-                                ]
+                                      child: NavbarSections(state: state)),
+                                ],
                               ],
                             )
                             /* 
@@ -382,6 +373,41 @@ class _SectionIconState extends State<SectionIcon> {
                     '${state.section == widget.section ? '-active' : ''}.svg',
                     //height: 48,
                   )));
+}
+
+class NavbarSections extends StatelessWidget {
+  final NavbarCubitState state;
+  const NavbarSections({Key? key, required this.state}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final wallet = SectionIcon(section: Section.wallet);
+    final manage = SectionIcon(section: Section.manage);
+    final scan = SectionIcon(
+        section: Section.scan,
+        preNavHook: () {
+          sail.to('/wallet/holdings', section: Section.wallet);
+        });
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: () {
+          if (state.currentNavbarHeight == NavbarHeight.max) {
+            if (state.previousNavbarHeight == NavbarHeight.mid) {
+              return [
+                FadeIn(child: wallet),
+                FadeIn(child: scan),
+                FadeIn(child: manage),
+              ];
+            }
+            return [wallet, scan, manage];
+          }
+          return [
+            FadeOut(child: wallet),
+            FadeOut(child: scan),
+            FadeOut(child: manage),
+          ];
+        }());
+  }
 }
 
 class NavbarActions extends StatelessWidget {
