@@ -78,7 +78,8 @@ class App {
 
 class Navbar {
   static const double _maxHeightPercentage = 0.1552631579;
-  static const double _midHeightPercentage = 0.0915;
+  static const double _midHeightPercentage = 0.087;
+  //static const double _midHeightPercentage = 0.0915;
   //static const double _midHeightPercentage = 0.09473684211;
   final double maxHeight;
   final double midHeight;
