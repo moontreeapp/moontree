@@ -90,7 +90,13 @@ List<AssetHolding> assetHoldingsFromBalances(Iterable<Balance> holdings) {
       balancesSub.values.toList() +
       balancesOther.values.toList();
 }*/
-List<AssetHolding> assetHoldings(Iterable<BalanceView> holdings) {
+/// asset holdings isn't just assets, it's assets and coins, but in an object
+/// called AssetHolding which is conformed for the frontend view
+List<AssetHolding> assetHoldings(
+  Iterable<BalanceView> holdings,
+  ChainNet? chainNet,
+) {
+  final Map<String, AssetHolding> balancesCoin = <String, AssetHolding>{};
   final Map<String, AssetHolding> balancesMain = <String, AssetHolding>{};
   final Map<String, AssetHolding> balancesSub = <String, AssetHolding>{};
   final Map<String, AssetHolding> balancesOther = <String, AssetHolding>{};
@@ -108,7 +114,11 @@ List<AssetHolding> assetHoldings(Iterable<BalanceView> holdings) {
         Symbol(balance.symbol)(ChainExtension.from(balance.chain!), Net.main);
     final baseSymbol = symbol.baseSymbol;
     final symbolType = symbol.symbolType;
-    if (<SymbolType>[SymbolType.main, SymbolType.admin].contains(symbolType)) {
+    if (balance.symbol == (chainNet?.symbol ?? 'RVN')) {
+      balancesCoin[baseSymbol] =
+          AssetHolding(symbol: baseSymbol, coin: balance);
+    } else if (<SymbolType>[SymbolType.main, SymbolType.admin]
+        .contains(symbolType)) {
       if (!balancesMain.containsKey(baseSymbol)) {
         balancesMain[baseSymbol] = AssetHolding(
           symbol: baseSymbol,
@@ -163,7 +173,8 @@ List<AssetHolding> assetHoldings(Iterable<BalanceView> holdings) {
       }
     }
   }
-  return balancesMain.values.toList() +
+  return balancesCoin.values.toList() +
+      balancesMain.values.toList() +
       balancesSub.values.toList() +
       balancesOther.values.toList();
 }

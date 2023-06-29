@@ -128,7 +128,7 @@ class ManageHoldingsViewCubit extends Cubit<ManageHoldingsViewState> {
       }
       update(
         holdingsViews: holdingViews.toList(),
-        assetHoldings: assetHoldings(holdingViews),
+        assetHoldings: assetHoldings(holdingViews, chainNet),
         ranWallet: wallet,
         ranChainNet: chainNet,
         startedDerive: startedDerive,

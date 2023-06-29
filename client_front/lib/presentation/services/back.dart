@@ -19,6 +19,8 @@ class SystemBackButton {
         '/login/native',
         '/login/password',
         '/wallet/holdings',
+        '/manage/holdings',
+        '/swap/holdings',
       ].contains(sail.latestLocation)) {
         // edgecase: if at home screen, minimize app
         sendToBackChannel.invokeMethod('sendToBackground');

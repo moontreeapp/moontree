@@ -15,6 +15,10 @@ class PageStructure extends StatelessWidget {
   final double headerSpace;
   final Widget? heightSpacer;
   final Widget? widthSpacer;
+  final double leftPadding;
+  final double rightPadding;
+  final double topPadding;
+
   const PageStructure({
     super.key,
     required this.children,
@@ -26,6 +30,9 @@ class PageStructure extends StatelessWidget {
     this.headerSpace = 0,
     this.heightSpacer = const SizedBox(height: 16),
     this.widthSpacer = const SizedBox(width: 16),
+    this.leftPadding = 16,
+    this.rightPadding = 16,
+    this.topPadding = 16,
   });
 
   @override
@@ -34,9 +41,13 @@ class PageStructure extends StatelessWidget {
         onTap: FocusScope.of(context).unfocus,
         behavior: HitTestBehavior.translucent,
         child: Container(
-            padding: EdgeInsets.only(
-                left: 16, right: 16, top: 16 + headerSpace, bottom: 40),
             alignment: Alignment.bottomCenter,
+            padding: EdgeInsets.only(
+              left: leftPadding,
+              right: rightPadding,
+              bottom: 40,
+              top: topPadding + headerSpace,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

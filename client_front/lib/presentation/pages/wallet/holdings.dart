@@ -81,7 +81,7 @@ class WalletHoldings extends StatelessWidget {
                         onRefresh: () => refresh(cubit),
                         child: ComingSoonPlaceholder(
                             scrollController: ScrollController(),
-                            header: 'Get Started',
+                            header: 'Wallet',
                             message:
                                 'Use the Import feature in the menu or Receive button below to add ${pros.settings.chain.title} & assets to your wallet.'));
                   } else {
@@ -182,7 +182,12 @@ class _HoldingsView extends State<HoldingsView> {
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
                 onTap: () {
                   if (components.cubits.location.menuOpened) {
-                    sail.menu(open: false);
+                    if (components.cubits.backContainer.state.path !=
+                        '/menu/settings') {
+                      sail.menu(open: false);
+                    } else {
+                      // do nothing
+                    }
                   } else {
                     onTap(widget.cubit.state.ranWallet, holding);
                   }

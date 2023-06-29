@@ -11,15 +11,29 @@ part 'state.dart';
 class TitleCubit extends Cubit<TitleCubitState> {
   TitleCubit() : super(const TitleState());
 
-  void update({String? title, bool? editable}) => emit(TitleState(
+  void update({
+    String? title,
+    bool? editable,
+    bool? submitting,
+  }) =>
+      emit(TitleState(
         title: title ?? state.title,
         editable: editable ?? state.editable,
+        submitting: submitting ?? state.submitting,
       ));
 
   void reset() => emit(TitleState(title: null, editable: false));
+  void refresh() {
+    update(submitting: true);
+    update(submitting: false);
+  }
 
   /// returns override title, the title by location, or empty string.
   String get title {
+    if (components.cubits.location.menuOpened &&
+        components.cubits.backContainer.state.path == '/menu/settings') {
+      return 'Settings';
+    }
     if (showWalletName) {
       return Current.wallet.name;
     }

@@ -60,7 +60,7 @@ class ManageHoldings extends StatelessWidget {
                       onRefresh: () => refresh(cubit),
                       child: ComingSoonPlaceholder(
                           scrollController: ScrollController(),
-                          header: 'Get Started',
+                          header: 'Manage',
                           message:
                               'Use the Create button to make an asset you can manage.'));
                 } else {
@@ -118,7 +118,12 @@ class _HoldingsView extends State<HoldingsView> {
               const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
           onTap: () async {
             if (components.cubits.location.menuOpened) {
-              sail.menu(open: false);
+              if (components.cubits.backContainer.state.path !=
+                  '/menu/settings') {
+                sail.menu(open: false);
+              } else {
+                // do nothing
+              }
             } else {
               onTap(widget.cubit.state.ranWallet, holding);
             }

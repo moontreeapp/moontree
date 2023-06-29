@@ -25,7 +25,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height =
-        MediaQuery.of(context).size.height - 118; // -56 (navbar tall)
+        MediaQuery.of(context).size.height - 118 - 56; // -56 (navbar tall)
     final SingleChildScrollView body = SingleChildScrollView(
       controller: scrollController,
       child: Stack(

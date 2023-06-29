@@ -57,3 +57,54 @@ class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
     );
   }
 }
+
+class FadeOut extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+
+  const FadeOut({
+    required this.child,
+    this.duration = animation.fadeDuration,
+  });
+
+  @override
+  _FadeOutState createState() => _FadeOutState();
+}
+
+class _FadeOutState extends State<FadeOut> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+
+    _animation = Tween<double>(begin: 1, end: 0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic))
+      ..addListener(() {
+        setState(() {}); // why is this here?
+      });
+
+    //_controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _controller.forward();
+    return Opacity(
+      opacity: _animation.value,
+      child: widget.child,
+    );
+  }
+}

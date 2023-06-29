@@ -16,6 +16,7 @@ class LocationCubit extends Cubit<LocationCubitState> {
     String? symbol,
     bool? menuOpen,
     bool? dataTab,
+    bool? submitting,
   }) {
     final newState = LocationState(
       path: path ?? state.path,
@@ -26,6 +27,7 @@ class LocationCubit extends Cubit<LocationCubitState> {
       symbol: symbol ?? state.symbol,
       menuOpen: menuOpen ?? state.menuOpen,
       dataTab: dataTab ?? state.dataTab,
+      submitting: submitting ?? state.submitting,
     );
     for (final hook in hooks) {
       hook(state, newState);
@@ -34,6 +36,10 @@ class LocationCubit extends Cubit<LocationCubitState> {
   }
 
   void reset() => emit(LocationState());
+  void refresh() {
+    update(submitting: true);
+    update(submitting: false);
+  }
 
   Symbol? get symbol => state.symbol == null ? null : Symbol(state.symbol!)();
   bool get menuOpened => state.menuOpen;

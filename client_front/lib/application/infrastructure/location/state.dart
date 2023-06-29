@@ -25,6 +25,8 @@ abstract class LocationCubitState extends Equatable {
 
   final bool dataTab; // if we open the data tab on wallet holding
 
+  final bool submitting;
+
   const LocationCubitState({
     this.path,
     this.section,
@@ -32,6 +34,7 @@ abstract class LocationCubitState extends Equatable {
     this.symbol,
     this.menuOpen = false,
     this.dataTab = false,
+    this.submitting = false,
   });
   // would like to enforce it here but we can't because const can't have body
   //  {
@@ -50,7 +53,8 @@ abstract class LocationCubitState extends Equatable {
       [Section.wallet, Section.manage, Section.swap];
 
   @override
-  List<Object?> get props => [path, section, sector, symbol, menuOpen, dataTab];
+  List<Object?> get props =>
+      [path, section, sector, symbol, menuOpen, dataTab, submitting];
 
   /// these path through functions allow this to be the single source of truth,
   /// for the rest of the front end. Todo: convert frontend to reference this.
@@ -90,5 +94,6 @@ class LocationState extends LocationCubitState {
     super.symbol,
     super.menuOpen,
     super.dataTab,
+    super.submitting,
   });
 }

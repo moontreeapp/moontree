@@ -37,7 +37,9 @@ class BottomModalSheetCubit extends Cubit<BottomModalSheetCubitState> {
       emit(BottomModalSheetState(
         display: true,
         exiting: false,
-        children: children ?? state.children,
+        children: children == null
+            ? state.children
+            : children + [SizedBox(height: 8)],
         childrenHeight: childrenHeight ?? state.childrenHeight,
         fullscreen: fullscreen ?? state.fullscreen,
         color: color ?? state.color,

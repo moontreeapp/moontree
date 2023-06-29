@@ -214,7 +214,7 @@ class _SimpleCreateState extends State<SimpleCreate> {
                       : decimalsController.selection);
             }
           }
-          return ScrollablePageStructure(
+          return PageStructure(
             headerSpace: Platform.isIOS ? 0 : 8,
             children: <Widget>[
               if (isSub(state.type))
