@@ -227,7 +227,6 @@ void navToBlockchain([BuildContext? context, Function? then]) {
         .clearSnackBars();
     //produceBlockchainModal(context: components.routes.routeContext!);
     components.cubits.bottomModalSheet.show(
-      childrenHeight: 52,
       children: blockchainOptions(
         onTap: () {
           components.cubits.bottomModalSheet.hide();

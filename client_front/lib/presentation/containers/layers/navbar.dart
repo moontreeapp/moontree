@@ -623,7 +623,9 @@ class NavbarActions extends StatelessWidget {
 
   bool get _hasAdmins => components.cubits.holdingsView.state.assetHoldings
       .map((e) => e.typesView)
-      .contains('Admin');
+      .where((e) => e.contains('Admin'))
+      .isNotEmpty;
+
   //bool get _hasAdmins => Current.holdingNames
   //    .where((String item) => item.isAdmin)
   //    .map((e) => Symbol(e).toMainSymbol!)
