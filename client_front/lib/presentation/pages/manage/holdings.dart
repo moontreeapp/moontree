@@ -60,7 +60,7 @@ class ManageHoldings extends StatelessWidget {
                       onRefresh: () => refresh(cubit),
                       child: ComingSoonPlaceholder(
                           scrollController: ScrollController(),
-                          header: 'Get Started',
+                          header: 'Manage',
                           message:
                               'Use the Create button to make an asset you can manage.'));
                 } else {
