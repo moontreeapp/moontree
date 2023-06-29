@@ -382,10 +382,12 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
             builder: (context, child) {
               return BlocBuilder<SearchCubit, SearchCubitState>(
                   builder: (BuildContext context, SearchCubitState _) {
+                final title = cubit.title;
                 return GestureDetector(
                     onTap: () async {
                       if (components.cubits.title.showWalletName &&
-                          !searchCubit.state.show) {
+                          !searchCubit.state.show &&
+                          title != 'Settings') {
                         showWallets();
                       }
                       //if (!dropDownActive) {
@@ -396,7 +398,8 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                     },
                     onDoubleTap: () async {
                       if (components.cubits.title.showWalletName &&
-                          !searchCubit.state.show) {
+                          !searchCubit.state.show &&
+                          title != 'Settings') {
                         bool next = false;
                         for (final Wallet wallet
                             in pros.wallets.ordered + pros.wallets.ordered) {
@@ -440,7 +443,7 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                   BlocBuilder<FrontContainerCubit,
                                           FrontContainerCubitState>(
                                       builder: (context, state) {
-                                    if (state.menuOpen) {
+                                    if (state.menuOpen && title != 'Settings') {
                                       return FadeIn(
                                           child: IconButton(
                                         onPressed: () => showWallets(),

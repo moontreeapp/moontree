@@ -4,6 +4,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:client_front/application/utilities.dart';
 import 'package:client_front/presentation/services/services.dart' as services;
+import 'package:client_front/presentation/components/components.dart'
+    as components;
 
 part 'state.dart';
 
@@ -21,19 +23,25 @@ class BackContainerCubit extends Cubit<BackContainerCubitState>
   void previousMenu() {
     if (menuExpanded) {
       final x = state.path.split('/');
-      return emit(BackContainerState(
+      emit(BackContainerState(
         height: state.height,
         path: x.sublist(0, x.length - 1).join('/'),
         priorPath: state.path,
       ));
+      components.cubits.title.refresh();
     }
   }
 
-  void update({double? height, String? path}) => emit(BackContainerState(
-        height: height ?? state.height,
-        path: path ?? state.path,
-        priorPath: path == state.path ? state.priorPath : state.path,
-      ));
+  void update({double? height, String? path}) {
+    emit(BackContainerState(
+      height: height ?? state.height,
+      path: path ?? state.path,
+      priorPath: path == state.path ? state.priorPath : state.path,
+    ));
+    if (['/menu', '/menu/settings'].contains(path)) {
+      components.cubits.title.refresh();
+    }
+  }
 
   @override
   void max() => emit(BackContainerState(
