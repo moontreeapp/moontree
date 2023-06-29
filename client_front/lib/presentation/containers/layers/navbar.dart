@@ -19,7 +19,6 @@ import 'package:client_front/presentation/services/services.dart'
     show sail, screen;
 import 'package:client_front/presentation/components/components.dart'
     as components;
-import 'package:wallet_utils/wallet_utils.dart';
 
 TextStyle style(BuildContext context, Snack? snack) => snack?.positive ?? true
     ? Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.white)
