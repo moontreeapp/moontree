@@ -1,3 +1,4 @@
+import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:tuple/tuple.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
@@ -615,32 +616,43 @@ class NavbarActions extends StatelessWidget {
     }
   }
 
+  bool get _inManage =>
+      components.cubits.location.state.path == '/manage/holding';
+  bool _hasAtLeastCoin(double coin) =>
+      components.cubits.holdingsView.walletCoin >= coin;
+
+  bool get _hasAdmins => components.cubits.holdingsView.state.assetHoldings
+      .map((e) => e.typesView)
+      .contains('Admin');
+  //bool get _hasAdmins => Current.holdingNames
+  //    .where((String item) => item.isAdmin)
+  //    .map((e) => Symbol(e).toMainSymbol!)
+  //    .isNotEmpty;
+
+  bool _hasAdminOf(Symbol symbol) =>
+      (components.cubits.holdingsView.state.assetHoldings
+              .where((element) => element.symbol == symbol.symbol)
+              .firstOrNull
+              ?.typesView
+              .contains('Admin') ??
+          false);
+
   bool _ableTo({String action = 'send', bool snack = true}) {
     var extraCondition = true;
     if (action == 'reissue') {
       final symbol = components.cubits.location.symbol!;
-      extraCondition =
-          components.cubits.location.state.path == '/manage/holding' ||
-              (components.cubits.location.state.dataTab &&
+      extraCondition = _inManage ||
+          (components.cubits.location.state.dataTab &&
                   symbol.isReissuableType &&
-                  (components.cubits.holdingsView.state.assetHoldings
-                          .where((element) => element.symbol == symbol.symbol)
-                          .firstOrNull
-                          ?.typesView
-                          .contains('Admin') ??
-                      false));
+                  _hasAdminOf(symbol)) &&
+              _hasAtLeastCoin(101);
     } else if (action == 'createSub') {
       final symbol = components.cubits.location.symbol!;
-      extraCondition =
-          components.cubits.location.state.path == '/manage/holding' ||
-              (components.cubits.location.state.dataTab &&
+      extraCondition = _inManage ||
+          (components.cubits.location.state.dataTab &&
                   (symbol.isMain || symbol.isQualifier || symbol.isSub) &&
-                  (components.cubits.holdingsView.state.assetHoldings
-                          .where((element) => element.symbol == symbol.symbol)
-                          .firstOrNull
-                          ?.typesView
-                          .contains('Admin') ??
-                      false));
+                  _hasAdminOf(symbol)) &&
+              _hasAtLeastCoin(101);
     }
     if (!components.cubits.holdingsView.walletEmptyCoin && extraCondition) {
       return true;
@@ -665,11 +677,13 @@ class NavbarActions extends StatelessWidget {
         background: AppColors.rgb(AppColors.lightPrimaries[1]));
     final modal = components.cubits.bottomModalSheet;
     final cubit = components.cubits.simpleCreateForm;
+    final hasAdmins = _hasAdmins;
+
     modal.show(children: [
-      for (final Tuple2<String, SymbolType> symbolType in [
-        if (!skipMain) Tuple2('Main', SymbolType.main),
-        Tuple2('Sub', SymbolType.sub),
-        Tuple2('NFT', SymbolType.unique),
+      for (final Tuple3<String, SymbolType, double> symbolType in [
+        if (!skipMain) Tuple3('Main', SymbolType.main, 500 + 1),
+        if (hasAdmins) Tuple3('Sub', SymbolType.sub, 100 + 1),
+        if (hasAdmins) Tuple3('NFT', SymbolType.unique, 5 + 1),
 
         /// hide these until we're ready to add verifierString support etc.
         // Tuple2('Channel', SymbolType.channel),
@@ -681,8 +695,22 @@ class NavbarActions extends StatelessWidget {
           onTap: () {
             modal.hide();
             cubit.reset();
-            cubit.update(type: symbolType.item2, parentName: parent);
-            sail.to('/manage/create');
+            if (!_hasAtLeastCoin(symbolType.item3)) {
+              final coin = Current.chainNet.symbol;
+              final amount = (symbolType.item3 -
+                      components.cubits.holdingsView.walletCoin.floor())
+                  .toInt();
+              final mintMsg = ('${symbolType.item1 == 'NFT' ? 'an' : 'a'} '
+                  '${symbolType.item1} '
+                  '${symbolType.item1 == 'NFT' ? '' : 'asset'}');
+              streams.app.behavior.snack.add(Snack(
+                delay: 0,
+                message: 'You need $amount more $coin to mint $mintMsg.',
+              ));
+            } else {
+              cubit.update(type: symbolType.item2, parentName: parent);
+              sail.to('/manage/create');
+            }
           },
           leading:
               //components.icons.generateIndicator(

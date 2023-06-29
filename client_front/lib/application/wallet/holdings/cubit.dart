@@ -1,16 +1,17 @@
-import 'package:client_front/application/wallet/holdings/derive.dart';
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/src/utilities/extensions.dart';
 import 'package:client_back/client_back.dart';
 import 'package:client_back/server/src/protocol/comm_balance_view.dart';
 import 'package:client_back/utilities/assets.dart';
 import 'package:client_front/infrastructure/repos/holdings.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:client_front/presentation/utils/ext.dart';
+import 'package:client_front/application/wallet/holdings/derive.dart';
 import 'package:client_front/application/common.dart';
-import 'package:moontree_utils/moontree_utils.dart';
+import 'package:client_front/presentation/utils/ext.dart';
 
 part 'state.dart';
 
@@ -152,8 +153,10 @@ class WalletHoldingsViewCubit extends Cubit<WalletHoldingsViewState> {
       state.holdingsViews.where((e) => e.symbol == symbol).firstOrNull;
 
   bool get walletEmpty => state.holdingsViews.map((e) => e.sats).sum == 0;
-  bool get walletEmptyCoin =>
-      state.holdingsViews.where((e) => e.isCoin).map((e) => e.sats).sum == 0;
+  int get walletCoinSats =>
+      state.holdingsViews.where((e) => e.isCoin).map((e) => e.sats).sum;
+  bool get walletEmptyCoin => walletCoinSats == 0;
+  double get walletCoin => walletCoinSats.asCoin;
 
   // we want to group certain assets into one view so we arrange them into this:
 }
