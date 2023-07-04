@@ -40,7 +40,7 @@ class Receive extends StatelessWidget {
                 },
                 child: Center(
                     child: components.cubits.receiveView.notGenerating
-                        ? QrImage(
+                        ? QrImageView(
                             backgroundColor: Colors.white,
                             data: components.cubits.receiveView.address,
                             foregroundColor: AppColors.primary,
