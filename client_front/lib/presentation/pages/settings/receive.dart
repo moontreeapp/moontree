@@ -40,10 +40,16 @@ class Receive extends StatelessWidget {
                 },
                 child: Center(
                     child: components.cubits.receiveView.notGenerating
-                        ? QrImage(
+                        ? QrImageView(
                             backgroundColor: Colors.white,
                             data: components.cubits.receiveView.address,
-                            foregroundColor: AppColors.primary,
+                            eyeStyle: const QrEyeStyle(
+                                eyeShape: QrEyeShape.square,
+                                color: AppColors.primary),
+                            dataModuleStyle: const QrDataModuleStyle(
+                                dataModuleShape: QrDataModuleShape.circle,
+                                color: AppColors.primary),
+                            //foregroundColor: AppColors.primary,
                             //embeddedImage: Image.asset(
                             //        'assets/logo/moontree_logo.png')
                             //    .image,
