@@ -111,39 +111,17 @@ class _TransactionListState extends State<TransactionList> {
     } else {
       transactionCount = transactions.length;
     }
-    return transactions.isEmpty && services.wallet.currentWallet.minerMode
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-                Container(
-                    alignment: Alignment.topCenter,
-                    padding:
-                        const EdgeInsets.only(top: 32, left: 16, right: 16),
-                    child: const Text(
-                      '"Mine to Wallet" is enabled, so transaction history is not available. \n\nTo download your transaction history please disable "Mine to Wallet" in Settings.',
-                      softWrap: true,
-                      maxLines: 10,
-                    )),
-                if (services.developer.developerMode)
-                  components.buttons.actionButtonSoft(
-                    context,
-                    label: 'Go to Settings',
-                    link: '/settings/network/mining',
-                  ),
-                const SizedBox(height: 80),
-              ])
-        : RefreshIndicator(
-            onRefresh: () => refresh(),
-            child: transactions.isEmpty
-                //? components.empty.transactions(context, msg: widget.msg)
-                ? components.empty.getTransactionsPlaceholder(context,
-                    scrollController: widget.scrollController!,
-                    count:
-                        transactionCount == 0 ? 1 : min(10, transactionCount))
-                : Container(
-                    alignment: Alignment.center,
-                    child: _transactionsView(context),
-                  ));
+    return RefreshIndicator(
+        onRefresh: () => refresh(),
+        child: transactions.isEmpty
+            //? components.empty.transactions(context, msg: widget.msg)
+            ? components.empty.getTransactionsPlaceholder(context,
+                scrollController: widget.scrollController!,
+                count: transactionCount == 0 ? 1 : min(10, transactionCount))
+            : Container(
+                alignment: Alignment.center,
+                child: _transactionsView(context),
+              ));
   }
 
   ListView _transactionsView(BuildContext context) => ListView(

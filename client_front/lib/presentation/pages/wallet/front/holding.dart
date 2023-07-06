@@ -107,10 +107,7 @@ class FrontHoldingExtraState extends State<FrontHoldingExtra>
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
-    // then get the transactions from the future endpoint call
-    if (!pros.wallets.currentWallet.minerMode) {
-      cubit.setInitial();
-    }
+    cubit.setInitial();
     return BlocBuilder<WalletHoldingViewCubit, WalletHoldingViewState>(
         bloc: cubit..enter(),
         builder: (BuildContext context, WalletHoldingViewState state) =>

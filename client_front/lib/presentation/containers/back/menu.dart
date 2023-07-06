@@ -369,12 +369,6 @@ class SettingsMenu extends StatelessWidget {
           //    name: 'Addresses',
           //    link: '/addresses',
           //  ),
-          //if (false) // not necessary anymore with new serverside backend
-          //  MenuLink(
-          //    icon: MdiIcons.pickaxe,
-          //    name: 'Mining',
-          //    link: '/setting/mining',
-          //  ),
           if (services.developer.developerMode)
             MenuLink(
               icon: MdiIcons.database,

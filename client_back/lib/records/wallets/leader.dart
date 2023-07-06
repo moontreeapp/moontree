@@ -23,7 +23,6 @@ class LeaderWallet extends Wallet {
     required String id,
     required this.encryptedEntropy,
     bool backedUp = false,
-    bool skipHistory = false,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
     String? name,
     Uint8List? seed,
@@ -33,7 +32,6 @@ class LeaderWallet extends Wallet {
           cipherUpdate: cipherUpdate,
           name: name,
           backedUp: backedUp,
-          skipHistory: skipHistory,
         ) {
     _seed = seed;
     _getEntropy = getEntropy;
@@ -47,7 +45,6 @@ class LeaderWallet extends Wallet {
     String? id,
     String? encryptedEntropy,
     bool? backedUp,
-    bool? skipHistory,
     CipherUpdate? cipherUpdate,
     String? name,
     Uint8List? seed, // must pass in if you want to save it.
@@ -57,7 +54,6 @@ class LeaderWallet extends Wallet {
         id: id ?? existing.id,
         encryptedEntropy: encryptedEntropy ?? existing.encryptedEntropy,
         backedUp: backedUp ?? existing.backedUp,
-        skipHistory: skipHistory ?? existing.skipHistory,
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
         name: name ?? existing.name,
         seed: seed, // can't autopopulate seed because it's async, must pass in.
@@ -70,18 +66,12 @@ class LeaderWallet extends Wallet {
       _getEntropy = getEntropy;
 
   @override
-  List<Object?> get props => <Object?>[
-        id,
-        cipherUpdate,
-        encryptedEntropy,
-        backedUp,
-        skipHistory,
-        name
-      ];
+  List<Object?> get props =>
+      <Object?>[id, cipherUpdate, encryptedEntropy, backedUp, name];
 
   @override
   String toString() =>
-      'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, $backedUp, $skipHistory, $name)';
+      'LeaderWallet($id, $encryptedEntropy, $cipherUpdate, $backedUp, $name)';
 
   @override
   String get encrypted => encryptedEntropy;

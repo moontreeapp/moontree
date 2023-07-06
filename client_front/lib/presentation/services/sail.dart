@@ -264,13 +264,6 @@ class Sail {
       navbarHeight: NavbarHeight.hidden,
       frontPath: '/mode/advanced',
     ),
-    '/setting/mining': Manifest(
-      title: 'Mining Settings',
-      section: Section.settings,
-      frontHeight: FrontContainerHeight.max,
-      navbarHeight: NavbarHeight.hidden,
-      frontPath: '/setting/mining',
-    ),
     '/setting/database': Manifest(
       title: 'Database Settings',
       section: Section.settings,

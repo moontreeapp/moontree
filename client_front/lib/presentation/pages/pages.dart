@@ -51,7 +51,6 @@ final _staticRoutes = <String, Widget Function(BuildContext)>{
   '/mode/developer': (BuildContext context) => const DeveloperMode(),
   '/mode/advanced': (BuildContext context) => const AdvancedDeveloperMode(),
   '/setting/database': (BuildContext context) => const DatabaseSettings(),
-  '/setting/mining': (BuildContext context) => const MiningSetting(),
   '/setting/security': (BuildContext context) => const SecuritySettings(),
   '/setting/preferences': (BuildContext context) => const Preferences(),
   '/setting/hidden/assets': (BuildContext context) => const HiddenAssets(),

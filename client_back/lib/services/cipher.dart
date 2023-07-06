@@ -83,7 +83,6 @@ class CipherService {
       cipherUpdate: currentCipherUpdate,
       name: wallet.name,
       backedUp: wallet.backedUp,
-      skipHistory: wallet.skipHistory,
       seed: seed, // necessary?
       getEntropy: wallet.getEntropy,
     );
@@ -109,7 +108,6 @@ class CipherService {
       id: reencrypt.walletId,
       encryptedWIF: reencrypt.encryptedSecret,
       cipherUpdate: currentCipherUpdate,
-      skipHistory: wallet.skipHistory,
       name: wallet.name,
     );
   }

@@ -19,18 +19,13 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
   @HiveField(3)
   bool backedUp;
 
-  @HiveField(4, defaultValue: false)
-  bool skipHistory;
-
   @override
-  List<Object?> get props =>
-      <Object?>[id, cipherUpdate, name, backedUp, skipHistory];
+  List<Object?> get props => <Object?>[id, cipherUpdate, name, backedUp];
 
   Wallet({
     required this.id,
     required this.cipherUpdate,
     this.backedUp = false,
-    this.skipHistory = false,
     String? name,
   }) : name = name ?? (id.length > 5 ? id.substring(0, 6) : id[0]);
 
@@ -50,6 +45,4 @@ abstract class Wallet with HiveObjectMixin, EquatableMixin {
 
   String get secretTypeToString => secretType.name;
   String get walletTypeToString => walletType.name;
-
-  bool get minerMode => skipHistory;
 }

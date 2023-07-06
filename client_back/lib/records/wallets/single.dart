@@ -18,14 +18,12 @@ class SingleWallet extends Wallet {
     required String id,
     required this.encryptedWIF,
     CipherUpdate cipherUpdate = defaultCipherUpdate,
-    bool skipHistory = false,
     String? name,
     Future<String> Function(String id)? getWif,
   }) : super(
           id: id,
           cipherUpdate: cipherUpdate,
           backedUp: true,
-          skipHistory: skipHistory,
           name: name,
         ) {
     _getWif = getWif;
@@ -38,7 +36,6 @@ class SingleWallet extends Wallet {
     String? id,
     String? encryptedWIF,
     CipherUpdate? cipherUpdate,
-    bool? skipHistory,
     String? name,
     Future<String> Function(String id)? getWif,
   }) =>
@@ -46,18 +43,15 @@ class SingleWallet extends Wallet {
         id: id ?? existing.id,
         encryptedWIF: encryptedWIF ?? existing.encryptedWIF,
         cipherUpdate: cipherUpdate ?? existing.cipherUpdate,
-        skipHistory: skipHistory ?? existing.skipHistory,
         name: name ?? existing.name,
         getWif: getWif ?? existing.getWif,
       );
 
   @override
-  List<Object?> get props =>
-      <Object?>[id, cipherUpdate, encryptedWIF, skipHistory, name];
+  List<Object?> get props => <Object?>[id, cipherUpdate, encryptedWIF, name];
 
   @override
-  String toString() =>
-      'SingleWallet($id, $encryptedWIF, $cipherUpdate, $skipHistory, $name)';
+  String toString() => 'SingleWallet($id, $encryptedWIF, $cipherUpdate, $name)';
 
   @override
   String get encrypted => encryptedWIF;

@@ -57,7 +57,7 @@ dependencies:
   tuple: ^2.0.0
   logging: ^1.1.0
   qr_code_scanner: ^1.0.1
-  qr_flutter: ^4.0.0
+  qr_flutter: ^4.1.0
   rxdart: ^0.27.5
   share: ^2.0.4 # to share the file that we create // old
   shimmer: ^2.0.0

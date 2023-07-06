@@ -31,10 +31,7 @@ class ManageHolding extends StatelessWidget {
           chain: pros.settings.chain,
           net: pros.settings.net,
         ));
-    // then get the transactions from the future endpoint call
-    if (!pros.wallets.currentWallet.minerMode) {
-      cubit.setInitial(force: true);
-    }
+    cubit.setInitial(force: true);
     return Container(
       color: Colors.transparent,
       height: services.screen.frontContainer.maxHeight,
