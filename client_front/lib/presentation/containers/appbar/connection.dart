@@ -31,18 +31,6 @@ class ConnectionLight extends StatelessWidget {
           child: GestureDetector(
             onLongPress: () {
               print('testing done here');
-              CIDInfo cidInfoV0 = CID
-                  .decodeCid('QmRKs2ZfuwvmZA3QAWmCqrGUjV9pxtBUDP3wuc6iVGnjA2');
-              print('QmRKs2ZfuwvmZA3QAWmCqrGUjV9pxtBUDP3wuc6iVGnjA2'
-                  .base58Decode
-                  .toEncodedString);
-              print(Uint8List.fromList(cidInfoV0.multihashDigest)
-                  .toEncodedString);
-              CIDInfo cidInfo = CID.decodeCid(
-                  'bafybeibml5uieyxa5tufngvg7fgwbkwvlsuntwbxgtskoqynbt7wlchmfm');
-              final encoded = Uint8List.fromList(cidInfo.multihashDigest);
-              print(encoded.length);
-              print(encoded.toEncodedString);
               streams.app.behavior.snack.add(
                   Snack(message: state.status.name, label: "ok", copy: 'abc'));
             },
