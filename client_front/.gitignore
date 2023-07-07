@@ -53,3 +53,5 @@ app.*.map.json
 database/
 testdb/
 *.exe
+/android/key.properties
+
