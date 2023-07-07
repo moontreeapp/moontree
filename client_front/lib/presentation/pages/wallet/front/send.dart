@@ -7,8 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet_utils/src/utilities/validation_ext.dart';
-import 'package:wallet_utils/wallet_utils.dart'
-    show FeeRate, SatsToAmountExtension;
+import 'package:wallet_utils/wallet_utils.dart' show FeeRate;
 import 'package:client_back/client_back.dart';
 import 'package:client_back/services/transaction/maker.dart';
 import 'package:client_back/streams/app.dart';
@@ -28,11 +27,6 @@ import 'package:client_front/presentation/widgets/widgets.dart';
 import 'package:client_front/presentation/theme/theme.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
-
-extension FunctionsForBalanceView on BalanceView {
-  int get sats => satsConfirmed + satsUnconfirmed;
-  double get amount => (satsConfirmed + satsUnconfirmed).asCoin;
-}
 
 class SimpleSend extends StatefulWidget {
   final dynamic data;

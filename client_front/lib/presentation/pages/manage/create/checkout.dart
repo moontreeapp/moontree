@@ -244,7 +244,7 @@ class SubmitButton extends StatelessWidget {
         onPressed: () async {
           if (DateTime.now().difference(startTime).inMilliseconds > 500) {
             components.cubits.loadingView.show(
-              title: 'Create',
+              title: 'Creating',
               msg: state.assetCreationName,
             );
             () async {

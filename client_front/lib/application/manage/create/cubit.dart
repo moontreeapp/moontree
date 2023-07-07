@@ -1,6 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:dart_cid/src/decode_cid.dart' show CIDInfo;
+import 'package:dart_cid/dart_cid.dart' show CID;
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -24,7 +28,6 @@ import 'package:client_front/infrastructure/repos/unsigned_create.dart';
 import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/infrastructure/services/lookup.dart';
 import 'package:client_front/infrastructure/calls/broadcast.dart';
-
 part 'state.dart';
 
 class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
@@ -89,7 +92,27 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
         return encoded.toEncodedString;
       }
     } catch (e) {
-      print('unrecognized');
+      print('unrecognized as v0');
+      return decodeCIDv1AssetMemo(assetMemo);
+    }
+    return null;
+  }
+
+  String? decodeCIDv1AssetMemo([String? assetMemo]) {
+    assetMemo ??= state.assetMemo;
+
+    if (assetMemo == null || assetMemo == '') {
+      return null;
+    }
+    try {
+      // this technically works with both v0 and v1 but drops the 1220 prefix
+      CIDInfo cidInfo = CID.decodeCid(assetMemo);
+      final encoded = Uint8List.fromList(cidInfo.multihashDigest);
+      if (encoded.length == 32) {
+        return '1220' + encoded.toEncodedString; // server expects 1220 prefix
+      }
+    } catch (e) {
+      print('unrecognized as v1');
     }
     return null;
   }
