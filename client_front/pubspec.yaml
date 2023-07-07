@@ -109,7 +109,7 @@ dev_dependencies:
   ##Analyzer language version: 2.19.0
   ##SDK language version: 3.0.0
   ##
-  ##Please update to the latest `analyzer` version (5.13.0) by running   
+  ##Please update to the latest `analyzer` version (5.13.0) by running
   ##`flutter packages upgrade`.
   ##
   ##If you are not getting the latest version by running the above command, you
@@ -118,9 +118,6 @@ dev_dependencies:
   ##
   ##dev_dependencies:
   ##  analyzer: ^5.13.0
-
-
-
 
 # The following section is specific to Flutter.
 flutter:
