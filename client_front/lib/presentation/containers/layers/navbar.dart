@@ -1,7 +1,3 @@
-import 'package:client_front/domain/concepts/concepts.dart';
-import 'package:client_front/infrastructure/services/lookup.dart';
-import 'package:client_front/presentation/utils/animation.dart';
-import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:tuple/tuple.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +9,10 @@ import 'package:client_back/client_back.dart';
 import 'package:client_back/streams/app.dart';
 import 'package:client_front/domain/utils/alphacon.dart';
 import 'package:client_front/application/cubits.dart';
+import 'package:client_front/infrastructure/services/lookup.dart';
+import 'package:client_front/presentation/utils/ext.dart'
+    show FunctionsForBalanceView;
+import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:client_front/presentation/theme/colors.dart';
 import 'package:client_front/presentation/widgets/other/buttons.dart';
 import 'package:client_front/presentation/utils/animation.dart' as animation;
@@ -490,17 +490,7 @@ class NavbarActions extends StatelessWidget {
                                                     'Not connected to network'));
                                           }
                                         },
-                                        onPressed: () async {
-                                          if (_ableTo(action: 'send')) {
-                                            sail.to('/wallet/send', arguments: {
-                                              'security': components
-                                                  .cubits
-                                                  .transactionsView
-                                                  .state
-                                                  .security
-                                            });
-                                          }
-                                        },
+                                        onPressed: _gotoSend,
                                       )),
                                       Expanded(
                                           child: BottomButton(
@@ -521,14 +511,7 @@ class NavbarActions extends StatelessWidget {
                                                 'Not connected to network'));
                                       }
                                     },
-                                    onPressed: () async {
-                                      if (_ableTo(action: 'send')) {
-                                        sail.to('/wallet/send', arguments: {
-                                          'security': components.cubits
-                                              .transactionsView.state.security
-                                        });
-                                      }
-                                    },
+                                    onPressed: _gotoSend,
                                   )),
                                   Expanded(
                                       child: BottomButton(
@@ -606,6 +589,17 @@ class NavbarActions extends StatelessWidget {
                         .toList(),
                     //)
                   )));
+
+  Future<void> _gotoSend() async {
+    if (_ableTo(action: 'send')) {
+      Security security = components.cubits.transactionsView.state.security;
+      if (components.cubits.holdingsView.holdingsViewFor(security.symbol) ==
+          null) {
+        security = Current.coin;
+      }
+      sail.to('/wallet/send', arguments: {'security': security});
+    }
+  }
 
   Future<void> _gotoReissue() async {
     final cubit = components.cubits.simpleReissueForm;
