@@ -78,7 +78,8 @@ dependencies:
   moontree_utils: ^1.1.7
   #serverpod_flutter: ^0.9.21
   serverpod_flutter: ^1.1.0
-
+  dart_cid: ^0.1.0
+  
 dependency_overrides:
   client_back:
     path: ../client_back
