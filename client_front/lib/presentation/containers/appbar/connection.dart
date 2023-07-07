@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:dart_cid/src/decode_cid.dart' show CIDInfo;
+import 'package:dart_cid/dart_cid.dart' show CID;
 import 'package:client_back/streams/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +15,8 @@ import 'package:client_front/presentation/components/components.dart'
 import 'package:client_front/presentation/widgets/other/fading.dart';
 import 'package:client_front/presentation/widgets/front/choices/blockchain_choice.dart'
     show navToBlockchain;
+import 'package:moontree_utils/extensions/string.dart';
+import 'package:moontree_utils/extensions/uint8list.dart';
 
 class ConnectionLight extends StatelessWidget {
   const ConnectionLight({Key? key}) : super(key: key);
