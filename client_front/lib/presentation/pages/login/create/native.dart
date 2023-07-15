@@ -189,7 +189,7 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
       }
       login();
       //}, title: 'Creating Wallet', msg: 'one moment please');
-
+      await Future.delayed(Duration(seconds: 1));
       components.cubits.loadingView.hide();
     } else {
       if (localAuthApi.reason == AuthenticationResult.error) {

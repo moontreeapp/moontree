@@ -249,9 +249,7 @@ class SubmitButtonReissue extends StatelessWidget {
               title: 'Reissuing',
               msg: state.assetReissueName,
             );
-            () async {
-              await components.cubits.simpleReissueForm.broadcast();
-            }();
+            await components.cubits.simpleReissueForm.broadcast();
             await Future.delayed(Duration(seconds: 3));
             components.cubits.loadingView.hide();
             await Future.delayed(Duration(milliseconds: 50));

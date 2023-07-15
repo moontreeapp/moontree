@@ -195,6 +195,7 @@ Future<void> changeChainNet(
   );
   await services.client.switchNetworks(chain: value.chain, net: value.net);
   components.cubits.connection.update(busy: false);
+  await Future.delayed(Duration(milliseconds: 1330));
   streams.app.behavior.snack.add(Snack(message: 'Successfully connected'));
   await components.cubits.holdingsView.setHoldingViews(force: true);
   components.cubits.loadingView.hide();

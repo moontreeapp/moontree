@@ -223,6 +223,7 @@ class _ChangeLoginPasswordState extends State<ChangeLoginPassword> {
       //if (data['onSuccess.returnHome'] as bool? ?? true) {
       //  sail.home();
       //}
+      await Future.delayed(Duration(seconds: 3));
       components.cubits.loadingView.hide();
       sail.back();
     }

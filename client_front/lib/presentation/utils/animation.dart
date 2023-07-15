@@ -34,6 +34,8 @@ class CurveDelayed extends Curve {
 /// we have no control over duration here so if we need to manage that we have
 /// to use the `onGenerateRoute` solution in main.dart rather than `routes`.
 /// the default duration is 300 ms, so 150 for fade out and 150 for fade in.
+/// ...
+/// I bet we can gain control over he duraton somehow, do it someday.
 class FadeInPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Constructs a page transition animation that slides the page up.
   const FadeInPageTransitionsBuilder();

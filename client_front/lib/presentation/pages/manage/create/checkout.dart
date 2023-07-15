@@ -247,9 +247,7 @@ class SubmitButton extends StatelessWidget {
               title: 'Creating',
               msg: state.assetCreationName,
             );
-            () async {
-              await components.cubits.simpleCreateForm.broadcast();
-            }();
+            await components.cubits.simpleCreateForm.broadcast();
             await Future.delayed(Duration(seconds: 3));
             components.cubits.loadingView.hide();
             await Future.delayed(Duration(milliseconds: 50));

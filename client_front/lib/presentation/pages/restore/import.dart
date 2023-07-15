@@ -223,6 +223,7 @@ class Import extends StatelessWidget {
             } catch (e) {
               log(e);
             }
+            await Future.delayed(Duration(seconds: 1));
             components.cubits.loadingView.hide();
             if (resp != text) {
               break;

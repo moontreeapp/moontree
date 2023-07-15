@@ -445,20 +445,23 @@ class PageTitleState extends State<PageTitle> with TickerProviderStateMixin {
                                           FrontContainerCubitState>(
                                       builder: (context, state) {
                                     if (state.menuOpen && title != 'Settings') {
-                                      return FadeIn(
-                                          child: IconButton(
-                                        onPressed: () => showWallets(),
-                                        icon:
-                                            //const Icon(
-                                            //  Icons.expand_more_rounded,
-                                            //  color: Colors.white,
-                                            //)
-                                            Container(
-                                                height: 24,
-                                                width: 24,
-                                                child: SvgPicture.asset(
-                                                    'assets/icons/custom/white/chevron-down.svg')),
-                                      ));
+                                      /// remove visual indicator of wallet change
+                                      /// we'll probably end up putting this back
+                                      /// so just commenting out for now.
+                                      //return FadeIn(
+                                      //    child: IconButton(
+                                      //  onPressed: () => showWallets(),
+                                      //  icon:
+                                      //      //const Icon(
+                                      //      //  Icons.expand_more_rounded,
+                                      //      //  color: Colors.white,
+                                      //      //)
+                                      //      Container(
+                                      //          height: 24,
+                                      //          width: 24,
+                                      //          child: SvgPicture.asset(
+                                      //              'assets/icons/custom/white/chevron-down.svg')),
+                                      //));
                                     }
                                     return SizedBox.shrink();
                                   }),

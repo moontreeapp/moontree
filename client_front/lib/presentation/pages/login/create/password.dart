@@ -247,6 +247,7 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
     //);
     await setupWallets();
     login(password: password.text);
+    await Future.delayed(Duration(seconds: 1));
     components.cubits.loadingView.hide();
   }
 }
