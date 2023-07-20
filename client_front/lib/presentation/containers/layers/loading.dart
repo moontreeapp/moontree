@@ -66,11 +66,11 @@ class LoadingLayerState extends State<LoadingLayer>
                   //onTap: cubit.hide,
                   behavior: HitTestBehavior.opaque,
                   child: LoadingContent(
-                    title: state.title ?? 'Loading',
-                    msg: state.msg ?? 'Please wait',
-                    scrim: const Color(0xFFFFFFFF)
-                        .withOpacity(1 - .12), // AppColors.white87,
-                  ),
+                      title: state.title ?? 'Loading',
+                      msg: state.msg ?? 'Please wait',
+                      scrim: const Color(0xFFFFFFFF)
+                      //.withOpacity(1 - .12),
+                      ),
                 ));
           },
         );
