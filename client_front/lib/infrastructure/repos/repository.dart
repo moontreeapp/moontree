@@ -9,6 +9,16 @@ class Repository<T> {
     errors = <RepoSource, String>{};
   }
 
+  bool resultsIsInitialized() {
+    try {
+      print("Results: $results");
+      return true;
+    } catch (e) {
+      print("Results has not been initialized yet.");
+      return false;
+    }
+  }
+
   String extractError(dynamic resultServer) => resultServer.error!;
   bool detectServerError(dynamic resultServer) => resultServer.error != null;
   bool detectLocalError(dynamic resultLocal) => resultLocal == null;
@@ -55,6 +65,10 @@ class Repository<T> {
       results = resultServer;
       save();
     }
+    if (resultsIsInitialized()) {
+      return results;
+    }
+    // remake the client in the way that would work, and try again.
     return results;
   }
 
