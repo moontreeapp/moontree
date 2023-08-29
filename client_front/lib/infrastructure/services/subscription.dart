@@ -11,6 +11,7 @@ import 'package:client_front/infrastructure/services/lookup.dart';
 
 class SubscriptionService {
   //static const String moontreeUrl = 'http://24.199.68.139:8080';
+  //static const String moontreeUrl = 'https://app.moontree.com/ws';
   static const String moontreeUrl = 'https://app.moontree.com';
   final server.Client client;
   late server.ConnectivityMonitor monitor;
@@ -27,6 +28,7 @@ class SubscriptionService {
     //    disconnectOnLostInternetConnection: true);
     connectionHandler = StreamingConnectionHandler(
       client: client,
+      retryEverySeconds: 10,
       listener: (StreamingConnectionHandlerState connectionState) {
         print('connection state: ${connectionState.status.name}');
         if (!streams.app.loc.splash.value) {
