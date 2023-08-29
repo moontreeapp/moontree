@@ -26,10 +26,12 @@ import 'package:client_back/server/src/protocol/comm_transaction_view.dart'
 import 'package:client_back/server/src/protocol/comm_string.dart' as _i13;
 import 'package:client_back/server/src/protocol/comm_transaction_details_view.dart'
     as _i14;
-import 'package:client_back/server/src/protocol/comm_unsigned_transaction_request_class.dart'
+import 'package:client_back/server/src/protocol/comm_ps_transaction_request_class.dart'
     as _i15;
-import 'dart:io' as _i16;
-import 'protocol.dart' as _i17;
+import 'package:client_back/server/src/protocol/comm_unsigned_transaction_request_class.dart'
+    as _i16;
+import 'dart:io' as _i17;
+import 'protocol.dart' as _i18;
 
 class _EndpointAddresses extends _i1.EndpointRef {
   _EndpointAddresses(_i1.EndpointCaller caller) : super(caller);
@@ -376,8 +378,21 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
   @override
   String get name => 'unsignedTransaction';
 
+  _i2.Future<_i5.UnsignedTransactionResult> completeAtomicSwap({
+    required _i15.PartiallySignedTransactionRequest request,
+    required String chainName,
+  }) =>
+      caller.callServerEndpoint<_i5.UnsignedTransactionResult>(
+        'unsignedTransaction',
+        'completeAtomicSwap',
+        {
+          'request': request,
+          'chainName': chainName,
+        },
+      );
+
   _i2.Future<List<_i5.UnsignedTransactionResult>> generateUnsignedTransaction({
-    required _i15.UnsignedTransactionRequest request,
+    required _i16.UnsignedTransactionRequest request,
     required String chainName,
   }) =>
       caller.callServerEndpoint<List<_i5.UnsignedTransactionResult>>(
@@ -393,11 +408,11 @@ class _EndpointUnsignedTransaction extends _i1.EndpointRef {
 class Client extends _i1.ServerpodClient {
   Client(
     String host, {
-    _i16.SecurityContext? context,
+    _i17.SecurityContext? context,
     _i1.AuthenticationKeyManager? authenticationKeyManager,
   }) : super(
           host,
-          _i17.Protocol(),
+          _i18.Protocol(),
           context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {

@@ -10,6 +10,7 @@ import 'package:client_front/presentation/components/components.dart'
 import 'package:client_front/infrastructure/services/lookup.dart';
 
 class SubscriptionService {
+  //static const String moontreeUrl = 'http://24.199.68.139:8080';
   static const String moontreeUrl = 'https://app.moontree.com';
   final server.Client client;
   late server.ConnectivityMonitor monitor;
