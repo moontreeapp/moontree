@@ -255,9 +255,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
                 focusNode: nameFocus,
                 controller: nameController,
                 textInputAction: TextInputAction.next,
-                selectionControls: CustomMaterialTextSelectionControls(
-                    context: components.routes.routeContext,
-                    offset: Offset.zero),
+                //selectionControls: CustomMaterialTextSelectionControls(
+                //    context: components.routes.routeContext,
+                //    offset: Offset.zero),
                 autocorrect: false,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter(
@@ -415,9 +415,9 @@ class _SimpleCreateState extends State<SimpleCreate> {
                     height: 200,
                     child: TextFieldFormatted(
                         focusNode: verifierFocus,
-                        selectionControls: CustomMaterialTextSelectionControls(
-                            context: components.routes.routeContext,
-                            offset: const Offset(0, 20)),
+                        //selectionControls: CustomMaterialTextSelectionControls(
+                        //    context: components.routes.routeContext,
+                        //    offset: const Offset(0, 20)),
                         autocorrect: false,
                         controller: verifierController,
                         obscureText: false,

@@ -271,9 +271,9 @@ class _SimpleReissueState extends State<SimpleReissue> {
                 readOnly: true,
                 autocorrect: false,
                 textInputAction: TextInputAction.next,
-                selectionControls: CustomMaterialTextSelectionControls(
-                    context: components.routes.routeContext,
-                    offset: Offset.zero),
+                //selectionControls: CustomMaterialTextSelectionControls(
+                //    context: components.routes.routeContext,
+                //    offset: Offset.zero),
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter(
                     RegExp(r'[a-zA-Z0-9._#]'),
@@ -414,9 +414,9 @@ class _SimpleReissueState extends State<SimpleReissue> {
                     height: 200,
                     child: TextFieldFormatted(
                         focusNode: verifierFocus,
-                        selectionControls: CustomMaterialTextSelectionControls(
-                            context: components.routes.routeContext,
-                            offset: const Offset(0, 20)),
+                        //selectionControls: CustomMaterialTextSelectionControls(
+                        //    context: components.routes.routeContext,
+                        //    offset: const Offset(0, 20)),
                         autocorrect: false,
                         controller: verifierController,
                         obscureText: false,

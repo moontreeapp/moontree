@@ -354,10 +354,10 @@ class _SimpleSendState extends State<SimpleSend> {
                           focusNode: sendAddressFocusNode,
                           controller: sendAddress,
                           textInputAction: TextInputAction.next,
-                          selectionControls:
-                              CustomMaterialTextSelectionControls(
-                                  context: components.routes.routeContext,
-                                  offset: Offset.zero),
+                          //selectionControls:
+                          //    CustomMaterialTextSelectionControls(
+                          //        context: components.routes.routeContext,
+                          //        offset: Offset.zero),
                           autocorrect: false,
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9]'),

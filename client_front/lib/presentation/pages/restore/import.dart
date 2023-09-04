@@ -281,9 +281,9 @@ class WordInput extends StatelessWidget {
       height: 200,
       child: TextFieldFormatted(
           focusNode: wordsFocus,
-          selectionControls: CustomMaterialTextSelectionControls(
-              context: components.routes.routeContext,
-              offset: const Offset(0, 20)),
+          //selectionControls: CustomMaterialTextSelectionControls(
+          //    context: components.routes.routeContext,
+          //    offset: const Offset(0, 20)),
           autocorrect: false,
           controller: words,
           obscureText: !state.importVisible,
@@ -316,18 +316,19 @@ class WordInput extends StatelessWidget {
                   onPressed: () => components.cubits.import
                       .set(importVisible: !state.importVisible),
                 ),
-                //if (clip !=
-                //    null /*&& components.cubits.import.validateValue(clip) we're just going to get it again anyway*/)
-                //  IconButton(
-                //      icon:
-                //          const Icon(Icons.paste_rounded, color: AppColors.black60),
-                //      onPressed: () async {
-                //        final String clip = await (context
-                //                .findAncestorWidgetOfExactType<Import>() as Import)
-                //            .getClip();
-                //        components.cubits.import.set(words: clip);
-                //        components.cubits.import.enableImport();
-                //      }),
+                if (clip !=
+                    null /*&& components.cubits.import.validateValue(clip) we're just going to get it again anyway*/)
+                  IconButton(
+                      icon: const Icon(Icons.paste_rounded,
+                          color: AppColors.black60),
+                      onPressed: () async {
+                        final String clip = await (context
+                                    .findAncestorWidgetOfExactType<Import>()
+                                as Import)
+                            .getClip();
+                        components.cubits.import.set(words: clip);
+                        components.cubits.import.enableImport();
+                      }),
                 IconButton(
                     icon: Icon(Icons.clear_rounded,
                         color: words.text != ''

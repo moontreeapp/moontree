@@ -47,7 +47,7 @@ class TextFieldFormatted extends StatefulWidget {
   final Brightness? keyboardAppearance;
   final EdgeInsets scrollPadding;
   final DragStartBehavior dragStartBehavior;
-  final bool enableInteractiveSelection;
+  final bool? enableInteractiveSelection;
   final TextSelectionControls? selectionControls;
   final void Function()? onTap;
   final MouseCursor? mouseCursor;
@@ -131,7 +131,7 @@ class TextFieldFormatted extends StatefulWidget {
     this.keyboardAppearance,
     this.scrollPadding = const EdgeInsets.all(20.0),
     this.dragStartBehavior = DragStartBehavior.start,
-    this.enableInteractiveSelection = true,
+    this.enableInteractiveSelection,
     this.selectionControls,
     this.onTap,
     this.mouseCursor,
@@ -244,7 +244,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
         textAlignVertical: widget.textAlignVertical,
         textDirection: widget.textDirection,
         readOnly: widget.readOnly,
-        toolbarOptions: widget.toolbarOptions,
+        //toolbarOptions: widget.toolbarOptions,
         showCursor: widget.showCursor,
         autofocus: widget.autofocus,
         obscuringCharacter: widget.obscuringCharacter,
