@@ -279,6 +279,7 @@ class WordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
       height: 200,
+      padding: EdgeInsets.only(top: Platform.isIOS ? 16 : 0),
       child: TextFieldFormatted(
           focusNode: wordsFocus,
           //selectionControls: CustomMaterialTextSelectionControls(
@@ -316,19 +317,18 @@ class WordInput extends StatelessWidget {
                   onPressed: () => components.cubits.import
                       .set(importVisible: !state.importVisible),
                 ),
-                if (clip !=
-                    null /*&& components.cubits.import.validateValue(clip) we're just going to get it again anyway*/)
-                  IconButton(
-                      icon: const Icon(Icons.paste_rounded,
-                          color: AppColors.black60),
-                      onPressed: () async {
-                        final String clip = await (context
-                                    .findAncestorWidgetOfExactType<Import>()
-                                as Import)
-                            .getClip();
-                        components.cubits.import.set(words: clip);
-                        components.cubits.import.enableImport();
-                      }),
+                //if (clip !=
+                //    null /*&& components.cubits.import.validateValue(clip) we're just going to get it again anyway*/)
+                //  IconButton(
+                //      icon:
+                //          const Icon(Icons.paste_rounded, color: AppColors.black60),
+                //      onPressed: () async {
+                //        final String clip = await (context
+                //                .findAncestorWidgetOfExactType<Import>() as Import)
+                //            .getClip();
+                //        components.cubits.import.set(words: clip);
+                //        components.cubits.import.enableImport();
+                //      }),
                 IconButton(
                     icon: Icon(Icons.clear_rounded,
                         color: words.text != ''
