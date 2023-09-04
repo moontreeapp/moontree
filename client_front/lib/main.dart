@@ -14,15 +14,6 @@ import 'package:client_front/presentation/pages/pages.dart' as pages;
 import 'package:client_front/presentation/containers/containers.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
-//import 'package:flutter/foundation.dart' show kDebugMode;
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
-
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   print('Handling a background message ${message.messageId}');
-// }
 
 Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   devFlags.addAll(flags ?? []);
@@ -52,32 +43,6 @@ Future<void> main([List<String>? _, List<DevFlag>? flags]) async {
   // runZonedGuarded<Future<void>>(() async {
   //   WidgetsFlutterBinding.ensureInitialized();
   //   WidgetsFlutterBinding.ensureInitialized();
-
-  //   await Firebase.initializeApp();
-
-  //   // Let local development handle errors normally
-  //   await FirebaseCrashlytics.instance
-  //       .setCrashlyticsCollectionEnabled(!kDebugMode);
-  //   // NOTE: To test firebase crashlytics in debug mode, set the above to
-  //   // `true` and call `FirebaseCrashlytics.instance.crash()` at some point
-  //   //  later in the code.
-
-  //   // Errors that we don't catch should be sent to Crashlytics
-  //   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-
-  //   // Set the background messaging handler early on, as a named top-level function
-  //   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  //   // In-app error notification when foregrounded
-  //   await FirebaseMessaging.instance
-  //       .setForegroundNotificationPresentationOptions(
-  //     alert: true, // Required to display a heads up notification
-  //     badge: true,
-  //     sound: false,
-  //   );
-  //   //setup();
-  //   runApp(MoontreeMobileApp());
-  // }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
 
 class MoontreeMobileApp extends StatelessWidget {

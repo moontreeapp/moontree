@@ -1,4 +1,4 @@
-/// unused currently - may want to use this to send logs to firebase
+/// unused currently
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
