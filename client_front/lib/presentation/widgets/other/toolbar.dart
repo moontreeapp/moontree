@@ -1,3 +1,4 @@
+/* unused, removing with selection_controls to reduce build errors
 import 'package:flutter/material.dart';
 
 class NoToolBar extends MaterialTextSelectionControls {
@@ -67,7 +68,7 @@ class CostumeSelectionToolbar extends TextSelectionToolbar {
     );
   }
 }
-
+*/
 /*
 class CustomToolBar extends MaterialTextSelectionControls {
   static const double _kToolbarContentDistanceBelow = 20.0;

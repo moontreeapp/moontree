@@ -1,3 +1,4 @@
+/* started to break with new ios stuff, so removing it.
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -317,3 +318,4 @@ class _TextSelectionHandlePainter extends CustomPainter {
 /// Text selection controls that follow the Material Design specification.
 final TextSelectionControls materialTextSelectionControls =
     MaterialTextSelectionControls();
+*/
