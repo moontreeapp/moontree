@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,6 +57,7 @@ class MoontreeMobileApp extends StatelessWidget {
       darkTheme: CustomTheme.lightTheme,
       navigatorKey: components.routes.navigatorKey,
       navigatorObservers: <NavigatorObserver>[components.routes],
+      //localizationsDelegates: [DefaultCupertinoLocalizations.delegate],
       //initialRoute: '/splash',
       //home: Splash(),
       routes: pages.routes,

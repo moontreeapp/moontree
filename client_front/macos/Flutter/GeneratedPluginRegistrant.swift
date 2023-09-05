@@ -8,7 +8,7 @@ import Foundation
 import connectivity_plus
 import device_info_plus
 import flutter_secure_storage_macos
-import path_provider_macos
+import path_provider_foundation
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

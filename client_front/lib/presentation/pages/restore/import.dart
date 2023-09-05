@@ -279,7 +279,7 @@ class WordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
       height: 200,
-      padding: EdgeInsets.only(top: Platform.isIOS ? 16 : 0),
+      padding: EdgeInsets.only(top: Platform.isIOS ? 24 : 0),
       child: TextFieldFormatted(
           focusNode: wordsFocus,
           //selectionControls: CustomMaterialTextSelectionControls(
