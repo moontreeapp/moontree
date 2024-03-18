@@ -30,17 +30,17 @@ class FeeConcept extends Concept<FeeOption> {
           shadows: shadows);
 }
 
-const FeeConcept fast = FeeConcept(
+final FeeConcept fast = FeeConcept(
   option: FeeOption.fast,
   iconData: MdiIcons.speedometer,
   feeRate: fastFee,
 );
-const FeeConcept standard = FeeConcept(
+final FeeConcept standard = FeeConcept(
   option: FeeOption.standard,
   iconData: MdiIcons.speedometerMedium,
   feeRate: standardFee,
 );
-const FeeConcept slow = FeeConcept(
+final FeeConcept slow = FeeConcept(
   option: FeeOption.slow,
   iconData: MdiIcons.speedometerSlow,
   feeRate: cheapFee,

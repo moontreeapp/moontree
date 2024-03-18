@@ -47,8 +47,9 @@ class Identicon {
 
   List<int> _createImage(
       List<List<bool>> matrix, int width, int height, int pad) {
-    final Image image = Image.rgb(width + (pad * 2), height + (pad * 2));
-    image.fill(Color.fromRgb(
+    final Image image =
+        Image(width: width + (pad * 2), height: height + (pad * 2));
+    image.clear(ColorFloat32.rgb(
       backgroundColor![0],
       backgroundColor![1],
       backgroundColor![2],
@@ -62,11 +63,11 @@ class Identicon {
         if (matrix[r][c]) {
           fillRect(
             image,
-            pad + c * blockWidth,
-            pad + r * blockHeight,
-            pad + (c + 1) * blockWidth - 1,
-            pad + (r + 1) * blockHeight - 1,
-            Color.fromRgb(
+            x1: pad + c * blockWidth,
+            x2: pad + r * blockHeight,
+            y1: pad + (c + 1) * blockWidth - 1,
+            y2: pad + (r + 1) * blockHeight - 1,
+            color: ColorFloat32.rgb(
               foregroundColor![0],
               foregroundColor![1],
               foregroundColor![2],
@@ -75,7 +76,7 @@ class Identicon {
         }
       }
     }
-    return writePng(image);
+    return encodePng(image);
   }
 
   List<List<bool>> _createMatrix(List<int> byteList) {

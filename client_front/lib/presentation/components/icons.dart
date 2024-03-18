@@ -80,10 +80,10 @@ class IconComponents {
 
   Icon get export => const Icon(Icons.save);
 
-  Icon get preview => const Icon(MdiIcons.checkboxMarkedCircleOutline);
+  Icon get preview => Icon(MdiIcons.checkboxMarkedCircleOutline);
 
-  Icon get disabledPreview => const Icon(MdiIcons.checkboxMarkedCircleOutline,
-      color: AppColors.disabled);
+  Icon get disabledPreview =>
+      Icon(MdiIcons.checkboxMarkedCircleOutline, color: AppColors.disabled);
 
   Image get assetMasterImage => Image.asset('assets/masterbag_transparent.png');
   Image get assetRegularImage => Image.asset('assets/assetbag_transparent.png');

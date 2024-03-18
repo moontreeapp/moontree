@@ -81,7 +81,7 @@ class Client extends _i1.ServerpodClient {
   }) : super(
           host,
           _i4.Protocol(),
-          context: context,
+          //context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {
     consent = _EndpointConsent(this);

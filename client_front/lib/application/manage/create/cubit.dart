@@ -3,8 +3,7 @@ import 'dart:typed_data';
 import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
-import 'package:dart_cid/src/decode_cid.dart' show CIDInfo;
-import 'package:dart_cid/dart_cid.dart' show CID;
+import 'package:cid/cid.dart' show CID, CIDInfo;
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -107,7 +106,7 @@ class SimpleCreateFormCubit extends Cubit<SimpleCreateFormState> {
     try {
       // this technically works with both v0 and v1 but drops the 1220 prefix
       CIDInfo cidInfo = CID.decodeCid(assetMemo);
-      final encoded = Uint8List.fromList(cidInfo.multihashDigest);
+      final encoded = Uint8List.fromList(cidInfo.multihashInfo.digest);
       if (encoded.length == 32) {
         return '1220' + encoded.toEncodedString; // server expects 1220 prefix
       }
