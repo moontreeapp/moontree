@@ -1,21 +1,18 @@
 import 'package:moontree/cubits/cubits.dart';
 
 class GlobalCubits {
-  /// primary pages
-  final appLayer = AppLayerCubit();
+  /// sections
   final walletLayer = WalletLayerCubit();
 
-  /// secondary pages
+  /// feeds
   final walletFeed = WalletFeedCubit();
 
   /// layers
+  final appLayer = AppLayerCubit();
   final navbar = NavbarCubit();
   final tutorial = TutorialCubit();
   final toast = ToastCubit();
   final panel = PanelCubit();
-
-  /// navbar
-  final gallery = GalleryCubit();
 
   GlobalCubits();
 }

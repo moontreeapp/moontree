@@ -1,13 +1,14 @@
+import 'package:moontree/services/routes.dart';
 import 'package:moontree/services/screen.dart';
 import 'package:moontree/services/back.dart';
 import 'package:moontree/services/keys.dart' as keys;
 //import 'package:moontree/services/maestro.dart';
 
+final RouteStack routes = RouteStack();
 late Screen screen;
 late ScreenFlags screenflags;
 late SystemBackButton back;
 //late Maestro maestro;
-
 late Keyboard keyboard;
 
 void init({
