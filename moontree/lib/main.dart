@@ -7,6 +7,7 @@ import 'package:moontree/cubits/cubits.dart';
 import 'package:moontree/presentation/pages.dart';
 import 'package:moontree/presentation/theme/colors.dart';
 import 'package:moontree/presentation/theme/custom.dart';
+import 'package:moontree/presentation/ui/appbar/appbar.dart';
 import 'package:moontree/presentation/ui/navbar/navbar.dart';
 import 'package:moontree/presentation/ui/panel/panel.dart';
 import 'package:moontree/presentation/ui/toast/toast.dart';
@@ -75,7 +76,7 @@ class MoontreeApp extends StatelessWidget {
                         //BlocProvider<SendLayerCubit>(
                         //    create: (context) => cubits.sendLayer),
                         //BlocProvider<RecieveLayerCubit>(
-                        //    create: (context) => cubits.recieveLayer),
+                        //    create: (context) => cubits.receiveLayer),
                         //BlocProvider<ManageLayerCubit>(
                         //    create: (BuildContext context) => cubits.manageLayer),
                         //BlocProvider<SwapLayerCubit>(
@@ -87,14 +88,16 @@ class MoontreeApp extends StatelessWidget {
                                 cubits.walletFeed),
 
                         /// layers
-                        BlocProvider<ToastCubit>(
-                            create: (context) => cubits.toast),
-                        BlocProvider<TutorialCubit>(
-                            create: (BuildContext context) => cubits.tutorial),
+                        BlocProvider<AppbarCubit>(
+                            create: (context) => cubits.appbar),
                         BlocProvider<NavbarCubit>(
                             create: (context) => cubits.navbar),
+                        BlocProvider<ToastCubit>(
+                            create: (context) => cubits.toast),
                         BlocProvider<PanelCubit>(
                             create: (context) => cubits.panel),
+                        BlocProvider<TutorialCubit>(
+                            create: (BuildContext context) => cubits.tutorial),
                       ],
                       child: const MaestroLayer(),
                     ))),
@@ -119,6 +122,7 @@ class MaestroLayer extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             children: <Widget>[
               PagesLayer(),
+              AppbarLayer(),
               NavbarLayer(),
               PanelLayer(),
               ToastLayer(),
@@ -142,7 +146,6 @@ class MaestroLayer extends StatelessWidget {
           ? 0
           : MediaQuery.of(context).padding.top,
     );
-    cubits.navbar.update(navOnly: true);
   }
 }
 

@@ -535,7 +535,7 @@ class ScrollSnapListState extends State<ScrollSnapList> {
                   // ScrollSnapList. If not, skip them. Try to avoid inifinte
                   // animation loop caused by multi-level NotificationListener
                   if (scrollInfo.depth > 0) {
-                    print('scrollInfo.depth > 0');
+                    //print('scrollInfo.depth > 0');
                     return false;
                   }
 

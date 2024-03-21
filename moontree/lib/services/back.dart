@@ -38,7 +38,6 @@ class SystemBackButton {
   void initListener() {
     backButtonChannel.setMethodCallHandler((call) async {
       if (call.method == "backButtonPressed") {
-        print('pressed');
         return backButtonPressed();
       }
     });

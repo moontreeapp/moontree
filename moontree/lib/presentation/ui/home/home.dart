@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/cubits/wallet/cubit.dart';
 import 'package:moontree/presentation/ui/home/feed/feed.dart';
 import 'package:moontree/services/services.dart' show screen;
@@ -16,10 +17,11 @@ class WalletLayer extends StatelessWidget {
               (!previous.active && !current.active),
           builder: (context, state) {
             if (state.prior?.active == null && state.active) {
-              return FadeIn(child: WalletSplit());
+              return const FadeIn(child: WalletLayers());
             }
             if ((state.prior?.active == null || !state.prior!.active) &&
                 !state.active) {
+              cubits.walletLayer.update(active: true);
               return const SizedBox.shrink();
             }
 
@@ -28,30 +30,32 @@ class WalletLayer extends StatelessWidget {
             //  return SlideSide(
             //    enter: true,
             //    side: Side.left,
-            //    child: WalletSplit(),
+            //    child: WalletLayers(),
             //  );
             //}
             //if (state.prior!.active && !state.active) {
             //  return SlideSide(
             //    enter: false,
             //    side: Side.left,
-            //    child: WalletSplit(),
+            //    child: WalletLayers(),
             //  );
             //}
             ////if (state.prior!.active && state.active)
-            return WalletSplit();
+            return const WalletLayers();
           });
 }
 
-class WalletSplit extends StatelessWidget {
-  const WalletSplit({super.key});
+class WalletLayers extends StatelessWidget {
+  const WalletLayers({super.key});
 
   @override
-  Widget build(BuildContext context) => Container(
-      height: screen.app.displayHeight,
-      alignment: Alignment.topCenter,
-      color: Colors.black,
-      child: Stack(children: [
-        WalletFeedLayer(),
-      ]));
+  Widget build(BuildContext context) => Padding(
+      padding: EdgeInsets.only(top: screen.appbar.height),
+      child: Container(
+          height: screen.displayHeight,
+          color: Colors.white,
+          alignment: Alignment.topCenter,
+          child: const Stack(children: [
+            WalletFeedLayer(),
+          ])));
 }

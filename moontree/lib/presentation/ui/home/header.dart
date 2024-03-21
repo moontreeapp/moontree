@@ -9,18 +9,18 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) => Container(
       height: 56,
       alignment: Alignment.center,
-      padding: EdgeInsets.only(left: 16, right: 16),
+      padding: const EdgeInsets.only(left: 16, right: 16),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Container(
           alignment: Alignment.center,
-          padding: EdgeInsets.only(top: 3),
+          padding: const EdgeInsets.only(top: 3),
         ),
         Text('header',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.h2!.copyWith(
               color: Colors.white,
               shadows: [
-                Shadow(
+                const Shadow(
                   offset: Offset(1.0, 1.0),
                   blurRadius: 1.0,
                   color: Color.fromRGBO(0, 0, 0, 0.50),
@@ -36,7 +36,7 @@ class HomeOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      height: screen.app.displayHeight,
+      height: screen.displayHeight,
       alignment: Alignment.topCenter,
-      child: HomeHeader());
+      child: const HomeHeader());
 }

@@ -8,8 +8,7 @@ final _borderMaterialShape =
 final _disabledBorderMaterialShape = MaterialStateProperty.all(
     BorderSide(color: AppColors.disabled, width: 2.0));
 final _buttonMaterialShape = MaterialStateProperty.all(RoundedRectangleBorder(
-    borderRadius:
-        BorderRadius.circular(uiservices.screen.app.buttonBorderRadius)));
+    borderRadius: BorderRadius.circular(uiservices.screen.buttonBorderRadius)));
 final _disabledMaterial = MaterialStateProperty.all(AppColors.primary38);
 final _enabledMaterial = MaterialStateProperty.all(AppColors.primary);
 final _unfilledMaterial = MaterialStateProperty.all(AppColors.background);
@@ -231,7 +230,7 @@ class GradientButtonFormatted extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25.0),
                 gradient: LinearGradient(
-                  colors: [AppColors.primaryEnd, AppColors.primaryStart],
+                  colors: const [AppColors.primary500, AppColors.primary300],
                   begin: alignmentFromAngle(2 + 180),
                   end: alignmentFromAngle(2),
                   //begin: Alignment.bottomLeft,

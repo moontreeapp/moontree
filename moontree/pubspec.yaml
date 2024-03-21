@@ -31,8 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
-  equatable: ^2.0.5
   flutter_svg: ^2.0.9
+  flutter_hicons: ^0.1.0
+  equatable: ^2.0.5
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -92,3 +93,57 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  assets:
+    - assets/
+    - assets/icons/
+    - assets/icons/menu/
+    - assets/icons/navbar/
+    - assets/logos/
+    - assets/animated/
+
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: fonts/Nunito/Nunito-VariableFont_wght.ttf
+        - asset: fonts/Nunito/Nunito-Italic-VariableFont_wght.ttf
+          style: italic
+        - asset: fonts/Nunito/static/Nunito-Regular.ttf
+          weight: 400
+        - asset: fonts/Nunito/static/Nunito-Italic.ttf
+          style: italic
+        - asset: fonts/Nunito/static/Nunito-Black.ttf
+          weight: 900
+        - asset: fonts/Nunito/static/Nunito-BlackItalic.ttf
+          style: italic
+          weight: 900
+        - asset: fonts/Nunito/static/Nunito-Bold.ttf
+          weight: 700
+        - asset: fonts/Nunito/static/Nunito-BoldItalic.ttf
+          style: italic
+          weight: 700
+        - asset: fonts/Nunito/static/Nunito-ExtraBold.ttf
+          weight: 800
+        - asset: fonts/Nunito/static/Nunito-ExtraBoldItalic.ttf
+          style: italic
+          weight: 800
+        - asset: fonts/Nunito/static/Nunito-ExtraLight.ttf
+          weight: 200
+        - asset: fonts/Nunito/static/Nunito-ExtraLightItalic.ttf
+          style: italic
+          weight: 200
+        - asset: fonts/Nunito/static/Nunito-Light.ttf
+          weight: 300
+        - asset: fonts/Nunito/static/Nunito-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/Nunito/static/Nunito-Medium.ttf
+          weight: 500
+        - asset: fonts/Nunito/static/Nunito-MediumItalic.ttf
+          style: italic
+          weight: 500
+        - asset: fonts/Nunito/static/Nunito-SemiBold.ttf
+          weight: 600
+        - asset: fonts/Nunito/static/Nunito-SemiBoldItalic.ttf
+          style: italic
+          weight: 600

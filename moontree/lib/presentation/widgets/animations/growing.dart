@@ -24,7 +24,7 @@ class GrowingCircleContent extends StatelessWidget {
               child: GrowingAnimation(
                 rebuild: true,
                 begin: 0.0,
-                end: (screen.app.height + screen.width) * 1.5,
+                end: (screen.height + screen.width) * 1.5,
                 child: child,
               )),
         ],
@@ -58,7 +58,7 @@ class GrowingCircle extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.black,
                 backgroundBlendMode: BlendMode.dstOut,
               ),
@@ -71,7 +71,7 @@ class GrowingCircle extends StatelessWidget {
                     delay: delay ?? Duration.zero,
                     rebuild: rebuild,
                     begin: 0.0,
-                    end: radius ?? max(screen.app.height, screen.width) * 1.2,
+                    end: radius ?? max(screen.height, screen.width) * 1.2,
                     child: Container(
                       height: 1,
                       width: 1,
@@ -91,7 +91,7 @@ class GrowingCircle extends StatelessWidget {
                     duration: duration,
                     rebuild: true,
                     begin: 0.0,
-                    end: radius ?? max(screen.app.height, screen.width) * 1.2,
+                    end: radius ?? max(screen.height, screen.width) * 1.2,
                     child: Container(
                       height: 1,
                       width: 1,

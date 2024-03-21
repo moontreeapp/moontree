@@ -1006,7 +1006,6 @@ String? detectPhoneFormat(String number) {
   for (final MapEntry<String, CountryPhoneNumber> entry
       in _phonesFormats.entries) {
     if (entry.value.fullRegex.hasMatch(number)) {
-      print(entry.key);
       return entry.key;
     }
   }
@@ -1017,7 +1016,6 @@ String? detectCountryFormat(String number) {
   for (final MapEntry<String, CountryPhoneNumber> entry
       in _phonesFormats.entries) {
     if (entry.value.countryRegex.hasMatch(number)) {
-      print(entry.key);
       return entry.key;
     }
   }

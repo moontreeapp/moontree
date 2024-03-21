@@ -8,7 +8,7 @@ class FadeHighlight extends StatefulWidget {
   final Color? background;
   final Duration? delay;
   final Duration? duration;
-  FadeHighlight({
+  const FadeHighlight({
     Key? key,
     required this.child,
     this.onEnd,
@@ -47,7 +47,7 @@ class FadeHighlightState extends State<FadeHighlight> {
       onEnd: widget.onEnd,
       duration: widget.duration ?? const Duration(seconds: 4),
       color: highlight
-          ? widget.color ?? AppColors.primary50
+          ? widget.color ?? AppColors.primary60
           : widget.background ?? Colors.white,
       child: widget.child);
 }
@@ -61,8 +61,8 @@ class FlashHighlight extends StatefulWidget {
   final Duration? duration;
   final Duration? fadeInDuration;
   final Duration? fadeOutDuration;
-  FlashHighlight({
-    Key? key,
+  const FlashHighlight({
+    super.key,
     required this.child,
     this.onEnd,
     this.color,
@@ -71,13 +71,13 @@ class FlashHighlight extends StatefulWidget {
     this.duration,
     this.fadeInDuration,
     this.fadeOutDuration,
-  }) : super(key: key);
+  });
 
   @override
-  _FlashHighlightState createState() => _FlashHighlightState();
+  FlashHighlightState createState() => FlashHighlightState();
 }
 
-class _FlashHighlightState extends State<FlashHighlight> {
+class FlashHighlightState extends State<FlashHighlight> {
   bool? show;
   Duration? duration;
 

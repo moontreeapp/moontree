@@ -48,7 +48,7 @@ class CircleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final width = size.width > 0 ? size.width : screen.width;
-    final height = size.width > 0 ? size.height : screen.app.height;
+    final height = size.width > 0 ? size.height : screen.height;
     return Path()
       ..addOval(Rect.fromCircle(
         center: Offset(x ?? width / 2, y ?? height / 2),

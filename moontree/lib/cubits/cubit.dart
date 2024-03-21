@@ -9,10 +9,11 @@ class GlobalCubits {
 
   /// layers
   final appLayer = AppLayerCubit();
+  final appbar = AppbarCubit();
   final navbar = NavbarCubit();
-  final tutorial = TutorialCubit();
   final toast = ToastCubit();
   final panel = PanelCubit();
+  final tutorial = TutorialCubit();
 
   GlobalCubits();
 }

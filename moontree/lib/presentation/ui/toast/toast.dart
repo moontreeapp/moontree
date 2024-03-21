@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:moontree/cubits/toast/cubit.dart';
-import 'package:moontree/presentation/widgets/assets/icons.dart';
 import 'package:moontree/presentation/widgets/assets/shadows.dart';
 import 'package:moontree/services/services.dart' show screen;
 import 'package:moontree/presentation/theme/colors.dart';

@@ -12,7 +12,7 @@ class SideShadowWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      height: screen.app.height,
+      height: screen.height,
       width: screen.width,
       decoration: BoxDecoration(
           //color: Colors.white,

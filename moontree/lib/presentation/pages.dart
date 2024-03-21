@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moontree/presentation/theme/colors.dart';
 import 'package:moontree/presentation/ui/home/home.dart';
 import 'package:moontree/services/services.dart' as services;
 
@@ -11,7 +12,7 @@ class PagesLayer extends StatelessWidget {
       SingleChildScrollView(
           controller: ScrollController(),
           child: SizedBox(
-            height: services.screen.app.height,
+            height: services.screen.height,
             child: const ContentBulk(),
           ));
 }
@@ -22,7 +23,8 @@ class ContentBulk extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         alignment: Alignment.topCenter,
-        height: services.screen.frontContainer.maxHeight,
+        color: AppColors.primary,
+        height: services.screen.displayHeight,
         child: const Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[

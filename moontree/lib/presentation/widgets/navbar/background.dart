@@ -108,16 +108,13 @@ class _DraggableNavbarBackgroundState extends State<DraggableNavbarBackground> {
     return GestureDetector(
       onVerticalDragUpdate: (details) {
         setState(() {
-          topPosition =
-              (topPosition ?? screen.app.height * 0.5) + details.delta.dy;
-          topPosition =
-              topPosition!.clamp(widget.minTop ?? 0.0, screen.app.height);
+          topPosition = (topPosition ?? screen.height * 0.5) + details.delta.dy;
+          topPosition = topPosition!.clamp(widget.minTop ?? 0.0, screen.height);
         });
         if (!called &&
             widget.maxTop != null &&
             topPosition != null &&
             topPosition! >= widget.maxTop!) {
-          print('calling');
           called = true;
           widget.maxTopCallback?.call();
         }
@@ -130,8 +127,7 @@ class _DraggableNavbarBackgroundState extends State<DraggableNavbarBackground> {
             right: 0,
             child: NavbarBackground(
               color: widget.color,
-              height:
-                  screen.app.height - (topPosition ?? screen.app.height * 0.5),
+              height: screen.height - (topPosition ?? screen.height * 0.5),
               blurAmount: widget.blurAmount,
               imageFilter: widget.imageFilter,
               child: widget.child,

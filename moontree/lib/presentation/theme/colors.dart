@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static ColorScheme colorScheme = ColorScheme(
+  static ColorScheme colorScheme = const ColorScheme(
       brightness: Brightness.light,
       primary: primary,
       onPrimary: Colors.white,
@@ -15,34 +15,36 @@ class AppColors {
       surface: Colors.white,
       onSurface: Colors.transparent);
 
-  static const Color primary3 = Color(0xFFFFFCF8);
-  static const Color primary8 = Color(0xFFFFF8EE);
-  static const Color primary38 = Color(0xFFFFDEAD);
-  static const Color primary50 = Color(0xFFFFF3E0);
-  static const Color primary60 = Color(0xFFFFCB7D);
-  static const Color primary100 = Color(0xFFFFE0B2);
-  static const Color primary200 = Color(0xFFFFCD80);
-  static const Color primary300 = Color(0xFFFFB84D);
-  static const Color primary400 = Color(0xFFFFA826);
-  static const Color primary500 = Color(0xFFFF9900);
-  static const Color primary600 = Color(0xFFFB8D00);
-  static const Color primary700 = Color(0xFFF57D00);
-  static const Color primary800 = Color(0xFFEF6D00);
-  static const Color primary900 = Color(0xFFE65300);
-  static const Color primaryDisabled = primary38;
+  static const Color errorlight = Color(0xFFFF9390);
+  static const Color error = Color(0xFFEF5350);
+  static const Color success = Color(0xFF66BB6A);
+  static const Color lightGreen = Color(0xFF9CCC65);
+  static const Color lime = Color(0xFFD4E157);
+  static const Color yellow = Color(0xFFFFEE58);
+  static const Color snackBar = Color(0xFF212121);
+  static const Color logoGreen = Color(0xFF94DF3F);
+  static const Color logoBlue = Color(0xFF54A3E3);
+
+  static const Color primary38 = Color(0xFFE8EAF6); // guess
+  static const Color primary60 = Color(0xFFC1C7E7); // guess
+  static const Color primary100 = Color(0xFFC5CAE9);
+  static const Color primary190 = Color(0xFF9DA6D9); // guess
+  static const Color primary200 = Color(0xFF9FA8DA);
+  static const Color primary300 = Color(0xFF7986CB);
+  static const Color primary400 = Color(0xFF5C6BC0);
+  static const Color primary500 = Color(0xFF3F51B5);
+  static const Color primary600 = Color(0xFF3949AB);
+  static const Color primary700 = Color(0xFF303F9F);
+  static const Color primary800 = Color(0xFF283593);
+  static const Color primary900 = Color(0xFF1A237E);
+  static const Color primaryDisabled = primary60;
   static const Color textFieldBackground = Color(0xFFE5E5E5);
-  static const Color primaryStart = Color(0xFFFF7F00); // linear gradient
-  static const Color primaryEnd = Color(0xFFFFA726); // linear gradient
-  static const Color error = Color(0xFFFF3C26);
-  static const Color signin = Color(0xFFFF9633);
   //static const Color success = Color(0xFF00F57E);
-  static const Color success = Color(0xFF3CB371);
   static const Color blue400 = Color(0xFF369DFF);
   static const Color blue60 = Color(0xFF86C4FF);
   static const Color blue38 = Color(0xFFB3DAFF);
   static const Color blue8 = Color(0xFFEFF7FF);
   static const Color blue3 = Color(0xFFF9FCFF);
-  static const Color yellow = Color(0xFFFFEB3B);
   static const Color primary = primary400;
   static const Color secondary = yellow;
   static const Color buttonTab = Color(0xFF9E9E9E);
