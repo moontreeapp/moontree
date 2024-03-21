@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:moontree/presentation/components/clippers.dart';
+import 'package:moontree/presentation/widgets/assets/clippers.dart';
 import 'package:moontree/presentation/theme/colors.dart';
 import 'package:moontree/services/services.dart' show screen;
 

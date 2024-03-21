@@ -2,6 +2,7 @@ import 'package:moontree/cubits/cubits.dart';
 
 class GlobalCubits {
   /// primary pages
+  final appLayer = AppLayerCubit();
   final walletLayer = WalletLayerCubit();
 
   /// secondary pages

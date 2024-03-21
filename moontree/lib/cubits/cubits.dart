@@ -1,3 +1,4 @@
+export 'package:moontree/cubits/app/cubit.dart';
 export 'package:moontree/cubits/wallet/cubit.dart';
 export 'package:moontree/cubits/wallet/feed/cubit.dart';
 export 'package:moontree/cubits/toast/cubit.dart';

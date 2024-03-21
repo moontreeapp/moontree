@@ -1,13 +1,9 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moontree/cubits/create/camera/cubit.dart';
 import 'package:moontree/cubits/navbar/cubit.dart';
 import 'package:moontree/cubits/cubit.dart';
-import 'package:moontree/presentation/layers/navbar/components/background.dart';
+import 'package:moontree/presentation/ui/navbar/components/background.dart';
 import 'package:moontree/presentation/theme/colors.dart';
-import 'package:moontree/presentation/widgets/animations/deblur.dart';
 
 class NavBackground extends StatefulWidget {
   const NavBackground({super.key});
@@ -53,21 +49,10 @@ class _NavBackgroundState extends State<NavBackground> {
       //     cubits.navbar.max();
       //   }
       // }, child:
-
-      BlocBuilder<CameraViewCubit, CameraViewState>(
-          builder: (BuildContext context, CameraViewState homeState) {
-        if (homeState.x != 0) {
-          beenBlurred = true;
-          return NavbarBackground(blurAmount: 10.0);
-        }
-        if (beenBlurred) {
-          return DeBlurAnimation();
-        }
-        return NavbarBackground(
-            color: cubits.navbar.state.navbarHeight == NavbarHeight.max
-                ? AppColors.black38
-                : AppColors.black24);
-      });
+      NavbarBackground(
+          color: cubits.navbar.state.navbarHeight == NavbarHeight.max
+              ? AppColors.black38
+              : AppColors.black24);
 }
 
 class AnimatedNavbarBackground extends StatefulWidget {

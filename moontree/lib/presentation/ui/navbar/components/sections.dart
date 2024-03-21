@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/domain/concepts/sections.dart';
-import 'package:moontree/presentation/components/icons.dart';
-import 'package:moontree/presentation/services/services.dart'
-    show screen, maestro;
+import 'package:moontree/services/services.dart' show screen; //, maestro;
+import 'package:moontree/presentation/widgets/assets/icons.dart';
 
 class NavbarSections extends StatelessWidget {
   final NavbarSection section;
@@ -16,30 +15,30 @@ class NavbarSections extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-                child: GestureDetector(
-                    onTap: () => maestro.conduct(NavbarSection.home),
-                    child: NavbarIcons.home(section == NavbarSection.home))),
-            Expanded(
-                child: GestureDetector(
-                    onTap: () => maestro.conduct(NavbarSection.explore),
-                    child:
-                        NavbarIcons.explore(section == NavbarSection.explore))),
-            Expanded(
-                child: GestureDetector(
-                    onTap: () => maestro.conduct(NavbarSection.create),
-                    child:
-                        NavbarIcons.create(section == NavbarSection.create))),
-            Expanded(
-                child: GestureDetector(
-                    onTap: () => maestro.conduct(NavbarSection.crew),
-                    child: NavbarIcons.crew(section == NavbarSection.crew))),
-            Expanded(
-                child: GestureDetector(
-                    onTap: () => maestro.conduct(NavbarSection.profile),
-                    child: NavbarIcons.profile(
-                      selected: section == NavbarSection.profile,
-                      photo: cubits.profile.state.image,
-                    ))),
+            //Expanded(
+            //    child: GestureDetector(
+            //        onTap: () => maestro.conduct(NavbarSection.wallet),
+            //        child: NavbarIcons.wallet(section == NavbarSection.wallet))),
+            //Expanded(
+            //    child: GestureDetector(
+            //        onTap: () => maestro.conduct(NavbarSection.send),
+            //        child: NavbarIcons.send(section == NavbarSection.send))),
+            //Expanded(
+            //    child: GestureDetector(
+            //        onTap: () => maestro.conduct(NavbarSection.recieve),
+            //        child:
+            //            NavbarIcons.recieve(section == NavbarSection.recieve))),
+            //Expanded(
+            //    child: GestureDetector(
+            //        onTap: () => maestro.conduct(NavbarSection.manage),
+            //        child:
+            //            NavbarIcons.manage(section == NavbarSection.manage))),
+            //Expanded(
+            //    child: GestureDetector(
+            //        onTap: () => maestro.conduct(NavbarSection.swap),
+            //        child: NavbarIcons.swap(
+            //          selected: section == NavbarSection.swap,
+            //          photo: cubits.swap.state.image,
+            //        ))),
           ]));
 }

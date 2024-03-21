@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moontree/cubits/cubit.dart';
-import 'package:moontree/cubits/home/feed/cubit.dart';
-import 'package:moontree/presentation/layers/home/feed/page.dart';
+import 'package:moontree/cubits/wallet/feed/cubit.dart';
+import 'package:moontree/presentation/ui/home/feed/page.dart';
 
-class HomeFeedLayer extends StatelessWidget {
-  const HomeFeedLayer({super.key});
+class WalletFeedLayer extends StatelessWidget {
+  const WalletFeedLayer({super.key});
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<HomeFeedCubit, HomeFeedState>(
-          builder: (BuildContext context, HomeFeedState state) {
-        return
-            //cubits.homeFeed.
-            state.videos.isEmpty
-                ? GestureDetector(
-                    onTap: () {
-                      cubits.homeFeed.populateVideos();
-                      print('tapped');
-                    },
-                    child: const Center(child: Text('Tap to populate videos')))
-                : HomeFeedPage();
+      BlocBuilder<WalletFeedCubit, WalletFeedState>(
+          builder: (BuildContext context, WalletFeedState state) {
+        if (state.currency.isEmpty && state.assets.isEmpty) {
+          return const Center(child: Text('Loading...'));
+        }
+        return WalletFeedPage();
         //);
       });
 }

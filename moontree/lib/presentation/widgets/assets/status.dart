@@ -4,7 +4,8 @@
 /// as such, I think this component need to be attached to each page.
 
 import 'package:flutter/material.dart';
-import 'package:moontree/infrastructure/streams/streams.dart' as streams;
+//import 'package:moontree/infrastructure/streams/streams.dart' as streams;
+import 'package:moontree/cubits/cubit.dart';
 
 const AppLifecycleReactor status = AppLifecycleReactor();
 
@@ -33,7 +34,8 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    streams.app.active.status.add(state.name);
+    //streams.app.active.status.add(state.name);
+    cubits.appLayer.update(status: state.name);
     setState(() {
       _notification = state;
     });

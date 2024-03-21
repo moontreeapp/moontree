@@ -34,13 +34,13 @@ class ToastLayer extends StatelessWidget {
                         boxShadow: frontLayer,
                       ),
                       child: Row(children: [
-                        SvgPicture.asset(
-                          moontreeIcons.wonupToastLoc,
-                          width: 24,
-                          height: 24,
-                          //fit: BoxFit.contain,
-                          alignment: Alignment.center,
-                        ),
+                        //SvgPicture.asset(
+                        //  moontreeIcons.wonupToastLoc,
+                        //  width: 24,
+                        //  height: 24,
+                        //  //fit: BoxFit.contain,
+                        //  alignment: Alignment.center,
+                        //),
                         const SizedBox(width: 8),
                         Text(state.msg!.title + ' ',
                             style: Theme.of(context).textTheme.body2!.copyWith(

@@ -14,7 +14,6 @@ import 'package:flutter/material.dart'
         Icons,
         Image,
         Widget;
-import 'package:flutter_hicons/flutter_hicons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moontree/presentation/theme/colors.dart';
 import 'package:moontree/services/services.dart' show screen;
@@ -46,20 +45,6 @@ class ToolIcons {
 class NavbarIcons {
   static const String base = 'assets/icons/navbar/';
   static const String ext = '.svg';
-  static Widget home(bool selected) => Container(
-      alignment: Alignment.center,
-      //color: cubits.navbar.atCreate ? Colors.black38 : Colors.black,
-      color: Colors.black,
-      child: selected
-          ? Icon(Hicons.home_2_bold, color: Colors.white)
-          : Icon(Hicons.home_2_light_outline, color: Colors.white));
-  static Widget explore(bool selected) => Container(
-      alignment: Alignment.center,
-      //color: cubits.navbar.atCreate ? Colors.black38 : Colors.black,
-      color: Colors.black,
-      child: selected
-          ? Icon(Hicons.search_2_bold, color: Colors.white)
-          : Icon(Hicons.search_2_light_outline, color: Colors.white));
 
   static Widget create(bool selected) => Container(
       alignment: Alignment.center,

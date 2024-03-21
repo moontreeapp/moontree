@@ -85,6 +85,8 @@ class Holding extends Equatable {
         metadata,
         sats,
       ];
+
+  bool get isEmpty => sats.isEmpty;
 }
 
 class HoldingMetadata extends Equatable {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/panel/cubit.dart';
 import 'package:moontree/domain/concepts/side.dart';
-import 'package:moontree/presentation/layers/navbar/components/background.dart';
+import 'package:moontree/presentation/ui/navbar/components/background.dart';
 import 'package:moontree/presentation/widgets/animations/sliding.dart';
 
 class PanelPage extends StatelessWidget {

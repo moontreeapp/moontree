@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/cubits.dart';
 import 'package:moontree/presentation/utils/animation.dart' as animation;
-import 'package:moontree/presentation/layers/navbar/components/draggable.dart';
-import 'package:moontree/presentation/layers/navbar/components/sections.dart';
+import 'package:moontree/presentation/ui/navbar/components/sections.dart';
 
 class NavbarLayer extends StatefulWidget {
   const NavbarLayer({Key? key}) : super(key: key);
@@ -17,7 +16,6 @@ class _NavbarLayerState extends State<NavbarLayer>
   late AnimationController animationController;
   late AnimationController fadeController;
   late AnimationController snackbarController;
-  final GlobalKey<DraggableSnappableSheetState> navSheetKey = GlobalKey();
 
   @override
   void initState() {

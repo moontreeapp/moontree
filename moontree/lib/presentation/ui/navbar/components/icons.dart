@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moontree/presentation/theme/colors.dart';
 import 'package:moontree/services/services.dart' show screen;
-import 'package:moontree/presentation/layers/navbar/components/circle.dart';
+import 'package:moontree/presentation/ui/navbar/components/circle.dart';
 
 class ShadedIcon extends StatelessWidget {
   final double? size;
