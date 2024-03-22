@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moontree/presentation/theme/colors.dart';
-import 'package:moontree/presentation/ui/home/home.dart';
+import 'package:moontree/presentation/ui/wallet/wallet.dart';
 import 'package:moontree/services/services.dart' as services;
 
 class PagesLayer extends StatelessWidget {
@@ -9,21 +8,24 @@ class PagesLayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       // SingleChildScrollView used because render error when system bar active
-      SingleChildScrollView(
-          controller: ScrollController(),
+      //SingleChildScrollView(
+      //    controller: ScrollController(),
+      //    child:
+      Padding(
+          padding: EdgeInsets.only(bottom: services.screen.navbar.height),
           child: SizedBox(
-            height: services.screen.height,
+            height: services.screen.displayHeight,
             child: const ContentBulk(),
-          ));
+          ))
+      //)
+      ;
 }
 
 class ContentBulk extends StatelessWidget {
   const ContentBulk({super.key});
 
   @override
-  Widget build(BuildContext context) => Container(
-        alignment: Alignment.topCenter,
-        color: AppColors.primary,
+  Widget build(BuildContext context) => SizedBox(
         height: services.screen.displayHeight,
         child: const Stack(
           alignment: Alignment.topCenter,

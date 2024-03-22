@@ -10,11 +10,12 @@ class AppColors {
       onSecondary: Colors.transparent,
       error: error,
       onError: Colors.white,
-      background: primary,
+      background: background,
       onBackground: Colors.transparent,
       surface: Colors.white,
       onSurface: Colors.transparent);
 
+  static const Color background = Colors.black;
   static const Color errorlight = Color(0xFFFF9390);
   static const Color error = Color(0xFFEF5350);
   static const Color success = Color(0xFF66BB6A);
@@ -49,10 +50,7 @@ class AppColors {
   static const Color secondary = yellow;
   static const Color buttonTab = Color(0xFF9E9E9E);
   static const Color buttonTabs = Color(0xFFF5F5F5);
-
   static const Color offTransparent = Color(0x01000000);
-  static const Color profileBackground = Color(0xFFF0F0F0);
-  static const Color background = white;
 
   // Colors.white.withAlpha(12) // .04*255 = 10
   static const Color white4 = Color(0x0AFFFFFF);

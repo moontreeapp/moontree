@@ -7,10 +7,7 @@ import 'package:moontree/cubits/cubits.dart';
 import 'package:moontree/presentation/pages.dart';
 import 'package:moontree/presentation/theme/colors.dart';
 import 'package:moontree/presentation/theme/custom.dart';
-import 'package:moontree/presentation/ui/appbar/appbar.dart';
-import 'package:moontree/presentation/ui/navbar/navbar.dart';
-import 'package:moontree/presentation/ui/panel/panel.dart';
-import 'package:moontree/presentation/ui/toast/toast.dart';
+import 'package:moontree/presentation/ui/ui.dart';
 import 'package:moontree/services/services.dart';
 
 /// to remove stupid overscroll glow indicator
@@ -73,6 +70,8 @@ class MoontreeApp extends StatelessWidget {
                             create: (context) => cubits.appLayer),
                         BlocProvider<WalletLayerCubit>(
                             create: (context) => cubits.walletLayer),
+                        BlocProvider<TransactionsLayerCubit>(
+                            create: (context) => cubits.transactionsLayer),
                         //BlocProvider<SendLayerCubit>(
                         //    create: (context) => cubits.sendLayer),
                         //BlocProvider<RecieveLayerCubit>(
@@ -86,8 +85,13 @@ class MoontreeApp extends StatelessWidget {
                         BlocProvider<WalletFeedCubit>(
                             create: (BuildContext context) =>
                                 cubits.walletFeed),
+                        BlocProvider<TransactionsFeedCubit>(
+                            create: (BuildContext context) =>
+                                cubits.transactionsFeed),
 
                         /// layers
+                        BlocProvider<PaneCubit>(
+                            create: (context) => cubits.pane),
                         BlocProvider<AppbarCubit>(
                             create: (context) => cubits.appbar),
                         BlocProvider<NavbarCubit>(
@@ -115,22 +119,27 @@ class MaestroLayer extends StatelessWidget {
       builder: (BuildContext context, BoxConstraints constraints) {
         _initializeServices(
             context, constraints.maxHeight, constraints.maxWidth);
-        const scaffold = Scaffold(
+        final scaffold = Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.white,
-          body: Stack(
-            alignment: Alignment.bottomCenter,
-            children: <Widget>[
-              PagesLayer(),
-              AppbarLayer(),
-              NavbarLayer(),
-              PanelLayer(),
-              ToastLayer(),
-              //const TutorialLayer(),
-            ],
+          backgroundColor: AppColors.background,
+          body: SizedBox(
+            height: screen.height,
+            child: const Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget>[
+                AppbarLayer(),
+                PaneLayer(),
+                PagesLayer(),
+                NavbarLayer(),
+                PanelLayer(),
+                ToastLayer(),
+                //const TutorialLayer(),
+              ],
+            ),
           ),
         );
-        return Platform.isIOS ? scaffold : const SafeArea(child: scaffold);
+        //return Platform.isIOS ? scaffold : const SafeArea(child: scaffold);
+        return scaffold;
       },
     );
   }
@@ -146,6 +155,7 @@ class MaestroLayer extends StatelessWidget {
           ? 0
           : MediaQuery.of(context).padding.top,
     );
+    cubits.pane.update(active: true, height: screen.pane.minHeight);
   }
 }
 

@@ -18,6 +18,7 @@ class Screen {
   final double widthOneThird;
   final Appbar appbar;
   final Navbar navbar;
+  final Pane pane;
   final double hspace;
   final double wspace;
   final double bspace;
@@ -31,6 +32,7 @@ class Screen {
     required this.widthOneThird,
     required this.appbar,
     required this.navbar,
+    required this.pane,
     required this.buttonHeight,
     required this.hspace,
     required this.wspace,
@@ -46,9 +48,11 @@ class Screen {
   factory Screen.init(double height, double width, double statusBarHeight) {
     final appbar = Appbar.init(height, statusBarHeight);
     final navbar = Navbar.init(height);
+    final pane = Pane.init(height, appbar, navbar);
     return Screen(
       appbar: appbar,
       navbar: navbar,
+      pane: pane,
       width: width,
       widthOneThird: (width ~/ 3).toDouble(),
       hspace: height * (16 / 760),
@@ -99,5 +103,23 @@ class Navbar {
         height: height * (56 / 760),
         iconHeight: height * (24 / 760),
         largeIconHeight: height * (32 / 760),
+      );
+}
+
+class Pane {
+  final double maxHeight;
+  final double midHeight;
+  final double minHeight;
+
+  Pane._({
+    required this.maxHeight,
+    required this.midHeight,
+    required this.minHeight,
+  });
+
+  factory Pane.init(double height, Appbar appbar, Navbar navbar) => Pane._(
+        maxHeight: height - appbar.height,
+        midHeight: height * 0.618,
+        minHeight: navbar.height + 20,
       );
 }

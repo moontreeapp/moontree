@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/cubits/wallet/feed/cubit.dart';
-import 'package:moontree/presentation/ui/home/feed/page.dart';
+import 'package:moontree/presentation/ui/wallet/feed/page.dart';
 
 class WalletFeedLayer extends StatelessWidget {
   const WalletFeedLayer({super.key});
@@ -14,9 +14,10 @@ class WalletFeedLayer extends StatelessWidget {
         if (state.currency.isEmpty && state.assets.isEmpty) {
           cubits.walletFeed.populateAssets();
           return const Center(
-              child: Text('Loading...', style: TextStyle(color: Colors.white)));
+              child: Text('Loading...', style: TextStyle(color: Colors.grey)));
         }
-        return WalletFeedPage();
-        //);
+        //return WalletFeedPage();
+        //cubits.pane.update(child: const WalletFeedPage());
+        return const SizedBox.shrink();
       });
 }

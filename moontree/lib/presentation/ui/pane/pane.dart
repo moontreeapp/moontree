@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moontree/cubits/panel/cubit.dart';
+import 'package:moontree/cubits/pane/cubit.dart';
 import 'package:moontree/domain/concepts/side.dart';
-import 'package:moontree/presentation/ui/panel/page.dart';
-import 'package:moontree/presentation/widgets/animations/fading.dart';
+import 'package:moontree/presentation/ui/pane/page.dart';
 import 'package:moontree/presentation/widgets/animations/sliding.dart';
 
-class PanelLayer extends StatelessWidget {
-  const PanelLayer({super.key});
+class PaneLayer extends StatelessWidget {
+  const PaneLayer({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<PanelCubit, PanelState>(
-      buildWhen: (PanelState previous, PanelState current) =>
+  Widget build(BuildContext context) => BlocBuilder<PaneCubit, PaneState>(
+      buildWhen: (PaneState previous, PaneState current) =>
           previous.active != current.active ||
           (!previous.active && !current.active),
       builder: (context, state) {
         if (state.prior?.active == null && state.active) {
-          return const FadeIn(child: PanelStack());
+          return const SlideSide(
+            enter: true,
+            side: Side.bottom,
+            child: PaneStack(),
+          );
         }
         if ((state.prior?.active == null || !state.prior!.active) &&
             !state.active) {
@@ -26,7 +29,7 @@ class PanelLayer extends StatelessWidget {
           return const SlideSide(
             enter: true,
             side: Side.bottom,
-            child: PanelStack(),
+            child: PaneStack(),
           );
         }
         if (state.prior!.active && !state.active) {
@@ -34,28 +37,22 @@ class PanelLayer extends StatelessWidget {
           return const SlideSide(
             enter: false,
             side: Side.bottom,
-            child: PanelStack(),
+            child: PaneStack(),
           );
         }
 
         //if (state.prior!.active && state.active)
-        return const PanelStack();
+        return const PaneStack();
       });
 }
 
-class PanelStack extends StatelessWidget {
-  const PanelStack({super.key});
+class PaneStack extends StatelessWidget {
+  const PaneStack({super.key});
 
   @override
   Widget build(BuildContext context) => const Stack(
         children: [
-          PanelPage(),
+          PanePage(),
         ],
       );
 }
-
-/// example usage
-// cubits.panel.update(
-//  child: (ScrollController scroller) =>
-//  ChooseCompetitors(scroller: scroller));
-// cubits.panel.update(active: true);

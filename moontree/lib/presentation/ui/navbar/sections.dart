@@ -15,9 +15,10 @@ class NavbarSections extends StatelessWidget {
   Widget build(BuildContext context) => Container(
       color: Colors.white,
       height: screen.navbar.height,
+      alignment: Alignment.center,
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
                 child: GestureDetector(
@@ -56,11 +57,10 @@ class NavbarSectionButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Column(children: [
+  Widget build(BuildContext context) =>
+      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
             alignment: Alignment.center,
-            //color: cubits.navbar.atCreate ? Colors.black38 : Colors.black,
-            color: Colors.white,
             child: SvgPicture.asset(
               '${NavbarIcons.base}/${section.name}${selected ? '-active' : ''}.${NavbarIcons.ext}',
               height: screen.navbar.iconHeight,
@@ -70,11 +70,12 @@ class NavbarSectionButton extends StatelessWidget {
               //colorFilter: selected
               //    ? ColorFilter.mode(AppColors.primary, BlendMode.modulate)
               //    : null,
+              colorFilter: ColorFilter.mode(Colors.black, BlendMode.modulate),
             )),
         Text(section.name.toTitleCase(),
             style: Theme.of(context)
                 .textTheme
                 .caption1!
-                .copyWith(color: AppColors.primary))
+                .copyWith(color: AppColors.black))
       ]);
 }
