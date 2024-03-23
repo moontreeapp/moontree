@@ -6,8 +6,10 @@
   "configurations": [
   
     {
-      "name": "moontree",
-      "cwd": "moontree",
+      //"name": "moontree",
+      //"cwd": "moontree",
+      "name": "client_front",
+      "cwd": "client_front",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart"

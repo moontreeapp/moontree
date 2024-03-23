@@ -23,7 +23,7 @@ class SeedWallet {
       exposure: exposure,
       net: chainNet.net,
     );
-    print(path);
+    print('p: $path');
     subwalletsByPath[path] ??= wallet.derivePath(path);
     return subwalletsByPath[path]!;
   }
