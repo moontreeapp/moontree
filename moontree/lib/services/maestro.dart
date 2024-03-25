@@ -1,7 +1,11 @@
+import 'package:flutter/widgets.dart';
 import 'package:moontree/cubits/utilities.dart';
 import 'package:moontree/domain/concepts/sections.dart';
 //import 'package:moontree/domain/concepts/side.dart';
 import 'package:moontree/cubits/cubit.dart' show cubits;
+import 'package:moontree/presentation/ui/wallet/transactions/feed/page.dart';
+import 'package:moontree/presentation/utils/animation.dart';
+import 'package:moontree/services/services.dart';
 
 class Maestro {
   List<NavbarSection> sectionsHistory = [];
@@ -44,17 +48,8 @@ class Maestro {
           //  cubits.mint,
         ]);
         break;
-      case NavbarSection.send:
+      case NavbarSection.swap:
         _activeateSend();
-        coda([
-          cubits.walletLayer,
-          //  cubits.sendLayer,
-          //  cubits.receiveLayer,
-          //  cubits.mint,
-        ]);
-        break;
-      case NavbarSection.receive:
-        _activeateReceive();
         coda([
           cubits.walletLayer,
           //  cubits.sendLayer,
@@ -94,8 +89,16 @@ class Maestro {
     }
   }
 
-  void _activeateHome() {
+  Future<void> _activeateHome() async {
+    cubits.transactionsLayer.update(active: false);
+    cubits.pane.removeChildren();
     cubits.navbar.update(section: NavbarSection.wallet);
+    final prevHeight = cubits.pane.state.height;
+    if (prevHeight != screen.pane.maxHeight) {
+      print('waiting');
+      cubits.pane.update(active: true, height: screen.pane.maxHeight);
+      await Future.delayed(slideDuration);
+    }
     cubits.walletLayer.update(active: true);
     //cubits.sendLayer.update(active: false);
     //cubits.receiveLayer.update(active: false);
@@ -103,15 +106,7 @@ class Maestro {
   }
 
   void _activeateSend() {
-    cubits.navbar.update(section: NavbarSection.send);
-    cubits.walletLayer.update(active: false);
-    //cubits.sendLayer.update(active: false);
-    //cubits.receiveLayer.update(active: false);
-    //cubits.mint.update(active: false);
-  }
-
-  void _activeateReceive() {
-    cubits.navbar.update(section: NavbarSection.receive);
+    cubits.navbar.update(section: NavbarSection.swap);
     cubits.walletLayer.update(active: false);
     //cubits.sendLayer.update(active: false);
     //cubits.receiveLayer.update(active: false);
@@ -124,5 +119,19 @@ class Maestro {
     //cubits.receiveLayer.update(active: false);
     //cubits.sendLayer.update(active: false);
     //cubits.mint.update(active: false);
+  }
+
+  Future<void> activateTransactions() async {
+    cubits.walletLayer.update(active: false);
+    await Future.delayed(fadeDuration);
+    cubits.pane.update(
+      active: true,
+      height: screen.pane.midHeight,
+    );
+    await Future.delayed(slideDuration);
+    cubits.transactionsLayer.update(active: true);
+    cubits.pane.update(
+        scrollableChild: (ScrollController scroller) =>
+            TransactionsFeedPage(scroller: scroller));
   }
 }

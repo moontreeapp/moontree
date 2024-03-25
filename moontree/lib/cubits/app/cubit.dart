@@ -8,6 +8,8 @@ class AppLayerCubit extends Cubit<AppLayerState>
     with UpdateSectionMixin<AppLayerState> {
   AppLayerCubit() : super(const AppLayerState());
   @override
+  String get key => 'app';
+  @override
   void reset() => emit(const AppLayerState());
   @override
   void setState(AppLayerState state) => emit(state);

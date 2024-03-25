@@ -10,6 +10,8 @@ class ToastCubit extends Cubit<ToastState> with UpdateMixin<ToastState> {
   int counter = 0;
   ToastCubit() : super(const ToastState());
   @override
+  String get key => 'toast';
+  @override
   void reset() => emit(const ToastState());
   @override
   void setState(ToastState state) => emit(state);

@@ -30,7 +30,7 @@ class ContentBulk extends StatelessWidget {
         child: const Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[
-            WalletLayer(),
+            //WalletLayer(),
           ],
         ),
       );

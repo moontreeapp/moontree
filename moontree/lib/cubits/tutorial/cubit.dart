@@ -15,6 +15,8 @@ class TutorialCubit extends Cubit<TutorialState>
       : super(const TutorialState(
             showTutorials: <TutorialStatus>[], flicked: false));
   @override
+  String get key => 'tutorial';
+  @override
   void reset() => emit(
       const TutorialState(showTutorials: <TutorialStatus>[], flicked: false));
   @override

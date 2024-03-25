@@ -42,6 +42,7 @@ mixin HeightCubitMixin {
 }
 
 mixin UpdateMixin<T> {
+  String get key;
   void reset();
   void update();
   void setState(T state);

@@ -9,6 +9,8 @@ part 'state.dart';
 class PaneCubit extends Cubit<PaneState> with UpdateSectionMixin<PaneState> {
   PaneCubit() : super(const PaneState());
   @override
+  String get key => 'pane';
+  @override
   void reset() => emit(const PaneState());
   @override
   void setState(PaneState state) => emit(state);

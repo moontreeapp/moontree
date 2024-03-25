@@ -10,6 +10,8 @@ part 'state.dart';
 class NavbarCubit extends Cubit<NavbarState> with UpdateMixin<NavbarState> {
   NavbarCubit() : super(const NavbarState());
   @override
+  String get key => 'navbar';
+  @override
   void reset() => emit(const NavbarState());
   @override
   void setState(NavbarState state) => emit(state);
@@ -25,7 +27,6 @@ class NavbarCubit extends Cubit<NavbarState> with UpdateMixin<NavbarState> {
   }
 
   bool get atWallet => state.section == NavbarSection.wallet;
-  bool get atSend => state.section == NavbarSection.send;
-  bool get atRecieve => state.section == NavbarSection.receive;
+  bool get atSwap => state.section == NavbarSection.swap;
   bool get atMint => state.section == NavbarSection.mint;
 }

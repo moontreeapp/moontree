@@ -15,6 +15,7 @@ class NavbarSections extends StatelessWidget {
   Widget build(BuildContext context) => Container(
       color: Colors.white,
       height: screen.navbar.height,
+      width: screen.width,
       alignment: Alignment.center,
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -28,23 +29,43 @@ class NavbarSections extends StatelessWidget {
                         selected: section == NavbarSection.wallet))),
             Expanded(
                 child: GestureDetector(
-                    onTap: () => maestro.conduct(NavbarSection.send),
-                    child: NavbarSectionButton(
-                        section: NavbarSection.send,
-                        selected: section == NavbarSection.send))),
-            Expanded(
-                child: GestureDetector(
-                    onTap: () => maestro.conduct(NavbarSection.receive),
-                    child: NavbarSectionButton(
-                        section: NavbarSection.receive,
-                        selected: section == NavbarSection.receive))),
-            Expanded(
-                child: GestureDetector(
                     onTap: () => maestro.conduct(NavbarSection.mint),
                     child: NavbarSectionButton(
                         section: NavbarSection.mint,
                         selected: section == NavbarSection.mint))),
+            Expanded(
+                child: GestureDetector(
+                    onTap: () => maestro.conduct(NavbarSection.swap),
+                    child: NavbarSectionButton(
+                        section: NavbarSection.swap,
+                        selected: section == NavbarSection.swap))),
           ]));
+}
+
+extension NavbarSectionPosition on NavbarSection {
+  Alignment get alignment {
+    switch (this) {
+      case NavbarSection.wallet:
+        return Alignment.centerRight;
+      case NavbarSection.swap:
+        return Alignment.centerLeft;
+      default:
+        return Alignment.center;
+    }
+  }
+
+  EdgeInsets? get padding {
+    switch (this) {
+      case NavbarSection.wallet:
+        return EdgeInsets.only(
+            right: (screen.widthOneThird - screen.navbar.iconHeight) / 4.5);
+      case NavbarSection.swap:
+        return EdgeInsets.only(
+            left: (screen.widthOneThird - screen.navbar.iconHeight) / 4.5);
+      default:
+        return null;
+    }
+  }
 }
 
 class NavbarSectionButton extends StatelessWidget {
@@ -57,25 +78,23 @@ class NavbarSectionButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) =>
-      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(
-            alignment: Alignment.center,
-            child: SvgPicture.asset(
-              '${NavbarIcons.base}/${section.name}${selected ? '-active' : ''}.${NavbarIcons.ext}',
-              height: screen.navbar.iconHeight,
-              width: screen.navbar.iconHeight,
-              fit: BoxFit.contain,
-              alignment: Alignment.center,
-              //colorFilter: selected
-              //    ? ColorFilter.mode(AppColors.primary, BlendMode.modulate)
-              //    : null,
-              colorFilter: ColorFilter.mode(Colors.black, BlendMode.modulate),
-            )),
+  Widget build(BuildContext context) => Container(
+      color: Colors.transparent,
+      alignment: section.alignment,
+      padding: section.padding,
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        SvgPicture.asset(
+          '${NavbarIcons.base}/${section.name}${selected ? '-active' : ''}.${NavbarIcons.ext}',
+          height: screen.navbar.iconHeight,
+          width: screen.navbar.iconHeight,
+          fit: BoxFit.contain,
+          alignment: Alignment.center,
+          colorFilter: const ColorFilter.mode(Colors.black, BlendMode.modulate),
+        ),
         Text(section.name.toTitleCase(),
             style: Theme.of(context)
                 .textTheme
                 .caption1!
                 .copyWith(color: AppColors.black))
-      ]);
+      ]));
 }

@@ -11,6 +11,8 @@ class TransactionsFeedCubit extends Cubit<TransactionsFeedState>
     with UpdateSectionMixin<TransactionsFeedState> {
   TransactionsFeedCubit() : super(const TransactionsFeedState());
   @override
+  String get key => 'transactionsFeed';
+  @override
   void reset() => emit(const TransactionsFeedState());
   @override
   void setState(TransactionsFeedState state) => emit(state);

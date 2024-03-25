@@ -8,6 +8,8 @@ class TransactionsLayerCubit extends Cubit<TransactionsLayerState>
     with UpdateSectionMixin<TransactionsLayerState> {
   TransactionsLayerCubit() : super(const TransactionsLayerState());
   @override
+  String get key => 'transactions';
+  @override
   void reset() => emit(const TransactionsLayerState());
   @override
   void setState(TransactionsLayerState state) => emit(state);

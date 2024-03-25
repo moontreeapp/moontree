@@ -8,6 +8,8 @@ class WalletLayerCubit extends Cubit<WalletLayerState>
     with UpdateSectionMixin<WalletLayerState> {
   WalletLayerCubit() : super(const WalletLayerState());
   @override
+  String get key => 'wallet';
+  @override
   void reset() => emit(const WalletLayerState());
   @override
   void setState(WalletLayerState state) => emit(state);

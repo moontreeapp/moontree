@@ -19,19 +19,19 @@ class WalletLayer extends StatelessWidget {
           builder: (context, state) {
             print('WalletLayerCubit: ${state.active}');
             if (state.prior?.active == null && state.active) {
-              print('1');
+              print('wallet 1');
               cubits.pane.update(child: const WalletFeedPage());
               return const FadeIn(child: WalletLayers());
             }
             if ((state.prior?.active == null || !state.prior!.active) &&
                 !state.active) {
-              print('2');
-              cubits.pane.removeChild();
+              print('wallet 2');
+              cubits.pane.removeChildren();
               return const SizedBox.shrink();
             }
             if ((state.prior?.active == true) && !state.active) {
-              print('3');
-              cubits.pane.removeChild();
+              print('wallet 3');
+              cubits.pane.removeChildren();
               return const FadeOut(child: WalletLayers());
             }
 
@@ -51,6 +51,7 @@ class WalletLayer extends StatelessWidget {
             //  );
             //}
             ////if (state.prior!.active && state.active)
+            print('wallet 4');
             cubits.pane.update(child: const WalletFeedPage());
             return const WalletLayers();
           });

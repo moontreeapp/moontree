@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/pane/cubit.dart';
 import 'package:moontree/domain/concepts/side.dart';
+import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/presentation/widgets/animations/fading.dart';
 import 'package:moontree/presentation/widgets/animations/sliding.dart';
 //import 'package:moontree/domain/concepts/side.dart';
@@ -24,6 +25,7 @@ class PanePage extends StatelessWidget {
         //            );
         //}
         if (!state.active) {
+          print('pane 0');
           return const SizedBox.shrink();
         }
         if (state.scrollableChild != null) {
@@ -65,26 +67,28 @@ class PanePage extends StatelessWidget {
                 } else {
                   child = state.scrollableChild!(scrollController);
                 }
-                return DraggablePaneBackground(child: child);
+                print('pane 1');
+                return DraggablePaneBackground(child: FadeIn(child: child));
               });
         }
         // if we have a height change, move it to the correct height,
         if (state.prior?.child != null && state.child == null) {
+          print('pane 2');
           return PaneBackground(
               height: state.height,
               child: FadeOut(
-                delay: Duration.zero,
                 child: state.prior!.child!,
               ));
         }
         if (state.prior?.child == null && state.child != null) {
+          print('pane 3');
           return PaneBackground(
               height: state.height,
               child: FadeIn(
-                delay: Duration.zero,
                 child: state.child!,
               ));
         }
+        print('pane 4');
         return PaneBackground(height: state.height, child: state.child);
       });
 }
@@ -104,7 +108,7 @@ class PaneBackground extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
         children: [
           AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
+            duration: slideDuration,
             curve: Curves.easeInOutCirc,
             top: screen.height - height,
             left: 0,

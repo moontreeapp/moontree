@@ -1,12 +1,6 @@
 enum NavbarSection {
   wallet,
-  send,
-  receive,
+  swap,
   mint,
-  //swap,
-  //menu,
-  //login,
-  //restore,
-  //etc,
   none,
 }

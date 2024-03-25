@@ -9,6 +9,8 @@ part 'state.dart';
 class AppbarCubit extends Cubit<AppbarState> with UpdateMixin<AppbarState> {
   AppbarCubit() : super(const AppbarState());
   @override
+  String get key => 'appbar';
+  @override
   void reset() => emit(const AppbarState());
   @override
   void setState(AppbarState state) => emit(state);

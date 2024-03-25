@@ -11,6 +11,8 @@ class WalletFeedCubit extends Cubit<WalletFeedState>
     with UpdateSectionMixin<WalletFeedState> {
   WalletFeedCubit() : super(const WalletFeedState());
   @override
+  String get key => 'walletFeed';
+  @override
   void reset() => emit(const WalletFeedState());
   @override
   void setState(WalletFeedState state) => emit(state);
