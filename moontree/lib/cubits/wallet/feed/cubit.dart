@@ -21,11 +21,13 @@ class WalletFeedCubit extends Cubit<WalletFeedState>
 
   @override
   void update({
+    bool? active,
     Holding? currency,
     List<Holding>? assets,
     bool? isSubmitting,
   }) {
     emit(WalletFeedState(
+      active: active ?? state.active,
       currency: currency ?? state.currency,
       assets: assets ?? state.assets,
       isSubmitting: isSubmitting ?? state.isSubmitting,

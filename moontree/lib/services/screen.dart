@@ -107,19 +107,28 @@ class Navbar {
 }
 
 class Pane {
+  static const double _midHeightPercent = 0.618;
   final double maxHeight;
   final double midHeight;
   final double minHeight;
+  final double maxHeightPercent;
+  final double midHeightPercent;
+  final double minHeightPercent;
 
   Pane._({
     required this.maxHeight,
     required this.midHeight,
     required this.minHeight,
+    required this.maxHeightPercent,
+    required this.midHeightPercent,
+    required this.minHeightPercent,
   });
 
   factory Pane.init(double height, Appbar appbar, Navbar navbar) => Pane._(
-        maxHeight: height - appbar.height,
-        midHeight: height * 0.618,
-        minHeight: navbar.height + 20,
-      );
+      maxHeight: height - appbar.height,
+      midHeight: height * _midHeightPercent,
+      minHeight: navbar.height + 20,
+      maxHeightPercent: (height - appbar.height) / height,
+      midHeightPercent: _midHeightPercent,
+      minHeightPercent: (navbar.height + 20) / height);
 }

@@ -52,7 +52,5 @@ class TransactionsLayers extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
       height: screen.displayHeight,
-      child: const Stack(alignment: Alignment.topCenter, children: [
-        WalletFeedLayer(),
-      ]));
+      child: const Stack(alignment: Alignment.topCenter, children: []));
 }

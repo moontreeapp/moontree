@@ -52,7 +52,8 @@ class PaneStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Stack(
         children: [
-          PanePage(),
+          //PanePage(),
+          DraggablePane(),
         ],
       );
 }

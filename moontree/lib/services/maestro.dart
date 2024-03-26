@@ -99,6 +99,7 @@ class Maestro {
       cubits.pane.update(active: true, height: screen.pane.maxHeight);
       await Future.delayed(slideDuration);
     }
+    cubits.walletFeed.update(active: false);
     cubits.walletLayer.update(active: true);
     //cubits.sendLayer.update(active: false);
     //cubits.receiveLayer.update(active: false);

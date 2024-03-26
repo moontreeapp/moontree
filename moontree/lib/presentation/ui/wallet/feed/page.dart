@@ -7,13 +7,15 @@ import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/services/services.dart';
 
 class WalletFeedPage extends StatelessWidget {
-  const WalletFeedPage({super.key});
+  final ScrollController scrollController;
+  const WalletFeedPage({super.key, required this.scrollController});
 
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<WalletFeedCubit, WalletFeedState>(
           builder: (BuildContext context, WalletFeedState state) =>
               ListView.builder(
+                  controller: scrollController,
                   shrinkWrap: true,
                   itemCount: 100,
                   itemBuilder: (context, index) => ListTile(

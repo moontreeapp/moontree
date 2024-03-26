@@ -129,7 +129,7 @@ class MaestroLayer extends StatelessWidget {
               children: <Widget>[
                 AppbarLayer(),
                 PaneLayer(),
-                PagesLayer(),
+                //PagesLayer(),
                 NavbarLayer(),
                 PanelLayer(),
                 ToastLayer(),
@@ -155,7 +155,8 @@ class MaestroLayer extends StatelessWidget {
           ? 0
           : MediaQuery.of(context).padding.top,
     );
-    cubits.pane.update(active: true, height: screen.pane.minHeight);
+    cubits.pane.update(active: true);
+    //cubits.pane.update(active: true, height: screen.pane.minHeight);
   }
 }
 
