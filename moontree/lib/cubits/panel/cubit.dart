@@ -6,7 +6,7 @@ import 'package:moontree/domain/concepts/side.dart';
 
 part 'state.dart';
 
-class PanelCubit extends Cubit<PanelState> with UpdateSectionMixin<PanelState> {
+class PanelCubit extends Cubit<PanelState> with UpdateHideMixin<PanelState> {
   PanelCubit() : super(const PanelState());
   @override
   String get key => 'panel';

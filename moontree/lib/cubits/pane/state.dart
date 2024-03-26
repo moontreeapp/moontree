@@ -2,29 +2,27 @@ part of 'cubit.dart';
 
 class PaneState with EquatableMixin {
   final bool active;
+  final bool dispose;
   // pixel
   final double height;
   // percentage
   final double initial;
   final double min;
   final double max;
-  final Widget? child;
+  final ScrollController? scroller;
   final DraggableScrollableController controller;
-  final Widget Function(ScrollController)? scrollableChild;
-  final Side transition;
   final bool isSubmitting;
   final PaneState? prior;
 
   const PaneState({
     this.active = false,
+    this.dispose = false,
     this.height = 20,
     this.initial = .618,
     this.min = .0,
     this.max = 1,
-    this.child,
+    this.scroller,
     required this.controller,
-    this.scrollableChild,
-    this.transition = Side.none,
     this.isSubmitting = false,
     this.prior,
   });
@@ -32,14 +30,13 @@ class PaneState with EquatableMixin {
   @override
   List<Object?> get props => <Object?>[
         active,
+        dispose,
         height,
         initial,
         min,
         max,
+        scroller,
         controller,
-        child,
-        scrollableChild,
-        transition,
         isSubmitting,
         prior,
       ];
@@ -49,14 +46,13 @@ class PaneState with EquatableMixin {
 
   PaneState get withoutPrior => PaneState(
         active: active,
+        dispose: dispose,
         height: height,
         initial: initial,
         min: min,
         max: max,
+        scroller: scroller,
         controller: controller,
-        child: child,
-        scrollableChild: scrollableChild,
-        transition: transition,
         isSubmitting: isSubmitting,
         prior: null,
       );

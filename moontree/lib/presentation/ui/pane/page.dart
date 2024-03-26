@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/cubits/pane/cubit.dart';
-import 'package:moontree/cubits/wallet/feed/cubit.dart';
 import 'package:moontree/domain/concepts/side.dart';
-import 'package:moontree/presentation/ui/wallet/feed/feed.dart';
+import 'package:moontree/presentation/ui/transactions/transactions.dart';
+import 'package:moontree/presentation/ui/wallet/wallet.dart';
 import 'package:moontree/presentation/utils/animation.dart';
-import 'package:moontree/presentation/widgets/animations/fading.dart';
 import 'package:moontree/presentation/widgets/animations/sliding.dart';
 //import 'package:moontree/domain/concepts/side.dart';
 //import 'package:moontree/presentation/widgets/animations/sliding.dart';
@@ -90,65 +89,43 @@ class DraggablePane extends StatelessWidget {
               maxChildSize: state.max,
               builder:
                   (BuildContext context, ScrollController scrollController) {
-                //draggableScrollController.addListener(() async => components
-                //    .cubits.bottomModalSheet
-                //    .setHeight(draggableScrollController.pixels));
-                //late final Widget child;
-                //if (state.prior?.scrollableChild != null &&
-                //    state.transition != Side.none) {
-                //  final prior = state.prior!.scrollableChild!(scrollController);
-                //  final current = state.scrollableChild!(scrollController);
-                //  child = Stack(children: [
-                //    SlideSide(
-                //      enter: false,
-                //      side: state.transition.opposite,
-                //      child: prior,
-                //    ),
-                //    SlideSide(
-                //      enter: true,
-                //      side: state.transition,
-                //      child: current,
-                //    ),
-                //  ]);
-                //} else {
-                //  child = state.scrollableChild!(scrollController);
-                //}
-                //print('pane 1');
-                //return DraggablePaneBackground(child: FadeIn(child: child));
-                return DraggablePaneBackground(
-                    child:
-                        DraggablePaneStack(scrollController: scrollController));
+                cubits.pane.update(scroller: scrollController);
+                return const DraggablePaneBackground(
+                    child: DraggablePaneStack());
               });
         });
   }
 }
 
 class DraggablePaneStack extends StatelessWidget {
-  final ScrollController scrollController;
-  const DraggablePaneStack({super.key, required this.scrollController});
+  const DraggablePaneStack({super.key});
 
   @override
-  Widget build(BuildContext context) => Stack(children: [
-        //WalletFeedLayer(scrollController: scrollController),
-        EmptyFeed(scrollController: scrollController),
+  Widget build(BuildContext context) => const Stack(children: [
+        Wallet(),
+        Transactions(),
+        EmptyFeed(),
       ]);
 }
 
 class EmptyFeed extends StatelessWidget {
-  final ScrollController scrollController;
-  const EmptyFeed({super.key, required this.scrollController});
+  const EmptyFeed({super.key});
 
   @override
   Widget build(BuildContext context) => BlocBuilder<PaneCubit, PaneState>(
-      buildWhen: (previous, current) => previous.height != current.height,
+      buildWhen: (previous, current) =>
+          previous.height != current.height || current.dispose,
       builder: (BuildContext context, PaneState state) {
+        final ScrollController scroller = state.scroller!;
+        double pixelsToPercentage(double pixels) => pixels / screen.height;
         Future<void> setHeightTo({
           double? heightAsPercent,
           double? heightInPixels,
           bool reset = true,
         }) async {
           assert(heightAsPercent != null || heightInPixels != null);
-          heightAsPercent = heightAsPercent ?? heightInPixels! / screen.height;
+          heightAsPercent =
+              heightAsPercent ?? pixelsToPercentage(heightInPixels!);
           if (state.controller.isAttached) {
             state.controller.animateTo(
               heightAsPercent,
@@ -158,21 +135,29 @@ class EmptyFeed extends StatelessWidget {
             await Future.delayed(slideDuration);
           }
           if (reset) {
-            cubits.pane.update(height: -1);
+            cubits.pane.dispose();
           }
         }
 
-        if (state.height == -1) {
-          const SizedBox.shrink();
+        if (state.dispose) {
+          return const SizedBox.shrink();
+        }
+        if (state.controller.isAttached) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async =>
+              await setHeightTo(heightInPixels: state.height, reset: false));
+          return const SizedBox.shrink();
         }
         WidgetsBinding.instance.addPostFrameCallback((_) async =>
             await setHeightTo(heightInPixels: state.height, reset: true));
         return ListView.builder(
-            controller: scrollController,
+            controller: scroller,
             shrinkWrap: true,
             itemCount: 100,
-            itemBuilder: (context, index) =>
-                ListTile(title: Text('default $index')));
+            itemBuilder: (context, index) => ListTile(
+                    title: Text(
+                  'default $index',
+                  style: const TextStyle(color: Colors.black),
+                )));
       });
 }
 
@@ -237,20 +222,20 @@ class DraggablePaneBackground extends StatelessWidget {
         height: screen.displayHeight,
         alignment: Alignment.topCenter,
         padding: EdgeInsets.only(bottom: screen.navbar.height),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: const BorderRadius.only(
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          //boxShadow: [
+          //  BoxShadow(
+          //    color: Colors.black.withOpacity(0.2),
+          //    spreadRadius: 5,
+          //    blurRadius: 7,
+          //    offset: const Offset(0, 3),
+          //  ),
+          //],
         ),
         child: child ?? const SizedBox.shrink(),
       );

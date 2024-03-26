@@ -5,7 +5,7 @@ import 'package:moontree/cubits/utilities.dart';
 part 'state.dart';
 
 class AppLayerCubit extends Cubit<AppLayerState>
-    with UpdateSectionMixin<AppLayerState> {
+    with UpdateMixin<AppLayerState> {
   AppLayerCubit() : super(const AppLayerState());
   @override
   String get key => 'app';
@@ -13,8 +13,6 @@ class AppLayerCubit extends Cubit<AppLayerState>
   void reset() => emit(const AppLayerState());
   @override
   void setState(AppLayerState state) => emit(state);
-  @override
-  void hide() => update(status: 'inactive');
 
   @override
   void update({

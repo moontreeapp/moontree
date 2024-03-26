@@ -1,35 +1,36 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moontree/cubits/utilities.dart';
 import 'package:moontree/domain/concepts/holding.dart';
 
 part 'state.dart';
 
-class WalletFeedCubit extends Cubit<WalletFeedState>
-    with UpdateSectionMixin<WalletFeedState> {
-  WalletFeedCubit() : super(const WalletFeedState());
+class TransactionsCubit extends Cubit<TransactionsState>
+    with UpdateHideMixin<TransactionsState> {
+  TransactionsCubit() : super(const TransactionsState());
   @override
-  String get key => 'walletFeed';
+  String get key => 'transactions';
   @override
-  void reset() => emit(const WalletFeedState());
+  void reset() => emit(const TransactionsState());
   @override
-  void setState(WalletFeedState state) => emit(state);
+  void setState(TransactionsState state) => emit(state);
   @override
-  void hide() => update();
-
+  void hide() => update(active: false);
   @override
   void update({
     bool? active,
+    bool? disposed,
     Holding? currency,
     List<Holding>? assets,
+    Widget? child,
     bool? isSubmitting,
   }) {
-    emit(WalletFeedState(
+    emit(TransactionsState(
       active: active ?? state.active,
       currency: currency ?? state.currency,
       assets: assets ?? state.assets,
+      child: child ?? state.child,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: state.withoutPrior,
     ));
@@ -48,6 +49,6 @@ class WalletFeedCubit extends Cubit<WalletFeedState>
       ),
       assets: []);
 
-  // todo pagenate list of holdings
+  // todo pagenae list of holdings
   //Holding getNextBatch(List<Holding> batch) {}
 }

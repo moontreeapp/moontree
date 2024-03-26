@@ -2,16 +2,13 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/utilities.dart';
-import 'package:moontree/domain/concepts/side.dart';
-import 'package:moontree/presentation/utils/animation.dart';
-import 'package:moontree/services/services.dart';
 
 part 'state.dart';
 
 final DraggableScrollableController draggableScrollController =
     DraggableScrollableController();
 
-class PaneCubit extends Cubit<PaneState> with UpdateSectionMixin<PaneState> {
+class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   PaneCubit() : super(PaneState(controller: draggableScrollController));
   @override
   String get key => 'pane';
@@ -26,72 +23,38 @@ class PaneCubit extends Cubit<PaneState> with UpdateSectionMixin<PaneState> {
   @override
   void update({
     bool? active,
+    bool? dispose,
     double? height,
     double? initial,
     double? min,
     double? max,
-    Widget? child,
-    Widget Function(ScrollController)? scrollableChild,
+    ScrollController? scroller,
     DraggableScrollableController? controller,
-    Side? transition,
     bool? isSubmitting,
+    PaneState? prior,
   }) {
+    if (scroller != null) {
+      scroller.addListener(_scrollListener);
+    }
     emit(PaneState(
       active: active ?? state.active,
+      dispose: dispose ?? false,
+      height: height ?? state.height,
       initial: initial ?? state.initial,
       min: min ?? state.min,
       max: max ?? state.max,
+      scroller: scroller ?? state.scroller,
       controller: controller ?? state.controller,
-      child: child ?? state.child,
-      scrollableChild: scrollableChild ?? state.scrollableChild,
-      transition: transition ?? state.transition,
       isSubmitting: isSubmitting ?? state.isSubmitting,
-      prior: state.withoutPrior,
+      prior: prior ?? state.withoutPrior,
     ));
   }
 
-  void removeChild() {
-    emit(PaneState(
-      active: state.active,
-      initial: state.initial,
-      min: state.min,
-      max: state.max,
-      controller: state.controller,
-      child: null,
-      scrollableChild: state.scrollableChild,
-      transition: state.transition,
-      isSubmitting: state.isSubmitting,
-      prior: state.withoutPrior,
-    ));
-  }
+  void dispose() => update(dispose: true);
+  bool unattached() => state.scroller?.positions.isEmpty ?? true;
 
-  void removeScrollableChild() {
-    emit(PaneState(
-      active: state.active,
-      initial: state.initial,
-      min: state.min,
-      max: state.max,
-      controller: state.controller,
-      child: state.child,
-      scrollableChild: null,
-      transition: state.transition,
-      isSubmitting: state.isSubmitting,
-      prior: state.withoutPrior,
-    ));
-  }
-
-  void removeChildren() {
-    emit(PaneState(
-      active: state.active,
-      initial: state.initial,
-      min: state.min,
-      max: state.max,
-      controller: state.controller,
-      child: null,
-      scrollableChild: null,
-      transition: state.transition,
-      isSubmitting: state.isSubmitting,
-      prior: state.withoutPrior,
-    ));
+  void _scrollListener() {
+    //  if (state.scroller != null && state.scroller!.positions.isEmpty) return;
+    print(state.scroller!.offset);
   }
 }

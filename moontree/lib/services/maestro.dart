@@ -1,9 +1,7 @@
-import 'package:flutter/widgets.dart';
 import 'package:moontree/cubits/utilities.dart';
 import 'package:moontree/domain/concepts/sections.dart';
 //import 'package:moontree/domain/concepts/side.dart';
 import 'package:moontree/cubits/cubit.dart' show cubits;
-import 'package:moontree/presentation/ui/wallet/transactions/feed/page.dart';
 import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/services/services.dart';
 
@@ -13,7 +11,7 @@ class Maestro {
   Maestro();
 
   //List<UpdateSectionMixin> get _sectionCubits => [
-  //      cubits.walletLayer,
+  //      cubits.wallet,
   //    ];
 
   bool get _allSectionCubitsAreHidden =>
@@ -42,97 +40,84 @@ class Maestro {
     switch (section) {
       case NavbarSection.wallet:
         _activeateHome();
-        coda([
-          //  cubits.sendLayer,
-          //  cubits.receiveLayer,
-          //  cubits.mint,
-        ]);
-        break;
-      case NavbarSection.swap:
-        _activeateSend();
-        coda([
-          cubits.walletLayer,
-          //  cubits.sendLayer,
-          //  cubits.receiveLayer,
-          //  cubits.mint,
-        ]);
         break;
       case NavbarSection.mint:
         _activeateMint();
-        coda([
-          cubits.walletLayer,
-          //  cubits.sendLayer,
-          //  cubits.receiveLayer,
-          //  cubits.mint,
-        ]);
+        break;
+      case NavbarSection.swap:
+        _activeateSwap();
         break;
       case NavbarSection.none:
         break;
     }
   }
 
-  void coda(List<SectionMixin> sectionCubits) {
-    /// REMOVING TRANSITIONS
-    //Future.delayed(slideDuration, () {
-    //  for (var cubit in sectionCubits) {
-    //    cubit.hide();
-    //  }
-    //  if (_allSectionCubitsAreHidden) {
-    //    _activeateHome();
-    //  }
-    //});
-    for (var cubit in sectionCubits) {
-      cubit.hide();
+  Future<void> awaitFor(
+    bool Function() fn, {
+    Duration? wait,
+    Duration? duration,
+    Duration? timeout,
+  }) async {
+    if (duration != null) {
+      await Future.delayed(duration);
     }
-    if (_allSectionCubitsAreHidden) {
-      _activeateHome();
+    final timeoutTime = timeout != null ? DateTime.now().add(timeout) : null;
+    while (!fn()) {
+      if (timeoutTime != null && DateTime.now().isAfter(timeoutTime)) {
+        break;
+      }
+      await Future.delayed(wait ?? const Duration(milliseconds: 100));
+    }
+  }
+
+  Future<void> inactiveateAllBut(dynamic except) async {
+    for (dynamic c in [cubits.wallet, cubits.transactions]) {
+      if (c.state != except && c.state.active) {
+        c.update(active: false);
+        await awaitFor(
+          cubits.pane.unattached,
+          duration: slideDuration,
+          wait: const Duration(milliseconds: 40),
+        );
+      }
     }
   }
 
   Future<void> _activeateHome() async {
-    cubits.transactionsLayer.update(active: false);
-    cubits.pane.removeChildren();
+    cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet);
-    final prevHeight = cubits.pane.state.height;
-    if (prevHeight != screen.pane.maxHeight) {
-      print('waiting');
-      cubits.pane.update(active: true, height: screen.pane.maxHeight);
-      await Future.delayed(slideDuration);
-    }
-    cubits.walletFeed.update(active: false);
-    cubits.walletLayer.update(active: true);
-    //cubits.sendLayer.update(active: false);
-    //cubits.receiveLayer.update(active: false);
-    //cubits.mint.update(active: false);
-  }
-
-  void _activeateSend() {
-    cubits.navbar.update(section: NavbarSection.swap);
-    cubits.walletLayer.update(active: false);
-    //cubits.sendLayer.update(active: false);
-    //cubits.receiveLayer.update(active: false);
-    //cubits.mint.update(active: false);
+    await inactiveateAllBut(cubits.wallet.state);
+    cubits.wallet.update(active: true);
+    await Future.delayed(slideDuration);
+    cubits.ignore.update(active: false);
   }
 
   void _activeateMint() {
+    cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.mint);
-    cubits.walletLayer.update(active: false);
-    //cubits.receiveLayer.update(active: false);
-    //cubits.sendLayer.update(active: false);
-    //cubits.mint.update(active: false);
+    cubits.wallet.update(active: false);
+    cubits.ignore.update(active: false);
+  }
+
+  void _activeateSwap() {
+    cubits.ignore.update(active: true);
+    cubits.navbar.update(section: NavbarSection.swap);
+    cubits.wallet.update(active: false);
+    cubits.ignore.update(active: false);
   }
 
   Future<void> activateTransactions() async {
-    cubits.walletLayer.update(active: false);
-    await Future.delayed(fadeDuration);
+    cubits.ignore.update(active: true);
     cubits.pane.update(
       active: true,
       height: screen.pane.midHeight,
     );
-    await Future.delayed(slideDuration);
-    cubits.transactionsLayer.update(active: true);
-    cubits.pane.update(
-        scrollableChild: (ScrollController scroller) =>
-            TransactionsFeedPage(scroller: scroller));
+    cubits.wallet.update(active: false);
+    await Future.delayed(slideDuration * 2);
+    cubits.transactions.update(active: true);
+    //cubits.pane.update(
+    //    scrollableChild: (ScrollController scroller) =>
+    //        TransactionsPage(scroller:scroller));
+    cubits.ignore.update(active: false);
   }
 }

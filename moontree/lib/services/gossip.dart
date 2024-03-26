@@ -38,4 +38,5 @@ class Gossip {
 
   void cancelSubscription(String key) => _subscriptions[key]?.cancel();
 }
+
 */

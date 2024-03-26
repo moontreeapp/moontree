@@ -17,6 +17,7 @@ class AppbarHeader extends StatelessWidget {
           children: [
             GestureDetector(
                 onTap: () => cubits.pane.update(height: screen.pane.minHeight),
+                //onTap: () => cubits.pane.update(max: .8),
                 child: Text('menu',
                     style: Theme.of(context)
                         .textTheme

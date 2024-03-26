@@ -7,6 +7,7 @@ import 'package:moontree/cubits/cubits.dart';
 import 'package:moontree/presentation/pages.dart';
 import 'package:moontree/presentation/theme/colors.dart';
 import 'package:moontree/presentation/theme/custom.dart';
+import 'package:moontree/presentation/ui/ignore/ignore.dart';
 import 'package:moontree/presentation/ui/ui.dart';
 import 'package:moontree/services/services.dart';
 
@@ -68,10 +69,10 @@ class MoontreeApp extends StatelessWidget {
                         /// pages
                         BlocProvider<AppLayerCubit>(
                             create: (context) => cubits.appLayer),
-                        BlocProvider<WalletLayerCubit>(
-                            create: (context) => cubits.walletLayer),
-                        BlocProvider<TransactionsLayerCubit>(
-                            create: (context) => cubits.transactionsLayer),
+                        BlocProvider<WalletCubit>(
+                            create: (context) => cubits.wallet),
+                        BlocProvider<TransactionsCubit>(
+                            create: (context) => cubits.transactions),
                         //BlocProvider<SendLayerCubit>(
                         //    create: (context) => cubits.sendLayer),
                         //BlocProvider<RecieveLayerCubit>(
@@ -80,14 +81,6 @@ class MoontreeApp extends StatelessWidget {
                         //    create: (BuildContext context) => cubits.manageLayer),
                         //BlocProvider<SwapLayerCubit>(
                         //    create: (BuildContext context) => cubits.swapLayer),
-
-                        /// secondary pages
-                        BlocProvider<WalletFeedCubit>(
-                            create: (BuildContext context) =>
-                                cubits.walletFeed),
-                        BlocProvider<TransactionsFeedCubit>(
-                            create: (BuildContext context) =>
-                                cubits.transactionsFeed),
 
                         /// layers
                         BlocProvider<PaneCubit>(
@@ -98,6 +91,8 @@ class MoontreeApp extends StatelessWidget {
                             create: (context) => cubits.navbar),
                         BlocProvider<ToastCubit>(
                             create: (context) => cubits.toast),
+                        BlocProvider<IgnoreCubit>(
+                            create: (context) => cubits.ignore),
                         BlocProvider<PanelCubit>(
                             create: (context) => cubits.panel),
                         BlocProvider<TutorialCubit>(
@@ -133,6 +128,7 @@ class MaestroLayer extends StatelessWidget {
                 NavbarLayer(),
                 PanelLayer(),
                 ToastLayer(),
+                IgnoreLayer(),
                 //const TutorialLayer(),
               ],
             ),
@@ -155,8 +151,15 @@ class MaestroLayer extends StatelessWidget {
           ? 0
           : MediaQuery.of(context).padding.top,
     );
-    cubits.pane.update(active: true);
-    //cubits.pane.update(active: true, height: screen.pane.minHeight);
+    cubits.ignore.update(active: true);
+    cubits.pane.update(
+      active: true,
+      initial: screen.pane.midHeightPercent,
+      min: screen.pane.minHeightPercent,
+      max: screen.pane.maxHeightPercent,
+    );
+    cubits.pane.update(height: screen.pane.maxHeight);
+    cubits.ignore.update(active: false);
   }
 }
 

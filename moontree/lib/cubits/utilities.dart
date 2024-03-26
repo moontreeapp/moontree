@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 enum FrontContainerHeight {
   max,
   mid,
@@ -12,33 +14,8 @@ enum PageContainer {
   extra,
 }
 
-abstract class ViewCubitMixin {
-  void show() {}
-  void hide() {}
-}
-
-mixin HeightCubitMixin {
-  void setHeightTo({required FrontContainerHeight height}) {
-    switch (height) {
-      case FrontContainerHeight.same:
-        return;
-      case FrontContainerHeight.max:
-        return max();
-      case FrontContainerHeight.mid:
-        return mid();
-      case FrontContainerHeight.min:
-        return min();
-      case FrontContainerHeight.hidden:
-        return hidden();
-      default:
-        return mid();
-    }
-  }
-
-  void max() {}
-  void mid() {}
-  void min() {}
-  void hidden() {}
+mixin HideMixin<T> {
+  void hide();
 }
 
 mixin UpdateMixin<T> {
@@ -48,8 +25,9 @@ mixin UpdateMixin<T> {
   void setState(T state);
 }
 
-mixin SectionMixin<T> {
-  void hide();
+mixin DisposedMixin {
+  void disposed();
+  bool isDisposed();
 }
 
-mixin UpdateSectionMixin<T> implements UpdateMixin<T>, SectionMixin<T> {}
+mixin UpdateHideMixin<T> implements UpdateMixin<T>, HideMixin {}
