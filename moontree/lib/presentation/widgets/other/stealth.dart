@@ -30,11 +30,11 @@ class StealthTextFieldWithoutIcon extends StatefulWidget {
   });
 
   @override
-  _StealthTextFieldWithoutIconState createState() =>
-      _StealthTextFieldWithoutIconState();
+  StealthTextFieldWithoutIconState createState() =>
+      StealthTextFieldWithoutIconState();
 }
 
-class _StealthTextFieldWithoutIconState
+class StealthTextFieldWithoutIconState
     extends State<StealthTextFieldWithoutIcon> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -73,7 +73,7 @@ class _StealthTextFieldWithoutIconState
         //cursorWidth: 2.0,
         //cursorHeight: 5.0,
         cursorColor: Colors.black38,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: InputBorder.none,
           focusedBorder: InputBorder.none,
           //prefixIcon: Icon(
@@ -90,11 +90,11 @@ class _StealthTextFieldWithoutIconState
         keyboardType: widget.keyboardType ?? TextInputType.name,
         textInputAction: TextInputAction.done,
         style: widget.style ??
-            Theme.of(context).textTheme.h2!.copyWith(color: Colors.black87),
+            Theme.of(context).textTheme.h2.copyWith(color: Colors.black87),
         textAlign: widget.textAlign ?? TextAlign.center,
         onEditingComplete: () {
           _controller.text =
-              (widget.onEditingComplete?.call() ?? null) ?? _controller.text;
+              (widget.onEditingComplete?.call()) ?? _controller.text;
           (widget.focusNode ?? _focusNode).unfocus();
           FocusScope.of(context).unfocus();
           widget.toast?.call();
@@ -102,8 +102,8 @@ class _StealthTextFieldWithoutIconState
         onChanged: widget.onChanged,
         onTapOutside: (details) {
           if ((widget.focusNode ?? _focusNode).hasFocus) {
-            _controller.text = (widget.onTapOutside?.call(details) ?? null) ??
-                _controller.text;
+            _controller.text =
+                (widget.onTapOutside?.call(details)) ?? _controller.text;
             FocusScope.of(context).unfocus();
             widget.toast?.call();
           }
@@ -154,10 +154,10 @@ class StealthTextField extends StatefulWidget {
   });
 
   @override
-  _StealthTextFieldState createState() => _StealthTextFieldState();
+  StealthTextFieldState createState() => StealthTextFieldState();
 }
 
-class _StealthTextFieldState extends State<StealthTextField> {
+class StealthTextFieldState extends State<StealthTextField> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _isFirstFocus = true;
@@ -240,12 +240,12 @@ class _StealthTextFieldState extends State<StealthTextField> {
             style: widget.style ??
                 Theme.of(context)
                     .textTheme
-                    .body2!
+                    .body2
                     .copyWith(color: Colors.black87),
             textAlign: widget.textAlign ?? TextAlign.center,
             onEditingComplete: () {
-              _controller.text = (widget.onEditingComplete?.call() ?? null) ??
-                  _controller.text;
+              _controller.text =
+                  (widget.onEditingComplete?.call()) ?? _controller.text;
               (widget.focusNode ?? _focusNode).unfocus();
               FocusScope.of(context).unfocus();
               widget.toast?.call();
@@ -257,8 +257,7 @@ class _StealthTextFieldState extends State<StealthTextField> {
             onTapOutside: (details) {
               if ((widget.focusNode ?? _focusNode).hasFocus) {
                 _controller.text =
-                    (widget.onTapOutside?.call(details) ?? null) ??
-                        _controller.text;
+                    (widget.onTapOutside?.call(details)) ?? _controller.text;
                 FocusScope.of(context).unfocus();
                 widget.toast?.call();
               }
@@ -270,18 +269,18 @@ class _StealthTextFieldState extends State<StealthTextField> {
   Widget _buildDynamicIcon() {
     _isFirstFocus = true;
     return Padding(
-      padding: EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 6),
       child: RichText(
         text: TextSpan(
           children: [
             TextSpan(
-              text: _controller.text + '        ',
+              text: '${_controller.text}        ',
               style: Theme.of(context)
                   .textTheme
-                  .body2!
+                  .body2
                   .copyWith(color: Colors.transparent),
             ),
-            WidgetSpan(
+            const WidgetSpan(
                 child:
                     Icon(Icons.edit_rounded, color: Colors.black26, size: 14)),
           ],

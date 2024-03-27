@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moontree/cubits/utilities.dart';
+import 'package:moontree/cubits/mixins.dart';
 
 part 'state.dart';
 
@@ -10,6 +10,7 @@ final DraggableScrollableController draggableScrollController =
 
 class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   PaneCubit() : super(PaneState(controller: draggableScrollController));
+  double height = 0;
   @override
   String get key => 'pane';
   @override
@@ -55,6 +56,7 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
 
   void _scrollListener() {
     //  if (state.scroller != null && state.scroller!.positions.isEmpty) return;
-    print(state.scroller!.offset);
+    //print(state.scroller!.offset);
+    height = state.scroller!.offset;
   }
 }

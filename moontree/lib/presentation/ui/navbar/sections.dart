@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moontree/domain/concepts/sections.dart';
 import 'package:moontree/domain/utils/string.dart';
-import 'package:moontree/presentation/theme/colors.dart';
+import 'package:moontree/presentation/theme/theme.dart';
 import 'package:moontree/services/services.dart' show screen, maestro;
-import 'package:moontree/presentation/theme/extensions.dart';
 import 'package:moontree/presentation/widgets/assets/icons.dart';
 
 class NavbarSections extends StatelessWidget {
@@ -94,7 +93,7 @@ class NavbarSectionButton extends StatelessWidget {
         Text(section.name.toTitleCase(),
             style: Theme.of(context)
                 .textTheme
-                .caption1!
+                .caption1
                 .copyWith(color: AppColors.black))
       ]));
 }

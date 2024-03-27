@@ -1,4 +1,6 @@
-import 'package:moontree/cubits/utilities.dart';
+import 'package:moontree/cubits/appbar/cubit.dart';
+import 'package:moontree/cubits/fade/cubit.dart';
+import 'package:moontree/cubits/mixins.dart';
 import 'package:moontree/domain/concepts/sections.dart';
 //import 'package:moontree/domain/concepts/side.dart';
 import 'package:moontree/cubits/cubit.dart' show cubits;
@@ -74,9 +76,10 @@ class Maestro {
     for (dynamic c in [cubits.wallet, cubits.transactions]) {
       if (c.state != except && c.state.active) {
         c.update(active: false);
+        cubits.fade.update(fade: FadeEvent.fadeOut);
         await awaitFor(
           cubits.pane.unattached,
-          duration: slideDuration,
+          duration: fadeDuration,
           wait: const Duration(milliseconds: 40),
         );
       }
@@ -86,16 +89,26 @@ class Maestro {
   Future<void> _activeateHome() async {
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet);
+    cubits.appbar.update(leading: AppbarLeading.connection, title: 'Wallet 1');
+    cubits.holding.update(active: false);
     await inactiveateAllBut(cubits.wallet.state);
     cubits.wallet.update(active: true);
+    if (cubits.pane.height != screen.pane.maxHeight) {
+      cubits.pane.update(height: screen.pane.maxHeight - 1);
+      cubits.pane.update(height: screen.pane.maxHeight);
+    }
+    cubits.pane.update(min: screen.pane.minHeightPercent);
+    cubits.fade.update(fade: FadeEvent.fadeIn);
     await Future.delayed(slideDuration);
     cubits.ignore.update(active: false);
   }
 
-  void _activeateMint() {
+  Future<void> _activeateMint() async {
     cubits.ignore.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(section: NavbarSection.mint);
-    cubits.wallet.update(active: false);
+    await inactiveateAllBut(null);
+    cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
   }
 
@@ -108,16 +121,18 @@ class Maestro {
 
   Future<void> activateTransactions() async {
     cubits.ignore.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeOut);
+    cubits.appbar.update(leading: AppbarLeading.back, title: 'Coin');
+    cubits.menu.update(active: false);
+    cubits.holding.update(active: true);
     cubits.pane.update(
       active: true,
       height: screen.pane.midHeight,
+      min: screen.pane.midHeightPercent,
     );
-    cubits.wallet.update(active: false);
-    await Future.delayed(slideDuration * 2);
+    await inactiveateAllBut(cubits.transactions.state);
     cubits.transactions.update(active: true);
-    //cubits.pane.update(
-    //    scrollableChild: (ScrollController scroller) =>
-    //        TransactionsPage(scroller:scroller));
+    cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
   }
 }

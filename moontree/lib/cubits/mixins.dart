@@ -1,19 +1,3 @@
-import 'package:equatable/equatable.dart';
-
-enum FrontContainerHeight {
-  max,
-  mid,
-  min,
-  hidden,
-  same,
-}
-
-enum PageContainer {
-  front,
-  back,
-  extra,
-}
-
 mixin HideMixin<T> {
   void hide();
 }

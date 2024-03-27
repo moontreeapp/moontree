@@ -1,8 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:moontree/cubits/utilities.dart';
+import 'package:moontree/cubits/mixins.dart';
 import 'package:moontree/domain/concepts/holding.dart';
+import 'package:moontree/domain/concepts/sats.dart';
 
 part 'state.dart';
 
@@ -40,11 +41,11 @@ class TransactionsCubit extends Cubit<TransactionsState>
       currency: Holding(
         name: 'Ravencoin',
         symbol: 'RVN',
-        sats: Sat(21),
+        sats: Sats(21),
         metadata: HoldingMetadata(
           divisibility: Divisibility(8),
           reissuable: false,
-          supply: Sat.fromCoin(Coin(21000000000)),
+          supply: Sats.fromCoin(Coin(21000000000)),
         ),
       ),
       assets: []);

@@ -1,38 +1,39 @@
 part of 'cubit.dart';
 
-enum AppbarTitleType {
-  wallet,
-  custom,
+enum AppbarLeading {
+  connection,
+  back,
+  close,
   none,
 }
 
 class AppbarState with EquatableMixin {
-  final AppbarTitleType titleType;
+  final AppbarLeading leading;
   final String title;
   final AppbarState? prior;
 
   const AppbarState({
-    this.titleType = AppbarTitleType.none,
+    this.leading = AppbarLeading.none,
     this.title = '',
     this.prior,
   });
 
   @override
   List<Object?> get props => [
-        titleType,
+        leading,
         title,
         prior,
       ];
 
   @override
   String toString() => 'AppbarState( '
-      'titleType=$titleType, '
+      'leading=$leading, '
       'title=$title, '
       'prior=$prior, '
       ')';
 
   AppbarState get withoutPrior => AppbarState(
-        titleType: titleType,
+        leading: leading,
         title: title,
         prior: null,
       );

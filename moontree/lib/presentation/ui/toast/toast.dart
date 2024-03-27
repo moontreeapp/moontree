@@ -41,14 +41,14 @@ class ToastLayer extends StatelessWidget {
                         //),
                         const SizedBox(width: 8),
                         Text(state.msg!.title + ' ',
-                            style: Theme.of(context).textTheme.body2!.copyWith(
+                            style: Theme.of(context).textTheme.body2.copyWith(
                                   color: AppColors.black60,
                                   fontWeight: FontWeights.extraBold,
                                 )),
                         //const SizedBox(width: 4),
                         Text(
                           state.msg!.text,
-                          style: Theme.of(context).textTheme.body2!.copyWith(
+                          style: Theme.of(context).textTheme.body2.copyWith(
                                 color: AppColors.black60,
                                 height: 0,
                               ),

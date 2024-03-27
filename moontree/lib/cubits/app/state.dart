@@ -1,12 +1,12 @@
 part of 'cubit.dart';
 
-class AppLayerState with EquatableMixin {
+class AppState with EquatableMixin {
   final String status;
 
   final bool submitting;
-  final AppLayerState? prior;
+  final AppState? prior;
 
-  const AppLayerState({
+  const AppState({
     this.status = '',
     this.submitting = false,
     this.prior,
@@ -22,7 +22,7 @@ class AppLayerState with EquatableMixin {
   @override
   String toString() => '$runtimeType($props)';
 
-  AppLayerState get withoutPrior => AppLayerState(
+  AppState get withoutPrior => AppState(
         status: status,
         submitting: submitting,
         prior: null,

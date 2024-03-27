@@ -183,12 +183,12 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
             disabledBorder: InputBorder.none,
-            labelStyle: Theme.of(context).textTheme.sub1!.copyWith(
+            labelStyle: Theme.of(context).textTheme.sub1.copyWith(
                 color: (widget.enabled ?? true) ? null : AppColors.black60),
             alignLabelWithHint: true,
             floatingLabelStyle: inUse
-                ? TextStyle(color: AppColors.primary)
-                : TextStyle(color: AppColors.black87),
+                ? const TextStyle(color: AppColors.primary)
+                : const TextStyle(color: AppColors.black87),
             contentPadding: EdgeInsets.only(
               left: 24 + widget.contentPaddingLeft,
               top: (inUse || used ? 16 : 12) +

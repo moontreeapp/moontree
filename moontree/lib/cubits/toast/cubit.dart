@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:moontree/cubits/utilities.dart';
+import 'package:moontree/cubits/mixins.dart';
 import 'package:moontree/presentation/utils/animation.dart';
 
 part 'state.dart';

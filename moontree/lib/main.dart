@@ -3,10 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/cubit.dart';
-import 'package:moontree/cubits/cubits.dart';
-import 'package:moontree/presentation/pages.dart';
 import 'package:moontree/presentation/theme/colors.dart';
 import 'package:moontree/presentation/theme/custom.dart';
+import 'package:moontree/presentation/ui/canvas/canvas.dart';
 import 'package:moontree/presentation/ui/ignore/ignore.dart';
 import 'package:moontree/presentation/ui/ui.dart';
 import 'package:moontree/services/services.dart';
@@ -65,39 +64,7 @@ class MoontreeApp extends StatelessWidget {
                 builder: (context) => ScrollConfiguration(
                     behavior: NoGlowScrollBehavior(),
                     child: MultiBlocProvider(
-                      providers: [
-                        /// pages
-                        BlocProvider<AppLayerCubit>(
-                            create: (context) => cubits.appLayer),
-                        BlocProvider<WalletCubit>(
-                            create: (context) => cubits.wallet),
-                        BlocProvider<TransactionsCubit>(
-                            create: (context) => cubits.transactions),
-                        //BlocProvider<SendLayerCubit>(
-                        //    create: (context) => cubits.sendLayer),
-                        //BlocProvider<RecieveLayerCubit>(
-                        //    create: (context) => cubits.receiveLayer),
-                        //BlocProvider<ManageLayerCubit>(
-                        //    create: (BuildContext context) => cubits.manageLayer),
-                        //BlocProvider<SwapLayerCubit>(
-                        //    create: (BuildContext context) => cubits.swapLayer),
-
-                        /// layers
-                        BlocProvider<PaneCubit>(
-                            create: (context) => cubits.pane),
-                        BlocProvider<AppbarCubit>(
-                            create: (context) => cubits.appbar),
-                        BlocProvider<NavbarCubit>(
-                            create: (context) => cubits.navbar),
-                        BlocProvider<ToastCubit>(
-                            create: (context) => cubits.toast),
-                        BlocProvider<IgnoreCubit>(
-                            create: (context) => cubits.ignore),
-                        BlocProvider<PanelCubit>(
-                            create: (context) => cubits.panel),
-                        BlocProvider<TutorialCubit>(
-                            create: (BuildContext context) => cubits.tutorial),
-                      ],
+                      providers: cubits.providers,
                       child: const MaestroLayer(),
                     ))),
           ],
@@ -123,8 +90,8 @@ class MaestroLayer extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               children: <Widget>[
                 AppbarLayer(),
+                CanvasLayer(),
                 PaneLayer(),
-                //PagesLayer(),
                 NavbarLayer(),
                 PanelLayer(),
                 ToastLayer(),
@@ -151,6 +118,7 @@ class MaestroLayer extends StatelessWidget {
           ? 0
           : MediaQuery.of(context).padding.top,
     );
+    cubits.menu.update(active: true);
     cubits.ignore.update(active: true);
     cubits.pane.update(
       active: true,

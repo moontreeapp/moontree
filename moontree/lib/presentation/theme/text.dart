@@ -104,17 +104,24 @@ class AppText {
   static TextStyle get link => body1.copyWith(
         color: AppColors.black60,
       );
-  static TextStyle underlined(TextStyle? style) =>
-      (style == null ? body1 : style).copyWith(
+  static TextStyle underlined(TextStyle? style) => (style ?? body1).copyWith(
         decoration: TextDecoration.underline,
       );
   static TextStyle underlinedLink(TextStyle? style) =>
-      (style == null ? body1 : style).copyWith(
+      (style ?? body1).copyWith(
         decoration: TextDecoration.underline,
         color: AppColors.primary,
       );
   static TextStyle notUnderlinedLink(TextStyle? style) =>
-      (style == null ? body1 : style).copyWith(
+      (style ?? body1).copyWith(
         color: AppColors.primary,
       );
+
+  static TextStyle get wholeHolding => h1.copyWith(color: AppColors.white);
+  static TextStyle get partHolding => h1.copyWith(color: AppColors.white87);
+  static TextStyle get usdHolding =>
+      subtitle1.copyWith(color: AppColors.white60);
+
+  static TextStyle get labelHolding =>
+      caption.copyWith(color: AppColors.white87, fontWeight: FontWeights.bold);
 }

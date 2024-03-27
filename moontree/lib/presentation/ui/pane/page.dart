@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/cubit.dart';
+import 'package:moontree/cubits/fade/cubit.dart';
 import 'package:moontree/cubits/pane/cubit.dart';
 import 'package:moontree/domain/concepts/side.dart';
-import 'package:moontree/presentation/ui/transactions/transactions.dart';
-import 'package:moontree/presentation/ui/wallet/wallet.dart';
+import 'package:moontree/presentation/ui/pane/transactions/transactions.dart';
+import 'package:moontree/presentation/ui/pane/wallet/wallet.dart';
 import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/presentation/widgets/animations/sliding.dart';
 //import 'package:moontree/domain/concepts/side.dart';
@@ -105,6 +106,7 @@ class DraggablePaneStack extends StatelessWidget {
         Wallet(),
         Transactions(),
         EmptyFeed(),
+        FadeLayer(),
       ]);
 }
 
@@ -239,6 +241,19 @@ class DraggablePaneBackground extends StatelessWidget {
         ),
         child: child ?? const SizedBox.shrink(),
       );
+}
+
+class FadeLayer extends StatelessWidget {
+  const FadeLayer({super.key});
+
+  @override
+  Widget build(BuildContext context) => BlocBuilder<FadeCubit, FadeState>(
+      buildWhen: (previous, current) => previous.fade != current.fade,
+      builder: (context, FadeState state) => IgnorePointer(
+          child: AnimatedOpacity(
+              opacity: state.fade.opacity,
+              duration: fadeDuration,
+              child: const DraggablePaneBackground())));
 }
 
 /** moontree impl.

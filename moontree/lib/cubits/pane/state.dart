@@ -56,4 +56,7 @@ class PaneState with EquatableMixin {
         isSubmitting: isSubmitting,
         prior: null,
       );
+
+  bool get wasInactive => (prior?.active == null || !prior!.active);
+  bool get wasActive => !wasInactive;
 }

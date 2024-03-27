@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart' show Cubit;
 import 'package:equatable/equatable.dart';
-import 'package:moontree/cubits/utilities.dart';
+import 'package:moontree/cubits/mixins.dart';
 
 part 'state.dart';
 

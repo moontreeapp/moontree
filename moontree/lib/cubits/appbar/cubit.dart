@@ -2,7 +2,7 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moontree/cubits/utilities.dart';
+import 'package:moontree/cubits/mixins.dart';
 
 part 'state.dart';
 
@@ -17,11 +17,11 @@ class AppbarCubit extends Cubit<AppbarState> with UpdateMixin<AppbarState> {
 
   @override
   void update({
-    AppbarTitleType? titleType,
+    AppbarLeading? leading,
     String? title,
   }) {
     emit(AppbarState(
-      titleType: titleType ?? state.titleType,
+      leading: leading ?? state.leading,
       title: title ?? state.title,
       prior: state.withoutPrior,
     ));

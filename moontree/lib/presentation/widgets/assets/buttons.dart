@@ -78,15 +78,15 @@ class ButtonFormatted extends StatelessWidget {
           BuildContext context, bool enabled, bool filled, bool bold) =>
       enabled
           ? (filled
-              ? Theme.of(context).textTheme.enabledButton!.copyWith(
+              ? Theme.of(context).textTheme.enabledButton.copyWith(
                   fontWeight: bold ? FontWeights.bold : FontWeights.semiBold)
-              : Theme.of(context).textTheme.enabledButton!.copyWith(
+              : Theme.of(context).textTheme.enabledButton.copyWith(
                   color: AppColors.primary,
                   fontWeight: bold ? FontWeights.bold : FontWeights.semiBold))
           : (filled
-              ? Theme.of(context).textTheme.disabledButton!.copyWith(
+              ? Theme.of(context).textTheme.disabledButton.copyWith(
                   fontWeight: bold ? FontWeights.bold : FontWeights.semiBold)
-              : Theme.of(context).textTheme.disabledButton!.copyWith(
+              : Theme.of(context).textTheme.disabledButton.copyWith(
                   color: AppColors.primary38,
                   fontWeight: bold ? FontWeights.bold : FontWeights.semiBold));
 
@@ -194,7 +194,7 @@ class BigButton extends StatelessWidget {
                 : disabledOnPressed ?? () {},
             child: Text(
               _labelDefault(label),
-              style: Theme.of(context).textTheme.enabledButton!.copyWith(
+              style: Theme.of(context).textTheme.enabledButton.copyWith(
                   fontWeight: bold ? FontWeights.bold : FontWeights.semiBold,
                   color: Colors.black87),
             ),

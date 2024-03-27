@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/cubits/wallet/cubit.dart';
-import 'package:moontree/presentation/ui/wallet/page.dart';
+import 'package:moontree/presentation/ui/pane/wallet/page.dart';
 import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/presentation/widgets/animations/fading.dart';
 import 'package:moontree/services/services.dart';
