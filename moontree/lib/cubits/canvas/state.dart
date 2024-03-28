@@ -1,6 +1,6 @@
 part of 'cubit.dart';
 
-class CanvasState with EquatableMixin {
+class CanvasState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final bool isSubmitting;
   final CanvasState? prior;
@@ -21,12 +21,16 @@ class CanvasState with EquatableMixin {
   @override
   String toString() => '$runtimeType($props)';
 
+  @override
   CanvasState get withoutPrior => CanvasState(
         active: active,
         isSubmitting: isSubmitting,
         prior: null,
       );
 
-  bool get wasInactive => (prior?.active == null || !prior!.active);
-  bool get wasActive => !wasInactive;
+  @override
+  bool get wasActive => prior?.active == true;
+
+  @override
+  bool get isActive => active;
 }

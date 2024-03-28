@@ -12,16 +12,9 @@ class HodingDetail extends StatelessWidget {
       buildWhen: (HoldingState previous, HoldingState current) =>
           previous.active != current.active ||
           (!previous.active && !current.active),
-      builder: (context, state) {
-        if (state.wasInactive && state.active) {
-          return const FadeIn(child: HodingDetailPage());
-        }
-        if (state.wasActive && !state.active) {
-          return const FadeOut(child: HodingDetailPage());
-        }
-        if (state.wasActive && state.active) {
-          return const HodingDetailPage();
-        }
-        return const SizedBox.shrink();
-      });
+      builder: (context, state) => state.transitionWidgets(state,
+          onEntering: const FadeIn(child: HodingDetailPage()),
+          onEntered: const HodingDetailPage(), // never triggered
+          onExiting: const FadeOut(child: HodingDetailPage()),
+          onExited: const SizedBox.shrink()));
 }

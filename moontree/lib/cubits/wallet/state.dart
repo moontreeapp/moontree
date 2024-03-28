@@ -1,7 +1,7 @@
 part of 'cubit.dart';
 
 @immutable
-class WalletState with EquatableMixin {
+class WalletState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final Holding currency;
   final List<Holding> assets;
@@ -31,6 +31,7 @@ class WalletState with EquatableMixin {
         prior,
       ];
 
+  @override
   WalletState get withoutPrior => WalletState(
         active: active,
         currency: currency,
@@ -40,6 +41,9 @@ class WalletState with EquatableMixin {
         prior: null,
       );
 
-  bool get wasInactive => (prior?.active == null || !prior!.active);
-  bool get wasActive => !wasInactive;
+  @override
+  bool get wasActive => prior?.active == true;
+
+  @override
+  bool get isActive => active;
 }

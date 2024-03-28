@@ -7,25 +7,19 @@ class Menu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
-          builder: (BuildContext context, MenuState state) {
-        if (state.wasInactive && state.active) {
-          return GestureDetector(
+      builder: (BuildContext context, MenuState state) => state.transitionWidgets(
+          state,
+          onEntering: GestureDetector(
               onTap: () => print('go into submenu by changing menu cubit'),
               child: const Center(
                   child:
-                      Text('Menu...', style: TextStyle(color: Colors.grey))));
-        }
-        if (state.wasActive && !state.active) {
-          return const SizedBox.shrink();
-        }
-        if (state.wasActive && state.active) {
-          return GestureDetector(
+                      Text('Menu...', style: TextStyle(color: Colors.grey)))),
+          onEntered: GestureDetector(
               onTap: () =>
                   print('go into or out of submenu by changing menu cubit'),
               child: const Center(
                   child:
-                      Text('Menu...', style: TextStyle(color: Colors.grey))));
-        }
-        return const SizedBox.shrink();
-      });
+                      Text('Menu...', style: TextStyle(color: Colors.grey)))),
+          onExiting: const SizedBox.shrink(),
+          onExited: const SizedBox.shrink()));
 }

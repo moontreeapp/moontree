@@ -4,6 +4,7 @@ import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/cubits/fade/cubit.dart';
 import 'package:moontree/cubits/pane/cubit.dart';
 import 'package:moontree/domain/concepts/side.dart';
+import 'package:moontree/presentation/ui/pane/send/send.dart';
 import 'package:moontree/presentation/ui/pane/transactions/transactions.dart';
 import 'package:moontree/presentation/ui/pane/wallet/wallet.dart';
 import 'package:moontree/presentation/utils/animation.dart';
@@ -83,13 +84,14 @@ class DraggablePane extends StatelessWidget {
           //        .setHeight(minExtent * screen.app.height);
 
           return DraggableScrollableSheet(
-              controller: state.controller,
+              controller: draggableScrollController,
               expand: false,
               initialChildSize: state.initial,
               minChildSize: state.min,
               maxChildSize: state.max,
               builder:
                   (BuildContext context, ScrollController scrollController) {
+                cubits.pane.update(controller: draggableScrollController);
                 cubits.pane.update(scroller: scrollController);
                 return const DraggablePaneBackground(
                     child: DraggablePaneStack());
@@ -105,6 +107,7 @@ class DraggablePaneStack extends StatelessWidget {
   Widget build(BuildContext context) => const Stack(children: [
         Wallet(),
         Transactions(),
+        Send(),
         EmptyFeed(),
         FadeLayer(),
       ]);
@@ -147,6 +150,7 @@ class EmptyFeed extends StatelessWidget {
         if (state.controller.isAttached) {
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await setHeightTo(heightInPixels: state.height, reset: false));
+          //state.controller.jumpTo(0);
           return const SizedBox.shrink();
         }
         WidgetsBinding.instance.addPostFrameCallback((_) async =>
@@ -154,7 +158,7 @@ class EmptyFeed extends StatelessWidget {
         return ListView.builder(
             controller: scroller,
             shrinkWrap: true,
-            itemCount: 100,
+            itemCount: 0,
             itemBuilder: (context, index) => ListTile(
                     title: Text(
                   'default $index',

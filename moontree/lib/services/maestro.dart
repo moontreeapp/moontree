@@ -1,6 +1,5 @@
 import 'package:moontree/cubits/appbar/cubit.dart';
 import 'package:moontree/cubits/fade/cubit.dart';
-import 'package:moontree/cubits/mixins.dart';
 import 'package:moontree/domain/concepts/sections.dart';
 //import 'package:moontree/domain/concepts/side.dart';
 import 'package:moontree/cubits/cubit.dart' show cubits;
@@ -73,7 +72,7 @@ class Maestro {
   }
 
   Future<void> inactiveateAllBut(dynamic except) async {
-    for (dynamic c in [cubits.wallet, cubits.transactions]) {
+    for (dynamic c in [cubits.wallet, cubits.transactions, cubits.send]) {
       if (c.state != except && c.state.active) {
         c.update(active: false);
         cubits.fade.update(fade: FadeEvent.fadeOut);
@@ -89,15 +88,26 @@ class Maestro {
   Future<void> _activeateHome() async {
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet);
-    cubits.appbar.update(leading: AppbarLeading.connection, title: 'Wallet 1');
+    cubits.appbar.update(
+      leading: AppbarLeading.connection,
+      title: 'Wallet 1',
+      onLead: cubits.appbar.none,
+      onTitle: cubits.pane.toggleFull,
+    );
     cubits.holding.update(active: false);
+    cubits.menu.update(active: true);
     await inactiveateAllBut(cubits.wallet.state);
     cubits.wallet.update(active: true);
+    cubits.pane.update(
+      max: screen.pane.maxHeightPercent,
+      min: screen.pane.minHeightPercent,
+    );
     if (cubits.pane.height != screen.pane.maxHeight) {
-      cubits.pane.update(height: screen.pane.maxHeight - 1);
+      if (cubits.pane.state.height == screen.pane.maxHeight) {
+        cubits.pane.update(height: screen.pane.maxHeight - 1);
+      }
       cubits.pane.update(height: screen.pane.maxHeight);
     }
-    cubits.pane.update(min: screen.pane.minHeightPercent);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     await Future.delayed(slideDuration);
     cubits.ignore.update(active: false);
@@ -122,16 +132,45 @@ class Maestro {
   Future<void> activateTransactions() async {
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
-    cubits.appbar.update(leading: AppbarLeading.back, title: 'Coin');
+    cubits.appbar.update(
+      leading: AppbarLeading.back,
+      title: 'Coin',
+      onLead: _activeateHome,
+      onTitle: cubits.appbar.none,
+    );
     cubits.menu.update(active: false);
-    cubits.holding.update(active: true);
+    cubits.holding.update(active: true, send: false);
     cubits.pane.update(
       active: true,
       height: screen.pane.midHeight,
-      min: screen.pane.midHeightPercent,
+      max: screen.pane.maxHeightPercent,
+      min: screen.pane.minHeightPercent,
     );
     await inactiveateAllBut(cubits.transactions.state);
     cubits.transactions.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeIn);
+    cubits.ignore.update(active: false);
+  }
+
+  Future<void> activateSend() async {
+    cubits.ignore.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeOut);
+    cubits.appbar.update(
+      leading: AppbarLeading.close,
+      title: 'Send',
+      onLead: activateTransactions,
+      onTitle: cubits.appbar.none,
+    );
+    cubits.menu.update(active: false);
+    cubits.holding.update(active: true, send: true);
+    cubits.pane.update(
+      active: true,
+      height: screen.pane.midHeight,
+      max: screen.pane.midHeightPercent,
+      min: screen.pane.midHeightPercent,
+    );
+    await inactiveateAllBut(cubits.send.state);
+    cubits.send.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
   }

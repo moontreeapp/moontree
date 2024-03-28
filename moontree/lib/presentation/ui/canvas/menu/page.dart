@@ -59,7 +59,7 @@ class Holding extends StatelessWidget {
             child: Text('Coin',
                 style: Theme.of(context)
                     .textTheme
-                    .body1!
+                    .body1
                     .copyWith(color: Colors.black87))),
         trailing: SizedBox(
             width: screen.iconMedium + screen.iconMedium,
@@ -68,7 +68,7 @@ class Holding extends StatelessWidget {
                 textAlign: TextAlign.right,
                 style: Theme.of(context)
                     .textTheme
-                    .body1!
+                    .body1
                     .copyWith(color: AppColors.black60))),
       );
 }

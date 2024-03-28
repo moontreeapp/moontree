@@ -12,34 +12,33 @@ class Wallet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<WalletCubit, WalletState>(
-          builder: (BuildContext context, WalletState state) {
-        if (state.wasInactive && state.active) {
-          WidgetsBinding.instance.addPostFrameCallback(
-              (_) => cubits.pane.update(height: screen.pane.maxHeight));
-          if (state.currency.isEmpty && state.assets.isEmpty) {
-            return GestureDetector(
-                onTap: cubits.wallet.populateAssets,
-                child: const Center(
-                    child: Text('Loading...',
-                        style: TextStyle(color: Colors.grey))));
-          }
-          const child = WalletPage();
-          cubits.wallet.update(child: child);
-          return child;
-          //return const FadeIn(child: WalletPage());
-        }
-        if (state.wasActive && !state.active) {
-          WidgetsBinding.instance.addPostFrameCallback((_) => Future.delayed(
-              fadeDuration, () => cubits.wallet.update(active: false)));
-          //return const FadeOut(child: WalletPage());
-          return state.child;
-        }
-        if (state.wasActive && state.active) {
-          //return const WalletPage();
-          return state.child;
-        }
-        const child = SizedBox.shrink();
-        cubits.wallet.update(child: child);
-        return child;
-      });
+      builder: (BuildContext context, WalletState state) =>
+          state.transitionFunctions(state,
+              onEntering: () {
+                WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => cubits.pane.update(height: screen.pane.maxHeight));
+                if (state.currency.isEmpty && state.assets.isEmpty) {
+                  return GestureDetector(
+                      onTap: cubits.wallet.populateAssets,
+                      child: const Center(
+                          child: Text('Loading...',
+                              style: TextStyle(color: Colors.grey))));
+                }
+                const child = WalletPage();
+                cubits.wallet.update(child: child);
+                return child;
+              },
+              onEntered: () => state.child,
+              onExiting: () {
+                WidgetsBinding.instance.addPostFrameCallback((_) =>
+                    Future.delayed(fadeDuration,
+                        () => cubits.wallet.update(active: false)));
+                //return const FadeOut(child: WalletPage());
+                return state.child;
+              },
+              onExited: () {
+                const child = SizedBox.shrink();
+                cubits.wallet.update(child: child);
+                return child;
+              }));
 }

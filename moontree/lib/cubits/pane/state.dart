@@ -1,6 +1,6 @@
 part of 'cubit.dart';
 
-class PaneState with EquatableMixin {
+class PaneState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final bool dispose;
   // pixel
@@ -44,6 +44,7 @@ class PaneState with EquatableMixin {
   @override
   String toString() => '$runtimeType($props)';
 
+  @override
   PaneState get withoutPrior => PaneState(
         active: active,
         dispose: dispose,
@@ -57,6 +58,9 @@ class PaneState with EquatableMixin {
         prior: null,
       );
 
-  bool get wasInactive => (prior?.active == null || !prior!.active);
-  bool get wasActive => !wasInactive;
+  @override
+  bool get wasActive => prior?.active == true;
+
+  @override
+  bool get isActive => active;
 }

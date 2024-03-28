@@ -1,16 +1,16 @@
 part of 'cubit.dart';
 
-class PanelState with EquatableMixin, PriorActiveStateMixin {
+class SendState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
-  final Widget Function(ScrollController)? child;
-  final Side transition;
+  final String asset; // TODO: use domain object
+  final double amount; // TODO: use domain object
   final bool isSubmitting;
-  final PanelState? prior;
+  final SendState? prior;
 
-  const PanelState({
+  const SendState({
     this.active = false,
-    this.child,
-    this.transition = Side.none,
+    this.asset = '',
+    this.amount = 0,
     this.isSubmitting = false,
     this.prior,
   });
@@ -18,8 +18,8 @@ class PanelState with EquatableMixin, PriorActiveStateMixin {
   @override
   List<Object?> get props => <Object?>[
         active,
-        child,
-        transition,
+        asset,
+        amount,
         isSubmitting,
         prior,
       ];
@@ -28,10 +28,10 @@ class PanelState with EquatableMixin, PriorActiveStateMixin {
   String toString() => '$runtimeType($props)';
 
   @override
-  PanelState get withoutPrior => PanelState(
+  SendState get withoutPrior => SendState(
         active: active,
-        child: child,
-        transition: transition,
+        asset: asset,
+        amount: amount,
         isSubmitting: isSubmitting,
         prior: null,
       );

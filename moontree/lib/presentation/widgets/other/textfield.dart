@@ -80,7 +80,7 @@ class TextFieldFormatted extends StatefulWidget {
   final double contentPaddingLeft;
 
   const TextFieldFormatted({
-    Key? key,
+    super.key,
     this.labelText,
     this.hintText,
     this.helperText,
@@ -144,16 +144,16 @@ class TextFieldFormatted extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.restorationId,
     this.enableIMEPersonalizedLearning = true,
-    this.focusedErrorBorder = null,
-    this.errorBorder = null,
-    this.focusedBorder = null,
-    this.enabledBorder = null,
-    this.disabledBorder = null,
-    this.border = null,
-    this.contentPadding = null,
+    this.focusedErrorBorder,
+    this.errorBorder,
+    this.focusedBorder,
+    this.enabledBorder,
+    this.disabledBorder,
+    this.border,
+    this.contentPadding,
     this.contentPaddingTop = 0.0,
     this.contentPaddingLeft = 0.0,
-  }) : super(key: key);
+  });
 
   @override
   State<TextFieldFormatted> createState() => _TextFieldFormattedState();
@@ -206,7 +206,11 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
             helperMaxLines: widget.helperMaxLines,
             // takes precedence -- only fill on field valdiation failure:
             errorText: widget.errorText,
-            suffixIcon: widget.suffixIcon,
+            suffixIcon: widget.suffixIcon != null
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 20, top: 10),
+                    child: widget.suffixIcon)
+                : null,
             suffixText: widget.suffixText,
             suffixStyle: widget.suffixStyle,
             errorStyle: Theme.of(context)
@@ -284,12 +288,14 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
         enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning);
     return Stack(children: [
       Column(children: [
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Container(
           height: 64,
           decoration: ShapeDecoration(
             //color: Color(0xFFE8EAF6),
-            color: Colors.white,
+            //color: Colors.white,
+            //color: AppColors.black60,
+            color: const Color(0xFFE5E5E5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28 * 100),
             ),

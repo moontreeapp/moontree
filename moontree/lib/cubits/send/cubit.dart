@@ -4,29 +4,30 @@ import 'package:moontree/cubits/mixins.dart';
 
 part 'state.dart';
 
-class HoldingCubit extends Cubit<HoldingState>
-    with UpdateHideMixin<HoldingState> {
-  HoldingCubit() : super(const HoldingState());
+class SendCubit extends Cubit<SendState> with UpdateHideMixin<SendState> {
+  SendCubit() : super(const SendState());
   double height = 0;
   @override
-  String get key => 'holding';
+  String get key => 'send';
   @override
-  void reset() => emit(const HoldingState());
+  void reset() => emit(const SendState());
   @override
-  void setState(HoldingState state) => emit(state);
+  void setState(SendState state) => emit(state);
   @override
   void hide() => update(active: false);
 
   @override
   void update({
     bool? active,
-    bool? send,
+    String? asset,
+    double? amount,
     bool? isSubmitting,
-    HoldingState? prior,
+    SendState? prior,
   }) {
-    emit(HoldingState(
+    emit(SendState(
       active: active ?? state.active,
-      send: send ?? state.send,
+      asset: asset ?? state.asset,
+      amount: amount ?? state.amount,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));

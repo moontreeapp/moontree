@@ -1,6 +1,6 @@
 part of 'cubit.dart';
 
-class MenuState with EquatableMixin {
+class MenuState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final Widget? child;
   final Side? side;
@@ -27,6 +27,7 @@ class MenuState with EquatableMixin {
   @override
   String toString() => '$runtimeType($props)';
 
+  @override
   MenuState get withoutPrior => MenuState(
         active: active,
         child: child,
@@ -35,6 +36,9 @@ class MenuState with EquatableMixin {
         prior: null,
       );
 
-  bool get wasInactive => (prior?.active == null || !prior!.active);
-  bool get wasActive => !wasInactive;
+  @override
+  bool get wasActive => prior?.active == true;
+
+  @override
+  bool get isActive => active;
 }

@@ -69,48 +69,52 @@ class ConnectionIndicator extends StatelessWidget {
       buildWhen: (AppbarState previous, AppbarState current) =>
           previous.leading != current.leading,
       builder: (context, state) {
-        if (state.leading == AppbarLeading.connection) {
-          return Container(
-              height: 16 + screen.iconMedium + 16,
-              width: 24 + screen.iconMedium + 24,
-              alignment: Alignment.center,
-              child: Container(
-                  height: screen.iconMedium,
-                  width: screen.iconMedium,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Icon(Icons.wifi,
-                      color: Colors.green, size: screen.iconMedium)));
-        }
-        if (state.leading == AppbarLeading.back) {
-          return Container(
-              height: 16 + screen.iconMedium + 16,
-              width: 24 + screen.iconMedium + 24,
-              alignment: Alignment.center,
-              child: Container(
-                  height: screen.iconMedium,
-                  width: screen.iconMedium,
-                  alignment: Alignment.center,
-                  child: Icon(Icons.chevron_left_rounded,
-                      color: Colors.white, size: screen.iconMedium)));
-        }
-        if (state.leading == AppbarLeading.close) {
-          return Container(
-              height: 16 + screen.iconMedium + 16,
-              width: 24 + screen.iconMedium + 24,
-              alignment: Alignment.center,
-              child: Container(
-                  height: screen.iconMedium,
-                  width: screen.iconMedium,
-                  alignment: Alignment.center,
-                  child: Icon(Icons.close_rounded,
-                      color: Colors.white, size: screen.iconMedium)));
-        }
-        return SizedBox(
-          height: 16 + screen.iconMedium + 16,
-        );
+        return GestureDetector(
+            onTap: state.onLead,
+            child: () {
+              if (state.leading == AppbarLeading.connection) {
+                return Container(
+                    height: 16 + screen.iconMedium + 16,
+                    width: 24 + screen.iconMedium + 24,
+                    alignment: Alignment.center,
+                    child: Container(
+                        height: screen.iconMedium,
+                        width: screen.iconMedium,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Icon(Icons.wifi,
+                            color: Colors.green, size: screen.iconMedium)));
+              }
+              if (state.leading == AppbarLeading.back) {
+                return Container(
+                    height: 16 + screen.iconMedium + 16,
+                    width: 24 + screen.iconMedium + 24,
+                    alignment: Alignment.center,
+                    child: Container(
+                        height: screen.iconMedium,
+                        width: screen.iconMedium,
+                        alignment: Alignment.center,
+                        child: Icon(Icons.chevron_left_rounded,
+                            color: Colors.white, size: screen.iconMedium)));
+              }
+              if (state.leading == AppbarLeading.close) {
+                return Container(
+                    height: 16 + screen.iconMedium + 16,
+                    width: 24 + screen.iconMedium + 24,
+                    alignment: Alignment.center,
+                    child: Container(
+                        height: screen.iconMedium,
+                        width: screen.iconMedium,
+                        alignment: Alignment.center,
+                        child: Icon(Icons.close_rounded,
+                            color: Colors.white, size: screen.iconMedium)));
+              }
+              return SizedBox(
+                height: 16 + screen.iconMedium + 16,
+              );
+            }());
       });
 }
 
@@ -121,13 +125,15 @@ class Title extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<AppbarCubit, AppbarState>(
       buildWhen: (AppbarState previous, AppbarState current) =>
           previous.title != current.title,
-      builder: (context, state) => Container(
-          height: screen.appbar.height,
-          width: screen.width - (24 + screen.iconMedium + 24) - 16,
-          alignment: Alignment.centerLeft,
-          child: Text(state.title,
-              style: Theme.of(context)
-                  .textTheme
-                  .sub1
-                  .copyWith(color: Colors.white))));
+      builder: (context, state) => GestureDetector(
+          onTap: state.onTitle,
+          child: Container(
+              height: screen.appbar.height,
+              width: screen.width - (24 + screen.iconMedium + 24) - 16,
+              alignment: Alignment.centerLeft,
+              child: Text(state.title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .sub1
+                      .copyWith(color: Colors.white)))));
 }

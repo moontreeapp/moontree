@@ -1,12 +1,14 @@
 part of 'cubit.dart';
 
-class HoldingState with EquatableMixin {
+class HoldingState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
+  final bool send;
   final bool isSubmitting;
   final HoldingState? prior;
 
   const HoldingState({
     this.active = false,
+    this.send = false,
     this.isSubmitting = false,
     this.prior,
   });
@@ -14,6 +16,7 @@ class HoldingState with EquatableMixin {
   @override
   List<Object?> get props => <Object?>[
         active,
+        send,
         isSubmitting,
         prior,
       ];
@@ -21,12 +24,17 @@ class HoldingState with EquatableMixin {
   @override
   String toString() => '$runtimeType($props)';
 
+  @override
   HoldingState get withoutPrior => HoldingState(
         active: active,
+        send: send,
         isSubmitting: isSubmitting,
         prior: null,
       );
 
-  bool get wasInactive => (prior?.active == null || !prior!.active);
-  bool get wasActive => !wasInactive;
+  @override
+  bool get wasActive => prior?.active == true;
+
+  @override
+  bool get isActive => active;
 }

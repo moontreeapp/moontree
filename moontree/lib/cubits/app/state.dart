@@ -2,7 +2,6 @@ part of 'cubit.dart';
 
 class AppState with EquatableMixin {
   final String status;
-
   final bool submitting;
   final AppState? prior;
 

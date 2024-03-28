@@ -8,6 +8,7 @@ export 'package:moontree/cubits/menu/cubit.dart';
 export 'package:moontree/cubits/navbar/cubit.dart';
 export 'package:moontree/cubits/pane/cubit.dart';
 export 'package:moontree/cubits/panel/cubit.dart';
+export 'package:moontree/cubits/send/cubit.dart';
 export 'package:moontree/cubits/toast/cubit.dart';
 export 'package:moontree/cubits/transactions/cubit.dart';
 export 'package:moontree/cubits/tutorial/cubit.dart';
