@@ -87,7 +87,7 @@ class Maestro {
 
   Future<void> _activeateHome() async {
     cubits.ignore.update(active: true);
-    cubits.navbar.update(section: NavbarSection.wallet);
+    cubits.navbar.update(section: NavbarSection.wallet, hidden: false);
     cubits.appbar.update(
       leading: AppbarLeading.connection,
       title: 'Wallet 1',
@@ -116,7 +116,7 @@ class Maestro {
   Future<void> _activeateMint() async {
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
-    cubits.navbar.update(section: NavbarSection.mint);
+    cubits.navbar.update(section: NavbarSection.mint, hidden: false);
     await inactiveateAllBut(null);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
@@ -124,7 +124,7 @@ class Maestro {
 
   void _activeateSwap() {
     cubits.ignore.update(active: true);
-    cubits.navbar.update(section: NavbarSection.swap);
+    cubits.navbar.update(section: NavbarSection.swap, hidden: false);
     cubits.wallet.update(active: false);
     cubits.ignore.update(active: false);
   }
@@ -132,6 +132,7 @@ class Maestro {
   Future<void> activateTransactions() async {
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
+    cubits.navbar.update(hidden: true);
     cubits.appbar.update(
       leading: AppbarLeading.back,
       title: 'Coin',
@@ -144,7 +145,7 @@ class Maestro {
       active: true,
       height: screen.pane.midHeight,
       max: screen.pane.maxHeightPercent,
-      min: screen.pane.minHeightPercent,
+      min: screen.pane.midHeightPercent,
     );
     await inactiveateAllBut(cubits.transactions.state);
     cubits.transactions.update(active: true);
@@ -155,6 +156,7 @@ class Maestro {
   Future<void> activateSend() async {
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
+    cubits.navbar.update(hidden: true);
     cubits.appbar.update(
       leading: AppbarLeading.close,
       title: 'Send',

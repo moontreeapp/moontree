@@ -9,12 +9,14 @@ class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
 
   @override
-  Widget build(BuildContext context) => ListView.builder(
-      controller: cubits.pane.state.scroller!,
-      shrinkWrap: true,
-      itemCount: 48,
-      itemBuilder: (context, int index) =>
-          Holding(sats: pow(index, index ~/ 4.2) as int));
+  Widget build(BuildContext context) => Padding(
+      padding: EdgeInsets.only(bottom: screen.navbar.height),
+      child: ListView.builder(
+          controller: cubits.pane.state.scroller!,
+          shrinkWrap: true,
+          itemCount: 48,
+          itemBuilder: (context, int index) =>
+              Holding(sats: pow(index, index ~/ 4.2) as int)));
 }
 
 class Holding extends StatelessWidget {

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moontree/cubits/holding/cubit.dart';
 import 'package:moontree/presentation/utils/animation.dart';
+import 'package:moontree/presentation/widgets/animations/hiding.dart';
 import 'package:moontree/services/services.dart' show maestro, screen;
 import 'package:moontree/presentation/theme/theme.dart';
 import 'package:moontree/presentation/widgets/assets/icons.dart';
@@ -134,15 +135,7 @@ class AnimatedCoinSpec extends StatelessWidget {
                   : 4 + screen.iconHuge + 16,
               child: assetValues()),
           Positioned(
-              bottom: 24,
-              child: IgnorePointer(
-                  ignoring: state.send,
-                  child: AnimatedOpacity(
-                      opacity: state.send ? 0 : 1,
-                      curve:
-                          state.send ? Curves.easeOutQuint : Curves.easeInQuint,
-                      duration: slideDuration,
-                      child: buttons()))),
+              bottom: 24, child: Hide(hidden: state.send, child: buttons())),
         ]);
       });
 }

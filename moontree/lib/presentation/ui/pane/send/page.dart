@@ -10,7 +10,7 @@ class SendPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
       height: screen.pane.midHeight,
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 24),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 24),
       child:
           Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         const Column(

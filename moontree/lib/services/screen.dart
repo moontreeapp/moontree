@@ -52,7 +52,8 @@ class Screen {
     required double screenHeight,
   }) {
     height = screenHeight - (Platform.isWindows ? 0 : appbar.statusBarHeight);
-    displayHeight = height - (navbar.height + appbar.height);
+    //displayHeight = height - (navbar.height + appbar.height);
+    displayHeight = height - appbar.height;
   }
 
   factory Screen.init(double height, double width, double statusBarHeight) {
@@ -163,6 +164,6 @@ class Canvas {
   factory Canvas.init(double height, Appbar appbar, Pane pane) => Canvas._(
         midHeight: height - (pane.midHeight + appbar.height),
         maxHeight: height - (pane.minHeight + appbar.height),
-        wSpace: height * (32/360),
+        wSpace: height * (32 / 360),
       );
 }

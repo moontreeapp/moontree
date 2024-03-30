@@ -19,9 +19,11 @@ class NavbarCubit extends Cubit<NavbarState> with UpdateMixin<NavbarState> {
   @override
   void update({
     NavbarSection? section,
+    bool? hidden,
   }) {
     emit(NavbarState(
       section: section ?? state.section,
+      hidden: hidden ?? state.hidden,
       prior: state.withoutPrior,
     ));
   }
