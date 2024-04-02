@@ -85,6 +85,25 @@ class Maestro {
     }
   }
 
+  void toggleFull() {
+    try {
+      cubits.pane.state.scroller?.jumpTo(0);
+    } catch (_) {}
+    if (cubits.pane.height <= screen.pane.midHeight) {
+      if (cubits.pane.state.height == screen.pane.maxHeight) {
+        cubits.pane.update(height: screen.pane.maxHeight - 1);
+      }
+      cubits.pane.update(height: screen.pane.maxHeight);
+      cubits.navbar.update(hidden: false);
+    } else {
+      if (cubits.pane.state.height == screen.pane.minHeight) {
+        cubits.pane.update(height: screen.pane.minHeight + 1);
+      }
+      cubits.pane.update(height: screen.pane.minHeight);
+      cubits.navbar.update(hidden: true);
+    }
+  }
+
   Future<void> _activeateHome() async {
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet, hidden: false);
@@ -92,7 +111,7 @@ class Maestro {
       leading: AppbarLeading.connection,
       title: 'Wallet 1',
       onLead: cubits.appbar.none,
-      onTitle: cubits.pane.toggleFull,
+      onTitle: toggleFull, //cubits.pane.toggleFull,
     );
     cubits.holding.update(active: false);
     cubits.menu.update(active: true);

@@ -9,14 +9,18 @@ class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
 
   @override
-  Widget build(BuildContext context) => Padding(
-      padding: EdgeInsets.only(bottom: screen.navbar.height),
-      child: ListView.builder(
+  Widget build(BuildContext context) => //Padding(
+      //padding: EdgeInsets.only(bottom: screen.navbar.height),
+      //child:
+      ListView.builder(
           controller: cubits.pane.state.scroller!,
           shrinkWrap: true,
-          itemCount: 48,
-          itemBuilder: (context, int index) =>
-              Holding(sats: pow(index, index ~/ 4.2) as int)));
+          itemCount: 48 + 1,
+          itemBuilder: (context, int index) => index < 48
+              ? Holding(sats: pow(index, index ~/ 4.2) as int)
+              : SizedBox(height: screen.navbar.height))
+      //)
+      ;
 }
 
 class Holding extends StatelessWidget {
@@ -61,7 +65,7 @@ class Holding extends StatelessWidget {
             child: Text('Coin',
                 style: Theme.of(context)
                     .textTheme
-                    .body1!
+                    .body1
                     .copyWith(color: Colors.black87))),
         trailing: SizedBox(
             width: screen.iconMedium + screen.iconMedium,

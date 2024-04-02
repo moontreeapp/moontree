@@ -13,7 +13,7 @@ class NavbarSections extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
       //color: Colors.grey.withOpacity(.5),
-      color: Colors.transparent,
+      color: Colors.white,
       height: screen.navbar.height,
       width: screen.width,
       alignment: Alignment.center,
