@@ -11,7 +11,7 @@ class Repository<T> {
 
   bool resultsIsInitialized() {
     try {
-      print("Results: $results");
+      print("Results<$T>: $results");
       return true;
     } catch (e) {
       print("Results has not been initialized yet.");
@@ -37,6 +37,7 @@ class Repository<T> {
         resultLocal = await fromLocal();
       } else {
         resultLocal = fromLocal();
+        print('resultLocal $resultLocal');
       }
       if (detectLocalError(resultLocal)) {
         errors[RepoSource.local] = 'cache not implemented'; //'nothing cached'
@@ -51,6 +52,7 @@ class Repository<T> {
     bool connErr = false;
     try {
       resultServer = await fromServer();
+      print('resultServer $resultServer');
     } catch (e) {
       connErr = true;
     }

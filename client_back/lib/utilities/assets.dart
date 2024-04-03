@@ -112,6 +112,7 @@ List<AssetHolding> assetHoldings(
   for (final BalanceView balance in holdings) {
     final symbol =
         Symbol(balance.symbol)(ChainExtension.from(balance.chain!), Net.main);
+    print('balance ${balance.toJson()}, ${symbol.symbol}');
     final baseSymbol = symbol.baseSymbol;
     final symbolType = symbol.symbolType;
     if (balance.symbol == (chainNet?.symbol ?? 'RVN')) {
