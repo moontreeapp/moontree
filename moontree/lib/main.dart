@@ -126,7 +126,7 @@ class MaestroLayer extends StatelessWidget {
       min: screen.pane.minHeightPercent,
       max: screen.pane.maxHeightPercent,
     );
-    cubits.pane.update(height: screen.pane.maxHeight);
+    cubits.pane.update(height: screen.pane.midHeight);
     cubits.ignore.update(active: false);
   }
 }

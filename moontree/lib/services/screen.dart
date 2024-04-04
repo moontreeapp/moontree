@@ -20,6 +20,7 @@ class Screen {
   final Navbar navbar;
   final Pane pane;
   final Canvas canvas;
+  final Menu menu;
   final double hspace;
   final double wspace;
   final double bspace;
@@ -39,6 +40,7 @@ class Screen {
     required this.navbar,
     required this.pane,
     required this.canvas,
+    required this.menu,
     required this.buttonHeight,
     required this.hspace,
     required this.wspace,
@@ -61,11 +63,13 @@ class Screen {
     final navbar = Navbar.init(height);
     final pane = Pane.init(height, appbar, navbar);
     final canvas = Canvas.init(height, appbar, pane);
+    final menu = Menu.init(height);
     return Screen(
       appbar: appbar,
       navbar: navbar,
       pane: pane,
       canvas: canvas,
+      menu: menu,
       width: width,
       widthOneThird: (width ~/ 3).toDouble(),
       hspace: height * (16 / 760),
@@ -87,15 +91,18 @@ class Appbar {
   final double statusBarHeightPercentage;
   final double statusBarHeight;
   final double height;
+  final double logoHeight;
 
   Appbar._({
     required this.statusBarHeightPercentage,
     required this.statusBarHeight,
     required this.height,
+    required this.logoHeight,
   });
 
   factory Appbar.init(double height, double statusBarHeight) => Appbar._(
         height: height * (56 / 760),
+        logoHeight: height * (24 / 760),
         statusBarHeight: statusBarHeight,
         statusBarHeightPercentage: statusBarHeight / height,
       );
@@ -144,26 +151,44 @@ class Pane {
   factory Pane.init(double height, Appbar appbar, Navbar navbar) => Pane._(
       maxHeight: height - appbar.height,
       midHeight: height * _midHeightPercent,
-      minHeight: navbar.height + 20,
+      minHeight: navbar.height + 0,
       maxHeightPercent: (height - appbar.height) / height,
       midHeightPercent: _midHeightPercent,
-      minHeightPercent: (navbar.height + 20) / height);
+      minHeightPercent: (navbar.height + 0) / height);
 }
 
 class Canvas {
-  final double midHeight;
   final double maxHeight;
+  final double midHeight;
+  final double bottomHeight;
   final double wSpace;
 
   Canvas._({
-    required this.midHeight,
     required this.maxHeight,
+    required this.midHeight,
+    required this.bottomHeight,
     required this.wSpace,
   });
 
   factory Canvas.init(double height, Appbar appbar, Pane pane) => Canvas._(
-        midHeight: height - (pane.midHeight + appbar.height),
         maxHeight: height - (pane.minHeight + appbar.height),
+        midHeight: height - (pane.midHeight + appbar.height),
+        bottomHeight: height -
+            (appbar.height +
+                pane.minHeight +
+                (height - (pane.midHeight + appbar.height))),
         wSpace: height * (32 / 360),
+      );
+}
+
+class Menu {
+  final double itemHeight;
+
+  Menu._({
+    required this.itemHeight,
+  });
+
+  factory Menu.init(double height) => Menu._(
+        itemHeight: height * (48 / 760),
       );
 }

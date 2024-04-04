@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/canvas/cubit.dart';
 import 'package:moontree/cubits/cubit.dart';
+import 'package:moontree/presentation/ui/canvas/balance/balance.dart';
 import 'package:moontree/presentation/ui/canvas/menu/menu.dart';
 import 'package:moontree/presentation/ui/canvas/holding/holding.dart';
 import 'package:moontree/presentation/utils/animation.dart';
@@ -43,6 +44,7 @@ class CanvasStack extends StatelessWidget {
   Widget build(BuildContext context) => const Stack(
         alignment: Alignment.topCenter,
         children: [
+          Balance(),
           Menu(),
           HodingDetail(), // mutates into send...
         ],

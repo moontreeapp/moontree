@@ -8,7 +8,6 @@ part 'state.dart';
 
 class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
   MenuCubit() : super(const MenuState());
-  double height = 0;
   @override
   String get key => 'menu';
   @override
@@ -21,6 +20,7 @@ class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
   @override
   void update({
     bool? active,
+    bool? faded,
     Widget? child,
     Side? side,
     bool? isSubmitting,
@@ -28,6 +28,7 @@ class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
   }) {
     emit(MenuState(
       active: active ?? state.active,
+      faded: faded ?? state.faded,
       child: child ?? state.child,
       side: side ?? state.side,
       isSubmitting: isSubmitting ?? state.isSubmitting,

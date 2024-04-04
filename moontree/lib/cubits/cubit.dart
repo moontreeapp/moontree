@@ -5,6 +5,7 @@ import 'package:provider/single_child_widget.dart' show SingleChildWidget;
 class GlobalCubits {
   /// canvas
   final canvas = CanvasCubit();
+  final balance = BalanceCubit();
   final menu = MenuCubit();
   final holding = HoldingCubit();
 
@@ -43,6 +44,7 @@ class GlobalCubits {
 
   List<SingleChildWidget> get providers => [
         BlocProvider<CanvasCubit>(create: (context) => canvas),
+        BlocProvider<BalanceCubit>(create: (context) => balance),
         BlocProvider<MenuCubit>(create: (context) => menu),
         BlocProvider<HoldingCubit>(create: (context) => holding),
         BlocProvider<PaneCubit>(create: (context) => pane),

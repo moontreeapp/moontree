@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moontree/cubits/send/cubit.dart';
+import 'package:moontree/cubits/pane/send/cubit.dart';
 import 'package:moontree/presentation/ui/pane/send/page.dart';
 
 class Send extends StatelessWidget {

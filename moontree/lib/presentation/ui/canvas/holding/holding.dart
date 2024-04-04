@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moontree/cubits/holding/cubit.dart';
+import 'package:moontree/cubits/canvas/holding/cubit.dart';
 import 'package:moontree/presentation/ui/canvas/holding/page.dart';
+import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/presentation/widgets/animations/fading.dart';
 
 class HodingDetail extends StatelessWidget {
@@ -13,8 +14,12 @@ class HodingDetail extends StatelessWidget {
           previous.active != current.active ||
           (!previous.active && !current.active),
       builder: (context, state) => state.transitionWidgets(state,
-          onEntering: const FadeIn(child: HodingDetailPage()),
+          onEntering:
+              const FadeIn(delay: fadeDuration, child: HodingDetailPage()),
           onEntered: const HodingDetailPage(), // never triggered
-          onExiting: const FadeOut(child: HodingDetailPage()),
+          onExiting: FadeOut(
+              child: IgnorePointer(
+                  ignoring: (state.active && !state.send) || (!state.active),
+                  child: const HodingDetailPage())),
           onExited: const SizedBox.shrink()));
 }

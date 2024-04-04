@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 extension DoubleReadableNumericExtension on double {
   String toCommaString() =>
       NumberFormat('#,##0.########', 'en_US').format(this);
+  String toFiatCommaString() => NumberFormat('#,##0.##', 'en_US').format(this);
 }
 
 extension IntReadableNumericExtension on int {
@@ -50,6 +51,18 @@ class Coin {
   Coin operator +(Coin other) => Coin._(value + other.value);
   Sats get toSats => Sats((value * satsPerCoin).round());
   String humanString() => value.toCommaString();
+}
+
+class Fiat {
+  final double value;
+  const Fiat._(this.value);
+  factory Fiat(double value) {
+    return Fiat._(value);
+  }
+  factory Fiat.fromCoin(Coin coin, double coinPrice) =>
+      Fiat._(coin.value * coinPrice);
+  Fiat operator +(Fiat other) => Fiat._(value + other.value);
+  String humanString() => value.toFiatCommaString();
 }
 
 class Divisibility {

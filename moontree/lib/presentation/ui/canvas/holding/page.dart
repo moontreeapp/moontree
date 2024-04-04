@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:moontree/cubits/holding/cubit.dart';
+import 'package:moontree/cubits/canvas/holding/cubit.dart';
 import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/presentation/widgets/animations/hiding.dart';
 import 'package:moontree/services/services.dart' show maestro, screen;

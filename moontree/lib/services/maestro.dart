@@ -104,28 +104,80 @@ class Maestro {
     }
   }
 
+  // returns true if it's toggled to mid height, false at min
+  bool toggleMidMin() {
+    try {
+      cubits.pane.state.scroller?.jumpTo(0);
+    } catch (_) {}
+    if (cubits.pane.height > screen.pane.midHeight) {
+      if (cubits.pane.state.height == screen.pane.midHeight) {
+        cubits.pane.update(height: screen.pane.midHeight - 1);
+      }
+      cubits.pane.update(height: screen.pane.midHeight);
+      //cubits.navbar.update(hidden: false);
+      return true;
+    } else if (cubits.pane.height < screen.pane.midHeight) {
+      if (cubits.pane.state.height == screen.pane.midHeight) {
+        cubits.pane.update(height: screen.pane.midHeight - 1);
+      }
+      cubits.pane.update(height: screen.pane.midHeight);
+      //cubits.navbar.update(hidden: false);
+      return true;
+    } else if (cubits.pane.height == screen.pane.midHeight) {
+      if (cubits.pane.state.height == screen.pane.minHeight) {
+        cubits.pane.update(height: screen.pane.minHeight + 1);
+      }
+      cubits.pane.update(height: screen.pane.minHeight);
+      //cubits.navbar.update(hidden: true);
+      return false;
+    }
+    return true;
+  }
+
+  void hideNavbarOnDrag(double height) {
+    if (height < screen.pane.minHeight * 2) {
+      if (!cubits.navbar.state.hidden) {
+        cubits.navbar.update(hidden: true);
+      }
+    } else {
+      if (cubits.navbar.state.hidden) {
+        cubits.navbar.update(hidden: false);
+      }
+    }
+  }
+
+  void toggleBalanceFade(bool show) {
+    if (show) {
+      cubits.balance.update(faded: false);
+    } else {
+      cubits.balance.update(faded: true);
+    }
+  }
+
   Future<void> _activeateHome() async {
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet, hidden: false);
     cubits.appbar.update(
       leading: AppbarLeading.connection,
-      title: 'Wallet 1',
-      onLead: cubits.appbar.none,
-      onTitle: toggleFull, //cubits.pane.toggleFull,
+      title: 'Magic',
+      onLead: () => toggleBalanceFade(toggleMidMin()),
+      onTitle: () => toggleBalanceFade(toggleMidMin()),
     );
     cubits.holding.update(active: false);
+    cubits.balance.update(active: true, faded: false);
     cubits.menu.update(active: true);
     await inactiveateAllBut(cubits.wallet.state);
     cubits.wallet.update(active: true);
+    cubits.pane.heightBehavior = hideNavbarOnDrag;
     cubits.pane.update(
       max: screen.pane.maxHeightPercent,
       min: screen.pane.minHeightPercent,
     );
-    if (cubits.pane.height != screen.pane.maxHeight) {
-      if (cubits.pane.state.height == screen.pane.maxHeight) {
-        cubits.pane.update(height: screen.pane.maxHeight - 1);
+    if (cubits.pane.height != screen.pane.midHeight) {
+      if (cubits.pane.state.height == screen.pane.midHeight) {
+        cubits.pane.update(height: screen.pane.midHeight - 1);
       }
-      cubits.pane.update(height: screen.pane.maxHeight);
+      cubits.pane.update(height: screen.pane.midHeight);
     }
     cubits.fade.update(fade: FadeEvent.fadeIn);
     await Future.delayed(slideDuration);
@@ -159,13 +211,22 @@ class Maestro {
       onTitle: cubits.appbar.none,
     );
     cubits.menu.update(active: false);
+    cubits.balance.update(active: false);
     cubits.holding.update(active: true, send: false);
+    if (cubits.pane.height != screen.pane.midHeight) {
+      if (cubits.pane.state.height == screen.pane.midHeight) {
+        cubits.pane.update(height: screen.pane.midHeight - 1);
+      }
+      cubits.pane.update(height: screen.pane.midHeight);
+      await Future.delayed(slideDuration);
+    }
     cubits.pane.update(
       active: true,
-      height: screen.pane.midHeight,
+      //height: screen.pane.midHeight,
       max: screen.pane.maxHeightPercent,
       min: screen.pane.midHeightPercent,
     );
+    cubits.pane.heightBehavior = null;
     await inactiveateAllBut(cubits.transactions.state);
     cubits.transactions.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);

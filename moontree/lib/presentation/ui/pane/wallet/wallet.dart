@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/cubit.dart';
-import 'package:moontree/cubits/wallet/cubit.dart';
+import 'package:moontree/cubits/pane/wallet/cubit.dart';
 import 'package:moontree/presentation/ui/pane/wallet/page.dart';
 import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/presentation/widgets/animations/fading.dart';
@@ -15,8 +15,8 @@ class Wallet extends StatelessWidget {
       builder: (BuildContext context, WalletState state) =>
           state.transitionFunctions(state,
               onEntering: () {
-                WidgetsBinding.instance.addPostFrameCallback(
-                    (_) => cubits.pane.update(height: screen.pane.maxHeight));
+                //WidgetsBinding.instance.addPostFrameCallback(
+                //    (_) => cubits.pane.update(height: screen.pane.midHeight));
                 if (state.currency.isEmpty && state.assets.isEmpty) {
                   return GestureDetector(
                       onTap: cubits.wallet.populateAssets,

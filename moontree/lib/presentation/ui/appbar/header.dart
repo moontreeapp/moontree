@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moontree/cubits/appbar/cubit.dart';
 import 'package:moontree/presentation/theme/theme.dart';
+import 'package:moontree/presentation/widgets/assets/icons.dart';
 import 'package:moontree/services/services.dart' show screen;
 
 class AppbarHeader extends StatelessWidget {
@@ -77,15 +79,17 @@ class ConnectionIndicator extends StatelessWidget {
                     height: 16 + screen.iconMedium + 16,
                     width: 24 + screen.iconMedium + 24,
                     alignment: Alignment.center,
-                    child: Container(
-                        height: screen.iconMedium,
-                        width: screen.iconMedium,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Icon(Icons.wifi,
-                            color: Colors.green, size: screen.iconMedium)));
+                    child: Icon(Icons.menu_rounded,
+                        color: Colors.white, size: screen.iconMedium));
+                //Container(
+                //    height: screen.iconMedium,
+                //    width: screen.iconMedium,
+                //    alignment: Alignment.center,
+                //    decoration: BoxDecoration(
+                //        color: Colors.green,
+                //        borderRadius: BorderRadius.circular(8)),
+                //    child: Icon(Icons.wifi,
+                //        color: Colors.green, size: screen.iconMedium)));
               }
               if (state.leading == AppbarLeading.back) {
                 return Container(
@@ -131,9 +135,18 @@ class Title extends StatelessWidget {
               height: screen.appbar.height,
               width: screen.width - (24 + screen.iconMedium + 24) - 16,
               alignment: Alignment.centerLeft,
-              child: Text(state.title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .sub1
-                      .copyWith(color: Colors.white)))));
+              child: state.title == 'Magic'
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: SvgPicture.asset(
+                        LogoIcons.magic,
+                        height: screen.appbar.logoHeight,
+                        fit: BoxFit.contain,
+                        alignment: Alignment.center,
+                      ))
+                  : Text(state.title,
+                      style: Theme.of(context)
+                          .textTheme
+                          .sub1
+                          .copyWith(color: Colors.white)))));
 }

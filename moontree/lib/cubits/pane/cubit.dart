@@ -12,6 +12,7 @@ final DraggableScrollableController draggableScrollController =
 class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   PaneCubit() : super(PaneState(controller: draggableScrollController));
   double height = 0;
+  void Function(double height)? heightBehavior;
   @override
   String get key => 'pane';
   @override
@@ -43,7 +44,7 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
       controller.removeListener(_controllerListener);
       controller.addListener(_controllerListener);
     }
-    this.height = height ?? state.height;
+    this.height = height ?? this.height;
     emit(PaneState(
       active: active ?? state.active,
       dispose: dispose ?? false,
@@ -69,8 +70,8 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   //}
 
   void _controllerListener() {
-    //  if (state.scroller != null && state.scroller!.positions.isEmpty) return;
     height = state.controller.sizeToPixels(state.controller.size);
+    heightBehavior?.call(height);
   }
 
   void toggleFull() {
