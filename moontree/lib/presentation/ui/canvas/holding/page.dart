@@ -32,18 +32,19 @@ class AnimatedCoinSpec extends StatelessWidget {
       width: screen.width,
       alignment: Alignment.center,
       child: Container(
-        height: screen.iconHuge,
-        width: screen.iconHuge,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.primary60,
-          borderRadius: BorderRadius.circular(100),
-        ),
-        //child: SvgPicture.asset(
-        //  '${TransactionIcons.base}/send.${TransactionIcons.ext}',
-        //  alignment: Alignment.center,
-        //),
-      ));
+          height: screen.iconHuge,
+          width: screen.iconHuge,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            //color: AppColors.primary60,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Image.asset(LogoIcons.evr) // TODO: get from cubit
+          //SvgPicture.asset(
+          //  LogoIcons.evr,
+          //  alignment: Alignment.center,
+          //),
+          ));
 
   Widget assetValues() =>
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [

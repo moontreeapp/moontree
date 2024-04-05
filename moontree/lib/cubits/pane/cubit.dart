@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/mixins.dart';
+import 'package:moontree/presentation/utils/animation.dart';
 import 'package:moontree/services/services.dart';
-
 part 'state.dart';
 
 final DraggableScrollableController draggableScrollController =
@@ -71,23 +72,36 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
 
   void _controllerListener() {
     height = state.controller.sizeToPixels(state.controller.size);
+    print(height);
     heightBehavior?.call(height);
+    // this works ok, but is snap-mid drag and comes with the side effect of
+    // not being able to flick it up or down all the way smoothly, it will snap
+    // to the midde first, furthermore, there's a nasty staccato effect.
+    //_draggableSnap(height);
   }
 
-  void toggleFull() {
-    try {
-      state.scroller?.jumpTo(0);
-    } catch (_) {}
-    if (height <= screen.pane.midHeight) {
-      if (state.height == screen.pane.maxHeight) {
-        update(height: screen.pane.maxHeight - 1);
-      }
-      update(height: screen.pane.maxHeight);
-    } else {
-      if (state.height == screen.pane.minHeight) {
-        update(height: screen.pane.minHeight + 1);
-      }
-      update(height: screen.pane.minHeight);
+  //void _draggableSnap(double height) {
+  //  final double snapTo = [
+  //    screen.pane.maxHeight,
+  //    screen.pane.midHeight,
+  //    screen.pane.minHeight,
+  //  ].reduce((a, b) => (height - a).abs() < (height - b).abs() ? a : b);
+  //  if (height != snapTo) {
+  //    print('oh snap! $snapTo');
+  //    update(height: snapTo);
+  //  }
+  //}
+
+  void snapTo(double heightPixels) {
+    if (height == heightPixels && state.height == heightPixels) return;
+    if (heightPixels == screen.pane.minHeight) {
+      try {
+        state.scroller?.jumpTo(0);
+      } catch (_) {}
     }
+    if (state.height == heightPixels) {
+      update(height: heightPixels + 1);
+    }
+    update(height: heightPixels);
   }
 }

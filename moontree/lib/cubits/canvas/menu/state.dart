@@ -1,10 +1,34 @@
 part of 'cubit.dart';
 
+enum DifficultyMode {
+  easy,
+  hard;
+
+  String get name {
+    switch (this) {
+      case DifficultyMode.easy:
+        return 'Easy';
+      case DifficultyMode.hard:
+        return 'Hard';
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case DifficultyMode.easy:
+        return Icons.sledding_rounded;
+      case DifficultyMode.hard:
+        return Icons.snowboarding_rounded;
+    }
+  }
+}
+
 class MenuState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final bool faded;
   final Widget? child;
   final Side? side;
+  final DifficultyMode mode;
   final bool isSubmitting;
   final MenuState? prior;
 
@@ -13,6 +37,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
     this.faded = false,
     this.child = const SizedBox.shrink(),
     this.side = Side.none,
+    this.mode = DifficultyMode.easy,
     this.isSubmitting = false,
     this.prior,
   });
@@ -23,6 +48,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
         faded,
         child,
         side,
+        mode,
         isSubmitting,
         prior,
       ];
@@ -36,6 +62,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
         faded: faded,
         child: child,
         side: side,
+        mode: mode,
         isSubmitting: isSubmitting,
         prior: null,
       );

@@ -90,16 +90,10 @@ class Maestro {
       cubits.pane.state.scroller?.jumpTo(0);
     } catch (_) {}
     if (cubits.pane.height <= screen.pane.midHeight) {
-      if (cubits.pane.state.height == screen.pane.maxHeight) {
-        cubits.pane.update(height: screen.pane.maxHeight - 1);
-      }
-      cubits.pane.update(height: screen.pane.maxHeight);
+      cubits.pane.snapTo(screen.pane.maxHeight);
       cubits.navbar.update(hidden: false);
     } else {
-      if (cubits.pane.state.height == screen.pane.minHeight) {
-        cubits.pane.update(height: screen.pane.minHeight + 1);
-      }
-      cubits.pane.update(height: screen.pane.minHeight);
+      cubits.pane.snapTo(screen.pane.minHeight);
       cubits.navbar.update(hidden: true);
     }
   }
@@ -110,24 +104,15 @@ class Maestro {
       cubits.pane.state.scroller?.jumpTo(0);
     } catch (_) {}
     if (cubits.pane.height > screen.pane.midHeight) {
-      if (cubits.pane.state.height == screen.pane.midHeight) {
-        cubits.pane.update(height: screen.pane.midHeight - 1);
-      }
-      cubits.pane.update(height: screen.pane.midHeight);
+      cubits.pane.snapTo(screen.pane.midHeight);
       //cubits.navbar.update(hidden: false);
       return true;
     } else if (cubits.pane.height < screen.pane.midHeight) {
-      if (cubits.pane.state.height == screen.pane.midHeight) {
-        cubits.pane.update(height: screen.pane.midHeight - 1);
-      }
-      cubits.pane.update(height: screen.pane.midHeight);
+      cubits.pane.snapTo(screen.pane.midHeight);
       //cubits.navbar.update(hidden: false);
       return true;
     } else if (cubits.pane.height == screen.pane.midHeight) {
-      if (cubits.pane.state.height == screen.pane.minHeight) {
-        cubits.pane.update(height: screen.pane.minHeight + 1);
-      }
-      cubits.pane.update(height: screen.pane.minHeight);
+      cubits.pane.snapTo(screen.pane.minHeight);
       //cubits.navbar.update(hidden: true);
       return false;
     }
@@ -145,6 +130,16 @@ class Maestro {
       }
     }
   }
+
+  //void snapOnDrag(double height) {
+  //  if (height < (screen.pane.midHeight - screen.pane.minHeight) / 2) {
+  //    cubits.pane.update(height: screen.pane.minHeight);
+  //  } else if (height < (screen.pane.maxHeight - screen.pane.midHeight) / 2) {
+  //    cubits.pane.update(height: screen.pane.midHeight);
+  //  } else if (height >= (screen.pane.maxHeight - screen.pane.midHeight) / 2) {
+  //    cubits.pane.update(height: screen.pane.maxHeight);
+  //  }
+  //}
 
   void toggleBalanceFade(bool show) {
     if (show) {

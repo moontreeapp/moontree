@@ -37,9 +37,9 @@ class AnimatedBalance extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(state.portfolioHead, style: AppText.wholeFiat),
-                  if (state.portfolioTail != '.00')
-                    Text(state.portfolioTail, style: AppText.partFiat),
+                  Text(state.portfolioValue.head, style: AppText.wholeFiat),
+                  if (state.portfolioValue.tail != '.00')
+                    Text(state.portfolioValue.tail, style: AppText.partFiat),
                 ]),
             Text('Portfolio Value', style: AppText.usdHolding),
           ])));

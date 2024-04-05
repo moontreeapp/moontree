@@ -83,19 +83,35 @@ class DraggablePane extends StatelessWidget {
           //components.cubits.bottomModalSheet
           //        .setHeight(minExtent * screen.app.height);
 
-          return DraggableScrollableSheet(
-              controller: draggableScrollController,
-              expand: false,
-              initialChildSize: state.initial,
-              minChildSize: state.min,
-              maxChildSize: state.max,
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
-                cubits.pane.update(controller: draggableScrollController);
-                cubits.pane.update(scroller: scrollController);
-                return const DraggablePaneBackground(
-                    child: DraggablePaneStack());
-              });
+          return NotificationListener<ScrollNotification>(
+              onNotification: (scrollNotification) {
+                if (scrollNotification is ScrollEndNotification) {
+                  final double snapTo = [
+                    screen.pane.maxHeight,
+                    screen.pane.midHeight,
+                    screen.pane.minHeight,
+                  ].reduce((a, b) => (cubits.pane.height - a).abs() <
+                          (cubits.pane.height - b).abs()
+                      ? a
+                      : b);
+                  cubits.pane.snapTo(snapTo);
+                  return true;
+                }
+                return false;
+              },
+              child: DraggableScrollableSheet(
+                  controller: draggableScrollController,
+                  expand: false,
+                  initialChildSize: state.initial,
+                  minChildSize: state.min,
+                  maxChildSize: state.max,
+                  builder: (BuildContext context,
+                      ScrollController scrollController) {
+                    cubits.pane.update(controller: draggableScrollController);
+                    cubits.pane.update(scroller: scrollController);
+                    return const DraggablePaneBackground(
+                        child: DraggablePaneStack());
+                  }));
         });
   }
 }

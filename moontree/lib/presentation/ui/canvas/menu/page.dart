@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/canvas/menu/cubit.dart';
+import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/domain/concepts/consent.dart';
 import 'package:moontree/presentation/theme/theme.dart';
 import 'package:moontree/presentation/utils/animation.dart';
@@ -32,7 +34,8 @@ class AnimatedMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
       buildWhen: (MenuState previous, MenuState current) =>
-          current.active && previous.faded != current.faded,
+          current.active &&
+          (previous.faded != current.faded || previous.mode != current.mode),
       builder: (context, state) => AnimatedOpacity(
           duration: fadeDuration,
           curve: Curves.easeInOutCubic,
@@ -44,6 +47,36 @@ class AnimatedMenu extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      GestureDetector(
+                          onTap: () => launchUrl(
+                              Uri.parse('https://discord.gg/cGDebEXgpW')),
+                          child: Container(
+                              height: screen.menu.itemHeight,
+                              color: Colors.transparent,
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.help_rounded,
+                                        color: Colors.white),
+                                    const SizedBox(width: 16),
+                                    Text('Need Help? Chat Now!',
+                                        style: AppText.h2
+                                            .copyWith(color: Colors.white)),
+                                  ]))),
+                      GestureDetector(
+                          onTap: cubits.menu.toggleDifficulty,
+                          child: Container(
+                              height: screen.menu.itemHeight,
+                              color: Colors.transparent,
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Icon(state.mode.icon, color: Colors.white),
+                                    const SizedBox(width: 16),
+                                    Text('Mode: ${state.mode.name}',
+                                        style: AppText.h2
+                                            .copyWith(color: Colors.white)),
+                                  ]))),
                       SizedBox(
                           height: screen.menu.itemHeight,
                           child: Row(

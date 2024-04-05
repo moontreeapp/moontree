@@ -4,8 +4,6 @@ import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/cubits/pane/wallet/cubit.dart';
 import 'package:moontree/presentation/ui/pane/wallet/page.dart';
 import 'package:moontree/presentation/utils/animation.dart';
-import 'package:moontree/presentation/widgets/animations/fading.dart';
-import 'package:moontree/services/services.dart';
 
 class Wallet extends StatelessWidget {
   const Wallet({super.key});

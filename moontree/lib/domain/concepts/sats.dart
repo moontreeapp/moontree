@@ -7,7 +7,7 @@ extension DoubleReadableNumericExtension on double {
 }
 
 extension IntReadableNumericExtension on int {
-  String toCommaString() => NumberFormat('#,##0' 'en_US').format(this);
+  String toCommaString() => NumberFormat('#,##0', 'en_US').format(this);
 }
 
 const satsPerCoin = 100000000;
@@ -61,8 +61,22 @@ class Fiat {
   }
   factory Fiat.fromCoin(Coin coin, double coinPrice) =>
       Fiat._(coin.value * coinPrice);
+  const Fiat.empty() : value = 0;
   Fiat operator +(Fiat other) => Fiat._(value + other.value);
   String humanString() => value.toFiatCommaString();
+
+  String get head =>
+      int.parse(value.toString().split('.').first).toCommaString();
+  String get tail {
+    final cents = '.${value.toString().split('.').last}';
+    if (cents.length == 2) {
+      return '${cents}0';
+    }
+    if (cents.length == 3) {
+      return cents;
+    }
+    return cents.substring(0, 3);
+  }
 }
 
 class Divisibility {

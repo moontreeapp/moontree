@@ -23,6 +23,7 @@ class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
     bool? faded,
     Widget? child,
     Side? side,
+    DifficultyMode? mode,
     bool? isSubmitting,
     MenuState? prior,
   }) {
@@ -31,8 +32,17 @@ class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
       faded: faded ?? state.faded,
       child: child ?? state.child,
       side: side ?? state.side,
+      mode: mode ?? state.mode,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));
+  }
+
+  void toggleDifficulty() {
+    if (state.mode == DifficultyMode.easy) {
+      update(mode: DifficultyMode.hard);
+    } else {
+      update(mode: DifficultyMode.easy);
+    }
   }
 }

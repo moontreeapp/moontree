@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moontree/cubits/mixins.dart';
+import 'package:moontree/domain/concepts/sats.dart';
 
 part 'state.dart';
 
@@ -20,7 +21,7 @@ class BalanceCubit extends Cubit<BalanceState>
   void update({
     bool? active,
     bool? faded,
-    double? portfolioValue,
+    Fiat? portfolioValue,
     bool? isSubmitting,
     BalanceState? prior,
   }) {

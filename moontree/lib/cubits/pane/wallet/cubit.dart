@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moontree/cubits/cubit.dart';
 import 'package:moontree/cubits/mixins.dart';
 import 'package:moontree/domain/concepts/holding.dart';
 import 'package:moontree/domain/concepts/sats.dart';
@@ -36,18 +37,21 @@ class WalletCubit extends Cubit<WalletState> with UpdateHideMixin<WalletState> {
     ));
   }
 
-  void populateAssets() => update(
-      currency: Holding(
-        name: 'Ravencoin',
-        symbol: 'RVN',
-        sats: Sats(21),
-        metadata: HoldingMetadata(
-          divisibility: Divisibility(8),
-          reissuable: false,
-          supply: Sats.fromCoin(Coin(21000000000)),
+  void populateAssets() {
+    update(
+        currency: Holding(
+          name: 'Ravencoin',
+          symbol: 'RVN',
+          sats: Sats(21),
+          metadata: HoldingMetadata(
+            divisibility: Divisibility(8),
+            reissuable: false,
+            supply: Sats.fromCoin(Coin(21000000000)),
+          ),
         ),
-      ),
-      assets: []);
+        assets: []);
+    cubits.balance.update(portfolioValue: Fiat(12546.01));
+  }
 
   // todo pagenate list of holdings
   //Holding getNextBatch(List<Holding> batch) {}

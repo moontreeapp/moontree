@@ -93,6 +93,10 @@ class AppText {
       letterSpacing: 0.25,
       color: AppColors.black87);
 
+  static TextStyle get identicon => h1.copyWith(
+        color: AppColors.white87,
+      );
+
   static TextStyle get disabledButton => button1.copyWith(
         fontWeight: FontWeights.semiBold,
         color: AppColors.white87,
