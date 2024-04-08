@@ -6,8 +6,8 @@
   "configurations": [
   
     {
-      "name": "moontree",
-      "cwd": "moontree",
+      "name": "magic",
+      "cwd": "magic",
       //"name": "client_front",
       //"cwd": "client_front",
       "request": "launch",
