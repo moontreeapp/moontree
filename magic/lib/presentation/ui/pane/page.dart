@@ -95,7 +95,7 @@ class DraggablePane extends StatelessWidget {
                       ? a
                       : b);
                   cubits.pane.snapTo(snapTo);
-                  return true;
+                  return false;
                 }
                 return false;
               },
@@ -150,7 +150,7 @@ class EmptyFeed extends StatelessWidget {
           if (state.controller.isAttached) {
             state.controller.animateTo(
               heightAsPercent,
-              duration: slideDuration,
+              duration: slideDuration * 1.618,
               curve: Curves.easeInOutCirc,
             );
             await Future.delayed(slideDuration);

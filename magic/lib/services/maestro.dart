@@ -15,8 +15,8 @@ class Maestro {
   //      cubits.wallet,
   //    ];
 
-  bool get _allSectionCubitsAreHidden =>
-      cubits.navbar.state.section == NavbarSection.none;
+  //bool get _allSectionCubitsAreHidden =>
+  //    cubits.navbar.state.section == NavbarSection.none;
   //_sectionCubits.every((cubit) => !(cubit as Cubit).state.active);
 
   void sectionBack({Function? beforeBack, Function? afterBack}) {
@@ -120,7 +120,7 @@ class Maestro {
   }
 
   void hideNavbarOnDrag(double height) {
-    if (height < screen.pane.minHeight * 2) {
+    if (height < (screen.pane.midHeight + screen.pane.minHeight) / 2) {
       if (!cubits.navbar.state.hidden) {
         cubits.navbar.update(hidden: true);
       }
@@ -128,6 +128,14 @@ class Maestro {
       if (cubits.navbar.state.hidden) {
         cubits.navbar.update(hidden: false);
       }
+    }
+  }
+
+  void setMinToMiddleOnMax(double height) {
+    if (height == screen.pane.maxHeight) {
+      cubits.pane.update(min: screen.pane.midHeightPercent);
+    } else if (height == screen.pane.midHeight) {
+      cubits.pane.update(min: screen.pane.minHeightPercent);
     }
   }
 
@@ -141,29 +149,24 @@ class Maestro {
   //  }
   //}
 
-  void toggleBalanceFade(bool show) {
-    if (show) {
-      cubits.balance.update(faded: false);
-    } else {
-      cubits.balance.update(faded: true);
-    }
-  }
-
   Future<void> _activeateHome() async {
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet, hidden: false);
     cubits.appbar.update(
       leading: AppbarLeading.connection,
       title: 'Magic',
-      onLead: () => toggleBalanceFade(toggleMidMin()),
-      onTitle: () => toggleBalanceFade(toggleMidMin()),
+      onLead: toggleMidMin,
+      onTitle: toggleMidMin,
     );
     cubits.holding.update(active: false);
-    cubits.balance.update(active: true, faded: false);
+    cubits.balance.update(active: true);
     cubits.menu.update(active: true);
     await inactiveateAllBut(cubits.wallet.state);
     cubits.wallet.update(active: true);
-    cubits.pane.heightBehavior = hideNavbarOnDrag;
+    cubits.pane.heightBehavior = (double h) {
+      hideNavbarOnDrag(h);
+      setMinToMiddleOnMax(h);
+    };
     cubits.pane.update(
       max: screen.pane.maxHeightPercent,
       min: screen.pane.minHeightPercent,

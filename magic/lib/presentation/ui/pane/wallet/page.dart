@@ -24,7 +24,9 @@ class Holding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-        onTap: maestro.activateTransactions,
+        onTap: () => cubits.pane.state.height == screen.pane.minHeight
+            ? cubits.pane.snapTo(screen.pane.midHeight)
+            : maestro.activateTransactions(),
         leading: const SimpleIdenticon(),
         title: SizedBox(
             width: screen.width -

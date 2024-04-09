@@ -20,14 +20,12 @@ class BalanceCubit extends Cubit<BalanceState>
   @override
   void update({
     bool? active,
-    bool? faded,
     Fiat? portfolioValue,
     bool? isSubmitting,
     BalanceState? prior,
   }) {
     emit(BalanceState(
       active: active ?? state.active,
-      faded: faded ?? state.faded,
       portfolioValue: portfolioValue ?? state.portfolioValue,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,

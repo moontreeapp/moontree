@@ -41,11 +41,11 @@ void main() {
   //ApiService.init();
   //await ApiConnection.init();
 
-  runApp(const MoontreeApp());
+  runApp(const MagicApp());
 }
 
-class MoontreeApp extends StatelessWidget {
-  const MoontreeApp({super.key});
+class MagicApp extends StatelessWidget {
+  const MagicApp({super.key});
 
   // This widget is the root of your application.
   @override

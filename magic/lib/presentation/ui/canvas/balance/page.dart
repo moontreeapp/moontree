@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/canvas/balance/cubit.dart';
+import 'package:magic/cubits/pane/cubit.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
@@ -27,20 +28,30 @@ class AnimatedBalance extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<BalanceCubit, BalanceState>(
       buildWhen: (BalanceState previous, BalanceState current) =>
-          current.active && previous.faded != current.faded,
-      builder: (context, state) => AnimatedOpacity(
-          duration: fadeDuration,
-          curve: Curves.easeInOutCubic,
-          opacity: state.faded ? .12 : 1,
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.portfolioValue.head, style: AppText.wholeFiat),
-                  if (state.portfolioValue.tail != '.00')
-                    Text(state.portfolioValue.tail, style: AppText.partFiat),
-                ]),
-            Text('Portfolio Value', style: AppText.usdHolding),
-          ])));
+          current.active,
+      builder: (context, state) => BlocBuilder<PaneCubit, PaneState>(
+          buildWhen: (PaneState previous, PaneState current) =>
+              previous.height != current.height,
+          builder: (BuildContext paneContext, PaneState paneState) =>
+              AnimatedOpacity(
+                  duration: fadeDuration * 2,
+                  curve: Curves.easeInOutCubic,
+                  opacity: paneState.height == screen.pane.minHeight
+                      ? .12
+                      : 1, //state.faded ? .12 : 1,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('\$${state.portfolioValue.head}',
+                                  style: AppText.wholeFiat),
+                              if (state.portfolioValue.tail != '.00')
+                                Text(state.portfolioValue.tail,
+                                    style: AppText.partFiat),
+                            ]),
+                        Text('Portfolio Value', style: AppText.usdHolding),
+                      ]))));
 }
