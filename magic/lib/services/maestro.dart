@@ -168,7 +168,9 @@ class Maestro {
       setMinToMiddleOnMax(h);
     };
     cubits.pane.update(
-      max: screen.pane.maxHeightPercent,
+      max: cubits.wallet.state.assets.length > 5
+          ? screen.pane.maxHeightPercent
+          : screen.pane.midHeightPercent,
       min: screen.pane.minHeightPercent,
     );
     if (cubits.pane.height != screen.pane.midHeight) {

@@ -41,6 +41,49 @@ class Transaction extends StatelessWidget {
     return ListTile(
       //dense: true,
       //visualDensity: VisualDensity.compact,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      leading: Container(
+        width: screen.iconHuge,
+        height: screen.iconHuge,
+        //color: Colors.red,
+        alignment: Alignment.center,
+        child: SvgPicture.asset(
+          '${TransactionIcons.base}/${x ? 'incoming' : 'outgoing'}.${TransactionIcons.ext}',
+          height: screen.iconHuge,
+          width: screen.iconHuge,
+          fit: BoxFit.contain,
+          alignment: Alignment.center,
+        ),
+      ),
+      title: SizedBox(
+          width: screen.width - (16 + 16 + screen.iconLarge + 16),
+          child: Text(x ? 'Sent' : 'Received',
+              style: Theme.of(context).textTheme.body1.copyWith(height: 0))),
+      subtitle: Container(
+          width: screen.width - (16 + 16 + screen.iconLarge + 16),
+          //color: Colors.red,
+          child: Text('today',
+              textAlign: TextAlign.start,
+              style: Theme.of(context).textTheme.body2.copyWith(
+                    height: 0,
+                    color: Colors.black38,
+                  ))),
+      trailing: SizedBox(
+          //width: screen.width - (16 + 16 + screen.iconLarge + 16),
+          child: Text('${x ? '+' : '-'}${display.sats.toCoin.humanString()}',
+              style: Theme.of(context).textTheme.body1.copyWith(
+                    height: 0,
+                    color: x ? AppColors.success : AppColors.black,
+                  ))),
+    );
+  }
+
+  @override
+  Widget build2(BuildContext context) {
+    final x = Random().nextInt(2) == 0;
+    return ListTile(
+      //dense: true,
+      //visualDensity: VisualDensity.compact,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: Container(
         width: screen.iconHuge,

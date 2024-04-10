@@ -150,7 +150,7 @@ class EmptyFeed extends StatelessWidget {
           if (state.controller.isAttached) {
             state.controller.animateTo(
               heightAsPercent,
-              duration: slideDuration * 1.618,
+              duration: quickSlideDuration,
               curve: Curves.easeInOutCirc,
             );
             await Future.delayed(slideDuration);

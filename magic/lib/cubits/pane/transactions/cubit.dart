@@ -41,6 +41,7 @@ class TransactionsCubit extends Cubit<TransactionsState>
       currency: Holding(
         name: 'Ravencoin',
         symbol: 'RVN',
+        root: 'RVN',
         sats: Sats(21),
         metadata: HoldingMetadata(
           divisibility: Divisibility(8),

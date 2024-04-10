@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const fastSlideDuration = Duration(milliseconds: 120);
+const quickSlideDuration = Duration(milliseconds: 180);
 const slideDuration = Duration(milliseconds: 300);
 const fadeDuration = Duration(milliseconds: 300);
 const slowFadeDuration = Duration(milliseconds: 4000);

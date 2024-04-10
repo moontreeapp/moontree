@@ -73,52 +73,42 @@ class ConnectionIndicator extends StatelessWidget {
       builder: (context, state) {
         return GestureDetector(
             onTap: state.onLead,
-            child: () {
-              if (state.leading == AppbarLeading.connection) {
-                return Container(
-                    height: 16 + screen.iconMedium + 16,
-                    width: 24 + screen.iconMedium + 24,
-                    alignment: Alignment.center,
-                    child: Icon(Icons.menu_rounded,
-                        color: Colors.white, size: screen.iconMedium));
-                //Container(
-                //    height: screen.iconMedium,
-                //    width: screen.iconMedium,
-                //    alignment: Alignment.center,
-                //    decoration: BoxDecoration(
-                //        color: Colors.green,
-                //        borderRadius: BorderRadius.circular(8)),
-                //    child: Icon(Icons.wifi,
-                //        color: Colors.green, size: screen.iconMedium)));
-              }
-              if (state.leading == AppbarLeading.back) {
-                return Container(
-                    height: 16 + screen.iconMedium + 16,
-                    width: 24 + screen.iconMedium + 24,
-                    alignment: Alignment.center,
-                    child: Container(
+            child: Container(
+                height: 16 + screen.iconMedium + 16,
+                width: 24 + screen.iconMedium,
+                alignment: Alignment.centerRight,
+                child: () {
+                  if (state.leading == AppbarLeading.connection) {
+                    return Icon(Icons.menu_rounded,
+                        color: Colors.white, size: screen.iconMedium);
+                    //Container(
+                    //    height: screen.iconMedium,
+                    //    width: screen.iconMedium,
+                    //    alignment: Alignment.center,
+                    //    decoration: BoxDecoration(
+                    //        color: Colors.green,
+                    //        borderRadius: BorderRadius.circular(8)),
+                    //    child: Icon(Icons.wifi,
+                    //        color: Colors.green, size: screen.iconMedium)));
+                  }
+                  if (state.leading == AppbarLeading.back) {
+                    return Container(
                         height: screen.iconMedium,
                         width: screen.iconMedium,
                         alignment: Alignment.center,
                         child: Icon(Icons.chevron_left_rounded,
-                            color: Colors.white, size: screen.iconMedium)));
-              }
-              if (state.leading == AppbarLeading.close) {
-                return Container(
-                    height: 16 + screen.iconMedium + 16,
-                    width: 24 + screen.iconMedium + 24,
-                    alignment: Alignment.center,
-                    child: Container(
+                            color: Colors.white, size: screen.iconMedium));
+                  }
+                  if (state.leading == AppbarLeading.close) {
+                    return Container(
                         height: screen.iconMedium,
                         width: screen.iconMedium,
                         alignment: Alignment.center,
                         child: Icon(Icons.close_rounded,
-                            color: Colors.white, size: screen.iconMedium)));
-              }
-              return SizedBox(
-                height: 16 + screen.iconMedium + 16,
-              );
-            }());
+                            color: Colors.white, size: screen.iconMedium));
+                  }
+                  return const SizedBox.shrink();
+                }()));
       });
 }
 
@@ -137,16 +127,18 @@ class Title extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: state.title == 'Magic'
                   ? Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
+                      padding: const EdgeInsets.only(left: 8, top: 8.0),
                       child: SvgPicture.asset(
                         LogoIcons.magic,
                         height: screen.appbar.logoHeight,
                         fit: BoxFit.contain,
                         alignment: Alignment.center,
                       ))
-                  : Text(state.title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .sub1
-                          .copyWith(color: Colors.white)))));
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 24, top: 8.0),
+                      child: Text(state.title,
+                          style: Theme.of(context)
+                              .textTheme
+                              .sub1
+                              .copyWith(color: Colors.white))))));
 }

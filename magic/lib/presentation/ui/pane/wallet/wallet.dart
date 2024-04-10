@@ -15,7 +15,7 @@ class Wallet extends StatelessWidget {
               onEntering: () {
                 //WidgetsBinding.instance.addPostFrameCallback(
                 //    (_) => cubits.pane.update(height: screen.pane.midHeight));
-                if (state.currency.isEmpty && state.assets.isEmpty) {
+                if (state.assets.isEmpty) {
                   return GestureDetector(
                       onTap: cubits.wallet.populateAssets,
                       child: const Center(

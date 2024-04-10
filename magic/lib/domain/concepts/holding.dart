@@ -4,12 +4,14 @@ import 'package:magic/domain/concepts/sats.dart';
 class Holding extends Equatable {
   final String name;
   final String symbol;
+  final String root;
   final HoldingMetadata metadata;
   final Sats sats;
 
   const Holding({
     required this.name,
     required this.symbol,
+    required this.root,
     required this.metadata,
     required this.sats,
   });
@@ -18,6 +20,7 @@ class Holding extends Equatable {
   const Holding.empty()
       : name = '',
         symbol = '',
+        root = '',
         metadata = const HoldingMetadata.empty(),
         sats = const Sats.empty();
 
@@ -28,11 +31,14 @@ class Holding extends Equatable {
   List<Object?> get props => <Object?>[
         name,
         symbol,
+        root,
         metadata,
         sats,
       ];
 
   bool get isEmpty => sats.isEmpty;
+  bool get isRoot => symbol == root;
+  Coin get coin => sats.toCoin;
 }
 
 class HoldingMetadata extends Equatable {

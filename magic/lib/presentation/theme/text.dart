@@ -134,8 +134,10 @@ class AppText {
         height: null,
       );
 
-  static TextStyle get wholeHolding => h1.copyWith(color: AppColors.white);
-  static TextStyle get partHolding => h1.copyWith(color: AppColors.white87);
+  static TextStyle get wholeHolding =>
+      h1.copyWith(fontWeight: FontWeights.bold, color: AppColors.white);
+  static TextStyle get partHolding =>
+      h1.copyWith(fontWeight: FontWeights.bold, color: AppColors.white67);
   static TextStyle get usdHolding =>
       subtitle1.copyWith(color: AppColors.white60);
 
