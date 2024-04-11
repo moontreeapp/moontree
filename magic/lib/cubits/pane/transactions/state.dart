@@ -3,16 +3,16 @@ part of 'cubit.dart';
 @immutable
 class TransactionsState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
-  final Holding currency;
-  final List<Holding> assets;
+  final Holding asset;
+  final List<TransactionDisplay> transactions;
   final Widget child;
   final bool isSubmitting;
   final TransactionsState? prior;
 
   const TransactionsState({
     this.active = false,
-    this.currency = const Holding.empty(),
-    this.assets = const [],
+    this.asset = const Holding.empty(),
+    this.transactions = const [],
     this.child = const SizedBox.shrink(),
     this.isSubmitting = false,
     this.prior,
@@ -24,8 +24,8 @@ class TransactionsState with EquatableMixin, PriorActiveStateMixin {
   @override
   List<Object?> get props => <Object?>[
         active,
-        currency,
-        assets,
+        asset,
+        transactions,
         child,
         isSubmitting,
         prior,
@@ -34,8 +34,8 @@ class TransactionsState with EquatableMixin, PriorActiveStateMixin {
   @override
   TransactionsState get withoutPrior => TransactionsState(
         active: active,
-        currency: currency,
-        assets: assets,
+        asset: asset,
+        transactions: transactions,
         child: child,
         isSubmitting: isSubmitting,
         prior: null,

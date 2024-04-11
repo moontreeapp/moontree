@@ -201,6 +201,7 @@ class Maestro {
   }
 
   Future<void> activateTransactions() async {
+    cubits.transactions.populate();
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(hidden: true);
@@ -223,7 +224,10 @@ class Maestro {
     cubits.pane.update(
       active: true,
       //height: screen.pane.midHeight,
-      max: screen.pane.maxHeightPercent,
+      //max: screen.pane.maxHeightPercent,
+      max: cubits.transactions.state.transactions.length > 6
+          ? screen.pane.maxHeightPercent
+          : screen.pane.midHeightPercent,
       min: screen.pane.midHeightPercent,
     );
     cubits.pane.heightBehavior = null;

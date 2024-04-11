@@ -17,23 +17,14 @@ class TransactionsPage extends StatelessWidget {
   Widget build(BuildContext context) => ListView.builder(
       controller: cubits.pane.state.scroller,
       shrinkWrap: true,
-      itemCount: 48,
-      itemBuilder: (context, index) => Transaction(
-          display: TransactionDisplay(
-              incoming: true,
-              when: DateTime.now(),
-              sats: Sats(() {
-                final x = pow(index, index ~/ 4.2) as int;
-                if (x > 0 && x < 2100000000000000000) {
-                  return x;
-                }
-                return index;
-              }()))));
+      itemCount: cubits.transactions.state.transactions.length,
+      itemBuilder: (context, index) => TransactionItem(
+          display: cubits.transactions.state.transactions.elementAt(index)));
 }
 
-class Transaction extends StatelessWidget {
+class TransactionItem extends StatelessWidget {
   final TransactionDisplay display;
-  const Transaction({super.key, required this.display});
+  const TransactionItem({super.key, required this.display});
 
   @override
   Widget build(BuildContext context) {

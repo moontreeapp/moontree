@@ -39,8 +39,7 @@ class WalletCubit extends Cubit<WalletState> with UpdateHideMixin<WalletState> {
 
   void populateAssets() {
     update(assets: [
-      //for (final index in range(47))
-      for (final index in range(3))
+      for (final index in range(47))
         Holding(
           name: 'Ravencoin',
           symbol: 'RVN',
