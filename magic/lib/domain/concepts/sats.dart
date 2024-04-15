@@ -22,6 +22,7 @@ extension DoubleReadableNumericExtension on double {
       //  return '${toInt()}';
       //}
       //return '~${toInt()}';
+
       return '${toInt()}';
     }
     if (this < 1000) {

@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
+import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/hiding.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
@@ -49,10 +50,10 @@ class AnimatedCoinSpec extends StatelessWidget {
   Widget assetValues() =>
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text('whole.', style: AppText.wholeHolding),
-          Text('part', style: AppText.partHolding),
+          Text(cubits.holding.state.whole, style: AppText.wholeHolding),
+          Text(cubits.holding.state.part, style: AppText.partHolding),
         ]),
-        Text('\$ usd', style: AppText.usdHolding),
+        Text(cubits.holding.state.usd, style: AppText.usdHolding),
       ]);
 
   Widget buttons() => SizedBox(

@@ -34,11 +34,9 @@ class AnimatedBalance extends StatelessWidget {
               previous.height != current.height,
           builder: (BuildContext paneContext, PaneState paneState) =>
               AnimatedOpacity(
-                  duration: fadeDuration * 2,
+                  duration: fadeDuration,
                   curve: Curves.easeInOutCubic,
-                  opacity: paneState.height == screen.pane.minHeight
-                      ? .12
-                      : 1, //state.faded ? .12 : 1,
+                  opacity: paneState.height == screen.pane.minHeight ? .12 : 1,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

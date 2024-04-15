@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/concepts/holding.dart';
 
 part 'state.dart';
 
@@ -21,12 +22,14 @@ class HoldingCubit extends Cubit<HoldingState>
   void update({
     bool? active,
     bool? send,
+    Holding? asset,
     bool? isSubmitting,
     HoldingState? prior,
   }) {
     emit(HoldingState(
       active: active ?? state.active,
       send: send ?? state.send,
+      asset: asset ?? state.asset,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));

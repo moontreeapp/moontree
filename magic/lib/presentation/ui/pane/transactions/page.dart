@@ -27,8 +27,7 @@ class TransactionItem extends StatelessWidget {
   const TransactionItem({super.key, required this.display});
 
   @override
-  Widget build(BuildContext context) {
-    final x = Random().nextInt(2) == 0;
+  Widget build2(BuildContext context) {
     return ListTile(
       //dense: true,
       //visualDensity: VisualDensity.compact,
@@ -39,7 +38,7 @@ class TransactionItem extends StatelessWidget {
         //color: Colors.red,
         alignment: Alignment.center,
         child: SvgPicture.asset(
-          '${TransactionIcons.base}/${x ? 'incoming' : 'outgoing'}.${TransactionIcons.ext}',
+          '${TransactionIcons.base}/${display.incoming ? 'incoming' : 'outgoing'}.${TransactionIcons.ext}',
           height: screen.iconHuge,
           width: screen.iconHuge,
           fit: BoxFit.contain,
@@ -48,7 +47,7 @@ class TransactionItem extends StatelessWidget {
       ),
       title: SizedBox(
           width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text(x ? 'Sent' : 'Received',
+          child: Text(display.incoming ? 'Received' : 'Sent',
               style: Theme.of(context).textTheme.body1.copyWith(height: 0))),
       subtitle: Container(
           width: screen.width - (16 + 16 + screen.iconLarge + 16),
@@ -61,17 +60,18 @@ class TransactionItem extends StatelessWidget {
                   ))),
       trailing: SizedBox(
           //width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text('${x ? '+' : '-'}${display.sats.toCoin.humanString()}',
+          child: Text(
+              '${display.incoming ? '+' : '-'}${display.sats.toCoin.humanString()}',
               style: Theme.of(context).textTheme.body1.copyWith(
                     height: 0,
-                    color: x ? AppColors.success : AppColors.black,
+                    color:
+                        display.incoming ? AppColors.success : AppColors.black,
                   ))),
     );
   }
 
   @override
-  Widget build2(BuildContext context) {
-    final x = Random().nextInt(2) == 0;
+  Widget build(BuildContext context) {
     return ListTile(
       //dense: true,
       //visualDensity: VisualDensity.compact,
@@ -82,7 +82,7 @@ class TransactionItem extends StatelessWidget {
         //color: Colors.red,
         alignment: Alignment.center,
         child: SvgPicture.asset(
-          '${TransactionIcons.base}/${x ? 'incoming' : 'outgoing'}.${TransactionIcons.ext}',
+          '${TransactionIcons.base}/${display.incoming ? 'incoming' : 'outgoing'}.${TransactionIcons.ext}',
           height: screen.iconHuge,
           width: screen.iconHuge,
           fit: BoxFit.contain,
@@ -91,7 +91,8 @@ class TransactionItem extends StatelessWidget {
       ),
       title: SizedBox(
           width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text(x ? 'Today' : 'Yesterday', //'Sent' : 'Received',
+          child: Text(
+              display.incoming ? 'Today' : 'Yesterday', //'Sent' : 'Received',
               style: Theme.of(context).textTheme.body1.copyWith(height: 0))),
       //subtitle: Container(
       //    width: screen.width - (16 + 16 + screen.iconLarge + 16),
@@ -104,10 +105,12 @@ class TransactionItem extends StatelessWidget {
       //            ))),
       trailing: SizedBox(
           //width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text('${x ? '+' : '-'}${display.sats.toCoin.humanString()}',
+          child: Text(
+              '${display.incoming ? '+' : '-'}${display.sats.toCoin.humanString()}',
               style: Theme.of(context).textTheme.body1.copyWith(
                     height: 0,
-                    color: x ? AppColors.success : AppColors.black,
+                    color:
+                        display.incoming ? AppColors.success : AppColors.black,
                   ))),
     );
   }

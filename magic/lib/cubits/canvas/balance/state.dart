@@ -2,12 +2,14 @@ part of 'cubit.dart';
 
 class BalanceState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
+  final bool initialized;
   final Fiat portfolioValue;
   final bool isSubmitting;
   final BalanceState? prior;
 
   const BalanceState({
     this.active = false,
+    this.initialized = false,
     this.portfolioValue = const Fiat.empty(),
     this.isSubmitting = false,
     this.prior,
@@ -16,6 +18,7 @@ class BalanceState with EquatableMixin, PriorActiveStateMixin {
   @override
   List<Object?> get props => <Object?>[
         active,
+        initialized,
         portfolioValue,
         isSubmitting,
         prior,
@@ -27,6 +30,7 @@ class BalanceState with EquatableMixin, PriorActiveStateMixin {
   @override
   BalanceState get withoutPrior => BalanceState(
         active: active,
+        initialized: initialized,
         portfolioValue: portfolioValue,
         isSubmitting: isSubmitting,
         prior: null,

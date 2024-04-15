@@ -310,23 +310,26 @@ class _SlideSideState extends State<SlideSide>
 class SlideOver extends StatefulWidget {
   final Widget child;
   final Duration duration;
+  final Duration delay;
   final Offset? begin;
   final Offset? end;
   final Curve? curve;
 
   const SlideOver({
+    super.key,
     required this.child,
     this.duration = animation.slideDuration,
+    this.delay = Duration.zero,
     this.begin,
     this.end,
     this.curve,
   });
 
   @override
-  _SlideOverState createState() => _SlideOverState();
+  SlideOverState createState() => SlideOverState();
 }
 
-class _SlideOverState extends State<SlideOver>
+class SlideOverState extends State<SlideOver>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late Animation<Offset> _animation;
@@ -338,7 +341,11 @@ class _SlideOverState extends State<SlideOver>
       vsync: this,
       duration: widget.duration,
     );
-    _controller.forward(from: 0.0);
+    Future.delayed(widget.delay, () {
+      if (mounted) {
+        _controller.forward(from: 0.0);
+      }
+    });
   }
 
   @override
@@ -350,7 +357,11 @@ class _SlideOverState extends State<SlideOver>
   @override
   void didUpdateWidget(SlideOver oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _controller.forward(from: 0.0);
+    Future.delayed(widget.delay, () {
+      if (mounted) {
+        _controller.forward(from: 0.0);
+      }
+    });
   }
 
   @override

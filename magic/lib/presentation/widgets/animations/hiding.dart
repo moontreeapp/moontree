@@ -3,8 +3,10 @@ import 'package:magic/presentation/utils/animation.dart';
 
 class Hide extends StatelessWidget {
   final bool hidden;
+  final Duration? duration;
   final Widget child;
-  const Hide({super.key, required this.hidden, required this.child});
+  const Hide(
+      {super.key, required this.hidden, this.duration, required this.child});
 
   @override
   Widget build(BuildContext context) => IgnorePointer(
@@ -12,6 +14,6 @@ class Hide extends StatelessWidget {
       child: AnimatedOpacity(
           opacity: hidden ? 0 : 1,
           curve: hidden ? Curves.easeOutQuint : Curves.easeInQuint,
-          duration: slideDuration,
+          duration: duration ?? slideDuration,
           child: child));
 }

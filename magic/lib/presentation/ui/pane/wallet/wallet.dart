@@ -28,9 +28,11 @@ class Wallet extends StatelessWidget {
               },
               onEntered: () => state.child,
               onExiting: () {
-                WidgetsBinding.instance.addPostFrameCallback((_) =>
-                    Future.delayed(fadeDuration,
-                        () => cubits.wallet.update(active: false)));
+                WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => Future.delayed(fadeDuration, () {
+                          cubits.wallet.update(active: false);
+                          cubits.balance.update(initialized: true);
+                        }));
                 //return const FadeOut(child: WalletPage());
                 return state.child;
               },
