@@ -91,10 +91,10 @@ class Maestro {
     } catch (_) {}
     if (cubits.pane.height <= screen.pane.midHeight) {
       cubits.pane.snapTo(screen.pane.maxHeight);
-      cubits.navbar.update(hidden: false);
+      cubits.navbar.activate();
     } else {
       cubits.pane.snapTo(screen.pane.minHeight);
-      cubits.navbar.update(hidden: true);
+      cubits.navbar.deactivate();
     }
   }
 
@@ -121,12 +121,12 @@ class Maestro {
 
   void hideNavbarOnDrag(double height) {
     if (height < (screen.pane.midHeight + screen.pane.minHeight) / 2) {
-      if (!cubits.navbar.state.hidden) {
-        cubits.navbar.update(hidden: true);
+      if (cubits.navbar.isActive) {
+        cubits.navbar.deactivate();
       }
     } else {
-      if (cubits.navbar.state.hidden) {
-        cubits.navbar.update(hidden: false);
+      if (!cubits.navbar.isActive) {
+        cubits.navbar.activate();
       }
     }
   }
@@ -138,6 +138,21 @@ class Maestro {
       cubits.pane.update(min: screen.pane.minHeightPercent);
     }
   }
+
+  /// this doesn't work as exected because as soon as we reach the middle it
+  /// sets it to max and continues to drag up to max, if it were to stop there
+  /// then the scroll list action would take over and we start scrolling the
+  /// list instead which is not what we want.
+  //void setMaxToMiddleOnMin(double height) {
+  //  print('height: $height, screen.pane.minHeight: ${screen.pane.minHeight}');
+  //  if (height < screen.pane.minHeight + 1) {
+  //    print('setting to mid');
+  //    cubits.pane.update(max: screen.pane.midHeightPercent);
+  //  } else if (height == screen.pane.midHeight) {
+  //    print('setting to max');
+  //    cubits.pane.update(max: screen.pane.maxHeightPercent);
+  //  }
+  //}
 
   //void snapOnDrag(double height) {
   //  if (height < (screen.pane.midHeight - screen.pane.minHeight) / 2) {
@@ -151,7 +166,7 @@ class Maestro {
 
   Future<void> _activeateHome() async {
     cubits.ignore.update(active: true);
-    cubits.navbar.update(section: NavbarSection.wallet, hidden: false);
+    cubits.navbar.update(section: NavbarSection.wallet, active: true);
     cubits.appbar.update(
       leading: AppbarLeading.connection,
       title: 'Magic',
@@ -166,6 +181,7 @@ class Maestro {
     cubits.pane.heightBehavior = (double h) {
       hideNavbarOnDrag(h);
       setMinToMiddleOnMax(h);
+      //setMaxToMiddleOnMin(h);
     };
     cubits.pane.update(
       max: cubits.wallet.state.assets.length > 5
@@ -187,7 +203,7 @@ class Maestro {
   Future<void> _activeateMint() async {
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
-    cubits.navbar.update(section: NavbarSection.mint, hidden: false);
+    cubits.navbar.update(section: NavbarSection.mint, active: true);
     await inactiveateAllBut(null);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
@@ -195,7 +211,7 @@ class Maestro {
 
   void _activeateSwap() {
     cubits.ignore.update(active: true);
-    cubits.navbar.update(section: NavbarSection.swap, hidden: false);
+    cubits.navbar.update(section: NavbarSection.swap, active: true);
     cubits.wallet.update(active: false);
     cubits.ignore.update(active: false);
   }
@@ -204,7 +220,7 @@ class Maestro {
     cubits.transactions.populate();
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
-    cubits.navbar.update(hidden: true);
+    cubits.navbar.update(active: false);
     cubits.appbar.update(
       leading: AppbarLeading.back,
       title: 'Coin',
@@ -240,7 +256,7 @@ class Maestro {
   Future<void> activateSend() async {
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
-    cubits.navbar.update(hidden: true);
+    cubits.navbar.update(active: false);
     cubits.appbar.update(
       leading: AppbarLeading.close,
       title: 'Send',

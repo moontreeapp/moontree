@@ -18,16 +18,21 @@ class NavbarCubit extends Cubit<NavbarState> with UpdateMixin<NavbarState> {
 
   @override
   void update({
+    bool? active,
     NavbarSection? section,
-    bool? hidden,
+    bool? dropped,
   }) {
     emit(NavbarState(
+      active: active ?? state.active,
       section: section ?? state.section,
-      hidden: hidden ?? state.hidden,
       prior: state.withoutPrior,
     ));
   }
 
+  void activate() => update(active: true);
+  void deactivate() => update(active: false);
+  bool get isActive => state.active;
+  bool get wasActive => state.wasActive;
   bool get atWallet => state.section == NavbarSection.wallet;
   bool get atSwap => state.section == NavbarSection.swap;
   bool get atMint => state.section == NavbarSection.mint;

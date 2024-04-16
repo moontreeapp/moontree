@@ -5,8 +5,12 @@ class Hide extends StatelessWidget {
   final bool hidden;
   final Duration? duration;
   final Widget child;
-  const Hide(
-      {super.key, required this.hidden, this.duration, required this.child});
+  const Hide({
+    super.key,
+    required this.hidden,
+    this.duration,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) => IgnorePointer(

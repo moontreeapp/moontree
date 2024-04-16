@@ -4,6 +4,7 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/pane/wallet/cubit.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/services/services.dart';
 
 class Wallet extends StatelessWidget {
   const Wallet({super.key});
@@ -24,9 +25,9 @@ class Wallet extends StatelessWidget {
                 }
                 const child = WalletPage();
                 cubits.wallet.update(child: child);
-                return child;
+                return const WalletStack(child: child);
               },
-              onEntered: () => state.child,
+              onEntered: () => WalletStack(child: state.child),
               onExiting: () {
                 WidgetsBinding.instance.addPostFrameCallback(
                     (_) => Future.delayed(fadeDuration, () {
@@ -34,11 +35,31 @@ class Wallet extends StatelessWidget {
                           cubits.balance.update(initialized: true);
                         }));
                 //return const FadeOut(child: WalletPage());
-                return state.child;
+                return WalletStack(child: state.child);
               },
               onExited: () {
                 const child = SizedBox.shrink();
                 cubits.wallet.update(child: child);
-                return child;
+                return const WalletStack(child: child);
               }));
+}
+
+class WalletStack extends StatelessWidget {
+  final Widget child;
+  const WalletStack({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) => Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          child,
+          GestureDetector(
+            onTap: () => cubits.pane.snapTo(screen.pane.midHeight),
+            onVerticalDragStart: (details) =>
+                cubits.pane.snapTo(screen.pane.midHeight),
+            child: Container(
+                height: 56, width: screen.width, color: Colors.transparent),
+          )
+        ],
+      );
 }

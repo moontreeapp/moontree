@@ -8,7 +8,7 @@ import 'package:magic/services/services.dart';
 class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
 
-  @override // TODO: get from cubit
+  @override
   Widget build(BuildContext context) => ListView.builder(
       controller: cubits.pane.state.scroller!,
       shrinkWrap: true,
@@ -25,9 +25,11 @@ class HoldingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-        onTap: () => cubits.pane.state.height == screen.pane.minHeight
-            ? cubits.pane.snapTo(screen.pane.midHeight)
-            : maestro.activateTransactions(),
+        /// this functionality is replaced by the WalletStack
+        //onTap: () => cubits.pane.state.height == screen.pane.minHeight
+        //    ? cubits.pane.snapTo(screen.pane.midHeight)
+        //    : maestro.activateTransactions(),
+        onTap: maestro.activateTransactions,
         leading: const SimpleIdenticon(),
         title: SizedBox(
             width: screen.width -
