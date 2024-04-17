@@ -26,7 +26,8 @@ class HodingDetail extends StatelessWidget {
           onExiting: //FadeOut(
               //child:
               IgnorePointer(
-                  ignoring: (state.active && !state.send) || (!state.active),
+                  ignoring:
+                      (state.active && state.onHistory) || (!state.active),
                   //child: const HodingDetailPage())),
                   child: const SlideOver(
                       duration: slideDuration,

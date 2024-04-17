@@ -1,5 +1,45 @@
 import 'package:equatable/equatable.dart';
 import 'package:magic/domain/concepts/sats.dart';
+import 'package:lit_relative_date_time/lit_relative_date_time.dart';
+
+//final RelativeDateFormat _relativeDateFormatter = const RelativeDateFormat(
+//      defaultRelativeDateLocalization as Locale,
+//      localizations: [defaultRelativeDateLocalization]);
+const RelativeDateLocalization defaultRelativeDateLocalization =
+    RelativeDateLocalization(
+  languageCode: 'en',
+  timeUnitsSingular: [
+    'second',
+    'minute',
+    'hour',
+    'day',
+    'week',
+    'month',
+    'year',
+  ],
+  timeUnitsPlural: [
+    'seconds',
+    'minutes',
+    'hours',
+    'days',
+    'weeks',
+    'months',
+    'years',
+  ],
+  prepositionPast: 'ago',
+  prepositionFuture: 'in',
+  atTheMoment: 'now',
+  formatOrderPast: [
+    FormatComponent.value,
+    FormatComponent.unit,
+    FormatComponent.preposition
+  ],
+  formatOrderFuture: [
+    FormatComponent.preposition,
+    FormatComponent.value,
+    FormatComponent.unit,
+  ],
+);
 
 class TransactionDisplay extends Equatable {
   final bool incoming;
@@ -34,4 +74,12 @@ class TransactionDisplay extends Equatable {
       ];
 
   bool get isEmpty => sats.isEmpty;
+  //String get humanWhen =>
+  //    _relativeDateTime.toString(); // when.toIso8601String();
+  //String humanWhen([RelativeDateFormat? relativeDateFormat]) =>
+  //    (relativeDateFormat ?? _relativeDateFormatter).format(_relativeDateTime);
+  String humanWhen(RelativeDateFormat relativeDateFormat) =>
+      relativeDateFormat.format(_relativeDateTime);
+  RelativeDateTime get _relativeDateTime =>
+      RelativeDateTime(dateTime: DateTime.now(), other: when);
 }

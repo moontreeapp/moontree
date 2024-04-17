@@ -1,4 +1,5 @@
 import 'package:magic/cubits/appbar/cubit.dart';
+import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/domain/concepts/sections.dart';
 //import 'package:magic/domain/concepts/side.dart';
@@ -229,7 +230,7 @@ class Maestro {
     );
     cubits.menu.update(active: false);
     cubits.balance.update(active: false);
-    cubits.holding.update(active: true, send: false);
+    cubits.holding.update(active: true, section: HoldingSection.none);
     if (cubits.pane.height != screen.pane.midHeight) {
       if (cubits.pane.state.height == screen.pane.midHeight) {
         cubits.pane.update(height: screen.pane.midHeight - 1);
@@ -264,7 +265,7 @@ class Maestro {
       onTitle: cubits.appbar.none,
     );
     cubits.menu.update(active: false);
-    cubits.holding.update(active: true, send: true);
+    cubits.holding.update(active: true, section: HoldingSection.send);
     cubits.pane.update(
       active: true,
       height: screen.pane.midHeight,

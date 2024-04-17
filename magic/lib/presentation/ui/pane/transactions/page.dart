@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/domain/concepts/sats.dart';
@@ -27,11 +28,14 @@ class TransactionItem extends StatelessWidget {
   const TransactionItem({super.key, required this.display});
 
   @override
-  Widget build2(BuildContext context) {
+  Widget build(BuildContext context) {
+    RelativeDateFormat _relativeDateFormatter = RelativeDateFormat(
+      Localizations.localeOf(context),
+    );
     return ListTile(
       //dense: true,
       //visualDensity: VisualDensity.compact,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: Container(
         width: screen.iconHuge,
         height: screen.iconHuge,
@@ -47,53 +51,11 @@ class TransactionItem extends StatelessWidget {
       ),
       title: SizedBox(
           width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text(display.incoming ? 'Received' : 'Sent',
-              style: Theme.of(context).textTheme.body1.copyWith(height: 0))),
-      subtitle: Container(
-          width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          //color: Colors.red,
-          child: Text('today',
-              textAlign: TextAlign.start,
-              style: Theme.of(context).textTheme.body2.copyWith(
-                    height: 0,
-                    color: Colors.black38,
-                  ))),
-      trailing: SizedBox(
-          //width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text(
-              '${display.incoming ? '+' : '-'}${display.sats.toCoin.humanString()}',
+          child: Text(display.humanWhen(_relativeDateFormatter),
               style: Theme.of(context).textTheme.body1.copyWith(
                     height: 0,
-                    color:
-                        display.incoming ? AppColors.success : AppColors.black,
+                    color: AppColors.black87,
                   ))),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      //dense: true,
-      //visualDensity: VisualDensity.compact,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      leading: Container(
-        width: screen.iconHuge,
-        height: screen.iconHuge,
-        //color: Colors.red,
-        alignment: Alignment.center,
-        child: SvgPicture.asset(
-          '${TransactionIcons.base}/${display.incoming ? 'incoming' : 'outgoing'}.${TransactionIcons.ext}',
-          height: screen.iconHuge,
-          width: screen.iconHuge,
-          fit: BoxFit.contain,
-          alignment: Alignment.center,
-        ),
-      ),
-      title: SizedBox(
-          width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text(
-              display.incoming ? 'Today' : 'Yesterday', //'Sent' : 'Received',
-              style: Theme.of(context).textTheme.body1.copyWith(height: 0))),
       //subtitle: Container(
       //    width: screen.width - (16 + 16 + screen.iconLarge + 16),
       //    //color: Colors.red,

@@ -1,15 +1,23 @@
 part of 'cubit.dart';
 
+enum HoldingSection {
+  none,
+  send,
+  receive,
+  swap,
+  transaction;
+}
+
 class HoldingState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
-  final bool send;
+  final HoldingSection section;
   final Holding asset;
   final bool isSubmitting;
   final HoldingState? prior;
 
   const HoldingState({
     this.active = false,
-    this.send = false,
+    this.section = HoldingSection.none,
     this.asset = const Holding.empty(),
     this.isSubmitting = false,
     this.prior,
@@ -18,7 +26,7 @@ class HoldingState with EquatableMixin, PriorActiveStateMixin {
   @override
   List<Object?> get props => <Object?>[
         active,
-        send,
+        section,
         asset,
         isSubmitting,
         prior,
@@ -30,7 +38,7 @@ class HoldingState with EquatableMixin, PriorActiveStateMixin {
   @override
   HoldingState get withoutPrior => HoldingState(
         active: active,
-        send: send,
+        section: section,
         asset: asset,
         isSubmitting: isSubmitting,
         prior: null,
@@ -41,6 +49,7 @@ class HoldingState with EquatableMixin, PriorActiveStateMixin {
 
   @override
   bool get isActive => active;
+  bool get onHistory => section == HoldingSection.none;
 
   String get whole => 'whole'; //asset.coin.().split('.').first;
   String get part => 'part'; //asset.coin.toCommaString().split('.').last;

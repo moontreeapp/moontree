@@ -184,6 +184,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  lit_relative_date_time:
+    dependency: "direct main"
+    description:
+      name: lit_relative_date_time
+      sha256: "26b04bdbd3dd1ec4ebcc04a947b1bee335ef5f029219a6f6cc01e5b152191a04"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   matcher:
     dependency: transitive
     description:

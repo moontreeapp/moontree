@@ -21,14 +21,14 @@ class HoldingCubit extends Cubit<HoldingState>
   @override
   void update({
     bool? active,
-    bool? send,
+    HoldingSection? section,
     Holding? asset,
     bool? isSubmitting,
     HoldingState? prior,
   }) {
     emit(HoldingState(
       active: active ?? state.active,
-      send: send ?? state.send,
+      section: section ?? state.section,
       asset: asset ?? state.asset,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,

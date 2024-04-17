@@ -121,23 +121,53 @@ class AnimatedCoinSpec extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<HoldingCubit, HoldingState>(
       buildWhen: (HoldingState previous, HoldingState current) =>
-          current.active && previous.send != current.send,
+          current.active && previous.section != current.section,
       builder: (context, state) {
+        double iconTop = 4;
+        double valueTop = 4 + screen.iconHuge + 16;
+
+        if (state.section == HoldingSection.none) {
+          iconTop = 4;
+          valueTop = 4 + screen.iconHuge + 16;
+        } else if (state.section == HoldingSection.send) {
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+              screen.iconHuge +
+              8;
+        } else if (state.section == HoldingSection.receive) {
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+              screen.iconHuge +
+              8;
+        } else if (state.section == HoldingSection.swap) {
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+              screen.iconHuge +
+              8;
+        } else if (state.section == HoldingSection.transaction) {
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+              screen.iconHuge +
+              8;
+          //iconTop = 24;
+          //valueTop = 24 + screen.iconHuge + 24;
+        }
         return Stack(alignment: Alignment.topCenter, children: [
           AnimatedPositioned(
               duration: slideDuration,
               curve: Curves.easeInOutCubic,
-              top: state.send ? 24 : 4,
+              top: iconTop,
               child: assetIcon()),
           AnimatedPositioned(
               duration: slideDuration,
               curve: Curves.easeInOutCubic,
-              top: state.send
-                  ? 24 + screen.iconHuge + 24
-                  : 4 + screen.iconHuge + 16,
+              top: valueTop,
               child: assetValues()),
           Positioned(
-              bottom: 24, child: Hide(hidden: state.send, child: buttons())),
+              bottom: 24,
+              child: Hide(
+                  hidden: state.section != HoldingSection.none,
+                  child: buttons())),
         ]);
       });
 }
