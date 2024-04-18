@@ -9,6 +9,7 @@ export 'package:magic/cubits/canvas/balance/cubit.dart';
 export 'package:magic/cubits/navbar/cubit.dart';
 export 'package:magic/cubits/pane/cubit.dart';
 export 'package:magic/cubits/panel/cubit.dart';
+export 'package:magic/cubits/pane/receive/cubit.dart';
 export 'package:magic/cubits/pane/send/cubit.dart';
 export 'package:magic/cubits/pane/transactions/cubit.dart';
 export 'package:magic/cubits/pane/wallet/cubit.dart';

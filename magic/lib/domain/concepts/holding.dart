@@ -39,6 +39,13 @@ class Holding extends Equatable {
   bool get isEmpty => sats.isEmpty;
   bool get isRoot => symbol == root;
   Coin get coin => sats.toCoin;
+  Fiat get fiat {
+    // if we have a rate for this asset to USD then
+    //we can convert and return
+    //coin.toFiat(rate)
+    //else
+    return const Fiat.empty();
+  }
 }
 
 class HoldingMetadata extends Equatable {

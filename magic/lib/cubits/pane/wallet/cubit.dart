@@ -24,13 +24,13 @@ class WalletCubit extends Cubit<WalletState> with UpdateHideMixin<WalletState> {
   @override
   void update({
     bool? active,
-    List<Holding>? assets,
+    List<Holding>? holdings,
     Widget? child,
     bool? isSubmitting,
   }) {
     emit(WalletState(
       active: active ?? state.active,
-      assets: assets ?? state.assets,
+      holdings: holdings ?? state.holdings,
       child: child ?? state.child,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: state.withoutPrior,
@@ -38,7 +38,7 @@ class WalletCubit extends Cubit<WalletState> with UpdateHideMixin<WalletState> {
   }
 
   void populateAssets() {
-    update(assets: [
+    update(holdings: [
       for (final index in range(47))
         Holding(
           name: 'Ravencoin',

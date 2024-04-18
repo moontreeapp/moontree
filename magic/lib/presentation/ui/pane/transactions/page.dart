@@ -7,7 +7,7 @@ import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/domain/concepts/sats.dart';
-import 'package:magic/services/services.dart' show screen;
+import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 
@@ -29,12 +29,13 @@ class TransactionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RelativeDateFormat _relativeDateFormatter = RelativeDateFormat(
+    RelativeDateFormat relativeDateFormatter = RelativeDateFormat(
       Localizations.localeOf(context),
     );
     return ListTile(
       //dense: true,
       //visualDensity: VisualDensity.compact,
+      onTap: () => maestro.activateTransaction(display),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: Container(
         width: screen.iconHuge,
@@ -51,7 +52,7 @@ class TransactionItem extends StatelessWidget {
       ),
       title: SizedBox(
           width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text(display.humanWhen(_relativeDateFormatter),
+          child: Text(display.humanWhen(relativeDateFormatter),
               style: Theme.of(context).textTheme.body1.copyWith(
                     height: 0,
                     color: AppColors.black87,

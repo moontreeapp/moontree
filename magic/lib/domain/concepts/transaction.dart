@@ -82,4 +82,13 @@ class TransactionDisplay extends Equatable {
       relativeDateFormat.format(_relativeDateTime);
   RelativeDateTime get _relativeDateTime =>
       RelativeDateTime(dateTime: DateTime.now(), other: when);
+
+  Coin get coin => sats.toCoin;
+  Fiat get fiat {
+    // if we have a rate for this asset to USD then
+    //we can convert and return
+    //coin.toFiat(rate)
+    //else
+    return const Fiat.empty();
+  }
 }

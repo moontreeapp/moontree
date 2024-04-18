@@ -12,24 +12,24 @@ class WalletPage extends StatelessWidget {
   Widget build(BuildContext context) => ListView.builder(
       controller: cubits.pane.state.scroller!,
       shrinkWrap: true,
-      itemCount: cubits.wallet.state.assets.length + 1,
+      itemCount: cubits.wallet.state.holdings.length + 1,
       itemBuilder: (context, int index) =>
-          index < cubits.wallet.state.assets.length
-              ? HoldingItem(asset: cubits.wallet.state.assets[index])
+          index < cubits.wallet.state.holdings.length
+              ? HoldingItem(holding: cubits.wallet.state.holdings[index])
               : SizedBox(height: screen.navbar.height));
 }
 
 class HoldingItem extends StatelessWidget {
-  final Holding asset;
-  const HoldingItem({super.key, required this.asset});
+  final Holding holding;
+  const HoldingItem({super.key, required this.holding});
 
   @override
   Widget build(BuildContext context) => ListTile(
         /// this functionality is replaced by the WalletStack
         //onTap: () => cubits.pane.state.height == screen.pane.minHeight
         //    ? cubits.pane.snapTo(screen.pane.midHeight)
-        //    : maestro.activateTransactions(),
-        onTap: maestro.activateTransactions,
+        //    : maestro.activateHistory(),
+        onTap: () => maestro.activateHistory(holding),
         leading: const SimpleIdenticon(),
         title: SizedBox(
             width: screen.width -
@@ -39,17 +39,17 @@ class HoldingItem extends StatelessWidget {
                     24 +
                     24),
             //color: Colors.grey,
-            child: Text(asset.isRoot ? asset.name : asset.symbol,
+            child: Text(holding.isRoot ? holding.name : holding.symbol,
                 style: Theme.of(context)
                     .textTheme
                     .body1
                     .copyWith(color: Colors.black87))),
-        subtitle: Text(asset.coin.simplified(),
+        subtitle: Text(holding.coin.simplified(),
             style: Theme.of(context)
                 .textTheme
                 .body1
                 .copyWith(color: AppColors.black60)),
-        trailing: Text(asset.coin.toFiat(1).simplified(),
+        trailing: Text(holding.coin.toFiat(1).simplified(),
             textAlign: TextAlign.right,
             style: Theme.of(context)
                 .textTheme

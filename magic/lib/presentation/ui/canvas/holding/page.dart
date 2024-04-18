@@ -47,13 +47,16 @@ class AnimatedCoinSpec extends StatelessWidget {
           //),
           ));
 
-  Widget assetValues() =>
+  Widget assetValues({String? whole, String? part, String? subtitle}) =>
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(cubits.holding.state.whole, style: AppText.wholeHolding),
-          Text(cubits.holding.state.part, style: AppText.partHolding),
+          Text(whole ?? cubits.holding.state.whole,
+              style: AppText.wholeHolding),
+          if ((part ?? cubits.holding.state.part) != '')
+            Text('.${part ?? cubits.holding.state.part}',
+                style: AppText.partHolding),
         ]),
-        Text(cubits.holding.state.usd, style: AppText.usdHolding),
+        Text(subtitle ?? cubits.holding.state.usd, style: AppText.usdHolding),
       ]);
 
   Widget buttons() => SizedBox(
@@ -80,41 +83,47 @@ class AnimatedCoinSpec extends StatelessWidget {
               Text('send', style: AppText.labelHolding),
             ])),
         //SizedBox(width: screen.canvas.wSpace),
-        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(
-            height: screen.iconLarge,
-            width: screen.iconLarge,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.primary60,
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: SvgPicture.asset(
-              '${TransactionIcons.base}/receive.${TransactionIcons.ext}',
-              alignment: Alignment.center,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text('receive', style: AppText.labelHolding),
-        ]),
+        GestureDetector(
+            onTap: () => maestro.activateReceive(),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                height: screen.iconLarge,
+                width: screen.iconLarge,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.primary60,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: SvgPicture.asset(
+                  '${TransactionIcons.base}/receive.${TransactionIcons.ext}',
+                  alignment: Alignment.center,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text('receive', style: AppText.labelHolding),
+            ])),
         //SizedBox(width: screen.canvas.wSpace),
-        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(
-            height: screen.iconLarge,
-            width: screen.iconLarge,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.primary60,
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: SvgPicture.asset(
-              '${TransactionIcons.base}/swap.${TransactionIcons.ext}',
-              alignment: Alignment.center,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text('swap', style: AppText.labelHolding),
-        ]),
+        GestureDetector(
+            onTap: () => maestro.activateSwapOnHolding(),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                height: screen.iconLarge,
+                width: screen.iconLarge,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.primary60,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: SvgPicture.asset(
+                  '${TransactionIcons.base}/swap.${TransactionIcons.ext}',
+                  alignment: Alignment.center,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text('swap', style: AppText.labelHolding),
+            ])),
       ]));
 
   /// AnimatedPositions solution:
@@ -125,6 +134,9 @@ class AnimatedCoinSpec extends StatelessWidget {
       builder: (context, state) {
         double iconTop = 4;
         double valueTop = 4 + screen.iconHuge + 16;
+        String? overrideWhole;
+        String? overridePart;
+        String? overrideSubtitle;
 
         if (state.section == HoldingSection.none) {
           iconTop = 4;
@@ -139,18 +151,28 @@ class AnimatedCoinSpec extends StatelessWidget {
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
               8;
+          overrideWhole = 'Receive Address';
+          overridePart = '';
+          overrideSubtitle = 'Evrmore Blockchain';
         } else if (state.section == HoldingSection.swap) {
-          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
-          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
-              screen.iconHuge +
-              8;
-        } else if (state.section == HoldingSection.transaction) {
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
               8;
           //iconTop = 24;
           //valueTop = 24 + screen.iconHuge + 24;
+        } else if (state.section == HoldingSection.transaction) {
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+              screen.iconHuge +
+              8;
+          overrideWhole = cubits.holding.state.wholeTransaction;
+          overridePart = cubits.holding.state.partTransaction;
+          overrideSubtitle = cubits.holding.state.transaction == null
+              ? ''
+              : (cubits.holding.state.transaction!.incoming)
+                  ? 'Received'
+                  : 'Sent';
         }
         return Stack(alignment: Alignment.topCenter, children: [
           AnimatedPositioned(
@@ -162,7 +184,10 @@ class AnimatedCoinSpec extends StatelessWidget {
               duration: slideDuration,
               curve: Curves.easeInOutCubic,
               top: valueTop,
-              child: assetValues()),
+              child: assetValues(
+                  whole: overrideWhole,
+                  part: overridePart,
+                  subtitle: overrideSubtitle)),
           Positioned(
               bottom: 24,
               child: Hide(

@@ -11,14 +11,16 @@ enum HoldingSection {
 class HoldingState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final HoldingSection section;
-  final Holding asset;
+  final Holding holding;
+  final TransactionDisplay? transaction;
   final bool isSubmitting;
   final HoldingState? prior;
 
   const HoldingState({
     this.active = false,
     this.section = HoldingSection.none,
-    this.asset = const Holding.empty(),
+    this.holding = const Holding.empty(),
+    this.transaction,
     this.isSubmitting = false,
     this.prior,
   });
@@ -27,7 +29,8 @@ class HoldingState with EquatableMixin, PriorActiveStateMixin {
   List<Object?> get props => <Object?>[
         active,
         section,
-        asset,
+        holding,
+        transaction,
         isSubmitting,
         prior,
       ];
@@ -39,7 +42,8 @@ class HoldingState with EquatableMixin, PriorActiveStateMixin {
   HoldingState get withoutPrior => HoldingState(
         active: active,
         section: section,
-        asset: asset,
+        holding: holding,
+        transaction: transaction,
         isSubmitting: isSubmitting,
         prior: null,
       );
@@ -51,7 +55,16 @@ class HoldingState with EquatableMixin, PriorActiveStateMixin {
   bool get isActive => active;
   bool get onHistory => section == HoldingSection.none;
 
-  String get whole => 'whole'; //asset.coin.().split('.').first;
-  String get part => 'part'; //asset.coin.toCommaString().split('.').last;
-  String get usd => '\$ usd'; //asset.coin.toCommaString().split('.').last;
+  String get whole => holding.coin.humanString().split('.').first;
+  String get part => holding.coin.humanString().split('.').last != '0'
+      ? holding.coin.humanString().split('.').last
+      : '';
+  String get usd => '\$ ${holding.fiat}';
+  String get wholeTransaction =>
+      transaction?.coin.humanString().split('.').first ?? '0';
+  String get partTransaction =>
+      transaction?.coin.humanString().split('.').last != '0'
+          ? transaction?.coin.humanString().split('.').last ?? ''
+          : '';
+  String get usdTransaction => '\$ ${transaction?.fiat ?? '-'}';
 }

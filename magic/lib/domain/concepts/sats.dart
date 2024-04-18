@@ -3,6 +3,20 @@ import 'package:intl/intl.dart';
 extension DoubleReadableNumericExtension on double {
   String toCommaString() =>
       NumberFormat('#,##0.########', 'en_US').format(this);
+  String toSpacedCommaString() {
+    String formatted = toCommaString();
+    int decimalIndex = formatted.indexOf('.');
+    //if (decimalIndex != -1 && formatted.length > decimalIndex + 6) {
+    //  formatted =
+    //      '${formatted.substring(0, decimalIndex + 6)} ${formatted.substring(decimalIndex + 6)}';
+    //}
+    if (decimalIndex != -1 && formatted.length > decimalIndex + 3) {
+      formatted =
+          '${formatted.substring(0, decimalIndex + 3)} ${formatted.substring(decimalIndex + 3)}';
+    }
+    return formatted;
+  }
+
   String toFiatCommaString() => NumberFormat('#,##0.##', 'en_US').format(this);
   double roundToTenth() => (this * 10).ceil() / 10;
   double roundToHundredth() => (this * 100).ceil() / 100;
@@ -118,27 +132,35 @@ class Coin {
   Coin operator +(Coin other) => Coin._(value + other.value);
   Sats get toSats => Sats((value * satsPerCoin).round());
   Fiat toFiat(double coinPrice) => Fiat(value * coinPrice);
-  String humanString() => value.toCommaString();
+  String humanString() => value.toSpacedCommaString();
   String simplified() => value.simplified();
 }
 
 class Fiat {
   final double value;
-  const Fiat._(this.value);
-  factory Fiat(double value) {
-    return Fiat._(value);
+  final bool rated;
+  const Fiat._(this.value, {this.rated = true});
+  factory Fiat(double value, {bool rated = true}) {
+    return Fiat._(value, rated: rated);
   }
   factory Fiat.fromCoin(Coin coin, double coinPrice) =>
       Fiat._(coin.value * coinPrice);
-  const Fiat.empty() : value = 0;
+  const Fiat.empty()
+      : value = 0,
+        rated = false;
   Fiat operator +(Fiat other) => Fiat._(value + other.value);
+  bool isEmpty() => !rated;
   @override
-  String toString() => value.toFiatCommaString();
-  String simplified() => '\$${value.simplified()}';
-  String humanString() => value.toFiatCommaString();
-  String get head =>
-      int.parse(value.toString().split('.').first).toCommaString();
+  String toString() => isEmpty() ? '-' : value.toFiatCommaString();
+  String simplified() => isEmpty() ? '-' : '\$${value.simplified()}';
+  String humanString() => isEmpty() ? '-' : value.toFiatCommaString();
+  String get head => isEmpty()
+      ? '-'
+      : int.parse(value.toString().split('.').first).toCommaString();
   String get tail {
+    if (isEmpty()) {
+      return '-';
+    }
     final cents = '.${value.toString().split('.').last}';
     if (cents.length == 2) {
       return '${cents}0';

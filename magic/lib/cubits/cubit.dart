@@ -14,6 +14,7 @@ class GlobalCubits {
   final wallet = WalletCubit();
   final transactions = TransactionsCubit();
   final send = SendCubit();
+  final receive = ReceiveCubit();
   final fade = FadeCubit();
 
   /// other
@@ -50,6 +51,7 @@ class GlobalCubits {
         BlocProvider<PaneCubit>(create: (context) => pane),
         BlocProvider<WalletCubit>(create: (context) => wallet),
         BlocProvider<TransactionsCubit>(create: (context) => transactions),
+        BlocProvider<ReceiveCubit>(create: (context) => receive),
         BlocProvider<SendCubit>(create: (context) => send),
         BlocProvider<FadeCubit>(create: (context) => fade),
         BlocProvider<AppCubit>(create: (context) => app),
