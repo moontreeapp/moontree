@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:magic/domain/concepts/coin.dart';
-import 'package:magic/domain/concepts/fiat.dart';
-import 'package:magic/domain/concepts/sats.dart';
+import 'package:magic/domain/concepts/numbers/coin.dart';
+import 'package:magic/domain/concepts/numbers/fiat.dart';
+import 'package:magic/domain/concepts/numbers/sats.dart';
 
 class Holding extends Equatable {
   final String name;
@@ -40,7 +40,7 @@ class Holding extends Equatable {
 
   bool get isEmpty => sats.isEmpty;
   bool get isRoot => symbol == root;
-  Coin get coin => sats.toCoin;
+  Coin get coin => sats.toCoin();
   Fiat get fiat {
     // if we have a rate for this asset to USD then
     //we can convert and return

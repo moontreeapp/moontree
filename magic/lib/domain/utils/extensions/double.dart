@@ -1,6 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:decimal/decimal.dart';
-import 'package:magic/domain/concepts/sats.dart';
+import 'package:magic/domain/concepts/numbers/sats.dart';
 
 extension DoubleReadableNumericExtension on double {
   String toCommaString() =>
@@ -65,10 +64,6 @@ extension DoubleReadableNumericExtension on double {
     }
     return '∞';
   }
-
-  /// do not create and use this, that was the problem in the first place.
-  /// converting to a string turns something like 200000.1000001 into 200000.1
-  //Decimal toDecimal() => Decimal.parse(toString());
 
   BigInt toSatsInt() => BigInt.from(this * satsPerCoin);
 }

@@ -58,14 +58,12 @@
 // //    child: Column(
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lit_relative_date_time/controller/relative_date_format.dart';
 import 'package:magic/cubits/cubit.dart';
-import 'package:magic/domain/concepts/coin.dart';
-import 'package:magic/domain/concepts/sats.dart';
+import 'package:magic/domain/concepts/numbers/coin.dart';
+import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/theme/theme.dart';
-import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart';
 
 class TransactionPage extends StatelessWidget {
@@ -80,29 +78,30 @@ class TransactionPage extends StatelessWidget {
           children: [
             TransactionItem(
                 label: 'To:',
-                display: TransactionDisplay(
-                    // point to cubit.transaction
-                    incoming: true,
-                    sats: Sats.fromCoin(Coin.fromDouble(20000000000.10000001)),
-                    when: DateTime.now())),
-            TransactionItem(
-                label: 'Amount:',
+                // point to cubit.transaction
                 display: TransactionDisplay(
                     incoming: true,
-                    sats: Sats.fromCoin(Coin.fromDouble(20000000000.10000001)),
+                    sats:
+                        Sats.fromCoin(Coin(coin: 20000000000, sats: 10000001)),
                     when: DateTime.now())),
-            TransactionItem(
-                label: 'Date:',
-                display: TransactionDisplay(
-                    incoming: true,
-                    sats: Sats.fromCoin(Coin.fromDouble(20000000000.10000001)),
-                    when: DateTime.now())),
-            TransactionItem(
-                label: 'Time:',
-                display: TransactionDisplay(
-                    incoming: true,
-                    sats: Sats.fromCoin(Coin.fromDouble(20000000000.10000001)),
-                    when: DateTime.now())),
+            //TransactionItem(
+            //    label: 'Amount:',
+            //    display: TransactionDisplay(
+            //        incoming: true,
+            //        sats: Sats.fromCoin(Coin(20 000 000 000.10000001)),
+            //        when: DateTime.now())),
+            //TransactionItem(
+            //    label: 'Date:',
+            //    display: TransactionDisplay(
+            //        incoming: true,
+            //        sats: Sats.fromCoin(Coin(20000000000.10000001)),
+            //        when: DateTime.now())),
+            //TransactionItem(
+            //    label: 'Time:',
+            //    display: TransactionDisplay(
+            //        incoming: true,
+            //        sats: Sats.fromCoin(Coin(20000000000.10000001)),
+            //        when: DateTime.now())),
           ]));
 }
 
@@ -114,12 +113,13 @@ class TransactionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// maybe this should be created once in a service...
     RelativeDateFormat relativeDateFormatter = RelativeDateFormat(
       Localizations.localeOf(context),
     );
     print('display.sats.value: ${display.sats.value}');
     print('sats should be    : 2000000000010000001');
-    print('display.coin.value: ${display.coin.value}');
+    print('display.coin.value: ${display.coin.humanString()}');
     print('coin should be    : 20000000000.10000001');
     return GestureDetector(
         onTap: () => maestro.activateTransaction(display),

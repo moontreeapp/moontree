@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:magic/domain/concepts/coin.dart';
-import 'package:magic/domain/concepts/fiat.dart';
-import 'package:magic/domain/concepts/sats.dart';
+import 'package:magic/domain/concepts/numbers/coin.dart';
+import 'package:magic/domain/concepts/numbers/fiat.dart';
+import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 
 //final RelativeDateFormat _relativeDateFormatter = const RelativeDateFormat(
@@ -85,7 +85,7 @@ class TransactionDisplay extends Equatable {
   RelativeDateTime get _relativeDateTime =>
       RelativeDateTime(dateTime: DateTime.now(), other: when);
 
-  Coin get coin => sats.toCoin;
+  Coin get coin => sats.toCoin();
   Fiat get fiat {
     // if we have a rate for this asset to USD then
     //we can convert and return

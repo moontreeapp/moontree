@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/domain/concepts/sections.dart';
-import 'package:magic/domain/utils/string.dart';
+import 'package:magic/domain/utils/extensions/string.dart';
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/services/services.dart' show screen, maestro;
 import 'package:magic/presentation/widgets/assets/icons.dart';

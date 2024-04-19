@@ -7,4 +7,6 @@ extension StringExtension on String {
             : '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}')
         .join(' ');
   }
+
+  String padWithZeros([int number = 8]) => padLeft(number, '0');
 }

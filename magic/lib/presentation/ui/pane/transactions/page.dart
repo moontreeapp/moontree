@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
-import 'package:magic/domain/concepts/sats.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
@@ -69,7 +68,7 @@ class TransactionItem extends StatelessWidget {
       trailing: SizedBox(
           //width: screen.width - (16 + 16 + screen.iconLarge + 16),
           child: Text(
-              '${display.incoming ? '+' : '-'}${display.sats.toCoin.humanString()}',
+              '${display.incoming ? '+' : '-'}${display.sats.toCoin().humanString()}',
               style: Theme.of(context).textTheme.body1.copyWith(
                     height: 0,
                     color:

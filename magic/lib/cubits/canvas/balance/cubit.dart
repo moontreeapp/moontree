@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
-import 'package:magic/domain/concepts/fiat.dart';
-import 'package:magic/domain/concepts/sats.dart';
+import 'package:magic/domain/concepts/numbers/fiat.dart';
 
 part 'state.dart';
 
