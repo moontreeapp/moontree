@@ -74,15 +74,9 @@ class Maestro {
     }
   }
 
-  Future<void> inactiveateAllBut(dynamic except) async {
-    for (dynamic c in [
-      // all panel cubits
-      cubits.wallet,
-      cubits.transactions,
-      cubits.send,
-      cubits.receive
-    ]) {
-      if (c.state != except && c.state.active) {
+  Future<void> inactiveateAllBut(String? except) async {
+    for (dynamic c in cubits.paneCubits) {
+      if (c.key != except && c.state.active) {
         c.update(active: false);
         cubits.fade.update(fade: FadeEvent.fadeOut);
         await awaitFor(
@@ -185,7 +179,7 @@ class Maestro {
     cubits.holding.update(active: false);
     cubits.balance.update(active: true);
     cubits.menu.update(active: true);
-    await inactiveateAllBut(cubits.wallet.state);
+    await inactiveateAllBut(cubits.wallet.key);
     cubits.wallet.update(active: true);
     cubits.pane.heightBehavior = (double h) {
       hideNavbarOnDrag(h);
@@ -260,7 +254,7 @@ class Maestro {
       min: screen.pane.midHeightPercent,
     );
     cubits.pane.heightBehavior = null;
-    await inactiveateAllBut(cubits.transactions.state);
+    await inactiveateAllBut(cubits.transactions.key);
     cubits.transactions.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
@@ -284,7 +278,7 @@ class Maestro {
       max: screen.pane.midHeightPercent,
       min: screen.pane.midHeightPercent,
     );
-    await inactiveateAllBut(cubits.send.state);
+    await inactiveateAllBut(cubits.send.key);
     cubits.send.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
@@ -308,32 +302,8 @@ class Maestro {
       max: screen.pane.midHeightPercent,
       min: screen.pane.midHeightPercent,
     );
-    await inactiveateAllBut(cubits.receive.state);
+    await inactiveateAllBut(cubits.receive.key);
     cubits.receive.update(active: true);
-    cubits.fade.update(fade: FadeEvent.fadeIn);
-    cubits.ignore.update(active: false);
-  }
-
-  Future<void> activateSwapOnHolding() async {
-    cubits.ignore.update(active: true);
-    cubits.fade.update(fade: FadeEvent.fadeOut);
-    cubits.navbar.update(active: false);
-    cubits.appbar.update(
-      leading: AppbarLeading.close,
-      title: 'Swap',
-      onLead: activateHistory,
-      onTitle: cubits.appbar.none,
-    );
-    cubits.menu.update(active: false);
-    cubits.holding.update(active: true, section: HoldingSection.swap);
-    cubits.pane.update(
-      active: true,
-      height: screen.pane.midHeight,
-      max: screen.pane.midHeightPercent,
-      min: screen.pane.midHeightPercent,
-    );
-    await inactiveateAllBut(cubits.send.state);
-    cubits.send.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
   }
@@ -359,8 +329,56 @@ class Maestro {
       max: screen.pane.midHeightPercent,
       min: screen.pane.midHeightPercent,
     );
-    await inactiveateAllBut(cubits.send.state);
-    cubits.send.update(active: true);
+    await inactiveateAllBut(cubits.transaction.key);
+    cubits.transaction.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeIn);
+    cubits.ignore.update(active: false);
+  }
+
+  Future<void> activateSwapOnHolding() async {
+    cubits.ignore.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeOut);
+    cubits.navbar.update(active: false);
+    cubits.appbar.update(
+      leading: AppbarLeading.close,
+      title: 'Swap',
+      onLead: activateHistory,
+      onTitle: cubits.appbar.none,
+    );
+    cubits.menu.update(active: false);
+    cubits.holding.update(active: true, section: HoldingSection.swap);
+    cubits.pane.update(
+      active: true,
+      height: screen.pane.midHeight,
+      max: screen.pane.midHeightPercent,
+      min: screen.pane.midHeightPercent,
+    );
+    await inactiveateAllBut(cubits.swap.key);
+    cubits.swap.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeIn);
+    cubits.ignore.update(active: false);
+  }
+
+  Future<void> activateManageOnHolding() async {
+    cubits.ignore.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeOut);
+    cubits.navbar.update(active: false);
+    cubits.appbar.update(
+      leading: AppbarLeading.close,
+      title: 'Manage',
+      onLead: activateHistory,
+      onTitle: cubits.appbar.none,
+    );
+    cubits.menu.update(active: false);
+    cubits.holding.update(active: true, section: HoldingSection.swap);
+    cubits.pane.update(
+      active: true,
+      height: screen.pane.midHeight,
+      max: screen.pane.midHeightPercent,
+      min: screen.pane.midHeightPercent,
+    );
+    await inactiveateAllBut(cubits.manage.key);
+    cubits.manage.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
   }

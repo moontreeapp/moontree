@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:magic/domain/concepts/coin.dart';
+import 'package:magic/domain/concepts/fiat.dart';
 import 'package:magic/domain/concepts/sats.dart';
 
 class Holding extends Equatable {

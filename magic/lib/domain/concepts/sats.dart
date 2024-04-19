@@ -1,96 +1,11 @@
-import 'package:intl/intl.dart';
-
-extension DoubleReadableNumericExtension on double {
-  String toCommaString() =>
-      NumberFormat('#,##0.########', 'en_US').format(this);
-  String toSpacedCommaString() {
-    String formatted = toCommaString();
-    int decimalIndex = formatted.indexOf('.');
-    //if (decimalIndex != -1 && formatted.length > decimalIndex + 6) {
-    //  formatted =
-    //      '${formatted.substring(0, decimalIndex + 6)} ${formatted.substring(decimalIndex + 6)}';
-    //}
-    if (decimalIndex != -1 && formatted.length > decimalIndex + 3) {
-      formatted =
-          '${formatted.substring(0, decimalIndex + 3)} ${formatted.substring(decimalIndex + 3)}';
-    }
-    return formatted;
-  }
-
-  String toFiatCommaString() => NumberFormat('#,##0.##', 'en_US').format(this);
-  double roundToTenth() => (this * 10).ceil() / 10;
-  double roundToHundredth() => (this * 100).ceil() / 100;
-  String simplified() {
-    if (this == 0.0) {
-      return '0';
-    }
-    if (this < 1) {
-      //if (this == roundToTenth()) {
-      //  return '${roundToTenth()}';
-      //}
-      //return '${roundToTenth()}*';
-      return '${roundToHundredth()}';
-    }
-    if (this < 100) {
-      //if (this == toInt()) {
-      //  return '${toInt()}';
-      //}
-      //return '~${toInt()}';
-
-      return '${toInt()}';
-    }
-    if (this < 1000) {
-      //if (this == toInt()) {
-      //  return '${toInt()}';
-      //}
-      //return '${toInt()}.';
-      return '${toInt()}';
-    }
-    if (this < 1000000) {
-      return '${(this / 1000).toStringAsFixed(0)}k';
-    }
-    if (this < 1000000000) {
-      return '${(this / 1000000).toStringAsFixed(0)}m';
-    }
-    if (this < 1000000000000) {
-      return '${(this / 1000000000).toStringAsFixed(0)}b';
-    }
-    if (this < 1000000000000000) {
-      return '${(this / 1000000000000).toStringAsFixed(0)}t';
-    }
-    if (this < 1000000000000000000) {
-      return '${(this / 1000000000000000).toStringAsFixed(0)}q';
-    }
-    return '∞';
-  }
-}
-
-extension IntReadableNumericExtension on int {
-  String toCommaString() => NumberFormat('#,##0', 'en_US').format(this);
-  String simplified() {
-    if (this < 1000) {
-      return '$this';
-    }
-    if (this < 1000000) {
-      return '${(this / 1000).toStringAsFixed(0)}k';
-    }
-    if (this < 1000000000) {
-      return '${(this / 1000000).toStringAsFixed(0)}m';
-    }
-    if (this < 1000000000000) {
-      return '${(this / 1000000000).toStringAsFixed(0)}b';
-    }
-    if (this < 1000000000000000) {
-      return '${(this / 1000000000000).toStringAsFixed(0)}t';
-    }
-    if (this < 1000000000000000000) {
-      return '${(this / 1000000000000000).toStringAsFixed(0)}q';
-    }
-    return '∞';
-  }
-}
+import 'package:decimal/decimal.dart';
+import 'package:magic/domain/concepts/coin.dart';
+import 'package:magic/domain/extensions/decimal.dart';
+import 'package:magic/domain/extensions/double.dart';
+import 'package:magic/domain/extensions/int.dart';
 
 const satsPerCoin = 100000000;
+Decimal satsPerCoinDec = Decimal.fromInt(100000000);
 
 class Sats {
   final int value;
@@ -104,73 +19,59 @@ class Sats {
     return Sats._(value, isEmpty: isEmpty);
   }
   factory Sats.fromCoin(Coin coin) {
-    return Sats._((coin.value * satsPerCoin).round());
+    return Sats._((coin.value.toDouble() * satsPerCoin).round());
+    // gave this problem:
+    //I/flutter ( 4206): display.sats.value: 2000000000009999872
+    //I/flutter ( 4206): display.coin.value: 20000000000.1
+
+    // Convert coin value to a string
+    var valueStr = coin.value.toCommaString();
+    print('valueStr: $valueStr');
+    // Find the decimal point position
+
+    int decimalIndex = valueStr.indexOf('.');
+    // Remove the decimal point by creating a new string
+    String newStr = valueStr.substring(0, decimalIndex) +
+        valueStr.substring(decimalIndex + 1);
+
+    print('newStr: $newStr');
+    // Convert the string to an integer
+    return Sats._(int.parse(newStr));
   }
   const Sats.empty()
       : value = 0,
         isEmpty = true;
   Sats operator +(Sats other) => Sats._(value + other.value);
-  Coin get toCoin => Coin(value / satsPerCoin);
+  Coin get toCoin => Coin((value.toDecimal() / satsPerCoinDec).toDecimal());
   // Sats shouldn't be separated by commas, so we don't get confused.
   String humanString() => value.toString(); //.toCommaString();
   String simplified() => value.simplified();
 }
 
-class Coin {
-  final double value;
-  const Coin._(this.value);
-  factory Coin(double value) {
-    if (value < 0 || value > 21000000000) {
-      throw ArgumentError(
-          'Value must be between 0 and 21000000000, inclusive.');
-    }
-    return Coin._(value);
-  }
-  factory Coin.fromSats(Sats sat) {
-    return Coin._(sat.value / satsPerCoin);
-  }
-  Coin operator +(Coin other) => Coin._(value + other.value);
-  Sats get toSats => Sats((value * satsPerCoin).round());
-  Fiat toFiat(double coinPrice) => Fiat(value * coinPrice);
-  String humanString() => value.toSpacedCommaString();
-  String simplified() => value.simplified();
-}
-
-class Fiat {
-  final double value;
-  final bool rated;
-  const Fiat._(this.value, {this.rated = true});
-  factory Fiat(double value, {bool rated = true}) {
-    return Fiat._(value, rated: rated);
-  }
-  factory Fiat.fromCoin(Coin coin, double coinPrice) =>
-      Fiat._(coin.value * coinPrice);
-  const Fiat.empty()
-      : value = 0,
-        rated = false;
-  Fiat operator +(Fiat other) => Fiat._(value + other.value);
-  bool isEmpty() => !rated;
-  @override
-  String toString() => isEmpty() ? '-' : value.toFiatCommaString();
-  String simplified() => isEmpty() ? '-' : '\$${value.simplified()}';
-  String humanString() => isEmpty() ? '-' : value.toFiatCommaString();
-  String get head => isEmpty()
-      ? '-'
-      : int.parse(value.toString().split('.').first).toCommaString();
-  String get tail {
-    if (isEmpty()) {
-      return '-';
-    }
-    final cents = '.${value.toString().split('.').last}';
-    if (cents.length == 2) {
-      return '${cents}0';
-    }
-    if (cents.length == 3) {
-      return cents;
-    }
-    return cents.substring(0, 3);
-  }
-}
+//class Coin {
+//  final double value;
+//  const Coin._(this.value);
+//  factory Coin(double value) {
+//    if (value < 0 || value > 21000000000) {
+//      throw ArgumentError(
+//          'Value must be between 0 and 21000000000, inclusive.');
+//    }
+//    return Coin._(value);
+//  }
+//  factory Coin.fromSats(Sats sat) {
+//    return Coin._(sat.value / satsPerCoin);
+//  }
+//  Coin operator +(Coin other) => Coin._(value + other.value);
+//  Sats get toSats => Sats((value * satsPerCoin).round());
+//  Fiat toFiat(double coinPrice) => Fiat(value * coinPrice);
+//  String humanString() => value.toSpacedCommaString();
+//  String simplified() => value.simplified();
+//  String whole() => humanString().split('.').first;
+//  String part() => ['', '0', humanString().split('.').first]
+//          .contains(humanString().split('.').last)
+//      ? ''
+//      : '.${humanString().split('.').last}';
+//}
 
 class Divisibility {
   final int value;

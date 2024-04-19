@@ -4,16 +4,15 @@ import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
 
-class ReceiveCubit extends Cubit<ReceiveState>
-    with UpdateHideMixin<ReceiveState> {
-  ReceiveCubit() : super(const ReceiveState());
+class SwapCubit extends Cubit<SwapState> with UpdateHideMixin<SwapState> {
+  SwapCubit() : super(const SwapState());
   double height = 0;
   @override
-  String get key => 'receive';
+  String get key => 'swap';
   @override
-  void reset() => emit(const ReceiveState());
+  void reset() => emit(const SwapState());
   @override
-  void setState(ReceiveState state) => emit(state);
+  void setState(SwapState state) => emit(state);
   @override
   void hide() => update(active: false);
 
@@ -24,9 +23,9 @@ class ReceiveCubit extends Cubit<ReceiveState>
     String? chain,
     String? address,
     bool? isSubmitting,
-    ReceiveState? prior,
+    SwapState? prior,
   }) {
-    emit(ReceiveState(
+    emit(SwapState(
       active: active ?? state.active,
       asset: asset ?? state.asset,
       chain: chain ?? state.chain,

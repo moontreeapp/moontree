@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/concepts/coin.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/sats.dart';
 import 'package:magic/domain/concepts/transaction.dart';
@@ -51,7 +52,7 @@ class TransactionsCubit extends Cubit<TransactionsState>
             metadata: HoldingMetadata(
               divisibility: Divisibility(8),
               reissuable: false,
-              supply: Sats.fromCoin(Coin(21000000000)),
+              supply: Sats.fromCoin(Coin.fromInt(21000000000)),
             ),
           ),
           transactions: [
