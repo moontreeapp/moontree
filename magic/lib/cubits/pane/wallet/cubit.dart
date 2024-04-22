@@ -39,6 +39,7 @@ class WalletCubit extends Cubit<WalletState> with UpdateHideMixin<WalletState> {
   }
 
   void populateAssets() {
+    // remember to order by currency first, amount second, alphabetical third
     update(holdings: [
       for (final index in range(47))
         Holding(

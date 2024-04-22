@@ -1,7 +1,6 @@
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/utils/extensions/int.dart';
-import 'package:magic/domain/utils/extensions/string.dart';
 
 class Coin {
   final int coin;
@@ -65,7 +64,15 @@ class Coin {
   String humanString() => '${coin.toCommaString()}${part()}';
   String simplified() {
     if (coin < 10 && sats > 0) {
-      return '${coin.simplified()}.$sats';
+      final ret = '${coin.simplified()}.${sats.toSpacedString()}';
+      final split = ret.split(' ');
+      if (split.last == '000000') {
+        return '${split.first}';
+      }
+      return '~${split.first}';
+    }
+    if (sats > 0) {
+      return '~${coin.simplified()}';
     }
     return coin.simplified();
   }

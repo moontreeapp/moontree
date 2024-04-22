@@ -56,7 +56,7 @@ class TransactionsCubit extends Cubit<TransactionsState>
             ),
           ),
           transactions: [
-            for (final index in range(40))
+            for (final index in range(16))
               TransactionDisplay(
                   incoming: Random().nextInt(2) == 0,
                   when: DateTime.now(),

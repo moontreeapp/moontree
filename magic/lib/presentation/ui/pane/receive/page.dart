@@ -13,35 +13,50 @@ class ReceivePage extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 24),
       child:
           Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        const Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        Expanded(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            TextFieldFormatted(
-              autocorrect: false,
-              textInputAction: TextInputAction.next,
-              labelText: 'To',
-              suffixIcon: Icon(Icons.qr_code_scanner, color: AppColors.black60),
-            ),
-            SizedBox(height: 4),
-            TextFieldFormatted(
-              autocorrect: false,
-              textInputAction: TextInputAction.done,
-              labelText: 'Amount',
-            ),
+            Container(
+                height: screen.width - 32 * 4,
+                width: screen.width - 32 * 4,
+                color: Colors.grey),
+            Text('address'),
           ],
-        ),
-        Container(
-            height: 64,
-            decoration: ShapeDecoration(
-              color: AppColors.error,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28 * 100),
-              ),
-            ),
-            child: Center(
-                child: Text(
-              'SEND',
-              style: AppText.button1.copyWith(color: Colors.white),
-            ))),
+        )),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+                child: Container(
+                    height: 64,
+                    decoration: ShapeDecoration(
+                      color: AppColors.success,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28 * 100),
+                      ),
+                    ),
+                    child: Center(
+                        child: Text(
+                      'COPY',
+                      style: AppText.button1.copyWith(color: Colors.white),
+                    )))),
+            const SizedBox(width: 16),
+            Expanded(
+                child: Container(
+                    height: 64,
+                    decoration: ShapeDecoration(
+                      color: AppColors.success,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28 * 100),
+                      ),
+                    ),
+                    child: Center(
+                        child: Text(
+                      'SHARE',
+                      style: AppText.button1.copyWith(color: Colors.white),
+                    )))),
+          ],
+        )
       ]));
 }

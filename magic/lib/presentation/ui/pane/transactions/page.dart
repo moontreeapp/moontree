@@ -32,48 +32,66 @@ class TransactionItem extends StatelessWidget {
       Localizations.localeOf(context),
     );
     return ListTile(
-      //dense: true,
-      //visualDensity: VisualDensity.compact,
-      onTap: () => maestro.activateTransaction(display),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      leading: Container(
-        width: screen.iconHuge,
-        height: screen.iconHuge,
-        //color: Colors.red,
-        alignment: Alignment.center,
-        child: SvgPicture.asset(
-          '${TransactionIcons.base}/${display.incoming ? 'incoming' : 'outgoing'}.${TransactionIcons.ext}',
-          height: screen.iconHuge,
+        //dense: true,
+        //visualDensity: VisualDensity.compact,
+        onTap: () => maestro.activateTransaction(display),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
           width: screen.iconHuge,
-          fit: BoxFit.contain,
+          height: screen.iconHuge,
+          //color: Colors.red,
           alignment: Alignment.center,
+          child: SvgPicture.asset(
+            '${TransactionIcons.base}/${display.incoming ? 'incoming' : 'outgoing'}.${TransactionIcons.ext}',
+            height: screen.iconHuge,
+            width: screen.iconHuge,
+            fit: BoxFit.contain,
+            alignment: Alignment.center,
+          ),
         ),
-      ),
-      title: SizedBox(
-          width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text(display.humanWhen(relativeDateFormatter),
-              style: Theme.of(context).textTheme.body1.copyWith(
-                    height: 0,
-                    color: AppColors.black87,
-                  ))),
-      //subtitle: Container(
-      //    width: screen.width - (16 + 16 + screen.iconLarge + 16),
-      //    //color: Colors.red,
-      //    child: Text('today',
-      //        textAlign: TextAlign.start,
-      //        style: Theme.of(context).textTheme.body2.copyWith(
-      //              height: 0,
-      //              color: Colors.black38,
-      //            ))),
-      trailing: SizedBox(
-          //width: screen.width - (16 + 16 + screen.iconLarge + 16),
-          child: Text(
-              '${display.incoming ? '+' : '-'}${display.sats.toCoin().humanString()}',
-              style: Theme.of(context).textTheme.body1.copyWith(
-                    height: 0,
-                    color:
-                        display.incoming ? AppColors.success : AppColors.black,
-                  ))),
-    );
+        title: SizedBox(
+            width: screen.width - (16 + 16 + screen.iconLarge + 16),
+            child: Text(display.humanWhen(relativeDateFormatter),
+                style: Theme.of(context).textTheme.body1.copyWith(
+                      height: 0,
+                      color: AppColors.black87,
+                    ))),
+        //trailing: SizedBox(
+        //    //width: screen.width - (16 + 16 + screen.iconLarge + 16),
+        //    child: Text(
+        //        '${display.incoming ? '+' : '-'}${display.sats.toCoin().humanString()}',
+        //        style: Theme.of(context).textTheme.body1.copyWith(
+        //              height: 0,
+        //              color:
+        //                  display.incoming ? AppColors.success : AppColors.black,
+        //             ))),
+        trailing: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          SizedBox(
+              //width: screen.width - (16 + 16 + screen.iconLarge + 16),
+              child: Text(
+                  '${display.incoming ? '+' : '-'}${display.sats.toCoin().humanString()}'
+                      .split(' ')
+                      .first,
+                  style: Theme.of(context).textTheme.body1.copyWith(
+                        height: 0,
+                        color: display.incoming
+                            ? AppColors.success
+                            : AppColors.black,
+                      ))),
+          SizedBox(
+              //width: screen.width - (16 + 16 + screen.iconLarge + 16),
+              child: Text(
+                  '${display.incoming ? '+' : '-'}${display.sats.toCoin().humanString()}'
+                      .split(' ')
+                      .last,
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context).textTheme.body1.copyWith(
+                        height: 0,
+                        fontSize: 8,
+                        color: display.incoming
+                            ? AppColors.success
+                            : AppColors.black60,
+                      ))),
+        ]));
   }
 }

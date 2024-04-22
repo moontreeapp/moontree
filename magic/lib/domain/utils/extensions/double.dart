@@ -19,8 +19,8 @@ extension DoubleReadableNumericExtension on double {
   }
 
   String toFiatCommaString() => NumberFormat('#,##0.##', 'en_US').format(this);
-  double roundToTenth() => (this * 10).ceil() / 10;
-  double roundToHundredth() => (this * 100).ceil() / 100;
+  double roundToTenth() => (this * 10).round() / 10;
+  double roundToHundredth() => (this * 100).round() / 100;
   String simplified() {
     if (this == 0.0) {
       return '0';

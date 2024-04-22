@@ -46,7 +46,8 @@ class AnimatedBalance extends StatelessWidget {
                             children: [
                               Text('\$${state.portfolioValue.head}',
                                   style: AppText.wholeFiat),
-                              if (state.portfolioValue.tail != '.00')
+                              if (state.portfolioValue.tail != '.00' &&
+                                  state.portfolioValue.head != '-')
                                 Text(state.portfolioValue.tail,
                                     style: AppText.partFiat),
                             ]),
