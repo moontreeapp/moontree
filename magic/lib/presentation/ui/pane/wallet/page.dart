@@ -1,8 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/presentation/theme/theme.dart';
+import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart';
 
 class WalletPage extends StatelessWidget {
@@ -24,41 +26,29 @@ class HoldingItem extends StatelessWidget {
   const HoldingItem({super.key, required this.holding});
 
   @override
-  Widget build(BuildContext context) => () {
-        print(holding.coin.toFiat(1));
-        return ListTile(
-          /// this functionality is replaced by the WalletStack
-          //onTap: () => cubits.pane.state.height == screen.pane.minHeight
-          //    ? cubits.pane.snapTo(screen.pane.midHeight)
-          //    : maestro.activateHistory(),
-          onTap: () => maestro.activateHistory(holding),
-          leading: const SimpleIdenticon(),
-          title: SizedBox(
-              width: screen.width -
-                  (screen.iconMedium +
-                      screen.iconMedium +
-                      screen.iconLarge +
-                      24 +
-                      24),
-              //color: Colors.grey,
-              child: Text(holding.isRoot ? holding.name : holding.symbol,
-                  style: Theme.of(context)
-                      .textTheme
-                      .body1
-                      .copyWith(color: Colors.black87))),
-          subtitle: Text(holding.coin.simplified(),
-              style: Theme.of(context)
-                  .textTheme
-                  .body1
-                  .copyWith(color: AppColors.black60)),
-          trailing: Text(holding.coin.toFiat(1).simplified(),
-              textAlign: TextAlign.right,
-              style: Theme.of(context)
-                  .textTheme
-                  .body1
-                  .copyWith(color: AppColors.black60)),
-        );
-      }();
+  Widget build(BuildContext context) => ListTile(
+        /// this functionality is replaced by the WalletStack
+        //onTap: () => cubits.pane.state.height == screen.pane.minHeight
+        //    ? cubits.pane.snapTo(screen.pane.midHeight)
+        //    : maestro.activateHistory(),
+        onTap: () => maestro.activateHistory(holding),
+        leading: const SimpleIdenticon(),
+        title: SizedBox(
+            width: screen.width -
+                (screen.iconMedium +
+                    screen.iconMedium +
+                    screen.iconLarge +
+                    24 +
+                    24),
+            //color: Colors.grey,
+            child: Text(holding.isRoot ? holding.name : holding.symbol,
+                style: Theme.of(context)
+                    .textTheme
+                    .body1
+                    .copyWith(color: Colors.black87))),
+        subtitle: CoinView(coin: holding.coin),
+        trailing: FiatView(fiat: holding.coin.toFiat(1)),
+      );
 }
 
 class SimpleIdenticon extends StatelessWidget {

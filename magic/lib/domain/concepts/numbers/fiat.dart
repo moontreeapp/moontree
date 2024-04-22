@@ -23,7 +23,7 @@ class Fiat {
   @override
   String toString() => isEmpty() ? '-' : value.toFiatCommaString();
   String simplified() => isEmpty() ? '-' : '\$${value.simplified()}';
-  String humanString() => isEmpty() ? '-' : value.toFiatCommaString();
+  String humanString() => isEmpty() ? '-' : '\$${value.toFiatCommaString()}';
 
   String get head => isEmpty()
       ? '-'

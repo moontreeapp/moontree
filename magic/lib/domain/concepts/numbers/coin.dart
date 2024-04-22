@@ -61,22 +61,39 @@ class Coin {
   Fiat toFiat(double coinPrice) =>
       Fiat((coin * coinPrice) + ((sats / satsPerCoin) * coinPrice));
 
-  String humanString() => '${coin.toCommaString()}${part()}';
+  String humanString() => '${whole()}${part()}';
+
+  /// 1,234.56788901 -> 1k
   String simplified() {
     if (coin < 10 && sats > 0) {
       final ret = '${coin.simplified()}.${sats.toSpacedString()}';
-      final split = ret.split(' ');
-      if (split.last == '000000') {
-        return '${split.first}';
+      if (ret.split(' ').first == '0.00') {
+        return '0';
       }
-      return '~${split.first}';
+      return ret.split(' ').first;
     }
-    if (sats > 0) {
-      return '~${coin.simplified()}';
+    return coin.simplified();
+  }
+
+  /// 1,234.56788901
+  String complicated() {
+    if (coin < 10 && sats > 0) {
+      final ret = '${coin.simplified()}.${sats.toSpacedString()}';
+      if (ret.split(' ').first == '0.00') {
+        return '0';
+      }
+      return ret.split(' ').first;
     }
     return coin.simplified();
   }
 
   String whole() => coin.toCommaString();
-  String part() => '.${sats > 0 ? sats.toSpacedString() : ''}';
+  String part({bool zeros = false}) =>
+      zeros || sats > 0 ? '.${sats.padWithZeros()}' : '';
+  String partOne() => '.${sats.padWithZeros().substring(0, 2)}';
+  String partTwo() => sats.padWithZeros().substring(2, 5);
+  String partThree() => sats.padWithZeros().substring(5, 8);
+  String entire() => '${whole()}${part(zeros: true)}';
+  String beginning() => entire().substring(0, entire().length - 6);
+  String ending() => entire().substring(entire().length - 6);
 }

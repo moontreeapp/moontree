@@ -3,9 +3,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
+import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/hiding.dart';
+import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
@@ -50,11 +52,22 @@ class AnimatedCoinSpec extends StatelessWidget {
   Widget assetValues({String? whole, String? part, String? subtitle}) =>
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(whole ?? cubits.holding.state.whole,
-              style: AppText.wholeHolding),
-          if ((part ?? cubits.holding.state.part) != '')
-            Text('.${part ?? cubits.holding.state.part}',
-                style: AppText.partHolding),
+          if (whole == null)
+            CoinBalanceView(
+              coin: cubits.holding.state.holding.coin,
+              wholeStyle: AppText.wholeHolding,
+              partOneStyle: AppText.partHolding,
+              partTwoStyle:
+                  AppText.partHolding.copyWith(color: AppColors.white38),
+              partThreeStyle:
+                  AppText.partHolding.copyWith(color: AppColors.white38),
+            )
+          else ...[
+            Text(whole, style: AppText.wholeHolding),
+            if ((part ?? cubits.holding.state.part) != '')
+              Text('.${part ?? cubits.holding.state.part}',
+                  style: AppText.partHolding),
+          ]
         ]),
         Text(subtitle ?? cubits.holding.state.usd, style: AppText.usdHolding),
       ]);

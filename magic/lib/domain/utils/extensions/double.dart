@@ -18,19 +18,36 @@ extension DoubleReadableNumericExtension on double {
     return formatted;
   }
 
-  String toFiatCommaString() => NumberFormat('#,##0.##', 'en_US').format(this);
+  String toFiatCommaString() {
+    final ret = NumberFormat('#,##0.##', 'en_US').format(this);
+    if (!ret.contains('.')) {
+      return '$ret.00';
+    }
+    if (ret.split('.').last.length == 1) {
+      return '${ret}0';
+    }
+    return ret;
+  }
+
   double roundToTenth() => (this * 10).round() / 10;
   double roundToHundredth() => (this * 100).round() / 100;
   String simplified() {
     if (this == 0.0) {
       return '0';
     }
-    if (this < 1) {
+    if (this < 10) {
       //if (this == roundToTenth()) {
       //  return '${roundToTenth()}';
       //}
       //return '${roundToTenth()}*';
-      return '${roundToHundredth()}';
+      final ret = '${roundToHundredth()}';
+      if (ret.split('.').last == '0') {
+        return ret.split('.').first;
+      }
+      if (ret.split('.').last.length == 1) {
+        return '${ret}0';
+      }
+      return ret;
     }
     if (this < 100) {
       //if (this == toInt()) {

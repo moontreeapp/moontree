@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/cubits.dart';
 import 'package:magic/domain/concepts/transaction.dart';
+import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
@@ -65,33 +67,26 @@ class TransactionItem extends StatelessWidget {
         //              color:
         //                  display.incoming ? AppColors.success : AppColors.black,
         //             ))),
-        trailing: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          SizedBox(
-              //width: screen.width - (16 + 16 + screen.iconLarge + 16),
-              child: Text(
-                  '${display.incoming ? '+' : '-'}${display.sats.toCoin().humanString()}'
-                      .split(' ')
-                      .first,
-                  style: Theme.of(context).textTheme.body1.copyWith(
-                        height: 0,
-                        color: display.incoming
-                            ? AppColors.success
-                            : AppColors.black,
-                      ))),
-          SizedBox(
-              //width: screen.width - (16 + 16 + screen.iconLarge + 16),
-              child: Text(
-                  '${display.incoming ? '+' : '-'}${display.sats.toCoin().humanString()}'
-                      .split(' ')
-                      .last,
-                  textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.body1.copyWith(
-                        height: 0,
-                        fontSize: 8,
-                        color: display.incoming
-                            ? AppColors.success
-                            : AppColors.black60,
-                      ))),
-        ]));
+        trailing: CoinSplitView(display: display, coin: display.sats.toCoin())
+        //trailing: CoinView(
+        //    coin: display.sats.toCoin(),
+        //    wholeStyle: Theme.of(context)
+        //        .textTheme
+        //        .body1
+        //        .copyWith(height: 0, color: AppColors.black60),
+        //    partOneStyle: Theme.of(context)
+        //        .textTheme
+        //        .body1
+        //        .copyWith(height: 0, fontSize: 14, color: AppColors.black60),
+        //    partTwoStyle: Theme.of(context)
+        //        .textTheme
+        //        .body1
+        //        .copyWith(height: 0, fontSize: 10, color: AppColors.black60),
+        //    partThreeStyle: Theme.of(context)
+        //        .textTheme
+        //        .body1
+        //        .copyWith(height: 0, fontSize: 10, color: AppColors.black60),
+        //    mode: DifficultyMode.hard)
+        );
   }
 }
