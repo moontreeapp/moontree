@@ -96,4 +96,16 @@ class Coin {
   String entire() => '${whole()}${part(zeros: true)}';
   String beginning() => entire().substring(0, entire().length - 6);
   String ending() => entire().substring(entire().length - 6);
+  String spacedEnding() =>
+      '${entire().substring(entire().length - 6, entire().length - 3)} ${entire().substring(entire().length - 3)}';
+  String spacedPart({bool zeros = false}) {
+    final p = part(zeros: zeros);
+    if (zeros) {
+      return '${p.substring(0, 3)} ${p.substring(3, 6)} ${p.substring(6)}';
+    }
+    if (p.length > 6) {
+      return '${p.substring(0, 3)} ${p.substring(3, 6)} ${p.substring(6)}';
+    }
+    return p;
+  }
 }

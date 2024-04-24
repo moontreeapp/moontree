@@ -16,6 +16,11 @@ class ReceiveCubit extends Cubit<ReceiveState>
   void setState(ReceiveState state) => emit(state);
   @override
   void hide() => update(active: false);
+  @override
+  void refresh() {
+    update(isSubmitting: false);
+    update(isSubmitting: true);
+  }
 
   @override
   void update({

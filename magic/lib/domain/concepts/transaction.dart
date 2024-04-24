@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
@@ -84,6 +85,17 @@ class TransactionDisplay extends Equatable {
       relativeDateFormat.format(_relativeDateTime);
   RelativeDateTime get _relativeDateTime =>
       RelativeDateTime(dateTime: DateTime.now(), other: when);
+
+  /// when we get dates from the server we should make sure we interpret them
+  /// as UTC datetimes:
+  /// // Simulate receiving a UTC date-time string
+  /// String utcDateString = "2024-04-15T12:30:00Z";
+  /// // Parsing the UTC string to a DateTime object
+  /// DateTime utcDateTime = DateTime.parse(utcDateString).toUtc();
+
+  String humanDate() =>
+      DateFormat('MMMM d, yyyy', 'en_US').format(when.toLocal());
+  String humanTime() => DateFormat('h:mm a').format(when.toLocal());
 
   Coin get coin => sats.toCoin();
   Fiat get fiat {

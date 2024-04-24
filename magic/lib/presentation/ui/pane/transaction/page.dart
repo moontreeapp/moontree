@@ -70,44 +70,75 @@ class TransactionPage extends StatelessWidget {
   const TransactionPage({super.key});
 
   @override
-  Widget build(BuildContext context) => Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16),
-      child: ListView(
-          controller: cubits.pane.state.scroller,
-          shrinkWrap: true,
-          children: [
-            TransactionItem(
-                label: 'To:',
-                // point to cubit.transaction
-                display: TransactionDisplay(
-                    incoming: true,
-                    sats:
-                        Sats.fromCoin(Coin(coin: 20000000000, sats: 10000001)),
-                    when: DateTime.now())),
-            //TransactionItem(
-            //    label: 'Amount:',
-            //    display: TransactionDisplay(
-            //        incoming: true,
-            //        sats: Sats.fromCoin(Coin(20 000 000 000.10000001)),
-            //        when: DateTime.now())),
-            //TransactionItem(
-            //    label: 'Date:',
-            //    display: TransactionDisplay(
-            //        incoming: true,
-            //        sats: Sats.fromCoin(Coin(20000000000.10000001)),
-            //        when: DateTime.now())),
-            //TransactionItem(
-            //    label: 'Time:',
-            //    display: TransactionDisplay(
-            //        incoming: true,
-            //        sats: Sats.fromCoin(Coin(20000000000.10000001)),
-            //        when: DateTime.now())),
-          ]));
+  Widget build(BuildContext context) {
+    if (cubits.holding.state.transaction == null) {
+      return const Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [Text('No Transaction Data to Display.')],
+      );
+    }
+
+    final TransactionDisplay display = cubits.holding.state.transaction!;
+    return Container(
+        height: screen.pane.midHeight,
+        padding:
+            const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 24),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                TransactionItem(label: 'Amount:', display: <TextSpan>[
+                  TextSpan(
+                      text:
+                          '${display.incoming ? '+' : '-'}${display.coin.whole()}',
+                      style: Theme.of(context).textTheme.body1.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: AppColors.black87,
+                          )),
+                  TextSpan(
+                      text: display.coin.spacedPart(),
+                      style: Theme.of(context).textTheme.body1.copyWith(
+                          fontWeight: FontWeight.normal,
+                          color: AppColors.black60,
+                          fontSize: 12)),
+                ]),
+                TransactionItem(label: 'Date:', display: <TextSpan>[
+                  TextSpan(
+                      text: display.humanDate(),
+                      style: Theme.of(context).textTheme.body1.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: AppColors.black87,
+                          )),
+                ]),
+                TransactionItem(label: 'Time:', display: <TextSpan>[
+                  TextSpan(
+                      text: display.humanTime(),
+                      style: Theme.of(context).textTheme.body1.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: AppColors.black87,
+                          )),
+                ])
+              ]),
+              Container(
+                  height: 64,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28 * 100),
+                    ),
+                  ),
+                  child: Center(
+                      child: Text(
+                    'View Details',
+                    style: AppText.button1.copyWith(color: AppColors.success),
+                  ))),
+            ]));
+  }
 }
 
 class TransactionItem extends StatelessWidget {
   final String label;
-  final TransactionDisplay display;
+  final List<TextSpan> display;
   const TransactionItem(
       {super.key, required this.label, required this.display});
 
@@ -117,47 +148,26 @@ class TransactionItem extends StatelessWidget {
     RelativeDateFormat relativeDateFormatter = RelativeDateFormat(
       Localizations.localeOf(context),
     );
-    print('display.sats.value: ${display.sats.value}');
-    print('sats should be    : 2000000000010000001');
-    print('display.coin.value: ${display.coin.humanString()}');
-    print('coin should be    : 20000000000.10000001');
-    return GestureDetector(
-        onTap: () => maestro.activateTransaction(display),
-        child: Container(
-            alignment: Alignment.center,
-            //color: Colors.red,
-            width: screen.width,
-            height: 64,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(label, style: Theme.of(context).textTheme.body1),
-                RichText(
-                  textAlign: TextAlign.end,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                  text: TextSpan(
-                    style:
-                        Theme.of(context).textTheme.body1, // Default text style
-                    children: <TextSpan>[
-                      TextSpan(
-                          text:
-                              '${display.incoming ? '+' : '-'}${display.coin.whole()}',
-                          style: Theme.of(context).textTheme.body1.copyWith(
-                                fontWeight: FontWeight.normal,
-                                color: AppColors.black87,
-                              )),
-                      TextSpan(
-                          text: display.coin.part(),
-                          style: Theme.of(context).textTheme.body1.copyWith(
-                              fontWeight: FontWeight.normal,
-                              color: AppColors.black60,
-                              fontSize: 12)),
-                    ],
-                  ),
-                )
-              ],
-            )));
+    return Container(
+        alignment: Alignment.center,
+        //color: Colors.red,
+        width: screen.width,
+        height: 64,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: Theme.of(context).textTheme.body1),
+            RichText(
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              text: TextSpan(
+                style: Theme.of(context).textTheme.body1, // Default text style
+                children: display,
+              ),
+            )
+          ],
+        ));
     //return ListTile(
     //  //dense: true,
     //  //visualDensity: VisualDensity.compact,

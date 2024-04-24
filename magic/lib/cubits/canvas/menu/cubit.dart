@@ -16,7 +16,11 @@ class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
   void setState(MenuState state) => emit(state);
   @override
   void hide() => update(active: false);
-
+  @override
+  void refresh() {
+    update(isSubmitting: false);
+    update(isSubmitting: true);
+  }
   @override
   void update({
     bool? active,

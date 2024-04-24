@@ -15,6 +15,8 @@ class NavbarCubit extends Cubit<NavbarState> with UpdateMixin<NavbarState> {
   void reset() => emit(const NavbarState());
   @override
   void setState(NavbarState state) => emit(state);
+  @override
+  void refresh() {}
 
   @override
   void update({

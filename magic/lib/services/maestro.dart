@@ -1,6 +1,7 @@
 import 'package:magic/cubits/appbar/cubit.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/sections.dart';
 //import 'package:magic/domain/concepts/side.dart';
@@ -107,18 +108,20 @@ class Maestro {
       cubits.pane.state.scroller?.jumpTo(0);
     } catch (_) {}
     if (cubits.pane.height > screen.pane.midHeight) {
-      cubits.pane.snapTo(screen.pane.midHeight);
+      cubits.pane.snapTo(screen.pane.midHeight, force: true);
       //cubits.navbar.update(hidden: false);
       return true;
     } else if (cubits.pane.height < screen.pane.midHeight) {
-      cubits.pane.snapTo(screen.pane.midHeight);
+      cubits.pane.snapTo(screen.pane.midHeight, force: true);
       //cubits.navbar.update(hidden: false);
       return true;
     } else if (cubits.pane.height == screen.pane.midHeight) {
-      cubits.pane.snapTo(screen.pane.minHeight);
+      cubits.pane.snapTo(screen.pane.minHeight, force: true);
       //cubits.navbar.update(hidden: true);
       return false;
     }
+    // this should never happen but if it does reset. might fix glitch.
+    cubits.pane.snapTo(screen.pane.midHeight, force: true);
     return true;
   }
 
@@ -213,6 +216,11 @@ class Maestro {
   }
 
   void _activeateSwap() {
+    cubits.toast.flash(
+        msg: const ToastMessage(
+      title: 'test toast',
+      text: 'animate correctly',
+    ));
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.swap, active: true);
     cubits.wallet.update(active: false);

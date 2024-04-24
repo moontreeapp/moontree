@@ -12,7 +12,9 @@ class FadeCubit extends Cubit<FadeState> with UpdateMixin<FadeState> {
   void reset() => emit(const FadeState());
   @override
   void setState(FadeState state) => emit(state);
-
+  @override
+  void refresh() {
+  }
   @override
   void update({FadeEvent? fade}) {
     emit(FadeState(fade: fade ?? state.fade));

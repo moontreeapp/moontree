@@ -15,6 +15,11 @@ class SwapCubit extends Cubit<SwapState> with UpdateHideMixin<SwapState> {
   void setState(SwapState state) => emit(state);
   @override
   void hide() => update(active: false);
+  @override
+  void refresh() {
+    update(isSubmitting: false);
+    update(isSubmitting: true);
+  }
 
   @override
   void update({

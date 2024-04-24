@@ -62,8 +62,9 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
     heightBehavior?.call(height);
   }
 
-  void snapTo(double heightPixels) {
-    if (height == heightPixels && state.height == heightPixels) return;
+  void snapTo(double heightPixels, {bool force = false}) {
+    if (height == heightPixels && state.height == heightPixels && !force)
+      return;
     if (heightPixels == screen.pane.minHeight) {
       try {
         state.scroller?.jumpTo(0);

@@ -8,6 +8,7 @@ mixin UpdateMixin<T> {
   String get key;
   void reset();
   void update();
+  void refresh();
   void setState(T state);
 }
 

@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/hiding.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
@@ -49,18 +50,17 @@ class AnimatedCoinSpec extends StatelessWidget {
           //),
           ));
 
-  Widget assetValues({String? whole, String? part, String? subtitle}) =>
+  Widget assetValues(
+          {String? whole, String? part, String? subtitle, Coin? coin}) =>
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           if (whole == null)
             CoinBalanceView(
-              coin: cubits.holding.state.holding.coin,
+              coin: coin ?? cubits.holding.state.holding.coin,
               wholeStyle: AppText.wholeHolding,
               partOneStyle: AppText.partHolding,
-              partTwoStyle:
-                  AppText.partHolding.copyWith(color: AppColors.white38),
-              partThreeStyle:
-                  AppText.partHolding.copyWith(color: AppColors.white38),
+              partTwoStyle: AppText.partHolding,
+              partThreeStyle: AppText.partHolding,
             )
           else ...[
             Text(whole, style: AppText.wholeHolding),
@@ -147,6 +147,7 @@ class AnimatedCoinSpec extends StatelessWidget {
       builder: (context, state) {
         double iconTop = 4;
         double valueTop = 4 + screen.iconHuge + 16;
+        Coin? overrideCoin;
         String? overrideWhole;
         String? overridePart;
         String? overrideSubtitle;
@@ -179,8 +180,9 @@ class AnimatedCoinSpec extends StatelessWidget {
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
               8;
-          overrideWhole = cubits.holding.state.wholeTransaction;
-          overridePart = cubits.holding.state.partTransaction;
+          overrideCoin = cubits.holding.state.transaction?.coin;
+          //overrideWhole = cubits.holding.state.wholeTransaction;
+          //overridePart = cubits.holding.state.partTransaction;
           overrideSubtitle = cubits.holding.state.transaction == null
               ? ''
               : (cubits.holding.state.transaction!.incoming)
@@ -198,6 +200,7 @@ class AnimatedCoinSpec extends StatelessWidget {
               curve: Curves.easeInOutCubic,
               top: valueTop,
               child: assetValues(
+                  coin: overrideCoin,
                   whole: overrideWhole,
                   part: overridePart,
                   subtitle: overrideSubtitle)),

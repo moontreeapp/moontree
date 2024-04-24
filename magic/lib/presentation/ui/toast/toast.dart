@@ -18,6 +18,7 @@ class ToastLayer extends StatelessWidget {
           previous.msg != current.msg || previous.showType != current.showType,
       builder: (BuildContext context, ToastState state) {
         if (state.msg != null) {
+          final content = ToastContent(state: state);
           final toast = Container(
               padding: const EdgeInsets.all(4.0),
               color: Colors.transparent,
@@ -31,32 +32,39 @@ class ToastLayer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(100.0),
                         boxShadow: frontLayer,
                       ),
-                      child: Row(children: [
-                        //SvgPicture.asset(
-                        //  moontreeIcons.wonupToastLoc,
-                        //  width: 24,
-                        //  height: 24,
-                        //  //fit: BoxFit.contain,
-                        //  alignment: Alignment.center,
-                        //),
-                        const SizedBox(width: 8),
-                        Text(state.msg!.title + ' ',
-                            style: Theme.of(context).textTheme.body2.copyWith(
-                                  color: AppColors.black60,
-                                  fontWeight: FontWeights.extraBold,
-                                )),
-                        //const SizedBox(width: 4),
-                        Text(
-                          state.msg!.text,
-                          style: Theme.of(context).textTheme.body2.copyWith(
-                                color: AppColors.black60,
-                                height: 0,
-                              ),
-                        ),
-                      ]))));
-          late Widget show;
+                      child: Visibility(
+                          visible: false,
+                          maintainSize: true,
+                          maintainAnimation: true,
+                          maintainState: true,
+                          child: Row(children: [
+                            //SvgPicture.asset(
+                            //  moontreeIcons.wonupToastLoc,
+                            //  width: 24,
+                            //  height: 24,
+                            //  //fit: BoxFit.contain,
+                            //  alignment: Alignment.center,
+                            //),
+                            const SizedBox(width: 8),
+                            Text('${state.msg!.title} ',
+                                style:
+                                    Theme.of(context).textTheme.body2.copyWith(
+                                          color: AppColors.black60,
+                                          fontWeight: FontWeights.extraBold,
+                                        )),
+                            //const SizedBox(width: 4),
+                            Text(
+                              state.msg!.text,
+                              style: Theme.of(context).textTheme.body2.copyWith(
+                                    color: AppColors.black60,
+                                    height: 0,
+                                  ),
+                            ),
+                          ])))));
+          late Widget showBackground;
+          late Widget showContent;
           if (state.showType == ToastShowType.normal) {
-            show = FadeOut(
+            showBackground = FadeOut(
                 refade: true,
                 delay: (state.msg?.duration ?? state.duration) + fadeDuration,
                 child: FadeIn(
@@ -64,14 +72,89 @@ class ToastLayer extends StatelessWidget {
                   duration: fadeDuration,
                   child: toast,
                 ));
+            showContent = FadeOut(
+                refade: true,
+                delay: (state.msg?.duration ?? state.duration) +
+                    fadeDuration +
+                    fadeDuration,
+                child: FadeIn(
+                  refade: true,
+                  delay: fadeDuration,
+                  duration: fadeDuration,
+                  child: content,
+                ));
           } else if (state.showType == ToastShowType.fadeAway) {
-            show = FadeOut(
+            showBackground = FadeOut(
               refade: true,
               child: toast,
             );
+            showContent = FadeOut(
+              refade: true,
+              child: content,
+            );
           }
-          return Positioned(top: state.height ?? screen.toast, child: show);
+          return Positioned(
+              top: state.height ?? screen.toast,
+              child: Stack(children: [
+                showBackground,
+                showContent,
+              ]));
         }
         return const SizedBox.shrink();
       });
+}
+
+class ToastContent extends StatelessWidget {
+  final ToastState state;
+  const ToastContent({super.key, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    final toast = Container(
+        padding: const EdgeInsets.all(4.0),
+        color: Colors.transparent,
+        child: Container(
+            padding:
+                const EdgeInsets.only(top: 9, bottom: 9, left: 9, right: 16),
+            child: Row(children: [
+              //SvgPicture.asset(
+              //  moontreeIcons.wonupToastLoc,
+              //  width: 24,
+              //  height: 24,
+              //  //fit: BoxFit.contain,
+              //  alignment: Alignment.center,
+              //),
+              const SizedBox(width: 8),
+              Text('${state.msg!.title} ',
+                  style: Theme.of(context).textTheme.body2.copyWith(
+                        color: AppColors.black60,
+                        fontWeight: FontWeights.extraBold,
+                      )),
+              //const SizedBox(width: 4),
+              Text(
+                state.msg!.text,
+                style: Theme.of(context).textTheme.body2.copyWith(
+                      color: AppColors.black60,
+                      height: 0,
+                    ),
+              ),
+            ])));
+    late Widget show;
+    if (state.showType == ToastShowType.normal) {
+      show = FadeOut(
+          refade: true,
+          delay: (state.msg?.duration ?? state.duration) + fadeDuration,
+          child: FadeIn(
+            refade: true,
+            duration: fadeDuration,
+            child: toast,
+          ));
+    } else if (state.showType == ToastShowType.fadeAway) {
+      show = FadeOut(
+        refade: true,
+        child: toast,
+      );
+    }
+    return Positioned(top: state.height ?? screen.toast, child: show);
+  }
 }

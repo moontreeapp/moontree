@@ -56,7 +56,7 @@ class TransactionItem extends StatelessWidget {
             child: Text(display.humanWhen(relativeDateFormatter),
                 style: Theme.of(context).textTheme.body1.copyWith(
                       height: 0,
-                      color: AppColors.black87,
+                      color: AppColors.black60,
                     ))),
         //trailing: SizedBox(
         //    //width: screen.width - (16 + 16 + screen.iconLarge + 16),

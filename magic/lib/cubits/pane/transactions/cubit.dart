@@ -24,6 +24,12 @@ class TransactionsCubit extends Cubit<TransactionsState>
   @override
   void hide() => update(active: false);
   @override
+  void refresh() {
+    update(isSubmitting: false);
+    update(isSubmitting: true);
+  }
+
+  @override
   void update({
     bool? active,
     bool? disposed,

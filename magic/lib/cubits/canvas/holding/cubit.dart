@@ -18,6 +18,11 @@ class HoldingCubit extends Cubit<HoldingState>
   void setState(HoldingState state) => emit(state);
   @override
   void hide() => update(active: false);
+  @override
+  void refresh() {
+    update(isSubmitting: false);
+    update(isSubmitting: true);
+  }
 
   @override
   void update({

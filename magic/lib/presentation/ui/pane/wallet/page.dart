@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
@@ -11,14 +12,15 @@ class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
 
   @override
-  Widget build(BuildContext context) => ListView.builder(
-      controller: cubits.pane.state.scroller!,
-      shrinkWrap: true,
-      itemCount: cubits.wallet.state.holdings.length + 1,
-      itemBuilder: (context, int index) =>
-          index < cubits.wallet.state.holdings.length
-              ? HoldingItem(holding: cubits.wallet.state.holdings[index])
-              : SizedBox(height: screen.navbar.height));
+  Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
+      builder: (BuildContext context, MenuState state) => ListView.builder(
+          controller: cubits.pane.state.scroller!,
+          shrinkWrap: true,
+          itemCount: cubits.wallet.state.holdings.length + 1,
+          itemBuilder: (context, int index) =>
+              index < cubits.wallet.state.holdings.length
+                  ? HoldingItem(holding: cubits.wallet.state.holdings[index])
+                  : SizedBox(height: screen.navbar.height)));
 }
 
 class HoldingItem extends StatelessWidget {

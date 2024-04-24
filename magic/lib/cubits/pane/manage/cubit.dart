@@ -15,6 +15,11 @@ class ManageCubit extends Cubit<ManageState> with UpdateHideMixin<ManageState> {
   void setState(ManageState state) => emit(state);
   @override
   void hide() => update(active: false);
+  @override
+  void refresh() {
+    update(isSubmitting: false);
+    update(isSubmitting: true);
+  }
 
   @override
   void update({

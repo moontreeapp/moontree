@@ -12,6 +12,8 @@ class IgnoreCubit extends Cubit<IgnoreState> with UpdateMixin<IgnoreState> {
   void reset() => emit(const IgnoreState());
   @override
   void setState(IgnoreState state) => emit(state);
+  @override
+  void refresh() {}
 
   @override
   void update({bool? active}) {

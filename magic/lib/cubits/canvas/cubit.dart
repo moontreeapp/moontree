@@ -15,7 +15,8 @@ class CanvasCubit extends Cubit<CanvasState> with UpdateHideMixin<CanvasState> {
   void setState(CanvasState state) => emit(state);
   @override
   void hide() => update(active: false);
-
+  @override
+  void refresh() {}
   @override
   void update({
     bool? active,

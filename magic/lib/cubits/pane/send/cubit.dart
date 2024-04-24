@@ -15,7 +15,11 @@ class SendCubit extends Cubit<SendState> with UpdateHideMixin<SendState> {
   void setState(SendState state) => emit(state);
   @override
   void hide() => update(active: false);
-
+  @override
+  void refresh() {
+    update(isSubmitting: false);
+    update(isSubmitting: true);
+  }
   @override
   void update({
     bool? active,

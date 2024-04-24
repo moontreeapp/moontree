@@ -12,6 +12,11 @@ class AppCubit extends Cubit<AppState> with UpdateMixin<AppState> {
   void reset() => emit(const AppState());
   @override
   void setState(AppState state) => emit(state);
+  @override
+  void refresh() {
+    update(submitting: false);
+    update(submitting: true);
+  }
 
   @override
   void update({

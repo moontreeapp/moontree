@@ -16,7 +16,8 @@ class AppbarCubit extends Cubit<AppbarState> with UpdateMixin<AppbarState> {
   void reset() => emit(const AppbarState());
   @override
   void setState(AppbarState state) => emit(state);
-
+  @override
+  void refresh() {}
   @override
   void update({
     AppbarLeading? leading,

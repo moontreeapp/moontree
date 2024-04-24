@@ -38,7 +38,7 @@ class CoinBalanceView extends StatelessWidget {
                       AppText.partHolding.copyWith(
                           //height: 1.625 + .15
                           )),
-              //SizedBox(width: 3),
+              const SizedBox(width: 4),
               Text(coin.partTwo(),
                   style: partTwoStyle ??
                       AppText.partHolding.copyWith(
@@ -47,7 +47,7 @@ class CoinBalanceView extends StatelessWidget {
                           //height: 1.625 + .6,
                           //fontSize: 10,
                           )),
-              //SizedBox(width: 3),
+              const SizedBox(width: 4),
               Text(coin.partThree(),
                   style: partThreeStyle ??
                       AppText.partHolding.copyWith(
@@ -86,7 +86,7 @@ class CoinView extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .body1
-                  .copyWith(color: AppColors.black60))
+                  .copyWith(height: 0, color: AppColors.black60))
           : RichText(
               textAlign: textAlign,
               overflow: TextOverflow.ellipsis,
@@ -141,37 +141,38 @@ class CoinSplitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-      width: screen.width / 2,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        RichText(
-            textAlign: TextAlign.end,
-            overflow: TextOverflow.ellipsis,
-            softWrap: false,
-            text: TextSpan(
-                style: Theme.of(context).textTheme.body1,
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '${display.incoming ? '+' : '-'}${coin.whole()}',
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                            height: 0,
-                            fontWeight:
-                                display.incoming ? FontWeight.bold : null,
-                            color: display.incoming
-                                ? AppColors.success
-                                : AppColors.black,
-                          )),
-                  TextSpan(
-                      text: coin.partOne(),
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                            height: 0,
-                            color: display.incoming
-                                ? AppColors.success
-                                : AppColors.black,
-                          )),
-                ])),
-        SizedBox(
-            //width: screen.width - (16 + 16 + screen.iconLarge + 16),
-            child: Text(coin.ending(),
+      width: screen.width * .375,
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            RichText(
+                textAlign: TextAlign.end,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                text: TextSpan(
+                    style: Theme.of(context).textTheme.body1,
+                    children: <TextSpan>[
+                      TextSpan(
+                          text:
+                              '${display.incoming ? '+' : '-'}${coin.whole()}',
+                          style: Theme.of(context).textTheme.body1.copyWith(
+                                fontWeight:
+                                    display.incoming ? FontWeight.bold : null,
+                                color: display.incoming
+                                    ? AppColors.success
+                                    : AppColors.black60,
+                              )),
+                      TextSpan(
+                          text: coin.partOne(),
+                          style: Theme.of(context).textTheme.body1.copyWith(
+                                height: 0,
+                                color: display.incoming
+                                    ? AppColors.success
+                                    : AppColors.black60,
+                              )),
+                    ])),
+            Text(coin.spacedEnding(),
                 textAlign: TextAlign.right,
                 style: Theme.of(context).textTheme.body1.copyWith(
                       height: 0,
@@ -179,8 +180,9 @@ class CoinSplitView extends StatelessWidget {
                       color: display.incoming
                           ? AppColors.success
                           : AppColors.black60,
-                    ))),
-      ]));
+                    )),
+            const SizedBox(height: 2),
+          ]));
 }
 
 class FiatView extends StatelessWidget {

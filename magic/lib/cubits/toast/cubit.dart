@@ -15,7 +15,8 @@ class ToastCubit extends Cubit<ToastState> with UpdateMixin<ToastState> {
   void reset() => emit(const ToastState());
   @override
   void setState(ToastState state) => emit(state);
-
+  @override
+  void refresh() {}
   @override
   void update({
     VoidCallback? onTap,

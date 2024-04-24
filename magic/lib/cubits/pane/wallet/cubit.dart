@@ -23,6 +23,14 @@ class WalletCubit extends Cubit<WalletState> with UpdateHideMixin<WalletState> {
   @override
   void hide() => update(active: false);
   @override
+  void refresh() {
+    if (state.active) {
+      update(active: false);
+    }
+    update(active: true);
+  }
+
+  @override
   void update({
     bool? active,
     List<Holding>? holdings,

@@ -21,7 +21,8 @@ class TutorialCubit extends Cubit<TutorialState>
       const TutorialState(showTutorials: <TutorialStatus>[], flicked: false));
   @override
   void setState(TutorialState state) => emit(state);
-
+  @override
+  void refresh() {}
   @override
   void update({
     List<TutorialStatus>? showTutorials,
