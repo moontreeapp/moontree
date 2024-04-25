@@ -1,4 +1,3 @@
-import 'package:flutter_bloc/flutter_bloc.dart' show Cubit;
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
 
@@ -9,8 +8,7 @@ enum TutorialStatus {
   wallet,
 }
 
-class TutorialCubit extends Cubit<TutorialState>
-    with UpdateMixin<TutorialState> {
+class TutorialCubit extends UpdatableCubit<TutorialState> {
   TutorialCubit()
       : super(const TutorialState(
             showTutorials: <TutorialStatus>[], flicked: false));
@@ -23,6 +21,10 @@ class TutorialCubit extends Cubit<TutorialState>
   void setState(TutorialState state) => emit(state);
   @override
   void refresh() {}
+  @override
+  void activate() => update();
+  @override
+  void deactivate() => update();
   @override
   void update({
     List<TutorialStatus>? showTutorials,
@@ -53,6 +55,11 @@ class TutorialCubit extends Cubit<TutorialState>
   //        as List<dynamic>);
 
   List<TutorialStatus> get missing => [];
+
+  @override
+  void hide() {
+    // TODO: implement hide
+  }
   //TutorialStatus.values
   //    .where((TutorialStatus tutorial) => !completed.contains(tutorial))
   //    .toList();

@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
 
-class SwapCubit extends Cubit<SwapState> with UpdateHideMixin<SwapState> {
+class SwapCubit extends UpdatableCubit<SwapState> {
   SwapCubit() : super(const SwapState());
   double height = 0;
   @override
@@ -21,6 +20,10 @@ class SwapCubit extends Cubit<SwapState> with UpdateHideMixin<SwapState> {
     update(isSubmitting: true);
   }
 
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
   @override
   void update({
     bool? active,

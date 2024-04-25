@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:magic/cubits/cubit.dart';
-import 'package:magic/cubits/cubits.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;

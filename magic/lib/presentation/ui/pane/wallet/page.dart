@@ -48,7 +48,7 @@ class HoldingItem extends StatelessWidget {
                     .textTheme
                     .body1
                     .copyWith(color: Colors.black87))),
-        subtitle: CoinView(coin: holding.coin),
+        subtitle: SimpleCoinSplitView(coin: holding.coin),
         trailing: FiatView(fiat: holding.coin.toFiat(1)),
       );
 }

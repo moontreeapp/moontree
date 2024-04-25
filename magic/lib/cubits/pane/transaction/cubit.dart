@@ -1,11 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
 
-class TransactionCubit extends Cubit<TransactionState>
-    with UpdateHideMixin<TransactionState> {
+class TransactionCubit extends UpdatableCubit<TransactionState> {
   TransactionCubit() : super(const TransactionState());
   double height = 0;
   @override
@@ -21,6 +19,11 @@ class TransactionCubit extends Cubit<TransactionState>
     update(isSubmitting: false);
     update(isSubmitting: true);
   }
+
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
   @override
   void update({
     bool? active,

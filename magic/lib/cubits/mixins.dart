@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 mixin HideMixin<T> {
   void hide();
@@ -10,6 +11,8 @@ mixin UpdateMixin<T> {
   void update();
   void refresh();
   void setState(T state);
+  void activate();
+  void deactivate();
 }
 
 mixin DisposedMixin {
@@ -18,6 +21,10 @@ mixin DisposedMixin {
 }
 
 mixin UpdateHideMixin<T> implements UpdateMixin<T>, HideMixin {}
+
+abstract class UpdatableCubit<T> extends Cubit<T> with UpdateHideMixin<T> {
+  UpdatableCubit(super.initialState);
+}
 
 mixin PriorStateMixin<T> {
   T get withoutPrior;

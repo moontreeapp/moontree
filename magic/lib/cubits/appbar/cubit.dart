@@ -3,12 +3,11 @@
 import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
 
-class AppbarCubit extends Cubit<AppbarState> with UpdateMixin<AppbarState> {
+class AppbarCubit extends UpdatableCubit<AppbarState> {
   AppbarCubit() : super(const AppbarState());
   @override
   String get key => 'appbar';
@@ -17,7 +16,15 @@ class AppbarCubit extends Cubit<AppbarState> with UpdateMixin<AppbarState> {
   @override
   void setState(AppbarState state) => emit(state);
   @override
+  void hide() {
+    // TODO: implement hide
+  }
+  @override
   void refresh() {}
+  @override
+  void activate() => update();
+  @override
+  void deactivate() => update();
   @override
   void update({
     AppbarLeading? leading,

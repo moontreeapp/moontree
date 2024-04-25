@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
-import 'package:magic/presentation/widgets/other/other.dart';
 import 'package:magic/services/services.dart';
 
 class ReceivePage extends StatelessWidget {
@@ -21,7 +20,7 @@ class ReceivePage extends StatelessWidget {
                 height: screen.width - 32 * 4,
                 width: screen.width - 32 * 4,
                 color: Colors.grey),
-            Text('address'),
+            const Text('address'),
           ],
         )),
         Row(

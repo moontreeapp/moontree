@@ -1,13 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 
 part 'state.dart';
 
-class HoldingCubit extends Cubit<HoldingState>
-    with UpdateHideMixin<HoldingState> {
+class HoldingCubit extends UpdatableCubit<HoldingState> {
   HoldingCubit() : super(const HoldingState());
   double height = 0;
   @override
@@ -23,6 +21,11 @@ class HoldingCubit extends Cubit<HoldingState>
     update(isSubmitting: false);
     update(isSubmitting: true);
   }
+
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
 
   @override
   void update({

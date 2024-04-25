@@ -1,10 +1,9 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
 
-class IgnoreCubit extends Cubit<IgnoreState> with UpdateMixin<IgnoreState> {
+class IgnoreCubit extends UpdatableCubit<IgnoreState> {
   IgnoreCubit() : super(const IgnoreState());
   @override
   String get key => 'ignore';
@@ -14,6 +13,14 @@ class IgnoreCubit extends Cubit<IgnoreState> with UpdateMixin<IgnoreState> {
   void setState(IgnoreState state) => emit(state);
   @override
   void refresh() {}
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
+  @override
+  void hide() {
+    // TODO: implement hide
+  }
 
   @override
   void update({bool? active}) {

@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/presentation/utils/animation.dart';

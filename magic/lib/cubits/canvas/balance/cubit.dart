@@ -1,12 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 
 part 'state.dart';
 
-class BalanceCubit extends Cubit<BalanceState>
-    with UpdateHideMixin<BalanceState> {
+class BalanceCubit extends UpdatableCubit<BalanceState> {
   BalanceCubit() : super(const BalanceState());
   @override
   String get key => 'balance';
@@ -21,6 +19,11 @@ class BalanceCubit extends Cubit<BalanceState>
     update(isSubmitting: false);
     update(isSubmitting: true);
   }
+
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
   @override
   void update({
     bool? active,

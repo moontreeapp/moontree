@@ -58,10 +58,7 @@
 // //    child: Column(
 
 import 'package:flutter/material.dart';
-import 'package:lit_relative_date_time/controller/relative_date_format.dart';
 import 'package:magic/cubits/cubit.dart';
-import 'package:magic/domain/concepts/numbers/coin.dart';
-import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/services/services.dart';
@@ -144,10 +141,6 @@ class TransactionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// maybe this should be created once in a service...
-    RelativeDateFormat relativeDateFormatter = RelativeDateFormat(
-      Localizations.localeOf(context),
-    );
     return Container(
         alignment: Alignment.center,
         //color: Colors.red,

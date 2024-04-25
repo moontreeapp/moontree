@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
@@ -12,7 +11,7 @@ import 'package:magic/presentation/utils/range.dart';
 
 part 'state.dart';
 
-class WalletCubit extends Cubit<WalletState> with UpdateHideMixin<WalletState> {
+class WalletCubit extends UpdatableCubit<WalletState> {
   WalletCubit() : super(const WalletState());
   @override
   String get key => 'walletFeed';
@@ -29,6 +28,11 @@ class WalletCubit extends Cubit<WalletState> with UpdateHideMixin<WalletState> {
     }
     update(active: true);
   }
+
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
 
   @override
   void update({

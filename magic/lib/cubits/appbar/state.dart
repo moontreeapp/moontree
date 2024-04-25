@@ -1,7 +1,7 @@
 part of 'cubit.dart';
 
 enum AppbarLeading {
-  connection,
+  menu,
   back,
   close,
   none,

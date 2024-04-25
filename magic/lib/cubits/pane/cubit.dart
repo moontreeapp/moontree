@@ -21,6 +21,10 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   void refresh() => update(isSubmitting: true);
   @override
   void hide() => update(active: false);
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
 
   @override
   void update({

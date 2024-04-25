@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
@@ -12,8 +11,7 @@ import 'package:magic/presentation/utils/range.dart';
 
 part 'state.dart';
 
-class TransactionsCubit extends Cubit<TransactionsState>
-    with UpdateHideMixin<TransactionsState> {
+class TransactionsCubit extends UpdatableCubit<TransactionsState> {
   TransactionsCubit() : super(const TransactionsState());
   @override
   String get key => 'transactions';
@@ -28,6 +26,11 @@ class TransactionsCubit extends Cubit<TransactionsState>
     update(isSubmitting: false);
     update(isSubmitting: true);
   }
+
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
 
   @override
   void update({

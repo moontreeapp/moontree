@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubits.dart';
+import 'package:magic/cubits/mixins.dart';
 import 'package:provider/single_child_widget.dart' show SingleChildWidget;
 
 class GlobalCubits {
@@ -45,7 +46,7 @@ class GlobalCubits {
         tutorial,
         ignore,
       ];
-  List<Cubit> get paneCubits =>
+  List<UpdatableCubit> get paneCubits =>
       [wallet, transactions, transaction, send, receive, swap, manage];
 
   List<SingleChildWidget> get providers => [

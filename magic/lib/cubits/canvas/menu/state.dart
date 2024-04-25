@@ -23,12 +23,21 @@ enum DifficultyMode {
   }
 }
 
+enum SubMenu {
+  none,
+  help,
+  mode,
+  settings,
+  about;
+}
+
 class MenuState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final bool faded;
   final Widget? child;
   final Side? side;
   final DifficultyMode mode;
+  final SubMenu sub;
   final bool isSubmitting;
   final MenuState? prior;
 
@@ -38,6 +47,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
     this.child = const SizedBox.shrink(),
     this.side = Side.none,
     this.mode = DifficultyMode.easy,
+    this.sub = SubMenu.none,
     this.isSubmitting = false,
     this.prior,
   });
@@ -49,6 +59,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
         child,
         side,
         mode,
+        sub,
         isSubmitting,
         prior,
       ];
@@ -63,6 +74,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
         child: child,
         side: side,
         mode: mode,
+        sub: sub,
         isSubmitting: isSubmitting,
         prior: null,
       );

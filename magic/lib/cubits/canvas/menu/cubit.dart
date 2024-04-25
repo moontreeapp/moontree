@@ -1,12 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/concepts/side.dart';
 
 part 'state.dart';
 
-class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
+class MenuCubit extends UpdatableCubit<MenuState> {
   MenuCubit() : super(const MenuState());
   @override
   String get key => 'menu';
@@ -17,10 +16,15 @@ class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
   @override
   void hide() => update(active: false);
   @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
+  @override
   void refresh() {
     update(isSubmitting: false);
     update(isSubmitting: true);
   }
+
   @override
   void update({
     bool? active,
@@ -28,6 +32,7 @@ class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
     Widget? child,
     Side? side,
     DifficultyMode? mode,
+    SubMenu? sub,
     bool? isSubmitting,
     MenuState? prior,
   }) {
@@ -37,6 +42,7 @@ class MenuCubit extends Cubit<MenuState> with UpdateHideMixin<MenuState> {
       child: child ?? state.child,
       side: side ?? state.side,
       mode: mode ?? state.mode,
+      sub: sub ?? state.sub,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));

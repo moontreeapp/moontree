@@ -19,7 +19,7 @@ class AppbarHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ConnectionIndicator(),
+            Leading(),
             Title(),
             //GestureDetector(
             //    //onTap: () => cubits.fade.update(fade: FadeEvent.fadeOut),
@@ -63,13 +63,14 @@ class AppbarHeader extends StatelessWidget {
           ]));
 }
 
-class ConnectionIndicator extends StatelessWidget {
-  const ConnectionIndicator({super.key});
+class Leading extends StatelessWidget {
+  const Leading({super.key});
 
   @override
   Widget build(BuildContext context) => BlocBuilder<AppbarCubit, AppbarState>(
       buildWhen: (AppbarState previous, AppbarState current) =>
-          previous.leading != current.leading,
+          previous.leading != current.leading ||
+          previous.onLead != current.onLead,
       builder: (context, state) {
         return GestureDetector(
             onTap: state.onLead,
@@ -78,7 +79,7 @@ class ConnectionIndicator extends StatelessWidget {
                 width: 24 + screen.iconMedium,
                 alignment: Alignment.centerRight,
                 child: () {
-                  if (state.leading == AppbarLeading.connection) {
+                  if (state.leading == AppbarLeading.menu) {
                     return Icon(Icons.menu_rounded,
                         color: Colors.white, size: screen.iconMedium);
                     //Container(
@@ -118,7 +119,8 @@ class Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<AppbarCubit, AppbarState>(
       buildWhen: (AppbarState previous, AppbarState current) =>
-          previous.title != current.title,
+          previous.title != current.title ||
+          previous.onTitle != current.onTitle,
       builder: (context, state) => GestureDetector(
           onTap: state.onTitle,
           child: Container(

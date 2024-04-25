@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
 
-class CanvasCubit extends Cubit<CanvasState> with UpdateHideMixin<CanvasState> {
+class CanvasCubit extends UpdatableCubit<CanvasState> {
   CanvasCubit() : super(const CanvasState());
   double height = 0;
   @override
@@ -17,6 +16,10 @@ class CanvasCubit extends Cubit<CanvasState> with UpdateHideMixin<CanvasState> {
   void hide() => update(active: false);
   @override
   void refresh() {}
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
   @override
   void update({
     bool? active,

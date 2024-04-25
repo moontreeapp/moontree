@@ -311,6 +311,7 @@ class SlideOver extends StatefulWidget {
   final Widget child;
   final Duration duration;
   final Duration delay;
+  final bool reslide;
   final Offset? begin;
   final Offset? end;
   final Curve? curve;
@@ -320,6 +321,7 @@ class SlideOver extends StatefulWidget {
     required this.child,
     this.duration = animation.slideDuration,
     this.delay = Duration.zero,
+    this.reslide = false,
     this.begin,
     this.end,
     this.curve,
@@ -357,6 +359,9 @@ class SlideOverState extends State<SlideOver>
   @override
   void didUpdateWidget(SlideOver oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.reslide || widget.child != oldWidget.child) {
+      _controller.reset();
+    }
     Future.delayed(widget.delay, () {
       if (mounted) {
         _controller.forward(from: 0.0);

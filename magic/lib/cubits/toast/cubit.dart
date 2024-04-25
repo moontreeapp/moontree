@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/presentation/utils/animation.dart';
 
 part 'state.dart';
 
-class ToastCubit extends Cubit<ToastState> with UpdateMixin<ToastState> {
+class ToastCubit extends UpdatableCubit<ToastState> {
   int counter = 0;
   ToastCubit() : super(const ToastState());
   @override
@@ -17,6 +16,11 @@ class ToastCubit extends Cubit<ToastState> with UpdateMixin<ToastState> {
   void setState(ToastState state) => emit(state);
   @override
   void refresh() {}
+  @override
+  void activate() => update(toastId: counter++);
+  @override
+  void deactivate() => update(toastId: counter++);
+
   @override
   void update({
     VoidCallback? onTap,
@@ -67,5 +71,10 @@ class ToastCubit extends Cubit<ToastState> with UpdateMixin<ToastState> {
   void fadeAway() {
     update(showType: ToastShowType.fadeAway);
     Future.delayed(fadeDuration, reset);
+  }
+
+  @override
+  void hide() {
+    // TODO: implement hide
   }
 }

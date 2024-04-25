@@ -1,10 +1,11 @@
 import 'package:magic/cubits/appbar/cubit.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
+import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
+import 'package:magic/cubits/mixins.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/sections.dart';
-//import 'package:magic/domain/concepts/side.dart';
 import 'package:magic/cubits/cubit.dart' show cubits;
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/utils/animation.dart';
@@ -76,9 +77,9 @@ class Maestro {
   }
 
   Future<void> inactiveateAllBut(String? except) async {
-    for (dynamic c in cubits.paneCubits) {
+    for (UpdatableCubit c in cubits.paneCubits) {
       if (c.key != except && c.state.active) {
-        c.update(active: false);
+        c.deactivate();
         cubits.fade.update(fade: FadeEvent.fadeOut);
         await awaitFor(
           cubits.pane.unattached,
@@ -100,6 +101,13 @@ class Maestro {
       cubits.pane.snapTo(screen.pane.minHeight);
       cubits.navbar.deactivate();
     }
+  }
+
+  bool activateMenu() {
+    if (cubits.menu.state.sub != SubMenu.none) {
+      deactivateSubMenu();
+    }
+    return toggleMidMin();
   }
 
   // returns true if it's toggled to mid height, false at min
@@ -174,10 +182,10 @@ class Maestro {
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet, active: true);
     cubits.appbar.update(
-      leading: AppbarLeading.connection,
+      leading: AppbarLeading.menu,
       title: 'Magic',
-      onLead: toggleMidMin,
-      onTitle: toggleMidMin,
+      onLead: activateMenu,
+      onTitle: activateMenu,
     );
     cubits.holding.update(active: false);
     cubits.balance.update(active: true);
@@ -389,5 +397,29 @@ class Maestro {
     cubits.manage.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+  }
+
+  Future<void> deactivateSubMenu() async {
+    cubits.navbar.update(active: false);
+    cubits.appbar.update(
+      leading: AppbarLeading.menu,
+      title: 'Magic',
+      onLead: activateMenu,
+      onTitle: activateMenu,
+    );
+    cubits.menu.update(active: true, sub: SubMenu.none);
+    cubits.balance.update(active: true);
+  }
+
+  Future<void> activateSubMenu(SubMenu sub) async {
+    cubits.navbar.update(active: false);
+    cubits.appbar.update(
+      leading: AppbarLeading.close,
+      title: 'Magic',
+      onLead: deactivateSubMenu,
+      onTitle: deactivateSubMenu,
+    );
+    cubits.menu.update(active: true, sub: sub);
+    cubits.balance.hide();
   }
 }

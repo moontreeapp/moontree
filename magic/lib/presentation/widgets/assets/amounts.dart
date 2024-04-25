@@ -185,6 +185,49 @@ class CoinSplitView extends StatelessWidget {
           ]));
 }
 
+class SimpleCoinSplitView extends StatelessWidget {
+  final Coin coin;
+  final DifficultyMode? mode;
+  const SimpleCoinSplitView({
+    super.key,
+    required this.coin,
+    this.mode,
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+      (mode ?? cubits.menu.state.mode) == DifficultyMode.easy
+          ? Text(coin.simplified(),
+              style: Theme.of(context)
+                  .textTheme
+                  .body1
+                  .copyWith(height: 0, color: AppColors.black60))
+          : SizedBox(
+              //width: screen.width * .375,
+              child: RichText(
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  text: TextSpan(
+                      style: Theme.of(context).textTheme.body1,
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: coin.whole(),
+                            style: Theme.of(context).textTheme.body1.copyWith(
+                                  height: 0,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.black60,
+                                )),
+                        TextSpan(
+                            text: coin.spacedPart(),
+                            style: Theme.of(context).textTheme.body1.copyWith(
+                                  height: 0,
+                                  color: AppColors.black60,
+                                )),
+                      ])),
+            );
+}
+
 class FiatView extends StatelessWidget {
   final Fiat fiat;
   final TextStyle? wholeStyle;

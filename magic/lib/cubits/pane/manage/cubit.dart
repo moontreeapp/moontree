@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
 
-class ManageCubit extends Cubit<ManageState> with UpdateHideMixin<ManageState> {
+class ManageCubit extends UpdatableCubit<ManageState> {
   ManageCubit() : super(const ManageState());
   double height = 0;
   @override
@@ -20,6 +19,11 @@ class ManageCubit extends Cubit<ManageState> with UpdateHideMixin<ManageState> {
     update(isSubmitting: false);
     update(isSubmitting: true);
   }
+
+  @override
+  void activate() => update(active: true);
+  @override
+  void deactivate() => update(active: false);
 
   @override
   void update({

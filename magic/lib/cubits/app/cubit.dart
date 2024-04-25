@@ -1,10 +1,9 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
 
-class AppCubit extends Cubit<AppState> with UpdateMixin<AppState> {
+class AppCubit extends UpdatableCubit<AppState> {
   AppCubit() : super(const AppState());
   @override
   String get key => 'app';
@@ -17,6 +16,15 @@ class AppCubit extends Cubit<AppState> with UpdateMixin<AppState> {
     update(submitting: false);
     update(submitting: true);
   }
+
+  @override
+  void hide() {
+    // TODO: implement hide
+  }
+  @override
+  void activate() => update();
+  @override
+  void deactivate() => update();
 
   @override
   void update({

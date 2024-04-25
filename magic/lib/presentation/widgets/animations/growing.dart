@@ -109,13 +109,14 @@ class GrowingCircle extends StatelessWidget {
 }
 
 class GrowingAnimation extends StatefulWidget {
-  final Widget child;
+  final Widget? child;
   final Duration? duration;
   final Duration delay;
   final double? begin;
   final double? end;
   final bool reverse;
   final bool rebuild;
+  final Curve curve;
   const GrowingAnimation({
     super.key,
     required this.child,
@@ -125,13 +126,14 @@ class GrowingAnimation extends StatefulWidget {
     this.delay = Duration.zero,
     this.reverse = false,
     this.rebuild = false,
+    this.curve = Curves.easeInOutCubicEmphasized,
   });
 
   @override
-  _GrowingAnimation createState() => _GrowingAnimation();
+  GrowingAnimationState createState() => GrowingAnimationState();
 }
 
-class _GrowingAnimation extends State<GrowingAnimation>
+class GrowingAnimationState extends State<GrowingAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -143,8 +145,8 @@ class _GrowingAnimation extends State<GrowingAnimation>
       vsync: this,
       duration: widget.duration ?? fadeDuration * 5,
     );
-    final Animation<double> curveAnimation = CurvedAnimation(
-        parent: _controller, curve: Curves.easeInOutCubicEmphasized);
+    final Animation<double> curveAnimation =
+        CurvedAnimation(parent: _controller, curve: widget.curve);
     // Curves.easeInExpo //Curves.easeInQuart //Curves.easeInQuint
     // Curves.easeOutCubic
     // Curves.easeInOutCubicEmphasized
