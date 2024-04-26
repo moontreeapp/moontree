@@ -5,9 +5,9 @@ import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/consent.dart';
 import 'package:magic/presentation/theme/theme.dart';
+import 'package:magic/presentation/ui/canvas/menu/submenus.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/animations.dart';
-import 'package:magic/presentation/widgets/animations/sliding.dart';
 import 'package:magic/services/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -47,18 +47,90 @@ class AnimatedMenu extends StatelessWidget {
             Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(height: screen.canvas.midHeight),
-                      ]),
+                  SubMenus(state: state),
                   const LegalLinks(),
                 ]),
             const HelpItem(),
             DifficultyItem(mode: state.mode),
             const SettingsItem(),
             const AboutItem(),
+          ])));
+}
+
+class HelpItem extends StatelessWidget {
+  const HelpItem({super.key});
+
+  @override
+  Widget build(BuildContext context) => MenuItem(
+        sub: SubMenu.help,
+        index: 0,
+        visual: GestureDetector(
+            onTap: () => launchUrl(Uri.parse('https://discord.gg/cGDebEXgpW')),
+            child: Container(
+                height: screen.menu.itemHeight,
+                color: Colors.transparent,
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  const Icon(Icons.help_rounded, color: Colors.white),
+                  const SizedBox(width: 16),
+                  Text('Need Help? Chat Now!',
+                      style: AppText.h2.copyWith(color: Colors.white)),
+                ]))),
+      );
+}
+
+class DifficultyItem extends StatelessWidget {
+  final DifficultyMode mode;
+  const DifficultyItem({super.key, required this.mode});
+
+  @override
+  Widget build(BuildContext context) => MenuItem(
+        sub: SubMenu.mode,
+        index: 1,
+        visual: GestureDetector(
+            onTap: cubits.menu.toggleDifficulty,
+            child: Container(
+                height: screen.menu.itemHeight,
+                color: Colors.transparent,
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Icon(mode.icon, color: Colors.white),
+                  const SizedBox(width: 16),
+                  Text('Mode: ${mode.name}',
+                      style: AppText.h2.copyWith(color: Colors.white)),
+                ]))),
+      );
+}
+
+class SettingsItem extends StatelessWidget {
+  const SettingsItem({super.key});
+
+  @override
+  Widget build(BuildContext context) => MenuItem(
+      sub: SubMenu.settings,
+      index: 2,
+      visual: SizedBox(
+          height: screen.menu.itemHeight,
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            const Icon(Icons.settings_rounded, color: Colors.white),
+            const SizedBox(width: 16),
+            Text('Settings', style: AppText.h2.copyWith(color: Colors.white)),
+          ])));
+}
+
+class AboutItem extends StatelessWidget {
+  const AboutItem({super.key});
+
+  @override
+  Widget build(BuildContext context) => MenuItem(
+      sub: SubMenu.about,
+      index: 3,
+      visual: SizedBox(
+          height: screen.menu.itemHeight,
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            const Icon(Icons.info_rounded, color: Colors.white),
+            const SizedBox(width: 16),
+            Text('About', style: AppText.h2.copyWith(color: Colors.white)),
           ])));
 }
 
@@ -69,6 +141,7 @@ class MenuItem extends StatelessWidget {
   final Widget? onChosen;
   final Widget? onUnchosen;
   final Widget? onNotChosen;
+  final Widget? onWasNotChosen;
   final Widget? onElse;
   final Widget? visual;
 
@@ -80,6 +153,7 @@ class MenuItem extends StatelessWidget {
     this.onChosen,
     this.onUnchosen,
     this.onNotChosen,
+    this.onWasNotChosen,
     this.onElse,
     this.visual,
   });
@@ -159,6 +233,20 @@ class MenuItem extends StatelessWidget {
                               (screen.menu.itemHeight * index)),
                       child: visual));
         }
+        if (state.prior?.sub != sub && state.sub == SubMenu.none) {
+          return onWasNotChosen ??
+              SlideOver(
+                  begin: const Offset(-1, 0),
+                  end: const Offset(0, 0),
+                  delay: fadeDuration * index * .25,
+                  child: Padding(
+                      padding: EdgeInsets.only(
+                          top: screen.canvas.midHeight +
+                              (screen.menu.itemHeight * index)),
+                      child: GestureDetector(
+                          onTap: () => maestro.activateSubMenu(sub),
+                          child: visual)));
+        }
         return onElse ??
             Padding(
                 padding: EdgeInsets.only(
@@ -167,83 +255,6 @@ class MenuItem extends StatelessWidget {
                 child: GestureDetector(
                     onTap: () => maestro.activateSubMenu(sub), child: visual));
       });
-}
-
-class HelpItem extends StatelessWidget {
-  const HelpItem({super.key});
-
-  @override
-  Widget build(BuildContext context) => MenuItem(
-        sub: SubMenu.help,
-        index: 0,
-        visual: GestureDetector(
-            onTap: () => launchUrl(Uri.parse('https://discord.gg/cGDebEXgpW')),
-            child: Container(
-                height: screen.menu.itemHeight,
-                color: Colors.transparent,
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  const Icon(Icons.help_rounded, color: Colors.white),
-                  const SizedBox(width: 16),
-                  Text('Need Help? Chat Now!',
-                      style: AppText.h2.copyWith(color: Colors.white)),
-                ]))),
-      );
-}
-
-class DifficultyItem extends StatelessWidget {
-  final DifficultyMode mode;
-  const DifficultyItem({super.key, required this.mode});
-
-  @override
-  Widget build(BuildContext context) => MenuItem(
-        sub: SubMenu.mode,
-        index: 1,
-        visual: GestureDetector(
-            onTap: cubits.menu.toggleDifficulty,
-            child: Container(
-                height: screen.menu.itemHeight,
-                color: Colors.transparent,
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Icon(mode.icon, color: Colors.white),
-                  const SizedBox(width: 16),
-                  Text('Mode: ${mode.name}',
-                      style: AppText.h2.copyWith(color: Colors.white)),
-                ]))),
-      );
-}
-
-class SettingsItem extends StatelessWidget {
-  const SettingsItem({super.key});
-
-  @override
-  Widget build(BuildContext context) => MenuItem(
-      sub: SubMenu.settings,
-      index: 2,
-      visual: SizedBox(
-          height: screen.menu.itemHeight,
-          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            const Icon(Icons.settings_rounded, color: Colors.white),
-            const SizedBox(width: 16),
-            Text('Settings', style: AppText.h2.copyWith(color: Colors.white)),
-          ])));
-}
-
-class AboutItem extends StatelessWidget {
-  const AboutItem({super.key});
-
-  @override
-  Widget build(BuildContext context) => MenuItem(
-      sub: SubMenu.about,
-      index: 3,
-      visual: SizedBox(
-          height: screen.menu.itemHeight,
-          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            const Icon(Icons.info_rounded, color: Colors.white),
-            const SizedBox(width: 16),
-            Text('About', style: AppText.h2.copyWith(color: Colors.white)),
-          ])));
 }
 
 class LegalLinks extends StatelessWidget {

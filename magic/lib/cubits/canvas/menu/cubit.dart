@@ -33,6 +33,7 @@ class MenuCubit extends UpdatableCubit<MenuState> {
     Side? side,
     DifficultyMode? mode,
     SubMenu? sub,
+    bool? setting,
     bool? isSubmitting,
     MenuState? prior,
   }) {
@@ -43,6 +44,7 @@ class MenuCubit extends UpdatableCubit<MenuState> {
       side: side ?? state.side,
       mode: mode ?? state.mode,
       sub: sub ?? state.sub,
+      setting: setting ?? state.setting,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));
@@ -55,4 +57,6 @@ class MenuCubit extends UpdatableCubit<MenuState> {
       update(mode: DifficultyMode.easy);
     }
   }
+
+  void toggleSetting() => update(setting: !state.setting);
 }

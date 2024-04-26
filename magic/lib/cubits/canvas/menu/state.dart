@@ -38,6 +38,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
   final Side? side;
   final DifficultyMode mode;
   final SubMenu sub;
+  final bool setting;
   final bool isSubmitting;
   final MenuState? prior;
 
@@ -48,6 +49,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
     this.side = Side.none,
     this.mode = DifficultyMode.easy,
     this.sub = SubMenu.none,
+    this.setting = false,
     this.isSubmitting = false,
     this.prior,
   });
@@ -60,6 +62,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
         side,
         mode,
         sub,
+        setting,
         isSubmitting,
         prior,
       ];
@@ -75,6 +78,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
         side: side,
         mode: mode,
         sub: sub,
+        setting: setting,
         isSubmitting: isSubmitting,
         prior: null,
       );
