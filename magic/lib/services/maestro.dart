@@ -133,6 +133,14 @@ class Maestro {
     return true;
   }
 
+  void hideSubMenuOnDrag(double height) {
+    if (height > (screen.pane.midHeight + screen.pane.minHeight) / 2) {
+      if (cubits.menu.state.sub != SubMenu.none) {
+        deactivateSubMenu();
+      }
+    }
+  }
+
   void hideNavbarOnDrag(double height) {
     if (height < (screen.pane.midHeight + screen.pane.minHeight) / 2) {
       if (cubits.navbar.isActive) {
@@ -148,7 +156,8 @@ class Maestro {
   void setMinToMiddleOnMax(double height) {
     if (height == screen.pane.maxHeight) {
       cubits.pane.update(min: screen.pane.midHeightPercent);
-    } else if (height == screen.pane.midHeight) {
+    } else if (height <= screen.pane.midHeight + 1 &&
+        cubits.pane.state.min == screen.pane.midHeightPercent) {
       cubits.pane.update(min: screen.pane.minHeightPercent);
     }
   }
@@ -194,6 +203,7 @@ class Maestro {
     cubits.wallet.update(active: true);
     cubits.pane.heightBehavior = (double h) {
       hideNavbarOnDrag(h);
+      hideSubMenuOnDrag(h);
       setMinToMiddleOnMax(h);
       //setMaxToMiddleOnMin(h);
     };

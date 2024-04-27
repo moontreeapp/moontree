@@ -68,6 +68,7 @@ class HelpItem extends StatelessWidget {
             onTap: () => launchUrl(Uri.parse('https://discord.gg/cGDebEXgpW')),
             child: Container(
                 height: screen.menu.itemHeight,
+                width: screen.width,
                 color: Colors.transparent,
                 child:
                     Row(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -91,6 +92,7 @@ class DifficultyItem extends StatelessWidget {
             onTap: cubits.menu.toggleDifficulty,
             child: Container(
                 height: screen.menu.itemHeight,
+                width: screen.width,
                 color: Colors.transparent,
                 child:
                     Row(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -109,8 +111,10 @@ class SettingsItem extends StatelessWidget {
   Widget build(BuildContext context) => MenuItem(
       sub: SubMenu.settings,
       index: 2,
-      visual: SizedBox(
+      visual: Container(
           height: screen.menu.itemHeight,
+          width: screen.width,
+          color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             const Icon(Icons.settings_rounded, color: Colors.white),
             const SizedBox(width: 16),
@@ -125,8 +129,10 @@ class AboutItem extends StatelessWidget {
   Widget build(BuildContext context) => MenuItem(
       sub: SubMenu.about,
       index: 3,
-      visual: SizedBox(
+      visual: Container(
           height: screen.menu.itemHeight,
+          width: screen.width,
+          color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             const Icon(Icons.info_rounded, color: Colors.white),
             const SizedBox(width: 16),

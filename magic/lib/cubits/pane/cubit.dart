@@ -18,6 +18,7 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   void reset() => emit(PaneState(controller: draggableScrollController));
   @override
   void setState(PaneState state) => emit(state);
+  @override
   void refresh() => update(isSubmitting: true);
   @override
   void hide() => update(active: false);
