@@ -116,7 +116,20 @@ class SettingsItem extends StatelessWidget {
           width: screen.width,
           color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            const Icon(Icons.settings_rounded, color: Colors.white),
+            BlocBuilder<MenuCubit, MenuState>(
+                buildWhen: (MenuState previous, MenuState current) =>
+                    current.active && previous.sub != current.sub,
+                builder: (context, state) => cubits.menu.state.sub ==
+                        SubMenu.settings
+                    ? SlideOver(
+                        begin: const Offset(0, 0),
+                        end: const Offset(-10, 0),
+                        delay: fadeDuration * (2 - 1) * .5,
+                        duration: fadeDuration,
+                        curve: Curves.easeInOutCubic,
+                        child: const Icon(Icons.settings_rounded,
+                            color: Colors.white))
+                    : const Icon(Icons.settings_rounded, color: Colors.white)),
             const SizedBox(width: 16),
             Text('Settings', style: AppText.h2.copyWith(color: Colors.white)),
           ])));
@@ -134,7 +147,20 @@ class AboutItem extends StatelessWidget {
           width: screen.width,
           color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            const Icon(Icons.info_rounded, color: Colors.white),
+            BlocBuilder<MenuCubit, MenuState>(
+                buildWhen: (MenuState previous, MenuState current) =>
+                    current.active && previous.sub != current.sub,
+                builder: (context, state) => cubits.menu.state.sub ==
+                        SubMenu.about
+                    ? SlideOver(
+                        begin: const Offset(0, 0),
+                        end: const Offset(-10, 0),
+                        delay: fadeDuration * (3 - 1) * .5,
+                        duration: fadeDuration,
+                        curve: Curves.easeInOutCubic,
+                        child:
+                            const Icon(Icons.info_rounded, color: Colors.white))
+                    : const Icon(Icons.info_rounded, color: Colors.white)),
             const SizedBox(width: 16),
             Text('About', style: AppText.h2.copyWith(color: Colors.white)),
           ])));
@@ -183,7 +209,7 @@ class MenuItem extends StatelessWidget {
           return onChosen ??
               SlideOver(
                   begin: const Offset(0, 0),
-                  end: const Offset(.5, -.67),
+                  end: const Offset(.48, -.67),
                   delay: fadeDuration * index * .5,
                   duration: fadeDuration,
                   curve: Curves.easeInOutCubic,
@@ -195,7 +221,7 @@ class MenuItem extends StatelessWidget {
                           onTap: () => maestro.activateSubMenu(sub),
                           child: GrowingAnimation(
                               begin: 1,
-                              end: 2,
+                              end: 1.618,
                               rebuild: true,
                               reverse: false,
                               curve: Curves.easeInOutCubic,
@@ -207,15 +233,15 @@ class MenuItem extends StatelessWidget {
           return onUnchosen ??
               FadeOutIn(
                   out: SlideOver(
-                      begin: const Offset(.5, -.67),
-                      end: const Offset(.5, -.67),
+                      begin: const Offset(.48, -.67),
+                      end: const Offset(.48, -.67),
                       child: Padding(
                           padding: EdgeInsets.only(
                               top: screen.canvas.midHeight +
                                   (screen.menu.itemHeight * index)),
                           child: GrowingAnimation(
-                              begin: 2,
-                              end: 2,
+                              begin: 1.618,
+                              end: 1.618,
                               rebuild: true,
                               reverse: true,
                               child: visual))),

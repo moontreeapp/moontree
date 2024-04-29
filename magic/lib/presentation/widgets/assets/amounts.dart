@@ -60,6 +60,35 @@ class CoinBalanceView extends StatelessWidget {
           ]));
 }
 
+class CoinBalanceSimpleView extends StatelessWidget {
+  final Coin coin;
+  final TextStyle? wholeStyle;
+  final TextStyle? partStyle;
+  const CoinBalanceSimpleView({
+    super.key,
+    required this.coin,
+    this.wholeStyle,
+    this.partStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) => Container(
+      alignment: Alignment.bottomCenter,
+      child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(coin.whole(), style: wholeStyle ?? AppText.wholeHolding),
+            if (coin.sats > 0) ...[
+              Text(coin.part(),
+                  style: partStyle ??
+                      AppText.partHolding.copyWith(
+                          //height: 1.625 + .15
+                          )),
+            ],
+          ]));
+}
+
 class CoinView extends StatelessWidget {
   final Coin coin;
   final TextStyle? wholeStyle;
@@ -133,10 +162,12 @@ class CoinView extends StatelessWidget {
 class CoinSplitView extends StatelessWidget {
   final Coin coin;
   final TransactionDisplay display;
+  final double space;
   const CoinSplitView({
     super.key,
     required this.coin,
     required this.display,
+    this.space = 2,
   });
 
   @override
@@ -181,7 +212,7 @@ class CoinSplitView extends StatelessWidget {
                           ? AppColors.success
                           : AppColors.black60,
                     )),
-            const SizedBox(height: 2),
+            SizedBox(height: space),
           ]));
 }
 

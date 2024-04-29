@@ -424,7 +424,7 @@ class Maestro {
   Future<void> activateSubMenu(SubMenu sub) async {
     cubits.navbar.update(active: false);
     cubits.appbar.update(
-      leading: AppbarLeading.close,
+      leading: AppbarLeading.back,
       title: 'Magic',
       onLead: deactivateSubMenu,
       onTitle: deactivateSubMenu,

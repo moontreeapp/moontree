@@ -61,6 +61,7 @@ import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/theme/theme.dart';
+import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart';
 
 class TransactionPage extends StatelessWidget {
@@ -85,21 +86,28 @@ class TransactionPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                TransactionItem(label: 'Amount:', display: <TextSpan>[
-                  TextSpan(
-                      text:
-                          '${display.incoming ? '+' : '-'}${display.coin.whole()}',
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                            fontWeight: FontWeight.normal,
-                            color: AppColors.black87,
-                          )),
-                  TextSpan(
-                      text: display.coin.spacedPart(),
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                          fontWeight: FontWeight.normal,
-                          color: AppColors.black60,
-                          fontSize: 12)),
-                ]),
+                TransactionItem(
+                    label: 'Amount:',
+                    overrideDisplay: CoinSplitView(
+                      display: display,
+                      coin: display.sats.toCoin(),
+                      space: 6,
+                    ),
+                    display: <TextSpan>[
+                      TextSpan(
+                          text:
+                              '${display.incoming ? '+' : '-'}${display.coin.whole()}',
+                          style: Theme.of(context).textTheme.body1.copyWith(
+                                fontWeight: FontWeight.normal,
+                                color: AppColors.black87,
+                              )),
+                      TextSpan(
+                          text: display.coin.spacedPart(),
+                          style: Theme.of(context).textTheme.body1.copyWith(
+                              fontWeight: FontWeight.normal,
+                              color: AppColors.black60,
+                              fontSize: 12)),
+                    ]),
                 TransactionItem(label: 'Date:', display: <TextSpan>[
                   TextSpan(
                       text: display.humanDate(),
@@ -136,8 +144,13 @@ class TransactionPage extends StatelessWidget {
 class TransactionItem extends StatelessWidget {
   final String label;
   final List<TextSpan> display;
-  const TransactionItem(
-      {super.key, required this.label, required this.display});
+  final Widget? overrideDisplay;
+  const TransactionItem({
+    super.key,
+    required this.label,
+    required this.display,
+    this.overrideDisplay,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -150,15 +163,19 @@ class TransactionItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label, style: Theme.of(context).textTheme.body1),
-            RichText(
-              textAlign: TextAlign.end,
-              overflow: TextOverflow.ellipsis,
-              softWrap: false,
-              text: TextSpan(
-                style: Theme.of(context).textTheme.body1, // Default text style
-                children: display,
-              ),
-            )
+            if (overrideDisplay != null)
+              overrideDisplay!
+            else
+              RichText(
+                textAlign: TextAlign.end,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                text: TextSpan(
+                  style:
+                      Theme.of(context).textTheme.body1, // Default text style
+                  children: display,
+                ),
+              )
           ],
         ));
     //return ListTile(

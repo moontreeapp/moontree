@@ -49,18 +49,29 @@ class AnimatedCoinSpec extends StatelessWidget {
           //),
           ));
 
-  Widget assetValues(
-          {String? whole, String? part, String? subtitle, Coin? coin}) =>
+  Widget assetValues({
+    String? whole,
+    String? part,
+    String? subtitle,
+    Coin? coin,
+  }) =>
       Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           if (whole == null)
-            CoinBalanceView(
-              coin: coin ?? cubits.holding.state.holding.coin,
-              wholeStyle: AppText.wholeHolding,
-              partOneStyle: AppText.partHolding,
-              partTwoStyle: AppText.partHolding,
-              partThreeStyle: AppText.partHolding,
-            )
+            if ((coin?.coin ?? cubits.holding.state.holding.coin.coin) > 0)
+              CoinBalanceSimpleView(
+                coin: coin ?? cubits.holding.state.holding.coin,
+                wholeStyle: AppText.wholeHolding,
+                partStyle: AppText.partHolding,
+              )
+            else
+              CoinBalanceView(
+                coin: coin ?? cubits.holding.state.holding.coin,
+                wholeStyle: AppText.wholeHolding,
+                partOneStyle: AppText.partHolding,
+                partTwoStyle: AppText.partHolding,
+                partThreeStyle: AppText.partHolding,
+              )
           else ...[
             Text(whole, style: AppText.wholeHolding),
             if ((part ?? cubits.holding.state.part) != '')

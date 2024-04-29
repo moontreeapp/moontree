@@ -78,6 +78,7 @@ class Leading extends StatelessWidget {
                 height: 16 + screen.iconMedium + 16,
                 width: 24 + screen.iconMedium,
                 alignment: Alignment.centerRight,
+                color: Colors.transparent,
                 child: () {
                   if (state.leading == AppbarLeading.menu) {
                     return Icon(Icons.menu_rounded,
@@ -127,6 +128,7 @@ class Title extends StatelessWidget {
               height: screen.appbar.height,
               width: screen.width - (24 + screen.iconMedium + 24) - 16,
               alignment: Alignment.centerLeft,
+              color: Colors.transparent,
               child: state.title == 'Magic'
                   ? Padding(
                       padding: const EdgeInsets.only(left: 8, top: 8.0),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/toast/cubit.dart';
-import 'package:magic/presentation/widgets/assets/shadows.dart';
+//import 'package:magic/presentation/widgets/assets/shadows.dart';
 import 'package:magic/services/services.dart' show screen;
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/extensions.dart';
@@ -28,9 +28,9 @@ class ToastLayer extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           top: 9, bottom: 9, left: 9, right: 16),
                       decoration: BoxDecoration(
-                        color: AppColors.white60,
+                        color: AppColors.black12,
                         borderRadius: BorderRadius.circular(100.0),
-                        boxShadow: frontLayer,
+                        //boxShadow: frontLayer,
                       ),
                       child: Visibility(
                           visible: false,
