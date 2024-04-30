@@ -18,7 +18,7 @@ class MenuPage extends StatelessWidget {
   Widget build(BuildContext context) => Container(
       width: screen.width,
       height: screen.height,
-      padding: EdgeInsets.only(top: screen.appbar.height),
+      //
       alignment: Alignment.topCenter,
       child: Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
@@ -119,17 +119,29 @@ class SettingsItem extends StatelessWidget {
             BlocBuilder<MenuCubit, MenuState>(
                 buildWhen: (MenuState previous, MenuState current) =>
                     current.active && previous.sub != current.sub,
-                builder: (context, state) => cubits.menu.state.sub ==
-                        SubMenu.settings
-                    ? SlideOver(
+                builder: (context, state) {
+                  const icon =
+                      Icon(Icons.settings_rounded, color: Colors.white);
+                  if (cubits.menu.state.sub == SubMenu.settings) {
+                    return SlideOver(
                         begin: const Offset(0, 0),
-                        end: const Offset(-10, 0),
+                        end: const Offset(-3, 0),
                         delay: fadeDuration * (2 - 1) * .5,
                         duration: fadeDuration,
                         curve: Curves.easeInOutCubic,
-                        child: const Icon(Icons.settings_rounded,
-                            color: Colors.white))
-                    : const Icon(Icons.settings_rounded, color: Colors.white)),
+                        child: icon);
+                  }
+                  if (cubits.menu.state.sub == SubMenu.none) {
+                    return SlideOver(
+                        begin: const Offset(-3, 0),
+                        end: const Offset(0, 0),
+                        delay: fadeDuration * (2 - 1) * .5,
+                        duration: fadeDuration,
+                        curve: Curves.easeInOutCubic,
+                        child: icon);
+                  }
+                  return icon;
+                }),
             const SizedBox(width: 16),
             Text('Settings', style: AppText.h2.copyWith(color: Colors.white)),
           ])));
@@ -150,17 +162,28 @@ class AboutItem extends StatelessWidget {
             BlocBuilder<MenuCubit, MenuState>(
                 buildWhen: (MenuState previous, MenuState current) =>
                     current.active && previous.sub != current.sub,
-                builder: (context, state) => cubits.menu.state.sub ==
-                        SubMenu.about
-                    ? SlideOver(
+                builder: (context, state) {
+                  const icon = Icon(Icons.info_rounded, color: Colors.white);
+                  if (cubits.menu.state.sub == SubMenu.about) {
+                    return SlideOver(
                         begin: const Offset(0, 0),
-                        end: const Offset(-10, 0),
+                        end: const Offset(-3, 0),
                         delay: fadeDuration * (3 - 1) * .5,
                         duration: fadeDuration,
                         curve: Curves.easeInOutCubic,
-                        child:
-                            const Icon(Icons.info_rounded, color: Colors.white))
-                    : const Icon(Icons.info_rounded, color: Colors.white)),
+                        child: icon);
+                  }
+                  if (cubits.menu.state.sub == SubMenu.none) {
+                    return SlideOver(
+                        begin: const Offset(-3, 0),
+                        end: const Offset(0, 0),
+                        delay: fadeDuration * (3 - 1) * .5,
+                        duration: fadeDuration,
+                        curve: Curves.easeInOutCubic,
+                        child: icon);
+                  }
+                  return icon;
+                }),
             const SizedBox(width: 16),
             Text('About', style: AppText.h2.copyWith(color: Colors.white)),
           ])));
@@ -195,12 +218,14 @@ class MenuItem extends StatelessWidget {
       buildWhen: (MenuState previous, MenuState current) =>
           current.active && previous.sub != current.sub,
       builder: (context, state) {
+        final padding = EdgeInsets.only(
+            top: screen.appbar.height +
+                screen.canvas.midHeight +
+                (screen.menu.itemHeight * index));
         if (state.prior?.sub == SubMenu.none && state.sub == SubMenu.none) {
           return onMenu ??
               Padding(
-                  padding: EdgeInsets.only(
-                      top: screen.canvas.midHeight +
-                          (screen.menu.itemHeight * index)),
+                  padding: padding,
                   child: GestureDetector(
                       onTap: () => maestro.activateSubMenu(sub),
                       child: visual));
@@ -209,19 +234,17 @@ class MenuItem extends StatelessWidget {
           return onChosen ??
               SlideOver(
                   begin: const Offset(0, 0),
-                  end: const Offset(.48, -.67),
+                  end: Offset(0, -.866 - ((index - 1) * 0.014)),
                   delay: fadeDuration * index * .5,
                   duration: fadeDuration,
                   curve: Curves.easeInOutCubic,
                   child: Padding(
-                      padding: EdgeInsets.only(
-                          top: screen.canvas.midHeight +
-                              (screen.menu.itemHeight * index)),
+                      padding: padding,
                       child: GestureDetector(
-                          onTap: () => maestro.activateSubMenu(sub),
+                          onTap: () => maestro.deactivateSubMenu(),
                           child: GrowingAnimation(
                               begin: 1,
-                              end: 1.618,
+                              end: 1,
                               rebuild: true,
                               reverse: false,
                               curve: Curves.easeInOutCubic,
@@ -231,27 +254,20 @@ class MenuItem extends StatelessWidget {
         }
         if (state.prior?.sub == sub && state.sub != sub) {
           return onUnchosen ??
-              FadeOutIn(
-                  out: SlideOver(
-                      begin: const Offset(.48, -.67),
-                      end: const Offset(.48, -.67),
-                      child: Padding(
-                          padding: EdgeInsets.only(
-                              top: screen.canvas.midHeight +
-                                  (screen.menu.itemHeight * index)),
-                          child: GrowingAnimation(
-                              begin: 1.618,
-                              end: 1.618,
-                              rebuild: true,
-                              reverse: true,
-                              child: visual))),
+              SlideOver(
+                  begin: Offset(0, -.866 - ((index - 1) * 0.014)),
+                  end: const Offset(0, 0),
+                  delay: fadeDuration * .25,
                   child: Padding(
-                      padding: EdgeInsets.only(
-                          top: screen.canvas.midHeight +
-                              (screen.menu.itemHeight * index)),
-                      child: GestureDetector(
-                          onTap: () => maestro.activateSubMenu(sub),
-                          child: visual)));
+                      padding: padding,
+                      child: GrowingAnimation(
+                          begin: 1,
+                          end: 1,
+                          rebuild: true,
+                          reverse: true,
+                          child: GestureDetector(
+                              onTap: () => maestro.activateSubMenu(sub),
+                              child: visual))));
         }
         if (state.prior?.sub == SubMenu.none && state.sub != sub) {
           return onNotChosen ??
@@ -259,31 +275,23 @@ class MenuItem extends StatelessWidget {
                   begin: const Offset(0, 0),
                   end: const Offset(-1, 0),
                   delay: fadeDuration * index * .25,
-                  child: Padding(
-                      padding: EdgeInsets.only(
-                          top: screen.canvas.midHeight +
-                              (screen.menu.itemHeight * index)),
-                      child: visual));
+                  child: Padding(padding: padding, child: visual));
         }
         if (state.prior?.sub != sub && state.sub == SubMenu.none) {
           return onWasNotChosen ??
               SlideOver(
                   begin: const Offset(-1, 0),
                   end: const Offset(0, 0),
-                  delay: fadeDuration * index * .25,
+                  delay: (fadeDuration * 1) + (fadeDuration * index * .25),
                   child: Padding(
-                      padding: EdgeInsets.only(
-                          top: screen.canvas.midHeight +
-                              (screen.menu.itemHeight * index)),
+                      padding: padding,
                       child: GestureDetector(
                           onTap: () => maestro.activateSubMenu(sub),
                           child: visual)));
         }
         return onElse ??
             Padding(
-                padding: EdgeInsets.only(
-                    top: screen.canvas.midHeight +
-                        (screen.menu.itemHeight * index)),
+                padding: padding,
                 child: GestureDetector(
                     onTap: () => maestro.activateSubMenu(sub), child: visual));
       });

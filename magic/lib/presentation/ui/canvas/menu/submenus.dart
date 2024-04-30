@@ -16,6 +16,7 @@ class SubMenus extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(height: screen.appbar.height),
             SizedBox(height: screen.canvas.midHeight),
             SubMenuItem(
                 state: state,
@@ -92,7 +93,7 @@ class AboutSubMenu extends StatelessWidget {
   const AboutSubMenu({super.key});
 
   @override
-  Widget build(BuildContext context) => Text('\n\nbuilt by Moontree',
+  Widget build(BuildContext context) => Text('built by Moontree',
       textAlign: TextAlign.center,
       style: AppText.h1.copyWith(color: Colors.white));
 }

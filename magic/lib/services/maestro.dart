@@ -425,7 +425,7 @@ class Maestro {
     cubits.navbar.update(active: false);
     cubits.appbar.update(
       leading: AppbarLeading.back,
-      title: 'Magic',
+      title: '',
       onLead: deactivateSubMenu,
       onTitle: deactivateSubMenu,
     );
