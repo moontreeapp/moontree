@@ -21,14 +21,17 @@ class GlobalCubits {
   final manage = ManageCubit();
   final fade = FadeCubit();
 
-  /// other
+  /// other - ui
   final appbar = AppbarCubit();
-  final app = AppCubit();
   final navbar = NavbarCubit();
   final panel = PanelCubit();
   final toast = ToastCubit();
   final tutorial = TutorialCubit();
   final ignore = IgnoreCubit();
+
+  /// other - state
+  final app = AppCubit();
+  final keys = KeysCubit();
 
   /// combined
   List<Cubit> get all => [
@@ -39,12 +42,13 @@ class GlobalCubits {
         transactions,
         fade,
         appbar,
-        app,
         navbar,
         panel,
         toast,
         tutorial,
         ignore,
+        app,
+        keys,
       ];
   List<UpdatableCubit> get paneCubits =>
       [wallet, transactions, transaction, send, receive, swap, manage];
@@ -63,13 +67,14 @@ class GlobalCubits {
         BlocProvider<SendCubit>(create: (context) => send),
         BlocProvider<ManageCubit>(create: (context) => manage),
         BlocProvider<FadeCubit>(create: (context) => fade),
-        BlocProvider<AppCubit>(create: (context) => app),
         BlocProvider<AppbarCubit>(create: (context) => appbar),
         BlocProvider<NavbarCubit>(create: (context) => navbar),
         BlocProvider<ToastCubit>(create: (context) => toast),
         BlocProvider<PanelCubit>(create: (context) => panel),
         BlocProvider<TutorialCubit>(create: (context) => tutorial),
         BlocProvider<IgnoreCubit>(create: (context) => ignore),
+        BlocProvider<AppCubit>(create: (context) => app),
+        BlocProvider<KeysCubit>(create: (context) => keys),
       ];
 
   GlobalCubits();

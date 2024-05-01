@@ -9,6 +9,7 @@ import 'package:magic/domain/concepts/sections.dart';
 import 'package:magic/cubits/cubit.dart' show cubits;
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/services/derivation/hd.dart';
 import 'package:magic/services/services.dart';
 
 class Maestro {
@@ -231,6 +232,11 @@ class Maestro {
     await inactiveateAllBut(null);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+
+    /// place for testing stuff since mint is unused:
+    print("storage.read(key: 'key') ${await storage.read(key: 'key')}");
+    await storage.write(key: 'key', value: makePubKey());
+    print("storage.read(key: 'key') ${await storage.read(key: 'key')}");
   }
 
   void _activeateSwap() {

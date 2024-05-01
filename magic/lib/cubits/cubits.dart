@@ -18,3 +18,4 @@ export 'package:magic/cubits/pane/wallet/cubit.dart';
 export 'package:magic/cubits/panel/cubit.dart';
 export 'package:magic/cubits/toast/cubit.dart';
 export 'package:magic/cubits/tutorial/cubit.dart';
+export 'package:magic/cubits/keys/cubit.dart';

@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:magic/services/routes.dart';
 import 'package:magic/services/screen.dart';
 import 'package:magic/services/back.dart';
@@ -10,6 +11,7 @@ late ScreenFlags screenflags;
 late SystemBackButton back;
 late Maestro maestro;
 late Keyboard keyboard;
+late FlutterSecureStorage storage;
 
 void init({
   required double height,
@@ -22,5 +24,6 @@ void init({
   keys.init();
   keyboard = Keyboard();
   maestro = Maestro();
+  storage = const FlutterSecureStorage();
   //api.connect();
 }
