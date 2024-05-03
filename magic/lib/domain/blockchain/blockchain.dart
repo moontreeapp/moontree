@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-
-import 'package:equatable/equatable.dart';
 import 'package:magic/domain/blockchain/chain.dart';
 import 'package:magic/domain/blockchain/net.dart';
 import 'package:moontree_utils/moontree_utils.dart';
@@ -8,31 +6,56 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/src/models/networks.dart'
     show NetworkType, mainnet, testnet, evrmoreMainnet, evrmoreTestnet;
 
-class Blockchain with EquatableMixin {
-  final Chain chain;
-  final Net net;
+enum Blockchain {
+  ravencoinMain,
+  ravencoinTest,
+  evrmoreMain,
+  evrmoreTest,
+  none;
 
-  const Blockchain(this.chain, this.net);
+  Chain get chain {
+    switch (this) {
+      case Blockchain.ravencoinMain:
+        return Chain.ravencoin;
+      case Blockchain.ravencoinTest:
+        return Chain.ravencoin;
+      case Blockchain.evrmoreMain:
+        return Chain.evrmore;
+      case Blockchain.evrmoreTest:
+        return Chain.evrmore;
+      case Blockchain.none:
+        return Chain.none;
+    }
+  }
+
+  Net get net {
+    switch (this) {
+      case Blockchain.ravencoinMain:
+        return Net.main;
+      case Blockchain.ravencoinTest:
+        return Net.test;
+      case Blockchain.evrmoreMain:
+        return Net.main;
+      case Blockchain.evrmoreTest:
+        return Net.test;
+      case Blockchain.none:
+        return Net.test;
+    }
+  }
 
   factory Blockchain.from({Chaindata? chaindata, String? name}) {
     switch (chaindata?.name ?? name) {
       case 'ravencoin_mainnet':
-        return const Blockchain(Chain.ravencoin, Net.main);
+        return Blockchain.ravencoinMain;
       case 'ravencoin_testnet':
-        return const Blockchain(Chain.ravencoin, Net.test);
+        return Blockchain.ravencoinTest;
       case 'evrmore_mainnet':
-        return const Blockchain(Chain.evrmore, Net.main);
+        return Blockchain.evrmoreMain;
       case 'evrmore_testnet':
-        return const Blockchain(Chain.evrmore, Net.test);
+        return Blockchain.evrmoreTest;
     }
-    return const Blockchain(Chain.ravencoin, Net.main);
+    return Blockchain.none;
   }
-
-  @override
-  List<Object?> get props => <Object?>[chain, net];
-
-  @override
-  String toString() => props.toString();
 
   int get purpose => 44;
   int get coinType {
