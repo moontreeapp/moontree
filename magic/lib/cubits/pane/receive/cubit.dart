@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
-import 'package:magic/services/wallet/hd.dart';
+import 'package:magic/services/wallet/utils.dart';
+import 'package:magic/domain/blockchain/wallets.dart';
 
 part 'state.dart';
 
@@ -47,11 +48,13 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
   }
 
   void populateAddress() {
-    Wallet wallet = Wallet(mnemonic: makeMnemonic());
+    MnemonicWallet wallet = MnemonicWallet(mnemonic: makeMnemonic());
     print('mnemonic: ${wallet.mnemonic}');
     print('entropy: ${wallet.entropy}');
     print('seed: ${wallet.seed}');
-    print('seed: ${wallet.subwallet(Blockchain.ravencoinMain).address}');
-    update(address: wallet.subwallet(Blockchain.ravencoinMain).address);
+    print(
+        'seed: ${wallet.seedWallet(Blockchain.ravencoinMain).hdWallet.address}');
+    update(
+        address: wallet.seedWallet(Blockchain.ravencoinMain).hdWallet.address);
   }
 }

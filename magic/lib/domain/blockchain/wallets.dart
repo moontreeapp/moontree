@@ -3,21 +3,63 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
-import 'package:magic/domain/blockchain/net.dart';
 import 'package:wallet_utils/wallet_utils.dart' show HDWallet, KPWallet;
 
-String makeMnemonic({String? entropy}) => entropy == null
-    ? bip39.generateMnemonic()
-    : bip39.entropyToMnemonic(entropy);
+class MasterWallet {
+  final List<MnemonicWallet> mnemonicWallets = [];
+  final List<KeypairWallet> keypairWallets = [];
 
-String makeEntropy({String? mnemonic}) =>
-    bip39.mnemonicToEntropy(mnemonic ?? makeMnemonic());
+  MasterWallet();
+}
 
-Uint8List makeSeed([String? mnemonic]) =>
-    bip39.mnemonicToSeed(mnemonic ?? makeMnemonic());
+class KeypairWallet {
+  String wif;
 
-String makePubKey({Uint8List? seed, String? mnemonic}) =>
-    HDWallet.fromSeed(seed ?? makeSeed(mnemonic)).pubKey;
+  KeypairWallet(this.wif);
+
+  KPWallet wallet(Blockchain blockchain) {
+    return KPWallet.fromWIF(wif, blockchain.network);
+  }
+}
+
+/// An hd wallet that can derive multiple SeedWallet for different blockchains
+class MnemonicWallet {
+  final String mnemonic;
+  String? _entropy;
+  Uint8List? _seed;
+  final Map<Blockchain, List<String>> _roots = {};
+  final Map<Blockchain, SeedWallet> seedWallets = {};
+
+  MnemonicWallet({required this.mnemonic});
+
+  String get entropy {
+    _entropy ??= bip39.mnemonicToEntropy(mnemonic);
+    return _entropy!;
+  }
+
+  Uint8List get seed {
+    _seed ??= bip39.mnemonicToSeed(mnemonic);
+    return _seed!;
+  }
+
+  SeedWallet seedWallet(Blockchain blockchain) {
+    seedWallets[blockchain] ??= SeedWallet(
+        blockchain: blockchain,
+        hdWallet: HDWallet.fromSeed(seed, network: blockchain.network));
+    return seedWallets[blockchain]!;
+  }
+
+  String? pubkey(Blockchain blockchain) =>
+      seedWallet(blockchain).hdWallet.pubKey;
+
+  List<String> roots(Blockchain blockchain) {
+    _roots[blockchain] ??= [
+      seedWallet(blockchain).root(Exposure.external),
+      seedWallet(blockchain).root(Exposure.internal),
+    ];
+    return _roots[blockchain]!;
+  }
+}
 
 class SeedWallet {
   final Blockchain blockchain;
@@ -68,53 +110,15 @@ class SeedWallet {
     }
     return true;
   }
-}
 
-class Wallet {
-  final String mnemonic;
-  String? _pubkey;
-  String? _entropy;
-  Uint8List? _seed;
-  final Map<Net, SeedWallet> subwallets = {};
-
-  Wallet({required this.mnemonic});
-
-  String get entropy {
-    _entropy ??= bip39.mnemonicToEntropy(mnemonic);
-    return _entropy!;
-  }
-
-  Uint8List get seed {
-    _seed ??= bip39.mnemonicToSeed(mnemonic);
-    return _seed!;
-  }
-
-  /// aren't pubkeys the same across networks?
-  String? pubkey() {
-    _pubkey ??= subwallets.values.firstOrNull?.hdWallet.pubKey;
-    return _pubkey!;
-  }
-
-  HDWallet subwallet(Blockchain blockchain) {
-    subwallets[blockchain.net] ??= SeedWallet(
-        blockchain: blockchain,
-        hdWallet: HDWallet.fromSeed(seed, network: blockchain.network));
-    return subwallets[blockchain.net]!.hdWallet;
-  }
-}
-
-/// perhaps DerivedWallet shouldn't implement Wallet, but instead be a
-/// slimmed down const address object or something?
-class DerivedWallet extends Wallet {
-  DerivedWallet({required super.mnemonic});
-}
-
-class SingleSelfWallet {
-  String wif;
-
-  SingleSelfWallet(this.wif);
-
-  KPWallet wallet(Blockchain blockchain) {
-    return KPWallet.fromWIF(wif, blockchain.network);
-  }
+  String root(Exposure exposure) => hdWallet
+      .derivePath(
+        // "m/44'/175'/0'/0" external
+        // "m/44'/175'/0'/1" internal
+        getDerivationPath(
+          exposure: exposure,
+          blockchain: blockchain,
+        ),
+      )
+      .base58!;
 }

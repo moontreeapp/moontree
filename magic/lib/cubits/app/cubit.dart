@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/infrastructure/server/serverv2_client.dart';
 
 part 'state.dart';
 
@@ -29,10 +30,12 @@ class AppCubit extends UpdatableCubit<AppState> {
   @override
   void update({
     String? status,
+    StreamingConnectionStatus? connection,
     bool? submitting,
   }) =>
       emit(AppState(
         status: status ?? state.status,
+        connection: connection ?? state.connection,
         submitting: submitting ?? state.submitting,
         prior: state.withoutPrior,
       ));

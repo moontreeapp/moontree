@@ -10,7 +10,7 @@ import 'package:magic/cubits/cubit.dart' show cubits;
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
-import 'package:magic/services/wallet/hd.dart';
+import 'package:magic/services/wallet/utils.dart';
 
 class Maestro {
   List<NavbarSection> sectionsHistory = [];

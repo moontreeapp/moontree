@@ -9,7 +9,8 @@ import 'package:magic/presentation/ui/canvas/menu/submenus.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/animations.dart';
 import 'package:magic/services/services.dart';
-import 'package:magic/services/wallet/hd.dart';
+import 'package:magic/services/wallet/utils.dart';
+import 'package:magic/domain/blockchain/wallets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MenuPage extends StatelessWidget {
@@ -68,7 +69,7 @@ class HelpItem extends StatelessWidget {
         visual: GestureDetector(
             //onTap: () => launchUrl(Uri.parse('https://discord.gg/cGDebEXgpW')),
             onTap: () {
-              Wallet wallet = Wallet(mnemonic: makeMnemonic());
+              MnemonicWallet wallet = MnemonicWallet(mnemonic: makeMnemonic());
               print('mnemonic: ${wallet.mnemonic}');
               print('entropy: ${wallet.entropy}');
               print('seed: ${wallet.seed}');
