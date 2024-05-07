@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:magic/domain/blockchain/blockchain.dart';
-import 'package:magic/domain/blockchain/chain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/blockchain/net.dart';
@@ -76,7 +75,7 @@ class Wallet {
   String? _pubkey;
   String? _entropy;
   Uint8List? _seed;
-  final Map<Net, SeedWallet> _seedWallets = {};
+  final Map<Net, SeedWallet> subwallets = {};
 
   Wallet({required this.mnemonic});
 
@@ -92,15 +91,15 @@ class Wallet {
 
   /// aren't pubkeys the same across networks?
   String? pubkey() {
-    _pubkey ??= _seedWallets.values.firstOrNull?.hdWallet.pubKey;
+    _pubkey ??= subwallets.values.firstOrNull?.hdWallet.pubKey;
     return _pubkey!;
   }
 
-  HDWallet hdWallet(Blockchain blockchain) {
-    _seedWallets[blockchain.net] ??= SeedWallet(
+  HDWallet subwallet(Blockchain blockchain) {
+    subwallets[blockchain.net] ??= SeedWallet(
         blockchain: blockchain,
         hdWallet: HDWallet.fromSeed(seed, network: blockchain.network));
-    return _seedWallets[blockchain.net]!.hdWallet;
+    return subwallets[blockchain.net]!.hdWallet;
   }
 }
 

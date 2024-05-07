@@ -28,7 +28,7 @@ class ToastLayer extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           top: 9, bottom: 9, left: 9, right: 16),
                       decoration: BoxDecoration(
-                        color: AppColors.black12,
+                        color: AppColors.white87,
                         borderRadius: BorderRadius.circular(100.0),
                         //boxShadow: frontLayer,
                       ),
@@ -93,12 +93,11 @@ class ToastLayer extends StatelessWidget {
               child: content,
             );
           }
-          return Positioned(
-              top: state.height ?? screen.toast,
-              child: Stack(children: [
-                showBackground,
-                showContent,
-              ]));
+          return Stack(alignment: Alignment.topCenter, children: [
+            Positioned(
+                top: state.height ?? screen.toast, child: showBackground),
+            Positioned(top: state.height ?? screen.toast, child: showContent),
+          ]);
         }
         return const SizedBox.shrink();
       });
@@ -155,6 +154,6 @@ class ToastContent extends StatelessWidget {
         child: toast,
       );
     }
-    return Positioned(top: state.height ?? screen.toast, child: show);
+    return show;
   }
 }

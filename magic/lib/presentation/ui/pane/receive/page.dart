@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/services/services.dart';
@@ -16,30 +20,65 @@ class ReceivePage extends StatelessWidget {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-                height: screen.width - 32 * 4,
-                width: screen.width - 32 * 4,
-                color: Colors.grey),
-            const Text('address'),
+            GestureDetector(
+                onTap: () {
+                  cubits.receive.populateAddress();
+                  Clipboard.setData(
+                      ClipboardData(text: cubits.receive.state.address));
+                },
+                child: Container(
+                    height: screen.width - 32 * 4,
+                    width: screen.width - 32 * 4,
+                    color: Colors.grey,
+                    child: QrImageView(
+                        backgroundColor: Colors.white,
+                        data: cubits.receive.state.address,
+                        eyeStyle: const QrEyeStyle(
+                            eyeShape: QrEyeShape.square,
+                            color: AppColors.primary),
+                        dataModuleStyle: const QrDataModuleStyle(
+                            dataModuleShape: QrDataModuleShape.circle,
+                            color: AppColors.primary),
+                        //foregroundColor: AppColors.primary,
+                        //embeddedImage: Image.asset(
+                        //        'assets/logo/moontree_logo.png')
+                        //    .image,
+                        size: screen.width - 32 * 2))),
+            SelectableText(
+              cubits.receive.state.address,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
+                  .copyWith(color: AppColors.black87),
+              showCursor: true,
+            )
           ],
         )),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Expanded(
-                child: Container(
-                    height: 64,
-                    decoration: ShapeDecoration(
-                      color: AppColors.success,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28 * 100),
-                      ),
-                    ),
-                    child: Center(
-                        child: Text(
-                      'COPY',
-                      style: AppText.button1.copyWith(color: Colors.white),
-                    )))),
+                child: GestureDetector(
+                    onTap: () {
+                      Clipboard.setData(
+                          ClipboardData(text: cubits.receive.state.address));
+                      cubits.toast.flash(
+                          msg: const ToastMessage(
+                              title: 'copied', text: 'to clipboard'));
+                    },
+                    child: Container(
+                        height: 64,
+                        decoration: ShapeDecoration(
+                          color: AppColors.success,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28 * 100),
+                          ),
+                        ),
+                        child: Center(
+                            child: Text(
+                          'COPY',
+                          style: AppText.button1.copyWith(color: Colors.white),
+                        ))))),
             const SizedBox(width: 16),
             Expanded(
                 child: Container(
