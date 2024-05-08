@@ -1,29 +1,73 @@
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:wallet_utils/wallet_utils.dart' show HDWallet, KPWallet;
 
-class MasterWallet {
+abstract class Jsonable {
+  Map<String, dynamic> get asMap;
+  String get asJson => jsonEncode(asMap);
+}
+
+/// this should be a cubit or something rather than a hierarchical object,
+/// that introduces complexity with no value added.
+class MasterWallet extends Jsonable {
   final List<MnemonicWallet> mnemonicWallets = [];
   final List<KeypairWallet> keypairWallets = [];
 
-  MasterWallet();
+  MasterWallet({
+    Iterable<MnemonicWallet>? mnemonicWallets,
+    Iterable<KeypairWallet>? keypairWallets,
+  }) {
+    if (mnemonicWallets != null) {
+      this.mnemonicWallets.addAll(mnemonicWallets);
+    }
+    if (keypairWallets != null) {
+      this.keypairWallets.addAll(keypairWallets);
+    }
+  }
+
+  factory MasterWallet.fromJson(String json) {
+    final Map<String, List<String>> decoded = jsonDecode(json);
+    return MasterWallet(
+      mnemonicWallets: (decoded['mnemonicWallets'] ?? [])
+          .map((mw) => MnemonicWallet.fromJson(mw)),
+      keypairWallets: (decoded['keypairWallets'] ?? [])
+          .map((kp) => KeypairWallet.fromJson(kp)),
+    );
+  }
+
+  @override
+  Map<String, dynamic> get asMap => {
+        'mnemonicWallets': mnemonicWallets.map((m) => m.asMap).toList(),
+        'keypairWallets': keypairWallets.map((m) => m.asMap).toList(),
+      };
 }
 
-class KeypairWallet {
-  String wif;
+class KeypairWallet extends Jsonable {
+  final String wif;
+  final Map<Blockchain, KPWallet> wallets = {};
 
-  KeypairWallet(this.wif);
+  KeypairWallet({required this.wif});
 
   KPWallet wallet(Blockchain blockchain) {
-    return KPWallet.fromWIF(wif, blockchain.network);
+    wallets[blockchain] ??= KPWallet.fromWIF(wif, blockchain.network);
+    return wallets[blockchain]!;
   }
+
+  factory KeypairWallet.fromJson(String json) {
+    final Map<String, String> decoded = jsonDecode(json);
+    return KeypairWallet(wif: decoded['wif']!);
+  }
+
+  @override
+  Map<String, String> get asMap => {'wif': wif};
 }
 
 /// An hd wallet that can derive multiple SeedWallet for different blockchains
-class MnemonicWallet {
+class MnemonicWallet extends Jsonable {
   final String mnemonic;
   String? _entropy;
   Uint8List? _seed;
@@ -31,6 +75,14 @@ class MnemonicWallet {
   final Map<Blockchain, SeedWallet> seedWallets = {};
 
   MnemonicWallet({required this.mnemonic});
+
+  factory MnemonicWallet.fromJson(String json) {
+    final Map<String, String> decoded = jsonDecode(json);
+    return MnemonicWallet(mnemonic: decoded['mnemonic']!);
+  }
+
+  @override
+  Map<String, String> get asMap => {'mnemonic': mnemonic};
 
   String get entropy {
     _entropy ??= bip39.mnemonicToEntropy(mnemonic);

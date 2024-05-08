@@ -31,11 +31,13 @@ class AppCubit extends UpdatableCubit<AppState> {
   void update({
     String? status,
     StreamingConnectionStatus? connection,
+    int? blockheight,
     bool? submitting,
   }) =>
       emit(AppState(
         status: status ?? state.status,
         connection: connection ?? state.connection,
+        blockheight: blockheight ?? state.blockheight,
         submitting: submitting ?? state.submitting,
         prior: state.withoutPrior,
       ));

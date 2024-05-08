@@ -3,12 +3,14 @@ part of 'cubit.dart';
 class AppState with EquatableMixin {
   final String status;
   final StreamingConnectionStatus connection;
+  final int blockheight;
   final bool submitting;
   final AppState? prior;
 
   const AppState({
     this.status = '',
     this.connection = StreamingConnectionStatus.disconnected,
+    this.blockheight = 0,
     this.submitting = false,
     this.prior,
   });
@@ -17,6 +19,7 @@ class AppState with EquatableMixin {
   List<Object?> get props => [
         status,
         connection,
+        blockheight,
         submitting,
         prior,
       ];
@@ -27,6 +30,7 @@ class AppState with EquatableMixin {
   AppState get withoutPrior => AppState(
         status: status,
         connection: connection,
+        blockheight: blockheight,
         submitting: submitting,
         prior: null,
       );

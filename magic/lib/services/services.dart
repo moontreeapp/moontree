@@ -26,4 +26,12 @@ void init({
   maestro = Maestro();
   storage = const FlutterSecureStorage();
   //api.connect();
+
+  /// here we could have a process that loads from local disk (wallets, settings)
+  /// then a process which connects to the server and setsup subscriptions on the client:
+  //      await subscription.setupSubscription(
+  //        wallets: cubits.wallets.currentWallet,
+  //        chain: value.chain,
+  //        net: value.net,
+  //      );
 }

@@ -1,19 +1,24 @@
 part of 'cubit.dart';
 
 class KeysState with EquatableMixin {
-  final String key;
+  final List<String> mnemonics;
+  final List<String> wifs;
   final bool submitting;
   final KeysState? prior;
 
   const KeysState({
-    this.key = '',
+    required this.mnemonics,
+    required this.wifs,
     this.submitting = false,
     this.prior,
   });
 
+  factory KeysState.empty() => const KeysState(mnemonics: [], wifs: []);
+
   @override
   List<Object?> get props => [
-        key,
+        mnemonics,
+        wifs,
         submitting,
         prior,
       ];
@@ -22,7 +27,8 @@ class KeysState with EquatableMixin {
   String toString() => '$runtimeType($props)';
 
   KeysState get withoutPrior => KeysState(
-        key: key,
+        mnemonics: mnemonics,
+        wifs: wifs,
         submitting: submitting,
         prior: null,
       );

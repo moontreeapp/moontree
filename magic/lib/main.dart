@@ -128,7 +128,16 @@ class MaestroLayer extends StatelessWidget {
     );
     cubits.pane.update(height: screen.pane.midHeight);
     cubits.ignore.update(active: false);
-    cubits.keys.update(key: 'some special key');
+    cubits.keys.load().then((x) {
+      print('cubits.keys.state.props');
+      print(cubits.keys.state.props);
+    });
+
+    cubits.keys.update(mnemonics: ['b', 'b']);
+    cubits.keys.dump();
+    cubits.keys.load();
+    print('cubits.keys.state.props');
+    print(cubits.keys.state.props);
   }
 }
 

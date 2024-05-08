@@ -39,24 +39,22 @@ class SubscriptionService {
   }
 
   Future<void> setupListeners() async {
+    /// TODO: implement triggerBalanceUpdates - after we setup repos for holdings:
     void triggerBalanceUpdates() {
-      /// TODO: implement triggerBalanceUpdates
-      //// update holdings list
-      //cubits.holdingsView.setHoldingViews(
-      //    wallet: Current.wallet, chainNet: Current.chainNet, force: true);
-      //// update receive address
-      //cubits.receiveView.setAddress(Current.wallet, force: true);
-      //// if we're on the transactions list, update that too:
-      //if (cubits.transactionsView.state.ranWallet != null) {
-      //  cubits.transactionsView.setInitial(force: true);
-      //}
+      print('triggerBalanceUpdates - not implemented');
+      /*
+      // update holdings list
+      cubits.holdingsView.setHoldingViews(
+          wallet: Current.wallet, chainNet: Current.chainNet, force: true);
+      // update receive address
+      cubits.receiveView.setAddress(Current.wallet, force: true);
+      // if we're on the transactions list, update that too:
+      if (cubits.transactionsView.state.ranWallet != null) {
+        cubits.transactionsView.setInitial(force: true);
+      }
+      */
     }
 
-    // move this to waiter? no, it has to be setup after above, I think, and
-    // monitor comes from the frontend, so we have to load the app first.
-    // we might as well setup these listeners on login or something like that.
-    // probably only needs to be set up once, not everytime we
-    // specifySubscription.
     try {
       client.subscription.stream.listen((message) async {
         /// # status means the state of the synchronizer (2 means up to date)
@@ -67,21 +65,13 @@ class SubscriptionService {
         // if balance update do y, etc.
         //print(message);
         if (message is protocol.NotifyChainStatus) {
-          //print('status! ${message.toJson()}');
         } else if (message is protocol.NotifyChainHeight) {
           if (message.height > 0) {
-            // TODO: implement NotifyChainHeight
-            //await pros.blocks.save(Block.fromNotification(message));
-
-            //print('pros.blocks.records ${pros.blocks.records.first}');
-          } else {
-            //print('message was weird: ${message.toJson()}');
+            cubits.app.update(blockheight: message.height);
           }
         } else if (message is protocol.NotifyChainH160Balance) {
-          // print('H160 (SingleWallet) balance updated!');
           triggerBalanceUpdates();
         } else if (message is protocol.NotifyChainWalletBalance) {
-          // print('LeaderWallet balance updated!');
           triggerBalanceUpdates();
         } else {
           print('unknown subscription message: ${message.runtimeType}');
@@ -123,6 +113,13 @@ class SubscriptionService {
     //  Chain? chain,
     //  Net? net,
     //}) async {
+    /* how to call:
+        await subscription.setupSubscription(
+          wallet: pros.wallets.currentWallet,
+          chain: value.chain,
+          net: value.net,
+        );
+      */
     //  wallet ??= pros.wallets.currentWallet;
     //  chain ??= pros.settings.chain;
     //  net ??= pros.settings.net;
