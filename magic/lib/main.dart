@@ -139,6 +139,7 @@ class MaestroLayer extends StatelessWidget {
     cubits.keys.load().then((x) {
       print('cubits.keys.state.props');
       print(cubits.keys.state.props);
+      cubits.receive.populateAddress();
     });
     subscription.setupSubscriptions(cubits.keys.master);
     print(subscription.starttime);

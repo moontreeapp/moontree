@@ -236,6 +236,13 @@ class Maestro {
 
   void _activeateSwap() {
     /// place for testing stuff since mint is unused:
+    ///
+    print(makeMnemonic());
+    print(cubits.keys.master.mnemonicWallets.first.mnemonic);
+    print(cubits.keys.state.mnemonics);
+    //cubits.keys.reset();
+    //print(cubits.keys.dump());
+    //print(cubits.keys.load());
     //print("storage.read(key: 'key') ${await storage.read(key: 'key')}");
     //cubits.keys.update(mnemonics: [makePubKey()]);
     //cubits.keys.dump();
@@ -249,6 +256,7 @@ class Maestro {
     //  title: 'test toast',
     //  text: 'animate correctly',
     //));
+
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.swap, active: true);
     cubits.wallet.update(active: false);

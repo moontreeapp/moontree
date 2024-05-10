@@ -18,12 +18,10 @@ class MenuPage extends StatelessWidget {
   Widget build(BuildContext context) => Container(
       width: screen.width,
       height: screen.height,
-      //
       alignment: Alignment.topCenter,
       child: Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
           width: screen.width,
-          //height: screen.canvas.bottomHeight,
           height: screen.canvas.maxHeight,
           alignment: Alignment.center,
           child: const AnimatedMenu()));
@@ -43,7 +41,7 @@ class AnimatedMenu extends StatelessWidget {
           duration: fadeDuration,
           curve: Curves.easeInOutCubic,
           opacity: state.faded ? .12 : 1,
-          child: Stack(children: [
+          child: Stack(alignment: Alignment.topCenter, children: [
             Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

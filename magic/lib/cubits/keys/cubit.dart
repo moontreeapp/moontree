@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/wallet/utils.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/services.dart';
 part 'state.dart';
@@ -52,6 +53,18 @@ class KeysCubit extends UpdatableCubit<KeysState> {
           jsonDecode((await storage.read(key: 'wifs')) ?? '[]').cast<String>(),
       submitting: false,
     );
+    build();
+  }
+
+  Future<void> build() async {
+    if (state.mnemonics.isEmpty) {
+      update(submitting: true);
+      update(
+        mnemonics: [makeMnemonic()],
+        submitting: false,
+      );
+    }
+    dump();
   }
 
   Future<void> dump() async {

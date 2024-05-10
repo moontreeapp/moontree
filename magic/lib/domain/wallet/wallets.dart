@@ -1,3 +1,15 @@
+/* diagram
+  cubits.keys.master (MasterWallet)
+    can have multiple .keypairWallets (KeypairWallets)
+      has one .wif
+      can have one .wallets (KPWallet) per blockchain
+        has one .address / .h160 / .pubkey / etc
+    can have mulitple .mnemonicWallets (MnemonicWallets)
+      can have one .seedWallets (SeedWallet) per blockchain
+        has two .roots per SeedWallet (external and internal)
+        has two lists of .subwallets (HDWallets) (externals and internals)
+          has one address per HDWallet
+*/
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:convert/convert.dart';
@@ -86,7 +98,7 @@ class MnemonicWallet extends Jsonable {
   final String mnemonic;
   String? _entropy;
   Uint8List? _seed;
-  final Map<Blockchain, List<String>> _roots = {};
+  final Map<Blockchain, Map<Exposure, String>> _roots = {};
   final Map<Blockchain, SeedWallet> seedWallets = {};
 
   MnemonicWallet({required this.mnemonic});
@@ -120,22 +132,28 @@ class MnemonicWallet extends Jsonable {
       seedWallet(blockchain).hdWallet.pubKey;
 
   List<String> roots(Blockchain blockchain) {
-    _roots[blockchain] ??= [
-      seedWallet(blockchain).root(Exposure.external),
-      seedWallet(blockchain).root(Exposure.internal),
-    ];
-    return _roots[blockchain]!;
+    _roots[blockchain] ??= {
+      Exposure.external: seedWallet(blockchain).root(Exposure.external),
+      Exposure.internal: seedWallet(blockchain).root(Exposure.internal),
+    };
+    return _roots[blockchain]!.values.toList();
   }
 }
 
 class SeedWallet {
   final Blockchain blockchain;
   final HDWallet hdWallet;
-  final Map<String, HDWallet> subwalletsByPath = {};
+  final Map<Exposure, List<HDWallet>> subwallets = {
+    Exposure.external: [],
+    Exposure.internal: [],
+  };
   final Map<Exposure, int> highestIndex = {};
   final Map<Exposure, int> gap = {};
 
   SeedWallet({required this.blockchain, required this.hdWallet});
+
+  List<HDWallet> get externals => subwallets[Exposure.external]!;
+  List<HDWallet> get internals => subwallets[Exposure.internal]!;
 
   HDWallet subwallet({
     required int hdIndex,
@@ -147,13 +165,14 @@ class SeedWallet {
       blockchain: blockchain,
     );
     print('p: $path');
-    subwalletsByPath[path] ??= hdWallet.derivePath(path);
-    return subwalletsByPath[path]!;
+    final sub = hdWallet.derivePath(path);
+    subwallets[exposure]!.add(sub);
+    return sub;
   }
 
   bool derive() {
     for (final exposure in Exposure.values) {
-      highestIndex[exposure] ??= 0;
+      highestIndex[exposure] ??= -1;
       gap[exposure] ??= 0;
 
       /// the server tells us the highest index right, so we know how far to go?

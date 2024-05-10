@@ -180,7 +180,7 @@ class Canvas {
   });
 
   factory Canvas.init(double height, Appbar appbar, Pane pane) => Canvas._(
-        maxHeight: height - (pane.minHeight + appbar.height),
+        maxHeight: height - (pane.minHeight),
         midHeight: height - (pane.midHeight + appbar.height),
         bottomHeight: height -
             (appbar.height +

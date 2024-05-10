@@ -93,7 +93,22 @@ class AboutSubMenu extends StatelessWidget {
   const AboutSubMenu({super.key});
 
   @override
-  Widget build(BuildContext context) => Text('built by Moontree',
-      textAlign: TextAlign.center,
-      style: AppText.h1.copyWith(color: Colors.white));
+  Widget build(BuildContext context) => SizedBox(
+      height: screen.canvas.bottomHeight - 40 - 32,
+      child:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text('built by Moontree',
+            textAlign: TextAlign.center,
+            style: AppText.h1.copyWith(color: Colors.white)),
+        Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Text('connection status: ${cubits.app.state.connection.name}',
+              textAlign: TextAlign.center,
+              style: AppText.body2.copyWith(color: Colors.white)),
+          const SizedBox(height: 8),
+          Text('version 0.0.1',
+              textAlign: TextAlign.center,
+              style: AppText.body2.copyWith(color: Colors.white)),
+          const SizedBox(height: 32),
+        ])
+      ]));
 }
