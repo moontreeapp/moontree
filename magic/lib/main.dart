@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/custom.dart';
@@ -23,7 +24,9 @@ class NoGlowScrollBehavior extends ScrollBehavior {
 
 bool isImmersiveSticky = true;
 
-void main() {
+Future<void> main() async {
+  await subscription.setupClient(FlutterConnectivityMonitor());
+
   WidgetsFlutterBinding.ensureInitialized();
   if (isImmersiveSticky) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -111,6 +114,11 @@ class MaestroLayer extends StatelessWidget {
     //infraServices.version.rotate(
     //  infraServices.version.byPlatform(Platform.isIOS ? 'ios' : 'android'),
     //);
+    if (initialized &&
+        screen.initializedWidth == width &&
+        screen.initializedHeight == height) {
+      return;
+    }
     init(
       height: height,
       width: width,
@@ -132,12 +140,8 @@ class MaestroLayer extends StatelessWidget {
       print('cubits.keys.state.props');
       print(cubits.keys.state.props);
     });
-
-    cubits.keys.update(mnemonics: ['b', 'b']);
-    cubits.keys.dump();
-    cubits.keys.load();
-    print('cubits.keys.state.props');
-    print(cubits.keys.state.props);
+    subscription.setupSubscriptions(cubits.keys.master);
+    print(subscription.starttime);
   }
 }
 

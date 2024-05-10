@@ -1,5 +1,5 @@
-import 'package:magic/infrastructure/server/serverv2_client.dart';
-import 'package:magic/infrastructure/services/subscription.dart';
+import 'package:magic/domain/server/serverv2_client.dart';
+import 'package:magic/services/services.dart';
 
 class ServerCall {
   //static const String moontreeUrl = 'http://24.199.68.139:8080';

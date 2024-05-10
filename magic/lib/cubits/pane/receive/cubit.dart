@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
-import 'package:magic/services/wallet/utils.dart';
-import 'package:magic/domain/blockchain/wallets.dart';
+import 'package:magic/domain/wallet/utils.dart';
+import 'package:magic/domain/wallet/wallets.dart';
 
 part 'state.dart';
 

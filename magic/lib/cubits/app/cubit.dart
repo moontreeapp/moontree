@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
-import 'package:magic/infrastructure/server/serverv2_client.dart';
+import 'package:magic/domain/server/serverv2_client.dart';
 
 part 'state.dart';
 

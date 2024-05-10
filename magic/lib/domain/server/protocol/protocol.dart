@@ -49,12 +49,11 @@ import 'wallet_balance_current_class.dart' as _i39;
 import 'wallet_balance_incremental_class.dart' as _i40;
 import 'wallet_chain_link.dart' as _i41;
 import 'wallet_class.dart' as _i42;
-import 'package:magic/infrastructure/server/protocol/comm_balance_view.dart'
-    as _i43;
+import 'package:magic/domain/server/protocol/comm_balance_view.dart' as _i43;
 import 'dart:typed_data' as _i44;
-import 'package:magic/infrastructure/server/protocol/comm_transaction_view.dart'
+import 'package:magic/domain/server/protocol/comm_transaction_view.dart'
     as _i45;
-import 'package:magic/infrastructure/server/protocol/comm_unsigned_transaction_result_class.dart'
+import 'package:magic/domain/server/protocol/comm_unsigned_transaction_result_class.dart'
     as _i46;
 export 'asset_class.dart';
 export 'asset_metadata_class.dart';

@@ -74,7 +74,7 @@ packages:
     source: hosted
     version: "2.1.1"
   bs58:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: bs58
       sha256: "3ed24dadf386ca749ff50af678be1131ef569a3583a6f37b87b90c032270c767"
@@ -113,8 +113,24 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
-  convert:
+  connectivity_plus:
     dependency: transitive
+    description:
+      name: connectivity_plus
+      sha256: "224a77051d52a11fbad53dd57827594d3bd24f945af28bd70bab376d68d437f0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.2"
+  connectivity_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: connectivity_plus_platform_interface
+      sha256: cf1d1c28f4416f8c654d7dc3cd638ec586076255d407cef3ddbdaf178272a71a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.4"
+  convert:
+    dependency: "direct main"
     description:
       name: convert
       sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
@@ -137,6 +153,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  dbus:
+    dependency: transitive
+    description:
+      name: dbus
+      sha256: "365c771ac3b0e58845f39ec6deebc76e3276aa9922b0cc60840712094d9047ac"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.10"
   equatable:
     dependency: "direct main"
     description:
@@ -384,6 +408,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  nm:
+    dependency: transitive
+    description:
+      name: nm
+      sha256: "2c9aae4127bdc8993206464fcc063611e0e36e72018696cd9631023a31b24254"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0"
   path:
     dependency: transitive
     description:
@@ -473,7 +505,7 @@ packages:
     source: hosted
     version: "2.1.8"
   pointycastle:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: pointycastle
       sha256: "79fbafed02cfdbe85ef3fd06c7f4bc2cbcba0177e61b765264853d4253b21744"
@@ -525,6 +557,14 @@ packages:
     description:
       name: serverpod_client
       sha256: "7f31fce9e3bdd23d37dd7bbc1a078bd7d104406e868265bd41ce406940de7130"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.6"
+  serverpod_flutter:
+    dependency: "direct main"
+    description:
+      name: serverpod_flutter
+      sha256: "117fb7db863ee01378ceae245f235c9fd4d432178dfbab43f384b67e905de7a9"
       url: "https://pub.dev"
     source: hosted
     version: "1.2.6"

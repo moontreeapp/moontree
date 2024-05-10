@@ -16,19 +16,19 @@ extension IntReadableNumericExtension on int {
       return '$this';
     }
     if (this < 1000000) {
-      return '${(this / 1000).toStringAsFixed(0)}k';
+      return '${(this / 1000).floor().toStringAsFixed(0)}k';
     }
     if (this < 1000000000) {
-      return '${(this / 1000000).toStringAsFixed(0)}m';
+      return '${(this / 1000000).floor().toStringAsFixed(0)}m';
     }
     if (this < 1000000000000) {
-      return '${(this / 1000000000).toStringAsFixed(0)}b';
+      return '${(this / 1000000000).floor().toStringAsFixed(0)}b';
     }
     if (this < 1000000000000000) {
-      return '${(this / 1000000000000).toStringAsFixed(0)}t';
+      return '${(this / 1000000000000).floor().toStringAsFixed(0)}t';
     }
     if (this < 1000000000000000000) {
-      return '${(this / 1000000000000000).toStringAsFixed(0)}q';
+      return '${(this / 1000000000000000).floor().toStringAsFixed(0)}q';
     }
     return '∞';
   }

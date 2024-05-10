@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:convert/convert.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
+import 'package:magic/domain/concepts/address.dart';
 import 'package:wallet_utils/wallet_utils.dart' show HDWallet, KPWallet;
 
 abstract class Jsonable {
@@ -11,8 +13,6 @@ abstract class Jsonable {
   String get asJson => jsonEncode(asMap);
 }
 
-/// this should be a cubit or something rather than a hierarchical object,
-/// that introduces complexity with no value added.
 class MasterWallet extends Jsonable {
   final List<MnemonicWallet> mnemonicWallets = [];
   final List<KeypairWallet> keypairWallets = [];
@@ -64,6 +64,21 @@ class KeypairWallet extends Jsonable {
 
   @override
   Map<String, String> get asMap => {'wif': wif};
+
+  String address(Blockchain blockchain) => wallet(blockchain).address!;
+
+  /// returns the address representation according to chain and net
+  //String address(Chain chain, Net net, {bool isP2sh = false}) => h160ToAddress(
+  //    h160: h160,
+  //    addressType: isP2sh
+  //        ? ChainNet(chain, net).chaindata.p2shPrefix
+  //        : ChainNet(chain, net).chaindata.p2pkhPrefix);
+
+  Uint8List h160(Blockchain blockchain) =>
+      hash160FromHexString(wallet(blockchain).pubKey!);
+  String h160AsString(Blockchain blockchain) => hex.encode(h160(blockchain));
+  ByteData h160AsByteData(Blockchain blockchain) =>
+      h160(blockchain).buffer.asByteData();
 }
 
 /// An hd wallet that can derive multiple SeedWallet for different blockchains

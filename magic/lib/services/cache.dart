@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:magic/domain/concepts/cache.dart';
-import 'package:magic/infrastructure/server/serverv2_client.dart'
+import 'package:magic/domain/server/serverv2_client.dart'
     show SerializableEntity;
-import 'package:magic/infrastructure/server/protocol/protocol.dart'
-    show Protocol;
+import 'package:magic/domain/server/protocol/protocol.dart' show Protocol;
 import 'package:magic/services/services.dart';
 
 class Cache {

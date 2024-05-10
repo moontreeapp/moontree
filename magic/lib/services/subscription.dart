@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/wallet/wallets.dart';
 import 'package:serverpod_client/serverpod_client.dart';
-import 'package:magic/infrastructure/server/serverv2_client.dart' as server;
-import 'package:magic/infrastructure/server/protocol/protocol.dart' as protocol;
+import 'package:magic/domain/server/serverv2_client.dart' as server;
+import 'package:magic/domain/server/protocol/protocol.dart' as protocol;
 
 class SubscriptionService {
   //static const String moontreeUrl = 'http://24.199.68.139:8080';
@@ -14,7 +16,14 @@ class SubscriptionService {
   late StreamingConnectionHandler connectionHandler;
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
+  DateTime? _starttime;
+
   SubscriptionService() : client = server.Client('$moontreeUrl/');
+
+  DateTime get starttime {
+    _starttime = _starttime ?? DateTime.now().toUtc();
+    return _starttime!;
+  }
 
   Future<void> setupClient(server.ConnectivityMonitor givenMonitor) async {
     monitor = givenMonitor;
@@ -63,10 +72,10 @@ class SubscriptionService {
         ///   {"id":null,"chainName":"evrmore_mainnet","height":107222}
         // if height do x
         // if balance update do y, etc.
-        //print(message);
         if (message is protocol.NotifyChainStatus) {
         } else if (message is protocol.NotifyChainHeight) {
           if (message.height > 0) {
+            print(message);
             cubits.app.update(blockheight: message.height);
           }
         } else if (message is protocol.NotifyChainH160Balance) {
@@ -107,41 +116,60 @@ class SubscriptionService {
     }
   }
 
+  Future<void> setupSubscriptions(MasterWallet master) async {
+    final roots = <String>[];
+    final h160s = <String>[];
+    for (final mnemonicWallet in master.mnemonicWallets) {
+      roots.addAll(mnemonicWallet.roots(Blockchain.ravencoinMain));
+    }
+    for (final keypairWallet in master.keypairWallets) {
+      h160s.add(keypairWallet.h160AsString(Blockchain.ravencoinMain));
+    }
+    final subscriptionVoid =
+
+        /// MOCK SERVER
+        //await Future.delayed(Duration(seconds: 1), spoofNothing);
+        /// SERVER
+        await specifySubscription(
+            chains: [Blockchain.ravencoinMain.chaindata.name],
+            roots: roots,
+            h160s: h160s);
+    return subscriptionVoid;
+  }
+
   /// TODO: implement setupSubscription
-  Future<void> setupSubscription() async {
-    //  Wallet? wallet,
-    //  Chain? chain,
-    //  Net? net,
-    //}) async {
-    /* how to call:
+  //Future<void> setupSubscription() async {
+  //  Wallet? wallet,
+  //  Chain? chain,
+  //  Net? net,
+  //}) async {
+  /* how to call:
         await subscription.setupSubscription(
           wallet: pros.wallets.currentWallet,
           chain: value.chain,
           net: value.net,
         );
       */
-    //  wallet ??= pros.wallets.currentWallet;
-    //  chain ??= pros.settings.chain;
-    //  net ??= pros.settings.net;
-    //  List<String> roots = [];
-    //  List<String> h160s = [];
-    //  if (wallet is LeaderWallet) {
-    //    roots = await (wallet).roots;
-    //  } else if (wallet is SingleWallet) {
-    //    h160s = wallet.addresses.map((e) => e.h160AsString).toList();
-    //  }
-    //  final subscriptionVoid =
-    //      /// MOCK SERVER
-    //      //await Future.delayed(Duration(seconds: 1), spoofNothing);
-    //      /// SERVER
-    //      await subscription.specifySubscription(
-    //          chains: [ChainNet(chain, net).chaindata.name],
-    //          roots: roots,
-    //          h160s: h160s);
-    //  return subscriptionVoid;
-  }
+  //  wallet ??= pros.wallets.currentWallet;
+  //  chain ??= pros.settings.chain;
+  //  net ??= pros.settings.net;
+  //  List<String> roots = [];
+  //  List<String> h160s = [];
+  //  if (wallet is LeaderWallet) {
+  //    roots = await (wallet).roots;
+  //  } else if (wallet is SingleWallet) {
+  //    h160s = wallet.addresses.map((e) => e.h160AsString).toList();
+  //  }
+  //  final subscriptionVoid =
+  //      /// MOCK SERVER
+  //      //await Future.delayed(Duration(seconds: 1), spoofNothing);
+  //      /// SERVER
+  //      await subscription.specifySubscription(
+  //          chains: [ChainNet(chain, net).chaindata.name],
+  //          roots: roots,
+  //          h160s: h160s);
+  //  return subscriptionVoid;
+  //}
 
   void spoofNothing() {}
 }
-
-final SubscriptionService subscription = SubscriptionService();

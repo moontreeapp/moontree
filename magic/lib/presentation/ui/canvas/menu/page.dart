@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/consent.dart';
@@ -9,9 +10,6 @@ import 'package:magic/presentation/ui/canvas/menu/submenus.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/animations.dart';
 import 'package:magic/services/services.dart';
-import 'package:magic/services/wallet/utils.dart';
-import 'package:magic/domain/blockchain/wallets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
@@ -67,13 +65,7 @@ class HelpItem extends StatelessWidget {
         sub: SubMenu.help,
         index: 0,
         visual: GestureDetector(
-            //onTap: () => launchUrl(Uri.parse('https://discord.gg/cGDebEXgpW')),
-            onTap: () {
-              MnemonicWallet wallet = MnemonicWallet(mnemonic: makeMnemonic());
-              print('mnemonic: ${wallet.mnemonic}');
-              print('entropy: ${wallet.entropy}');
-              print('seed: ${wallet.seed}');
-            },
+            onTap: () => launchUrl(Uri.parse('https://discord.gg/cGDebEXgpW')),
             child: Container(
                 height: screen.menu.itemHeight,
                 width: screen.width,

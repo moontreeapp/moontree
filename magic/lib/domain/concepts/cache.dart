@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
-import 'package:magic/infrastructure/server/serverv2_client.dart'
+import 'package:magic/domain/server/serverv2_client.dart'
     show SerializableEntity;
 import 'package:moontree_utils/extensions/bytedata.dart';
 import 'dart:convert' as convert;

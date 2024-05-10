@@ -33,7 +33,13 @@ class Screen {
   final double buttonBorderRadius;
   late double height;
   late double displayHeight;
+  final double initializedWidth;
+  final double initializedHeight;
+  final double initializedStatusBarHeight;
   Screen({
+    required this.initializedWidth,
+    required this.initializedHeight,
+    required this.initializedStatusBarHeight,
     required this.width,
     required this.widthOneThird,
     required this.appbar,
@@ -65,6 +71,9 @@ class Screen {
     final canvas = Canvas.init(height, appbar, pane);
     final menu = Menu.init(height);
     return Screen(
+      initializedWidth: width,
+      initializedHeight: height,
+      initializedStatusBarHeight: statusBarHeight,
       appbar: appbar,
       navbar: navbar,
       pane: pane,

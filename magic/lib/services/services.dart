@@ -4,6 +4,8 @@ import 'package:magic/services/screen.dart';
 import 'package:magic/services/back.dart';
 import 'package:magic/services/keys.dart' as keys;
 import 'package:magic/services/maestro.dart';
+import 'package:magic/services/server.dart';
+import 'package:magic/services/subscription.dart';
 
 final RouteStack routes = RouteStack();
 late Screen screen;
@@ -12,6 +14,9 @@ late SystemBackButton back;
 late Maestro maestro;
 late Keyboard keyboard;
 late FlutterSecureStorage storage;
+final SubscriptionService subscription = SubscriptionService();
+late ServerCall server;
+bool initialized = false;
 
 void init({
   required double height,
@@ -25,8 +30,10 @@ void init({
   keyboard = Keyboard();
   maestro = Maestro();
   storage = const FlutterSecureStorage();
-  //api.connect();
+  server = ServerCall();
+  initialized = true;
 
+  //api.connect();
   /// here we could have a process that loads from local disk (wallets, settings)
   /// then a process which connects to the server and setsup subscriptions on the client:
   //      await subscription.setupSubscription(

@@ -65,11 +65,20 @@ class Coin {
 
   /// 1,234.56788901 -> 1k
   String simplified() {
+    if (coin == 0 && sats == 0) {
+      return '0';
+    }
+    if (coin == 0 && sats == 1) {
+      return '$sats satoshi';
+    }
+    if (coin == 0 && sats < 1000000) {
+      return '${sats.simplified()} sats';
+    }
+    if (coin == 0 && sats >= 1000000) {
+      return '0.${sats.toSpacedString().split(' ').first} (${sats.simplified()} sats)';
+    }
     if (coin < 10 && sats > 0) {
       final ret = '${coin.simplified()}.${sats.toSpacedString()}';
-      if (ret.split(' ').first == '0.00') {
-        return '0';
-      }
       return ret.split(' ').first;
     }
     return coin.simplified();
@@ -108,4 +117,23 @@ class Coin {
     }
     return p;
   }
+
+  List<EnrichedChar> boldedPart({bool zeros = false}) {
+    final p = part(zeros: zeros);
+    var bolded = false;
+    final ret = <EnrichedChar>[];
+    for (int i = 0; i < p.length; i++) {
+      if (p[i] != '0' && p[i] != '.') {
+        bolded = true;
+      }
+      ret.add(EnrichedChar(char: p[i], bolded: bolded));
+    }
+    return ret;
+  }
+}
+
+class EnrichedChar {
+  final String char;
+  final bool bolded;
+  const EnrichedChar({required this.char, this.bolded = false});
 }

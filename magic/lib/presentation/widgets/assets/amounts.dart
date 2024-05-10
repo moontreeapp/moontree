@@ -31,31 +31,40 @@ class CoinBalanceView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(coin.whole(), style: wholeStyle ?? AppText.wholeHolding),
+            Text(coin.whole(),
+                style: wholeStyle ??
+                    (coin.coin > 0
+                        ? AppText.wholeHolding
+                        : AppText.partHolding)),
             if (coin.sats > 0) ...[
-              Text(coin.partOne(),
-                  style: partOneStyle ??
-                      AppText.partHolding.copyWith(
-                          //height: 1.625 + .15
-                          )),
-              const SizedBox(width: 4),
-              Text(coin.partTwo(),
-                  style: partTwoStyle ??
-                      AppText.partHolding.copyWith(
-                          //height: 1.625 + .3,
-                          //fontSize: 12,
-                          //height: 1.625 + .6,
-                          //fontSize: 10,
-                          )),
-              const SizedBox(width: 4),
-              Text(coin.partThree(),
-                  style: partThreeStyle ??
-                      AppText.partHolding.copyWith(
-                          // how do I align at with bottom?
-                          //height: 1.625 + .6,
-                          //fontSize: 10,
-
-                          ))
+              for (final e in coin.boldedPart())
+                Text(e.char,
+                    style: partOneStyle ??
+                        (e.bolded
+                            ? AppText.partHoldingBright
+                            : AppText.partHolding)),
+              //Text(coin.partOne(),
+              //    style: partOneStyle ??
+              //        AppText.partHolding.copyWith(
+              //            //height: 1.625 + .15
+              //            )),
+              ////const SizedBox(width: 4),
+              //Text(coin.partTwo(),
+              //    style: partTwoStyle ??
+              //        AppText.partHolding.copyWith(
+              //            //height: 1.625 + .3,
+              //            //fontSize: 12,
+              //            //height: 1.625 + .6,
+              //            //fontSize: 10,
+              //            )),
+              //const SizedBox(width: 4),
+              //Text(coin.partThree(),
+              //    style: partThreeStyle ??
+              //        AppText.partHolding.copyWith(
+              //            // how do I align at with bottom?
+              //            //height: 1.625 + .6,
+              //            //fontSize: 10,
+              //            ))
             ],
           ]));
 }
@@ -78,7 +87,11 @@ class CoinBalanceSimpleView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(coin.whole(), style: wholeStyle ?? AppText.wholeHolding),
+            Text(coin.whole(),
+                style: wholeStyle ??
+                    (coin.coin > 0
+                        ? AppText.wholeHolding
+                        : AppText.partHolding)),
             if (coin.sats > 0) ...[
               Text(coin.part(),
                   style: partStyle ??
@@ -226,37 +239,63 @@ class SimpleCoinSplitView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) =>
-      (mode ?? cubits.menu.state.mode) == DifficultyMode.easy
-          ? Text(coin.simplified(),
-              style: Theme.of(context)
-                  .textTheme
-                  .body1
-                  .copyWith(height: 0, color: AppColors.black60))
-          : SizedBox(
-              //width: screen.width * .375,
-              child: RichText(
-                  textAlign: TextAlign.start,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                  text: TextSpan(
-                      style: Theme.of(context).textTheme.body1,
-                      children: <TextSpan>[
+  Widget build(BuildContext context) => (mode ?? cubits.menu.state.mode) ==
+          DifficultyMode.easy
+      ? Text(coin.simplified(),
+          style: Theme.of(context)
+              .textTheme
+              .body1
+              .copyWith(height: 0, color: AppColors.black60))
+      : SizedBox(
+          //width: screen.width * .375,
+          child: RichText(
+              textAlign: TextAlign.start,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              text: TextSpan(
+                  style: Theme.of(context).textTheme.body1,
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: coin.whole(),
+                        style: Theme.of(context).textTheme.body1.copyWith(
+                              height: 0,
+                              fontWeight:
+                                  coin.coin > 0 ? FontWeight.w800 : null,
+                              color: AppColors.black60,
+                            )),
+                    //TextSpan(
+                    //    text: coin.spacedPart(),
+                    //    style: Theme.of(context).textTheme.body1.copyWith(
+                    //          height: 0,
+                    //          color: AppColors.black60,
+                    //        )),
+                    //...() {
+                    //  var bolded = false;
+                    //  final ret = [];
+                    //  for (final i in coin.part().characters) {
+                    //    if (i != '0' && i != '.') bolded = true;
+                    //    ret.add(TextSpan(
+                    //        text: i,
+                    //        style: Theme.of(context).textTheme.body1.copyWith(
+                    //              height: 0,
+                    //              fontWeight: bolded ? FontWeight.w700 : null,
+                    //              color: AppColors.black60,
+                    //            )));
+                    //  }
+                    //  return ret;
+                    //}(),
+                    ...[
+                      for (final e in coin.boldedPart())
                         TextSpan(
-                            text: coin.whole(),
+                            text: e.char,
                             style: Theme.of(context).textTheme.body1.copyWith(
                                   height: 0,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: e.bolded ? FontWeight.w700 : null,
                                   color: AppColors.black60,
-                                )),
-                        TextSpan(
-                            text: coin.spacedPart(),
-                            style: Theme.of(context).textTheme.body1.copyWith(
-                                  height: 0,
-                                  color: AppColors.black60,
-                                )),
-                      ])),
-            );
+                                ))
+                    ],
+                  ])),
+        );
 }
 
 class FiatView extends StatelessWidget {

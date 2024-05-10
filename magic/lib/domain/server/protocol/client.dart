@@ -8,30 +8,27 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:magic/infrastructure/server/protocol/comm_int.dart' as _i3;
-import 'package:magic/infrastructure/server/protocol/comm_asset_metadata_response.dart'
+import 'package:magic/domain/server/protocol/comm_int.dart' as _i3;
+import 'package:magic/domain/server/protocol/comm_asset_metadata_response.dart'
     as _i4;
-import 'package:magic/infrastructure/server/protocol/comm_unsigned_transaction_result_class.dart'
+import 'package:magic/domain/server/protocol/comm_unsigned_transaction_result_class.dart'
     as _i5;
-import 'package:magic/infrastructure/server/protocol/comm_asset_create.dart'
-    as _i6;
-import 'package:magic/infrastructure/server/protocol/comm_asset_reissue.dart'
-    as _i7;
-import 'package:magic/infrastructure/server/protocol/comm_asset_global_freeze.dart'
+import 'package:magic/domain/server/protocol/comm_asset_create.dart' as _i6;
+import 'package:magic/domain/server/protocol/comm_asset_reissue.dart' as _i7;
+import 'package:magic/domain/server/protocol/comm_asset_global_freeze.dart'
     as _i8;
-import 'package:magic/infrastructure/server/protocol/comm_asset_tag_address.dart'
+import 'package:magic/domain/server/protocol/comm_asset_tag_address.dart'
     as _i9;
-import 'package:magic/infrastructure/server/protocol/comm_balance_view.dart'
-    as _i10;
+import 'package:magic/domain/server/protocol/comm_balance_view.dart' as _i10;
 import 'dart:typed_data' as _i11;
-import 'package:magic/infrastructure/server/protocol/comm_transaction_view.dart'
+import 'package:magic/domain/server/protocol/comm_transaction_view.dart'
     as _i12;
-import 'package:magic/infrastructure/server/protocol/comm_string.dart' as _i13;
-import 'package:magic/infrastructure/server/protocol/comm_transaction_details_view.dart'
+import 'package:magic/domain/server/protocol/comm_string.dart' as _i13;
+import 'package:magic/domain/server/protocol/comm_transaction_details_view.dart'
     as _i14;
-import 'package:magic/infrastructure/server/protocol/comm_ps_transaction_request_class.dart'
+import 'package:magic/domain/server/protocol/comm_ps_transaction_request_class.dart'
     as _i15;
-import 'package:magic/infrastructure/server/protocol/comm_unsigned_transaction_request_class.dart'
+import 'package:magic/domain/server/protocol/comm_unsigned_transaction_request_class.dart'
     as _i16;
 import 'dart:io' as _i17;
 import 'protocol.dart' as _i18;

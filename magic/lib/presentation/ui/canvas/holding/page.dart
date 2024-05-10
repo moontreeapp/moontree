@@ -61,16 +61,16 @@ class AnimatedCoinSpec extends StatelessWidget {
             if ((coin?.coin ?? cubits.holding.state.holding.coin.coin) > 0)
               CoinBalanceSimpleView(
                 coin: coin ?? cubits.holding.state.holding.coin,
-                wholeStyle: AppText.wholeHolding,
-                partStyle: AppText.partHolding,
+                //wholeStyle: AppText.wholeHolding,
+                //partStyle: AppText.partHolding,
               )
             else
               CoinBalanceView(
                 coin: coin ?? cubits.holding.state.holding.coin,
-                wholeStyle: AppText.wholeHolding,
-                partOneStyle: AppText.partHolding,
-                partTwoStyle: AppText.partHolding,
-                partThreeStyle: AppText.partHolding,
+                //wholeStyle: AppText.wholeHolding,
+                //partOneStyle: AppText.partHolding,
+                //partTwoStyle: AppText.partHolding,
+                //partThreeStyle: AppText.partHolding,
               )
           else ...[
             Text(whole, style: AppText.wholeHolding),
