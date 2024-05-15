@@ -209,39 +209,6 @@ class ConnectionIndicator extends StatelessWidget {
                         width: screen.iconMedium,
                       ),
                     ]);
-                    //return BouncingIcon(
-                    //    assetName: 'assets/icons/status-offline.svg',
-                    //    width: screen.iconMedium);
-                    //return GentleAnimation(
-                    //    child: SvgPicture.asset(
-                    //  'assets/icons/status-offline.svg',
-                    //  colorFilter: const ColorFilter.mode(
-                    //    Colors.white,
-                    //    BlendMode.srcIn,
-                    //  ),
-                    //  width: screen.iconMedium,
-                    //));
-                    //return Stack(alignment: Alignment.centerLeft, children: [
-                    //  SvgPicture.asset(
-                    //    'assets/icons/status-offline.svg',
-                    //    colorFilter: const ColorFilter.mode(
-                    //      Colors.white,
-                    //      BlendMode.srcIn,
-                    //    ),
-                    //    width: screen.iconMedium,
-                    //  ),
-                    //  Container(
-                    //      alignment: Alignment.bottomLeft,
-                    //      padding: const EdgeInsets.only(bottom: 4),
-                    //      child: SvgPicture.asset(
-                    //        'assets/icons/just-rain.svg',
-                    //        colorFilter: const ColorFilter.mode(
-                    //          Colors.white,
-                    //          BlendMode.srcIn,
-                    //        ),
-                    //        width: screen.iconMedium,
-                    //      )),
-                    //]);
                   }
                   if (state.connection ==
                       StreamingConnectionStatus.disconnected) {
