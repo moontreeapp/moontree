@@ -28,7 +28,7 @@ class ToastLayer extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           top: 9, bottom: 9, left: 9, right: 16),
                       decoration: BoxDecoration(
-                        color: AppColors.white87,
+                        color: Colors.grey[300],
                         borderRadius: BorderRadius.circular(100.0),
                         //boxShadow: frontLayer,
                       ),

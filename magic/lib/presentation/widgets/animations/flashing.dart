@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/presentation/theme/colors.dart';
 
 class FadeHighlight extends StatefulWidget {
@@ -134,4 +135,62 @@ class FlashHighlightState extends State<FlashHighlight> {
           ? widget.color ?? AppColors.secondary
           : widget.background ?? Colors.white,
       child: widget.child);
+}
+
+class FadeFlashIcon extends StatefulWidget {
+  final String assetName;
+  final double width;
+
+  const FadeFlashIcon(
+      {required this.assetName, required this.width, super.key});
+
+  @override
+  FadeFlashIconState createState() => FadeFlashIconState();
+}
+
+class FadeFlashIconState extends State<FadeFlashIcon>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _animation.value,
+          child: child,
+        );
+      },
+      child: SvgPicture.asset(
+        widget.assetName,
+        colorFilter: const ColorFilter.mode(
+          Colors.white,
+          BlendMode.srcIn,
+        ),
+        width: widget.width,
+      ),
+    );
+  }
 }

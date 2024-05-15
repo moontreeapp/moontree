@@ -119,21 +119,24 @@ class SubscriptionService {
   Future<void> setupSubscriptions(MasterWallet master) async {
     final roots = <String>[];
     final h160s = <String>[];
+    // todo: add evrmoreMain
     for (final mnemonicWallet in master.mnemonicWallets) {
       roots.addAll(mnemonicWallet.roots(Blockchain.ravencoinMain));
+      //roots.addAll(mnemonicWallet.roots(Blockchain.evrmoreMain));
     }
     for (final keypairWallet in master.keypairWallets) {
       h160s.add(keypairWallet.h160AsString(Blockchain.ravencoinMain));
+      //h160s.add(keypairWallet.h160AsString(Blockchain.evrmoreMain));
     }
     final subscriptionVoid =
 
         /// MOCK SERVER
         //await Future.delayed(Duration(seconds: 1), spoofNothing);
         /// SERVER
-        await specifySubscription(
-            chains: [Blockchain.ravencoinMain.chaindata.name],
-            roots: roots,
-            h160s: h160s);
+        await specifySubscription(chains: [
+      Blockchain.ravencoinMain.chaindata.name,
+      //Blockchain.evrmoreMain.chaindata.name,
+    ], roots: roots, h160s: h160s);
     return subscriptionVoid;
   }
 
