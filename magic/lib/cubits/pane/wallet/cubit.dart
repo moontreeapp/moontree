@@ -3,11 +3,13 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/presentation/utils/range.dart';
+import 'package:magic/services/calls/holdings.dart';
 
 part 'state.dart';
 
@@ -50,7 +52,21 @@ class WalletCubit extends UpdatableCubit<WalletState> {
     ));
   }
 
-  void populateAssets() {
+  Future<void> populateAssets() async {
+    // remember to order by currency first, amount second, alphabetical third
+    update(isSubmitting: true);
+    update(
+        holdings: await HoldingBalancesCall(
+          blockchain: Blockchain.ravencoinMain,
+          mnemonicWallets: cubits.keys.master.mnemonicWallets,
+          keypairWallets: cubits.keys.master.keypairWallets,
+        ).call(),
+        isSubmitting: false);
+
+    cubits.balance.update(portfolioValue: Fiat(12546.01));
+  }
+
+  void populateAssetsSpoof() {
     // remember to order by currency first, amount second, alphabetical third
     update(holdings: [
       for (final index in range(47))

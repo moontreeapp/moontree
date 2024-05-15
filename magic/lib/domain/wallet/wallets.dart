@@ -131,13 +131,19 @@ class MnemonicWallet extends Jsonable {
   String? pubkey(Blockchain blockchain) =>
       seedWallet(blockchain).hdWallet.pubKey;
 
-  List<String> roots(Blockchain blockchain) {
+  Map<Exposure, String> rootsMap(Blockchain blockchain) {
     _roots[blockchain] ??= {
       Exposure.external: seedWallet(blockchain).root(Exposure.external),
       Exposure.internal: seedWallet(blockchain).root(Exposure.internal),
     };
-    return _roots[blockchain]!.values.toList();
+    return _roots[blockchain]!;
   }
+
+  List<String> roots(Blockchain blockchain) =>
+      rootsMap(blockchain).values.toList();
+
+  String root(Blockchain blockchain, Exposure exposure) =>
+      rootsMap(blockchain)[exposure]!;
 }
 
 class SeedWallet {

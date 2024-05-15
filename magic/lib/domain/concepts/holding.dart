@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
+import 'package:magic/domain/server/protocol/comm_balance_view.dart';
 
 class Holding extends Equatable {
   final String name;
@@ -25,6 +27,17 @@ class Holding extends Equatable {
         root = '',
         metadata = const HoldingMetadata.empty(),
         sats = const Sats.empty();
+
+  factory Holding.fromBalanceView({
+    required BalanceView balanceView,
+    required Blockchain blockchain,
+  }) =>
+      Holding(
+          name: balanceView.symbol,
+          symbol: balanceView.symbol,
+          root: balanceView.chain ?? blockchain.name,
+          metadata: const HoldingMetadata.empty(),
+          sats: Sats(balanceView.satsConfirmed + balanceView.satsUnconfirmed));
 
   @override
   String toString() => '$runtimeType($props)';

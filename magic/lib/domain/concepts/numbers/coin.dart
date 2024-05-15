@@ -75,7 +75,8 @@ class Coin {
       return '${sats.simplified()} sats';
     }
     if (coin == 0 && sats >= 1000000) {
-      return '0.${sats.toSpacedString().split(' ').first} (${sats.simplified()} sats)';
+      //return '0.${sats.toSpacedString().split(' ').first} (${sats.simplified()} sats)';
+      return '${sats.simplified()} sats';
     }
     if (coin < 10 && sats > 0) {
       final ret = '${coin.simplified()}.${sats.toSpacedString()}';

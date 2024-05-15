@@ -4,7 +4,7 @@ import 'package:magic/services/screen.dart';
 import 'package:magic/services/back.dart';
 import 'package:magic/services/keys.dart' as keys;
 import 'package:magic/services/maestro.dart';
-import 'package:magic/services/server.dart';
+//import 'package:magic/services/calls/server.dart';
 import 'package:magic/services/subscription.dart';
 
 final RouteStack routes = RouteStack();
@@ -15,7 +15,7 @@ late Maestro maestro;
 late Keyboard keyboard;
 late FlutterSecureStorage storage;
 final SubscriptionService subscription = SubscriptionService();
-late ServerCall server;
+//late ServerCall server;
 bool initialized = false;
 
 void init({
@@ -30,7 +30,7 @@ void init({
   keyboard = Keyboard();
   maestro = Maestro();
   storage = const FlutterSecureStorage();
-  server = ServerCall();
+  //server = ServerCall();
   initialized = true;
 
   //api.connect();
