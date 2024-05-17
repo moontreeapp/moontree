@@ -62,7 +62,6 @@ class WalletCubit extends UpdatableCubit<WalletState> {
           keypairWallets: cubits.keys.master.keypairWallets,
         ).call(),
         isSubmitting: false);
-
     cubits.balance.update(portfolioValue: Fiat(12546.01));
   }
 
@@ -82,7 +81,6 @@ class WalletCubit extends UpdatableCubit<WalletState> {
           ),
         ),
     ]);
-
     cubits.balance.update(portfolioValue: Fiat(12546.01));
   }
 

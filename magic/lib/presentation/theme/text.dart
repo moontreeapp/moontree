@@ -93,8 +93,14 @@ class AppText {
       letterSpacing: 0.25,
       color: AppColors.black87);
 
-  static TextStyle get identicon => h1.copyWith(
+  static TextStyle get identiconLarge => h1.copyWith(
         color: AppColors.white87,
+        height: null,
+      );
+
+  static TextStyle get identiconHuge => h1.copyWith(
+        color: AppColors.white87,
+        height: 2,
       );
 
   static TextStyle get disabledButton => button1.copyWith(
@@ -142,6 +148,14 @@ class AppText {
       h1.copyWith(fontWeight: FontWeights.bold, color: AppColors.white87);
   static TextStyle get usdHolding =>
       subtitle1.copyWith(color: AppColors.white60);
+  static TextStyle get parentsAssetName =>
+      subtitle1.copyWith(color: AppColors.white60);
+  static TextStyle get childAssetName =>
+      subtitle1.copyWith(color: Colors.white);
+  static TextStyle get parentsAssetNameDark =>
+      subtitle1.copyWith(color: AppColors.black60);
+  static TextStyle get childAssetNameDark =>
+      subtitle1.copyWith(color: Colors.black87);
 
   static TextStyle get labelHolding =>
       caption.copyWith(color: AppColors.white87, fontWeight: FontWeights.bold);

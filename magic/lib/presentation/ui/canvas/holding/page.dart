@@ -5,9 +5,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
+import 'package:magic/presentation/ui/pane/wallet/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/hiding.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
+import 'package:magic/presentation/widgets/assets/names.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
@@ -32,22 +34,35 @@ class AnimatedCoinSpec extends StatelessWidget {
   const AnimatedCoinSpec({super.key});
 
   Widget assetIcon() => Container(
-      width: screen.width,
-      alignment: Alignment.center,
-      child: Container(
-          height: screen.iconHuge,
-          width: screen.iconHuge,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            //color: AppColors.primary60,
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: Image.asset(LogoIcons.evr) // TODO: get from cubit
-          //SvgPicture.asset(
-          //  LogoIcons.evr,
-          //  alignment: Alignment.center,
-          //),
-          ));
+        width: screen.width,
+        alignment: Alignment.center,
+        child: cubits.holding.state.holding.isRoot
+            ? CurrencyIdenticon(
+                holding: cubits.holding.state.holding,
+                height: screen.iconHuge,
+                width: screen.iconHuge,
+              )
+            : SimpleIdenticon(
+                letter: cubits.holding.state.holding.symbol[0],
+                height: screen.iconHuge,
+                width: screen.iconHuge,
+                style: AppText.identiconHuge,
+              ),
+      );
+  //Container(
+  //    height: screen.iconHuge,
+  //    width: screen.iconHuge,
+  //    alignment: Alignment.center,
+  //    decoration: BoxDecoration(
+  //      //color: AppColors.primary60,
+  //      borderRadius: BorderRadius.circular(100),
+  //    ),
+  //    child: Image.asset(LogoIcons.evr) // TODO: get from cubit
+  //    //SvgPicture.asset(
+  //    //  LogoIcons.evr,
+  //    //  alignment: Alignment.center,
+  //    //),
+  //    ));
 
   Widget assetValues({
     String? whole,
@@ -79,7 +94,13 @@ class AnimatedCoinSpec extends StatelessWidget {
                   style: AppText.partHolding),
           ]
         ]),
-        Text(subtitle ?? cubits.holding.state.usd, style: AppText.usdHolding),
+        HighlightedNameView(holding: cubits.holding.state.holding)
+        //Text(
+        //    subtitle ??
+        //        (cubits.holding.state.holding.isRoot
+        //            ? cubits.holding.state.holding.blockchain!.chain.title
+        //            : cubits.holding.state.holding.name),
+        //    style: AppText.usdHolding),
       ]);
 
   Widget buttons() => SizedBox(

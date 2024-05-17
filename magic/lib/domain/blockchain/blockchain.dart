@@ -13,6 +13,20 @@ enum Blockchain {
   evrmoreTest,
   none;
 
+  factory Blockchain.from({Chaindata? chaindata, String? name}) {
+    switch (chaindata?.name ?? name) {
+      case 'ravencoin_mainnet':
+        return Blockchain.ravencoinMain;
+      case 'ravencoin_testnet':
+        return Blockchain.ravencoinTest;
+      case 'evrmore_mainnet':
+        return Blockchain.evrmoreMain;
+      case 'evrmore_testnet':
+        return Blockchain.evrmoreTest;
+    }
+    return Blockchain.none;
+  }
+
   Chain get chain {
     switch (this) {
       case Blockchain.ravencoinMain:
@@ -41,20 +55,6 @@ enum Blockchain {
       case Blockchain.none:
         return Net.test;
     }
-  }
-
-  factory Blockchain.from({Chaindata? chaindata, String? name}) {
-    switch (chaindata?.name ?? name) {
-      case 'ravencoin_mainnet':
-        return Blockchain.ravencoinMain;
-      case 'ravencoin_testnet':
-        return Blockchain.ravencoinTest;
-      case 'evrmore_mainnet':
-        return Blockchain.evrmoreMain;
-      case 'evrmore_testnet':
-        return Blockchain.evrmoreTest;
-    }
-    return Blockchain.none;
   }
 
   int get purpose => 44;

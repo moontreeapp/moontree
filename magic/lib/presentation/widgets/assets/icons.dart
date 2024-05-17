@@ -10,7 +10,8 @@ class TransactionIcons {
 
 class LogoIcons {
   static const String base = 'assets/logos';
+  static const String ext = 'svg';
   static const String magic = '$base/magic.$ext';
   static const String evr = '$base/evrcircle.png';
-  static const String ext = 'svg';
+  static const String rvn = '$base/rvncircle.png';
 }

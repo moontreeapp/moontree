@@ -11,6 +11,8 @@ class Holding extends Equatable {
   final String root;
   final HoldingMetadata metadata;
   final Sats sats;
+  final BalanceView? balanceView;
+  final Blockchain? blockchain;
 
   const Holding({
     required this.name,
@@ -18,6 +20,8 @@ class Holding extends Equatable {
     required this.root,
     required this.metadata,
     required this.sats,
+    this.balanceView,
+    this.blockchain,
   });
 
   // Adding the .empty() named constructor
@@ -26,7 +30,9 @@ class Holding extends Equatable {
         symbol = '',
         root = '',
         metadata = const HoldingMetadata.empty(),
-        sats = const Sats.empty();
+        sats = const Sats.empty(),
+        balanceView = null,
+        blockchain = null;
 
   factory Holding.fromBalanceView({
     required BalanceView balanceView,
@@ -35,9 +41,12 @@ class Holding extends Equatable {
       Holding(
           name: balanceView.symbol,
           symbol: balanceView.symbol,
-          root: balanceView.chain ?? blockchain.name,
+          root: blockchain.symbol,
+          //root: balanceView.chain ?? blockchain.name,
           metadata: const HoldingMetadata.empty(),
-          sats: Sats(balanceView.satsConfirmed + balanceView.satsUnconfirmed));
+          sats: Sats(balanceView.satsConfirmed + balanceView.satsUnconfirmed),
+          balanceView: balanceView,
+          blockchain: blockchain);
 
   @override
   String toString() => '$runtimeType($props)';
@@ -49,6 +58,8 @@ class Holding extends Equatable {
         root,
         metadata,
         sats,
+        balanceView,
+        blockchain,
       ];
 
   bool get isEmpty => sats.isEmpty;
@@ -61,6 +72,12 @@ class Holding extends Equatable {
     //else
     return const Fiat.empty();
   }
+
+  bool get assetPathIsAChild => name.contains('/');
+  String get assetPathParents => assetPathIsAChild
+      ? name.split('/').sublist(0, name.split('/').length - 1).join('/')
+      : name;
+  String get assetPathChild => name.split('/').last;
 }
 
 class HoldingMetadata extends Equatable {

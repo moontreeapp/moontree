@@ -63,8 +63,8 @@ class KeysCubit extends UpdatableCubit<KeysState> {
         mnemonics: [makeMnemonic()],
         submitting: false,
       );
+      dump();
     }
-    dump();
   }
 
   Future<void> dump() async {
