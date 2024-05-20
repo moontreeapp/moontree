@@ -51,35 +51,33 @@ class ResponsiveHighlightedNameView extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<HoldingCubit, HoldingState>(
       builder: (BuildContext context, HoldingState state) => Padding(
           padding: const EdgeInsets.only(left: 16, top: 2.0, right: 16),
-          child: Flexible(
-              child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                      alignment: alignment,
-                      //width: screen.appbar.titleWidth,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: cubits.menu.isInHardMode
-                            ? (state.holding.assetPathIsAChild
-                                ? [
-                                    Text('${state.holding.assetPathParents}/',
-                                        style: parentsStyle ??
-                                            AppText.parentsAssetName),
-                                    Text(
-                                      state.holding.assetPathChild,
-                                      style:
-                                          childStyle ?? AppText.childAssetName,
-                                    ),
-                                  ]
-                                : [
-                                    Text(state.holding.name,
-                                        style: childStyle ??
-                                            AppText.childAssetName),
-                                  ])
+          child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Container(
+                  alignment: alignment,
+                  //width: screen.appbar.titleWidth,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: cubits.menu.isInHardMode
+                        ? (state.holding.assetPathIsAChild
+                            ? [
+                                Text('${state.holding.assetPathParents}/',
+                                    style: parentsStyle ??
+                                        AppText.parentsAssetName),
+                                Text(
+                                  state.holding.assetPathChild,
+                                  style: childStyle ?? AppText.childAssetName,
+                                ),
+                              ]
                             : [
-                                Text(state.holding.assetPathChild,
-                                    style: childStyle ?? AppText.childAssetName)
-                              ],
-                      ))))));
+                                Text(state.holding.name,
+                                    style:
+                                        childStyle ?? AppText.childAssetName),
+                              ])
+                        : [
+                            Text(state.holding.assetPathChild,
+                                style: childStyle ?? AppText.childAssetName)
+                          ],
+                  )))));
 }

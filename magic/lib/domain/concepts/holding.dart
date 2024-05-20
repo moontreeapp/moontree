@@ -11,6 +11,7 @@ class Holding extends Equatable {
   final String root;
   final HoldingMetadata metadata;
   final Sats sats;
+  final double? rate;
   final BalanceView? balanceView;
   final Blockchain? blockchain;
 
@@ -20,6 +21,7 @@ class Holding extends Equatable {
     required this.root,
     required this.metadata,
     required this.sats,
+    this.rate,
     this.balanceView,
     this.blockchain,
   });
@@ -31,12 +33,14 @@ class Holding extends Equatable {
         root = '',
         metadata = const HoldingMetadata.empty(),
         sats = const Sats.empty(),
+        rate = null,
         balanceView = null,
         blockchain = null;
 
   factory Holding.fromBalanceView({
     required BalanceView balanceView,
     required Blockchain blockchain,
+    double? rate,
   }) =>
       Holding(
           name: balanceView.symbol,
@@ -45,8 +49,34 @@ class Holding extends Equatable {
           //root: balanceView.chain ?? blockchain.name,
           metadata: const HoldingMetadata.empty(),
           sats: Sats(balanceView.satsConfirmed + balanceView.satsUnconfirmed),
+          rate: rate,
           balanceView: balanceView,
           blockchain: blockchain);
+
+  Holding copyWith({
+    String? name,
+    String? symbol,
+    String? root,
+    HoldingMetadata? metadata,
+    Sats? sats,
+    BalanceView? balanceView,
+    Blockchain? blockchain,
+    double? rate,
+  }) =>
+      Holding(
+          name: name ?? balanceView?.symbol ?? this.name,
+          symbol: symbol ?? balanceView?.symbol ?? this.symbol,
+          root: root ?? blockchain?.symbol ?? this.root,
+          //root: balanceView.chain ?? blockchain.name,
+          metadata: metadata ?? const HoldingMetadata.empty(),
+          sats: sats ??
+              (balanceView != null
+                  ? Sats(
+                      balanceView.satsConfirmed + balanceView.satsUnconfirmed)
+                  : this.sats),
+          rate: rate ?? this.rate,
+          balanceView: balanceView ?? this.balanceView,
+          blockchain: blockchain ?? this.blockchain);
 
   @override
   String toString() => '$runtimeType($props)';
@@ -66,10 +96,9 @@ class Holding extends Equatable {
   bool get isRoot => symbol == root;
   Coin get coin => sats.toCoin();
   Fiat get fiat {
-    // if we have a rate for this asset to USD then
-    //we can convert and return
-    //coin.toFiat(rate)
-    //else
+    if (rate != null) {
+      return coin.toFiat(rate!);
+    }
     return const Fiat.empty();
   }
 

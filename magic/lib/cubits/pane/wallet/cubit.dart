@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/concepts/money/rate.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/holding.dart';
@@ -86,4 +87,15 @@ class WalletCubit extends UpdatableCubit<WalletState> {
 
   // todo pagenate list of holdings
   //Holding getNextBatch(List<Holding> batch) {}
+
+  /// update all the holding with the new rate
+  void newRate({required Rate rate}) {
+    final holding = state.holdings
+        .firstWhere((element) => element.symbol == rate.base.symbol);
+    final newHolding = holding.copyWith(rate: rate.rate);
+    final newHoldings = state.holdings
+        .map((e) => e.symbol == rate.base.symbol ? newHolding : e)
+        .toList();
+    update(holdings: newHoldings);
+  }
 }
