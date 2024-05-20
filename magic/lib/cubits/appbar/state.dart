@@ -10,6 +10,7 @@ enum AppbarLeading {
 class AppbarState with EquatableMixin {
   final AppbarLeading leading;
   final String title;
+  final Widget? titleChild;
   final VoidCallback? onLead;
   final VoidCallback? onTitle;
   final AppbarState? prior;
@@ -17,6 +18,7 @@ class AppbarState with EquatableMixin {
   const AppbarState({
     this.leading = AppbarLeading.none,
     this.title = '',
+    this.titleChild,
     this.onLead,
     this.onTitle,
     this.prior,
@@ -26,6 +28,7 @@ class AppbarState with EquatableMixin {
   List<Object?> get props => [
         leading,
         title,
+        titleChild,
         onLead,
         onTitle,
         prior,
@@ -35,6 +38,7 @@ class AppbarState with EquatableMixin {
   String toString() => 'AppbarState( '
       'leading=$leading, '
       'title=$title, '
+      'titleChild=$titleChild, '
       'onLead=$onLead, '
       'onTitle=$onTitle, '
       'prior=$prior, '
@@ -43,6 +47,7 @@ class AppbarState with EquatableMixin {
   AppbarState get withoutPrior => AppbarState(
         leading: leading,
         title: title,
+        titleChild: titleChild,
         onLead: onLead,
         onTitle: onTitle,
         prior: null,

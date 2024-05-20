@@ -139,22 +139,24 @@ class Title extends StatelessWidget {
               //width: screen.width - (24 + screen.iconMedium + 24) - 16 - 10,
               alignment: Alignment.centerLeft,
               color: Colors.transparent,
-              child: state.title == 'Magic'
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 8, top: 8.0),
-                      child: SvgPicture.asset(
-                        LogoIcons.magic,
-                        height: screen.appbar.logoHeight,
-                        fit: BoxFit.contain,
-                        alignment: Alignment.center,
-                      ))
-                  : Padding(
-                      padding: const EdgeInsets.only(left: 24, top: 8.0),
-                      child: Text(state.title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .sub1
-                              .copyWith(color: Colors.white))))));
+              child: state.title == '' && state.titleChild != null
+                  ? state.titleChild
+                  : (state.title == 'Magic'
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 8, top: 8.0),
+                          child: SvgPicture.asset(
+                            LogoIcons.magic,
+                            height: screen.appbar.logoHeight,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.center,
+                          ))
+                      : Padding(
+                          padding: const EdgeInsets.only(left: 16, top: 2.0),
+                          child: Text(state.title,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .sub1
+                                  .copyWith(color: Colors.white)))))));
 }
 
 class ConnectionIndicator extends StatelessWidget {

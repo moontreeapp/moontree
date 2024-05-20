@@ -59,4 +59,6 @@ class MenuCubit extends UpdatableCubit<MenuState> {
   }
 
   void toggleSetting() => update(setting: !state.setting);
+  bool get isInHardMode => state.mode == DifficultyMode.hard;
+  bool get isInEasyMode => state.mode == DifficultyMode.easy;
 }

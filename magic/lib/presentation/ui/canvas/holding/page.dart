@@ -94,7 +94,8 @@ class AnimatedCoinSpec extends StatelessWidget {
                   style: AppText.partHolding),
           ]
         ]),
-        HighlightedNameView(holding: cubits.holding.state.holding)
+        Text(subtitle ?? cubits.holding.state.usd, style: AppText.usdHolding),
+        //HighlightedNameView(holding: cubits.holding.state.holding)
         //Text(
         //    subtitle ??
         //        (cubits.holding.state.holding.isRoot

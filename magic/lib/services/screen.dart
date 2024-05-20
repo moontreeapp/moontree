@@ -65,7 +65,8 @@ class Screen {
   }
 
   factory Screen.init(double height, double width, double statusBarHeight) {
-    final appbar = Appbar.init(height, statusBarHeight);
+    final iconMedium = height * (24 / 760);
+    final appbar = Appbar.init(height, statusBarHeight, width, iconMedium);
     final navbar = Navbar.init(height);
     final pane = Pane.init(height, appbar, navbar);
     final canvas = Canvas.init(height, appbar, pane);
@@ -86,7 +87,7 @@ class Screen {
       bspace: height * (72 / 760),
       toast: height * (496 / 760),
       iconSmall: height * (16 / 760),
-      iconMedium: height * (24 / 760),
+      iconMedium: iconMedium,
       iconLarge: height * (40 / 760),
       iconHuge: height * (48 / 760),
       buttonHeight: height * (40 / 760),
@@ -100,18 +101,27 @@ class Appbar {
   final double statusBarHeightPercentage;
   final double statusBarHeight;
   final double height;
+  final double titleWidth;
   final double logoHeight;
 
   Appbar._({
     required this.statusBarHeightPercentage,
     required this.statusBarHeight,
     required this.height,
+    required this.titleWidth,
     required this.logoHeight,
   });
 
-  factory Appbar.init(double height, double statusBarHeight) => Appbar._(
+  factory Appbar.init(
+    double height,
+    double statusBarHeight,
+    double width,
+    double iconMedium,
+  ) =>
+      Appbar._(
         height: height * (56 / 760),
         logoHeight: height * (24 / 760),
+        titleWidth: width - (24 + iconMedium + 16 + 24 + iconMedium + 16),
         statusBarHeight: statusBarHeight,
         statusBarHeightPercentage: statusBarHeight / height,
       );

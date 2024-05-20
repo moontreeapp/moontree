@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:magic/cubits/mixins.dart';
 
 part 'state.dart';
@@ -29,14 +30,19 @@ class AppbarCubit extends UpdatableCubit<AppbarState> {
   void update({
     AppbarLeading? leading,
     String? title,
+    Widget? titleChild,
     VoidCallback? onLead,
     VoidCallback? onTitle,
+    bool clearTitleChild = false,
+    bool clearOnLead = false,
+    bool clearOnTitle = false,
   }) {
     emit(AppbarState(
       leading: leading ?? state.leading,
       title: title ?? state.title,
-      onLead: onLead ?? state.onLead ?? none,
-      onTitle: onTitle ?? state.onTitle ?? none,
+      titleChild: titleChild ?? (clearTitleChild ? null : state.titleChild),
+      onLead: onLead ?? (clearOnLead ? null : state.onLead) ?? none,
+      onTitle: onTitle ?? (clearOnTitle ? null : state.onTitle) ?? none,
       prior: state.withoutPrior,
     ));
   }

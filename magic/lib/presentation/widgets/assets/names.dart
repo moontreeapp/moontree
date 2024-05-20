@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:magic/cubits/canvas/holding/cubit.dart';
+import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/presentation/theme/text.dart';
+import 'package:magic/services/services.dart';
 
 class HighlightedNameView extends StatelessWidget {
   final Holding holding;
@@ -30,4 +34,52 @@ class HighlightedNameView extends StatelessWidget {
                   Text(holding.name,
                       style: childStyle ?? AppText.childAssetName),
                 ]));
+}
+
+class ResponsiveHighlightedNameView extends StatelessWidget {
+  final TextStyle? parentsStyle;
+  final TextStyle? childStyle;
+  final Alignment alignment;
+  const ResponsiveHighlightedNameView({
+    super.key,
+    this.parentsStyle,
+    this.childStyle,
+    this.alignment = Alignment.center,
+  });
+
+  @override
+  Widget build(BuildContext context) => BlocBuilder<HoldingCubit, HoldingState>(
+      builder: (BuildContext context, HoldingState state) => Padding(
+          padding: const EdgeInsets.only(left: 16, top: 2.0, right: 16),
+          child: Flexible(
+              child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                      alignment: alignment,
+                      //width: screen.appbar.titleWidth,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: cubits.menu.isInHardMode
+                            ? (state.holding.assetPathIsAChild
+                                ? [
+                                    Text('${state.holding.assetPathParents}/',
+                                        style: parentsStyle ??
+                                            AppText.parentsAssetName),
+                                    Text(
+                                      state.holding.assetPathChild,
+                                      style:
+                                          childStyle ?? AppText.childAssetName,
+                                    ),
+                                  ]
+                                : [
+                                    Text(state.holding.name,
+                                        style: childStyle ??
+                                            AppText.childAssetName),
+                                  ])
+                            : [
+                                Text(state.holding.assetPathChild,
+                                    style: childStyle ?? AppText.childAssetName)
+                              ],
+                      ))))));
 }

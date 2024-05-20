@@ -9,6 +9,7 @@ import 'package:magic/domain/concepts/sections.dart';
 import 'package:magic/cubits/cubit.dart' show cubits;
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/assets/names.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/domain/wallet/utils.dart';
 
@@ -194,6 +195,7 @@ class Maestro {
     cubits.appbar.update(
       leading: AppbarLeading.menu,
       title: 'Magic',
+      clearTitleChild: true,
       onLead: activateMenu,
       onTitle: activateMenu,
     );
@@ -270,7 +272,8 @@ class Maestro {
     cubits.navbar.update(active: false);
     cubits.appbar.update(
       leading: AppbarLeading.back,
-      title: 'Coin',
+      title: '',
+      titleChild: const ResponsiveHighlightedNameView(),
       onLead: _activeateHome,
       onTitle: cubits.appbar.none,
     );
@@ -311,6 +314,7 @@ class Maestro {
     cubits.appbar.update(
       leading: AppbarLeading.close,
       title: 'Send',
+      clearTitleChild: true,
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
@@ -335,6 +339,7 @@ class Maestro {
     cubits.appbar.update(
       leading: AppbarLeading.close,
       title: 'Receive',
+      clearTitleChild: true,
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
@@ -359,6 +364,7 @@ class Maestro {
     cubits.appbar.update(
       leading: AppbarLeading.close,
       title: 'Transaction',
+      clearTitleChild: true,
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
@@ -386,6 +392,7 @@ class Maestro {
     cubits.appbar.update(
       leading: AppbarLeading.close,
       title: 'Swap',
+      clearTitleChild: true,
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
@@ -410,6 +417,7 @@ class Maestro {
     cubits.appbar.update(
       leading: AppbarLeading.close,
       title: 'Manage',
+      clearTitleChild: true,
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
@@ -432,6 +440,7 @@ class Maestro {
     cubits.appbar.update(
       leading: AppbarLeading.menu,
       title: 'Magic',
+      clearTitleChild: true,
       onLead: activateMenu,
       onTitle: activateMenu,
     );
@@ -444,6 +453,7 @@ class Maestro {
     cubits.appbar.update(
       leading: AppbarLeading.back,
       title: '',
+      //clearTitleChild: true,
       onLead: deactivateSubMenu,
       onTitle: deactivateSubMenu,
     );
