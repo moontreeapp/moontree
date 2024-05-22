@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:magic/services/rate.dart';
 import 'package:magic/services/routes.dart';
 import 'package:magic/services/screen.dart';
 import 'package:magic/services/back.dart';
@@ -6,6 +7,7 @@ import 'package:magic/services/keys.dart' as keys;
 import 'package:magic/services/maestro.dart';
 //import 'package:magic/services/calls/server.dart';
 import 'package:magic/services/subscription.dart';
+import 'package:magic/services/triggers/rate.dart';
 
 final RouteStack routes = RouteStack();
 late Screen screen;
@@ -17,6 +19,7 @@ late FlutterSecureStorage storage;
 final SubscriptionService subscription = SubscriptionService();
 //late ServerCall server;
 bool initialized = false;
+late RateWaiter rates;
 
 void init({
   required double height,
@@ -31,6 +34,7 @@ void init({
   maestro = Maestro();
   storage = const FlutterSecureStorage();
   //server = ServerCall();
+  rates = RateWaiter()..init(RVNtoFiat());
   initialized = true;
 
   //api.connect();

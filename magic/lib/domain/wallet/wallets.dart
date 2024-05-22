@@ -176,25 +176,17 @@ class SeedWallet {
     return sub;
   }
 
-  bool derive() {
+  bool derive([Map<Exposure, int>? givenNextIndex]) {
+    givenNextIndex = givenNextIndex ??
+        {
+          Exposure.external: 0,
+          Exposure.internal: 0,
+        };
     for (final exposure in Exposure.values) {
       highestIndex[exposure] ??= -1;
-      gap[exposure] ??= 0;
-
-      /// the server tells us the highest index right, so we know how far to go?
-      /// how do we know the gap?
-      //while (gap[exposure]! < 20) {
-      //  subwallet(hdIndex: highestIndex[exposure]!+1, exposure: exposure);
-      //  highestIndex[exposure] = highestIndex[exposure]! + 1;
-      //  if empty {
-      //    gap[exposure]! += 1;
-      //  } else {
-      //    gap[exposure]! = 0;
-      //  }
-      //}
-
-      /// for now: just derive 20 addresses
-      while (gap[exposure]! < 20) {
+      gap[exposure] ??= 0; // this concept may be irrelevant
+      while (gap[exposure]! < 20 &&
+          highestIndex[exposure]! < givenNextIndex[exposure]!) {
         subwallet(hdIndex: highestIndex[exposure]! + 1, exposure: exposure);
         highestIndex[exposure] = highestIndex[exposure]! + 1;
         gap[exposure] = gap[exposure]! + 1;

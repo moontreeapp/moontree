@@ -42,7 +42,7 @@ class HoldingBalancesCall extends ServerCall {
   }
 
   Future<List<Holding>> call() async {
-    final List<BalanceView> history = await holdingBalancesBy(
+    final List<BalanceView> holdings = await holdingBalancesBy(
       chain: blockchain.chaindata,
       roots: mnemonicWallets
           .map((e) => e.roots(blockchain))
@@ -51,17 +51,17 @@ class HoldingBalancesCall extends ServerCall {
       h160s: keypairWallets.map((e) => e.h160AsByteData(blockchain)).toList(),
     );
 
-    if (history.length == 1 && history.first.error != null) {
+    if (holdings.length == 1 && holdings.first.error != null) {
       // handle
-      print('error: ${history.first.error}');
+      print('error: ${holdings.first.error}');
       return [];
     }
 
-    for (final txView in history) {
+    for (final txView in holdings) {
       txView.chain = blockchain.name;
     }
-    print('history: $history');
-    return translate(sortedHoldings(history, blockchain.symbol), blockchain);
+    print('holdings: $holdings');
+    return translate(sortedHoldings(holdings, blockchain.symbol), blockchain);
   }
 
   List<BalanceView> sortedHoldings(List<BalanceView> records, String coin) {

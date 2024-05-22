@@ -58,6 +58,7 @@
 // //    child: Column(
 
 import 'package:flutter/material.dart';
+import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/theme/theme.dart';
@@ -88,11 +89,8 @@ class TransactionPage extends StatelessWidget {
               Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                 TransactionItem(
                     label: 'Amount:',
-                    overrideDisplay: CoinSplitView(
-                      display: display,
-                      coin: display.sats.toCoin(),
-                      space: 6,
-                    ),
+                    overrideDisplay: SimpleCoinSplitView(
+                        mode: DifficultyMode.hard, coin: display.sats.toCoin()),
                     display: <TextSpan>[
                       TextSpan(
                           text:

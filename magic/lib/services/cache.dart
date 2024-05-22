@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:magic/domain/concepts/cache.dart';
+import 'package:magic/domain/concepts/storage.dart';
 import 'package:magic/domain/server/serverv2_client.dart'
     show SerializableEntity;
 import 'package:magic/domain/server/protocol/protocol.dart' show Protocol;
@@ -12,16 +13,17 @@ class Cache {
     required Iterable<SerializableEntity> records,
   }) async =>
       storage.write(
-          key: 'cache-$key',
+          key: StorageKey.cache.key(key),
           value:
               jsonEncode(records.map((r) => CachedServerObject.from(r, type))));
 
   static Future<String?> read({required String key}) async =>
-      await storage.read(key: 'cache-$key');
+      await storage.read(key: StorageKey.cache.key(key));
 
-  static Future<T?> readAs<T>({required String key}) async => Cache.build<T>(
-      CachedServerObject.read(await storage.read(key: 'cache-$key') ??
-          '{"type": "null", "json": "null"}'));
+  static Future<T?> readAs<T>({required String key}) async =>
+      Cache.build<T>(CachedServerObject.read(
+          await storage.read(key: StorageKey.cache.key(key)) ??
+              '{"type": "null", "json": "null"}'));
 
   static T build<T>(CachedServerObject x) =>
       Protocol().deserialize(json.decode(x.json), T);

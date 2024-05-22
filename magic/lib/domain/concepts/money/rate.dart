@@ -31,5 +31,7 @@ class Rate with EquatableMixin {
   List<Object?> get props => <Object?>[base, quote, rate];
 
   @override
-  String toString() => '$base/$quote=$rate';
+  String toString() => '$id=$rate';
+
+  String get id => '${base.symbol}/${quote.name.toUpperCase()}';
 }

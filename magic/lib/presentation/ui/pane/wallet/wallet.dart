@@ -23,11 +23,9 @@ class Wallet extends StatelessWidget {
                           child: Text('Loading...',
                               style: TextStyle(color: Colors.grey))));
                 }
-                const child = WalletPage();
-                cubits.wallet.update(child: child);
-                return const WalletStack(child: child);
+                return const WalletStack(child: WalletPage());
               },
-              onEntered: () => WalletStack(child: state.child),
+              onEntered: () => const WalletStack(child: WalletPage()),
               onExiting: () {
                 WidgetsBinding.instance.addPostFrameCallback(
                     (_) => Future.delayed(fadeDuration, () {
@@ -38,9 +36,7 @@ class Wallet extends StatelessWidget {
                 return WalletStack(child: state.child);
               },
               onExited: () {
-                const child = SizedBox.shrink();
-                cubits.wallet.update(child: child);
-                return const WalletStack(child: child);
+                return const WalletStack(child: SizedBox.shrink());
               }));
 }
 

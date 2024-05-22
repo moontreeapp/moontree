@@ -3,7 +3,6 @@ import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
-import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/sections.dart';
 import 'package:magic/cubits/cubit.dart' show cubits;
@@ -266,7 +265,7 @@ class Maestro {
   }
 
   Future<void> activateHistory([Holding? holding]) async {
-    cubits.transactions.populate();
+    cubits.transactions.populateTransactions(holding);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);

@@ -9,7 +9,6 @@ import 'package:magic/presentation/ui/pane/wallet/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/hiding.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
-import 'package:magic/presentation/widgets/assets/names.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';

@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
-import 'package:magic/domain/wallet/utils.dart';
-import 'package:magic/domain/wallet/wallets.dart';
+import 'package:magic/domain/blockchain/exposure.dart';
+import 'package:magic/services/calls/receive.dart';
 
 part 'state.dart';
 
@@ -48,7 +48,7 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
     ));
   }
 
-  void populateAddress() {
+  Future<void> populateAddress() async {
     //MnemonicWallet wallet = MnemonicWallet(mnemonic: makeMnemonic());
     //print('mnemonic: ${wallet.mnemonic}');
     //print('entropy: ${wallet.entropy}');
@@ -57,9 +57,32 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
     //    'seed: ${wallet.seedWallet(Blockchain.ravencoinMain).hdWallet.address}');
     //update(
     //    address: wallet.seedWallet(Blockchain.ravencoinMain).hdWallet.address);
-    cubits.keys.master.mnemonicWallets.first
-        .seedWallet(Blockchain.ravencoinMain)
-        .derive();
+
+    final seedWallet = cubits.keys.master.mnemonicWallets.first
+        .seedWallet(Blockchain.ravencoinMain);
+    if (seedWallet.highestIndex.isEmpty) {
+      final indexMap = {
+        Exposure.internal: (await ReceiveCall(
+          blockchain: Blockchain.evrmoreMain,
+          mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
+          exposure: Exposure.internal,
+        ).call())
+            .value,
+        Exposure.external: (await ReceiveCall(
+          blockchain: Blockchain.evrmoreMain,
+          mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
+          exposure: Exposure.external,
+        ).call())
+            .value,
+      };
+      cubits.keys.master.mnemonicWallets.first
+          .seedWallet(Blockchain.ravencoinMain)
+          .derive(indexMap);
+    } else {
+      cubits.keys.master.mnemonicWallets.first
+          .seedWallet(Blockchain.ravencoinMain)
+          .derive();
+    }
     update(
         // not right this is a seed wallet, not a derivative wallet:
         //  address: cubits.keys.master.mnemonicWallets.first

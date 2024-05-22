@@ -58,8 +58,9 @@ class Coin {
       );
 
   Sats toSats() => Sats((coin * satsPerCoin) + sats);
-  Fiat toFiat(double coinPrice) =>
-      Fiat((coin * coinPrice) + ((sats / satsPerCoin) * coinPrice));
+  Fiat toFiat(double? coinPrice) => coinPrice == null
+      ? const Fiat.empty()
+      : Fiat((coin * coinPrice) + ((sats / satsPerCoin) * coinPrice));
 
   String humanString() => '${whole()}${part()}';
 

@@ -13,19 +13,18 @@ import 'package:moontree_utils/moontree_utils.dart';
 class ReceiveCall extends ServerCall {
   late MnemonicWallet mnemonicWallet;
   late Blockchain blockchain;
-  late bool change;
+  late Exposure exposure;
 
   ReceiveCall({
     required this.mnemonicWallet,
     required this.blockchain,
-    this.change = false, // default external
+    this.exposure=Exposure.external,
   });
 
   Future<CommInt> emptyAddressBy({required Chaindata chain}) async =>
       await runCall(() async => await client.addresses.nextEmptyIndex(
           chainName: chain.name,
-          xpubkey: mnemonicWallet.root(
-              blockchain, change ? Exposure.internal : Exposure.external)));
+          xpubkey: mnemonicWallet.root(blockchain, exposure)));
 
   Future<CommInt> call() async {
     late CommInt index;

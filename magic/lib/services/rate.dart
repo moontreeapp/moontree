@@ -217,4 +217,3 @@ class RVNtoFiat implements RVNRateInterface {
     return rvnPrice;
   }
 }
-

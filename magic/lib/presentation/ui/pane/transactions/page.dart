@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
+import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
@@ -63,7 +64,9 @@ class TransactionItem extends StatelessWidget {
         //              color:
         //                  display.incoming ? AppColors.success : AppColors.black,
         //             ))),
-        trailing: CoinSplitView(display: display, coin: display.sats.toCoin())
+        trailing: SimpleCoinSplitView(
+            mode: DifficultyMode.hard, coin: display.sats.toCoin())
+        //CoinSplitView(display: display, coin: display.sats.toCoin())
         //trailing: CoinView(
         //    coin: display.sats.toCoin(),
         //    wholeStyle: Theme.of(context)

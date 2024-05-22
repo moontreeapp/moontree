@@ -259,9 +259,12 @@ class SimpleCoinSplitView extends StatelessWidget {
                         text: coin.whole(),
                         style: Theme.of(context).textTheme.body1.copyWith(
                               height: 0,
-                              fontWeight:
-                                  coin.coin > 0 ? FontWeight.w800 : null,
-                              color: AppColors.black60,
+                              fontWeight: coin.coin > 0
+                                  ? FontWeight.w600
+                                  : FontWeight.w300,
+                              color: coin.coin > 0
+                                  ? AppColors.black60
+                                  : Colors.black45,
                             )),
                     //TextSpan(
                     //    text: coin.spacedPart(),
@@ -290,8 +293,12 @@ class SimpleCoinSplitView extends StatelessWidget {
                             text: e.char,
                             style: Theme.of(context).textTheme.body1.copyWith(
                                   height: 0,
-                                  fontWeight: e.bolded ? FontWeight.w700 : null,
-                                  color: AppColors.black60,
+                                  fontWeight: e.bolded && coin.coin == 0
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                                  color: e.bolded
+                                      ? Colors.black45
+                                      : AppColors.black60,
                                 ))
                     ],
                   ])),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/concepts/storage.dart';
 import 'package:magic/domain/wallet/utils.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/services.dart';
@@ -47,10 +48,11 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   Future<void> load() async {
     update(submitting: true);
     update(
-      mnemonics: jsonDecode((await storage.read(key: 'mnemonics')) ?? '[]')
+      mnemonics: jsonDecode(
+              (await storage.read(key: StorageKey.mnemonics.key())) ?? '[]')
           .cast<String>(),
-      wifs:
-          jsonDecode((await storage.read(key: 'wifs')) ?? '[]').cast<String>(),
+      wifs: jsonDecode((await storage.read(key: StorageKey.wifs.key())) ?? '[]')
+          .cast<String>(),
       submitting: false,
     );
     build();
@@ -68,8 +70,9 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   }
 
   Future<void> dump() async {
-    storage.write(key: 'mnemonics', value: jsonEncode(state.mnemonics));
-    storage.write(key: 'wifs', value: jsonEncode(state.wifs));
+    storage.write(
+        key: StorageKey.mnemonics.key(), value: jsonEncode(state.mnemonics));
+    storage.write(key: StorageKey.wifs.key(), value: jsonEncode(state.wifs));
   }
 
   Future<void> syncMnemonics(List<String>? mnemonics) async {

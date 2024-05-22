@@ -9,8 +9,11 @@ import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
+import 'package:magic/domain/concepts/storage.dart';
+import 'package:magic/domain/utils/extensions/list.dart';
 import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/calls/holdings.dart';
+import 'package:magic/services/services.dart';
 
 part 'state.dart';
 
@@ -56,14 +59,27 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   Future<void> populateAssets() async {
     // remember to order by currency first, amount second, alphabetical third
     update(isSubmitting: true);
-    update(
-        holdings: await HoldingBalancesCall(
-          blockchain: Blockchain.ravencoinMain,
-          mnemonicWallets: cubits.keys.master.mnemonicWallets,
-          keypairWallets: cubits.keys.master.keypairWallets,
-        ).call(),
-        isSubmitting: false);
-    cubits.balance.update(portfolioValue: Fiat(12546.01));
+    final holdings = _sort(_newRateThese(
+            rate: rates.evrUsdRate,
+            holdings: await HoldingBalancesCall(
+              blockchain: Blockchain.evrmoreMain,
+              mnemonicWallets: cubits.keys.master.mnemonicWallets,
+              keypairWallets: cubits.keys.master.keypairWallets,
+            ).call()) +
+        _newRateThese(
+            rate: rates.rvnUsdRate,
+            holdings: await HoldingBalancesCall(
+              blockchain: Blockchain.ravencoinMain,
+              mnemonicWallets: cubits.keys.master.mnemonicWallets,
+              keypairWallets: cubits.keys.master.keypairWallets,
+            ).call()));
+    update(holdings: holdings, isSubmitting: false);
+    if (rates.rvnUsdRate != null) {
+      cacheRate(rates.rvnUsdRate!);
+    }
+    if (rates.evrUsdRate != null) {
+      cacheRate(rates.evrUsdRate!);
+    }
   }
 
   void populateAssetsSpoof() {
@@ -85,17 +101,40 @@ class WalletCubit extends UpdatableCubit<WalletState> {
     cubits.balance.update(portfolioValue: Fiat(12546.01));
   }
 
+  /// default sort is by currency type, then by amount, then by alphabetical
+  List<Holding> _sort(List<Holding> holdings) =>
+      holdings.where((e) => e.isRoot).toList() +
+      holdings.where((e) => !e.isRoot).toList();
+
   // todo pagenate list of holdings
   //Holding getNextBatch(List<Holding> batch) {}
 
   /// update all the holding with the new rate
   void newRate({required Rate rate}) {
-    final holding = state.holdings
-        .firstWhere((element) => element.symbol == rate.base.symbol);
-    final newHolding = holding.copyWith(rate: rate.rate);
-    final newHoldings = state.holdings
-        .map((e) => e.symbol == rate.base.symbol ? newHolding : e)
+    if (state.holdings.isEmpty) return;
+    update(holdings: _newRateThese(rate: rate, holdings: state.holdings));
+    cacheRate(rate);
+  }
+
+  /// update all the holding with the new rate
+  List<Holding> _newRateThese({Rate? rate, required List<Holding> holdings}) {
+    if (holdings.isEmpty || rate == null || rate.rate <= 0) {
+      return holdings;
+    }
+    return holdings
+        .map((e) =>
+            e.symbol == rate.base.symbol ? e.copyWith(rate: rate.rate) : e)
         .toList();
-    update(holdings: newHoldings);
+  }
+
+  void cacheRate(Rate rate) {
+    // save to disk, so we can load it on next app start
+    storage.write(
+        key: StorageKey.rate.key(rate.id), value: rate.rate.toStringAsFixed(4));
+    // update balance
+    cubits.balance.update(
+        portfolioValue: Fiat(state.holdings
+            .map((e) => e.coin.toFiat(e.rate).value)
+            .sumNumbers()));
   }
 }

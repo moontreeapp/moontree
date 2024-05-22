@@ -2,12 +2,17 @@ import 'dart:math';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/concepts/money/rate.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/utils/range.dart';
+import 'package:magic/services/calls/transactions.dart';
+import 'package:magic/services/services.dart';
 
 part 'state.dart';
 
@@ -50,6 +55,38 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: state.withoutPrior,
     ));
+  }
+
+  Future<void> populateTransactions([Holding? holding]) async {
+    // remember to order by currency first, amount second, alphabetical third
+    update(isSubmitting: true);
+    if (holding != null && holding != state.asset) {
+      update(transactions: []);
+    }
+    final transactions = _newRateThese(
+        rate: rates.rvnUsdRate, // rates by blockchain and symbol...security?
+        transactions: await TransactionHistoryCall(
+          mnemonicWallets: cubits.keys.master.mnemonicWallets,
+          keypairWallets: cubits.keys.master.keypairWallets,
+          blockchain: state.asset.blockchain ?? Blockchain.ravencoinMain,
+          height: state.transactions.length,
+          symbol: state.asset.symbol,
+        ).call());
+    update(
+        transactions: state.transactions + transactions, isSubmitting: false);
+  }
+
+  /// update all the holding with the new rate
+  List<TransactionDisplay> _newRateThese({
+    Rate? rate,
+    required List<TransactionDisplay> transactions,
+  }) {
+    if (transactions.isEmpty || rate == null || rate.rate <= 0) {
+      return transactions;
+    }
+    return transactions
+        .map((e) => e.copyWith(worth: e.fiat(rate.rate)))
+        .toList();
   }
 
   void populate() => update(
