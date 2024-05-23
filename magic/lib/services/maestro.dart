@@ -307,12 +307,7 @@ class Maestro {
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
     cubits.pane.setOnBottomReached(
-        //bottomReached: () => cubits.transactions.callNextBatch(holding));
-        //bottomReached: () => cubits.transactions.populateTransactions(holding));
-        () {
-      print('bottomReached');
-      cubits.transactions.populateTransactions(holding);
-    });
+        () => cubits.transactions.populateTransactions(holding));
   }
 
   Future<void> activateSend() async {
