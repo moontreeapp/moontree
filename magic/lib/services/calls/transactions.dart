@@ -54,7 +54,7 @@ class TransactionHistoryCall extends ServerCall {
         serverSymbol == null ? blockchain.symbol : security?.symbol ?? symbol;
     final List<TransactionView> history = await transactionHistoryBy(
       symbol: serverSymbol,
-      height: null,
+      height: height,
       chain: blockchain.chaindata,
       roots: mnemonicWallets
           .map((e) => e.roots(blockchain))
@@ -72,7 +72,7 @@ class TransactionHistoryCall extends ServerCall {
       txView.chain = blockchain.name;
       txView.symbol = symbol;
     }
-
+    print('trasnsactions: $history');
     return translate(history, blockchain);
   }
 

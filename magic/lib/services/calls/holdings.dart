@@ -29,9 +29,9 @@ class HoldingBalancesCall extends ServerCall {
     required List<String> roots,
     required List<ByteData> h160s,
   }) async {
-    print('chain: $chain');
-    print('h160s: $h160s');
-    print('roots: $roots');
+    //print('chain: $chain');
+    //print('h160s: $h160s');
+    //print('roots: $roots');
     //xpub6EtVexS6kuhFVjQNB1qGSUGumEnQVF3xp3926wy92W4GJS7ymvhbWkVzBTjXQ4u8EixkRXmE8N538zei6kCdAyZkWKcZBZ7BSdYm9uNPn9i
     //xpub6EtVexS6kuhFZ22PBCWPC97VNkZ9vufPdrTp2ZDDApasumxt8f8CREs4Zv6nDdFKByp8BPZ5tFFj6ZG4eeerNkDM7mJ2PZfBDeB5LjdRiXY
     return await runCall(() async => await client.balances.get(
@@ -60,7 +60,7 @@ class HoldingBalancesCall extends ServerCall {
     for (final txView in holdings) {
       txView.chain = blockchain.name;
     }
-    print('holdings: $holdings');
+    
     return translate(sortedHoldings(holdings, blockchain.symbol), blockchain);
   }
 

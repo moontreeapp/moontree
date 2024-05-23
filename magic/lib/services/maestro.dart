@@ -189,6 +189,7 @@ class Maestro {
   //}
 
   Future<void> _activeateHome() async {
+    cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet, active: true);
     cubits.appbar.update(
@@ -198,6 +199,7 @@ class Maestro {
       onLead: activateMenu,
       onTitle: activateMenu,
     );
+    cubits.transactions.clearTransactions();
     cubits.holding.update(active: false);
     cubits.balance.update(active: true);
     cubits.menu.update(active: true);
@@ -238,9 +240,9 @@ class Maestro {
   void _activeateSwap() {
     /// place for testing stuff since mint is unused:
     ///
-    print(makeMnemonic());
-    print(cubits.keys.master.mnemonicWallets.first.mnemonic);
-    print(cubits.keys.state.mnemonics);
+    //print(makeMnemonic());
+    //print(cubits.keys.master.mnemonicWallets.first.mnemonic);
+    //print(cubits.keys.state.mnemonics);
     //cubits.keys.reset();
     //print(cubits.keys.dump());
     //print(cubits.keys.load());
@@ -257,7 +259,7 @@ class Maestro {
     //  title: 'test toast',
     //  text: 'animate correctly',
     //));
-
+    cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.swap, active: true);
     cubits.wallet.update(active: false);
@@ -304,6 +306,13 @@ class Maestro {
     cubits.transactions.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+    cubits.pane.setOnBottomReached(
+        //bottomReached: () => cubits.transactions.callNextBatch(holding));
+        //bottomReached: () => cubits.transactions.populateTransactions(holding));
+        () {
+      print('bottomReached');
+      cubits.transactions.populateTransactions(holding);
+    });
   }
 
   Future<void> activateSend() async {
@@ -332,6 +341,7 @@ class Maestro {
   }
 
   Future<void> activateReceive() async {
+    cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
@@ -357,6 +367,7 @@ class Maestro {
   }
 
   Future<void> activateTransaction(TransactionDisplay transaction) async {
+    cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
@@ -385,6 +396,7 @@ class Maestro {
   }
 
   Future<void> activateSwapOnHolding() async {
+    cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
@@ -410,6 +422,7 @@ class Maestro {
   }
 
   Future<void> activateManageOnHolding() async {
+    cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);

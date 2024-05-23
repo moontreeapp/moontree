@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
@@ -18,6 +19,7 @@ part 'state.dart';
 
 class TransactionsCubit extends UpdatableCubit<TransactionsState> {
   TransactionsCubit() : super(const TransactionsState());
+  bool reachedEnd = false;
   @override
   String get key => 'transactions';
   @override
@@ -58,22 +60,61 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
   }
 
   Future<void> populateTransactions([Holding? holding]) async {
+    print('CALLED: $holding');
     // remember to order by currency first, amount second, alphabetical third
-    update(isSubmitting: true);
-    if (holding != null && holding != state.asset) {
-      update(transactions: []);
+    if (holding == null || reachedEnd) {
+      //update(transactions: [], isSubmitting: false);
+      return;
     }
-    final transactions = _newRateThese(
+    update(isSubmitting: true);
+    final replace = holding != cubits.holding.state.holding;
+    print('state.transactions.length: ${state.transactions.length}');
+    print(cubits.holding.state.holding.symbol);
+    final transactions = _sort(_newRateThese(
         rate: rates.rvnUsdRate, // rates by blockchain and symbol...security?
         transactions: await TransactionHistoryCall(
           mnemonicWallets: cubits.keys.master.mnemonicWallets,
           keypairWallets: cubits.keys.master.keypairWallets,
-          blockchain: state.asset.blockchain ?? Blockchain.ravencoinMain,
-          height: state.transactions.length,
-          symbol: state.asset.symbol,
-        ).call());
+          blockchain: holding.blockchain ?? Blockchain.ravencoinMain,
+          height:
+              state.transactions.isNotEmpty ? state.transactions.length : null,
+          symbol: holding.symbol,
+        ).call()));
+    if (transactions.isEmpty || transactions == state.transactions) {
+      print('got the same ones again');
+      reachedEnd = true;
+      // might want to remember that we've got to the end to save hits on the server...
+      update(isSubmitting: false);
+      return;
+    }
     update(
-        transactions: state.transactions + transactions, isSubmitting: false);
+      transactions: (replace ? <TransactionDisplay>[] : state.transactions) +
+          transactions,
+      isSubmitting: false,
+    );
+    cubits.pane.update(
+      active: true,
+      //height: screen.pane.midHeight,
+      //max: screen.pane.maxHeightPercent,
+      max: state.transactions.length > 6
+          ? screen.pane.maxHeightPercent
+          : screen.pane.midHeightPercent,
+      min: screen.pane.midHeightPercent,
+    );
+  }
+
+  /// TODO complete - this should call the next batch of transactions starting
+  /// at the length of the current list of transactions (I think they come in
+  /// 50 at a time), if the number of transactions returns is less than 50,
+  /// including 0 then we have reached the end of the list. and we should
+  /// remember that so we don't keep calling again and again.
+  Future<void> callNextBatch([Holding? holding]) async {
+    print(cubits.transactions.state.transactions.length);
+  }
+
+  void clearTransactions() {
+    reachedEnd = false;
+    update(transactions: []);
   }
 
   /// update all the holding with the new rate
@@ -88,6 +129,10 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
         .map((e) => e.copyWith(worth: e.fiat(rate.rate)))
         .toList();
   }
+
+  /// sorts transactions from newest to oldest using the .when property
+  List<TransactionDisplay> _sort(List<TransactionDisplay> transactions) =>
+      transactions.sortedBy((e) => e.when).reversed.toList();
 
   void populate() => update(
           asset: Holding(

@@ -11,6 +11,8 @@ final DraggableScrollableController draggableScrollController =
 class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   PaneCubit() : super(PaneState(controller: draggableScrollController));
   double height = 0;
+  VoidCallback? onTopReached = () => {};
+  VoidCallback? onBottomReached = () => {};
   void Function(double height)? heightBehavior;
   @override
   String get key => 'pane';
@@ -39,10 +41,28 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
     DraggableScrollableController? controller,
     bool? isSubmitting,
     PaneState? prior,
+    bool clearScroller = false,
+    bool clearController = false,
   }) {
+    if (scroller != null) {
+      //state.scroller?.removeListener(_scrollerListener);
+      //state.scroller?.dispose();
+      scroller.removeListener(_scrollerListener);
+      scroller.addListener(_scrollerListener);
+    }
     if (controller != null) {
+      //state.controller.removeListener(_controllerListener);
+      //state.controller.dispose();
       controller.removeListener(_controllerListener);
       controller.addListener(_controllerListener);
+    }
+    if (clearScroller) {
+      state.scroller?.removeListener(_scrollerListener);
+      state.scroller?.dispose();
+    }
+    if (clearController) {
+      state.controller.removeListener(_controllerListener);
+      state.controller.dispose();
     }
     this.height = height ?? this.height;
     emit(PaneState(
@@ -59,8 +79,23 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
     ));
   }
 
+  void setOnTopReached(VoidCallback? topReached) => onTopReached = topReached;
+
+  void setOnBottomReached(VoidCallback? bottomReached) =>
+      onBottomReached = bottomReached;
+
   void dispose() => update(dispose: true);
   bool unattached() => state.scroller?.positions.isEmpty ?? true;
+
+  void _scrollerListener() {
+    if (state.scroller?.position.atEdge ?? false) {
+      if (state.scroller?.position.pixels == 0) {
+        onTopReached?.call();
+      } else {
+        onBottomReached?.call();
+      }
+    }
+  }
 
   void _controllerListener() {
     height = state.controller.sizeToPixels(state.controller.size);
@@ -68,8 +103,9 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   }
 
   void snapTo(double heightPixels, {bool force = false}) {
-    if (height == heightPixels && state.height == heightPixels && !force)
+    if (height == heightPixels && state.height == heightPixels && !force) {
       return;
+    }
     if (heightPixels == screen.pane.minHeight) {
       try {
         state.scroller?.jumpTo(0);

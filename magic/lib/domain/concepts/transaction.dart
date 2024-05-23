@@ -83,7 +83,7 @@ class TransactionDisplay extends Equatable {
         when: transactionView.datetime,
         sats: Sats(transactionView.iProvided == 0
             ? transactionView.iReceived
-            : transactionView.iProvided),
+            : transactionView.iProvided - transactionView.iReceived),
         transactionView: transactionView,
         blockchain: blockchain,
       );
