@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
@@ -139,7 +140,7 @@ class MaestroLayer extends StatelessWidget {
     cubits.keys.load().then((x) {
       print('cubits.keys.state.props');
       print(cubits.keys.state.props);
-      cubits.receive.populateAddress();
+      cubits.receive.populateAddresses(Blockchain.ravencoinMain);
     });
     subscription.setupSubscriptions(cubits.keys.master);
     print(subscription.starttime);

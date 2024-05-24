@@ -48,49 +48,55 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
     ));
   }
 
-  Future<void> populateAddress() async {
-    //MnemonicWallet wallet = MnemonicWallet(mnemonic: makeMnemonic());
-    //print('mnemonic: ${wallet.mnemonic}');
-    //print('entropy: ${wallet.entropy}');
-    //print('seed: ${wallet.seed}');
-    //print(
-    //    'seed: ${wallet.seedWallet(Blockchain.ravencoinMain).hdWallet.address}');
-    //update(
-    //    address: wallet.seedWallet(Blockchain.ravencoinMain).hdWallet.address);
-
-    final seedWallet = cubits.keys.master.mnemonicWallets.first
-        .seedWallet(Blockchain.ravencoinMain);
+  Future<void> populateAddresses(Blockchain blockchain) async {
+    final seedWallet =
+        cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain);
     if (seedWallet.highestIndex.isEmpty) {
-      final indexMap = {
+      cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain).derive({
         Exposure.internal: (await ReceiveCall(
-          blockchain: Blockchain.evrmoreMain,
+          blockchain: blockchain,
           mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
           exposure: Exposure.internal,
         ).call())
             .value,
         Exposure.external: (await ReceiveCall(
-          blockchain: Blockchain.evrmoreMain,
+          blockchain: blockchain,
           mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
           exposure: Exposure.external,
         ).call())
             .value,
-      };
-      cubits.keys.master.mnemonicWallets.first
-          .seedWallet(Blockchain.ravencoinMain)
-          .derive(indexMap);
+      });
     } else {
-      cubits.keys.master.mnemonicWallets.first
-          .seedWallet(Blockchain.ravencoinMain)
-          .derive();
+      cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain).derive();
     }
     update(
-        // not right this is a seed wallet, not a derivative wallet:
-        //  address: cubits.keys.master.mnemonicWallets.first
-        //      .seedWallet(Blockchain.ravencoinMain)
-        //      .hdWallet
-        //      .address);
         address: cubits.keys.master.mnemonicWallets.first
-            .seedWallet(Blockchain.ravencoinMain)
+            .seedWallet(blockchain)
+            .externals
+            .last
+            .address);
+  }
+
+  Future<void> populateReceiveAddress(Blockchain blockchain) async {
+    final seedWallet =
+        cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain);
+    if (seedWallet.highestIndex.isEmpty) {
+      cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain).derive({
+        Exposure.external: (await ReceiveCall(
+          blockchain: blockchain,
+          mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
+          exposure: Exposure.external,
+        ).call())
+            .value,
+      });
+    } else {
+      cubits.keys.master.mnemonicWallets.first
+          .seedWallet(blockchain)
+          .derive({Exposure.external: 0});
+    }
+    update(
+        address: cubits.keys.master.mnemonicWallets.first
+            .seedWallet(blockchain)
             .externals
             .last
             .address);

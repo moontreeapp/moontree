@@ -176,17 +176,17 @@ class SeedWallet {
     return sub;
   }
 
-  bool derive([Map<Exposure, int>? givenNextIndex]) {
-    givenNextIndex = givenNextIndex ??
+  bool derive([Map<Exposure, int>? nextIndexByExposure]) {
+    nextIndexByExposure = nextIndexByExposure ??
         {
           Exposure.external: 0,
           Exposure.internal: 0,
         };
-    for (final exposure in Exposure.values) {
+    for (final exposure in nextIndexByExposure.keys) {
       highestIndex[exposure] ??= -1;
       gap[exposure] ??= 0; // this concept may be irrelevant
       while (gap[exposure]! < 20 &&
-          highestIndex[exposure]! < givenNextIndex[exposure]!) {
+          highestIndex[exposure]! < nextIndexByExposure[exposure]!) {
         subwallet(hdIndex: highestIndex[exposure]! + 1, exposure: exposure);
         highestIndex[exposure] = highestIndex[exposure]! + 1;
         gap[exposure] = gap[exposure]! + 1;

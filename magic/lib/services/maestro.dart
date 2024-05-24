@@ -3,6 +3,7 @@ import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/sections.dart';
 import 'package:magic/cubits/cubit.dart' show cubits;
@@ -335,7 +336,8 @@ class Maestro {
     cubits.ignore.update(active: false);
   }
 
-  Future<void> activateReceive() async {
+  Future<void> activateReceive(Blockchain blockchain) async {
+    cubits.receive.populateReceiveAddress(blockchain);
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);

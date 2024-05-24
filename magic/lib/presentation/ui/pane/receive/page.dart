@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
@@ -22,7 +23,10 @@ class ReceivePage extends StatelessWidget {
           children: [
             GestureDetector(
                 onTap: () {
-                  cubits.receive.populateAddress();
+                  if (cubits.receive.state.address.isEmpty) {
+                    cubits.receive.populateReceiveAddress(
+                        cubits.holding.state.holding.blockchain!);
+                  }
                   Clipboard.setData(
                       ClipboardData(text: cubits.receive.state.address));
                 },

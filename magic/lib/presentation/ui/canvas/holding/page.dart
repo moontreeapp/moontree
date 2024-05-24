@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
@@ -128,7 +129,8 @@ class AnimatedCoinSpec extends StatelessWidget {
             ])),
         //SizedBox(width: screen.canvas.wSpace),
         GestureDetector(
-            onTap: () => maestro.activateReceive(),
+            onTap: () => maestro
+                .activateReceive(cubits.holding.state.holding.blockchain!),
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
