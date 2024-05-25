@@ -144,6 +144,7 @@ class MaestroLayer extends StatelessWidget {
     });
     subscription.setupSubscriptions(cubits.keys.master);
     print(subscription.starttime);
+    deriveInBackground();
   }
 }
 

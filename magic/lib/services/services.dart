@@ -1,3 +1,5 @@
+export 'package:magic/services/derivation.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:magic/services/rate.dart';
 import 'package:magic/services/routes.dart';
