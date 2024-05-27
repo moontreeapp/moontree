@@ -6,6 +6,7 @@ class TransactionsState with EquatableMixin, PriorActiveStateMixin {
   final Holding asset;
   final List<TransactionDisplay> transactions;
   final Widget child;
+  final bool clearing;
   final bool isSubmitting;
   final TransactionsState? prior;
 
@@ -14,6 +15,7 @@ class TransactionsState with EquatableMixin, PriorActiveStateMixin {
     this.asset = const Holding.empty(),
     this.transactions = const [],
     this.child = const SizedBox.shrink(),
+    this.clearing = false,
     this.isSubmitting = false,
     this.prior,
   });
@@ -27,6 +29,7 @@ class TransactionsState with EquatableMixin, PriorActiveStateMixin {
         asset,
         transactions,
         child,
+        clearing,
         isSubmitting,
         prior,
       ];
@@ -37,6 +40,7 @@ class TransactionsState with EquatableMixin, PriorActiveStateMixin {
         asset: asset,
         transactions: transactions,
         child: child,
+        clearing: clearing,
         isSubmitting: isSubmitting,
         prior: null,
       );

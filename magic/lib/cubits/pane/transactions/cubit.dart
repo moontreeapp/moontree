@@ -11,6 +11,7 @@ import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/transaction.dart';
+import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/calls/transactions.dart';
 import 'package:magic/services/services.dart';
@@ -47,6 +48,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     // should be Transaction then we convert to a display object in the ui or state.
     List<TransactionDisplay>? transactions,
     Widget? child,
+    bool? clearing,
     bool? isSubmitting,
   }) {
     emit(TransactionsState(
@@ -54,6 +56,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       asset: asset ?? state.asset,
       transactions: transactions ?? state.transactions,
       child: child ?? state.child,
+      clearing: clearing ?? state.clearing,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: state.withoutPrior,
     ));
@@ -101,6 +104,13 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
   void clearTransactions() {
     reachedEnd = false;
     update(transactions: []);
+  }
+
+  Future<void> slowlyClearTransactions() async {
+    reachedEnd = false;
+    update(clearing: true);
+    await Future.delayed(
+        fadeDuration, () => update(transactions: [], clearing: false));
   }
 
   /// update all the holding with the new rate

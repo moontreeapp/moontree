@@ -20,10 +20,12 @@ class WalletPage extends StatelessWidget {
           controller: cubits.pane.state.scroller!,
           shrinkWrap: true,
           itemCount: cubits.wallet.state.holdings.length + 1,
-          itemBuilder: (context, int index) =>
-              index < cubits.wallet.state.holdings.length
-                  ? HoldingItem(holding: cubits.wallet.state.holdings[index])
-                  : SizedBox(height: screen.navbar.height)));
+          itemBuilder: (context, int index) => index <
+                  cubits.wallet.state.holdings.length
+              ? cubits.wallet.state.holdings[index].symbol.endsWith('!')
+                  ? const SizedBox(height: 0)
+                  : HoldingItem(holding: cubits.wallet.state.holdings[index])
+              : SizedBox(height: screen.navbar.height)));
 }
 
 class HoldingItem extends StatelessWidget {
@@ -99,6 +101,7 @@ class SimpleIdenticon extends StatelessWidget {
   final double? height;
   final double? width;
   final TextStyle? style;
+  final bool? admin;
   const SimpleIdenticon({
     super.key,
     this.letter,
@@ -106,6 +109,7 @@ class SimpleIdenticon extends StatelessWidget {
     this.width,
     this.height,
     this.style,
+    this.admin,
   });
 
   @override
@@ -119,16 +123,42 @@ class SimpleIdenticon extends StatelessWidget {
                     .indexOf(letter!) %
                 AppColors.identicons.length];
 
-    return Container(
+    final identicon = Container(
       width: width ?? screen.iconLarge,
       height: height ?? screen.iconLarge,
       alignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
         color: chosenColor,
         shape: BoxShape.circle,
+        //border: Border.all(
+        //  //color: AppColors.primary, // Replace with your desired border color
+        //  width: 2.0,
+        //),
       ),
       child: Text(chosenLetter, style: style ?? AppText.identiconLarge),
     );
+    if (admin == true) {
+      return Stack(
+        children: <Widget>[
+          identicon,
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              width: screen.iconSmall,
+              height: screen.iconSmall,
+              alignment: Alignment.bottomCenter,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary,
+              ),
+              child: const Icon(Icons.star, color: Colors.white, size: 16),
+            ),
+          ),
+        ],
+      );
+    }
+    return identicon;
   }
 }
 

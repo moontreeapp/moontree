@@ -47,6 +47,9 @@ class ResponsiveHighlightedNameView extends StatelessWidget {
     this.alignment = Alignment.center,
   });
 
+  String adminize(String name) =>
+      name.endsWith('!') ? '${name.replaceAll('!', '')} (Admin)' : name;
+
   @override
   Widget build(BuildContext context) => BlocBuilder<HoldingCubit, HoldingState>(
       builder: (BuildContext context, HoldingState state) => Padding(
@@ -66,17 +69,17 @@ class ResponsiveHighlightedNameView extends StatelessWidget {
                                     style: parentsStyle ??
                                         AppText.parentsAssetName),
                                 Text(
-                                  state.holding.assetPathChild,
+                                  adminize(state.holding.assetPathChild),
                                   style: childStyle ?? AppText.childAssetName,
                                 ),
                               ]
                             : [
-                                Text(state.holding.name,
+                                Text(adminize(state.holding.name),
                                     style:
                                         childStyle ?? AppText.childAssetName),
                               ])
                         : [
-                            Text(state.holding.assetPathChild,
+                            Text(adminize(state.holding.assetPathChild),
                                 style: childStyle ?? AppText.childAssetName)
                           ],
                   )))));

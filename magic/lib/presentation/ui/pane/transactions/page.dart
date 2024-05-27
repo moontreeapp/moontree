@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
+import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/pane/transactions/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
+import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
@@ -18,15 +21,24 @@ class TransactionsPage extends StatelessWidget {
   Widget build(BuildContext context) =>
       BlocBuilder<TransactionsCubit, TransactionsState>(
           buildWhen: (previous, current) =>
-              previous.transactions.length != current.transactions.length,
+              previous.transactions.length != current.transactions.length ||
+              previous.clearing != current.clearing,
           builder: (BuildContext context, TransactionsState state) =>
-              ListView.builder(
-                  controller: cubits.pane.state.scroller,
-                  shrinkWrap: true,
-                  itemCount: cubits.transactions.state.transactions.length,
-                  itemBuilder: (context, index) => TransactionItem(
-                      display: cubits.transactions.state.transactions
-                          .elementAt(index))));
+
+              ///BlocBuilder<HoldingCubit, HoldingState>(
+              ///    buildWhen: (HoldingState previous, HoldingState current) =>
+              ///        previous.holding != current.holding,
+              ///    builder: (context, HoldingState holdingState) =>
+              AnimatedOpacity(
+                  duration: fastFadeDuration,
+                  opacity: state.clearing ? 0 : 1,
+                  child: ListView.builder(
+                      controller: cubits.pane.state.scroller,
+                      shrinkWrap: true,
+                      itemCount: cubits.transactions.state.transactions.length,
+                      itemBuilder: (context, index) => TransactionItem(
+                          display: cubits.transactions.state.transactions
+                              .elementAt(index)))));
 }
 
 class TransactionItem extends StatelessWidget {

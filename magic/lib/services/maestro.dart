@@ -311,6 +311,39 @@ class Maestro {
         () => cubits.transactions.populateTransactions(holding));
   }
 
+  /// when on a transactions list screen you clickon a coin at the top
+  Future<void> activateOtherHolding(Holding holding) async {
+    //cubits.transactions.slowlyClearTransactions().then((_) {
+    //    print('end');
+    //    maestro.activateHistory(widget.mainHolding);
+    //    setState(() => isAdminSelected = false);
+    //  });
+
+    cubits.pane.setOnBottomReached(null);
+    cubits.ignore.update(active: true);
+    cubits.fade.update(fade: FadeEvent.fadeOut);
+    await Future.delayed(fadeDuration, () {
+      cubits.holding.update(holding: holding);
+      cubits.transactions.clearTransactions();
+      cubits.transactions.populateTransactions(holding);
+    });
+    cubits.appbar.update(
+      leading: AppbarLeading.back,
+      title: '',
+      titleChild: const ResponsiveHighlightedNameView(),
+      onLead: _activeateHome,
+      onTitle: cubits.appbar.none,
+    );
+    cubits.pane.update(
+      active: true,
+      height: screen.pane.midHeight,
+      max: screen.pane.midHeightPercent,
+      min: screen.pane.midHeightPercent,
+    );
+    cubits.fade.update(fade: FadeEvent.fadeIn);
+    cubits.ignore.update(active: false);
+  }
+
   Future<void> activateSend() async {
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);

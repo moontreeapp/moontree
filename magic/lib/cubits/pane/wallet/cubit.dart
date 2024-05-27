@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
@@ -14,6 +15,7 @@ import 'package:magic/domain/utils/extensions/list.dart';
 import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/calls/holdings.dart';
 import 'package:magic/services/services.dart';
+import 'package:tuple/tuple.dart';
 
 part 'state.dart';
 
@@ -137,4 +139,22 @@ class WalletCubit extends UpdatableCubit<WalletState> {
             .map((e) => e.coin.toFiat(e.rate).value)
             .sumNumbers()));
   }
+
+  Holding? adminOf(Holding holding) =>
+      state.holdings.firstWhereOrNull((h) => h.symbol == '${holding.symbol}!');
+
+  Holding? mainOf(Holding holding) => state.holdings
+      .firstWhereOrNull((h) => h.symbol == holding.symbol.replaceAll('!', ''));
+
+  MainAdminPair mainAndAdminOf(Holding holding) => MainAdminPair(
+        main: holding.isAdmin ? mainOf(holding) : holding,
+        admin: holding.isAdmin ? holding : adminOf(holding),
+      );
+}
+
+class MainAdminPair {
+  final Holding? main;
+  final Holding? admin;
+  const MainAdminPair({required this.main, required this.admin});
+  bool get full => main != null && admin != null;
 }

@@ -107,6 +107,7 @@ class Holding extends Equatable {
       ? name.split('/').sublist(0, name.split('/').length - 1).join('/')
       : name;
   String get assetPathChild => name.split('/').last;
+  bool get isAdmin => symbol.endsWith('!') || name.endsWith('!');
 }
 
 class HoldingMetadata extends Equatable {

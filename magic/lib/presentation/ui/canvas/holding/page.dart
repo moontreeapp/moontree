@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
-import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
@@ -42,12 +42,45 @@ class AnimatedCoinSpec extends StatelessWidget {
                 height: screen.iconHuge,
                 width: screen.iconHuge,
               )
-            : SimpleIdenticon(
-                letter: cubits.holding.state.holding.symbol[0],
-                height: screen.iconHuge,
-                width: screen.iconHuge,
-                style: AppText.identiconHuge,
-              ),
+            : () {
+                final pair =
+                    cubits.wallet.mainAndAdminOf(cubits.holding.state.holding);
+                if (pair.full) {
+                  return TokenToggle(
+                    height: screen.iconHuge,
+                    width: screen.iconHuge,
+                    style: AppText.identiconHuge,
+                    mainHolding: pair.main!,
+                    adminHolding: pair.admin!,
+                  );
+                }
+                return SimpleIdenticon(
+                  letter: cubits.holding.state.holding.symbol[0],
+                  height: screen.iconHuge,
+                  width: screen.iconHuge,
+                  style: AppText.identiconHuge,
+                  admin: cubits.holding.state.holding.isAdmin,
+                );
+              }(),
+        //: Stack(children: [
+        //    Padding(
+        //      padding: const EdgeInsets.only(left: 8),
+        //      child: SimpleIdenticon(
+        //        letter: cubits.wallet
+        //            .adminOf(cubits.holding.state.holding)!
+        //            .symbol[0],
+        //        height: screen.iconHuge,
+        //        width: screen.iconHuge,
+        //        style: AppText.identiconHuge,
+        //      ),
+        //    ),
+        //    SimpleIdenticon(
+        //      letter: cubits.holding.state.holding.symbol[0],
+        //      height: screen.iconHuge,
+        //      width: screen.iconHuge,
+        //      style: AppText.identiconHuge,
+        //    ),
+        //  ]),
       );
   //Container(
   //    height: screen.iconHuge,
@@ -176,8 +209,10 @@ class AnimatedCoinSpec extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<HoldingCubit, HoldingState>(
       buildWhen: (HoldingState previous, HoldingState current) =>
-          current.active && previous.section != current.section,
-      builder: (context, state) {
+          current.active &&
+          (previous.section != current.section ||
+              previous.holding != current.holding),
+      builder: (context, HoldingState state) {
         double iconTop = 4;
         double valueTop = 4 + screen.iconHuge + 16;
         Coin? overrideCoin;
@@ -244,4 +279,118 @@ class AnimatedCoinSpec extends StatelessWidget {
                   child: buttons())),
         ]);
       });
+}
+
+class TokenToggle extends StatefulWidget {
+  final Holding mainHolding;
+  final Holding adminHolding;
+  final double height;
+  final double width;
+  final TextStyle style;
+
+  const TokenToggle({
+    super.key,
+    required this.mainHolding,
+    required this.adminHolding,
+    required this.height,
+    required this.width,
+    required this.style,
+  });
+
+  @override
+  TokenToggleState createState() => TokenToggleState();
+}
+
+class TokenToggleState extends State<TokenToggle> {
+  bool isAdminSelected = false;
+
+  void _toggleMain() {
+    if (isAdminSelected) {
+      maestro.activateOtherHolding(widget.mainHolding);
+      setState(() => isAdminSelected = false);
+    }
+  }
+
+  void _toggleAdmin() {
+    if (!isAdminSelected) {
+      maestro.activateOtherHolding(widget.adminHolding);
+      setState(() => isAdminSelected = true);
+    }
+  }
+
+  double? _disapearMain() {
+    if (isAdminSelected &&
+        cubits.holding.state.section != HoldingSection.none) {
+      return 0.0;
+    }
+    return null;
+  }
+
+  double? _disapearAdmin() {
+    if (!isAdminSelected &&
+        cubits.holding.state.section != HoldingSection.none) {
+      return 0.0;
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HoldingCubit, HoldingState>(
+        buildWhen: (HoldingState previous, HoldingState current) =>
+            previous.section != current.section,
+        builder: (context, HoldingState state) => SizedBox(
+            width: widget.width * 4 + 16,
+            height: widget.height,
+            child: Stack(alignment: Alignment.bottomCenter, children: [
+              AnimatedPositioned(
+                  left: isAdminSelected ? 0 : widget.width * 1 + 32,
+                  duration: fadeDuration,
+                  curve: Curves.easeInOut,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: _toggleMain,
+                        child: AnimatedOpacity(
+                          opacity:
+                              _disapearMain() ?? (isAdminSelected ? 0.38 : 1.0),
+                          duration: fadeDuration,
+                          child: AnimatedScale(
+                            scale: isAdminSelected ? 0.72 : 1.0,
+                            duration: fadeDuration,
+                            child: SimpleIdenticon(
+                              letter: widget.mainHolding.symbol[0],
+                              height: widget.height,
+                              width: widget.width,
+                              style: widget.style,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 32),
+                      GestureDetector(
+                        onTap: _toggleAdmin,
+                        child: AnimatedOpacity(
+                          opacity: _disapearAdmin() ??
+                              (isAdminSelected ? 1.0 : 0.38),
+                          duration: fadeDuration,
+                          child: AnimatedScale(
+                            scale: isAdminSelected ? 1.0 : 0.72,
+                            duration: fadeDuration,
+                            child: SimpleIdenticon(
+                              letter: widget.adminHolding.symbol[0],
+                              height: widget.height,
+                              width: widget.width,
+                              style: widget.style,
+                              admin: true,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ))
+            ])));
+  }
 }

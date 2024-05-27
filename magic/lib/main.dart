@@ -138,12 +138,9 @@ class MaestroLayer extends StatelessWidget {
     cubits.pane.update(height: screen.pane.midHeight);
     cubits.ignore.update(active: false);
     cubits.keys.load().then((x) {
-      print('cubits.keys.state.props');
-      print(cubits.keys.state.props);
       cubits.receive.populateAddresses(Blockchain.ravencoinMain);
     });
     subscription.setupSubscriptions(cubits.keys.master);
-    print(subscription.starttime);
     deriveInBackground();
   }
 }
