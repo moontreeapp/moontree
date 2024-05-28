@@ -125,6 +125,9 @@ flutter:
     - assets/animated/
 
   fonts:
+    - family: Pacifico
+      fonts:
+        - asset: fonts/Pacifico/Pacifico-Regular.ttf
     - family: Nunito
       fonts:
         - asset: fonts/Nunito/Nunito-VariableFont_wght.ttf

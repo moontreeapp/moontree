@@ -25,6 +25,7 @@ class GlobalCubits {
   final appbar = AppbarCubit();
   final navbar = NavbarCubit();
   final panel = PanelCubit();
+  final welcome = WelcomeCubit();
   final toast = ToastCubit();
   final tutorial = TutorialCubit();
   final ignore = IgnoreCubit();
@@ -49,6 +50,7 @@ class GlobalCubits {
         ignore,
         app,
         keys,
+        welcome,
       ];
   List<UpdatableCubit> get paneCubits =>
       [wallet, transactions, transaction, send, receive, swap, manage];
@@ -75,6 +77,7 @@ class GlobalCubits {
         BlocProvider<IgnoreCubit>(create: (context) => ignore),
         BlocProvider<AppCubit>(create: (context) => app),
         BlocProvider<KeysCubit>(create: (context) => keys),
+        BlocProvider<WelcomeCubit>(create: (context) => welcome),
       ];
 
   GlobalCubits();

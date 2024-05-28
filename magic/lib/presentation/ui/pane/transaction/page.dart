@@ -90,7 +90,9 @@ class TransactionPage extends StatelessWidget {
                 TransactionItem(
                     label: 'Amount:',
                     overrideDisplay: SimpleCoinSplitView(
-                        mode: DifficultyMode.hard, coin: display.sats.toCoin()),
+                        mode: DifficultyMode.hard,
+                        coin: display.sats.toCoin(),
+                        incoming: display.incoming),
                     display: <TextSpan>[
                       TextSpan(
                           text:

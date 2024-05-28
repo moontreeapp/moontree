@@ -8,9 +8,14 @@ Future<void> deriveInBackground() async {
   Future<void> deriveAll() async {
     for (final mnemonicWallet in cubits.keys.master.mnemonicWallets) {
       for (final blockchain in Blockchain.values) {
+        while (cubits.app.animating) {
+          await Future.delayed(const Duration(milliseconds: 500));
+        }
         final seedWallet = mnemonicWallet.seedWallet(blockchain);
         for (final exposure in Exposure.values) {
-          await Future.delayed(const Duration(milliseconds: 500));
+          while (cubits.app.animating) {
+            await Future.delayed(const Duration(milliseconds: 500));
+          }
           if (seedWallet.highestIndex.isEmpty) {
             seedWallet.derive({
               exposure: (await ReceiveCall(

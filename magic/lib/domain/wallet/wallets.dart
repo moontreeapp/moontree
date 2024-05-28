@@ -14,6 +14,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
@@ -121,6 +122,8 @@ class MnemonicWallet extends Jsonable {
     return _seed!;
   }
 
+  List<String> get words => mnemonic.split(' ');
+
   SeedWallet seedWallet(Blockchain blockchain) {
     seedWallets[blockchain] ??= SeedWallet(
         blockchain: blockchain,
@@ -176,7 +179,7 @@ class SeedWallet {
     return sub;
   }
 
-  bool derive([Map<Exposure, int>? nextIndexByExposure]) {
+  Future<bool> derive([Map<Exposure, int>? nextIndexByExposure]) async {
     nextIndexByExposure = nextIndexByExposure ??
         {
           Exposure.external: 0,
@@ -187,6 +190,9 @@ class SeedWallet {
       gap[exposure] ??= 0; // this concept may be irrelevant
       while (gap[exposure]! < 20 &&
           highestIndex[exposure]! < nextIndexByExposure[exposure]!) {
+        while (cubits.app.animating) {
+          await Future.delayed(Duration(milliseconds: 100));
+        }
         subwallet(hdIndex: highestIndex[exposure]! + 1, exposure: exposure);
         highestIndex[exposure] = highestIndex[exposure]! + 1;
         gap[exposure] = gap[exposure]! + 1;

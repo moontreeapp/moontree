@@ -232,10 +232,12 @@ class CoinSplitView extends StatelessWidget {
 class SimpleCoinSplitView extends StatelessWidget {
   final Coin coin;
   final DifficultyMode? mode;
+  final bool incoming;
   const SimpleCoinSplitView({
     super.key,
     required this.coin,
     this.mode,
+    this.incoming = false,
   });
 
   @override
@@ -255,16 +257,37 @@ class SimpleCoinSplitView extends StatelessWidget {
               text: TextSpan(
                   style: Theme.of(context).textTheme.body1,
                   children: <TextSpan>[
+                    /// I don't think the plus and minus is necessary.
+                    if (incoming)
+                      TextSpan(
+                          text: '+',
+                          style: Theme.of(context).textTheme.body1.copyWith(
+                                height: 0,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.success,
+                              ))
+                    else
+                      TextSpan(
+                          text: '-',
+                          style: Theme.of(context).textTheme.body1.copyWith(
+                                height: 0,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.black.withOpacity(.67),
+                              )),
                     TextSpan(
                         text: coin.whole(),
                         style: Theme.of(context).textTheme.body1.copyWith(
                               height: 0,
                               fontWeight: coin.coin > 0
-                                  ? FontWeight.w600
+                                  ? FontWeight.w700
                                   : FontWeight.w400,
-                              color: coin.coin > 0
-                                  ? AppColors.black60
-                                  : Colors.black45,
+                              color: incoming
+                                  ? (coin.coin > 0
+                                      ? AppColors.success
+                                      : AppColors.success.withOpacity(.45))
+                                  : (coin.coin > 0
+                                      ? AppColors.black.withOpacity(.67)
+                                      : Colors.black38),
                             )),
                     //TextSpan(
                     //    text: coin.spacedPart(),
@@ -294,11 +317,15 @@ class SimpleCoinSplitView extends StatelessWidget {
                             style: Theme.of(context).textTheme.body1.copyWith(
                                   height: 0,
                                   fontWeight: e.bolded && coin.coin == 0
-                                      ? FontWeight.w600
+                                      ? FontWeight.w700
                                       : FontWeight.w400,
-                                  color: e.bolded && coin.coin == 0
-                                      ? AppColors.black60
-                                      : Colors.black45,
+                                  color: incoming
+                                      ? (e.bolded && coin.coin == 0
+                                          ? AppColors.success
+                                          : AppColors.success.withOpacity(.87))
+                                      : (e.bolded && coin.coin == 0
+                                          ? AppColors.black.withOpacity(.67)
+                                          : Colors.black38),
                                 ))
                     ],
                   ])),

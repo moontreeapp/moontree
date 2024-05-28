@@ -47,13 +47,13 @@ class Maestro {
     }
     switch (section) {
       case NavbarSection.wallet:
-        _activeateHome();
+        activeateHome();
         break;
       case NavbarSection.mint:
-        _activeateMint();
+        activeateMint();
         break;
       case NavbarSection.swap:
-        _activeateSwap();
+        activeateSwap();
         break;
       case NavbarSection.none:
         break;
@@ -189,7 +189,7 @@ class Maestro {
   //  }
   //}
 
-  Future<void> _activeateHome() async {
+  Future<void> activeateHome() async {
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet, active: true);
@@ -229,7 +229,7 @@ class Maestro {
     cubits.ignore.update(active: false);
   }
 
-  Future<void> _activeateMint() async {
+  Future<void> activeateMint() async {
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(section: NavbarSection.mint, active: true);
@@ -238,7 +238,7 @@ class Maestro {
     cubits.ignore.update(active: false);
   }
 
-  void _activeateSwap() {
+  void activeateSwap() {
     /// place for testing stuff since mint is unused:
     ///
     //print(makeMnemonic());
@@ -268,6 +268,7 @@ class Maestro {
   }
 
   Future<void> activateHistory([Holding? holding]) async {
+    cubits.app.animating = true;
     cubits.transactions.populateTransactions(holding);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
@@ -276,7 +277,7 @@ class Maestro {
       leading: AppbarLeading.back,
       title: '',
       titleChild: const ResponsiveHighlightedNameView(),
-      onLead: _activeateHome,
+      onLead: activeateHome,
       onTitle: cubits.appbar.none,
     );
     cubits.menu.update(active: false);
@@ -309,16 +310,11 @@ class Maestro {
     cubits.ignore.update(active: false);
     cubits.pane.setOnBottomReached(
         () => cubits.transactions.populateTransactions(holding));
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 
   /// when on a transactions list screen you clickon a coin at the top
   Future<void> activateOtherHolding(Holding holding) async {
-    //cubits.transactions.slowlyClearTransactions().then((_) {
-    //    print('end');
-    //    maestro.activateHistory(widget.mainHolding);
-    //    setState(() => isAdminSelected = false);
-    //  });
-
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
@@ -331,7 +327,7 @@ class Maestro {
       leading: AppbarLeading.back,
       title: '',
       titleChild: const ResponsiveHighlightedNameView(),
-      onLead: _activeateHome,
+      onLead: activeateHome,
       onTitle: cubits.appbar.none,
     );
     cubits.pane.update(

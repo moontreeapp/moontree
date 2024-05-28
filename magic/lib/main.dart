@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/presentation/ui/welcome/welcome.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
@@ -96,10 +97,11 @@ class MaestroLayer extends StatelessWidget {
                 AppbarLayer(),
                 CanvasLayer(),
                 PaneLayer(),
-                NavbarLayer(),
+                //NavbarLayer(),
                 PanelLayer(),
                 ToastLayer(),
                 IgnoreLayer(),
+                WelcomeLayer(),
                 //const TutorialLayer(),
               ],
             ),
@@ -127,6 +129,7 @@ class MaestroLayer extends StatelessWidget {
           ? 0
           : MediaQuery.of(context).padding.top,
     );
+    cubits.welcome.update(active: true, child: const WelcomeBackScreen());
     cubits.menu.update(active: true);
     cubits.ignore.update(active: true);
     cubits.pane.update(
@@ -138,10 +141,10 @@ class MaestroLayer extends StatelessWidget {
     cubits.pane.update(height: screen.pane.midHeight);
     cubits.ignore.update(active: false);
     cubits.keys.load().then((x) {
-      cubits.receive.populateAddresses(Blockchain.ravencoinMain);
+      subscription.setupSubscriptions(cubits.keys.master);
+      cubits.wallet.populateAssets().then((_) => maestro.activeateHome());
+      //maestro.activeateHome();
     });
-    subscription.setupSubscriptions(cubits.keys.master);
-    deriveInBackground();
   }
 }
 
@@ -232,3 +235,4 @@ class MaestroLayer extends StatelessWidget {
 //    );
 //  }
 //}
+

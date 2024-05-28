@@ -39,23 +39,39 @@ class ReceivePage extends StatelessWidget {
                         data: cubits.receive.state.address,
                         eyeStyle: const QrEyeStyle(
                             eyeShape: QrEyeShape.square,
-                            color: AppColors.primary),
+                            color: AppColors.black),
                         dataModuleStyle: const QrDataModuleStyle(
                             dataModuleShape: QrDataModuleShape.circle,
-                            color: AppColors.primary),
+                            color: AppColors.black),
                         //foregroundColor: AppColors.primary,
                         //embeddedImage: Image.asset(
                         //        'assets/logo/moontree_logo.png')
                         //    .image,
                         size: screen.width - 32 * 2))),
-            SelectableText(
-              cubits.receive.state.address,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall!
-                  .copyWith(color: AppColors.black87),
-              showCursor: true,
-            )
+            SelectableText.rich(
+              TextSpan(
+                text: '',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: AppColors.black87),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: cubits.receive.state.address.substring(0, 6),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text: cubits.receive.state.address
+                        .substring(6, cubits.receive.state.address.length - 6),
+                  ),
+                  TextSpan(
+                    text: cubits.receive.state.address
+                        .substring(cubits.receive.state.address.length - 6),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
           ],
         )),
         Row(

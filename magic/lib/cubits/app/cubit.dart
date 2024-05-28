@@ -6,6 +6,7 @@ part 'state.dart';
 
 class AppCubit extends UpdatableCubit<AppState> {
   AppCubit() : super(const AppState());
+  bool animating = false;
   @override
   String get key => 'app';
   @override

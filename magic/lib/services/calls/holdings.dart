@@ -34,6 +34,9 @@ class HoldingBalancesCall extends ServerCall {
     //print('roots: $roots');
     //xpub6EtVexS6kuhFVjQNB1qGSUGumEnQVF3xp3926wy92W4GJS7ymvhbWkVzBTjXQ4u8EixkRXmE8N538zei6kCdAyZkWKcZBZ7BSdYm9uNPn9i
     //xpub6EtVexS6kuhFZ22PBCWPC97VNkZ9vufPdrTp2ZDDApasumxt8f8CREs4Zv6nDdFKByp8BPZ5tFFj6ZG4eeerNkDM7mJ2PZfBDeB5LjdRiXY
+    if (roots.isEmpty && h160s.isEmpty) {
+      return [];
+    }
     return await runCall(() async => await client.balances.get(
           chainName: chain.name,
           xpubkeys: roots,
@@ -60,7 +63,7 @@ class HoldingBalancesCall extends ServerCall {
     for (final txView in holdings) {
       txView.chain = blockchain.name;
     }
-    
+
     return translate(sortedHoldings(holdings, blockchain.symbol), blockchain);
   }
 

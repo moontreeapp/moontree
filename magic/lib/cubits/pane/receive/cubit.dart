@@ -73,8 +73,8 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
         address: cubits.keys.master.mnemonicWallets.first
             .seedWallet(blockchain)
             .externals
-            .last
-            .address);
+            .lastOrNull
+            ?.address);
   }
 
   Future<void> populateReceiveAddress(Blockchain blockchain) async {

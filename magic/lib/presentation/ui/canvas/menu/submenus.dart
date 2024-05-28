@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/presentation/theme/text.dart';
+import 'package:magic/presentation/ui/canvas/menu/subitems.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/services/services.dart';
@@ -70,21 +71,10 @@ class SettingsSubMenu extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
       buildWhen: (MenuState previous, MenuState current) =>
           current.active && (previous.setting != current.setting),
-      builder: (context, state) => GestureDetector(
-          onTap: cubits.menu.toggleSetting,
-          child: Container(
-              height: screen.menu.itemHeight,
-              color: Colors.transparent,
-              child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Icon(
-                    state.setting
-                        ? Icons.notifications_on_rounded
-                        : Icons.notifications_off_rounded,
-                    color: Colors.white),
-                const SizedBox(width: 16),
-                Text('Notification: ${state.setting ? 'On' : 'Off'}',
-                    style: AppText.h2.copyWith(color: Colors.white)),
-              ]))));
+      builder: (context, state) => Column(children: [
+            NotificationItem(state: state),
+            const BackupItem(),
+          ]));
 
   //Text('Some Setting', style: AppText.h1.copyWith(color: Colors.white));
 }

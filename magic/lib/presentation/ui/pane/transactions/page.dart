@@ -85,7 +85,9 @@ class TransactionItem extends StatelessWidget {
         //                  display.incoming ? AppColors.success : AppColors.black,
         //             ))),
         trailing: SimpleCoinSplitView(
-            mode: DifficultyMode.hard, coin: display.sats.toCoin())
+            mode: DifficultyMode.hard,
+            coin: display.sats.toCoin(),
+            incoming: display.incoming)
         //CoinSplitView(display: display, coin: display.sats.toCoin())
         //trailing: CoinView(
         //    coin: display.sats.toCoin(),
