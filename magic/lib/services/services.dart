@@ -36,7 +36,10 @@ void init({
   maestro = Maestro();
   storage = const FlutterSecureStorage();
   //server = ServerCall();
-  rates = RateWaiter()..init(RVNtoFiat());
+  rates = RateWaiter(
+      evrGrabber: RateGrabber(symbol: 'EVR'),
+      rvnGrabber: RateGrabber(symbol: 'RVN'))
+    ..init();
   initialized = true;
 
   //api.connect();

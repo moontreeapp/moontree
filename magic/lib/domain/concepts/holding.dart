@@ -59,9 +59,9 @@ class Holding extends Equatable {
     String? root,
     HoldingMetadata? metadata,
     Sats? sats,
+    double? rate,
     BalanceView? balanceView,
     Blockchain? blockchain,
-    double? rate,
   }) =>
       Holding(
           name: name ?? balanceView?.symbol ?? this.name,
@@ -88,6 +88,7 @@ class Holding extends Equatable {
         root,
         metadata,
         sats,
+        rate,
         balanceView,
         blockchain,
       ];

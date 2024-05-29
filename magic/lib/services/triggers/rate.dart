@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/money/currency.dart' as currency;
-import 'package:magic/domain/concepts/money/currency.dart';
 import 'package:magic/domain/concepts/money/security.dart';
 import 'package:magic/domain/concepts/storage.dart';
 import 'package:magic/services/rate.dart';
@@ -12,43 +11,98 @@ import 'package:magic/services/services.dart';
 import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
 class RateWaiter extends Trigger {
+  final RateGrabber evrGrabber;
+  final RateGrabber rvnGrabber;
   // eventually (once swaps matter) we should push this to the device rather than pull every 10 minutes
   static const Duration _rateWait = Duration(minutes: 1);
   Rate? rvnUsdRate;
   Rate? evrUsdRate;
 
-  void init(RVNtoFiat rvnRate) {
-    _saveRate(rvnRate);
+  RateWaiter({required this.evrGrabber, required this.rvnGrabber});
+
+  void init() {
+    void saveRates() {
+      _saveRate(evrGrabber);
+      _saveRate(rvnGrabber);
+    }
+
+    saveRates();
     when(
       thereIsA: Stream<dynamic>.periodic(_rateWait),
-      doThis: (_) async => _saveRate(rvnRate), // only gets USD/RVN right now
+      doThis: (_) async => saveRates(),
     );
   }
 
-  Future<double> _rate(RVNtoFiat rvnRate) async =>
-      await rvnRate.get() ??
-      rvnUsdRate?.rate ??
-      double.tryParse(await storage.read(
-              key: StorageKey.rate.key(
-            const Rate(
-              base:
-                  Security(blockchain: Blockchain.ravencoinMain, symbol: 'RVN'),
-              quote: Currency.usd,
-              rate: 0,
-            ).id,
-          )) ??
-          '0') ??
-      0;
+  Future<void> _saveRate(RateGrabber rateGrabber) async =>
+      _save(rateGrabber: rateGrabber, rate: await _rate(rateGrabber));
 
-  Future<void> _save(double rate) async {
-    rvnUsdRate = Rate(
-      base: const Security(symbol: 'RVN', blockchain: Blockchain.ravencoinMain),
-      quote: currency.Currency.usd,
-      rate: rate,
-    );
-    cubits.wallet.newRate(rate: rvnUsdRate!);
+  Future<double?> _getExistingRate(RateGrabber rateGrabber) async {
+    Future<double?> fromCache() async => double.tryParse(await storage.read(
+            key: StorageKey.rate
+                .key(_toRate(rateGrabber: rateGrabber, rate: 0)!.id)) ??
+        '');
+
+    switch (rateGrabber.symbol) {
+      case 'EVR':
+        return evrUsdRate?.rate ?? (await fromCache());
+      case 'RVN':
+        return rvnUsdRate?.rate ?? (await fromCache());
+      default:
+        return null;
+    }
   }
 
-  Future<void> _saveRate(RVNtoFiat rvnRate) async =>
-      _save(await _rate(rvnRate));
+  Future<double> _rate(RateGrabber rateGrabber) async =>
+      (await rateGrabber.get()) ?? await _getExistingRate(rateGrabber) ?? 0;
+
+  Future<double?> getRateOf(String symbol) async {
+    if (symbol == 'EVR') {
+      return await _rate(evrGrabber);
+    }
+    if (symbol == 'RVN') {
+      return await _rate(rvnGrabber);
+    }
+    return null;
+  }
+
+  Rate? _toRate({required RateGrabber rateGrabber, required double rate}) {
+    switch (rateGrabber.symbol) {
+      case 'EVR':
+        return Rate(
+          rate: rate,
+          quote: currency.Currency.usd,
+          base: Security(
+            symbol: rateGrabber.symbol,
+            blockchain: Blockchain.evrmoreMain,
+          ),
+        );
+      case 'RVN':
+        return Rate(
+          rate: rate,
+          quote: currency.Currency.usd,
+          base: Security(
+            symbol: rateGrabber.symbol,
+            blockchain: Blockchain.ravencoinMain,
+          ),
+        );
+      default:
+        return null;
+    }
+  }
+
+  void _save({required RateGrabber rateGrabber, required double rate}) {
+    print('saving ${rateGrabber.symbol}, rate: $rate');
+    switch (rateGrabber.symbol) {
+      case 'EVR':
+        evrUsdRate = _toRate(rateGrabber: rateGrabber, rate: rate);
+        cubits.wallet.newRate(rate: evrUsdRate!);
+        return;
+      case 'RVN':
+        rvnUsdRate = _toRate(rateGrabber: rateGrabber, rate: rate);
+        cubits.wallet.newRate(rate: rvnUsdRate!);
+        return;
+      default:
+        return;
+    }
+  }
 }

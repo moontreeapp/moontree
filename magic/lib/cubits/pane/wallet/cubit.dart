@@ -15,7 +15,6 @@ import 'package:magic/domain/utils/extensions/list.dart';
 import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/calls/holdings.dart';
 import 'package:magic/services/services.dart';
-import 'package:tuple/tuple.dart';
 
 part 'state.dart';
 
@@ -62,14 +61,16 @@ class WalletCubit extends UpdatableCubit<WalletState> {
     // remember to order by currency first, amount second, alphabetical third
     update(isSubmitting: true);
     final holdings = _sort(_newRateThese(
-            rate: rates.evrUsdRate,
+            symbol: 'EVR',
+            rate: await rates.getRateOf('EVR'),
             holdings: await HoldingBalancesCall(
               blockchain: Blockchain.evrmoreMain,
               mnemonicWallets: cubits.keys.master.mnemonicWallets,
               keypairWallets: cubits.keys.master.keypairWallets,
             ).call()) +
         _newRateThese(
-            rate: rates.rvnUsdRate,
+            symbol: 'RVN',
+            rate: await rates.getRateOf('RVN'),
             holdings: await HoldingBalancesCall(
               blockchain: Blockchain.ravencoinMain,
               mnemonicWallets: cubits.keys.master.mnemonicWallets,
@@ -114,28 +115,30 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   /// update all the holding with the new rate
   void newRate({required Rate rate}) {
     if (state.holdings.isEmpty) return;
-    update(holdings: _newRateThese(rate: rate, holdings: state.holdings));
-    cacheRate(rate);
+    final holdings = _newRateThese(
+        symbol: rate.base.symbol, rate: rate.rate, holdings: state.holdings);
+    update(holdings: holdings);
+    cacheRate(rate, holdings);
   }
 
   /// update all the holding with the new rate
-  List<Holding> _newRateThese({Rate? rate, required List<Holding> holdings}) {
-    if (holdings.isEmpty || rate == null || rate.rate <= 0) {
+  List<Holding> _newRateThese(
+      {required String symbol, double? rate, required List<Holding> holdings}) {
+    if (holdings.isEmpty || rate == null || rate <= 0) {
       return holdings;
     }
     return holdings
-        .map((e) =>
-            e.symbol == rate.base.symbol ? e.copyWith(rate: rate.rate) : e)
+        .map((e) => e.symbol == symbol ? e.copyWith(rate: rate) : e)
         .toList();
   }
 
-  void cacheRate(Rate rate) {
+  void cacheRate(Rate rate, [List<Holding>? holdings]) {
     // save to disk, so we can load it on next app start
     storage.write(
         key: StorageKey.rate.key(rate.id), value: rate.rate.toStringAsFixed(4));
     // update balance
     cubits.balance.update(
-        portfolioValue: Fiat(state.holdings
+        portfolioValue: Fiat((holdings ?? state.holdings)
             .map((e) => e.coin.toFiat(e.rate).value)
             .sumNumbers()));
   }
