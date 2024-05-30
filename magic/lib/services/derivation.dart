@@ -4,9 +4,12 @@ import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/services/calls/receive.dart';
 
-Future<void> deriveInBackground() async {
+Future<void> deriveInBackground([String? mnemonic]) async {
   Future<void> deriveAll() async {
     for (final mnemonicWallet in cubits.keys.master.mnemonicWallets) {
+      if (mnemonic != null && mnemonicWallet.mnemonic != mnemonic) {
+        continue;
+      }
       for (final blockchain in Blockchain.values) {
         while (cubits.app.animating) {
           await Future.delayed(const Duration(milliseconds: 500));

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/blockchain/mnemonic';
 import 'package:magic/domain/concepts/storage.dart';
 import 'package:magic/domain/wallet/utils.dart';
 import 'package:magic/domain/wallet/wallets.dart';
@@ -43,6 +44,14 @@ class KeysCubit extends UpdatableCubit<KeysState> {
       submitting: submitting ?? state.submitting,
       prior: state.withoutPrior,
     ));
+  }
+
+  bool addMnemonic(String mnemonic) {
+    if (state.mnemonics.contains(mnemonic)) return true;
+    if (validateMnemonic(mnemonic)) return false;
+    update(mnemonics: [...state.mnemonics, mnemonic]);
+    build();
+    return true;
   }
 
   Future<void> load() async {

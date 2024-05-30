@@ -74,6 +74,7 @@ class SettingsSubMenu extends StatelessWidget {
       builder: (context, state) => Column(children: [
             NotificationItem(state: state),
             const BackupItem(),
+            const ImportItem(),
           ]));
 
   //Text('Some Setting', style: AppText.h1.copyWith(color: Colors.white));

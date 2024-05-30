@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
-import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
@@ -29,6 +28,9 @@ class ReceivePage extends StatelessWidget {
                   }
                   Clipboard.setData(
                       ClipboardData(text: cubits.receive.state.address));
+                  cubits.toast.flash(
+                      msg: const ToastMessage(
+                          title: 'copied', text: 'to clipboard'));
                 },
                 child: Container(
                     height: screen.width - 32 * 4,
@@ -41,7 +43,7 @@ class ReceivePage extends StatelessWidget {
                             eyeShape: QrEyeShape.square,
                             color: AppColors.black),
                         dataModuleStyle: const QrDataModuleStyle(
-                            dataModuleShape: QrDataModuleShape.circle,
+                            dataModuleShape: QrDataModuleShape.square,
                             color: AppColors.black),
                         //foregroundColor: AppColors.primary,
                         //embeddedImage: Image.asset(

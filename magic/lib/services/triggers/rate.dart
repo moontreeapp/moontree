@@ -14,7 +14,7 @@ class RateWaiter extends Trigger {
   final RateGrabber evrGrabber;
   final RateGrabber rvnGrabber;
   // eventually (once swaps matter) we should push this to the device rather than pull every 10 minutes
-  static const Duration _rateWait = Duration(minutes: 1);
+  static const Duration _rateWait = Duration(minutes: 10);
   Rate? rvnUsdRate;
   Rate? evrUsdRate;
 
