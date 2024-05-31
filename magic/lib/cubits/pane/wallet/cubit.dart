@@ -57,7 +57,12 @@ class WalletCubit extends UpdatableCubit<WalletState> {
     ));
   }
 
-  Future<void> populateAssets() async {
+  void clearAssets() {
+    update(active: false);
+    update(holdings: [], active: true);
+  }
+
+  Future<bool> populateAssets() async {
     // remember to order by currency first, amount second, alphabetical third
     update(isSubmitting: true);
     final holdings = _sort(_newRateThese(
@@ -83,6 +88,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
     if (rates.evrUsdRate != null) {
       cacheRate(rates.evrUsdRate!);
     }
+    return true;
   }
 
   void populateAssetsSpoof() {

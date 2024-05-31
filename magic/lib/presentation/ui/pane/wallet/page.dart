@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/pane/wallet/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/presentation/theme/theme.dart';
@@ -14,18 +15,22 @@ class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
-      buildWhen: (previous, current) => previous.mode != current.mode,
-      builder: (BuildContext context, MenuState state) => ListView.builder(
-          controller: cubits.pane.state.scroller!,
-          shrinkWrap: true,
-          itemCount: cubits.wallet.state.holdings.length + 1,
-          itemBuilder: (context, int index) => index <
-                  cubits.wallet.state.holdings.length
-              ? cubits.wallet.state.holdings[index].symbol.endsWith('!')
-                  ? const SizedBox(height: 0)
-                  : HoldingItem(holding: cubits.wallet.state.holdings[index])
-              : SizedBox(height: screen.navbar.height)));
+  Widget build(BuildContext context) => BlocBuilder<WalletCubit, WalletState>(
+      buildWhen: (previous, current) => previous.holdings != current.holdings,
+      builder: (BuildContext context, WalletState state) =>
+          BlocBuilder<MenuCubit, MenuState>(
+              buildWhen: (previous, current) => previous.mode != current.mode,
+              builder: (BuildContext context, MenuState state) =>
+                  ListView.builder(
+                      controller: cubits.pane.state.scroller!,
+                      shrinkWrap: true,
+                      itemCount: cubits.wallet.state.holdings.length,
+                      itemBuilder: (context, int index) => cubits
+                              .wallet.state.holdings[index].symbol
+                              .endsWith('!')
+                          ? const SizedBox(height: 0)
+                          : HoldingItem(
+                              holding: cubits.wallet.state.holdings[index]))));
 }
 
 class HoldingItem extends StatelessWidget {
@@ -64,7 +69,7 @@ class HoldingItem extends StatelessWidget {
                     .textTheme
                     .body1
                     .copyWith(color: Colors.black87))),
-        subtitle: SimpleCoinSplitView(coin: holding.coin),
+        subtitle: SimpleCoinSplitView(coin: holding.coin, incoming: null),
         trailing: FiatView(fiat: holding.coin.toFiat(holding.rate)),
       );
 }

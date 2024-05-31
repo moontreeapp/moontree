@@ -232,7 +232,7 @@ class CoinSplitView extends StatelessWidget {
 class SimpleCoinSplitView extends StatelessWidget {
   final Coin coin;
   final DifficultyMode? mode;
-  final bool incoming;
+  final bool? incoming;
   const SimpleCoinSplitView({
     super.key,
     required this.coin,
@@ -258,7 +258,7 @@ class SimpleCoinSplitView extends StatelessWidget {
                   style: Theme.of(context).textTheme.body1,
                   children: <TextSpan>[
                     /// I don't think the plus and minus is necessary.
-                    if (incoming)
+                    if (incoming == true)
                       TextSpan(
                           text: '+',
                           style: Theme.of(context).textTheme.body1.copyWith(
@@ -266,7 +266,7 @@ class SimpleCoinSplitView extends StatelessWidget {
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.success,
                               ))
-                    else
+                    else if (incoming == false)
                       TextSpan(
                           text: '-',
                           style: Theme.of(context).textTheme.body1.copyWith(
@@ -281,7 +281,7 @@ class SimpleCoinSplitView extends StatelessWidget {
                               fontWeight: coin.coin > 0
                                   ? FontWeight.w700
                                   : FontWeight.w400,
-                              color: incoming
+                              color: incoming == true
                                   ? (coin.coin > 0
                                       ? AppColors.success
                                       : AppColors.success.withOpacity(.45))
@@ -319,7 +319,7 @@ class SimpleCoinSplitView extends StatelessWidget {
                                   fontWeight: e.bolded && coin.coin == 0
                                       ? FontWeight.w700
                                       : FontWeight.w400,
-                                  color: incoming
+                                  color: incoming == true
                                       ? (e.bolded && coin.coin == 0
                                           ? AppColors.success
                                           : AppColors.success.withOpacity(.87))

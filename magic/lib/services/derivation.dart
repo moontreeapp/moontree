@@ -49,5 +49,5 @@ Future<void> deriveInBackground([String? mnemonic]) async {
   //  }
   //  //body.add(message);
   //});
-  deriveAll();
+  await deriveAll();
 }

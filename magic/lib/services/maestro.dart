@@ -11,7 +11,6 @@ import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/assets/names.dart';
 import 'package:magic/services/services.dart';
-import 'package:magic/domain/wallet/utils.dart';
 
 class Maestro {
   List<NavbarSection> sectionsHistory = [];
@@ -190,6 +189,7 @@ class Maestro {
   //}
 
   Future<void> activeateHome() async {
+    cubits.app.animating = true;
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet, active: true);
@@ -227,6 +227,7 @@ class Maestro {
     cubits.fade.update(fade: FadeEvent.fadeIn);
     await Future.delayed(slideDuration);
     cubits.ignore.update(active: false);
+    cubits.app.animating = false;
   }
 
   Future<void> activeateMint() async {
@@ -315,6 +316,7 @@ class Maestro {
 
   /// when on a transactions list screen you clickon a coin at the top
   Future<void> activateOtherHolding(Holding holding) async {
+    cubits.app.animating = true;
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
@@ -338,9 +340,11 @@ class Maestro {
     );
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 
   Future<void> activateSend() async {
+    cubits.app.animating = true;
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
@@ -363,9 +367,11 @@ class Maestro {
     cubits.send.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 
   Future<void> activateReceive(Blockchain blockchain) async {
+    cubits.app.animating = true;
     cubits.receive.populateReceiveAddress(blockchain);
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
@@ -390,9 +396,11 @@ class Maestro {
     cubits.receive.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 
   Future<void> activateTransaction(TransactionDisplay transaction) async {
+    cubits.app.animating = true;
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
@@ -419,9 +427,11 @@ class Maestro {
     cubits.transaction.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 
   Future<void> activateSwapOnHolding() async {
+    cubits.app.animating = true;
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
@@ -445,9 +455,11 @@ class Maestro {
     cubits.swap.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 
   Future<void> activateManageOnHolding() async {
+    cubits.app.animating = true;
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
@@ -471,9 +483,11 @@ class Maestro {
     cubits.manage.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 
   Future<void> deactivateSubMenu() async {
+    cubits.app.animating = true;
     cubits.navbar.update(active: false);
     cubits.appbar.update(
       leading: AppbarLeading.menu,
@@ -484,9 +498,11 @@ class Maestro {
     );
     cubits.menu.update(active: true, sub: SubMenu.none);
     cubits.balance.update(active: true);
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 
   Future<void> activateSubMenu(SubMenu sub) async {
+    cubits.app.animating = true;
     cubits.navbar.update(active: false);
     cubits.appbar.update(
       leading: AppbarLeading.back,
@@ -497,5 +513,6 @@ class Maestro {
     );
     cubits.menu.update(active: true, sub: sub);
     cubits.balance.hide();
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
   }
 }

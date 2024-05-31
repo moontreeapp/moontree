@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
-import 'package:magic/domain/blockchain/mnemonic';
+import 'package:magic/domain/blockchain/mnemonic.dart';
 import 'package:magic/domain/concepts/storage.dart';
 import 'package:magic/domain/wallet/utils.dart';
 import 'package:magic/domain/wallet/wallets.dart';
@@ -46,11 +46,25 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     ));
   }
 
-  bool addMnemonic(String mnemonic) {
+  Future<bool> addMnemonic(String mnemonic) async {
     if (state.mnemonics.contains(mnemonic)) return true;
-    if (validateMnemonic(mnemonic)) return false;
+    if (!validateMnemonic(mnemonic)) return false;
     update(mnemonics: [...state.mnemonics, mnemonic]);
-    build();
+    await dump();
+    return true;
+  }
+
+  Future<bool> removeMnemonic(String mnemonic) async {
+    if (!state.mnemonics.contains(mnemonic)) return true;
+    update(mnemonics: state.mnemonics.where((m) => m != mnemonic).toList());
+    await dump();
+    return true;
+  }
+
+  Future<bool> removeWif(String wif) async {
+    if (!state.wifs.contains(wif)) return true;
+    update(mnemonics: state.wifs.where((w) => w != wif).toList());
+    await dump();
     return true;
   }
 

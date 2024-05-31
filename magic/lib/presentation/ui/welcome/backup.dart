@@ -54,7 +54,7 @@ class BackupPageState extends State<BackupPage> {
         cubits.app.animating = true;
         Future.delayed(slideDuration * 1.1, () {
           cubits.welcome.update(active: false, child: const SizedBox.shrink());
-          cubits.app.animating = true;
+          cubits.app.animating = false;
         });
       }
       setState(() => lifecycle = stage);
@@ -129,9 +129,9 @@ class BackupPageState extends State<BackupPage> {
                                         border: Border(
                                           bottom: BorderSide(
                                             color: Colors
-                                                .black54, // Set the color of the border
+                                                .black38, // Set the color of the border
                                             width:
-                                                2.0, // Set the width of the border
+                                                1.0, // Set the width of the border
                                           ),
                                         ),
                                       )

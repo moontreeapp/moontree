@@ -4,7 +4,6 @@ import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/presentation/theme/text.dart';
-import 'package:magic/services/services.dart';
 
 class HighlightedNameView extends StatelessWidget {
   final Holding holding;

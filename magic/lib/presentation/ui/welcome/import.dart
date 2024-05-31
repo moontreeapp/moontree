@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
-import 'package:magic/domain/blockchain/mnemonic';
+import 'package:magic/domain/blockchain/mnemonic.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
 
@@ -70,7 +70,7 @@ class ImportPageState extends State<ImportPage> {
         cubits.app.animating = true;
         Future.delayed(slideDuration * 1.1, () {
           cubits.welcome.update(active: false, child: const SizedBox.shrink());
-          cubits.app.animating = true;
+          cubits.app.animating = false;
         });
       }
       setState(() => lifecycle = stage);
@@ -81,21 +81,20 @@ class ImportPageState extends State<ImportPage> {
 
   void submit() async {
     if (lifecycle == ImportLifecycle.validated) {
-      cubits.app.animating = true;
       toStage(ImportLifecycle.submitting);
-      await Future.delayed(const Duration(seconds: 3));
-      if (cubits.keys.addMnemonic(controller.text.trim())) {
+      if (await cubits.keys.addMnemonic(controller.text.trim())) {
         /// do we need to resetup our subscriptions? yes.
         /// all of them or just this wallet? just do all of them.
         await subscription.setupSubscriptions(cubits.keys.master);
 
         /// do we need to get all our assets again? yes.
         /// all of them or just this wallet? just do all of them.
+        //cubits.wallet.clearAssets();
         await cubits.wallet.populateAssets();
 
         /// do we need to derive all our addresses? yes.
         /// all of them or just this wallet? we can specify just this wallet.
-        await deriveInBackground(controller.text.trim());
+        deriveInBackground(controller.text.trim());
 
         /// we always default to the first wallet, so we don't need to do this.
         /// maybe we should default to the last one... it's the one we know they
@@ -164,6 +163,7 @@ class ImportPageState extends State<ImportPage> {
                       child: TextField(
                         controller: controller,
                         focusNode: textFocus,
+                        maxLines: 4,
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
                           hintText: 'Enter your seed phrase here',
@@ -172,6 +172,8 @@ class ImportPageState extends State<ImportPage> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        textInputAction: TextInputAction.done,
+                        onTapOutside: (_) => submitFocus.requestFocus(),
                         onChanged: (value) {
                           if (lifecycle == ImportLifecycle.form &&
                               isValid(value.trim())) {

@@ -75,6 +75,8 @@ class SettingsSubMenu extends StatelessWidget {
             NotificationItem(state: state),
             const BackupItem(),
             const ImportItem(),
+            if (cubits.menu.state.mode == DifficultyMode.hard)
+              const WalletsItem(),
           ]));
 
   //Text('Some Setting', style: AppText.h1.copyWith(color: Colors.white));

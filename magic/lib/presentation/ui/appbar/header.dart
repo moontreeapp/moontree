@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hicons/flutter_hicons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/app/cubit.dart';
 import 'package:magic/cubits/appbar/cubit.dart';
@@ -10,7 +7,6 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/server/serverv2_client.dart';
 import 'package:magic/presentation/theme/theme.dart';
-import 'package:magic/presentation/widgets/animations/bounce.dart';
 import 'package:magic/presentation/widgets/animations/flashing.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart' show screen;
