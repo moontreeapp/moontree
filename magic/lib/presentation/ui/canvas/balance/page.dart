@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/canvas/balance/cubit.dart';
 import 'package:magic/cubits/pane/cubit.dart';
+import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
+import 'package:magic/presentation/ui/canvas/balance/chips.dart';
+import 'package:magic/presentation/ui/canvas/balance/wallet.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
 
@@ -38,19 +41,40 @@ class AnimatedBalance extends StatelessWidget {
                   curve: Curves.easeInOutCubic,
                   opacity: paneState.height == screen.pane.minHeight ? .12 : 1,
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                        // listen to the right cubit for this - make it's own widget
+                        AnimatedOpacity(
+                            duration: fadeDuration,
+                            curve: Curves.easeInOutCubic,
+                            opacity: paneState.height == screen.pane.minHeight
+                                ? 0
+                                : 1,
+                            child: const WalletChooser()),
+                        Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('\$${state.portfolioValue.head}',
-                                  style: AppText.wholeFiat),
-                              if (state.portfolioValue.tail != '.00' &&
-                                  state.portfolioValue.head != '-')
-                                Text(state.portfolioValue.tail,
-                                    style: AppText.partFiat),
+                              Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('\$${state.portfolioValue.head}',
+                                        style: AppText.wholeFiat),
+                                    if (state.portfolioValue.tail != '.00' &&
+                                        state.portfolioValue.head != '-')
+                                      Text(state.portfolioValue.tail,
+                                          style: AppText.partFiat),
+                                  ]),
+                              Text('Portfolio Value',
+                                  style: AppText.usdHolding),
                             ]),
-                        Text('Portfolio Value', style: AppText.usdHolding),
+                        // listen to the right cubit for this - make it's own widget
+                        AnimatedOpacity(
+                            duration: fadeDuration,
+                            curve: Curves.easeInOutCubic,
+                            opacity: paneState.height == screen.pane.minHeight
+                                ? 0
+                                : 1,
+                            child: const Chips()),
                       ]))));
 }
