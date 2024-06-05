@@ -141,7 +141,7 @@ class BackupPageState extends State<BackupPage> {
                                             .keys.master.mnemonicWallets.length
                                     ? Wrap(children: <Widget>[
                                         for (final word in cubits.keys.master
-                                            .mnemonicWallets[0].words)
+                                            .mnemonicWallets[index].words)
                                           Container(
                                               padding: const EdgeInsets.only(
                                                   left: 8,
