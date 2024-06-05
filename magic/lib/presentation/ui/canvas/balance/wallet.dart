@@ -13,29 +13,31 @@ class WalletChooser extends StatelessWidget {
           previous.mode != current.mode,
       builder: (BuildContext context, MenuState state) => Padding(
             padding: EdgeInsets.only(
-                top: 16,
+                top: 8,
                 left: screen.width * 0.309,
                 right: screen.width * 0.309),
-            child: Container(
-                height: 40,
-                padding: const EdgeInsets.only(left: 8),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.white54,
-                    borderRadius: BorderRadius.circular(100)),
-                child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.keyboard_arrow_down_rounded,
-                          color: AppColors.primary700),
-                      Flexible(
-                          child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text('Wallet',
-                                  style: TextStyle(
-                                      color: AppColors.primary700,
-                                      height: 0)))),
-                      SizedBox(width: 20),
-                    ])),
+            child: state.mode == DifficultyMode.easy
+                ? const SizedBox(height: 40)
+                : Container(
+                    height: 40,
+                    padding: const EdgeInsets.only(left: 8),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: Colors.white54,
+                        borderRadius: BorderRadius.circular(100)),
+                    child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(Icons.keyboard_arrow_down_rounded,
+                              color: AppColors.primary700),
+                          Flexible(
+                              child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text('Wallet',
+                                      style: TextStyle(
+                                          color: AppColors.primary700,
+                                          height: 0)))),
+                          SizedBox(width: 20),
+                        ])),
           ));
 }

@@ -42,26 +42,25 @@ class AnimatedCoinSpec extends StatelessWidget {
                 height: screen.iconHuge,
                 width: screen.iconHuge,
               )
-            : () {
-                final pair =
-                    cubits.wallet.mainAndAdminOf(cubits.holding.state.holding);
-                if (pair.full) {
-                  return TokenToggle(
+            : cubits.holding.state.holding.weHaveAdminOrMain
+                ? () {
+                    final pair = cubits.wallet
+                        .mainAndAdminOf(cubits.holding.state.holding);
+                    return TokenToggle(
+                      height: screen.iconHuge,
+                      width: screen.iconHuge,
+                      style: AppText.identiconHuge,
+                      mainHolding: pair.main!,
+                      adminHolding: pair.admin!,
+                    );
+                  }()
+                : SimpleIdenticon(
+                    letter: cubits.holding.state.holding.symbol[0],
                     height: screen.iconHuge,
                     width: screen.iconHuge,
                     style: AppText.identiconHuge,
-                    mainHolding: pair.main!,
-                    adminHolding: pair.admin!,
-                  );
-                }
-                return SimpleIdenticon(
-                  letter: cubits.holding.state.holding.symbol[0],
-                  height: screen.iconHuge,
-                  width: screen.iconHuge,
-                  style: AppText.identiconHuge,
-                  admin: cubits.holding.state.holding.isAdmin,
-                );
-              }(),
+                    admin: cubits.holding.state.holding.isAdmin,
+                  ),
         //: Stack(children: [
         //    Padding(
         //      padding: const EdgeInsets.only(left: 8),

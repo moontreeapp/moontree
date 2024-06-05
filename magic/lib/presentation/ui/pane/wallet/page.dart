@@ -7,6 +7,8 @@ import 'package:magic/cubits/pane/wallet/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/presentation/theme/theme.dart';
+import 'package:magic/presentation/ui/canvas/balance/chips.dart';
+//import 'package:magic/presentation/ui/canvas/balance/chips.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart';
@@ -16,21 +18,45 @@ class WalletPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<WalletCubit, WalletState>(
-      buildWhen: (previous, current) => previous.holdings != current.holdings,
-      builder: (BuildContext context, WalletState state) =>
+      buildWhen: (previous, current) =>
+          previous.holdings != current.holdings ||
+          previous.chips != current.chips,
+      builder: (BuildContext context, WalletState walletState) =>
           BlocBuilder<MenuCubit, MenuState>(
               buildWhen: (previous, current) => previous.mode != current.mode,
-              builder: (BuildContext context, MenuState state) =>
-                  ListView.builder(
-                      controller: cubits.pane.state.scroller!,
-                      shrinkWrap: true,
-                      itemCount: cubits.wallet.state.holdings.length,
-                      itemBuilder: (context, int index) => cubits
-                              .wallet.state.holdings[index].symbol
-                              .endsWith('!')
-                          ? const SizedBox(height: 0)
-                          : HoldingItem(
-                              holding: cubits.wallet.state.holdings[index]))));
+              builder: (BuildContext context, MenuState state) {
+                /// all must satisfy
+                //final filtered =
+                //    walletState.holdings.toList(); // Create a copy of the list
+                //filtered.removeWhere((holding) => walletState.chips
+                //    .map((e) => e.filter)
+                //    .any((filter) => !filter(holding)));
+
+                /// additive - any must satisfy
+                //final filtered = walletState.holdings
+                //    .where((holding) => walletState.chips
+                //        .map((e) => e.filter)
+                //        .any((filter) => filter(holding)))
+                //    .toList();
+
+                /// smart - depends...
+                final filtered = walletState.holdings
+                    .where((holding) =>
+                        Chips.combinedFilter(walletState.chips)(holding))
+                    .toList();
+
+                return ListView.builder(
+                    controller: cubits.pane.state.scroller!,
+                    shrinkWrap: true,
+                    itemCount: filtered.length,
+                    itemBuilder: (context, int index) {
+                      final holding = filtered[index];
+                      if (holding.isAdmin && holding.weHaveAdminOrMain) {
+                        return const SizedBox(height: 0);
+                      }
+                      return HoldingItem(holding: holding);
+                    });
+              }));
 }
 
 class HoldingItem extends StatelessWidget {

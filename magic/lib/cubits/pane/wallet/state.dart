@@ -4,6 +4,7 @@ part of 'cubit.dart';
 class WalletState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final List<Holding> holdings;
+  final List<Chips> chips;
   final Widget child;
   final bool isSubmitting;
   final WalletState? prior;
@@ -11,6 +12,7 @@ class WalletState with EquatableMixin, PriorActiveStateMixin {
   const WalletState({
     this.active = false,
     this.holdings = const [],
+    this.chips = const [Chips.all],
     this.child = const SizedBox.shrink(),
     this.isSubmitting = false,
     this.prior,
@@ -23,6 +25,7 @@ class WalletState with EquatableMixin, PriorActiveStateMixin {
   List<Object?> get props => <Object?>[
         active,
         holdings,
+        chips,
         child,
         isSubmitting,
         prior,
@@ -32,6 +35,7 @@ class WalletState with EquatableMixin, PriorActiveStateMixin {
   WalletState get withoutPrior => WalletState(
         active: active,
         holdings: holdings,
+        chips: chips,
         child: child,
         isSubmitting: isSubmitting,
         prior: null,

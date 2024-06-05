@@ -10,6 +10,7 @@ class Holding extends Equatable {
   final String symbol;
   final String root;
   final HoldingMetadata metadata;
+  final bool weHaveAdminOrMain;
   final Sats sats;
   final double? rate;
   final BalanceView? balanceView;
@@ -21,6 +22,7 @@ class Holding extends Equatable {
     required this.root,
     required this.metadata,
     required this.sats,
+    this.weHaveAdminOrMain = false,
     this.rate,
     this.balanceView,
     this.blockchain,
@@ -33,6 +35,7 @@ class Holding extends Equatable {
         root = '',
         metadata = const HoldingMetadata.empty(),
         sats = const Sats.empty(),
+        weHaveAdminOrMain = false,
         rate = null,
         balanceView = null,
         blockchain = null;
@@ -49,6 +52,7 @@ class Holding extends Equatable {
           //root: balanceView.chain ?? blockchain.name,
           metadata: const HoldingMetadata.empty(),
           sats: Sats(balanceView.satsConfirmed + balanceView.satsUnconfirmed),
+          weHaveAdminOrMain: false,
           rate: rate,
           balanceView: balanceView,
           blockchain: blockchain);
@@ -59,6 +63,7 @@ class Holding extends Equatable {
     String? root,
     HoldingMetadata? metadata,
     Sats? sats,
+    bool? weHaveAdminOrMain,
     double? rate,
     BalanceView? balanceView,
     Blockchain? blockchain,
@@ -74,6 +79,7 @@ class Holding extends Equatable {
                   ? Sats(
                       balanceView.satsConfirmed + balanceView.satsUnconfirmed)
                   : this.sats),
+          weHaveAdminOrMain: weHaveAdminOrMain ?? this.weHaveAdminOrMain,
           rate: rate ?? this.rate,
           balanceView: balanceView ?? this.balanceView,
           blockchain: blockchain ?? this.blockchain);
@@ -88,6 +94,7 @@ class Holding extends Equatable {
         root,
         metadata,
         sats,
+        weHaveAdminOrMain,
         rate,
         balanceView,
         blockchain,
@@ -95,6 +102,11 @@ class Holding extends Equatable {
 
   bool get isEmpty => sats.isEmpty;
   bool get isRoot => symbol == root;
+  bool get isEvrmore => isRoot && symbol == 'EVR';
+  bool get isRavencoin => isRoot && symbol == 'RVN';
+  bool get isOnEvrmore => root == 'EVR';
+  bool get isOnRavencoin => root == 'RVN';
+
   Coin get coin => sats.toCoin();
   Fiat get fiat {
     if (rate != null) {
@@ -108,6 +120,8 @@ class Holding extends Equatable {
       ? name.split('/').sublist(0, name.split('/').length - 1).join('/')
       : name;
   String get assetPathChild => name.split('/').last;
+  bool get isNft =>
+      (isOnEvrmore || isOnRavencoin) && assetPathChild.contains('#');
   bool get isAdmin => symbol.endsWith('!') || name.endsWith('!');
 }
 

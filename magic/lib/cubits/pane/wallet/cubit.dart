@@ -12,6 +12,7 @@ import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/storage.dart';
 import 'package:magic/domain/utils/extensions/list.dart';
+import 'package:magic/presentation/ui/canvas/balance/chips.dart';
 import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/calls/holdings.dart';
 import 'package:magic/services/services.dart';
@@ -20,6 +21,17 @@ part 'state.dart';
 
 class WalletCubit extends UpdatableCubit<WalletState> {
   WalletCubit() : super(const WalletState());
+
+  List<Chips> defaultChips = [
+    Chips.all,
+    Chips.evrmore,
+    Chips.ravencoin,
+    Chips.nonzero,
+    Chips.currencies,
+    Chips.nfts,
+    Chips.admintokens,
+  ];
+
   @override
   String get key => 'walletFeed';
   @override
@@ -45,16 +57,42 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   void update({
     bool? active,
     List<Holding>? holdings,
+    List<Chips>? chips,
     Widget? child,
     bool? isSubmitting,
   }) {
     emit(WalletState(
       active: active ?? state.active,
       holdings: holdings ?? state.holdings,
+      chips: chips ?? state.chips,
       child: child ?? state.child,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: state.withoutPrior,
     ));
+  }
+
+  void toggleChip(Chips chip) {
+    if (chip == Chips.all) {
+      return update(chips: [Chips.all]);
+    }
+    final List<Chips> basic = state.chips.contains(chip)
+        ? state.chips.where((e) => e != chip).toList()
+        : [...state.chips, chip];
+    if (basic.isEmpty) {
+      return update(chips: [Chips.all]);
+    } else if (basic.contains(Chips.all)) {
+      basic.remove(Chips.all);
+    }
+    if (chip == Chips.evrmore) {
+      return update(chips: basic.where((e) => e != Chips.ravencoin).toList());
+    }
+    if (chip == Chips.ravencoin) {
+      return update(chips: basic.where((e) => e != Chips.evrmore).toList());
+    }
+    if (basic.length == defaultChips.length) {
+      return update(chips: []);
+    }
+    update(chips: basic);
   }
 
   void clearAssets() {
@@ -65,7 +103,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   Future<bool> populateAssets() async {
     // remember to order by currency first, amount second, alphabetical third
     update(isSubmitting: true);
-    final holdings = _sort(_newRateThese(
+    final holdings = setCorrespondingFlag(_sort(_newRateThese(
             symbol: 'EVR',
             rate: await rates.getRateOf('EVR'),
             holdings: await HoldingBalancesCall(
@@ -80,7 +118,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
               blockchain: Blockchain.ravencoinMain,
               mnemonicWallets: cubits.keys.master.mnemonicWallets,
               keypairWallets: cubits.keys.master.keypairWallets,
-            ).call()));
+            ).call())));
     update(holdings: holdings, isSubmitting: false);
     if (rates.rvnUsdRate != null) {
       cacheRate(rates.rvnUsdRate!);
@@ -108,6 +146,23 @@ class WalletCubit extends UpdatableCubit<WalletState> {
         ),
     ]);
     cubits.balance.update(portfolioValue: Fiat(12546.01));
+  }
+
+  List<Holding> setCorrespondingFlag(List<Holding> holdings) {
+    final ret = <Holding>[];
+    for (final holding in holdings) {
+      print(holding.symbol);
+      if (holding.isRoot) {
+        ret.add(holding);
+      } else if (holding.isAdmin && mainOf(holding, holdings) != null) {
+        ret.add(holding.copyWith(weHaveAdminOrMain: true));
+      } else if (!holding.isAdmin && adminOf(holding, holdings) != null) {
+        ret.add(holding.copyWith(weHaveAdminOrMain: true));
+      } else {
+        ret.add(holding);
+      }
+    }
+    return ret;
   }
 
   /// default sort is by currency type, then by amount, then by alphabetical
@@ -149,11 +204,13 @@ class WalletCubit extends UpdatableCubit<WalletState> {
             .sumNumbers()));
   }
 
-  Holding? adminOf(Holding holding) =>
-      state.holdings.firstWhereOrNull((h) => h.symbol == '${holding.symbol}!');
+  Holding? adminOf(Holding holding, [List<Holding>? overrideHoldings]) =>
+      (overrideHoldings ?? state.holdings)
+          .firstWhereOrNull((h) => h.symbol == '${holding.symbol}!');
 
-  Holding? mainOf(Holding holding) => state.holdings
-      .firstWhereOrNull((h) => h.symbol == holding.symbol.replaceAll('!', ''));
+  Holding? mainOf(Holding holding, [List<Holding>? overrideHoldings]) =>
+      (overrideHoldings ?? state.holdings).firstWhereOrNull(
+          (h) => h.symbol == holding.symbol.replaceAll('!', ''));
 
   MainAdminPair mainAndAdminOf(Holding holding) => MainAdminPair(
         main: holding.isAdmin ? mainOf(holding) : holding,
