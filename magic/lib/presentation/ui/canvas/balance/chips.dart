@@ -163,21 +163,27 @@ class ChipsView extends StatelessWidget {
   const ChipsView({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<WalletCubit, WalletState>(
-      buildWhen: (WalletState previous, WalletState current) =>
-          previous.chips != current.chips,
-      builder: (BuildContext context, WalletState state) => Container(
-          padding: const EdgeInsets.all(16),
-          width: screen.width,
-          height: 26 + 16 + 16,
-          child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: cubits.wallet.defaultChips.length,
-              itemBuilder: (context, index) => ChipItem(
-                    chip: cubits.wallet.defaultChips[index],
-                    selected:
-                        state.chips.contains(cubits.wallet.defaultChips[index]),
-                  ))));
+  Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
+      buildWhen: (MenuState previous, MenuState current) =>
+          previous.mode != current.mode,
+      builder: (BuildContext context, MenuState state) => state.mode ==
+              DifficultyMode.easy
+          ? const SizedBox(height: 58)
+          : BlocBuilder<WalletCubit, WalletState>(
+              buildWhen: (WalletState previous, WalletState current) =>
+                  previous.chips != current.chips,
+              builder: (BuildContext context, WalletState state) => Container(
+                  padding: const EdgeInsets.all(16),
+                  width: screen.width,
+                  height: 26 + 16 + 16,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: cubits.wallet.defaultChips.length,
+                      itemBuilder: (context, index) => ChipItem(
+                            chip: cubits.wallet.defaultChips[index],
+                            selected: state.chips
+                                .contains(cubits.wallet.defaultChips[index]),
+                          )))));
 }
 
 class ChipItem extends StatelessWidget {

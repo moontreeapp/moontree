@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/pane/cubit.dart';
 import 'package:magic/cubits/pane/wallet/cubit.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
@@ -49,13 +50,24 @@ class WalletStack extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         children: [
           child,
-          GestureDetector(
-            onTap: () => cubits.pane.snapTo(screen.pane.midHeight),
-            onVerticalDragStart: (details) =>
-                cubits.pane.snapTo(screen.pane.midHeight),
-            child: Container(
-                height: 56, width: screen.width, color: Colors.transparent),
-          )
+          BlocBuilder<PaneCubit, PaneState>(
+              buildWhen: (PaneState previous, PaneState current) =>
+                  current.height == screen.pane.minHeight ||
+                  (previous.height <= screen.pane.minHeight + 1 &&
+                      current.height > previous.height),
+              builder: (BuildContext context, PaneState state) =>
+                  state.height == screen.pane.minHeight
+                      ? GestureDetector(
+                          onTap: () =>
+                              cubits.pane.snapTo(screen.pane.midHeight),
+                          onVerticalDragStart: (details) =>
+                              cubits.pane.snapTo(screen.pane.midHeight),
+                          child: Container(
+                              height: 56,
+                              width: screen.width,
+                              color: Colors.transparent),
+                        )
+                      : const SizedBox.shrink())
         ],
       );
 }

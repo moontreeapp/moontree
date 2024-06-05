@@ -13,13 +13,14 @@ class WalletChooser extends StatelessWidget {
           previous.mode != current.mode,
       builder: (BuildContext context, MenuState state) => Padding(
             padding: EdgeInsets.only(
-                top: 8,
+                top: 4,
+                bottom: 4,
                 left: screen.width * 0.309,
                 right: screen.width * 0.309),
             child: state.mode == DifficultyMode.easy
-                ? const SizedBox(height: 40)
+                ? const SizedBox(height: 32)
                 : Container(
-                    height: 40,
+                    height: 32,
                     padding: const EdgeInsets.only(left: 8),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(

@@ -45,7 +45,6 @@ class AnimatedBalance extends StatelessWidget {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // listen to the right cubit for this - make it's own widget
                         AnimatedOpacity(
                             duration: fadeDuration,
                             curve: Curves.easeInOutCubic,
@@ -70,7 +69,6 @@ class AnimatedBalance extends StatelessWidget {
                               Text('Portfolio Value',
                                   style: AppText.usdHolding),
                             ]),
-                        // listen to the right cubit for this - make it's own widget
                         AnimatedOpacity(
                             duration: fadeDuration,
                             curve: Curves.easeInOutCubic,
