@@ -4,6 +4,9 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final String asset; // TODO: use domain object
   final double amount; // TODO: use domain object
+  final SendRequest? sendRequest; // TODO: use domain object
+  //final UnsignedTransaction unsignedTransaction; // TODO: use domain object
+  final String? unsignedTransaction; // TODO: use domain object
   final bool isSubmitting;
   final SendState? prior;
 
@@ -11,6 +14,8 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
     this.active = false,
     this.asset = '',
     this.amount = 0,
+    this.sendRequest,
+    this.unsignedTransaction,
     this.isSubmitting = false,
     this.prior,
   });
@@ -20,6 +25,8 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
         active,
         asset,
         amount,
+        sendRequest,
+        unsignedTransaction,
         isSubmitting,
         prior,
       ];
@@ -32,6 +39,8 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
         active: active,
         asset: asset,
         amount: amount,
+        sendRequest: sendRequest,
+        unsignedTransaction: unsignedTransaction,
         isSubmitting: isSubmitting,
         prior: null,
       );

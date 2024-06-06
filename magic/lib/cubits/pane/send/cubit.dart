@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/concepts/send.dart';
 
 part 'state.dart';
 
@@ -29,6 +30,8 @@ class SendCubit extends UpdatableCubit<SendState> {
     bool? active,
     String? asset,
     double? amount,
+    SendRequest? sendRequest,
+    String? unsignedTransaction,
     bool? isSubmitting,
     SendState? prior,
   }) {
@@ -36,6 +39,8 @@ class SendCubit extends UpdatableCubit<SendState> {
       active: active ?? state.active,
       asset: asset ?? state.asset,
       amount: amount ?? state.amount,
+      sendRequest: sendRequest ?? state.sendRequest,
+      unsignedTransaction: unsignedTransaction ?? state.unsignedTransaction,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));
