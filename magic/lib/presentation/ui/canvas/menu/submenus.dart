@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/presentation/theme/text.dart';
-import 'package:magic/presentation/ui/canvas/menu/subitems.dart';
+import 'package:magic/presentation/ui/canvas/menu/settings.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/services/services.dart';
@@ -70,8 +70,11 @@ class SettingsSubMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
       buildWhen: (MenuState previous, MenuState current) =>
-          current.active && (previous.setting != current.setting),
+          current.active &&
+          (previous.setting != current.setting ||
+              previous.mode != current.mode),
       builder: (context, state) => Column(children: [
+            DifficultyItem(mode: state.mode),
             NotificationItem(state: state),
             const BackupItem(),
             const ImportItem(),

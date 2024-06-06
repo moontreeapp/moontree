@@ -1,11 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/blockchain/hash.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
 import 'package:magic/domain/server/protocol/protocol.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 
 //final RelativeDateFormat _relativeDateFormatter = const RelativeDateFormat(
 //      defaultRelativeDateLocalization as Locale,
@@ -50,6 +52,7 @@ class TransactionDisplay extends Equatable {
   final bool incoming;
   final DateTime when;
   final Sats sats;
+  final String hash;
   final Fiat? worth;
   final TransactionView? transactionView;
   final Blockchain? blockchain;
@@ -58,6 +61,7 @@ class TransactionDisplay extends Equatable {
     required this.incoming,
     required this.when,
     required this.sats,
+    this.hash = '',
     this.worth,
     this.transactionView,
     this.blockchain,
@@ -84,6 +88,7 @@ class TransactionDisplay extends Equatable {
         sats: Sats(transactionView.iProvided == 0
             ? transactionView.iReceived
             : transactionView.iProvided - transactionView.iReceived),
+        hash: byteHashToString(transactionView.hash),
         transactionView: transactionView,
         blockchain: blockchain,
       );
@@ -93,12 +98,19 @@ class TransactionDisplay extends Equatable {
     DateTime? when,
     Sats? sats,
     Fiat? worth,
+    String? hash,
+    TransactionView? transactionView,
+    Blockchain? blockchain,
   }) =>
       TransactionDisplay(
-          incoming: incoming ?? this.incoming,
-          when: when ?? this.when,
-          sats: sats ?? this.sats,
-          worth: worth ?? this.worth);
+        incoming: incoming ?? this.incoming,
+        when: when ?? this.when,
+        sats: sats ?? this.sats,
+        worth: worth ?? this.worth,
+        hash: hash ?? this.hash,
+        transactionView: transactionView ?? this.transactionView,
+        blockchain: blockchain ?? this.blockchain,
+      );
 
   @override
   String toString() => '$runtimeType($props)';
@@ -109,6 +121,9 @@ class TransactionDisplay extends Equatable {
         when,
         sats,
         worth,
+        hash,
+        transactionView,
+        blockchain,
       ];
 
   bool get isEmpty => sats.isEmpty;
@@ -139,4 +154,6 @@ class TransactionDisplay extends Equatable {
     }
     return const Fiat.empty();
   }
+
+  String get readableHash => hash.cutOutMiddle();
 }

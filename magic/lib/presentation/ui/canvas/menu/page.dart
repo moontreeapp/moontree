@@ -35,7 +35,7 @@ class AnimatedMenu extends StatelessWidget {
       buildWhen: (MenuState previous, MenuState current) =>
           current.active &&
           (previous.faded != current.faded ||
-              previous.mode != current.mode ||
+              //previous.mode != current.mode ||
               previous.sub != current.sub),
       builder: (context, state) => AnimatedOpacity(
           duration: fadeDuration,
@@ -49,7 +49,7 @@ class AnimatedMenu extends StatelessWidget {
                   const LegalLinks(),
                 ]),
             const HelpItem(),
-            DifficultyItem(mode: state.mode),
+            //DifficultyItem(mode: state.mode),
             const SettingsItem(),
             const AboutItem(),
           ])));
@@ -85,7 +85,7 @@ class DifficultyItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MenuItem(
         sub: SubMenu.mode,
-        index: 1,
+        index: -1,
         visual: GestureDetector(
             onTap: cubits.menu.toggleDifficulty,
             child: Container(
@@ -108,7 +108,7 @@ class SettingsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MenuItem(
       sub: SubMenu.settings,
-      index: 2,
+      index: 1,
       visual: Container(
           height: screen.menu.itemHeight,
           width: screen.width,
@@ -151,7 +151,7 @@ class AboutItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MenuItem(
       sub: SubMenu.about,
-      index: 3,
+      index: 2,
       visual: Container(
           height: screen.menu.itemHeight,
           width: screen.width,

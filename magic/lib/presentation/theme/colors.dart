@@ -16,7 +16,9 @@ class AppColors {
       onSurface: Colors.transparent);
 
   static const Color error = Color(0xFFEF5350);
-  static const Color success = Color(0xFF66BB6A);
+  //static const Color success = Color(0xFF66BB6A);
+  static const Color success = Color(0xFF8BC34A);
+  static const Color successDark = Color(0xFF7AAB41);
   static const Color primary50 = Color(0xFFE8EAF6);
   static const Color primary38 = Color(0xFFC1C7E7);
   static const Color primary60 = Color(0xFF9DA6D9);

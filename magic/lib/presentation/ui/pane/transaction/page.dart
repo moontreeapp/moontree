@@ -58,12 +58,14 @@
 // //    child: Column(
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TransactionPage extends StatelessWidget {
   const TransactionPage({super.key});
@@ -87,6 +89,16 @@ class TransactionPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                //if (![null, '']
+                //    .contains(display.transactionView?.hash.toString()))
+                TransactionItem(label: 'ID:', display: <TextSpan>[
+                  TextSpan(
+                      text: display.readableHash,
+                      style: Theme.of(context).textTheme.body1.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: AppColors.black87,
+                          )),
+                ]),
                 TransactionItem(
                     label: 'Amount:',
                     overrideDisplay: SimpleCoinSplitView(
@@ -125,18 +137,22 @@ class TransactionPage extends StatelessWidget {
                           )),
                 ])
               ]),
-              Container(
-                  height: 64,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28 * 100),
-                    ),
-                  ),
-                  child: Center(
-                      child: Text(
-                    'View Details',
-                    style: AppText.button1.copyWith(color: AppColors.success),
-                  ))),
+              GestureDetector(
+                  onTap: () => launchUrl(Uri.parse(
+                      display.blockchain?.explorerTxUrl(display.hash) ?? '')),
+                  child: Container(
+                      height: 64,
+                      decoration: ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28 * 100),
+                        ),
+                      ),
+                      child: Center(
+                          child: Text(
+                        'View Details',
+                        style:
+                            AppText.button1.copyWith(color: AppColors.success),
+                      )))),
             ]));
   }
 }

@@ -352,7 +352,10 @@ class Maestro {
       leading: AppbarLeading.close,
       title: 'Send',
       clearTitleChild: true,
-      onLead: activateHistory,
+      onLead: () {
+        cubits.send.reset();
+        activateHistory();
+      },
       onTitle: cubits.appbar.none,
     );
     cubits.menu.update(active: false);

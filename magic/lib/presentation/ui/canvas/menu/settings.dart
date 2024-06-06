@@ -7,6 +7,26 @@ import 'package:magic/presentation/ui/welcome/import.dart';
 import 'package:magic/presentation/ui/welcome/wallets.dart';
 import 'package:magic/services/services.dart';
 
+class DifficultyItem extends StatelessWidget {
+  final DifficultyMode mode;
+  const DifficultyItem({super.key, required this.mode});
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: cubits.menu.toggleDifficulty,
+        child: Container(
+            height: screen.menu.itemHeight,
+            width: screen.width,
+            color: Colors.transparent,
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Icon(mode.icon, color: Colors.white),
+              const SizedBox(width: 16),
+              Text('Mode: ${mode.name}',
+                  style: AppText.h2.copyWith(color: Colors.white)),
+            ])),
+      );
+}
+
 class NotificationItem extends StatelessWidget {
   final MenuState state;
   const NotificationItem({super.key, required this.state});
@@ -16,6 +36,7 @@ class NotificationItem extends StatelessWidget {
       onTap: cubits.menu.toggleSetting,
       child: Container(
           height: screen.menu.itemHeight,
+          width: screen.width,
           color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Icon(

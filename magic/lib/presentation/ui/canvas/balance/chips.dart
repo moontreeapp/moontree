@@ -194,15 +194,27 @@ class ChipItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
       onTap: () => cubits.wallet.toggleChip(chip),
-      child: Padding(
+      child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: chip == Chips.nonzero
+              ? const BoxDecoration(
+                  border: Border(
+                      left: BorderSide(
+                        color: AppColors.white12,
+                        width: 1.0,
+                      ),
+                      right: BorderSide(
+                        color: AppColors.white12,
+                        width: 1.0,
+                      )))
+              : null,
           child: Container(
               padding:
                   const EdgeInsets.only(left: 6, right: 6, top: 3, bottom: 1),
               height: 26,
               decoration: BoxDecoration(
                   color: selected ? AppColors.white60 : null,
-                  border: Border.all(color: AppColors.white87, width: 1),
+                  border: Border.all(color: AppColors.white38, width: 1),
                   borderRadius: BorderRadius.circular(100)),
               child: Text(chip.label,
                   style: TextStyle(

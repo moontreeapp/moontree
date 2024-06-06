@@ -27,6 +27,21 @@ enum Blockchain {
     return Blockchain.none;
   }
 
+  String explorerTxUrl(String txid) {
+    switch (this) {
+      case Blockchain.ravencoinMain:
+        return 'https://rvn.cryptoscope.io/tx/?txid=$txid';
+      case Blockchain.ravencoinTest:
+        return 'https://rvnt.cryptoscope.io/tx/?txid=$txid';
+      case Blockchain.evrmoreMain:
+        return 'https://evr.cryptoscope.io/tx/?txid=$txid';
+      case Blockchain.evrmoreTest:
+        return 'https://evrt.cryptoscope.io/tx/?txid=$txid';
+      case Blockchain.none:
+        return '';
+    }
+  }
+
   Chain get chain {
     switch (this) {
       case Blockchain.ravencoinMain:

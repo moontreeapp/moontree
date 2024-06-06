@@ -8,6 +8,7 @@ import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/widgets/other/other.dart';
 import 'package:magic/services/services.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class SendPage extends StatelessWidget {
   const SendPage({super.key});
@@ -21,7 +22,11 @@ class SendPage extends StatelessWidget {
           return const SendContent();
         }
         if (state.unsignedTransaction == null) {
-          return const Text('please wait...');
+          return const ConfirmContent();
+          return Container(
+              height: screen.pane.midHeight,
+              alignment: Alignment.center,
+              child: const Text('please wait...'));
         }
         return const ConfirmContent();
       });
@@ -30,7 +35,7 @@ class SendPage extends StatelessWidget {
 class SendContent extends StatelessWidget {
   const SendContent({super.key});
 
-  void _startSend() {
+  void _send() {
     // validate address is valid
     // validate amount is a valid amount
     // validate amount is less than amount we hold of this asset
@@ -60,30 +65,28 @@ class SendContent extends StatelessWidget {
           note: state.note != '' ? state.note : null,
         );
     */
-    //cubits.send.update(
-    //    sendRequest: SendRequest(
-    //  //sendAll: holdingBalance.amount == state.amount,
-    //  sendAll: false,
-    //  //wallet: Current.wallet, // what should we do here?
-    //  //sendAddress: state.address,
-    //  //holding: holdingBalance.amount,
-    //  //visibleAmount: _asDoubleString(state.amount),
-    //  //sendAmountAsSats: state.sats,
-    //  //feeRate: state.fee,
-    //  //security: state.security,
-    //  // only for hard mode
-    //  //assetMemo: state.security != pros.securities.currentCoin &&
-    //  //        state.memo != '' &&
-    //  //        state.memo.isIpfs
-    //  //    ? state.memo
-    //  //    : null,
-    //  //memo: state.security == pros.securities.currentCoin &&
-    //  //        state.memo != '' &&
-    //  //        _verifyMemo(state.memo)
-    //  //    ? state.memo
-    //  //    : null,
-    //  //note: state.note != '' ? state.note : null,
-    //));
+    cubits.send.update(
+        sendRequest: SendRequest(
+      sendAll: false,
+      sendAddress: 'state.address',
+      holding: 0,
+      visibleAmount: '0',
+      sendAmountAsSats: 0,
+      feeRate: cheapFee,
+      //security: state.security,
+      // only for hard mode
+      //assetMemo: state.security != pros.securities.currentCoin &&
+      //        state.memo != '' &&
+      //        state.memo.isIpfs
+      //    ? state.memo
+      //    : null,
+      //memo: state.security == pros.securities.currentCoin &&
+      //        state.memo != '' &&
+      //        _verifyMemo(state.memo)
+      //    ? state.memo
+      //    : null,
+      //note: state.note != '' ? state.note : null,
+    ));
 
     // send the request
     // // _confirmSend(sendRequest, cubit);
@@ -116,7 +119,7 @@ class SendContent extends StatelessWidget {
           ],
         ),
         GestureDetector(
-            onTap: () {},
+            onTap: _send,
             child: Container(
                 height: 64,
                 decoration: ShapeDecoration(
@@ -128,7 +131,8 @@ class SendContent extends StatelessWidget {
                 child: Center(
                     child: Text(
                   'PREVIEW',
-                  style: AppText.button1.copyWith(color: Colors.white),
+                  style: AppText.button1
+                      .copyWith(fontSize: 16, color: Colors.white),
                 )))),
       ]));
 }
