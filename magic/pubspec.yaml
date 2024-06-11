@@ -60,6 +60,7 @@ dependencies:
   collection: ^1.18.0
   http: ^1.2.1
   tuple: ^2.0.2
+  local_auth: ^2.2.0
 
 
 dev_dependencies:

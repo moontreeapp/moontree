@@ -232,9 +232,9 @@ class AnimatedCoinSpec extends StatelessWidget {
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
               8;
-          overrideWhole = 'Receive Address';
+          overrideWhole = 'Send to Me';
           overridePart = '';
-          overrideSubtitle = 'Evrmore Blockchain';
+          overrideSubtitle = state.holding.blockchain?.name ?? 'Evrmore';
         } else if (state.section == HoldingSection.swap) {
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +

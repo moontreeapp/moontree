@@ -72,6 +72,8 @@ enum Blockchain {
     }
   }
 
+  String get name => symbolName(chain.symbol + net.symbolModifier);
+
   int get purpose => 44;
   int get coinType {
     if (chain == Chain.ravencoin || chain == Chain.evrmore) {
