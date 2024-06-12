@@ -75,13 +75,10 @@ class SettingsSubMenu extends StatelessWidget {
               previous.mode != current.mode),
       builder: (context, state) => Column(children: [
             DifficultyItem(mode: state.mode),
-            NotificationItem(state: state),
-            if (cubits.menu.state.mode == DifficultyMode.hard)
-              const BackupItem(),
-            if (cubits.menu.state.mode == DifficultyMode.hard)
-              const ImportItem(),
-            if (cubits.menu.state.mode == DifficultyMode.hard)
-              const WalletsItem(),
+            //NotificationItem(state: state),
+            if (cubits.menu.isInDevMode) const BackupItem(),
+            if (cubits.menu.isInDevMode) const ImportItem(),
+            if (cubits.menu.isInDevMode) const WalletsItem(),
           ]));
 
   //Text('Some Setting', style: AppText.h1.copyWith(color: Colors.white));

@@ -2,14 +2,17 @@ part of 'cubit.dart';
 
 enum DifficultyMode {
   easy,
-  hard;
+  hard,
+  dev;
 
   String get name {
     switch (this) {
       case DifficultyMode.easy:
-        return 'Easy';
+        return 'Simple';
       case DifficultyMode.hard:
-        return 'Hard';
+        return 'Expert';
+      case DifficultyMode.dev:
+        return 'Dev';
     }
   }
 
@@ -19,6 +22,8 @@ enum DifficultyMode {
         return Icons.sledding_rounded;
       case DifficultyMode.hard:
         return Icons.snowboarding_rounded;
+      case DifficultyMode.dev:
+        return Icons.scuba_diving_rounded;
     }
   }
 }

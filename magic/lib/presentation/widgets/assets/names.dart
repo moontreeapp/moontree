@@ -77,9 +77,14 @@ class ResponsiveHighlightedNameView extends StatelessWidget {
                                     style:
                                         childStyle ?? AppText.childAssetName),
                               ])
-                        : [
-                            Text(adminize(state.holding.assetPathChild),
-                                style: childStyle ?? AppText.childAssetName)
-                          ],
+                        : state.holding.isRoot
+                            ? [
+                                Text(state.holding.blockchain!.name,
+                                    style: childStyle ?? AppText.childAssetName)
+                              ]
+                            : [
+                                Text(adminize(state.holding.assetPathChild),
+                                    style: childStyle ?? AppText.childAssetName)
+                              ],
                   )))));
 }

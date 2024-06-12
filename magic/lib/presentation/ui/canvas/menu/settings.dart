@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/text.dart';
+import 'package:magic/presentation/ui/login/native.dart';
 import 'package:magic/presentation/ui/welcome/backup.dart';
 import 'package:magic/presentation/ui/welcome/import.dart';
 import 'package:magic/presentation/ui/welcome/wallets.dart';
@@ -14,6 +15,7 @@ class DifficultyItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: cubits.menu.toggleDifficulty,
+        onLongPress: () => cubits.menu.update(mode: DifficultyMode.dev),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -55,8 +57,8 @@ class BackupItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () =>
-            cubits.welcome.update(active: true, child: const BackupPage()),
+        onTap: () => cubits.welcome.update(
+            active: true, child: const LoginNative(child: BackupPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,

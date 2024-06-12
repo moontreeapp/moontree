@@ -17,7 +17,7 @@ class WalletChooser extends StatelessWidget {
                 bottom: 4,
                 left: screen.width * 0.309,
                 right: screen.width * 0.309),
-            child: state.mode == DifficultyMode.easy
+            child: true //state.mode == DifficultyMode.easy
                 ? const SizedBox(height: 32)
                 : Container(
                     height: 32,

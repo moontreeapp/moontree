@@ -349,7 +349,7 @@ class Maestro {
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
     cubits.appbar.update(
-      leading: AppbarLeading.close,
+      leading: AppbarLeading.back,
       title: 'Send',
       clearTitleChild: true,
       onLead: () {
@@ -381,7 +381,7 @@ class Maestro {
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
     cubits.appbar.update(
-      leading: AppbarLeading.close,
+      leading: AppbarLeading.back,
       title: 'Receive',
       clearTitleChild: true,
       onLead: activateHistory,
@@ -409,7 +409,7 @@ class Maestro {
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
     cubits.appbar.update(
-      leading: AppbarLeading.close,
+      leading: AppbarLeading.back,
       title: 'Transaction',
       clearTitleChild: true,
       onLead: activateHistory,

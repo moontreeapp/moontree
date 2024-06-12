@@ -55,7 +55,8 @@ class AnimatedCoinSpec extends StatelessWidget {
                     );
                   }()
                 : SimpleIdenticon(
-                    letter: cubits.holding.state.holding.symbol[0],
+                    letter: cubits.holding.state.holding
+                        .assetPathChildNFT[0], //symbol[0],
                     height: screen.iconHuge,
                     width: screen.iconHuge,
                     style: AppText.identiconHuge,
@@ -126,7 +127,8 @@ class AnimatedCoinSpec extends StatelessWidget {
                   style: AppText.partHolding),
           ]
         ]),
-        Text(subtitle ?? cubits.holding.state.usd, style: AppText.usdHolding),
+        Text(subtitle ?? cubits.holding.state.usd,
+            textAlign: TextAlign.center, style: AppText.usdHolding),
         //HighlightedNameView(holding: cubits.holding.state.holding)
         //Text(
         //    subtitle ??
@@ -182,26 +184,28 @@ class AnimatedCoinSpec extends StatelessWidget {
               Text('receive', style: AppText.labelHolding),
             ])),
         //SizedBox(width: screen.canvas.wSpace),
-        GestureDetector(
-            onTap: () => maestro.activateSwapOnHolding(),
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                height: screen.iconLarge,
-                width: screen.iconLarge,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.primary60,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: SvgPicture.asset(
-                  '${TransactionIcons.base}/swap.${TransactionIcons.ext}',
-                  alignment: Alignment.center,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text('swap', style: AppText.labelHolding),
-            ])),
+        if (DateTime.now().isAfter(DateTime(2024, 7, 15)))
+          GestureDetector(
+              onTap: () => maestro.activateSwapOnHolding(),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: screen.iconLarge,
+                      width: screen.iconLarge,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary60,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: SvgPicture.asset(
+                        '${TransactionIcons.base}/swap.${TransactionIcons.ext}',
+                        alignment: Alignment.center,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text('swap', style: AppText.labelHolding),
+                  ])),
       ]));
 
   /// AnimatedPositions solution:
@@ -234,7 +238,9 @@ class AnimatedCoinSpec extends StatelessWidget {
               8;
           overrideWhole = 'Send to Me';
           overridePart = '';
-          overrideSubtitle = state.holding.blockchain?.name ?? 'Evrmore';
+          overrideSubtitle = state.holding.isRoot
+              ? (state.holding.blockchain?.name ?? 'Evrmore')
+              : '${state.holding.name}${state.holding.blockchain != null ? '\non ${state.holding.blockchain!.name}' : ''}';
         } else if (state.section == HoldingSection.swap) {
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +

@@ -72,7 +72,7 @@ class HoldingItem extends StatelessWidget {
         onTap: () => maestro.activateHistory(holding),
         leading: holding.isRoot
             ? CurrencyIdenticon(holding: holding)
-            : SimpleIdenticon(letter: holding.assetPathChild[0]),
+            : SimpleIdenticon(letter: holding.assetPathChildNFT[0]),
         title: SizedBox(
             width: screen.width -
                 (screen.iconMedium +
@@ -90,7 +90,7 @@ class HoldingItem extends StatelessWidget {
             child: Text(
                 holding.isRoot
                     ? holding.blockchain!.chain.title
-                    : holding.assetPathChild,
+                    : holding.assetPathChildNFT,
                 style: Theme.of(context)
                     .textTheme
                     .body1

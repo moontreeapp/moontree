@@ -88,6 +88,7 @@ class DifficultyItem extends StatelessWidget {
         index: -1,
         visual: GestureDetector(
             onTap: cubits.menu.toggleDifficulty,
+            onLongPress: () => cubits.menu.update(mode: DifficultyMode.dev),
             child: Container(
                 height: screen.menu.itemHeight,
                 width: screen.width,

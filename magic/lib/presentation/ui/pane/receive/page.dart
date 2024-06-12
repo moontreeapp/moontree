@@ -18,7 +18,7 @@ class ReceivePage extends StatelessWidget {
           Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Expanded(
             child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
                 onTap: () {
@@ -30,7 +30,9 @@ class ReceivePage extends StatelessWidget {
                       ClipboardData(text: cubits.receive.state.address));
                   cubits.toast.flash(
                       msg: const ToastMessage(
-                          title: 'copied', text: 'to clipboard'));
+                          duration: Duration(seconds: 2),
+                          title: 'copied',
+                          text: 'to clipboard'));
                 },
                 child: Container(
                     height: screen.width - 32 * 4,
@@ -50,6 +52,7 @@ class ReceivePage extends StatelessWidget {
                         //        'assets/logo/moontree_logo.png')
                         //    .image,
                         size: screen.width - 32 * 2))),
+            const SizedBox(height: 16),
             SelectableText.rich(
               TextSpan(
                 text: '',
@@ -74,6 +77,7 @@ class ReceivePage extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 16),
           ],
         )),
         Row(
@@ -86,7 +90,9 @@ class ReceivePage extends StatelessWidget {
                           ClipboardData(text: cubits.receive.state.address));
                       cubits.toast.flash(
                           msg: const ToastMessage(
-                              title: 'copied', text: 'to clipboard'));
+                              duration: Duration(seconds: 2),
+                              title: 'copied',
+                              text: 'to clipboard'));
                     },
                     child: Container(
                         height: 64,
