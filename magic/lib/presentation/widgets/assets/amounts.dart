@@ -318,7 +318,9 @@ class SimpleCoinSplitView extends StatelessWidget {
                                   height: 0,
                                   fontWeight: e.bolded && coin.coin == 0
                                       ? FontWeight.w700
-                                      : FontWeight.w400,
+                                      : e.bolded && coin.coin > 0
+                                          ? FontWeight.w700
+                                          : FontWeight.w400,
                                   color: incoming == true
                                       ? (e.bolded && coin.coin == 0
                                           ? AppColors.success

@@ -5,6 +5,12 @@ import 'package:moontree_utils/moontree_utils.dart';
 // ignore: implementation_imports
 import 'package:wallet_utils/src/models/networks.dart'
     show NetworkType, mainnet, testnet, evrmoreMainnet, evrmoreTestnet;
+import 'package:wallet_utils/wallet_utils.dart'
+    show
+        StringValidationExtension,
+        AmountValidationNumericExtension,
+        AmountValidationIntExtension,
+        AmountValidationDoubleExtension;
 
 enum Blockchain {
   ravencoinMain,
@@ -141,7 +147,8 @@ enum Blockchain {
       } else if (net == Net.test) {
         return ravencoinTestnetChaindata;
       }
-    } else if (chain == Chain.evrmore) {
+    }
+    if (chain == Chain.evrmore) {
       if (net == Net.main) {
         return evrmoreMainnetChaindata;
       } else if (net == Net.test) {
@@ -166,4 +173,32 @@ enum Blockchain {
   String addressFromH160(Uint8List h160, {bool isP2sh = false}) =>
       h160ToAddress(
           h160, isP2sh ? chaindata.p2shPrefix : chaindata.p2pkhPrefix);
+
+  bool isAddress(String address) {
+    if (chain == Chain.ravencoin) {
+      if (net == Net.main) {
+        return address.isAddressRVN;
+      } else if (net == Net.test) {
+        return address.isAddressRVNt;
+      }
+    }
+    if (chain == Chain.evrmore) {
+      if (net == Net.main) {
+        return address.isAddressEVR;
+      } else if (net == Net.test) {
+        return address.isAddressEVRt;
+      }
+    }
+    return false;
+  }
+
+  bool isAmount(num amount) {
+    if (chain == Chain.ravencoin) {
+      return amount.isRVNAmount;
+    }
+    if (chain == Chain.evrmore) {
+      return amount.isRVNAmount;
+    }
+    return false;
+  }
 }

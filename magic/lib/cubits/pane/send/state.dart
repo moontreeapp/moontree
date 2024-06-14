@@ -3,7 +3,8 @@ part of 'cubit.dart';
 class SendState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final String asset; // TODO: use domain object
-  final double amount; // TODO: use domain object
+  final String address; // TODO: use domain object
+  final String amount; // TODO: use domain object
   final SendRequest? sendRequest; // TODO: use domain object
   //final UnsignedTransaction unsignedTransaction; // TODO: use domain object
   final String? unsignedTransaction; // TODO: use domain object
@@ -13,7 +14,8 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
   const SendState({
     this.active = false,
     this.asset = '',
-    this.amount = 0,
+    this.amount = '',
+    this.address = '',
     this.sendRequest,
     this.unsignedTransaction,
     this.isSubmitting = false,
@@ -24,6 +26,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
   List<Object?> get props => <Object?>[
         active,
         asset,
+        address,
         amount,
         sendRequest,
         unsignedTransaction,
@@ -38,6 +41,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
   SendState get withoutPrior => SendState(
         active: active,
         asset: asset,
+        address: address,
         amount: amount,
         sendRequest: sendRequest,
         unsignedTransaction: unsignedTransaction,

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/extensions.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
+import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart';
 
 class ConfirmContent extends StatelessWidget {
@@ -55,9 +58,9 @@ class ConfirmContent extends StatelessWidget {
                       /// of course it should always be the same so validate it
                       CurrencyIdenticon(holding: cubits.holding.state.holding),
                       const SizedBox(width: 8),
-                      const Text(
-                        'address',
-                        style: TextStyle(fontSize: 16),
+                      Text(
+                        cubits.send.state.sendRequest!.sendAddress,
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ],
                   ),
@@ -66,37 +69,27 @@ class ConfirmContent extends StatelessWidget {
             ),
             Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
-                child: ConfirmationItem(label: 'Fee:', display: <TextSpan>[
-                  TextSpan(
-                      text: 'display.coin.whole()',
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                            fontWeight: FontWeight.normal,
-                            color: AppColors.black87,
-                          )),
-                  TextSpan(
-                      text: 'display.coin.spacedPart()',
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                          fontWeight: FontWeight.normal,
-                          color: AppColors.black60,
-                          fontSize: 12)),
-                ])),
+                child: ConfirmationItem(
+                    label: 'Fee:',
+                    overrideDisplay: SimpleCoinSplitView(
+                        mode: DifficultyMode.hard,
+                        // should actually be fee from the unsigned transaction object
+                        coin: Sats(
+                                cubits.send.state.sendRequest!.sendAmountAsSats)
+                            .toCoin(),
+                        incoming: null))),
             const Divider(height: 1, indent: 0, endIndent: 0),
             Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
-                child: ConfirmationItem(label: 'Total:', display: <TextSpan>[
-                  TextSpan(
-                      text: 'amount+fee',
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                            fontWeight: FontWeight.normal,
-                            color: AppColors.black87,
-                          )),
-                  TextSpan(
-                      text: '.conform to design',
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                          fontWeight: FontWeight.normal,
-                          color: AppColors.black60,
-                          fontSize: 12)),
-                ])),
+                child: ConfirmationItem(
+                    label: 'Total:',
+                    overrideDisplay: SimpleCoinSplitView(
+                        mode: DifficultyMode.hard,
+                        // should actually be ammount + fee from the unsigned transaction object
+                        coin: Sats(
+                                cubits.send.state.sendRequest!.sendAmountAsSats)
+                            .toCoin(),
+                        incoming: null))),
             const SizedBox(height: 8),
             Padding(
                 padding: const EdgeInsets.only(
@@ -131,7 +124,7 @@ class ConfirmationItem extends StatelessWidget {
   const ConfirmationItem({
     super.key,
     required this.label,
-    required this.display,
+    this.display = const <TextSpan>[],
     this.overrideDisplay,
   });
 

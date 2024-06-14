@@ -41,22 +41,36 @@ class Coin {
   }
   factory Coin.fromString(String value) {
     if (value.contains('.')) {
+      var parts = value.split('.');
+      var coinPart = int.tryParse(parts.first.replaceAll(',', '')) ?? 0;
+      var satPartStr = parts.last.replaceAll(' ', '');
+      var satPart = int.tryParse(satPartStr) ?? 0;
+
+      // Calculate the sats correctly
+      var satMultiplier = (satPartStr.length < 8) ? (8 - satPartStr.length) : 0;
+      var sats = satPart *
+          (satMultiplier > 0
+              ? int.parse('1'.padRight(satMultiplier + 1, '0'))
+              : 1);
+
       return Coin._(
-        coin: int.tryParse(value.split('.').first.replaceAll(',', '')) ?? 0,
-        sats: int.tryParse(value.split('.').last.replaceAll(' ', '')) ?? 0,
+        coin: coinPart,
+        sats: sats,
       );
     }
     return Coin._(
-      coin: int.tryParse(value.split('.').first) ?? 0,
+      coin: int.tryParse(value.split('.').first.replaceAll(',', '')) ?? 0,
       sats: 0,
     );
   }
+  factory Coin.fromDouble(double amount) => Coin.fromString(amount.toString());
 
   Coin operator +(Coin other) => Coin._(
         coin: coin + other.coin,
         sats: sats + other.sats,
       );
 
+  double toDouble() => double.parse('${coin.toString()}.${sats.toString()}');
   Sats toSats() => Sats((coin * satsPerCoin) + sats);
   Fiat toFiat(double? coinPrice) => coinPrice == null
       ? const Fiat.empty()
