@@ -127,8 +127,9 @@ class AnimatedCoinSpec extends StatelessWidget {
                   style: AppText.partHolding),
           ]
         ]),
-        Text(subtitle ?? cubits.holding.state.usd,
-            textAlign: TextAlign.center, style: AppText.usdHolding),
+        if ((subtitle ?? cubits.holding.state.usd) != '\$ -')
+          Text(subtitle ?? cubits.holding.state.usd,
+              textAlign: TextAlign.center, style: AppText.usdHolding),
         //HighlightedNameView(holding: cubits.holding.state.holding)
         //Text(
         //    subtitle ??
@@ -216,6 +217,7 @@ class AnimatedCoinSpec extends StatelessWidget {
           (previous.section != current.section ||
               previous.holding != current.holding),
       builder: (context, HoldingState state) {
+        double modifierTop = 0;
         double iconTop = 4;
         double valueTop = 4 + screen.iconHuge + 16;
         Coin? overrideCoin;
@@ -227,6 +229,9 @@ class AnimatedCoinSpec extends StatelessWidget {
           iconTop = 4;
           valueTop = 4 + screen.iconHuge + 16;
         } else if (state.section == HoldingSection.send) {
+          overrideSubtitle = state.holding.isRoot
+              ? (state.holding.blockchain?.name ?? 'Evrmore')
+              : state.holding.name;
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
@@ -262,16 +267,19 @@ class AnimatedCoinSpec extends StatelessWidget {
                   ? 'Received'
                   : 'Sent';
         }
+        if ((overrideSubtitle ?? cubits.holding.state.usd) == '\$ -') {
+          modifierTop = 16;
+        }
         return Stack(alignment: Alignment.topCenter, children: [
           AnimatedPositioned(
               duration: slideDuration,
               curve: Curves.easeInOutCubic,
-              top: iconTop,
+              top: modifierTop + iconTop,
               child: assetIcon()),
           AnimatedPositioned(
               duration: slideDuration,
               curve: Curves.easeInOutCubic,
-              top: valueTop,
+              top: modifierTop + valueTop,
               child: assetValues(
                   coin: overrideCoin,
                   whole: overrideWhole,

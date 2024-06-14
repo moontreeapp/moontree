@@ -223,21 +223,26 @@ class _SlideOutInState extends State<SlideOutIn>
 class SlideSide extends StatefulWidget {
   final Widget child;
   final Duration duration;
+  final Duration delay;
   final bool enter;
   final Side side;
+  final double modifier;
 
   const SlideSide({
+    super.key,
     required this.child,
     this.duration = animation.slideDuration,
+    this.delay = Duration.zero,
     this.enter = true,
     this.side = Side.left,
+    this.modifier = 0,
   });
 
   @override
-  _SlideSideState createState() => _SlideSideState();
+  SlideSideState createState() => SlideSideState();
 }
 
-class _SlideSideState extends State<SlideSide>
+class SlideSideState extends State<SlideSide>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late Animation<Offset> _animation;
@@ -251,9 +256,17 @@ class _SlideSideState extends State<SlideSide>
       duration: widget.duration,
     );
     if (widget.enter) {
-      _controller.forward(from: 0.0);
+      Future.delayed(widget.delay, () {
+        if (mounted) {
+          _controller.forward(from: 0.0);
+        }
+      });
     } else {
-      _controller.reverse(from: 1.0);
+      Future.delayed(widget.delay, () {
+        if (mounted) {
+          _controller.reverse(from: 1.0);
+        }
+      });
     }
   }
 
@@ -268,9 +281,17 @@ class _SlideSideState extends State<SlideSide>
     super.didUpdateWidget(oldWidget);
     if (mounted) {
       if (widget.enter) {
-        _controller.forward(from: 0.0);
+        Future.delayed(widget.delay, () {
+          if (mounted) {
+            _controller.forward(from: 0.0);
+          }
+        });
       } else {
-        _controller.reverse(from: 1.0);
+        Future.delayed(widget.delay, () {
+          if (mounted) {
+            _controller.reverse(from: 1.0);
+          }
+        });
       }
     }
   }
@@ -279,19 +300,19 @@ class _SlideSideState extends State<SlideSide>
   Widget build(BuildContext context) {
     switch (widget.side) {
       case Side.left:
-        _offset = const Offset(-1, 0);
+        _offset = Offset(-1 + widget.modifier, 0);
         break;
       case Side.right:
-        _offset = const Offset(1, 0);
+        _offset = Offset(1 + widget.modifier, 0);
         break;
       case Side.top:
-        _offset = const Offset(0, -1);
+        _offset = Offset(0, -1 + widget.modifier);
         break;
       case Side.bottom:
-        _offset = const Offset(0, 1);
+        _offset = Offset(0, 1 + widget.modifier);
         break;
       default:
-        _offset = const Offset(-1, 0);
+        _offset = Offset(-1 + widget.modifier, 0);
     }
     _animation = Tween<Offset>(
       begin: _offset,

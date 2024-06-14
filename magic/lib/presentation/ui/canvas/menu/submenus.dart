@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/domain/concepts/side.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/canvas/menu/settings.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/fading.dart';
+import 'package:magic/presentation/widgets/animations/sliding.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/cubits/cubit.dart';
 
@@ -52,12 +54,23 @@ class SubMenuItem extends StatelessWidget {
             Container(
                 width: screen.width - 32,
                 alignment: alignment,
-                child: FadeIn(delay: fadeDuration * 4 * .5, child: child)),
+                //child: FadeIn(delay: fadeDuration * 4 * .5, child: child)),
+                child: SlideSide(
+                    delay: fadeDuration * 4 * .5,
+                    modifier: 32 / screen.width,
+                    side: Side.right,
+                    enter: true,
+                    child: child)),
           if (state.prior?.sub == sub && state.sub != sub)
             Container(
                 width: screen.width - 32,
                 alignment: alignment,
-                child: FadeOut(child: child)),
+                //child: FadeOut(child: child)),
+                child: SlideSide(
+                    side: Side.right,
+                    modifier: 32 / screen.width,
+                    enter: false,
+                    child: child)),
         ],
       );
 }

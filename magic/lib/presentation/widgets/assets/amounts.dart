@@ -366,7 +366,7 @@ class FiatView extends StatelessWidget {
                             .body1
                             .copyWith(height: 0, color: AppColors.black60),
                   ),
-                  if (humanString != '\$0.00')
+                  if (humanString != '\$0.00' && humanString != '\$-')
                     TextSpan(
                       text: '.${humanString.split('.').last}',
                       style: wholeStyle ??

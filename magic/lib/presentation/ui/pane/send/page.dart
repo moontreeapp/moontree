@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/cubits/pane/send/cubit.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
+import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/other/other.dart';
 import 'package:magic/services/services.dart';
 import 'package:wallet_utils/wallet_utils.dart';
@@ -35,7 +37,11 @@ class SendPage extends StatelessWidget {
 class SendContent extends StatelessWidget {
   const SendContent({super.key});
 
-  void _send() {
+  Future<void> _send() async {
+    cubits.fade.update(fade: FadeEvent.fadeOut);
+    // maybe we can shorten or remove: cubit may take more than that time anyway
+    await Future.delayed(fadeDuration);
+
     // validate address is valid
     // validate amount is a valid amount
     // validate amount is less than amount we hold of this asset
@@ -65,6 +71,7 @@ class SendContent extends StatelessWidget {
           note: state.note != '' ? state.note : null,
         );
     */
+
     cubits.send.update(
         sendRequest: SendRequest(
       sendAll: false,
@@ -93,6 +100,9 @@ class SendContent extends StatelessWidget {
     // go to the confirm page
     // on that page display results of transaction
     // sign it.
+
+    await Future.delayed(fadeDuration);
+    cubits.fade.update(fade: FadeEvent.fadeIn);
   }
 
   @override
