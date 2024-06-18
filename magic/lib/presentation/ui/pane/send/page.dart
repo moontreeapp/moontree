@@ -226,7 +226,11 @@ class SendContentState extends State<SendContent> {
     // go to the confirm page
     // on that page display results of transaction
     // sign it.
-
+    cubits.send.setUnsignedTransaction(
+      sendAllCoinFlag: false,
+      symbol: cubits.holding.state.holding.symbol,
+      blockchain: cubits.holding.state.holding.blockchain!,
+    );
     await Future.delayed(fadeDuration);
     cubits.fade.update(fade: FadeEvent.fadeIn);
   }
