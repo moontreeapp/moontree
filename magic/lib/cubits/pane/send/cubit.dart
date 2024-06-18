@@ -1,6 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/send.dart';
+import 'package:magic/domain/server/wrappers/unsigned_tx_result.dart';
+import 'package:magic/services/calls/unsigned.dart';
 
 part 'state.dart';
 
@@ -30,9 +34,10 @@ class SendCubit extends UpdatableCubit<SendState> {
     bool? active,
     String? asset,
     String? address,
+    String? changeAddress,
     String? amount,
     SendRequest? sendRequest,
-    String? unsignedTransaction,
+    UnsignedTransactionResultCalled? unsignedTransaction,
     bool? isSubmitting,
     SendState? prior,
   }) {
@@ -40,6 +45,7 @@ class SendCubit extends UpdatableCubit<SendState> {
       active: active ?? state.active,
       asset: asset ?? state.asset,
       address: address ?? state.address,
+      changeAddress: changeAddress ?? state.changeAddress,
       amount: amount ?? state.amount,
       sendRequest: sendRequest ?? state.sendRequest,
       unsignedTransaction: unsignedTransaction ?? state.unsignedTransaction,
@@ -48,45 +54,38 @@ class SendCubit extends UpdatableCubit<SendState> {
     ));
   }
 
-  /**from v2
-     Future<void> setUnsignedTransaction({
+  Future<void> setUnsignedTransaction({
     bool sendAllCoinFlag = false,
-    Wallet? wallet,
     String? symbol,
-    Chain? chain,
-    Net? net,
+    required Blockchain blockchain,
   }) async {
-    set(
+    update(
       isSubmitting: true,
     );
-    chain ??= Current.chain;
-    net ??= Current.net;
-    final changeAddress =
-        (await ReceiveRepo(wallet: wallet, change: true).fetch())
-            .address(chain, net);
-    List<UnsignedTransactionResult> unsigned = await UnsignedTransactionRepo(
-      wallet: wallet,
-      symbol: symbol ?? state.security.symbol,
-      security: state.security,
-      // server decides fast:
-      feeRate: state.fee == standardFee ? state.fee : null,
-      sats: sendAllCoinFlag ? -1 : state.sats,
+    final changeAddress = ''; // todo get
+    UnsignedTransactionResultCalled? unsigned = await UnsignedTransactionCall(
+      mnemonicWallets: cubits.keys.master.mnemonicWallets,
+      keypairWallets: cubits.keys.master.keypairWallets,
+      symbol: symbol ?? state.asset,
+      sats: sendAllCoinFlag ? -1 : state.sendRequest?.sendAmountAsSats ?? 0,
       changeAddress: changeAddress,
       address: state.address,
-      memo: state.memo,
-      chain: chain,
-      net: net,
+      memo: null, //state.memo,
+      blockchain: blockchain,
 
       /// todo: eventually we'll make a system to have accounts serverside, and
       ///       this will be relevant. until then, keep it as a reminder
       //String? addressName,
-    ).fetch(only: true);
-    set(
-      unsigned: unsigned,
+    ).call();
+    update(
+      unsignedTransaction: unsigned,
       changeAddress: changeAddress,
       isSubmitting: false,
     );
   }
+
+  /**from v2
+
 
   /// convert to TransactionBuilder object, inspect
   Future<bool> sign() async {

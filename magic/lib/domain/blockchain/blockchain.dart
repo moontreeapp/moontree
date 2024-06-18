@@ -201,4 +201,8 @@ enum Blockchain {
     }
     return false;
   }
+
+  bool get isFiat => this == Blockchain.none;
+  bool isCoin(String? assetSymbol) => symbol == assetSymbol;
+  bool isAsset(String? assetSymbol) => !isFiat && !isCoin(assetSymbol);
 }
