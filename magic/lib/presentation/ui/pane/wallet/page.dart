@@ -70,7 +70,7 @@ class HoldingItem extends StatelessWidget {
         //    ? cubits.pane.snapTo(screen.pane.midHeight)
         //    : maestro.activateHistory(),
         onTap: () => maestro.activateHistory(holding),
-        leading: holding.isRoot
+        leading: holding.isCurrency
             ? CurrencyIdenticon(holding: holding)
             : SimpleIdenticon(letter: holding.assetPathChildNFT[0]),
         title: SizedBox(
@@ -88,8 +88,8 @@ class HoldingItem extends StatelessWidget {
             //)),
 
             child: Text(
-                holding.isRoot
-                    ? holding.blockchain!.chain.title
+                holding.isCurrency
+                    ? holding.blockchain.chain.title
                     : holding.assetPathChildNFT,
                 style: Theme.of(context)
                     .textTheme
@@ -121,7 +121,7 @@ class CurrencyIdenticon extends StatelessWidget {
         shape: BoxShape.circle,
         //borderRadius: BorderRadius.circular(100),
       ),
-      child: Image.asset(holding.blockchain!.logo),
+      child: Image.asset(holding.blockchain.logo),
     );
   }
 }

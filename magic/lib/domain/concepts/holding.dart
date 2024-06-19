@@ -8,37 +8,34 @@ import 'package:magic/domain/server/protocol/comm_balance_view.dart';
 class Holding extends Equatable {
   final String name;
   final String symbol;
-  final String root;
   final HoldingMetadata metadata;
   final bool weHaveAdminOrMain;
   final Sats sats;
   final double? rate;
   final BalanceView? balanceView;
-  final Blockchain? blockchain;
+  final Blockchain blockchain;
 
   const Holding({
     required this.name,
     required this.symbol,
-    required this.root,
     required this.metadata,
     required this.sats,
+    required this.blockchain,
     this.weHaveAdminOrMain = false,
     this.rate,
     this.balanceView,
-    this.blockchain,
   });
 
   // Adding the .empty() named constructor
   const Holding.empty()
       : name = '',
         symbol = '',
-        root = '',
         metadata = const HoldingMetadata.empty(),
         sats = const Sats.empty(),
         weHaveAdminOrMain = false,
         rate = null,
         balanceView = null,
-        blockchain = null;
+        blockchain = Blockchain.none;
 
   factory Holding.fromBalanceView({
     required BalanceView balanceView,
@@ -48,8 +45,6 @@ class Holding extends Equatable {
       Holding(
           name: balanceView.symbol,
           symbol: balanceView.symbol,
-          root: blockchain.symbol,
-          //root: balanceView.chain ?? blockchain.name,
           metadata: const HoldingMetadata.empty(),
           sats: Sats(balanceView.satsConfirmed + balanceView.satsUnconfirmed),
           weHaveAdminOrMain: false,
@@ -71,8 +66,6 @@ class Holding extends Equatable {
       Holding(
           name: name ?? balanceView?.symbol ?? this.name,
           symbol: symbol ?? balanceView?.symbol ?? this.symbol,
-          root: root ?? blockchain?.symbol ?? this.root,
-          //root: balanceView.chain ?? blockchain.name,
           metadata: metadata ?? const HoldingMetadata.empty(),
           sats: sats ??
               (balanceView != null
@@ -91,7 +84,6 @@ class Holding extends Equatable {
   List<Object?> get props => <Object?>[
         name,
         symbol,
-        root,
         metadata,
         sats,
         weHaveAdminOrMain,
@@ -101,11 +93,11 @@ class Holding extends Equatable {
       ];
 
   bool get isEmpty => sats.isEmpty;
-  bool get isRoot => symbol == root;
-  bool get isEvrmore => isRoot && symbol == 'EVR';
-  bool get isRavencoin => isRoot && symbol == 'RVN';
-  bool get isOnEvrmore => root == 'EVR';
-  bool get isOnRavencoin => root == 'RVN';
+  bool get isCurrency => symbol == blockchain.symbol;
+  bool get isEvrmore => isCurrency && symbol == 'EVR';
+  bool get isRavencoin => isCurrency && symbol == 'RVN';
+  bool get isOnEvrmore => blockchain.symbol == 'EVR';
+  bool get isOnRavencoin => blockchain.symbol == 'RVN';
 
   Coin get coin => sats.toCoin();
   Fiat get fiat {

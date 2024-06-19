@@ -36,7 +36,7 @@ class AnimatedCoinSpec extends StatelessWidget {
   Widget assetIcon() => Container(
         width: screen.width,
         alignment: Alignment.center,
-        child: cubits.holding.state.holding.isRoot
+        child: cubits.holding.state.holding.isCurrency
             ? CurrencyIdenticon(
                 holding: cubits.holding.state.holding,
                 height: screen.iconHuge,
@@ -133,8 +133,8 @@ class AnimatedCoinSpec extends StatelessWidget {
         //HighlightedNameView(holding: cubits.holding.state.holding)
         //Text(
         //    subtitle ??
-        //        (cubits.holding.state.holding.isRoot
-        //            ? cubits.holding.state.holding.blockchain!.chain.title
+        //        (cubits.holding.state.holding.isCurrency
+        //            ? cubits.holding.state.holding.blockchain.chain.title
         //            : cubits.holding.state.holding.name),
         //    style: AppText.usdHolding),
       ]);
@@ -165,7 +165,7 @@ class AnimatedCoinSpec extends StatelessWidget {
         //SizedBox(width: screen.canvas.wSpace),
         GestureDetector(
             onTap: () => maestro
-                .activateReceive(cubits.holding.state.holding.blockchain!),
+                .activateReceive(cubits.holding.state.holding.blockchain),
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
@@ -229,8 +229,8 @@ class AnimatedCoinSpec extends StatelessWidget {
           iconTop = 4;
           valueTop = 4 + screen.iconHuge + 16;
         } else if (state.section == HoldingSection.send) {
-          overrideSubtitle = state.holding.isRoot
-              ? (state.holding.blockchain?.name ?? 'Evrmore')
+          overrideSubtitle = state.holding.isCurrency
+              ? (state.holding.blockchain.name)
               : state.holding.name;
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
@@ -243,9 +243,9 @@ class AnimatedCoinSpec extends StatelessWidget {
               8;
           overrideWhole = 'Send to Me';
           overridePart = '';
-          overrideSubtitle = state.holding.isRoot
-              ? (state.holding.blockchain?.name ?? 'Evrmore')
-              : '${state.holding.name}${state.holding.blockchain != null ? '\non ${state.holding.blockchain!.name}' : ''}';
+          overrideSubtitle = state.holding.isCurrency
+              ? (state.holding.blockchain.name)
+              : '${state.holding.name}${'\non ${state.holding.blockchain.name}'}';
         } else if (state.section == HoldingSection.swap) {
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +

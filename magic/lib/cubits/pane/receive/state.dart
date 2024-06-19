@@ -5,6 +5,7 @@ class ReceiveState with EquatableMixin, PriorActiveStateMixin {
   final String asset;
   final String chain;
   final String address;
+  final String changeAddress;
   final double amount;
   final bool isSubmitting;
   final ReceiveState? prior;
@@ -14,6 +15,7 @@ class ReceiveState with EquatableMixin, PriorActiveStateMixin {
     this.asset = '',
     this.chain = '',
     this.address = '',
+    this.changeAddress = '',
     this.amount = 0,
     this.isSubmitting = false,
     this.prior,
@@ -25,6 +27,7 @@ class ReceiveState with EquatableMixin, PriorActiveStateMixin {
         asset,
         chain,
         address,
+        changeAddress,
         amount,
         isSubmitting,
         prior,
@@ -39,6 +42,7 @@ class ReceiveState with EquatableMixin, PriorActiveStateMixin {
         asset: asset,
         chain: chain,
         address: address,
+        changeAddress: changeAddress,
         amount: amount,
         isSubmitting: isSubmitting,
         prior: null,

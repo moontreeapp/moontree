@@ -136,7 +136,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
         Holding(
           name: 'Ravencoin',
           symbol: 'RVN',
-          root: 'RVN',
+          blockchain: Blockchain.ravencoinMain,
           sats: Sats(pow(index, index ~/ 4.2) as int),
           metadata: HoldingMetadata(
             divisibility: Divisibility(8),
@@ -152,7 +152,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
     final ret = <Holding>[];
     for (final holding in holdings) {
       print(holding.symbol);
-      if (holding.isRoot) {
+      if (holding.isCurrency) {
         ret.add(holding);
       } else if (holding.isAdmin && mainOf(holding, holdings) != null) {
         ret.add(holding.copyWith(weHaveAdminOrMain: true));
@@ -167,8 +167,8 @@ class WalletCubit extends UpdatableCubit<WalletState> {
 
   /// default sort is by currency type, then by amount, then by alphabetical
   List<Holding> _sort(List<Holding> holdings) =>
-      holdings.where((e) => e.isRoot).toList() +
-      holdings.where((e) => !e.isRoot).toList();
+      holdings.where((e) => e.isCurrency).toList() +
+      holdings.where((e) => !e.isCurrency).toList();
 
   // todo pagenate list of holdings
   //Holding getNextBatch(List<Holding> batch) {}

@@ -46,7 +46,7 @@ enum Chips {
       case Chips.nonzero:
         return (Holding holding) => holding.sats.value > 0;
       case Chips.currencies:
-        return (Holding holding) => holding.isRoot;
+        return (Holding holding) => holding.isCurrency;
       case Chips.nfts:
         return (Holding holding) => holding.isNft;
       case Chips.admintokens:

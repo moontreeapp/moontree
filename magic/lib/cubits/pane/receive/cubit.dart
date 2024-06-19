@@ -35,6 +35,7 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
     String? asset,
     String? chain,
     String? address,
+    String? changeAddress,
     bool? isSubmitting,
     ReceiveState? prior,
   }) {
@@ -43,6 +44,7 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
       asset: asset ?? state.asset,
       chain: chain ?? state.chain,
       address: address ?? state.address,
+      changeAddress: changeAddress ?? state.changeAddress,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));
@@ -100,5 +102,31 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
             .externals
             .last
             .address);
+  }
+
+  Future<String> populateChangeAddress(Blockchain blockchain) async {
+    final seedWallet =
+        cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain);
+    if (seedWallet.highestIndex.isEmpty) {
+      cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain).derive({
+        Exposure.internal: (await ReceiveCall(
+          blockchain: blockchain,
+          mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
+          exposure: Exposure.internal,
+        ).call())
+            .value,
+      });
+    } else {
+      cubits.keys.master.mnemonicWallets.first
+          .seedWallet(blockchain)
+          .derive({Exposure.internal: 0});
+    }
+    update(
+        changeAddress: cubits.keys.master.mnemonicWallets.first
+            .seedWallet(blockchain)
+            .internals
+            .last
+            .address);
+    return state.changeAddress;
   }
 }

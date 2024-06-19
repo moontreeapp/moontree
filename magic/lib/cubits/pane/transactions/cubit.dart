@@ -134,7 +134,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
           asset: Holding(
             name: 'Ravencoin',
             symbol: 'RVN',
-            root: 'RVN',
+            blockchain: Blockchain.ravencoinMain,
             sats: Sats(21),
             metadata: HoldingMetadata(
               divisibility: Divisibility(8),

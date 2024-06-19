@@ -12,10 +12,10 @@ class UnsignedTransactionCall extends ServerCall {
   late List<KeypairWallet> keypairWallets;
   late Blockchain blockchain;
   late String symbol;
-  final String? changeAddress;
-  final String? memo;
+  final String changeAddress;
   final String address;
   final int sats;
+  final String? memo;
   UnsignedTransactionCall({
     required this.mnemonicWallets,
     required this.keypairWallets,
@@ -23,7 +23,7 @@ class UnsignedTransactionCall extends ServerCall {
     required this.address,
     required this.sats,
     required this.symbol,
-    this.changeAddress,
+    required this.changeAddress,
     this.memo,
   });
 

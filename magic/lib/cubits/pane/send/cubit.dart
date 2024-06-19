@@ -62,7 +62,9 @@ class SendCubit extends UpdatableCubit<SendState> {
     update(
       isSubmitting: true,
     );
-    final changeAddress = ''; // todo get
+    final changeAddress =
+        await cubits.receive.populateChangeAddress(blockchain);
+    //cubits.receive.state.changeAddress.isEmpty ? : ;
     UnsignedTransactionResultCalled? unsigned = await UnsignedTransactionCall(
       mnemonicWallets: cubits.keys.master.mnemonicWallets,
       keypairWallets: cubits.keys.master.keypairWallets,

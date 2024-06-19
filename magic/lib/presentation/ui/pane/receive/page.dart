@@ -24,7 +24,7 @@ class ReceivePage extends StatelessWidget {
                 onTap: () {
                   if (cubits.receive.state.address.isEmpty) {
                     cubits.receive.populateReceiveAddress(
-                        cubits.holding.state.holding.blockchain!);
+                        cubits.holding.state.holding.blockchain);
                   }
                   Clipboard.setData(
                       ClipboardData(text: cubits.receive.state.address));

@@ -123,7 +123,7 @@ class SendContentState extends State<SendContent> {
 
   bool validateAddressNotEmpty(String address) => address.isNotEmpty;
   bool validateAddressByBlockchain(String address) =>
-      (cubits.holding.state.holding.blockchain?.isAddress(address) ?? false);
+      (cubits.holding.state.holding.blockchain.isAddress(address));
 
   bool validateAmount(String amount) =>
       validateAmountNotEmpty(amount) &&
@@ -229,7 +229,7 @@ class SendContentState extends State<SendContent> {
     cubits.send.setUnsignedTransaction(
       sendAllCoinFlag: false,
       symbol: cubits.holding.state.holding.symbol,
-      blockchain: cubits.holding.state.holding.blockchain!,
+      blockchain: cubits.holding.state.holding.blockchain,
     );
     await Future.delayed(fadeDuration);
     cubits.fade.update(fade: FadeEvent.fadeIn);
