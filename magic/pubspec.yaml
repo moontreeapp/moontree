@@ -61,6 +61,7 @@ dependencies:
   http: ^1.2.1
   tuple: ^2.0.2
   local_auth: ^2.2.0
+  crypto: ^3.0.3
 
 
 dev_dependencies:

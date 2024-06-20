@@ -19,7 +19,7 @@ import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/concepts/address.dart';
-import 'package:wallet_utils/wallet_utils.dart' show HDWallet, KPWallet;
+import 'package:wallet_utils/wallet_utils.dart' show ECPair, HDWallet, KPWallet;
 
 abstract class Jsonable {
   Map<String, dynamic> get asMap;

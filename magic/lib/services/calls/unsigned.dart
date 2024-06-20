@@ -57,13 +57,16 @@ class UnsignedTransactionCall extends ServerCall {
 
   Future<UnsignedTransactionResultCalled?> call() async {
     final String? serverSymbol = (blockchain.isCoin(symbol) ? null : symbol);
+    final roots = mnemonicWallets
+        .map((e) => e.roots(blockchain))
+        .expand((e) => e)
+        .toList();
+    final h160s =
+        keypairWallets.map((e) => e.h160AsString(blockchain)).toList();
     final List<UnsignedTransactionResult> unsigned = await unsignedTransaction(
       chain: blockchain.chaindata,
-      roots: mnemonicWallets
-          .map((e) => e.roots(blockchain))
-          .expand((e) => e)
-          .toList(),
-      h160s: keypairWallets.map((e) => e.h160AsString(blockchain)).toList(),
+      roots: roots,
+      h160s: h160s,
       addresses: [address],
       serverAssets: [serverSymbol],
       satsToSend: [sats],
@@ -74,12 +77,14 @@ class UnsignedTransactionCall extends ServerCall {
       return null;
     }
 
-    return translate(unsigned, blockchain);
+    return translate(unsigned, blockchain, roots, h160s);
   }
 
   UnsignedTransactionResultCalled translate(
     List<UnsignedTransactionResult> records,
     Blockchain blockchain,
+    List<String> roots,
+    List<String> h160s,
   ) =>
       UnsignedTransactionResultCalled(
         unsignedTransactionResults: records,
@@ -91,5 +96,7 @@ class UnsignedTransactionCall extends ServerCall {
         symbol: symbol,
         changeAddress: changeAddress,
         memo: memo,
+        roots: roots,
+        h160s: h160s,
       );
 }

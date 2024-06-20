@@ -14,6 +14,8 @@ class UnsignedTransactionResultCalled extends ServerCall {
   final String? memo;
   final String address;
   final int sats;
+  final List<String> roots;
+  final List<String> h160s;
   final List<UnsignedTransactionResult> unsignedTransactionResults;
   UnsignedTransactionResultCalled({
     required this.unsignedTransactionResults,
@@ -23,6 +25,8 @@ class UnsignedTransactionResultCalled extends ServerCall {
     required this.address,
     required this.sats,
     required this.symbol,
+    required this.roots,
+    required this.h160s,
     this.changeAddress,
     this.memo,
   });

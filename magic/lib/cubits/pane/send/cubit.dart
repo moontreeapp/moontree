@@ -2,9 +2,27 @@ import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/concepts/send.dart';
+import 'package:magic/domain/server/protocol/comm_unsigned_transaction_result_class.dart';
 import 'package:magic/domain/server/wrappers/unsigned_tx_result.dart';
+import 'package:magic/domain/wallet/extended_wallet_base.dart';
+import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/calls/unsigned.dart';
+import 'package:wallet_utils/wallet_utils.dart'
+    show
+        ECPair,
+        FeeRate,
+        TransactionBuilder,
+        Transaction,
+        satsPerCoin,
+        standardFee;
+import 'package:tuple/tuple.dart';
+import 'package:equatable/equatable.dart';
+import 'package:collection/collection.dart';
+import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:moontree_utils/moontree_utils.dart';
 
 part 'state.dart';
 
@@ -38,6 +56,7 @@ class SendCubit extends UpdatableCubit<SendState> {
     String? amount,
     SendRequest? sendRequest,
     UnsignedTransactionResultCalled? unsignedTransaction,
+    List<Transaction>? signedTransactions,
     bool? isSubmitting,
     SendState? prior,
   }) {
@@ -49,6 +68,7 @@ class SendCubit extends UpdatableCubit<SendState> {
       amount: amount ?? state.amount,
       sendRequest: sendRequest ?? state.sendRequest,
       unsignedTransaction: unsignedTransaction ?? state.unsignedTransaction,
+      signedTransactions: signedTransactions ?? state.signedTransactions,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));
@@ -86,59 +106,75 @@ class SendCubit extends UpdatableCubit<SendState> {
     );
   }
 
-  /**from v2
-
-
-  /// convert to TransactionBuilder object, inspect
-  Future<bool> sign() async {
-    List<wutx.Transaction> txs = [];
-    for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
+  Future<bool> signUnsignedTransaction() async {
+    if (state.unsignedTransaction == null) {
+      return false;
+    }
+    List<Transaction> txs = [];
+    for (final UnsignedTransactionResult unsigned
+        in state.unsignedTransaction!.unsignedTransactionResults) {
       final txb = TransactionBuilder.fromRawInfo(
           unsigned.rawHex,
           unsigned.vinScriptOverride.map((String? e) => e?.hexBytes),
           unsigned.vinLockingScriptType.map((e) =>
               e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
-          state.security.chainNet.network);
+          state.unsignedTransaction!.blockchain.network);
       // this map reduces the time to sign large tx in half (for mining wallets)
       Map<String, ECPair?> keyPairByPath = {};
       ECPair? keyPair;
-      final List<String> walletRoots =
-          await (Current.wallet as LeaderWallet).roots;
+      final List<String> walletRoots = state.unsignedTransaction!.roots;
       for (final Tuple2<int, String> e
           in unsigned.vinPrivateKeySource.enumeratedTuple<String>()) {
         if (e.item2.contains(':')) {
           final walletPubKeyAndDerivationIndex = e.item2.split(':');
           // todo Current.wallet must be LeaderWallet, if not err?
-          final NodeExposure nodeExposure =
+          final Exposure exposure =
               walletPubKeyAndDerivationIndex[0] == walletRoots[0]
-                  ? NodeExposure.external
-                  : NodeExposure.internal;
+                  ? Exposure.external
+                  : Exposure.internal;
           keyPairByPath[
-                  '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
-              await services.wallet.getAddressKeypair(
-                  await services.wallet.leader.deriveAddressByIndex(
-            wallet: Current.wallet as LeaderWallet,
-            exposure: nodeExposure,
-            hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
-            chain: state.security.chain,
-            net: state.security.net,
-          ));
+                  '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
+              cubits.keys.master.mnemonicWallets
+                  .map((MnemonicWallet e) => e
+                      .seedWallet(state.unsignedTransaction!.blockchain)
+                      .subwallet(
+                        hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
+                        exposure: exposure,
+                      ))
+                  .firstOrNull
+                  ?.keyPair;
+
           keyPair = keyPairByPath[
-              '${nodeExposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
+              '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
+          // not sure this works right - what if we have multiple KeypairWallets?
+          // I don't think this necessarily selects the correct one. perhaps this
+          // never happens since e.item2.contains(':') is probably indicitive of
+          // MnemonicWallet.
+          //if (keyPair == null) {
+          //  keyPairByPath[
+          //        '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
+          //        cubits.keys.master.keypairWallets
+          //            .map((KeypairWallet e) => e.wallet(state.unsignedTransaction!.blockchain).keyPair).firstOrNull;
+          //  keyPair = keyPairByPath[
+          //        '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
+          //}
         } else {
-          /// case for SingleWallet
-          /// in theory we shouldn't have to use the h160 to figureout which
-          /// address since the current wallet is the one that made this
-          /// transaction, it should always match the h160 provided
-          if (e.item2 !=
-              (Current.wallet as SingleWallet).addresses.first.h160AsString) {
-            throw Exception(
-                ("Single wallet signing erorr: wallet doens't match h160 returned from server\n"
-                    "h160: ${e.item2}"
-                    "local: ${(Current.wallet as SingleWallet).addresses.first.h160AsString}"));
-          }
-          keyPair ??= await services.wallet.getAddressKeypair(
-              (Current.wallet as SingleWallet).addresses.first);
+          // case for SingleWallet
+          // what do we have to match on? never tested, old design had Current.wallet concept, we don't.
+          //if (e.item2 !=
+          //    (Current.wallet as SingleWallet).addresses.first.h160AsString) {
+          //  throw Exception(
+          //      ("Single wallet signing erorr: wallet doens't match h160 returned from server\n"
+          //          "h160: ${e.item2}"
+          //          "local: ${(Current.wallet as SingleWallet).addresses.first.h160AsString}"));
+          //}
+          //keyPair ??= await services.wallet.getAddressKeypair(
+          //    (Current.wallet as SingleWallet).addresses.first);
+          // this should work if they only have one keypair wallet:
+          keyPair = cubits.keys.master.keypairWallets
+              .map((KeypairWallet e) =>
+                  e.wallet(state.unsignedTransaction!.blockchain).keyPair)
+              .firstOrNull;
         }
         txb.signRaw(
           vin: e.item1,
@@ -148,16 +184,20 @@ class SendCubit extends UpdatableCubit<SendState> {
           prevOutScriptOverride: unsigned.vinScriptOverride[e.item1]?.hexBytes,
           asset: unsigned.vinAssets[e.item1],
           assetAmount: unsigned.vinAmounts[e.item1],
-          assetLiteral: Current.chainNet.chaindata.assetLiteral,
+          assetLiteral:
+              state.unsignedTransaction!.blockchain.chaindata.assetLiteral,
         );
       }
       final tx = txb.build();
       txs.add(tx);
     }
-    set(signed: txs);
+    update(signedTransactions: txs);
     // compare this against parsed fee amount to verify fee.
     return false;
   }
+
+  /**from v2
+
 
   /// parse transaction to verify elements within
   Future<TransactionComponents> processHex(
@@ -342,20 +382,18 @@ class SendCubit extends UpdatableCubit<SendState> {
           if (coinInput - fee - coinChange != 0) {
             return false;
           }
-          /*
-        kralverde — Today at 10:48 AM
-          Yeah for the vins, the tx would fail if they aren’t ours and the 
-          asset/amount are pulled directly from the db
-        meta stack — Today at 10:51 AM
-          true I was just trying to to verify that the 
-          `assetInput - assetSent == assetChange` to make sure the client is
-          getting all the change they deserve back, but I can't verify that
-          without determining the assetInput used, but since the server could
-          lie about tx data there's no way to guarantee it.
-        if (assetInput - state.sats - assetChange != 0) {
-          return false;
-        }
-        */
+        //kralverde — Today at 10:48 AM
+        //  Yeah for the vins, the tx would fail if they aren’t ours and the 
+        //  asset/amount are pulled directly from the db
+        //meta stack — Today at 10:51 AM
+        //  true I was just trying to to verify that the 
+        //  `assetInput - assetSent == assetChange` to make sure the client is
+        //  getting all the change they deserve back, but I can't verify that
+        //  without determining the assetInput used, but since the server could
+        //  lie about tx data there's no way to guarantee it.
+        //if (assetInput - state.sats - assetChange != 0) {
+        //  return false;
+        //}
         }
       }
       // no errors found
