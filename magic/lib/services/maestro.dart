@@ -271,6 +271,8 @@ class Maestro {
   Future<void> activateHistory([Holding? holding]) async {
     cubits.app.animating = true;
     cubits.transactions.populateTransactions(holding);
+    cubits.transactions
+        .populateMempoolTransactions(force: true, holding: holding);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
@@ -324,6 +326,7 @@ class Maestro {
       cubits.holding.update(holding: holding);
       cubits.transactions.clearTransactions();
       cubits.transactions.populateTransactions(holding);
+      cubits.transactions.populateMempoolTransactions(holding: holding);
     });
     cubits.appbar.update(
       leading: AppbarLeading.back,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/cubits/pane/send/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
@@ -19,19 +20,24 @@ class SendPage extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<SendCubit, SendState>(
       buildWhen: (SendState prior, SendState current) =>
           prior.sendRequest != current.sendRequest ||
-          prior.unsignedTransaction != current.unsignedTransaction,
+          prior.unsignedTransaction != current.unsignedTransaction ||
+          prior.estimate != current.estimate,
       builder: (BuildContext context, SendState state) {
-        if (state.sendRequest == null) {
-          return const SendContent();
-        }
-        if (state.unsignedTransaction == null) {
+        if (state.unsignedTransaction != null && state.estimate != null) {
           return const ConfirmContent();
-          return Container(
-              height: screen.pane.midHeight,
-              alignment: Alignment.center,
-              child: const Text('please wait...'));
         }
-        return const ConfirmContent();
+        return const SendContent();
+        //if (state.sendRequest == null) {
+        //  return const SendContent();
+        //}
+        //if (state.unsignedTransaction == null) {
+        //  return const ConfirmContent();
+        //  return Container(
+        //      height: screen.pane.midHeight,
+        //      alignment: Alignment.center,
+        //      child: const Text('please wait...'));
+        //}
+        //return const ConfirmContent();
       });
 }
 
@@ -226,11 +232,45 @@ class SendContentState extends State<SendContent> {
     // go to the confirm page
     // on that page display results of transaction
     // sign it.
-    cubits.send.setUnsignedTransaction(
+    await cubits.send.setUnsignedTransaction(
       sendAllCoinFlag: false,
       symbol: cubits.holding.state.holding.symbol,
       blockchain: cubits.holding.state.holding.blockchain,
     );
+    await cubits.send.signUnsignedTransaction();
+    final validateMsg = await cubits.send.verifyTransaction();
+    print(validateMsg);
+    if (!validateMsg.item1) {
+      cubits.send.update(
+          signedTransactions: [],
+          txHashes: [],
+          removeUnsignedTransaction: true,
+          removeEstimate: true);
+      cubits.toast.flash(
+          msg: const ToastMessage(
+        title: 'Error',
+        text: 'Unable to generate transaction',
+        //positive: false,
+        //copy: validateMsg.item2,
+        //label: 'copy'
+      ));
+    } else {
+      cubits.appbar.update(
+        onLead: () {
+          cubits.send.update(
+            signedTransactions: [],
+            removeUnsignedTransaction: true,
+            removeEstimate: true,
+          );
+          cubits.appbar.update(
+            onLead: () {
+              cubits.send.reset();
+              maestro.activateHistory();
+            },
+          );
+        },
+      );
+    }
     await Future.delayed(fadeDuration);
     cubits.fade.update(fade: FadeEvent.fadeIn);
   }
@@ -266,6 +306,8 @@ class SendContentState extends State<SendContent> {
               autocorrect: false,
               textInputAction: TextInputAction.done,
               controller: amountText,
+              keyboardType:
+                  const TextInputType.numberWithOptions(signed: false),
               labelText: 'Amount',
               errorText: amountText.text.trim() == '' ||
                       validateAmount(amountText.text)

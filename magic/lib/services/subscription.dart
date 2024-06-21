@@ -51,6 +51,7 @@ class SubscriptionService {
     /// TODO: implement triggerBalanceUpdates - after we setup repos for holdings:
     void triggerBalanceUpdates() {
       print('triggerBalanceUpdates - not implemented');
+      cubits.wallet.populateAssets();
       /*
       // update holdings list
       cubits.holdingsView.setHoldingViews(

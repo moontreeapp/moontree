@@ -6,6 +6,7 @@ import 'package:magic/domain/server/wrappers/unsigned_tx_result.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/calls/server.dart';
 import 'package:moontree_utils/moontree_utils.dart';
+import 'package:wallet_utils/wallet_utils.dart';
 
 class UnsignedTransactionCall extends ServerCall {
   late List<MnemonicWallet> mnemonicWallets;
@@ -42,8 +43,11 @@ class UnsignedTransactionCall extends ServerCall {
               request: UnsignedTransactionRequest(
                 myH106s: h160s,
                 myPubkeys: roots,
-                feeRateKb:
-                    feeRatePerByte == null ? null : feeRatePerByte * 1000,
+                feeRateKb: 1000001, //minimum 1000000
+                // null works for ravencoin but not evrmore,
+                // so we always supply the minimum.
+                // we can get more sophisticated later.
+                //feeRatePerByte == null ? null : feeRatePerByte * 1000,
                 changeSource: changeAddress,
                 eachOutputAddress: addresses,
                 eachOutputAsset: serverAssets,
@@ -90,10 +94,9 @@ class UnsignedTransactionCall extends ServerCall {
         unsignedTransactionResults: records,
         mnemonicWallets: mnemonicWallets,
         keypairWallets: keypairWallets,
-        blockchain: blockchain,
         address: address,
         sats: sats,
-        symbol: symbol,
+        security: Security(symbol: symbol, blockchain: blockchain),
         changeAddress: changeAddress,
         memo: memo,
         roots: roots,

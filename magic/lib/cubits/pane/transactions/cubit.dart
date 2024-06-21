@@ -13,6 +13,7 @@ import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/utils/range.dart';
+import 'package:magic/services/calls/mempool.dart';
 import 'package:magic/services/calls/transactions.dart';
 import 'package:magic/services/services.dart';
 
@@ -46,6 +47,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     bool? disposed,
     Holding? asset,
     // should be Transaction then we convert to a display object in the ui or state.
+    List<TransactionDisplay>? mempool,
     List<TransactionDisplay>? transactions,
     Widget? child,
     bool? clearing,
@@ -54,6 +56,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     emit(TransactionsState(
       active: active ?? state.active,
       asset: asset ?? state.asset,
+      mempool: mempool ?? state.mempool,
       transactions: transactions ?? state.transactions,
       child: child ?? state.child,
       clearing: clearing ?? state.clearing,
@@ -71,11 +74,15 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     update(isSubmitting: true);
     final replace = holding != cubits.holding.state.holding;
     final transactions = _sort(_newRateThese(
-        rate: rates.rvnUsdRate, // rates by blockchain and symbol...security?
+        rate: holding.isRavencoin
+            ? rates.rvnUsdRate
+            : holding.isEvrmore
+                ? rates.evrUsdRate
+                : null,
         transactions: await TransactionHistoryCall(
           mnemonicWallets: cubits.keys.master.mnemonicWallets,
           keypairWallets: cubits.keys.master.keypairWallets,
-          blockchain: holding.blockchain ?? Blockchain.ravencoinMain,
+          blockchain: holding.blockchain,
           height:
               state.transactions.isNotEmpty ? state.transactions.length : null,
           symbol: holding.symbol,
@@ -101,16 +108,40 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     );
   }
 
+  Future<void> populateMempoolTransactions(
+      {bool force = false, Holding? holding}) async {
+    if (force || state.mempool.isEmpty) {
+      update(isSubmitting: true);
+      holding ??= cubits.holding.state.holding;
+      final transactions = _sort(_newRateThese(
+          rate: holding.isRavencoin
+              ? rates.rvnUsdRate
+              : holding.isEvrmore
+                  ? rates.evrUsdRate
+                  : null,
+          transactions: await TransactionMempoolCall(
+            mnemonicWallets: cubits.keys.master.mnemonicWallets,
+            keypairWallets: cubits.keys.master.keypairWallets,
+            blockchain: holding.blockchain,
+            symbol: holding.symbol,
+          ).call()));
+      update(
+        mempool: transactions,
+        isSubmitting: false,
+      );
+    }
+  }
+
   void clearTransactions() {
     reachedEnd = false;
-    update(transactions: []);
+    update(mempool: [], transactions: []);
   }
 
   Future<void> slowlyClearTransactions() async {
     reachedEnd = false;
     update(clearing: true);
-    await Future.delayed(
-        fadeDuration, () => update(transactions: [], clearing: false));
+    await Future.delayed(fadeDuration,
+        () => update(mempool: [], transactions: [], clearing: false));
   }
 
   /// update all the holding with the new rate

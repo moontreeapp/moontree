@@ -12,9 +12,20 @@ import 'package:magic/services/services.dart';
 class ConfirmContent extends StatelessWidget {
   const ConfirmContent({super.key});
 
-  void _send() {
-    // sign it.
-    // broadcast it.
+  Future<void> _send() async {
+    //cubits.send.signUnsignedTransaction(); // already signed.
+    await cubits.send.broadcast();
+    print(cubits.send.state.txHashes);
+    //cubits.toast.flash(msg: ToastMessage(title: 'transaction id', text: : cubits.send.state.txHashes));
+    cubits.send.reset();
+    await cubits.wallet.populateAssets();
+    await Future.delayed(const Duration(seconds: 1));
+    cubits.holding.update(active: false);
+    await maestro.activateHistory(
+      cubits.wallet.state.holdings.firstWhere((holding) =>
+          holding.blockchain == cubits.holding.state.holding.blockchain &&
+          holding.symbol == cubits.holding.state.holding.symbol),
+    );
   }
 
   @override
@@ -56,12 +67,19 @@ class ConfirmContent extends StatelessWidget {
                     children: [
                       /// todo: this needs to be the blockchain of the address not the holding
                       /// of course it should always be the same so validate it
-                      CurrencyIdenticon(holding: cubits.holding.state.holding),
-                      const SizedBox(width: 8),
-                      Text(
-                        cubits.send.state.sendRequest!.sendAddress,
-                        style: const TextStyle(fontSize: 16),
+                      CurrencyIdenticon(
+                        holding: cubits.holding.state.holding,
+                        width: 24,
+                        height: 24,
                       ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                          child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                cubits.send.state.sendRequest!.sendAddress,
+                                style: const TextStyle(fontSize: 16),
+                              ))),
                     ],
                   ),
                 ),
@@ -73,23 +91,32 @@ class ConfirmContent extends StatelessWidget {
                     label: 'Fee:',
                     overrideDisplay: SimpleCoinSplitView(
                         mode: DifficultyMode.hard,
-                        // should actually be fee from the unsigned transaction object
-                        coin: Sats(
-                                cubits.send.state.sendRequest!.sendAmountAsSats)
-                            .toCoin(),
+                        coin: Sats(cubits.send.state.estimate!.fees).toCoin(),
                         incoming: null))),
-            const Divider(height: 1, indent: 0, endIndent: 0),
-            Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: ConfirmationItem(
-                    label: 'Total:',
-                    overrideDisplay: SimpleCoinSplitView(
-                        mode: DifficultyMode.hard,
-                        // should actually be ammount + fee from the unsigned transaction object
-                        coin: Sats(
-                                cubits.send.state.sendRequest!.sendAmountAsSats)
-                            .toCoin(),
-                        incoming: null))),
+            if (cubits.send.state.unsignedTransaction!.security.isCoin) ...[
+              const Divider(height: 1, indent: 0, endIndent: 0),
+              Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: ConfirmationItem(
+                      label: 'Total:',
+                      overrideDisplay: SimpleCoinSplitView(
+                          mode: DifficultyMode.hard,
+                          coin:
+                              Sats(cubits.send.state.estimate!.total).toCoin(),
+                          incoming: null))),
+            ] else if (cubits
+                .send.state.unsignedTransaction!.security.isAsset) ...[
+              const Divider(height: 1, indent: 0, endIndent: 0),
+              Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: ConfirmationItem(
+                      label: 'Amount:',
+                      overrideDisplay: SimpleCoinSplitView(
+                          mode: DifficultyMode.hard,
+                          coin:
+                              Sats(cubits.send.state.estimate!.amount).toCoin(),
+                          incoming: null))),
+            ],
             const SizedBox(height: 8),
             Padding(
                 padding: const EdgeInsets.only(

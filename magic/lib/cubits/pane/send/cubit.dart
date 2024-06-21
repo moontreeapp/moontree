@@ -1,13 +1,18 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
+import 'package:magic/domain/concepts/money/security.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/domain/server/protocol/comm_unsigned_transaction_result_class.dart';
 import 'package:magic/domain/server/wrappers/unsigned_tx_result.dart';
 import 'package:magic/domain/wallet/extended_wallet_base.dart';
 import 'package:magic/domain/wallet/wallets.dart';
+import 'package:magic/services/calls/broadcast.dart';
 import 'package:magic/services/calls/unsigned.dart';
 import 'package:wallet_utils/wallet_utils.dart'
     show
@@ -57,8 +62,12 @@ class SendCubit extends UpdatableCubit<SendState> {
     SendRequest? sendRequest,
     UnsignedTransactionResultCalled? unsignedTransaction,
     List<Transaction>? signedTransactions,
+    SendEstimate? estimate,
+    List<String>? txHashes,
     bool? isSubmitting,
     SendState? prior,
+    bool removeUnsignedTransaction = false,
+    bool removeEstimate = false,
   }) {
     emit(SendState(
       active: active ?? state.active,
@@ -67,8 +76,11 @@ class SendCubit extends UpdatableCubit<SendState> {
       changeAddress: changeAddress ?? state.changeAddress,
       amount: amount ?? state.amount,
       sendRequest: sendRequest ?? state.sendRequest,
-      unsignedTransaction: unsignedTransaction ?? state.unsignedTransaction,
+      unsignedTransaction: unsignedTransaction ??
+          (removeUnsignedTransaction ? null : state.unsignedTransaction),
       signedTransactions: signedTransactions ?? state.signedTransactions,
+      estimate: estimate ?? (removeEstimate ? null : state.estimate),
+      txHashes: txHashes ?? state.txHashes,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));
@@ -118,7 +130,7 @@ class SendCubit extends UpdatableCubit<SendState> {
           unsigned.vinScriptOverride.map((String? e) => e?.hexBytes),
           unsigned.vinLockingScriptType.map((e) =>
               e == -1 ? null : ['pubkeyhash', 'scripthash', 'pubkey'][e]),
-          state.unsignedTransaction!.blockchain.network);
+          state.unsignedTransaction!.security.blockchain.network);
       // this map reduces the time to sign large tx in half (for mining wallets)
       Map<String, ECPair?> keyPairByPath = {};
       ECPair? keyPair;
@@ -136,7 +148,8 @@ class SendCubit extends UpdatableCubit<SendState> {
                   '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
               cubits.keys.master.mnemonicWallets
                   .map((MnemonicWallet e) => e
-                      .seedWallet(state.unsignedTransaction!.blockchain)
+                      .seedWallet(
+                          state.unsignedTransaction!.security.blockchain)
                       .subwallet(
                         hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
                         exposure: exposure,
@@ -172,8 +185,9 @@ class SendCubit extends UpdatableCubit<SendState> {
           //    (Current.wallet as SingleWallet).addresses.first);
           // this should work if they only have one keypair wallet:
           keyPair = cubits.keys.master.keypairWallets
-              .map((KeypairWallet e) =>
-                  e.wallet(state.unsignedTransaction!.blockchain).keyPair)
+              .map((KeypairWallet e) => e
+                  .wallet(state.unsignedTransaction!.security.blockchain)
+                  .keyPair)
               .firstOrNull;
         }
         txb.signRaw(
@@ -184,8 +198,8 @@ class SendCubit extends UpdatableCubit<SendState> {
           prevOutScriptOverride: unsigned.vinScriptOverride[e.item1]?.hexBytes,
           asset: unsigned.vinAssets[e.item1],
           assetAmount: unsigned.vinAmounts[e.item1],
-          assetLiteral:
-              state.unsignedTransaction!.blockchain.chaindata.assetLiteral,
+          assetLiteral: state
+              .unsignedTransaction!.security.blockchain.chaindata.assetLiteral,
         );
       }
       final tx = txb.build();
@@ -193,22 +207,24 @@ class SendCubit extends UpdatableCubit<SendState> {
     }
     update(signedTransactions: txs);
     // compare this against parsed fee amount to verify fee.
-    return false;
+    if (txs.isEmpty) {
+      return false;
+    }
+    return true;
   }
-
-  /**from v2
-
 
   /// parse transaction to verify elements within
   Future<TransactionComponents> processHex(
     int index,
-    wutx.Transaction signed,
+    Transaction signed,
   ) async {
     /// sum the vinAmounts that are evr
     int getCoinInput() => [
           for (final x in IterableZip([
-            state.unsigned![index].vinAssets,
-            state.unsigned![index].vinAmounts,
+            state.unsignedTransaction!.unsignedTransactionResults[index]
+                .vinAssets,
+            state.unsignedTransaction!.unsignedTransactionResults[index]
+                .vinAmounts,
           ]))
             x[0] == null ? x[1] : 0
         ].sum() as int;
@@ -237,7 +253,7 @@ class SendCubit extends UpdatableCubit<SendState> {
       if (assetPortion.length >= 5 + assetNameLength) {
         final assetName =
             utf8.decode(assetPortion.sublist(5, 5 + assetNameLength));
-        if (state.security.symbol == assetName) {
+        if (state.unsignedTransaction!.security.symbol == assetName) {
           if (type == 0x6f) {
             // Ownership creation
             return {assetName: coin};
@@ -255,7 +271,7 @@ class SendCubit extends UpdatableCubit<SendState> {
       return {'': 0};
     }
 
-    bool getTargetAddressVerification(wutx.Transaction signed, int fee) {
+    bool getTargetAddressVerification(Transaction signed, int fee) {
       for (final x in signed.outs) {
         if (x.script != null) {
           final opCodes = getOpCodes(x.script!);
@@ -268,19 +284,20 @@ class SendCubit extends UpdatableCubit<SendState> {
           }
           final addressData = tryGuessAddressFromOpList(
               opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
-              Current.chainNet.constants);
+              state.unsignedTransaction!.security.blockchain.constants);
           if (addressData?.address == state.address) {
-            if (state.signed!.length == 1) {
-              if (state.security.isCoin) {
-                if ((!state.checkout!.estimate!.sendAll &&
-                        x.value == state.sats) ||
-                    (state.checkout!.estimate!.sendAll &&
-                        x.value == state.sats - fee)) {
+            if (state.signedTransactions.length == 1) {
+              if (state.unsignedTransaction!.security.isCoin) {
+                if ((!state.sendRequest!.sendAll &&
+                        x.value == state.sendRequest!.sendAmountAsSats) ||
+                    (state.sendRequest!.sendAll &&
+                        x.value == state.sendRequest!.sendAmountAsSats - fee)) {
                   return true;
                 }
               } else {
                 final nameSats = _parseAsset(maybeOpRVNAssetTuplePtr, opCodes);
-                if (nameSats[state.security.symbol] == state.sats) {
+                if (nameSats[state.unsignedTransaction!.security.symbol] ==
+                    state.unsignedTransaction!.sats) {
                   return true;
                 }
               }
@@ -288,7 +305,7 @@ class SendCubit extends UpdatableCubit<SendState> {
           }
         }
       }
-      if (state.signed!.length > 1) {
+      if (state.signedTransactions.length > 1) {
         return true;
       }
       return false;
@@ -296,9 +313,10 @@ class SendCubit extends UpdatableCubit<SendState> {
 
     bool getTargetAddressVerificationForAll(int fee) {
       // do this once on the last tx
-      if (index == state.signed!.length - 1) {
+      if (index == state.signedTransactions.length - 1) {
         return [
-          for (final s in state.signed!) getTargetAddressVerification(s, fee)
+          for (final s in state.signedTransactions)
+            getTargetAddressVerification(s, fee)
         ].every((i) => i);
       }
       return true;
@@ -311,7 +329,8 @@ class SendCubit extends UpdatableCubit<SendState> {
     Future<bool> getChangeAddressVerification(int coinInput, int fee) async {
       // verify all addresses
       // get change amount(s) here too
-      for (final UnsignedTransactionResult unsigned in state.unsigned ?? []) {
+      for (final UnsignedTransactionResult unsigned
+          in state.unsignedTransaction!.unsignedTransactionResults) {
         for (final cs in unsigned.changeSource) {
           /* kralverde -
           Just fyi it can also be wallet_key:index just like the vin source
@@ -325,7 +344,8 @@ class SendCubit extends UpdatableCubit<SendState> {
             //print(h160ToAddress(
             //    cs.hexBytes, Current.chainNet.chaindata.p2pkhPrefix));
             if (state.changeAddress !=
-                Current.chainNet.addressFromH160String(cs)) {
+                state.unsignedTransaction!.security.blockchain
+                    .addressFromH160String(cs)) {
               /* where is this going? why are we sending anything to an address
               that is neither the specified changeAddress or the target address?
               so we fail here if we don't recognize the address.
@@ -351,7 +371,7 @@ class SendCubit extends UpdatableCubit<SendState> {
           }
           final addressData = tryGuessAddressFromOpList(
               opCodes.sublist(0, maybeOpRVNAssetTuplePtr),
-              Current.chainNet.constants);
+              state.unsignedTransaction!.security.blockchain.constants);
           if (state.address == state.changeAddress) {
             coinChange += x.value ?? 0;
           } else if (addressData?.address != state.address) {
@@ -363,18 +383,22 @@ class SendCubit extends UpdatableCubit<SendState> {
           }
         }
       }
-      if (state.signed!.length == 1) {
+      if (state.signedTransactions.length == 1) {
         // verify amounts
-        if (state.security.isCoin) {
+        if (state.unsignedTransaction!.security.isCoin) {
           if (state.address == state.changeAddress) {
-            coinChange -= state.sats;
+            coinChange -= state.sendRequest!.sendAmountAsSats;
           }
-          if (state.checkout!.estimate!.sendAll) {
+          if (state.sendRequest!.sendAll) {
             if (coinChange > 0) {
               return false;
             }
           } else {
-            if (coinInput - fee - state.sats - coinChange != 0) {
+            if (coinInput -
+                    fee -
+                    state.sendRequest!.sendAmountAsSats -
+                    coinChange !=
+                0) {
               return false;
             }
           }
@@ -382,18 +406,18 @@ class SendCubit extends UpdatableCubit<SendState> {
           if (coinInput - fee - coinChange != 0) {
             return false;
           }
-        //kralverde — Today at 10:48 AM
-        //  Yeah for the vins, the tx would fail if they aren’t ours and the 
-        //  asset/amount are pulled directly from the db
-        //meta stack — Today at 10:51 AM
-        //  true I was just trying to to verify that the 
-        //  `assetInput - assetSent == assetChange` to make sure the client is
-        //  getting all the change they deserve back, but I can't verify that
-        //  without determining the assetInput used, but since the server could
-        //  lie about tx data there's no way to guarantee it.
-        //if (assetInput - state.sats - assetChange != 0) {
-        //  return false;
-        //}
+          //kralverde — Today at 10:48 AM
+          //  Yeah for the vins, the tx would fail if they aren’t ours and the
+          //  asset/amount are pulled directly from the db
+          //meta stack — Today at 10:51 AM
+          //  true I was just trying to to verify that the
+          //  `assetInput - assetSent == assetChange` to make sure the client is
+          //  getting all the change they deserve back, but I can't verify that
+          //  without determining the assetInput used, but since the server could
+          //  lie about tx data there's no way to guarantee it.
+          //if (assetInput - state.sats - assetChange != 0) {
+          //  return false;
+          //}
         }
       }
       // no errors found
@@ -402,21 +426,28 @@ class SendCubit extends UpdatableCubit<SendState> {
 
     Future<bool> getChangeAddressVerificationForAll() async {
       // do this once on the last tx
-      if (index == state.signed!.length - 1) {
+      if (index == state.signedTransactions.length - 1) {
         return [
-          for (final _ in state.signed!)
+          for (final _ in state.signedTransactions)
             await getChangeAddressVerification(0, 0)
         ].every((i) => i);
       }
       return true;
     }
 
+    if (state.sendRequest == null || state.unsignedTransaction == null) {
+      return const TransactionComponents(
+          coinInput: 0,
+          fee: 0,
+          targetAddressAmountVerified: false,
+          changeAddressAmountVerified: false);
+    }
     final coinInput = getCoinInput();
     final fee = getCoinFee(coinInput);
-    final targetAddressVerified = state.signed!.length == 1
+    final targetAddressVerified = state.signedTransactions.length == 1
         ? getTargetAddressVerification(signed, fee)
         : getTargetAddressVerificationForAll(fee);
-    final changeAddressVerified = state.signed!.length == 1
+    final changeAddressVerified = state.signedTransactions.length == 1
         ? await getChangeAddressVerification(coinInput, fee)
         : await getChangeAddressVerificationForAll();
     return TransactionComponents(
@@ -429,37 +460,39 @@ class SendCubit extends UpdatableCubit<SendState> {
   /// verify fee, sending to address, and return address
   Future<Tuple2<bool, String>> verifyTransaction() async {
     int fees = 0;
-    for (final Tuple2<int, wutx.Transaction> indexSigned
-        in (state.signed ?? []).enumeratedTuple<wutx.Transaction>()) {
+    for (final Tuple2<int, Transaction> indexSigned
+        in (state.signedTransactions).enumeratedTuple<Transaction>()) {
       final transactionComponents =
           await processHex(indexSigned.item1, indexSigned.item2);
       if (!transactionComponents.feeSanityCheck) {
-        return Tuple2(false, 'fee too large');
+        return const Tuple2(false, 'fee too large');
       }
       // our estimate a of the fee should be close to the fee the server calculated,
       // which should be equal to next condition, by the way.
-      if (state.fee == standardFee) {
+      if (state.sendRequest!.feeRate == standardFee) {
         if (!(transactionComponents.fee <=
-            state.fee.rate * indexSigned.item2.fee(goal: state.fee) * 1.01)) {
-          return Tuple2(false, 'fee does not match specified fee rate');
+            state.sendRequest!.feeRate.rate *
+                indexSigned.item2.fee(goal: state.sendRequest!.feeRate) *
+                1.01)) {
+          return const Tuple2(false, 'fee does not match specified fee rate');
         }
       } else {
         // server rate is the same as our rate, but has a minimum limit of 1 kb
         // so if we specify the server rate we want to make sure it's still no
         // larger than our rate or its the minimumFee
         if (!(transactionComponents.fee <=
-                state.fee.rate *
-                    indexSigned.item2.fee(goal: state.fee) *
+                state.sendRequest!.feeRate.rate *
+                    indexSigned.item2.fee(goal: state.sendRequest!.feeRate) *
                     1.01 ||
             transactionComponents.fee <= FeeRate.minimumFee)) {
-          return Tuple2(false, 'fee does not match server rate');
+          return const Tuple2(false, 'fee does not match server rate');
         }
       }
       if (!transactionComponents.targetAddressAmountVerified) {
-        return Tuple2(false, 'target address or amounts invalid');
+        return const Tuple2(false, 'target address or amounts invalid');
       }
       if (!transactionComponents.changeAddressAmountVerified) {
-        return Tuple2(false, 'change address or amounts invalid');
+        return const Tuple2(false, 'change address or amounts invalid');
       }
       fees += transactionComponents.fee;
     }
@@ -486,35 +519,26 @@ class SendCubit extends UpdatableCubit<SendState> {
     //    //transactionComponents.changeAmount == transactionComponents.totalOut - transactionComponents.sendAmount - transactionComponents.fee
     //    );
     // update checkout struct to update checkout page
-    set(
-      checkout: state.checkout!.newEstimate(
-        SendEstimate(
-          state.sats,
-          sendAll: state.checkout!.estimate!.sendAll,
-          fees: fees,
-          security: state.security,
-          memo: state.memo,
-          creation: false,
-
-          /// not necessary
-          /// in string form at cubit.state.unsigned.vinPrivateKeySource
-          //utxos: null,
-          /// todo: correct? wait, we need more logic - if sending asset then assetMemo, else opreturnMemo below
-          //assetMemo: Uint8List.fromList(cubit.state.memo
-          //    .codeUnits),
-        ),
+    update(
+      estimate: SendEstimate(
+        amount: state.sendRequest!.sendAmountAsSats,
+        sendAll: state.sendRequest!.sendAll,
+        fees: fees,
+        security: state.unsignedTransaction!.security,
+        memo: state.unsignedTransaction!.memo,
+        creation: false,
       ),
     );
-    return Tuple2(true, 'success');
+    return const Tuple2(true, 'success');
   }
 
   /// actually commit transaction
   Future<void> broadcast() async {
-    if (state.signed == null) {
+    if (state.signedTransactions.isEmpty) {
       print('transaction not signed yet');
       return;
     }
-    for (final wutx.Transaction signed in state.signed ?? []) {
+    for (final Transaction signed in state.signedTransactions) {
       print('broadcasting ${signed.toHex()}');
 
       /// should we use a repository for this? why? myabe for validation purposes?
@@ -522,32 +546,37 @@ class SendCubit extends UpdatableCubit<SendState> {
       /// todo: do repo pattern I guess..
       final broadcastResult = (await BroadcastTransactionCall(
         rawTransactionHex: signed.toHex(),
-        chain: state.security.chain,
-        net: state.security.net,
+        blockchain: state.unsignedTransaction!.security.blockchain,
       )());
 
       // todo: should we do more validation on the txHash?
       if (broadcastResult.value != null && broadcastResult.error == null) {
-        set(txHash: [...state.txHash ?? [], broadcastResult.value!]);
+        update(txHashes: [...state.txHashes, broadcastResult.value!]);
+        print(broadcastResult);
         // todo: save note by this txHash here
         // should this be in a repo?
-        pros.notes.save(
-            Note(note: state.note, transactionId: broadcastResult.value!));
-        Future.delayed(Duration(seconds: 2)).then((_) =>
-            streams.app.behavior.snack.add(Snack(
-                positive: true,
-                message: 'Successfully Sent Transaction',
-                copy: broadcastResult.value!)));
+        //pros.notes.save(
+        //    Note(note: state.note, transactionId: broadcastResult.value!));
+        Future.delayed(const Duration(seconds: 2))
+            .then((_) => cubits.toast.flash(
+                    msg: const ToastMessage(
+                  title: 'Sent',
+                  text: 'Successfully Sent Transaction',
+                  //copy: broadcastResult.value!
+                )));
       } else {
-        Future.delayed(Duration(seconds: 2)).then((_) =>
-            streams.app.behavior.snack.add(Snack(
-                positive: false,
-                message: 'Unable to Send, Try again Later',
-                copy: broadcastResult.error)));
+        Future.delayed(const Duration(seconds: 2))
+            .then((_) => cubits.toast.flash(
+                    msg: const ToastMessage(
+                  title: 'Failed',
+                  text: 'Unable to send, try again later',
+                  //copy: broadcastResult.error!
+                )));
       }
     }
   }
 
+  /**from v2
 
 
 
