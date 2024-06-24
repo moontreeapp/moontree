@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/welcome/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 
 class WelcomeLayer extends StatelessWidget {
@@ -48,7 +49,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(
                     top: Radius.circular(_isAnimating ? 30 : 0)),
-                color: Colors.white),
+                color: AppColors.foreground),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -63,6 +64,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                             fontSize: 40,
                             fontFamily: 'Pacifico',
                             fontWeight: FontWeight.normal,
+                            color: AppColors.title,
                           ),
                         ),
                         SizedBox(height: 8),
@@ -70,7 +72,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                           'Welcome Back',
                           style: TextStyle(
                             fontSize: 24,
-                            color: Colors.grey,
+                            color: AppColors.subtitle,
                           ),
                         ),
                       ],
@@ -101,7 +103,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightGreen,
+                        backgroundColor: AppColors.button,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

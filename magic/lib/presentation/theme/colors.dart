@@ -2,6 +2,18 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static const Color buttonLight = Color(0xFF6AAFE6);
+  static const Color buttonOutline = Color(0xFF609DE6); // overlay white12
+  static const Color button = Color(0xFF4A90E2);
+  static const Color frontHighlight = Colors.white38;
+  static const Color frontItem = Color(0xFF3A3A3A);
+  static const Color front = Color(0xFF2E2E2E);
+  static const Color back = Color(0xFF121212);
+  static const Color systemBar = Colors.black;
+  static const Color success = Color(0xFF34C759);
+  static const Color title = Colors.white;
+  static const Color subtitle = Colors.white60;
+
   static ColorScheme colorScheme = const ColorScheme(
       brightness: Brightness.light,
       primary: primary,
@@ -17,7 +29,7 @@ class AppColors {
 
   static const Color error = Color(0xFFEF5350);
   //static const Color success = Color(0xFF66BB6A);
-  static const Color success = Color(0xFF8BC34A);
+  //static const Color success = Color(0xFF8BC34A);
   static const Color successDark = Color(0xFF7AAB41);
   static const Color primary50 = Color(0xFFE8EAF6);
   static const Color primary38 = Color(0xFFC1C7E7);
@@ -35,7 +47,8 @@ class AppColors {
   static const Color primary900 = Color(0xFF1A237E);
   static const Color primaryDisabled = primary60;
   static const Color primary = primary400;
-  static const Color background = primary;
+  static const Color background = back;
+  static const Color foreground = front;
   static const Color primaryDark = primary400b12;
   static const Color secondary = success;
   static const Color white4 = Color(0x0AFFFFFF);

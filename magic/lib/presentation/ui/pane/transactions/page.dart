@@ -67,6 +67,8 @@ class TransactionItem extends StatelessWidget {
             height: screen.iconHuge,
             width: screen.iconHuge,
             fit: BoxFit.contain,
+            colorFilter: const ColorFilter.mode(
+                AppColors.frontHighlight, BlendMode.srcIn),
             alignment: Alignment.center,
           ),
         ),
@@ -75,7 +77,7 @@ class TransactionItem extends StatelessWidget {
             child: Text(display.humanWhen(relativeDateFormatter),
                 style: Theme.of(context).textTheme.body1.copyWith(
                       height: 0,
-                      color: AppColors.black60,
+                      color: AppColors.white60,
                     ))),
         //trailing: SizedBox(
         //    //width: screen.width - (16 + 16 + screen.iconLarge + 16),
@@ -92,7 +94,7 @@ class TransactionItem extends StatelessWidget {
                 style: Theme.of(context).textTheme.body1.copyWith(
                       height: 0,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.black.withOpacity(.67),
+                      color: AppColors.white.withOpacity(.67),
                     ))
             : SimpleCoinSplitView(
                 mode: DifficultyMode.hard,
@@ -104,19 +106,19 @@ class TransactionItem extends StatelessWidget {
         //    wholeStyle: Theme.of(context)
         //        .textTheme
         //        .body1
-        //        .copyWith(height: 0, color: AppColors.black60),
+        //        .copyWith(height: 0, color: AppColors.white60),
         //    partOneStyle: Theme.of(context)
         //        .textTheme
         //        .body1
-        //        .copyWith(height: 0, fontSize: 14, color: AppColors.black60),
+        //        .copyWith(height: 0, fontSize: 14, color: AppColors.white60),
         //    partTwoStyle: Theme.of(context)
         //        .textTheme
         //        .body1
-        //        .copyWith(height: 0, fontSize: 10, color: AppColors.black60),
+        //        .copyWith(height: 0, fontSize: 10, color: AppColors.white60),
         //    partThreeStyle: Theme.of(context)
         //        .textTheme
         //        .body1
-        //        .copyWith(height: 0, fontSize: 10, color: AppColors.black60),
+        //        .copyWith(height: 0, fontSize: 10, color: AppColors.white60),
         //    mode: DifficultyMode.hard)
         );
   }

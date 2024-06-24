@@ -87,7 +87,7 @@ class AnimatedCoinSpec extends StatelessWidget {
   //    width: screen.iconHuge,
   //    alignment: Alignment.center,
   //    decoration: BoxDecoration(
-  //      //color: AppColors.primary60,
+  //      //color: AppColors.buttonLight,
   //      borderRadius: BorderRadius.circular(100),
   //    ),
   //    child: Image.asset(LogoIcons.evr) // TODO: get from cubit
@@ -142,6 +142,7 @@ class AnimatedCoinSpec extends StatelessWidget {
   Widget buttons() => SizedBox(
       width: screen.width * .8,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        const SizedBox.shrink(),
         GestureDetector(
             onTap: () => maestro.activateSend(),
             child:
@@ -151,7 +152,7 @@ class AnimatedCoinSpec extends StatelessWidget {
                 width: screen.iconLarge,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.primary60,
+                  color: AppColors.buttonLight,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: SvgPicture.asset(
@@ -173,7 +174,7 @@ class AnimatedCoinSpec extends StatelessWidget {
                 width: screen.iconLarge,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.primary60,
+                  color: AppColors.buttonLight,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: SvgPicture.asset(
@@ -185,28 +186,28 @@ class AnimatedCoinSpec extends StatelessWidget {
               Text('receive', style: AppText.labelHolding),
             ])),
         //SizedBox(width: screen.canvas.wSpace),
-        if (DateTime.now().isAfter(DateTime(2024, 7, 15)))
-          GestureDetector(
-              onTap: () => maestro.activateSwapOnHolding(),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: screen.iconLarge,
-                      width: screen.iconLarge,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary60,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: SvgPicture.asset(
-                        '${TransactionIcons.base}/swap.${TransactionIcons.ext}',
-                        alignment: Alignment.center,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text('swap', style: AppText.labelHolding),
-                  ])),
+        //if (DateTime.now().isAfter(DateTime(2024, 7, 15)))
+        //GestureDetector(
+        //    onTap: () => maestro.activateSwapOnHolding(),
+        //    child:
+        //        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        //      Container(
+        //        height: screen.iconLarge,
+        //        width: screen.iconLarge,
+        //        alignment: Alignment.center,
+        //        decoration: BoxDecoration(
+        //          color: AppColors.buttonLight,
+        //          borderRadius: BorderRadius.circular(100),
+        //        ),
+        //        child: SvgPicture.asset(
+        //          '${TransactionIcons.base}/swap.${TransactionIcons.ext}',
+        //          alignment: Alignment.center,
+        //        ),
+        //      ),
+        //      const SizedBox(height: 4),
+        //      Text('swap', style: AppText.labelHolding),
+        //    ])),
+        const SizedBox.shrink(),
       ]));
 
   /// AnimatedPositions solution:

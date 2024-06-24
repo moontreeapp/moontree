@@ -128,7 +128,7 @@ class CoinView extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .body1
-                  .copyWith(height: 0, color: AppColors.black60))
+                  .copyWith(height: 0, color: AppColors.white60))
           : RichText(
               textAlign: textAlign,
               overflow: TextOverflow.ellipsis,
@@ -138,7 +138,7 @@ class CoinView extends StatelessWidget {
                     Theme.of(context)
                         .textTheme
                         .body1
-                        .copyWith(height: 0, color: AppColors.black60),
+                        .copyWith(height: 0, color: AppColors.white60),
                 children: <TextSpan>[
                   TextSpan(text: coin.whole()),
                   if (coin.sats > 0) ...[
@@ -205,7 +205,7 @@ class CoinSplitView extends StatelessWidget {
                                     display.incoming ? FontWeight.bold : null,
                                 color: display.incoming
                                     ? AppColors.success
-                                    : AppColors.black60,
+                                    : AppColors.white60,
                               )),
                       TextSpan(
                           text: coin.partOne(),
@@ -213,7 +213,7 @@ class CoinSplitView extends StatelessWidget {
                                 height: 0,
                                 color: display.incoming
                                     ? AppColors.success
-                                    : AppColors.black60,
+                                    : AppColors.white60,
                               )),
                     ])),
             Text(coin.spacedEnding(),
@@ -223,7 +223,7 @@ class CoinSplitView extends StatelessWidget {
                       fontSize: 10,
                       color: display.incoming
                           ? AppColors.success
-                          : AppColors.black60,
+                          : AppColors.white60,
                     )),
             SizedBox(height: space),
           ]));
@@ -247,7 +247,7 @@ class SimpleCoinSplitView extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .body1
-              .copyWith(height: 0, color: AppColors.black60))
+              .copyWith(height: 0, color: AppColors.white60))
       : SizedBox(
           //width: screen.width * .375,
           child: RichText(
@@ -272,7 +272,7 @@ class SimpleCoinSplitView extends StatelessWidget {
                           style: Theme.of(context).textTheme.body1.copyWith(
                                 height: 0,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.black.withOpacity(.67),
+                                color: AppColors.white.withOpacity(.67),
                               )),
                     TextSpan(
                         text: coin.whole(),
@@ -286,14 +286,14 @@ class SimpleCoinSplitView extends StatelessWidget {
                                       ? AppColors.success
                                       : AppColors.success.withOpacity(.45))
                                   : (coin.coin > 0
-                                      ? AppColors.black.withOpacity(.67)
-                                      : Colors.black38),
+                                      ? AppColors.white.withOpacity(.67)
+                                      : AppColors.white38),
                             )),
                     //TextSpan(
                     //    text: coin.spacedPart(),
                     //    style: Theme.of(context).textTheme.body1.copyWith(
                     //          height: 0,
-                    //          color: AppColors.black60,
+                    //          color: AppColors.white60,
                     //        )),
                     //...() {
                     //  var bolded = false;
@@ -305,7 +305,7 @@ class SimpleCoinSplitView extends StatelessWidget {
                     //        style: Theme.of(context).textTheme.body1.copyWith(
                     //              height: 0,
                     //              fontWeight: bolded ? FontWeight.w700 : null,
-                    //              color: AppColors.black60,
+                    //              color: AppColors.white60,
                     //            )));
                     //  }
                     //  return ret;
@@ -326,8 +326,8 @@ class SimpleCoinSplitView extends StatelessWidget {
                                           ? AppColors.success
                                           : AppColors.success.withOpacity(.87))
                                       : (e.bolded && coin.coin == 0
-                                          ? AppColors.black.withOpacity(.67)
-                                          : Colors.black38),
+                                          ? AppColors.white.withOpacity(.67)
+                                          : AppColors.white38),
                                 ))
                     ],
                   ])),
@@ -353,7 +353,7 @@ class FiatView extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .body1
-                  .copyWith(color: AppColors.black60))
+                  .copyWith(color: AppColors.white60))
           : (String humanString) {
               return RichText(
                 textAlign: TextAlign.start,
@@ -366,7 +366,7 @@ class FiatView extends StatelessWidget {
                         Theme.of(context)
                             .textTheme
                             .body1
-                            .copyWith(height: 0, color: AppColors.black60),
+                            .copyWith(height: 0, color: AppColors.white60),
                   ),
                   if (humanString != '\$0.00' && humanString != '\$-')
                     TextSpan(
@@ -375,7 +375,7 @@ class FiatView extends StatelessWidget {
                           Theme.of(context)
                               .textTheme
                               .body1
-                              .copyWith(height: 0, color: AppColors.black60),
+                              .copyWith(height: 0, color: AppColors.white60),
                     ),
                 ]),
               );

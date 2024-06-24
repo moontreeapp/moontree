@@ -11,7 +11,7 @@ class AppText {
       fontSize: 24.0,
       height: null, // figma: 24
       letterSpacing: 0.18,
-      color: AppColors.black);
+      color: AppColors.white);
 
   static TextStyle get h2 => const TextStyle(
       fontFamily: 'Nunito',
@@ -19,7 +19,7 @@ class AppText {
       fontSize: 20.0,
       height: 1.4, // figma: 24
       letterSpacing: 0.15,
-      color: AppColors.black);
+      color: AppColors.white);
 
   static TextStyle get subtitle1 => const TextStyle(
       fontFamily: 'Nunito',
@@ -27,7 +27,7 @@ class AppText {
       fontSize: 16.0,
       height: 1.625, // figma: 24
       letterSpacing: 0.15,
-      color: AppColors.black60);
+      color: AppColors.white60);
 
   static TextStyle get subtitle2 => const TextStyle(
       fontFamily: 'Nunito',
@@ -35,7 +35,7 @@ class AppText {
       fontSize: 14.0,
       height: 1.714, // figma: 24
       letterSpacing: 0.1,
-      color: AppColors.black);
+      color: AppColors.white);
 
   static TextStyle get body1 => const TextStyle(
       fontFamily: 'Nunito',
@@ -43,7 +43,7 @@ class AppText {
       fontSize: 16.0,
       height: 1.625, // figma: 24
       letterSpacing: 0.5,
-      color: AppColors.black);
+      color: AppColors.white);
 
   static TextStyle get body2 => const TextStyle(
       fontFamily: 'Nunito',
@@ -51,7 +51,7 @@ class AppText {
       fontSize: 14.0,
       height: 1.714, // figma: 24
       letterSpacing: 0.25,
-      color: AppColors.black);
+      color: AppColors.white);
 
   static TextStyle get button1 => const TextStyle(
       fontFamily: 'Nunito',
@@ -59,7 +59,7 @@ class AppText {
       fontSize: 14.0,
       height: 1.3, // figma: 18
       letterSpacing: 1.25, // figma: 1.25 px
-      color: AppColors.black);
+      color: AppColors.white);
 
   static TextStyle get caption => const TextStyle(
       fontFamily: 'Nunito',
@@ -67,7 +67,7 @@ class AppText {
       fontSize: 12.0,
       height: 1.5, // figma: 16
       letterSpacing: 0.004, // figma: 0.4 %
-      color: AppColors.black);
+      color: AppColors.white);
 
   static TextStyle get overline => const TextStyle(
       fontFamily: 'Nunito',
@@ -75,7 +75,7 @@ class AppText {
       fontSize: 10.0,
       height: 1.7, // figma: 16
       letterSpacing: 1.5, // figma: 1.5 px
-      color: AppColors.black);
+      color: AppColors.white);
 
   static TextStyle get agreement => const TextStyle(
       fontFamily: 'Nunito',
@@ -83,7 +83,7 @@ class AppText {
       fontSize: 14.0,
       height: 1.714,
       letterSpacing: 0.25,
-      color: AppColors.black60);
+      color: AppColors.white60);
 
   static TextStyle get question => const TextStyle(
       fontFamily: 'Nunito',
@@ -91,7 +91,7 @@ class AppText {
       fontSize: 12.0,
       height: 1.1427,
       letterSpacing: 0.25,
-      color: AppColors.black87);
+      color: AppColors.white87);
 
   static TextStyle get identiconLarge => h1.copyWith(
         color: AppColors.white87,
@@ -112,7 +112,7 @@ class AppText {
         color: AppColors.white,
       );
   static TextStyle get link => body1.copyWith(
-        color: AppColors.black60,
+        color: AppColors.white60,
       );
   static TextStyle underlined([TextStyle? style]) => (style ?? body1).copyWith(
         decoration: TextDecoration.underline,
@@ -153,7 +153,7 @@ class AppText {
   static TextStyle get childAssetName =>
       subtitle1.copyWith(color: Colors.white);
   static TextStyle get parentsAssetNameDark =>
-      subtitle1.copyWith(color: AppColors.black60);
+      subtitle1.copyWith(color: AppColors.white60);
   static TextStyle get childAssetNameDark =>
       subtitle1.copyWith(color: Colors.black87);
 

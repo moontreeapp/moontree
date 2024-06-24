@@ -4,6 +4,7 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/cubits/pane/cubit.dart';
 import 'package:magic/domain/concepts/side.dart';
+import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/ui/pane/receive/receive.dart';
 import 'package:magic/presentation/ui/pane/send/send.dart';
 import 'package:magic/presentation/ui/pane/transaction/transaction.dart';
@@ -47,7 +48,7 @@ class DraggablePane extends StatelessWidget {
   final Widget? child;
   const DraggablePane({
     super.key,
-    this.color = Colors.white,
+    this.color = AppColors.foreground,
     this.height = 0,
     this.child,
   });
@@ -193,7 +194,7 @@ class PaneBackground extends StatelessWidget {
   final Widget? child;
   const PaneBackground({
     super.key,
-    this.color = Colors.white,
+    this.color = AppColors.foreground,
     this.height = 0,
     this.child,
   });
@@ -249,7 +250,7 @@ class DraggablePaneBackground extends StatelessWidget {
         alignment: Alignment.topCenter,
         //padding: EdgeInsets.only(bottom: screen.navbar.height),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.foreground,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
@@ -341,7 +342,7 @@ class BottomModalSheet extends StatelessWidget {
                 SlideUp(
                     enter: false,
                     child: FrontCurve(
-                        color: Colors.white,
+                        color: AppColors.foreground,
                         fuzzyTop: false,
                         height: components.cubits.bottomModalSheet.height,
                         child: ListView(

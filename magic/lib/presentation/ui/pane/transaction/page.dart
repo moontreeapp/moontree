@@ -20,7 +20,7 @@
 //               autocorrect: false,
 //               textInputAction: TextInputAction.next,
 //               labelText: 'To',
-//               suffixIcon: Icon(Icons.qr_code_scanner, color: AppColors.black60),
+//               suffixIcon: Icon(Icons.qr_code_scanner, color: AppColors.white60),
 //             ),
 //             SizedBox(height: 4),
 //             TextFieldFormatted(
@@ -96,7 +96,7 @@ class TransactionPage extends StatelessWidget {
                       text: display.readableHash,
                       style: Theme.of(context).textTheme.body1.copyWith(
                             fontWeight: FontWeight.normal,
-                            color: AppColors.black87,
+                            color: AppColors.white87,
                           )),
                 ]),
                 TransactionItem(
@@ -111,13 +111,13 @@ class TransactionPage extends StatelessWidget {
                               '${display.incoming ? '+' : '-'}${display.coin.whole()}',
                           style: Theme.of(context).textTheme.body1.copyWith(
                                 fontWeight: FontWeight.normal,
-                                color: AppColors.black87,
+                                color: AppColors.white87,
                               )),
                       TextSpan(
                           text: display.coin.spacedPart(),
                           style: Theme.of(context).textTheme.body1.copyWith(
                               fontWeight: FontWeight.normal,
-                              color: AppColors.black60,
+                              color: AppColors.white60,
                               fontSize: 12)),
                     ]),
                 TransactionItem(label: 'Date:', display: <TextSpan>[
@@ -125,7 +125,7 @@ class TransactionPage extends StatelessWidget {
                       text: display.humanDate(),
                       style: Theme.of(context).textTheme.body1.copyWith(
                             fontWeight: FontWeight.normal,
-                            color: AppColors.black87,
+                            color: AppColors.white87,
                           )),
                 ]),
                 TransactionItem(label: 'Time:', display: <TextSpan>[
@@ -133,7 +133,7 @@ class TransactionPage extends StatelessWidget {
                       text: display.humanTime(),
                       style: Theme.of(context).textTheme.body1.copyWith(
                             fontWeight: FontWeight.normal,
-                            color: AppColors.black87,
+                            color: AppColors.white87,
                           )),
                 ])
               ]),
@@ -149,9 +149,10 @@ class TransactionPage extends StatelessWidget {
                       ),
                       child: Center(
                           child: Text(
-                        'View Details',
-                        style:
-                            AppText.button1.copyWith(color: AppColors.success),
+                        'VIEW DETAILS',
+                        style: AppText.button1.copyWith(
+                            color: AppColors.success,
+                            fontWeight: FontWeight.bold),
                       )))),
             ]));
   }
@@ -215,13 +216,13 @@ class TransactionItem extends StatelessWidget {
     //                    '${display.incoming ? '+' : '-'}${display.coin.whole()}',
     //                style: Theme.of(context).textTheme.body1.copyWith(
     //                      fontWeight: FontWeight.normal,
-    //                      color: AppColors.black87,
+    //                      color: AppColors.white87,
     //                    )),
     //            TextSpan(
     //                text: display.coin.part(),
     //                style: Theme.of(context).textTheme.body1.copyWith(
     //                    fontWeight: FontWeight.normal,
-    //                    color: AppColors.black60,
+    //                    color: AppColors.white60,
     //                    fontSize: 12)),
     //          ],
     //        ),
@@ -231,13 +232,13 @@ class TransactionItem extends StatelessWidget {
     //      //      '${display.incoming ? '+' : '-'}${display.sats.toCoin.whole()}',
     //      //      style: Theme.of(context).textTheme.body1.copyWith(
     //      //            fontWeight: FontWeight.w300,
-    //      //            color: AppColors.black87,
+    //      //            color: AppColors.white87,
     //      //          )),
     //      //  Text(display.sats.toCoin.whole(),
     //      //      overflow: TextOverflow.ellipsis,
     //      //      style: Theme.of(context).textTheme.body1.copyWith(
     //      //            fontWeight: FontWeight.w300,
-    //      //            color: AppColors.black60,
+    //      //            color: AppColors.white60,
     //      //          ))
     //      //])
     //      ),
