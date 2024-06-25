@@ -45,6 +45,14 @@ class AppText {
       letterSpacing: 0.5,
       color: AppColors.white);
 
+  static TextStyle get body1Front => const TextStyle(
+      fontFamily: 'Nunito',
+      fontWeight: FontWeights.semiBold,
+      fontSize: 16.0,
+      height: 1.625, // figma: 24
+      letterSpacing: 0.5,
+      color: AppColors.white87);
+
   static TextStyle get body2 => const TextStyle(
       fontFamily: 'Nunito',
       fontWeight: FontWeights.semiBold,

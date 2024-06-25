@@ -91,7 +91,7 @@ class HoldingItem extends StatelessWidget {
                 holding.isCurrency
                     ? holding.blockchain.chain.title
                     : holding.assetPathChildNFT,
-                style: Theme.of(context).textTheme.body1)),
+                style: AppText.body1Front)),
         subtitle: SimpleCoinSplitView(coin: holding.coin, incoming: null),
         trailing: FiatView(fiat: holding.coin.toFiat(holding.rate)),
       );
