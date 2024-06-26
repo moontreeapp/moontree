@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
+import 'package:magic/presentation/ui/pane/wallet/page.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
@@ -34,48 +35,64 @@ class ReceivePage extends StatelessWidget {
                           title: 'copied',
                           text: 'to clipboard'));
                 },
-                child: Container(
+                child: SizedBox(
                     height: screen.width - 32 * 4,
                     width: screen.width - 32 * 4,
-                    color: Colors.grey,
                     child: QrImageView(
-                        backgroundColor: Colors.white,
+                        backgroundColor: AppColors.front,
                         data: cubits.receive.state.address,
                         eyeStyle: const QrEyeStyle(
                             eyeShape: QrEyeShape.square,
-                            color: AppColors.black),
+                            color: AppColors.white),
                         dataModuleStyle: const QrDataModuleStyle(
                             dataModuleShape: QrDataModuleShape.square,
-                            color: AppColors.black),
+                            color: AppColors.white),
                         //foregroundColor: AppColors.primary,
                         //embeddedImage: Image.asset(
                         //        'assets/logo/moontree_logo.png')
                         //    .image,
                         size: screen.width - 32 * 2))),
-            const SizedBox(height: 16),
-            SelectableText.rich(
-              TextSpan(
-                text: '',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: AppColors.black87),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: cubits.receive.state.address.substring(0, 6),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+            SizedBox(height: screen.hspace),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                /// todo: this needs to be the blockchain of the address not the holding
+                /// of course it should always be the same so validate it
+                CurrencyIdenticon(
+                  holding: cubits.holding.state.holding,
+                  width: 24,
+                  height: 24,
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                    child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: SelectableText.rich(
+                    TextSpan(
+                      text: '',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: AppColors.white.withOpacity(.44)),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: cubits.receive.state.address.substring(0, 6),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: cubits.receive.state.address.substring(
+                              6, cubits.receive.state.address.length - 6),
+                        ),
+                        TextSpan(
+                          text: cubits.receive.state.address.substring(
+                              cubits.receive.state.address.length - 6),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
-                  TextSpan(
-                    text: cubits.receive.state.address
-                        .substring(6, cubits.receive.state.address.length - 6),
-                  ),
-                  TextSpan(
-                    text: cubits.receive.state.address
-                        .substring(cubits.receive.state.address.length - 6),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+                )),
+              ],
             ),
             const SizedBox(height: 16),
           ],
@@ -97,7 +114,7 @@ class ReceivePage extends StatelessWidget {
                     child: Container(
                         height: 64,
                         decoration: ShapeDecoration(
-                          color: AppColors.success,
+                          color: AppColors.button,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28 * 100),
                           ),
@@ -112,7 +129,7 @@ class ReceivePage extends StatelessWidget {
                 child: Container(
                     height: 64,
                     decoration: ShapeDecoration(
-                      color: AppColors.success,
+                      color: AppColors.button,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(28 * 100),
                       ),

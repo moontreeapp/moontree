@@ -137,9 +137,18 @@ class TransactionPage extends StatelessWidget {
                           )),
                 ])
               ]),
-              GestureDetector(
-                  onTap: () => launchUrl(Uri.parse(
+              ElevatedButton(
+                  onPressed: () => launchUrl(Uri.parse(
                       display.blockchain?.explorerTxUrl(display.hash) ?? '')),
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(AppColors.front),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(AppColors.front),
+                    shadowColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    elevation: MaterialStateProperty.all<double>(0),
+                  ),
                   child: Container(
                       height: 64,
                       decoration: ShapeDecoration(
@@ -154,6 +163,49 @@ class TransactionPage extends StatelessWidget {
                             color: AppColors.success,
                             fontWeight: FontWeight.bold),
                       )))),
+              //GestureDetector(
+              //    onTap: () => launchUrl(Uri.parse(
+              //        display.blockchain?.explorerTxUrl(display.hash) ?? '')),
+              //    child: Container(
+              //        height: 64,
+              //        decoration: ShapeDecoration(
+              //          shape: RoundedRectangleBorder(
+              //            borderRadius: BorderRadius.circular(28 * 100),
+              //          ),
+              //        ),
+              //        child: Center(
+              //            child: Text(
+              //          'VIEW DETAILS',
+              //          style: AppText.button1.copyWith(
+              //              color: AppColors.success,
+              //              fontWeight: FontWeight.bold),
+              //        )))),
+              //Material(
+              //  color: Colors.transparent,
+              //  child: InkWell(
+              //    borderRadius: BorderRadius.circular(28 * 100),
+              //    splashColor: AppColors.background.withOpacity(0.2),
+              //    onTap: () => launchUrl(Uri.parse(
+              //        display.blockchain?.explorerTxUrl(display.hash) ?? '')),
+              //    child: Container(
+              //      height: 64,
+              //      decoration: ShapeDecoration(
+              //        shape: RoundedRectangleBorder(
+              //          borderRadius: BorderRadius.circular(28 * 100),
+              //        ),
+              //      ),
+              //      child: Center(
+              //        child: Text(
+              //          'VIEW DETAILS',
+              //          style: AppText.button1.copyWith(
+              //            color: AppColors.success,
+              //            fontWeight: FontWeight.bold,
+              //          ),
+              //        ),
+              //      ),
+              //    ),
+              //  ),
+              //),
             ]));
   }
 }

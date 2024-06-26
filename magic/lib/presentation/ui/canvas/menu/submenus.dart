@@ -5,7 +5,6 @@ import 'package:magic/domain/concepts/side.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/canvas/menu/settings.dart';
 import 'package:magic/presentation/utils/animation.dart';
-import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/animations/sliding.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/cubits/cubit.dart';
@@ -23,26 +22,30 @@ class SubMenus extends StatelessWidget {
             SizedBox(height: screen.canvas.midHeight),
             SubMenuItem(
                 state: state,
-                alignment: Alignment.center,
                 sub: SubMenu.about,
+                delay: slideDuration * 1.25,
+                alignment: Alignment.center,
                 child: const AboutSubMenu()),
             SubMenuItem(
                 state: state,
-                alignment: Alignment.topLeft,
                 sub: SubMenu.settings,
+                delay: slideDuration * 1,
+                alignment: Alignment.topLeft,
                 child: SettingsSubMenu(state: state)),
           ]);
 }
 
 class SubMenuItem extends StatelessWidget {
-  final MenuState state;
-  final Alignment alignment;
   final SubMenu sub;
+  final MenuState state;
+  final Duration delay;
+  final Alignment alignment;
   final Widget child;
   const SubMenuItem({
     super.key,
     required this.state,
     required this.sub,
+    required this.delay,
     required this.alignment,
     required this.child,
   });
@@ -56,7 +59,7 @@ class SubMenuItem extends StatelessWidget {
                 alignment: alignment,
                 //child: FadeIn(delay: fadeDuration * 4 * .5, child: child)),
                 child: SlideSide(
-                    delay: fadeDuration * 4 * .5,
+                    delay: delay,
                     modifier: 32 / screen.width,
                     side: Side.right,
                     enter: true,
@@ -86,13 +89,15 @@ class SettingsSubMenu extends StatelessWidget {
           current.active &&
           (previous.setting != current.setting ||
               previous.mode != current.mode),
-      builder: (context, state) => Column(children: [
+      builder: (context, state) => SizedBox(
+          width: screen.width - 32,
+          child: Column(children: [
             DifficultyItem(mode: state.mode),
             //NotificationItem(state: state),
             if (cubits.menu.isInDevMode) const BackupItem(),
             if (cubits.menu.isInDevMode) const ImportItem(),
             if (cubits.menu.isInDevMode) const WalletsItem(),
-          ]));
+          ])));
 
   //Text('Some Setting', style: AppText.h1.copyWith(color: Colors.white));
 }
@@ -103,20 +108,21 @@ class AboutSubMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
       height: screen.canvas.bottomHeight - 40 - 32,
+      width: screen.width - 32,
       child:
           Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text('built by Moontree',
-            textAlign: TextAlign.center,
-            style: AppText.h1.copyWith(color: Colors.white)),
+        Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: Text('built by Moontree',
+                textAlign: TextAlign.center,
+                style: AppText.h1.copyWith(color: Colors.white))),
         Column(mainAxisAlignment: MainAxisAlignment.end, children: [
           Text('connection status: ${cubits.app.state.connection.name}',
               textAlign: TextAlign.center,
               style: AppText.body2.copyWith(color: Colors.white)),
-          const SizedBox(height: 8),
           Text('version 0.0.1',
               textAlign: TextAlign.center,
               style: AppText.body2.copyWith(color: Colors.white)),
-          const SizedBox(height: 32),
         ])
       ]));
 }

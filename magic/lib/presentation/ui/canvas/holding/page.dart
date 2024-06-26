@@ -121,15 +121,16 @@ class AnimatedCoinSpec extends StatelessWidget {
                 //partThreeStyle: AppText.partHolding,
               )
           else ...[
-            Text(whole, style: AppText.wholeHolding),
+            Text(whole, style: AppText.wholeHolding.copyWith(height: 0)),
             if ((part ?? cubits.holding.state.part) != '')
               Text('.${part ?? cubits.holding.state.part}',
-                  style: AppText.partHolding),
+                  style: AppText.partHolding.copyWith(height: 0)),
           ]
         ]),
         if ((subtitle ?? cubits.holding.state.usd) != '\$ -')
           Text(subtitle ?? cubits.holding.state.usd,
-              textAlign: TextAlign.center, style: AppText.usdHolding),
+              textAlign: TextAlign.center,
+              style: AppText.usdHolding.copyWith(height: 0)),
         //HighlightedNameView(holding: cubits.holding.state.holding)
         //Text(
         //    subtitle ??
@@ -160,8 +161,8 @@ class AnimatedCoinSpec extends StatelessWidget {
                   alignment: Alignment.center,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text('send', style: AppText.labelHolding),
+              const SizedBox(height: 2),
+              Text('Send', style: AppText.labelHolding),
             ])),
         //SizedBox(width: screen.canvas.wSpace),
         GestureDetector(
@@ -182,8 +183,8 @@ class AnimatedCoinSpec extends StatelessWidget {
                   alignment: Alignment.center,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text('receive', style: AppText.labelHolding),
+              const SizedBox(height: 2),
+              Text('Receive', style: AppText.labelHolding),
             ])),
         //SizedBox(width: screen.canvas.wSpace),
         //if (DateTime.now().isAfter(DateTime(2024, 7, 15)))
@@ -219,16 +220,18 @@ class AnimatedCoinSpec extends StatelessWidget {
               previous.holding != current.holding),
       builder: (context, HoldingState state) {
         double modifierTop = 0;
-        double iconTop = 4;
-        double valueTop = 4 + screen.iconHuge + 16;
+        double iconTop = 16;
+        int expandedSpacing = 8;
+        int scrunchedSpacing = 8;
+        double valueTop = iconTop + screen.iconHuge + expandedSpacing;
         Coin? overrideCoin;
         String? overrideWhole;
         String? overridePart;
         String? overrideSubtitle;
 
         if (state.section == HoldingSection.none) {
-          iconTop = 4;
-          valueTop = 4 + screen.iconHuge + 16;
+          iconTop = 16;
+          valueTop = iconTop + screen.iconHuge + expandedSpacing;
         } else if (state.section == HoldingSection.send) {
           overrideSubtitle = state.holding.isCurrency
               ? (state.holding.blockchain.name)
@@ -236,29 +239,30 @@ class AnimatedCoinSpec extends StatelessWidget {
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
-              8;
+              scrunchedSpacing;
         } else if (state.section == HoldingSection.receive) {
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
-              8;
+              scrunchedSpacing;
           overrideWhole = 'Send to Me';
           overridePart = '';
           overrideSubtitle = state.holding.isCurrency
               ? (state.holding.blockchain.name)
-              : '${state.holding.name}${'\non ${state.holding.blockchain.name}'}';
+              : state.holding.name;
+          //: '${state.holding.name}${'\non ${state.holding.blockchain.name}'}';
         } else if (state.section == HoldingSection.swap) {
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
-              8;
+              scrunchedSpacing;
           //iconTop = 24;
           //valueTop = 24 + screen.iconHuge + 24;
         } else if (state.section == HoldingSection.transaction) {
           iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
           valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
               screen.iconHuge +
-              8;
+              scrunchedSpacing;
           overrideCoin = cubits.holding.state.transaction?.coin;
           //overrideWhole = cubits.holding.state.wholeTransaction;
           //overridePart = cubits.holding.state.partTransaction;
@@ -287,7 +291,7 @@ class AnimatedCoinSpec extends StatelessWidget {
                   part: overridePart,
                   subtitle: overrideSubtitle)),
           Positioned(
-              bottom: 24,
+              bottom: 16,
               child: Hide(
                   hidden: state.section != HoldingSection.none,
                   child: buttons())),

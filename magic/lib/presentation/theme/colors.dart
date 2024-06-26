@@ -11,6 +11,11 @@ class AppColors {
   static const Color back = Color(0xFF121212);
   static const Color systemBar = Colors.black;
   static const Color success = Color(0xFF34C759);
+  static const Color success67 = Color(0xAB34C759);
+  static const Color toast = Color(0xFF424242);
+  //static const Color successDark =
+  //    Color(0xFF34C759); //success.withOpacity(.67);
+
   static const Color title = Colors.white;
   static const Color subtitle = Colors.white60;
 
@@ -46,7 +51,7 @@ class AppColors {
   static const Color primary800 = Color(0xFF283593);
   static const Color primary900 = Color(0xFF1A237E);
   static const Color primaryDisabled = primary60;
-  static const Color primary = primary400;
+  static const Color primary = Colors.white;
   static const Color background = back;
   static const Color foreground = front;
   static const Color primaryDark = primary400b12;

@@ -75,11 +75,38 @@ class ConfirmContent extends StatelessWidget {
                       const SizedBox(width: 8),
                       Flexible(
                           child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                cubits.send.state.sendRequest!.sendAddress,
-                                style: const TextStyle(fontSize: 16),
-                              ))),
+                        fit: BoxFit.scaleDown,
+                        child: SelectableText.rich(
+                          TextSpan(
+                            text: '',
+                            style: AppText.body1,
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: cubits.send.state.sendRequest!.sendAddress
+                                    .substring(0, 6),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                text: cubits.send.state.sendRequest!.sendAddress
+                                    .substring(
+                                        6,
+                                        cubits.send.state.sendRequest!
+                                                .sendAddress.length -
+                                            6),
+                              ),
+                              TextSpan(
+                                text: cubits.send.state.sendRequest!.sendAddress
+                                    .substring(cubits.send.state.sendRequest!
+                                            .sendAddress.length -
+                                        6),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )),
                     ],
                   ),
                 ),
@@ -126,10 +153,10 @@ class ConfirmContent extends StatelessWidget {
                     child: Container(
                         height: 64,
                         decoration: BoxDecoration(
-                          color: AppColors.success,
+                          color: AppColors.buttonOutline,
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(
-                            color: AppColors.successDark,
+                            color: AppColors.button,
                             width: 4,
                           ),
                         ),

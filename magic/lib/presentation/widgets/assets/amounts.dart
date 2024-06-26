@@ -270,9 +270,9 @@ class SimpleCoinSplitView extends StatelessWidget {
                       TextSpan(
                           text: '-',
                           style: Theme.of(context).textTheme.body1.copyWith(
-                                height: 0,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.white.withOpacity(.67),
+                              height: 0,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.white87 //.withOpacity(.67),
                               )),
                     TextSpan(
                         text: coin.whole(),
@@ -284,10 +284,10 @@ class SimpleCoinSplitView extends StatelessWidget {
                               color: incoming == true
                                   ? (coin.coin > 0
                                       ? AppColors.success
-                                      : AppColors.success.withOpacity(.45))
+                                      : AppColors.success67)
                                   : (coin.coin > 0
-                                      ? AppColors.white.withOpacity(.67)
-                                      : AppColors.white38),
+                                      ? AppColors.white87
+                                      : AppColors.white67),
                             )),
                     //TextSpan(
                     //    text: coin.spacedPart(),
@@ -319,15 +319,15 @@ class SimpleCoinSplitView extends StatelessWidget {
                                   fontWeight: e.bolded && coin.coin == 0
                                       ? FontWeight.w700
                                       : e.bolded && coin.coin > 0
-                                          ? FontWeight.w700
+                                          ? FontWeight.w400
                                           : FontWeight.w400,
                                   color: incoming == true
-                                      ? (e.bolded && coin.coin == 0
+                                      ? (e.bolded
                                           ? AppColors.success
-                                          : AppColors.success.withOpacity(.87))
-                                      : (e.bolded && coin.coin == 0
-                                          ? AppColors.white.withOpacity(.67)
-                                          : AppColors.white38),
+                                          : AppColors.success67)
+                                      : (e.bolded
+                                          ? AppColors.white87
+                                          : AppColors.white67),
                                 ))
                     ],
                   ])),

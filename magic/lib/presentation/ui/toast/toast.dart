@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/toast/cubit.dart';
+import 'package:magic/presentation/theme/text.dart';
 //import 'package:magic/presentation/widgets/assets/shadows.dart';
 import 'package:magic/services/services.dart' show screen;
 import 'package:magic/presentation/theme/colors.dart';
@@ -28,7 +29,7 @@ class ToastLayer extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           top: 9, bottom: 9, left: 9, right: 16),
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: AppColors.toast,
                         borderRadius: BorderRadius.circular(100.0),
                         //boxShadow: frontLayer,
                       ),
@@ -47,19 +48,9 @@ class ToastLayer extends StatelessWidget {
                             //),
                             const SizedBox(width: 8),
                             Text('${state.msg!.title} ',
-                                style:
-                                    Theme.of(context).textTheme.body2.copyWith(
-                                          color: AppColors.black60,
-                                          fontWeight: FontWeights.extraBold,
-                                        )),
+                                style: AppText.toastTitle),
                             //const SizedBox(width: 4),
-                            Text(
-                              state.msg!.text,
-                              style: Theme.of(context).textTheme.body2.copyWith(
-                                    color: AppColors.black60,
-                                    height: 0,
-                                  ),
-                            ),
+                            Text(state.msg!.text, style: AppText.toastText),
                           ])))));
           late Widget showBackground;
           late Widget showContent;
@@ -124,19 +115,9 @@ class ToastContent extends StatelessWidget {
               //  alignment: Alignment.center,
               //),
               const SizedBox(width: 8),
-              Text('${state.msg!.title} ',
-                  style: Theme.of(context).textTheme.body2.copyWith(
-                        color: AppColors.black60,
-                        fontWeight: FontWeights.extraBold,
-                      )),
+              Text('${state.msg!.title} ', style: AppText.toastTitle),
               //const SizedBox(width: 4),
-              Text(
-                state.msg!.text,
-                style: Theme.of(context).textTheme.body2.copyWith(
-                      color: AppColors.black60,
-                      height: 0,
-                    ),
-              ),
+              Text(state.msg!.text, style: AppText.toastText),
             ])));
     late Widget show;
     if (state.showType == ToastShowType.normal) {

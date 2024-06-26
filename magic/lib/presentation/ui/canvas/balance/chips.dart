@@ -219,6 +219,6 @@ class ChipItem extends StatelessWidget {
               child: Text(chip.label,
                   style: TextStyle(
                       color:
-                          selected ? AppColors.primary500 : AppColors.white87,
+                          selected ? AppColors.background : AppColors.white87,
                       height: 0)))));
 }

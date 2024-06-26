@@ -7,6 +7,8 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/server/serverv2_client.dart';
 import 'package:magic/presentation/theme/theme.dart';
+import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/animations.dart';
 import 'package:magic/presentation/widgets/animations/flashing.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart' show screen;
@@ -180,14 +182,16 @@ class ConnectionIndicator extends StatelessWidget {
                 color: Colors.transparent,
                 child: () {
                   if (state.connection == StreamingConnectionStatus.connected) {
-                    return SvgPicture.asset(
-                      'assets/icons/status-ok.svg',
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                      width: screen.iconMedium,
-                    );
+                    return FadeOut(
+                        duration: slowFadeDuration * 10,
+                        child: SvgPicture.asset(
+                          'assets/icons/status-ok.svg',
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                          width: screen.iconMedium,
+                        ));
                   }
                   if (state.connection ==
                           StreamingConnectionStatus.waitingToRetry ||

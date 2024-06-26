@@ -74,6 +74,7 @@ class TextFieldFormatted extends StatefulWidget {
   final Widget? prefixIcon;
   final TextStyle? helperStyle;
   final TextStyle? suffixStyle;
+  final TextStyle? labelStyle;
   final bool alwaysShowHelper;
   final int? helperMaxLines;
   final double contentPaddingTop;
@@ -90,6 +91,7 @@ class TextFieldFormatted extends StatefulWidget {
     this.prefixIcon,
     this.helperStyle,
     this.suffixStyle,
+    this.labelStyle,
     this.helperMaxLines,
     this.alwaysShowHelper = false,
     this.controller,
@@ -183,12 +185,14 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
             disabledBorder: InputBorder.none,
-            labelStyle: Theme.of(context).textTheme.sub1.copyWith(
-                color: (widget.enabled ?? true) ? null : AppColors.black60),
+            labelStyle: widget.labelStyle ??
+                (Theme.of(context).textTheme.sub1.copyWith(
+                    color:
+                        (widget.enabled ?? true) ? null : AppColors.white60)),
             alignLabelWithHint: true,
             floatingLabelStyle: inUse
-                ? const TextStyle(color: AppColors.primary)
-                : const TextStyle(color: AppColors.black87),
+                ? const TextStyle(color: AppColors.white67)
+                : const TextStyle(color: AppColors.white60),
             contentPadding: EdgeInsets.only(
               left: 24 + widget.contentPaddingLeft,
               top: (inUse || used ? 16 : 12) +
@@ -221,7 +225,7 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
                 Theme.of(context)
                     .textTheme
                     .bodySmall!
-                    .copyWith(height: .8, color: AppColors.primary),
+                    .copyWith(height: .8, color: AppColors.white87),
           );
     final TextField text = TextField(
         //key: widget.key,
@@ -288,14 +292,14 @@ class _TextFieldFormattedState extends State<TextFieldFormatted> {
         enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning);
     return Stack(children: [
       Column(children: [
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Container(
           height: 64,
           decoration: ShapeDecoration(
             //color: Color(0xFFE8EAF6),
             //color: Colors.white,
-            //color: AppColors.black60,
-            color: const Color(0xFFE5E5E5),
+            //color: AppColors.white60,
+            color: AppColors.frontItem,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28 * 100),
             ),

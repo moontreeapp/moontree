@@ -54,7 +54,7 @@ class MagicApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Moontree Wallet',
+        title: 'Magic Wallet',
         debugShowCheckedModeBanner: false,
         key: routes.appKey,
         theme: CustomTheme.lightTheme,

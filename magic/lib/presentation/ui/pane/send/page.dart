@@ -10,7 +10,6 @@ import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
-import 'package:magic/presentation/widgets/other/other.dart';
 import 'package:magic/services/services.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
@@ -158,8 +157,7 @@ class SendContentState extends State<SendContent> {
       (double.tryParse(amount) ?? -1) > 0.000000009;
   bool validateAmountByBlockchain(String amount) =>
       (cubits.holding.state.holding.blockchain
-              ?.isAmount((double.tryParse(amount) ?? -1)) ??
-          false);
+          .isAmount((double.tryParse(amount) ?? -1)));
   bool validateAmountLTTotal(String amount) =>
       (cubits.holding.state.holding.coin.toDouble() >=
           (double.tryParse(amount) ?? -1));
@@ -284,13 +282,13 @@ class SendContentState extends State<SendContent> {
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            TextFieldFormatted(
-              autocorrect: false,
+            CustomTextField(
               textInputAction: TextInputAction.next,
               controller: addressText,
               labelText: 'To',
-              suffixIcon:
-                  const Icon(Icons.qr_code_scanner, color: AppColors.black60),
+              suffixIcon: const Padding(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: Icon(Icons.qr_code_scanner, color: AppColors.white60)),
               errorText: addressText.text.trim() == '' ||
                       validateAddress(addressText.text)
                   ? null
@@ -301,9 +299,8 @@ class SendContentState extends State<SendContent> {
                 }
               }),
             ),
-            const SizedBox(height: 4),
-            TextFieldFormatted(
-              autocorrect: false,
+            const SizedBox(height: 16),
+            CustomTextField(
               textInputAction: TextInputAction.done,
               controller: amountText,
               keyboardType:
@@ -326,8 +323,8 @@ class SendContentState extends State<SendContent> {
             child: Container(
                 height: 64,
                 decoration: ShapeDecoration(
-                  color:
-                      validateForm() ? AppColors.success : AppColors.disabled,
+                  //color: validateForm() ? AppColors.button : AppColors.disabled,
+                  color: AppColors.button,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28 * 100),
                   ),
@@ -339,4 +336,128 @@ class SendContentState extends State<SendContent> {
                       .copyWith(fontSize: 16, color: Colors.white),
                 )))),
       ]));
+}
+
+class CustomTextField extends StatefulWidget {
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final TextInputType? keyboardType;
+  final String? labelText;
+  final String? errorText;
+  final Widget? suffixIcon;
+  final TextInputAction? textInputAction;
+
+  final void Function(String)? onChanged;
+  const CustomTextField({
+    super.key,
+    this.controller,
+    this.focusNode,
+    this.keyboardType,
+    this.labelText,
+    this.errorText,
+    this.suffixIcon,
+    this.textInputAction,
+    this.onChanged,
+  });
+
+  @override
+  CustomTextFieldState createState() => CustomTextFieldState();
+}
+
+class CustomTextFieldState extends State<CustomTextField> {
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _controller = TextEditingController();
+  bool _isFocused = false;
+  bool _isFilled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFocused = widget.focusNode?.hasFocus ?? false;
+    _isFilled = ![null, ''].contains(widget.controller?.text.trim());
+    _focusNode.addListener(_handleFocusChange);
+    _controller.addListener(_handleTextChange);
+    widget.focusNode?.addListener(_handleFocusChange);
+    widget.controller?.addListener(_handleTextChange);
+  }
+
+  void _handleFocusChange() {
+    setState(() {
+      _isFocused = widget.focusNode?.hasFocus ?? _focusNode.hasFocus;
+    });
+  }
+
+  void _handleTextChange() {
+    setState(() {
+      _isFilled = (widget.controller ?? _controller).text.trim() != '';
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    widget.focusNode?.removeListener(_handleFocusChange);
+    widget.controller?.removeListener(_handleTextChange);
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Container(
+          height: 64,
+          decoration: ShapeDecoration(
+            color: AppColors.frontItem,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28 * 100),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+              top: 14, left: 24, right: widget.suffixIcon == null ? 24 : 56),
+          child: TextField(
+            controller: widget.controller ?? _controller,
+            focusNode: widget.focusNode ?? _focusNode,
+            autocorrect: false,
+            textInputAction: widget.textInputAction,
+            keyboardType: widget.keyboardType,
+            cursorColor: AppColors.white67,
+            style: const TextStyle(color: AppColors.white87),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              fillColor: Colors.transparent,
+              filled: true,
+              contentPadding: EdgeInsets.zero,
+              errorText: widget.errorText,
+              errorStyle: const TextStyle(
+                height: 0.8,
+                color: AppColors.error,
+              ),
+              //suffixIcon: widget.suffixIcon,
+            ),
+            onChanged: widget.onChanged,
+          ),
+        ),
+        if (widget.suffixIcon != null)
+          Positioned(top: 18, right: 20, child: widget.suffixIcon!),
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 200),
+          left: 24.0,
+          top: _isFocused || _isFilled ? 6.0 : 18.0,
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            style: AppText.subtitle1.copyWith(
+              fontSize: _isFocused || _isFilled ? 12.0 : 16.0,
+            ),
+            child: Text(widget.labelText ?? ''),
+          ),
+        ),
+      ],
+    );
+  }
 }

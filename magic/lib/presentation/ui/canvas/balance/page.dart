@@ -66,8 +66,7 @@ class AnimatedBalance extends StatelessWidget {
                                       Text(state.portfolioValue.tail,
                                           style: AppText.partFiat),
                                   ]),
-                              Text('Portfolio Value',
-                                  style: AppText.usdHolding),
+                              Text('Portfolio', style: AppText.usdHolding),
                             ]),
                         AnimatedOpacity(
                             duration: fadeDuration,

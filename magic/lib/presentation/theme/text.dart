@@ -61,6 +61,22 @@ class AppText {
       letterSpacing: 0.25,
       color: AppColors.white);
 
+  static TextStyle get toastTitle => const TextStyle(
+      fontFamily: 'Nunito',
+      fontWeight: FontWeights.extraBold,
+      fontSize: 14.0,
+      height: 1.714, // figma: 24
+      letterSpacing: 0.25,
+      color: AppColors.white);
+
+  static TextStyle get toastText => const TextStyle(
+      fontFamily: 'Nunito',
+      fontWeight: FontWeights.semiBold,
+      fontSize: 14.0,
+      height: 0,
+      letterSpacing: 0.25,
+      color: AppColors.white);
+
   static TextStyle get button1 => const TextStyle(
       fontFamily: 'Nunito',
       fontWeight: FontWeights.semiBold,
@@ -106,7 +122,10 @@ class AppText {
         height: null,
       );
 
-  static TextStyle get identiconHuge => h1.copyWith(
+  static TextStyle get identiconHuge =>
+      h1.copyWith(color: AppColors.white87, fontSize: 32.0, height: 1.9);
+
+  static TextStyle get identicon48 => h1.copyWith(
         color: AppColors.white87,
         height: 2,
       );

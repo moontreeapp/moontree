@@ -56,6 +56,7 @@ class TransactionItem extends StatelessWidget {
         //dense: true,
         //visualDensity: VisualDensity.compact,
         onTap: () => maestro.activateTransaction(display),
+        splashColor: Colors.transparent,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           width: screen.iconHuge,

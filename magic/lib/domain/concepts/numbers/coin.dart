@@ -142,7 +142,13 @@ class Coin {
       if (p[i] != '0' && p[i] != '.') {
         bolded = true;
       }
+      if (p[i] == '.') {
+        bolded = true;
+      }
       ret.add(EnrichedChar(char: p[i], bolded: bolded));
+      if (p[i] == '.') {
+        bolded = false;
+      }
     }
     return ret;
   }

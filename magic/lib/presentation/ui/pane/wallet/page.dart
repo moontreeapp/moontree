@@ -70,6 +70,7 @@ class HoldingItem extends StatelessWidget {
         //    ? cubits.pane.snapTo(screen.pane.midHeight)
         //    : maestro.activateHistory(),
         onTap: () => maestro.activateHistory(holding),
+        splashColor: Colors.transparent,
         leading: holding.isCurrency
             ? CurrencyIdenticon(holding: holding)
             : SimpleIdenticon(letter: holding.assetPathChildNFT[0]),
@@ -156,6 +157,7 @@ class SimpleIdenticon extends StatelessWidget {
       height: height ?? screen.iconLarge,
       alignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
+        //color: Colors.amber,
         color: chosenColor,
         shape: BoxShape.circle,
         //border: Border.all(
