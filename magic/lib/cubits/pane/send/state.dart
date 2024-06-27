@@ -74,6 +74,7 @@ class SendEstimate with ToStringMixin {
 
 class SendState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
+  final bool scanActive;
   final String asset; // TODO: use domain object
   final String address; // TODO: use domain object
   final String changeAddress; // TODO: use domain object
@@ -90,6 +91,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
 
   const SendState({
     this.active = false,
+    this.scanActive = false,
     this.asset = '',
     this.amount = '',
     this.address = '',
@@ -106,6 +108,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
   @override
   List<Object?> get props => <Object?>[
         active,
+        scanActive,
         asset,
         address,
         changeAddress,
@@ -125,6 +128,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
   @override
   SendState get withoutPrior => SendState(
         active: active,
+        scanActive: scanActive,
         asset: asset,
         address: address,
         changeAddress: changeAddress,

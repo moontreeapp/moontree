@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:magic/cubits/cubit.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRViewable extends StatefulWidget {
@@ -92,6 +93,10 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
               print(event.raw);
               setState(() {
                 barcode = event.barcodes.first.rawValue;
+                if (barcode?.isNotEmpty ?? false) {
+                  cubits.send.update(address: barcode);
+                  cubits.send.update(scanActive: false);
+                }
               });
             },
           ),

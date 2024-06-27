@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:tuple/tuple.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
@@ -22,11 +24,6 @@ import 'package:wallet_utils/wallet_utils.dart'
         Transaction,
         satsPerCoin,
         standardFee;
-import 'package:tuple/tuple.dart';
-import 'package:equatable/equatable.dart';
-import 'package:collection/collection.dart';
-import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 part 'state.dart';
@@ -55,6 +52,7 @@ class SendCubit extends UpdatableCubit<SendState> {
   @override
   void update({
     bool? active,
+    bool? scanActive,
     String? asset,
     String? address,
     String? changeAddress,
@@ -71,6 +69,7 @@ class SendCubit extends UpdatableCubit<SendState> {
   }) {
     emit(SendState(
       active: active ?? state.active,
+      scanActive: scanActive ?? state.scanActive,
       asset: asset ?? state.asset,
       address: address ?? state.address,
       changeAddress: changeAddress ?? state.changeAddress,
