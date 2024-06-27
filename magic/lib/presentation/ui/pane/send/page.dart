@@ -319,7 +319,7 @@ class SendContentState extends State<SendContent> {
             //  }),
             //),
             Container(
-              padding: EdgeInsetsGeometry(top: 8),
+              padding: const EdgeInsets.only(top: 8),
               constraints: BoxConstraints(
                   maxHeight:
                       screen.width - 32), // Adjust the maxHeight as needed
