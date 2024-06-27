@@ -7,9 +7,9 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/server/serverv2_client.dart';
 import 'package:magic/presentation/theme/theme.dart';
+import 'package:magic/presentation/ui/appbar/scanner.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/animations.dart';
-import 'package:magic/presentation/widgets/animations/flashing.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart' show screen;
 
@@ -29,6 +29,7 @@ class AppbarHeader extends StatelessWidget {
             Leading(),
             Expanded(child: Title()),
             ConnectionIndicator(),
+            Scanner(),
             //GestureDetector(
             //    //onTap: () => cubits.fade.update(fade: FadeEvent.fadeOut),
             //    //onTap: () => cubits.pane.update(height: screen.pane.minHeight),

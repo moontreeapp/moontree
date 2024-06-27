@@ -8,6 +8,7 @@ import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
+import 'package:magic/presentation/ui/pane/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
@@ -315,6 +316,10 @@ class SendContentState extends State<SendContent> {
                   cubits.send.update(amount: value);
                 }
               }),
+            ),
+            Container(
+              height: 200,
+              child: const QRViewable(),
             ),
           ],
         ),
