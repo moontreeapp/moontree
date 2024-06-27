@@ -285,67 +285,66 @@ class SendContentState extends State<SendContent> {
         BlocBuilder<SendCubit, SendState>(
             buildWhen: (SendState prior, SendState current) =>
                 prior.scanActive != current.scanActive,
-            builder: (BuildContext context, SendState state) =>
-                !state.scanActive
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CustomTextField(
-                            textInputAction: TextInputAction.next,
-                            controller: addressText,
-                            labelText: 'To',
-                            suffixIcon: Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: GestureDetector(
-                                    onTap: () {
-                                      cubits.send.update(
-                                          scanActive:
-                                              !cubits.send.state.scanActive);
-                                    },
-                                    child: const Icon(Icons.qr_code_scanner,
-                                        color: AppColors.white60))),
-                            errorText: addressText.text.trim() == '' ||
-                                    validateAddress(addressText.text)
-                                ? null
-                                : invalidAddressMessages(addressText.text)
-                                    .firstOrNull,
-                            onChanged: (value) => setState(() {
-                              if (validateAddress(addressText.text)) {
-                                cubits.send.update(address: value);
-                              }
-                            }),
-                          ),
-                          const SizedBox(height: 16),
-                          CustomTextField(
-                            textInputAction: TextInputAction.done,
-                            controller: amountText,
-                            keyboardType: const TextInputType.numberWithOptions(
-                                signed: false),
-                            labelText: 'Amount',
-                            errorText: amountText.text.trim() == '' ||
-                                    validateAmount(amountText.text)
-                                ? null
-                                : invalidAmountMessages(amountText.text).first,
-                            onChanged: (value) => setState(() {
-                              if (validateAmount(amountText.text)) {
-                                cubits.send.update(amount: value);
-                              }
-                            }),
-                          ),
-                        ],
-                      )
-                    : Container(
-                        padding: const EdgeInsets.only(top: 8),
-                        constraints: BoxConstraints(
-                            maxHeight: screen.width -
-                                32), // Adjust the maxHeight as needed
-                        decoration: ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28 * 100),
-                          ),
-                        ),
-                        child: const QRViewable(),
-                      )),
+            builder: (BuildContext context, SendState state) {
+              if (state.scanActive) {
+                return Container(
+                  padding: const EdgeInsets.only(top: 8),
+                  constraints: BoxConstraints(maxHeight: screen.width - 32),
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28 * 100),
+                    ),
+                  ),
+                  child: const QRViewable(),
+                );
+              }
+              addressText.text = cubits.send.state.address;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomTextField(
+                    textInputAction: TextInputAction.next,
+                    controller: addressText,
+                    labelText: 'To',
+                    suffixIcon: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: GestureDetector(
+                            onTap: () {
+                              cubits.send.update(
+                                  scanActive: !cubits.send.state.scanActive);
+                            },
+                            child: const Icon(Icons.qr_code_scanner,
+                                color: AppColors.white60))),
+                    errorText: addressText.text.trim() == '' ||
+                            validateAddress(addressText.text)
+                        ? null
+                        : invalidAddressMessages(addressText.text).firstOrNull,
+                    onChanged: (value) => setState(() {
+                      if (validateAddress(addressText.text)) {
+                        cubits.send.update(address: value);
+                      }
+                    }),
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    textInputAction: TextInputAction.done,
+                    controller: amountText,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(signed: false),
+                    labelText: 'Amount',
+                    errorText: amountText.text.trim() == '' ||
+                            validateAmount(amountText.text)
+                        ? null
+                        : invalidAmountMessages(amountText.text).first,
+                    onChanged: (value) => setState(() {
+                      if (validateAmount(amountText.text)) {
+                        cubits.send.update(amount: value);
+                      }
+                    }),
+                  ),
+                ],
+              );
+            }),
         GestureDetector(
             onTap: _send,
             child: Container(
