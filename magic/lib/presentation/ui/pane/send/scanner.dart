@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -84,6 +82,7 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
       children: [
         Expanded(
           child: MobileScanner(
+            //fit: BoxFit.contain,
             controller: controller,
             onDetect: (BarcodeCapture event) {
               print(event);
@@ -97,13 +96,13 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
             },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            barcode != null ? 'Barcode found: $barcode' : 'Scan a code',
-            style: TextStyle(fontSize: 20),
-          ),
-        ),
+        //Padding(
+        //  padding: const EdgeInsets.all(16.0),
+        //  child: Text(
+        //    barcode != null ? 'Barcode found: $barcode' : 'Scan a code',
+        //    style: TextStyle(fontSize: 20),
+        //  ),
+        //),
       ],
     );
   }

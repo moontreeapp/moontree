@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
@@ -8,7 +9,7 @@ import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
-import 'package:magic/presentation/ui/pane/scanner.dart';
+import 'package:magic/presentation/ui/pane/send/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
@@ -283,42 +284,45 @@ class SendContentState extends State<SendContent> {
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            CustomTextField(
-              textInputAction: TextInputAction.next,
-              controller: addressText,
-              labelText: 'To',
-              suffixIcon: const Padding(
-                  padding: EdgeInsets.only(bottom: 16),
-                  child: Icon(Icons.qr_code_scanner, color: AppColors.white60)),
-              errorText: addressText.text.trim() == '' ||
-                      validateAddress(addressText.text)
-                  ? null
-                  : invalidAddressMessages(addressText.text).firstOrNull,
-              onChanged: (value) => setState(() {
-                if (validateAddress(addressText.text)) {
-                  cubits.send.update(address: value);
-                }
-              }),
-            ),
-            const SizedBox(height: 16),
-            CustomTextField(
-              textInputAction: TextInputAction.done,
-              controller: amountText,
-              keyboardType:
-                  const TextInputType.numberWithOptions(signed: false),
-              labelText: 'Amount',
-              errorText: amountText.text.trim() == '' ||
-                      validateAmount(amountText.text)
-                  ? null
-                  : invalidAmountMessages(amountText.text).first,
-              onChanged: (value) => setState(() {
-                if (validateAmount(amountText.text)) {
-                  cubits.send.update(amount: value);
-                }
-              }),
-            ),
+            //CustomTextField(
+            //  textInputAction: TextInputAction.next,
+            //  controller: addressText,
+            //  labelText: 'To',
+            //  suffixIcon: const Padding(
+            //      padding: EdgeInsets.only(bottom: 16),
+            //      child: Icon(Icons.qr_code_scanner, color: AppColors.white60)),
+            //  errorText: addressText.text.trim() == '' ||
+            //          validateAddress(addressText.text)
+            //      ? null
+            //      : invalidAddressMessages(addressText.text).firstOrNull,
+            //  onChanged: (value) => setState(() {
+            //    if (validateAddress(addressText.text)) {
+            //      cubits.send.update(address: value);
+            //    }
+            //  }),
+            //),
+            //const SizedBox(height: 16),
+            //CustomTextField(
+            //  textInputAction: TextInputAction.done,
+            //  controller: amountText,
+            //  keyboardType:
+            //      const TextInputType.numberWithOptions(signed: false),
+            //  labelText: 'Amount',
+            //  errorText: amountText.text.trim() == '' ||
+            //          validateAmount(amountText.text)
+            //      ? null
+            //      : invalidAmountMessages(amountText.text).first,
+            //  onChanged: (value) => setState(() {
+            //    if (validateAmount(amountText.text)) {
+            //      cubits.send.update(amount: value);
+            //    }
+            //  }),
+            //),
             Container(
-              height: 200,
+              padding: EdgeInsetsGeometry(top: 8),
+              constraints: BoxConstraints(
+                  maxHeight:
+                      screen.width - 32), // Adjust the maxHeight as needed
               child: const QRViewable(),
             ),
           ],
