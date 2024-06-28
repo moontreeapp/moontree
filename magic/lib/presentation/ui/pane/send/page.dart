@@ -7,6 +7,8 @@ import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/cubits/pane/send/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
+import 'package:magic/domain/concepts/numbers/fiat.dart';
+import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
@@ -54,6 +56,9 @@ class SendContentState extends State<SendContent> {
       TextEditingController(text: cubits.send.state.address);
   final TextEditingController amountText =
       TextEditingController(text: cubits.send.state.amount);
+  bool amountDollars = false;
+  bool automaticConversion = false;
+  bool userChanged = false;
 
   @override
   void initState() {
@@ -288,15 +293,12 @@ class SendContentState extends State<SendContent> {
             builder: (BuildContext context, SendState state) {
               if (state.scanActive) {
                 return Container(
-                  padding: const EdgeInsets.only(top: 8),
-                  constraints: BoxConstraints(maxHeight: screen.width - 32),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28 * 100),
-                    ),
-                  ),
-                  child: const QRViewable(),
-                );
+                    padding: const EdgeInsets.only(top: 8),
+                    constraints: BoxConstraints(maxHeight: screen.width - 32),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28.0),
+                      child: const QRViewable(),
+                    ));
               }
               addressText.text = cubits.send.state.address;
               return Column(
@@ -331,16 +333,67 @@ class SendContentState extends State<SendContent> {
                     controller: amountText,
                     keyboardType:
                         const TextInputType.numberWithOptions(signed: false),
-                    labelText: 'Amount',
+                    labelText: amountDollars ? 'Amount in USD' : 'Amount',
+                    suffixIcon: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: GestureDetector(
+                            onTap: () {
+                              setState(() => automaticConversion = true);
+                              setState(() {
+                                if (amountDollars) {
+                                  if (userChanged) {
+                                    amountText.text = Fiat(double.tryParse(
+                                                amountText.text
+                                                    .trim()
+                                                    .replaceAll(',', '')) ??
+                                            0)
+                                        .toCoin(
+                                            cubits.holding.state.holding.rate)
+                                        .toString();
+                                  } else {
+                                    amountText.text = cubits.send.state.amount;
+                                  }
+                                } else {
+                                  amountText.text = Coin.fromString(
+                                          amountText.text)
+                                      .toFiat(cubits.holding.state.holding.rate)
+                                      .toString();
+                                }
+                                amountDollars = !amountDollars;
+                              });
+                              setState(() {
+                                automaticConversion = false;
+                                userChanged = false;
+                              });
+                            },
+                            child: Icon(
+                                amountDollars
+                                    ? Icons.attach_money_rounded
+                                    : Icons.toll_rounded,
+                                color: AppColors.white60))),
                     errorText: amountText.text.trim() == '' ||
                             validateAmount(amountText.text)
                         ? null
                         : invalidAmountMessages(amountText.text).first,
-                    onChanged: (value) => setState(() {
-                      if (validateAmount(amountText.text)) {
-                        cubits.send.update(amount: value);
+                    onChanged: (value) {
+                      if (automaticConversion) {
+                        return;
                       }
-                    }),
+                      userChanged = true;
+                      if (amountDollars) {
+                        value = Fiat(double.tryParse(amountText.text
+                                    .trim()
+                                    .replaceAll(',', '')) ??
+                                0)
+                            .toCoin(cubits.holding.state.holding.rate)
+                            .toString();
+                      }
+                      setState(() {
+                        if (validateAmount(amountText.text)) {
+                          cubits.send.update(amount: value);
+                        }
+                      });
+                    },
                   ),
                 ],
               );

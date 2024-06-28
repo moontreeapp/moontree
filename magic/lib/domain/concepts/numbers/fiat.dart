@@ -20,6 +20,13 @@ class Fiat {
 
   bool isEmpty() => !rated;
 
+  Coin toCoin(double? coinPrice) {
+    if (coinPrice == null) {
+      return const Coin.empty();
+    }
+    return Coin.fromDouble(value / coinPrice);
+  }
+
   @override
   String toString() => isEmpty() ? '-' : value.toFiatCommaString();
   String simplified() => isEmpty() ? '\$-' : '\$${value.simplified()}';

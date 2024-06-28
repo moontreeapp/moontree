@@ -40,6 +40,7 @@ class Coin {
     return Coin.fromInt(sats.value);
   }
   factory Coin.fromString(String value) {
+    value = value.trim().replaceAll(',', '');
     if (value.contains('.')) {
       var parts = value.split('.');
       var coinPart = int.tryParse(parts.first.replaceAll(',', '')) ?? 0;
@@ -52,7 +53,9 @@ class Coin {
           (satMultiplier > 0
               ? int.parse('1'.padRight(satMultiplier + 1, '0'))
               : 1);
-
+      sats = sats.toString().length > 8
+          ? int.parse(sats.toString().substring(0, 8))
+          : sats;
       return Coin._(
         coin: coinPart,
         sats: sats,
@@ -70,6 +73,8 @@ class Coin {
         sats: sats + other.sats,
       );
 
+  @override
+  String toString() => '$coin.$sats';
   double toDouble() => double.parse('${coin.toString()}.${sats.toString()}');
   Sats toSats() => Sats((coin * satsPerCoin) + sats);
   Fiat toFiat(double? coinPrice) => coinPrice == null
