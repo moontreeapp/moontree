@@ -77,12 +77,15 @@ class ImportPageState extends State<ImportPage> {
     }
   }
 
-  bool isValid(String value) => validateMnemonic(value);
+  bool isValid(String value) =>
+      validateMnemonic(value) || validatePrivateKey(value);
 
   void submit() async {
+    final value = controller.text.trim();
     if (lifecycle == ImportLifecycle.validated) {
       toStage(ImportLifecycle.submitting);
-      if (await cubits.keys.addMnemonic(controller.text.trim())) {
+      if ((validateMnemonic(value) && await cubits.keys.addMnemonic(value)) ||
+          (validatePrivateKey(value) && await cubits.keys.addPrivKey(value))) {
         /// do we need to resetup our subscriptions? yes.
         /// all of them or just this wallet? just do all of them.
         await subscription.setupSubscriptions(cubits.keys.master);
@@ -92,9 +95,11 @@ class ImportPageState extends State<ImportPage> {
         //cubits.wallet.clearAssets();
         await cubits.wallet.populateAssets();
 
-        /// do we need to derive all our addresses? yes.
-        /// all of them or just this wallet? we can specify just this wallet.
-        deriveInBackground(controller.text.trim());
+        if (validateMnemonic(value)) {
+          /// do we need to derive all our addresses? yes.
+          /// all of them or just this wallet? we can specify just this wallet.
+          deriveInBackground(value);
+        }
 
         /// we always default to the first wallet, so we don't need to do this.
         /// maybe we should default to the last one... it's the one we know they
@@ -108,7 +113,7 @@ class ImportPageState extends State<ImportPage> {
         toStage(ImportLifecycle.failed);
       }
     } else if (lifecycle == ImportLifecycle.failed) {
-      if (isValid(controller.text.trim())) {
+      if (isValid(value)) {
         toStage(ImportLifecycle.validated);
       } else {
         toStage(ImportLifecycle.form);

@@ -19,6 +19,7 @@ import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/concepts/address.dart';
+import 'package:moontree_utils/moontree_utils.dart' show decode;
 import 'package:wallet_utils/wallet_utils.dart' show ECPair, HDWallet, KPWallet;
 
 abstract class Jsonable {
@@ -77,6 +78,9 @@ class KeypairWallet extends Jsonable {
 
   @override
   Map<String, String> get asMap => {'wif': wif};
+
+  static String privateKeyToWif(String privKey) =>
+      ECPair.fromPrivateKey(decode(privKey)).toWIF();
 
   String address(Blockchain blockchain) => wallet(blockchain).address!;
 

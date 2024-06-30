@@ -1,6 +1,7 @@
 import 'package:bip39/bip39.dart' as bip39;
 // ignore: implementation_imports
 import 'package:bip39/src/wordlists/english.dart' as bip39_wordlists;
+import 'package:magic/domain/wallet/wallets.dart';
 
 bool validateMnemonic(String mnemonic) {
   if (mnemonic.isEmpty) return false;
@@ -20,4 +21,13 @@ bool validateMnemonic(String mnemonic) {
 
   // Validate mnemonic using BIP39 library
   return bip39.validateMnemonic(mnemonic);
+}
+
+bool validatePrivateKey(String privkey) {
+  try {
+    KeypairWallet.privateKeyToWif(privkey);
+    return true;
+  } catch (_) {
+    return false;
+  }
 }

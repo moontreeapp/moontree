@@ -54,6 +54,14 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     return true;
   }
 
+  Future<bool> addPrivKey(String privKey) async {
+    if (state.wifs.contains(privKey)) return true;
+    if (!validatePrivateKey(privKey)) return false;
+    update(wifs: [...state.wifs, KeypairWallet.privateKeyToWif(privKey)]);
+    await dump();
+    return true;
+  }
+
   Future<bool> removeMnemonic(String mnemonic) async {
     if (!state.mnemonics.contains(mnemonic)) return true;
     update(mnemonics: state.mnemonics.where((m) => m != mnemonic).toList());
