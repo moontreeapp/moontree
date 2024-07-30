@@ -38,6 +38,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   }) {
     syncMnemonics(mnemonics);
     syncKeypairs(wifs);
+    print(mnemonics);
     emit(KeysState(
       mnemonics: mnemonics ?? state.mnemonics,
       wifs: wifs ?? state.wifs,
