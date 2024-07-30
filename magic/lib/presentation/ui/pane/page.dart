@@ -275,6 +275,7 @@ class FadeLayer extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<FadeCubit, FadeState>(
       buildWhen: (previous, current) => previous.fade != current.fade,
       builder: (context, FadeState state) => IgnorePointer(
+          ignoring: false,
           child: AnimatedOpacity(
               opacity: state.fade.opacity,
               duration: fadeDuration,

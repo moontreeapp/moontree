@@ -14,7 +14,8 @@ class Hide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IgnorePointer(
-      ignoring: hidden,
+      ignoring: false,
+      //ignoring: hidden,
       child: AnimatedOpacity(
           opacity: hidden ? 0 : 1,
           curve: hidden ? Curves.easeOutQuint : Curves.easeInQuint,

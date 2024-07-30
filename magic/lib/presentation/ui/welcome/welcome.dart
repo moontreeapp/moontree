@@ -88,6 +88,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                       onHover: (_) => cubits.app.animating = true,
                       onPressed: () {
                         cubits.app.animating = true;
+                        print('register');
                         setState(() {
                           _isAnimating = true;
                         });

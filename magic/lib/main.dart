@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:magic/services/testing.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
@@ -143,6 +144,7 @@ class MaestroLayer extends StatelessWidget {
       cubits.wallet.populateAssets().then((_) => maestro.activeateHome());
       //maestro.activeateHome();
     });
+    Testing.test();
   }
 }
 
