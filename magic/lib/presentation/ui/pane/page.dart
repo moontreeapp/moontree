@@ -275,7 +275,8 @@ class FadeLayer extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<FadeCubit, FadeState>(
       buildWhen: (previous, current) => previous.fade != current.fade,
       builder: (context, FadeState state) => IgnorePointer(
-          ignoring: false,
+          //ignoring: false, // weird. this acts like ignoring == true
+          ignoring: true,
           child: AnimatedOpacity(
               opacity: state.fade.opacity,
               duration: fadeDuration,
