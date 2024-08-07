@@ -6,7 +6,9 @@ import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/pane/transactions/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
+import 'package:magic/presentation/ui/pane/receive/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/animations/shimmer.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
@@ -22,10 +24,10 @@ class TransactionsPage extends StatelessWidget {
           buildWhen: (previous, current) =>
               previous.transactions.length != current.transactions.length ||
               previous.mempool.length != current.mempool.length ||
-              previous.clearing != current.clearing,
+              previous.clearing != current.clearing ||
+              previous.isSubmitting != current.isSubmitting,
           builder: (BuildContext context, TransactionsState state) {
-            if (state.transactions.isEmpty && state.mempool.isEmpty) {
-              // shimmer until transactions are fetched
+            if (state.isSubmitting) {
               return FadeShimmer(
                 child: Container(
                   decoration: const BoxDecoration(
@@ -37,6 +39,12 @@ class TransactionsPage extends StatelessWidget {
                 ),
               );
             }
+            if (state.transactions.isEmpty && state.mempool.isEmpty) {
+              // shimmer until transactions are fetched
+              return FadeIn(
+                  delay: slowFadeDuration + fadeDuration,
+                  child: const SoftReceivePage());
+            }
 
             ///BlocBuilder<HoldingCubit, HoldingState>(
             ///    buildWhen: (HoldingState previous, HoldingState current) =>
@@ -47,14 +55,20 @@ class TransactionsPage extends StatelessWidget {
             return AnimatedOpacity(
                 duration: fastFadeDuration,
                 opacity: state.clearing ? 0 : 1,
-                child: ListView.builder(
-                    controller: cubits.pane.state.scroller,
-                    shrinkWrap: true,
-                    itemCount: mempool.length + transactions.length,
-                    itemBuilder: (context, index) => TransactionItem(
-                        display: index < mempool.length
-                            ? mempool.elementAt(index)
-                            : transactions.elementAt(index - mempool.length))));
+                child: RefreshIndicator(
+                    onRefresh: () async {
+                      print('refreshing transactions');
+                      return cubits.transactions.populateAllTransactions();
+                    },
+                    child: ListView.builder(
+                        controller: cubits.pane.state.scroller,
+                        shrinkWrap: true,
+                        itemCount: mempool.length + transactions.length,
+                        itemBuilder: (context, index) => TransactionItem(
+                            display: index < mempool.length
+                                ? mempool.elementAt(index)
+                                : transactions
+                                    .elementAt(index - mempool.length)))));
           });
 }
 

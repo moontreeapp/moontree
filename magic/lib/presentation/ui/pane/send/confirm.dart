@@ -22,7 +22,7 @@ class ConfirmContent extends StatelessWidget {
     await Future.delayed(const Duration(seconds: 1));
     cubits.holding.update(active: false);
     await maestro.activateHistory(
-      cubits.wallet.state.holdings.firstWhere((holding) =>
+      holding: cubits.wallet.state.holdings.firstWhere((holding) =>
           holding.blockchain == cubits.holding.state.holding.blockchain &&
           holding.symbol == cubits.holding.state.holding.symbol),
     );

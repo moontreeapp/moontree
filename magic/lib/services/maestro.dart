@@ -298,16 +298,15 @@ class Maestro {
     locked = false;
   }
 
-  Future<void> activateHistory([Holding? holding]) async {
+  Future<void> activateHistory(
+      {Holding? holding, bool redirectOnEmpty = false}) async {
     if (locked) {
       return;
     } else {
       locked = true;
     }
     cubits.app.animating = true;
-    cubits.transactions.populateTransactions(holding);
-    cubits.transactions
-        .populateMempoolTransactions(force: true, holding: holding);
+    cubits.transactions.populateAllTransactions(holding);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
@@ -350,6 +349,20 @@ class Maestro {
         () => cubits.transactions.populateTransactions(holding));
     await Future.delayed(slideDuration, () => cubits.app.animating = false);
     locked = false;
+    if (redirectOnEmpty &&
+        ['\$ -', '\$ 0.00'].contains(cubits.holding.state.usd) &&
+        (cubits.transactions.state.transactions.length +
+                cubits.transactions.state.mempool.length ==
+            0)) {
+      if (locked) {
+        return;
+      } else {
+        locked = true;
+      }
+      await Future.delayed(slideDuration);
+      locked = false;
+      activateReceive(cubits.holding.state.holding.blockchain);
+    }
   }
 
   /// when on a transactions list screen you clickon a coin at the top

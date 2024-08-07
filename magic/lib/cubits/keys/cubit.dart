@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/mnemonic.dart';
 import 'package:magic/domain/concepts/storage.dart';
 import 'package:magic/domain/wallet/utils.dart';
@@ -38,7 +39,13 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   }) {
     syncMnemonics(mnemonics);
     syncKeypairs(wifs);
-    print(mnemonics);
+    //print(mnemonics);
+    //try {
+    //  print('-----------------------------');
+    //  print(master.mnemonicWallets.first.mnemonic);
+    //  print(master.mnemonicWallets.first.roots(Blockchain.evrmoreMain));
+    //  print(master.mnemonicWallets.first.roots(Blockchain.ravencoinMain));
+    //} catch (e) {}
     emit(KeysState(
       mnemonics: mnemonics ?? state.mnemonics,
       wifs: wifs ?? state.wifs,

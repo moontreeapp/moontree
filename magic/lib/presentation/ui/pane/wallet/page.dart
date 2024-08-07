@@ -69,7 +69,8 @@ class HoldingItem extends StatelessWidget {
         //onTap: () => cubits.pane.state.height == screen.pane.minHeight
         //    ? cubits.pane.snapTo(screen.pane.midHeight)
         //    : maestro.activateHistory(),
-        onTap: () => maestro.activateHistory(holding),
+        onTap: () =>
+            maestro.activateHistory(holding: holding, redirectOnEmpty: true),
         splashColor: Colors.transparent,
         leading: holding.isCurrency
             ? CurrencyIdenticon(holding: holding)

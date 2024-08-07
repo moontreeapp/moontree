@@ -65,6 +65,12 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     ));
   }
 
+  Future<void> populateAllTransactions([Holding? holding]) async {
+    holding = holding ?? cubits.holding.state.holding;
+    populateTransactions(holding);
+    populateMempoolTransactions(force: true, holding: holding);
+  }
+
   Future<void> populateTransactions([Holding? holding]) async {
     // remember to order by currency first, amount second, alphabetical third
     if (holding == null || reachedEnd) {

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
@@ -39,16 +40,16 @@ class AnimatedCoinSpec extends StatelessWidget {
         child: cubits.holding.state.holding.isCurrency
             ? CurrencyIdenticon(
                 holding: cubits.holding.state.holding,
-                height: screen.iconHuge,
-                width: screen.iconHuge,
+                height: screen.iconHuge + 12,
+                width: screen.iconHuge + 12,
               )
             : cubits.holding.state.holding.weHaveAdminOrMain
                 ? () {
                     final pair = cubits.wallet
                         .mainAndAdminOf(cubits.holding.state.holding);
                     return TokenToggle(
-                      height: screen.iconHuge,
-                      width: screen.iconHuge,
+                      height: screen.iconHuge + 12,
+                      width: screen.iconHuge + 12,
                       style: AppText.identiconHuge,
                       mainHolding: pair.main!,
                       adminHolding: pair.admin!,
@@ -57,8 +58,8 @@ class AnimatedCoinSpec extends StatelessWidget {
                 : SimpleIdenticon(
                     letter: cubits.holding.state.holding
                         .assetPathChildNFT[0], //symbol[0],
-                    height: screen.iconHuge,
-                    width: screen.iconHuge,
+                    height: screen.iconHuge + 12,
+                    width: screen.iconHuge + 12,
                     style: AppText.identiconHuge,
                     admin: cubits.holding.state.holding.isAdmin,
                   ),
@@ -102,68 +103,83 @@ class AnimatedCoinSpec extends StatelessWidget {
     String? part,
     String? subtitle,
     Coin? coin,
-  }) =>
-      Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          if (whole == null)
-            if ((coin?.coin ?? cubits.holding.state.holding.coin.coin) > 0)
-              CoinBalanceSimpleView(
-                coin: coin ?? cubits.holding.state.holding.coin,
-                //wholeStyle: AppText.wholeHolding,
-                //partStyle: AppText.partHolding,
-              )
-            else
-              CoinBalanceView(
-                coin: coin ?? cubits.holding.state.holding.coin,
-                //wholeStyle: AppText.wholeHolding,
-                //partOneStyle: AppText.partHolding,
-                //partTwoStyle: AppText.partHolding,
-                //partThreeStyle: AppText.partHolding,
-              )
-          else ...[
-            Text(whole, style: AppText.wholeHolding.copyWith(height: 0)),
-            if ((part ?? cubits.holding.state.part) != '')
-              Text('.${part ?? cubits.holding.state.part}',
-                  style: AppText.partHolding.copyWith(height: 0)),
-          ]
-        ]),
-        if ((subtitle ?? cubits.holding.state.usd) != '\$ -')
-          Text(subtitle ?? cubits.holding.state.usd,
-              textAlign: TextAlign.center,
-              style: AppText.usdHolding.copyWith(height: 0)),
-        //HighlightedNameView(holding: cubits.holding.state.holding)
-        //Text(
-        //    subtitle ??
-        //        (cubits.holding.state.holding.isCurrency
-        //            ? cubits.holding.state.holding.blockchain.chain.title
-        //            : cubits.holding.state.holding.name),
-        //    style: AppText.usdHolding),
-      ]);
+  }) {
+    final dollarText = subtitle ?? cubits.holding.state.usd;
+    final showDollar = !['\$ -', '\$ 0.00'].contains(dollarText);
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      if (!showDollar)
+        const SizedBox(height: 20)
+      else
+        const SizedBox(height: 12),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        if (whole == null)
+          if ((coin?.coin ?? cubits.holding.state.holding.coin.coin) > 0)
+            CoinBalanceSimpleView(
+              coin: coin ?? cubits.holding.state.holding.coin,
+              //wholeStyle: AppText.wholeHolding,
+              //partStyle: AppText.partHolding,
+            )
+          else
+            CoinBalanceView(
+              coin: coin ?? cubits.holding.state.holding.coin,
+              //wholeStyle: AppText.wholeHolding,
+              //partOneStyle: AppText.partHolding,
+              //partTwoStyle: AppText.partHolding,
+              //partThreeStyle: AppText.partHolding,
+            )
+        else ...[
+          Text(whole, style: AppText.wholeHolding.copyWith(height: 0)),
+          if ((part ?? cubits.holding.state.part) != '')
+            Text('.${part ?? cubits.holding.state.part}',
+                style: AppText.partHolding.copyWith(height: 0)),
+        ]
+      ]),
+      if (showDollar)
+        Text(dollarText,
+            textAlign: TextAlign.center,
+            style: AppText.usdHolding.copyWith(height: 0)),
+      //HighlightedNameView(holding: cubits.holding.state.holding)
+      //Text(
+      //    subtitle ??
+      //        (cubits.holding.state.holding.isCurrency
+      //            ? cubits.holding.state.holding.blockchain.chain.title
+      //            : cubits.holding.state.holding.name),
+      //    style: AppText.usdHolding),
+    ]);
+  }
 
   Widget buttons() => SizedBox(
       width: screen.width * .8,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         const SizedBox.shrink(),
-        GestureDetector(
-            onTap: () => maestro.activateSend(),
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                height: screen.iconLarge + 8,
-                width: screen.iconLarge + 8,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.buttonLight,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: SvgPicture.asset(
-                  '${TransactionIcons.base}/send.${TransactionIcons.ext}',
-                  alignment: Alignment.center,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text('Send', style: AppText.labelHolding),
-            ])),
+        if (cubits.holding.state.holding.coin.coin > 0)
+          GestureDetector(
+              onTap: !['\$ -', '\$ 0.00'].contains(cubits.holding.state.usd)
+                  ? () => maestro.activateSend()
+                  : () => cubits.toast.flash(
+                      msg: const ToastMessage(
+                          duration: Duration(seconds: 2),
+                          title: 'Empty',
+                          text: 'unable to send')),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: screen.iconLarge + 12,
+                      width: screen.iconLarge + 12,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.buttonLight,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: SvgPicture.asset(
+                        '${TransactionIcons.base}/send.${TransactionIcons.ext}',
+                        alignment: Alignment.center,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text('Send', style: AppText.labelHolding),
+                  ])),
         //SizedBox(width: screen.canvas.wSpace),
         GestureDetector(
             onTap: () => maestro
@@ -171,8 +187,8 @@ class AnimatedCoinSpec extends StatelessWidget {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
-                height: screen.iconLarge + 8,
-                width: screen.iconLarge + 8,
+                height: screen.iconLarge + 12,
+                width: screen.iconLarge + 12,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: AppColors.buttonLight,
@@ -230,7 +246,7 @@ class AnimatedCoinSpec extends StatelessWidget {
         String? overrideSubtitle;
 
         if (state.section == HoldingSection.none) {
-          iconTop = 16;
+          iconTop = 4;
           valueTop = iconTop + screen.iconHuge + expandedSpacing;
         } else if (state.section == HoldingSection.send) {
           overrideSubtitle = state.holding.isCurrency
