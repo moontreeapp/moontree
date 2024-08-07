@@ -7,6 +7,7 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/pane/transactions/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/shimmer.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
@@ -23,6 +24,20 @@ class TransactionsPage extends StatelessWidget {
               previous.mempool.length != current.mempool.length ||
               previous.clearing != current.clearing,
           builder: (BuildContext context, TransactionsState state) {
+            if (state.transactions.isEmpty && state.mempool.isEmpty) {
+              // shimmer until transactions are fetched
+              return FadeShimmer(
+                child: Container(
+                  decoration: const BoxDecoration(
+                      color: AppColors.backhalf,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      )),
+                ),
+              );
+            }
+
             ///BlocBuilder<HoldingCubit, HoldingState>(
             ///    buildWhen: (HoldingState previous, HoldingState current) =>
             ///        previous.holding != current.holding,

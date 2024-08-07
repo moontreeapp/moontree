@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/blockchain/mnemonic.dart';
+import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
 
@@ -152,7 +153,7 @@ class ImportPageState extends State<ImportPage> {
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                color: Colors.white),
+                color: AppColors.foreground),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -160,7 +161,7 @@ class ImportPageState extends State<ImportPage> {
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                         icon: const Icon(Icons.close_rounded,
-                            color: Colors.black54),
+                            color: Colors.white54),
                         onPressed: () => toStage(ImportLifecycle.exiting))),
                 if (lifecycle.msg == '')
                   Padding(
@@ -172,7 +173,7 @@ class ImportPageState extends State<ImportPage> {
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
                           hintText: 'Enter your seed phrase here',
-                          hintStyle: const TextStyle(color: Colors.black54),
+                          hintStyle: const TextStyle(color: Colors.white54),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),

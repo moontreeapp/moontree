@@ -82,7 +82,7 @@ class BackupPageState extends State<BackupPage> {
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                color: Colors.white),
+                color: AppColors.foreground),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -90,7 +90,7 @@ class BackupPageState extends State<BackupPage> {
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                         icon: const Icon(Icons.close_rounded,
-                            color: Colors.black54),
+                            color: Colors.white54),
                         onPressed: () => toStage(BackupLifeCycle.exiting))),
                 if (lifecycle.msg != '')
                   Padding(
@@ -129,7 +129,7 @@ class BackupPageState extends State<BackupPage> {
                                         border: Border(
                                           bottom: BorderSide(
                                             color: Colors
-                                                .black38, // Set the color of the border
+                                                .white38, // Set the color of the border
                                             width:
                                                 1.0, // Set the width of the border
                                           ),

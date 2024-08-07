@@ -185,5 +185,5 @@ class AppText {
       subtitle1.copyWith(color: Colors.black87);
 
   static TextStyle get labelHolding =>
-      caption.copyWith(color: AppColors.white87, fontWeight: FontWeights.bold);
+      caption.copyWith(color: AppColors.white87, fontWeight: FontWeights.extraBold);
 }

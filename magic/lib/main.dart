@@ -141,8 +141,8 @@ class MaestroLayer extends StatelessWidget {
     cubits.ignore.update(active: false);
     cubits.keys.load().then((x) {
       subscription.setupSubscriptions(cubits.keys.master);
-      cubits.wallet.populateAssets().then((_) => maestro.activeateHome());
-      //maestro.activeateHome();
+      cubits.wallet.populateAssets().then((_) => maestro.activateHome());
+      //maestro.activateHome();
     });
     //Testing.test();
   }

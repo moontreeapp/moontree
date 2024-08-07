@@ -8,9 +8,9 @@ enum DifficultyMode {
   String get name {
     switch (this) {
       case DifficultyMode.easy:
-        return 'Simple';
+        return 'Easy';
       case DifficultyMode.hard:
-        return 'Expert';
+        return 'Advanced';
       case DifficultyMode.dev:
         return 'Dev';
     }

@@ -34,6 +34,7 @@ dependencies:
   flutter_svg: ^2.0.9
   flutter_hicons: ^0.1.0
   flutter_secure_storage: ^9.0.0
+  flutter_launcher_icons: ^0.13.1
   equatable: ^2.0.5
   intl: ^0.19.0 # for formatting numbers into comma separated Strings
   lit_relative_date_time: ^1.2.0

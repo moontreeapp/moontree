@@ -9,6 +9,7 @@ class AppColors {
   static const Color frontItem = Color(0xFF3A3A3A);
   static const Color front = Color(0xFF2E2E2E);
   static const Color back = Color(0xFF121212);
+  static const Color backhalf = Color(0xFF202020);
   static const Color systemBar = Colors.black;
   static const Color success = Color(0xFF34C759);
   static const Color success67 = Color(0xAB34C759);

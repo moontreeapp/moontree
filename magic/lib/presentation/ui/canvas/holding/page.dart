@@ -149,8 +149,8 @@ class AnimatedCoinSpec extends StatelessWidget {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
-                height: screen.iconLarge,
-                width: screen.iconLarge,
+                height: screen.iconLarge + 8,
+                width: screen.iconLarge + 8,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: AppColors.buttonLight,
@@ -171,8 +171,8 @@ class AnimatedCoinSpec extends StatelessWidget {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Container(
-                height: screen.iconLarge,
-                width: screen.iconLarge,
+                height: screen.iconLarge + 8,
+                width: screen.iconLarge + 8,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: AppColors.buttonLight,
@@ -324,15 +324,21 @@ class TokenToggleState extends State<TokenToggle> {
 
   void _toggleMain() {
     if (isAdminSelected) {
-      maestro.activateOtherHolding(widget.mainHolding);
-      setState(() => isAdminSelected = false);
+      // TODO: maestro might be locked, could causes issue with widget state
+      if (!maestro.locked) {
+        maestro.activateOtherHolding(widget.mainHolding);
+        setState(() => isAdminSelected = false);
+      }
     }
   }
 
   void _toggleAdmin() {
     if (!isAdminSelected) {
-      maestro.activateOtherHolding(widget.adminHolding);
-      setState(() => isAdminSelected = true);
+      // TODO: maestro might be locked, could causes issue with widget state
+      if (!maestro.locked) {
+        maestro.activateOtherHolding(widget.adminHolding);
+        setState(() => isAdminSelected = true);
+      }
     }
   }
 

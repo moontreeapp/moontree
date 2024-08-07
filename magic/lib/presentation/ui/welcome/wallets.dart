@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
 
@@ -58,7 +59,7 @@ class WalletsPageState extends State<WalletsPage> {
             padding: const EdgeInsets.only(left: 16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                color: Colors.white),
+                color: AppColors.foreground),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -66,13 +67,13 @@ class WalletsPageState extends State<WalletsPage> {
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                         icon: const Icon(Icons.close_rounded,
-                            color: Colors.black54),
+                            color: Colors.white54),
                         onPressed: () => toStage(WalletsLifecycle.exiting))),
                 Column(children: [
                   const Padding(
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        'These are your wallets',
+                        'Your Wallets',
                         textAlign: TextAlign.center,
                       )),
                   ConstrainedBox(
@@ -109,8 +110,8 @@ class WalletsPageState extends State<WalletsPage> {
                                   ? ListTile(
                                       dense: true,
                                       visualDensity: VisualDensity.compact,
-                                      iconColor: Colors.black87,
-                                      textColor: Colors.black87,
+                                      iconColor: Colors.white70,
+                                      textColor: Colors.white70,
                                       title: Text(
                                         'Wallet $index (HD wallet)',
                                       ),
@@ -199,7 +200,7 @@ class WalletsPageState extends State<WalletsPage> {
                         'CLOSE',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.white,
+                          color: Colors.black54,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
