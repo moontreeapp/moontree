@@ -17,23 +17,8 @@ import 'package:magic/services/services.dart';
 class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
 
-  void _triggerRefresh(BuildContext context) {
-    print('refreshing');
-    cubits.transactions.refresh();
-  }
-
   @override
   Widget build(BuildContext context) {
-    void _onScroll() {
-      print('triggered');
-      if (cubits.pane.state.scroller != null &&
-          cubits.pane.state.scroller!.offset <= 0 &&
-          cubits.pane.state.scroller!.position.userScrollDirection ==
-              ScrollDirection.forward) {
-        _triggerRefresh(context);
-      }
-    }
-
     return BlocBuilder<WalletCubit, WalletState>(
         buildWhen: (previous, current) =>
             previous.holdings != current.holdings ||
@@ -62,25 +47,17 @@ class WalletPage extends StatelessWidget {
                           Chips.combinedFilter(walletState.chips)(holding))
                       .toList();
 
-                  return NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification notification) {
-                        print('scrolling');
-                        if (notification.metrics.axis == Axis.vertical) {
-                          _onScroll();
+                  return ListView.builder(
+                      controller: cubits.pane.state.scroller!,
+                      shrinkWrap: true,
+                      itemCount: filtered.length,
+                      itemBuilder: (context, int index) {
+                        final holding = filtered[index];
+                        if (holding.isAdmin && holding.weHaveAdminOrMain) {
+                          return const SizedBox(height: 0);
                         }
-                        return false;
-                      },
-                      child: ListView.builder(
-                          controller: cubits.pane.state.scroller!,
-                          shrinkWrap: true,
-                          itemCount: filtered.length,
-                          itemBuilder: (context, int index) {
-                            final holding = filtered[index];
-                            if (holding.isAdmin && holding.weHaveAdminOrMain) {
-                              return const SizedBox(height: 0);
-                            }
-                            return HoldingItem(holding: holding);
-                          }));
+                        return HoldingItem(holding: holding);
+                      });
                 }));
   }
 }
