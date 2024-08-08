@@ -11,7 +11,7 @@ class TransactionIcons {
 class LogoIcons {
   static const String base = 'assets/logos';
   static const String ext = 'svg';
-  static const String magic = '$base/magic.$ext';
+  static const String magic = '$base/magic-white.$ext';
   static const String evr = '$base/evr-icon.png';
   static const String rvn = '$base/rvn-icon.png';
 }

@@ -294,7 +294,6 @@ class _FadeOutState extends State<FadeOut> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    if (widget.enabled) {
       _controller = AnimationController(
         vsync: this,
         duration: widget.duration,
@@ -305,6 +304,7 @@ class _FadeOutState extends State<FadeOut> with SingleTickerProviderStateMixin {
           setState(() {});
         });
 
+    if (widget.enabled) {
       Future.delayed(widget.delay, () {
         if (mounted) {
           _controller.forward();
