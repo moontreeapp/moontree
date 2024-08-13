@@ -1,0 +1,4 @@
+on balance 0 - straight to recieve
+hide all assets with balance 0
+after sending transaction show mempool transaction on list
+think the server needs indexes...

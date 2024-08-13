@@ -9,7 +9,7 @@ import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/ui/pane/receive/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/fading.dart';
-import 'package:magic/presentation/widgets/animations/shimmer.dart';
+import 'package:magic/presentation/widgets/animations/loading.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
@@ -28,16 +28,7 @@ class TransactionsPage extends StatelessWidget {
               previous.isSubmitting != current.isSubmitting,
           builder: (BuildContext context, TransactionsState state) {
             if (state.isSubmitting) {
-              return FadeShimmer(
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: AppColors.backhalf,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      )),
-                ),
-              );
+              return const LoadingIndicator();
             }
             if (state.transactions.isEmpty && state.mempool.isEmpty) {
               // shimmer until transactions are fetched

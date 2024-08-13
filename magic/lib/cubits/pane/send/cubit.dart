@@ -146,6 +146,9 @@ class SendCubit extends UpdatableCubit<SendState> {
           keyPairByPath[
                   '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
               cubits.keys.master.mnemonicWallets
+                  .where((MnemonicWallet e) => e
+                      .roots(state.unsignedTransaction!.security.blockchain)
+                      .contains(walletPubKeyAndDerivationIndex[0]))
                   .map((MnemonicWallet e) => e
                       .seedWallet(
                           state.unsignedTransaction!.security.blockchain)

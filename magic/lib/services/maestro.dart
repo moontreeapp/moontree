@@ -5,6 +5,7 @@ import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/holding.dart';
+import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/sections.dart';
 import 'package:magic/cubits/cubit.dart' show cubits;
 import 'package:magic/domain/concepts/transaction.dart';
@@ -298,8 +299,10 @@ class Maestro {
     locked = false;
   }
 
-  Future<void> activateHistory(
-      {Holding? holding, bool redirectOnEmpty = false}) async {
+  Future<void> activateHistory({
+    Holding? holding,
+    bool redirectOnEmpty = false,
+  }) async {
     if (locked) {
       return;
     } else {
@@ -349,20 +352,24 @@ class Maestro {
         () => cubits.transactions.populateTransactions(holding));
     await Future.delayed(slideDuration, () => cubits.app.animating = false);
     locked = false;
-    if (redirectOnEmpty &&
-        ['\$ -', '\$ 0.00'].contains(cubits.holding.state.usd) &&
-        (cubits.transactions.state.transactions.length +
-                cubits.transactions.state.mempool.length ==
-            0)) {
-      if (locked) {
-        return;
-      } else {
-        locked = true;
-      }
-      await Future.delayed(slideDuration);
-      locked = false;
-      activateReceive(cubits.holding.state.holding.blockchain);
-    }
+    //if (redirectOnEmpty && cubits.holding.state.holding.sats.value == 0) {
+    //  activateReceive(cubits.holding.state.holding.blockchain);
+    //}
+
+    //if (redirectOnEmpty &&
+    //    ['\$ -', '\$ 0.00'].contains(cubits.holding.state.usd) &&
+    //    (cubits.transactions.state.transactions.length +
+    //            cubits.transactions.state.mempool.length ==
+    //        0)) {
+    //  if (locked) {
+    //    return;
+    //  } else {
+    //    locked = true;
+    //  }
+    //  await Future.delayed(slideDuration);
+    //  locked = false;
+    //  activateReceive(cubits.holding.state.holding.blockchain);
+    //}
   }
 
   /// when on a transactions list screen you clickon a coin at the top
