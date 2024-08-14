@@ -26,7 +26,12 @@ class NoGlowScrollBehavior extends ScrollBehavior {
 bool isImmersiveSticky = true;
 
 Future<void> main() async {
-  await subscription.setupClient(FlutterConnectivityMonitor());
+  // Initialize the Serverpod client with a retry mechanism to handle connection issues
+  await subscription.setupClient(
+    FlutterConnectivityMonitor(),
+    retryCount: 3,
+    retryDelay: const Duration(seconds: 2)
+  );
 
   WidgetsFlutterBinding.ensureInitialized();
   if (isImmersiveSticky) {
@@ -140,9 +145,10 @@ class MaestroLayer extends StatelessWidget {
     cubits.pane.update(height: screen.pane.midHeight);
     cubits.ignore.update(active: false);
     cubits.keys.load().then((x) {
-      subscription.setupSubscriptions(cubits.keys.master);
-      cubits.wallet.populateAssets().then((_) => maestro.activateHome());
-      //maestro.activateHome();
+      subscription.ensureConnected().then((_) {
+        subscription.setupSubscriptions(cubits.keys.master);
+        cubits.wallet.populateAssets().then((_) => maestro.activateHome());
+      });
     });
     //Testing.test();
   }
@@ -235,4 +241,3 @@ class MaestroLayer extends StatelessWidget {
 //    );
 //  }
 //}
-

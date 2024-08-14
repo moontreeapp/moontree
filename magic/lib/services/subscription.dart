@@ -25,26 +25,55 @@ class SubscriptionService {
     return _starttime!;
   }
 
-  Future<void> setupClient(server.ConnectivityMonitor givenMonitor) async {
+  Future<void> setupClient(
+    server.ConnectivityMonitor givenMonitor, {
+    int retryCount = 3,
+    Duration retryDelay = const Duration(seconds: 2),
+  }) async {
     monitor = givenMonitor;
     client.connectivityMonitor = givenMonitor;
-    //await client.openStreamingConnection(
-    //    disconnectOnLostInternetConnection: true);
     connectionHandler = StreamingConnectionHandler(
       client: client,
-      retryEverySeconds: 10,
+      retryEverySeconds: retryDelay.inSeconds,
       listener: (StreamingConnectionHandlerState connectionState) {
         print('connection state: ${connectionState.status.name}');
         cubits.app.update(connection: connectionState.status);
       },
     );
-    print('connecting!');
-    try {
-      connectionHandler.connect();
-    } catch (e) {
-      print(e);
+
+    print('Connecting...');
+    for (int attempt = 1; attempt <= retryCount; attempt++) {
+      try {
+        connectionHandler.connect();
+
+        // Wait for connection to be established (up to 10 seconds)
+        final stopwatch = Stopwatch()..start();
+        while (connectionHandler.status.status !=
+                StreamingConnectionStatus.connected &&
+            stopwatch.elapsed < const Duration(seconds: 10)) {
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+
+        if (connectionHandler.status.status ==
+            StreamingConnectionStatus.connected) {
+          print('Connected successfully on attempt $attempt');
+          await setupListeners();
+          return;
+        } else {
+          print('Failed to connect on attempt $attempt');
+        }
+      } catch (e) {
+        print('Error during connection setup on attempt $attempt: $e');
+      }
+
+      if (attempt < retryCount) {
+        print('Retrying in ${retryDelay.inSeconds} seconds...');
+        await Future.delayed(retryDelay);
+      }
     }
-    await setupListeners();
+
+    print('Failed to connect after $retryCount attempts');
+    // Handle connection failure (e.g., show an error message to the user)
   }
 
   Future<void> setupListeners() async {
@@ -94,11 +123,48 @@ class SubscriptionService {
     }
   }
 
+  Future<void> ensureConnected() async {
+    if (connectionHandler.status.status ==
+        StreamingConnectionStatus.connected) {
+      return; // Already connected, no action needed
+    }
+
+    // Check if a connection attempt is already in progress
+    if (connectionHandler.status.status ==
+        StreamingConnectionStatus.connecting) {
+      // Wait for the existing connection attempt to complete
+      await _waitForConnection();
+      return;
+    }
+
+    // If not connected and not connecting, initiate a new connection
+    try {
+      connectionHandler.connect();
+    } catch (e) {
+      print('Failed to connect: $e');
+      // Handle connection error (e.g., throw an exception or return an error status)
+    }
+  }
+
+  Future<void> _waitForConnection() async {
+    final stopwatch = Stopwatch()..start();
+    while (connectionHandler.status.status !=
+            StreamingConnectionStatus.connected &&
+        stopwatch.elapsed < const Duration(seconds: 10)) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    if (connectionHandler.status.status !=
+        StreamingConnectionStatus.connected) {
+      throw TimeoutException('Connection attempt timed out');
+    }
+  }
+
   Future<void> specifySubscription({
     required List<String> chains,
     required List<String> roots,
     required List<String> h160s,
   }) async {
+    await ensureConnected();
     try {
       await client.subscription
           .sendStreamMessage(protocol.ChainWalletH160Subscription(
@@ -106,14 +172,9 @@ class SubscriptionService {
         walletPubKeys: roots,
         h160s: h160s,
       ));
-    } on ServerpodClientException {
-      /// (ServerpodClientException: WebSocket is not connected, statusCode = 0)
-      print(
-          'ServerpodClientException: WebSocket is not connected, trying again');
-      await setupClient(monitor);
-      await specifySubscription(chains: chains, roots: roots, h160s: h160s);
     } catch (e) {
-      print(e);
+      print('Failed to send subscription: $e');
+      // Implement proper error handling
     }
   }
 
