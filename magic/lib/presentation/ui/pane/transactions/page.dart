@@ -27,7 +27,9 @@ class TransactionsPage extends StatelessWidget {
               previous.clearing != current.clearing ||
               previous.isSubmitting != current.isSubmitting,
           builder: (BuildContext context, TransactionsState state) {
-            if (state.isSubmitting) {
+            if (state.isSubmitting &&
+                state.transactions.isEmpty &&
+                state.mempool.isEmpty) {
               return const LoadingIndicator();
             }
             if (state.transactions.isEmpty && state.mempool.isEmpty) {
@@ -49,7 +51,10 @@ class TransactionsPage extends StatelessWidget {
                 child: RefreshIndicator(
                     onRefresh: () async {
                       print('refreshing transactions');
-                      return cubits.transactions.populateAllTransactions();
+                      cubits.transactions.reachedEnd = false;
+                      // cubits.transactions.update(transactions: []); // causes major issue - why?
+                      cubits.transactions
+                          .populateAllTransactions(fromHeight: 0);
                     },
                     child: ListView.builder(
                         controller: cubits.pane.state.scroller,

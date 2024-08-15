@@ -1,7 +1,10 @@
-on balance 0 - straight to recieve
 hide all assets with balance 0
 after sending transaction show mempool transaction on list
 pagination loading cycle fix
 pagination not working after 2nd call
-cycle loader for generating unsigned transaction
 
+mempool transaction list not populating
+pagination not working - not triggered at end of list
+manual refresh doesn't pull latest data
+not pulling more than 44, 45, 46, transactions? 
+cleanup all other prints

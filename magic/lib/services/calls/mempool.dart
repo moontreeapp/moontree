@@ -79,6 +79,7 @@ class TransactionMempoolCall extends ServerCall {
     //TransactionView ({"id":null,"error":null,"hash":"decode('5htuA5MpcIzrZUVxXJhG/Wpsj1wMYxO96jkzL5vc64M=', 'base64')","datetime":"-0001-01-01T00:00:00.000Z","fee":501600,"vsize":456,"height":-1,"containsAssets":true,"consolidation":false,"iProvided":37673075821,"iReceived":37672574221,"issueMainBurned":0,"reissueBurned":0,"issueSubBurned":0,"issueUniqueBurned":0,"issueMessageBurned":0,"issueQualifierBurned":0,"issueSubQualifierBurned":0,"issueRestrictedBurned":0,"addTagBurned":0,"burnBurned":0,"chain":null,"symbol":null})
     if (history.length == 1 && history.first.error != null) {
       // handle
+      print('history ERROR: ${history.first.error}');
       return [];
     }
 
@@ -89,12 +90,14 @@ class TransactionMempoolCall extends ServerCall {
         txView.datetime = DateTime.now();
       }
     }
-    print('trasnsactions: $history');
+    print('mempool: $history');
     return translate(history, blockchain);
   }
 
   List<TransactionDisplay> translate(
-          List<TransactionView> records, Blockchain blockchain) =>
+    List<TransactionView> records,
+    Blockchain blockchain,
+  ) =>
       [
         for (final record in records)
           TransactionDisplay.fromTransactionView(

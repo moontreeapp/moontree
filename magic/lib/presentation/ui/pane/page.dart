@@ -279,7 +279,9 @@ class FadeLayer extends StatelessWidget {
           ignoring: true,
           child: AnimatedOpacity(
               opacity: state.fade.opacity,
-              duration: fadeDuration,
+              duration: [FadeEvent.faded, FadeEvent.none].contains(state.fade)
+                  ? Duration.zero
+                  : fadeDuration,
               child: const DraggablePaneBackground())));
 }
 

@@ -11,9 +11,15 @@ class ServerCall {
   Future<T> runCall<T>(Future<T> Function() call) async {
     try {
       await subscription.ensureConnected();
-      return await call();
+      return await call()
+          .timeout(const Duration(seconds: 30)); // Add a 30-second timeout
     } catch (e) {
+      //if (e is TimeoutException) {
+      //  print('Query timed out after 30 seconds');
+      //  // Handle timeout specifically
+      //} else {
       print('Error during server call: $e');
+      // }
       // You might want to add more specific error handling here
       rethrow; // Rethrow the error to let the caller handle it
     }

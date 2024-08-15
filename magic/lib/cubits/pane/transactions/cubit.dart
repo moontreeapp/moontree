@@ -65,19 +65,29 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     ));
   }
 
-  Future<void> populateAllTransactions([Holding? holding]) async {
+  Future<void> populateAllTransactions({
+    Holding? holding,
+    int? fromHeight,
+  }) async {
     holding = holding ?? cubits.holding.state.holding;
-    populateTransactions(holding);
-    populateMempoolTransactions(force: true, holding: holding);
+    update(isSubmitting: true);
+    await populateTransactions(holding: holding, fromHeight: fromHeight);
+    await populateMempoolTransactions(holding: holding);
+    update(isSubmitting: false);
   }
 
-  Future<void> populateTransactions([Holding? holding]) async {
+  Future<void> populateTransactions({Holding? holding, int? fromHeight}) async {
     // remember to order by currency first, amount second, alphabetical third
     if (holding == null || reachedEnd) {
       //update(transactions: [], isSubmitting: false);
       return;
     }
-    update(isSubmitting: true);
+    final isSubmitting = state.isSubmitting;
+    if (!isSubmitting) {
+      update(isSubmitting: true);
+    }
+    await Future.delayed(fadeDuration * 10);
+    print('populating transactions: ${state.transactions.length}');
     final replace = holding != cubits.holding.state.holding;
     final transactions = _sort(_newRateThese(
         rate: holding.isRavencoin
@@ -89,19 +99,21 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
           mnemonicWallets: cubits.keys.master.mnemonicWallets,
           keypairWallets: cubits.keys.master.keypairWallets,
           blockchain: holding.blockchain,
-          height:
-              state.transactions.isNotEmpty ? state.transactions.length : null,
+          height: fromHeight ??
+              (state.transactions.isNotEmpty
+                  ? state.transactions.length
+                  : null),
           symbol: holding.symbol,
         ).call()));
     if (transactions.isEmpty || transactions == state.transactions) {
       reachedEnd = true;
-      update(isSubmitting: false);
+      update(isSubmitting: isSubmitting);
       return;
     }
     update(
       transactions: (replace ? <TransactionDisplay>[] : state.transactions) +
           transactions,
-      isSubmitting: false,
+      isSubmitting: isSubmitting,
     );
     cubits.pane.update(
       active: true,
@@ -114,28 +126,30 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     );
   }
 
-  Future<void> populateMempoolTransactions(
-      {bool force = false, Holding? holding}) async {
-    if (force || state.mempool.isEmpty) {
+  Future<void> populateMempoolTransactions({
+    Holding? holding,
+  }) async {
+    final isSubmitting = state.isSubmitting;
+    if (!isSubmitting) {
       update(isSubmitting: true);
-      holding ??= cubits.holding.state.holding;
-      final transactions = _sort(_newRateThese(
-          rate: holding.isRavencoin
-              ? rates.rvnUsdRate
-              : holding.isEvrmore
-                  ? rates.evrUsdRate
-                  : null,
-          transactions: await TransactionMempoolCall(
-            mnemonicWallets: cubits.keys.master.mnemonicWallets,
-            keypairWallets: cubits.keys.master.keypairWallets,
-            blockchain: holding.blockchain,
-            symbol: holding.symbol,
-          ).call()));
-      update(
-        mempool: transactions,
-        isSubmitting: false,
-      );
     }
+    holding ??= cubits.holding.state.holding;
+    final transactions = _sort(_newRateThese(
+        rate: holding.isRavencoin
+            ? rates.rvnUsdRate
+            : holding.isEvrmore
+                ? rates.evrUsdRate
+                : null,
+        transactions: await TransactionMempoolCall(
+          mnemonicWallets: cubits.keys.master.mnemonicWallets,
+          keypairWallets: cubits.keys.master.keypairWallets,
+          blockchain: holding.blockchain,
+          symbol: holding.symbol,
+        ).call()));
+    update(
+      mempool: transactions,
+      isSubmitting: isSubmitting,
+    );
   }
 
   void clearTransactions() {

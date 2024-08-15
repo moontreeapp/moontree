@@ -65,6 +65,7 @@ class TransactionHistoryCall extends ServerCall {
 
     if (history.length == 1 && history.first.error != null) {
       // handle
+      print('history.first.error: ${history.first.error}');
       return [];
     }
 
@@ -77,7 +78,9 @@ class TransactionHistoryCall extends ServerCall {
   }
 
   List<TransactionDisplay> translate(
-          List<TransactionView> records, Blockchain blockchain) =>
+    List<TransactionView> records,
+    Blockchain blockchain,
+  ) =>
       [
         for (final record in records)
           TransactionDisplay.fromTransactionView(

@@ -309,7 +309,7 @@ class Maestro {
       locked = true;
     }
     cubits.app.animating = true;
-    cubits.transactions.populateAllTransactions(holding);
+    cubits.transactions.populateAllTransactions(holding: holding);
     cubits.ignore.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeOut);
     cubits.navbar.update(active: false);
@@ -349,7 +349,7 @@ class Maestro {
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
     cubits.pane.setOnBottomReached(
-        () => cubits.transactions.populateTransactions(holding));
+        () => cubits.transactions.populateTransactions(holding: holding));
     await Future.delayed(slideDuration, () => cubits.app.animating = false);
     locked = false;
     //if (redirectOnEmpty && cubits.holding.state.holding.sats.value == 0) {
@@ -386,7 +386,7 @@ class Maestro {
     await Future.delayed(fadeDuration, () {
       cubits.holding.update(holding: holding);
       cubits.transactions.clearTransactions();
-      cubits.transactions.populateTransactions(holding);
+      cubits.transactions.populateTransactions(holding: holding);
       cubits.transactions.populateMempoolTransactions(holding: holding);
     });
     cubits.appbar.update(

@@ -15,6 +15,7 @@ import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/pane/send/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/loading.dart';
 import 'package:magic/services/services.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
@@ -27,6 +28,9 @@ class SendPage extends StatelessWidget {
           prior.unsignedTransaction != current.unsignedTransaction ||
           prior.estimate != current.estimate,
       builder: (BuildContext context, SendState state) {
+        if (state.isSubmitting) {
+          return const LoadingIndicator();
+        }
         if (state.unsignedTransaction != null && state.estimate != null) {
           return const ConfirmContent();
         }
@@ -178,7 +182,8 @@ class SendContentState extends State<SendContent> {
     cubits.fade.update(fade: FadeEvent.fadeOut);
     // maybe we can shorten or remove: cubit may take more than that time anyway
     await Future.delayed(fadeDuration);
-
+    cubits.send.update(isSubmitting: true);
+    cubits.fade.update(fade: FadeEvent.fadeIn);
     // validate address is valid
     // validate amount is a valid amount
     // validate amount is less than amount we hold of this asset
@@ -277,7 +282,10 @@ class SendContentState extends State<SendContent> {
         },
       );
     }
+    cubits.fade.update(fade: FadeEvent.faded);
     await Future.delayed(fadeDuration);
+    cubits.send.update(isSubmitting: false);
+    cubits.fade.update(fade: FadeEvent.faded);
     cubits.fade.update(fade: FadeEvent.fadeIn);
   }
 
