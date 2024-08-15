@@ -73,7 +73,6 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     update(isSubmitting: true);
     await populateTransactions(holding: holding, fromHeight: fromHeight);
     await populateMempoolTransactions(holding: holding);
-    print('-1 ${state.isSubmitting}');
     update(isSubmitting: false);
   }
 
@@ -87,7 +86,6 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     if (!isSubmitting) {
       update(isSubmitting: true);
     }
-    print('00 $isSubmitting');
     await Future.delayed(fadeDuration * 10);
     print('populating transactions: ${state.transactions.length}');
     final replace = holding != cubits.holding.state.holding;
@@ -135,9 +133,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     if (!isSubmitting) {
       update(isSubmitting: true);
     }
-    print('0 $isSubmitting');
     holding ??= cubits.holding.state.holding;
-    print('calling mempool transactions');
     final transactions = _sort(_newRateThese(
         rate: holding.isRavencoin
             ? rates.rvnUsdRate
