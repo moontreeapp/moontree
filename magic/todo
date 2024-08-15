@@ -8,8 +8,4 @@ manual refresh doesn't pull latest data
 not pulling more than 44, 45, 46, transactions? 
 cleanup all other prints
 race condition sometimes shows "no transactions"
-
-fix size of top coin image issues placement of letter and center it in duel mode
-transaction history on assets with no transactions
-
-are all assets failing?
+race condition sometimes shows previous holding's transactions

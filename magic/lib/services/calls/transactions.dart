@@ -37,14 +37,13 @@ class TransactionHistoryCall extends ServerCall {
     required List<String> roots,
     required List<ByteData> h160s,
   }) async =>
-      [];
-  //await runCall(() async => await client.transactions.get(
-  //      symbol: symbol,
-  //      backFromHeight: height,
-  //      chainName: chain.name,
-  //      xpubkeys: roots,
-  //      h160s: h160s,
-  //    ));
+      await runCall(() async => await client.transactions.get(
+            symbol: symbol,
+            backFromHeight: height,
+            chainName: chain.name,
+            xpubkeys: roots,
+            h160s: h160s,
+          ));
 
   Future<List<TransactionDisplay>> call() async {
     final String? serverSymbol = ((security?.isCoin ?? true) &&
