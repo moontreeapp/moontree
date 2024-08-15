@@ -27,16 +27,19 @@ class TransactionsPage extends StatelessWidget {
               previous.clearing != current.clearing ||
               previous.isSubmitting != current.isSubmitting,
           builder: (BuildContext context, TransactionsState state) {
+            if (!state.active) {
+              return const SizedBox.shrink();
+            }
             if (state.isSubmitting &&
                 state.transactions.isEmpty &&
                 state.mempool.isEmpty) {
               return const LoadingIndicator();
             }
             if (state.transactions.isEmpty && state.mempool.isEmpty) {
-              // shimmer until transactions are fetched
-              return FadeIn(
-                  delay: slowFadeDuration + fadeDuration,
-                  child: const SoftReceivePage());
+              return const FadeIn(
+                delay: slowFadeDuration,
+                child: SoftReceivePage(),
+              );
             }
 
             ///BlocBuilder<HoldingCubit, HoldingState>(

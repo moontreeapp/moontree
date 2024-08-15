@@ -123,7 +123,7 @@ class AppText {
       );
 
   static TextStyle get identiconHuge =>
-      h1.copyWith(color: AppColors.white87, fontSize: 32.0, height: 1.9);
+      h1.copyWith(color: AppColors.white87, fontSize: 38.0, height: 1.85);
 
   static TextStyle get identicon48 => h1.copyWith(
         color: AppColors.white87,
@@ -184,6 +184,6 @@ class AppText {
   static TextStyle get childAssetNameDark =>
       subtitle1.copyWith(color: Colors.black87);
 
-  static TextStyle get labelHolding =>
-      caption.copyWith(color: AppColors.white87, fontWeight: FontWeights.extraBold);
+  static TextStyle get labelHolding => caption.copyWith(
+      color: AppColors.white87, fontWeight: FontWeights.extraBold);
 }

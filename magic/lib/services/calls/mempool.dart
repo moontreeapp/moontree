@@ -49,12 +49,6 @@ class TransactionMempoolCall extends ServerCall {
           ));
 
   Future<List<TransactionDisplay>> call() async {
-    /// TODO: REMOVE WHEN EVR MEMPOOL IS FIXED ON SERVERSIDE
-    if (blockchain.isEvrmore) {
-      return [];
-    }
-
-    ///
     final String? serverSymbol = ((security?.isCoin ?? true) &&
             (symbol == null || symbol == blockchain.symbol || symbol == '')
         ? null

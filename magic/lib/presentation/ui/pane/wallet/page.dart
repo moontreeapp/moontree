@@ -179,14 +179,17 @@ class SimpleIdenticon extends StatelessWidget {
             right: 0,
             bottom: 0,
             child: Container(
-              width: screen.iconSmall,
-              height: screen.iconSmall,
+              width: screen.iconSmall + 2,
+              height: screen.iconSmall + 2,
               alignment: Alignment.bottomCenter,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primary,
+                color: AppColors.background,
               ),
-              child: const Icon(Icons.star, color: Colors.white, size: 16),
+              child: const Padding(
+                padding: EdgeInsets.only(bottom: 1),
+                child: Icon(Icons.star, color: Colors.white, size: 16),
+              ),
             ),
           ),
         ],

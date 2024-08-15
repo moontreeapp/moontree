@@ -3,8 +3,13 @@ after sending transaction show mempool transaction on list
 pagination loading cycle fix
 pagination not working after 2nd call
 
-mempool transaction list not populating
 pagination not working - not triggered at end of list
 manual refresh doesn't pull latest data
 not pulling more than 44, 45, 46, transactions? 
 cleanup all other prints
+race condition sometimes shows "no transactions"
+
+fix size of top coin image issues placement of letter and center it in duel mode
+transaction history on assets with no transactions
+
+are all assets failing?

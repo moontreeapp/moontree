@@ -380,11 +380,13 @@ class TokenToggleState extends State<TokenToggle> {
         buildWhen: (HoldingState previous, HoldingState current) =>
             previous.section != current.section,
         builder: (context, HoldingState state) => SizedBox(
-            width: widget.width * 4 + 16,
+            width: widget.width * 4 + 16 + 12,
             height: widget.height,
             child: Stack(alignment: Alignment.bottomCenter, children: [
               AnimatedPositioned(
-                  left: isAdminSelected ? 0 : widget.width * 1 + 32,
+                  left: isAdminSelected
+                      ? 0 + 12 + 6
+                      : widget.width * 1 + 32 + 12 + 6,
                   duration: fadeDuration,
                   curve: Curves.easeInOut,
                   child: Row(
