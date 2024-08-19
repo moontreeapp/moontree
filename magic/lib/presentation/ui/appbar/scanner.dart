@@ -11,8 +11,8 @@ class Scanner extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
       onTap: () => cubits.toast.flash(
               msg: const ToastMessage(
-            title: 'To scanner',
-            text: '',
+            title: 'Pair with Extension',
+            text: '(coming soon)',
           )),
       child: Container(
         height: 16 + screen.iconMedium + 16,

@@ -213,15 +213,15 @@ class SendContentState extends State<SendContent> {
           note: state.note != '' ? state.note : null,
         );
     */
-
+    final sendSats = Coin.fromString(cubits.send.state.amount).toSats().value;
+    final sendAll = sendSats == cubits.holding.state.holding.sats.value;
     cubits.send.update(
         sendRequest: SendRequest(
-      sendAll: false,
+      sendAll: sendAll,
       sendAddress: cubits.send.state.address,
       holding: cubits.holding.state.holding.coin.toDouble(),
       visibleAmount: cubits.send.state.amount,
-      sendAmountAsSats:
-          Coin.fromString(cubits.send.state.amount).toSats().value,
+      sendAmountAsSats: sendSats,
       feeRate: cheapFee,
       //security: state.security,
       // only for hard mode
@@ -244,7 +244,7 @@ class SendContentState extends State<SendContent> {
     // on that page display results of transaction
     // sign it.
     await cubits.send.setUnsignedTransaction(
-      sendAllCoinFlag: false,
+      sendAllCoinFlag: sendAll,
       symbol: cubits.holding.state.holding.symbol,
       blockchain: cubits.holding.state.holding.blockchain,
     );

@@ -521,17 +521,20 @@ class SendCubit extends UpdatableCubit<SendState> {
     //    //transactionComponents.changeAmount == transactionComponents.totalOut - transactionComponents.sendAmount - transactionComponents.fee
     //    );
     // update checkout struct to update checkout page
-    update(
-      estimate: SendEstimate(
-        amount: state.sendRequest!.sendAmountAsSats,
-        sendAll: state.sendRequest!.sendAll,
-        fees: fees,
-        security: state.unsignedTransaction!.security,
-        memo: state.unsignedTransaction!.memo,
-        creation: false,
-      ),
-    );
-    return const Tuple2(true, 'success');
+    if (state.unsignedTransaction != null) {
+      update(
+        estimate: SendEstimate(
+          amount: state.sendRequest!.sendAmountAsSats,
+          sendAll: state.sendRequest!.sendAll,
+          fees: fees,
+          security: state.unsignedTransaction!.security,
+          memo: state.unsignedTransaction!.memo,
+          creation: false,
+        ),
+      );
+      return const Tuple2(true, 'success');
+    }
+    return const Tuple2(false, 'failure');
   }
 
   /// actually commit transaction

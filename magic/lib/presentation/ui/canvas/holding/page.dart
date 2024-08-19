@@ -152,15 +152,17 @@ class AnimatedCoinSpec extends StatelessWidget {
       width: screen.width * .8,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         const SizedBox.shrink(),
-        if (cubits.holding.state.holding.coin.coin > 0)
+        if (cubits.holding.state.holding.sats.value > 0)
           GestureDetector(
-              onTap: !['\$ -', '\$ 0.00'].contains(cubits.holding.state.usd)
-                  ? () => maestro.activateSend()
-                  : () => cubits.toast.flash(
-                      msg: const ToastMessage(
-                          duration: Duration(seconds: 2),
-                          title: 'Empty',
-                          text: 'unable to send')),
+              onTap:
+                  //!['\$ -', '\$ 0.00'].contains(cubits.holding.state.usd)
+                  cubits.holding.state.holding.sats.value > 0
+                      ? () => maestro.activateSend()
+                      : () => cubits.toast.flash(
+                          msg: const ToastMessage(
+                              duration: Duration(seconds: 2),
+                              title: 'Empty',
+                              text: 'unable to send')),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -167,7 +167,8 @@ class ChipsView extends StatelessWidget {
       buildWhen: (MenuState previous, MenuState current) =>
           previous.mode != current.mode,
       builder: (BuildContext context, MenuState state) => state.mode ==
-              DifficultyMode.easy
+                  DifficultyMode.easy ||
+              true // ALPHA
           ? const SizedBox(height: 58)
           : BlocBuilder<WalletCubit, WalletState>(
               buildWhen: (WalletState previous, WalletState current) =>
@@ -210,7 +211,7 @@ class ChipItem extends StatelessWidget {
               : null,
           child: Container(
               padding:
-                  const EdgeInsets.only(left: 6, right: 6, top: 3, bottom: 1),
+                  const EdgeInsets.only(left: 6, right: 6, top: 1.5, bottom: 1),
               height: 26,
               decoration: BoxDecoration(
                   color: selected ? AppColors.white60 : null,

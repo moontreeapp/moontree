@@ -41,7 +41,7 @@ class Maestro {
   }
 
   void conduct(NavbarSection section, {bool remember = true}) {
-    /* snap back method not great 
+    /* snap back method not great
      snapshots .add(snapCubits(_navbarCubits + (_sectionCubits as List<UpdateMixin>)));*/
     if (remember) {
       sectionsHistory.add(section);
@@ -592,6 +592,9 @@ class Maestro {
     }
     cubits.app.animating = true;
     cubits.navbar.update(active: false);
+    cubits.menu.update(active: true, sub: SubMenu.none);
+    cubits.balance.update(active: true);
+    await Future.delayed(slideDuration, () => cubits.app.animating = false);
     cubits.appbar.update(
       leading: AppbarLeading.menu,
       title: 'Magic',
@@ -599,9 +602,6 @@ class Maestro {
       onLead: activateMenu,
       onTitle: activateMenu,
     );
-    cubits.menu.update(active: true, sub: SubMenu.none);
-    cubits.balance.update(active: true);
-    await Future.delayed(slideDuration, () => cubits.app.animating = false);
     locked = false;
   }
 
