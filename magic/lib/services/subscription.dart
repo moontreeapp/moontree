@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/concepts/numbers/coin.dart';
+import 'package:magic/domain/utils/extensions/string.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:serverpod_client/serverpod_client.dart';
 import 'package:magic/domain/server/serverv2_client.dart' as server;
@@ -77,21 +80,20 @@ class SubscriptionService {
   }
 
   Future<void> setupListeners() async {
-    /// TODO: implement triggerBalanceUpdates - after we setup repos for holdings:
-    void triggerBalanceUpdates() {
-      print('triggerBalanceUpdates - not implemented');
-      cubits.wallet.populateAssets();
-      /*
-      // update holdings list
-      cubits.holdingsView.setHoldingViews(
-          wallet: Current.wallet, chainNet: Current.chainNet, force: true);
-      // update receive address
-      cubits.receiveView.setAddress(Current.wallet, force: true);
-      // if we're on the transactions list, update that too:
-      if (cubits.transactionsView.state.ranWallet != null) {
-        cubits.transactionsView.setInitial(force: true);
+    void triggerBalanceUpdates({
+      required String symbol,
+      required int satsConfirmed,
+      required int satsUnconfirmed,
+    }) {
+      if (satsConfirmed + satsUnconfirmed > 0) {
+        cubits.toast.flash(
+            msg: ToastMessage(
+          title: 'Received $symbol:',
+          text:
+              '+${Coin.fromInt(satsConfirmed + satsUnconfirmed).humanString()}',
+        ));
       }
-      */
+      cubits.wallet.populateAssets();
     }
 
     try {
@@ -109,9 +111,21 @@ class SubscriptionService {
             cubits.app.update(blockheight: message.height);
           }
         } else if (message is protocol.NotifyChainH160Balance) {
-          triggerBalanceUpdates();
+          print(
+              'NotifyChainWalletBalance H160 update: ${message.symbol} ${message.satsConfirmed} ${message.satsUnconfirmed}');
+          triggerBalanceUpdates(
+              symbol: message.symbol ??
+                  message.chainName.split('_').first.toTitleCase(),
+              satsConfirmed: message.satsConfirmed,
+              satsUnconfirmed: message.satsUnconfirmed);
         } else if (message is protocol.NotifyChainWalletBalance) {
-          triggerBalanceUpdates();
+          print(
+              'NotifyChainWalletBalance Wallet update: ${message.symbol} ${message.satsConfirmed} ${message.satsUnconfirmed}');
+          triggerBalanceUpdates(
+              symbol: message.symbol ??
+                  message.chainName.split('_').first.toTitleCase(),
+              satsConfirmed: message.satsConfirmed,
+              satsUnconfirmed: message.satsUnconfirmed);
         } else {
           print('unknown subscription message: ${message.runtimeType}');
         }
@@ -197,7 +211,7 @@ class SubscriptionService {
         /// SERVER
         await specifySubscription(chains: [
       Blockchain.ravencoinMain.chaindata.name,
-      //Blockchain.evrmoreMain.chaindata.name,
+      Blockchain.evrmoreMain.chaindata.name,
     ], roots: roots, h160s: h160s);
     return subscriptionVoid;
   }

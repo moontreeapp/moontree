@@ -27,11 +27,8 @@ bool isImmersiveSticky = true;
 
 Future<void> main() async {
   // Initialize the Serverpod client with a retry mechanism to handle connection issues
-  await subscription.setupClient(
-    FlutterConnectivityMonitor(),
-    retryCount: 3,
-    retryDelay: const Duration(seconds: 2)
-  );
+  await subscription.setupClient(FlutterConnectivityMonitor(),
+      retryCount: 3, retryDelay: const Duration(seconds: 2));
 
   WidgetsFlutterBinding.ensureInitialized();
   if (isImmersiveSticky) {

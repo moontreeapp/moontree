@@ -13,20 +13,21 @@ race condition sometimes shows previous holding's
 should make a new endpoint to know which holdings have transactions and which don't immediately
 
 TESTING:
-snackbar on recieve
-balance not updating on receive
-    - subscription
-    - on home page trigger
-balance less than 1 no send
 
+DONE snackbar on recieve
+DONE balance not updating on receive
+DONE     - subscription
+DONE     - on home page trigger
 DONE Send button
 DONE    "unable to send" - unspents?
-
 DONE menu settings, waiting before Magic logo to come in
-
 DONE no transaction history - just say it on transaction history
-
 DONE fix chips spacing
 DONE hide chips
+
+balance less than 1 no send
+
+update about page
+update need help page
 
 test on IOS...
