@@ -80,11 +80,17 @@ class SubscriptionService {
   }
 
   Future<void> setupListeners() async {
-    void triggerBalanceUpdates({
+    Future<void> triggerBalanceUpdates({
       required String symbol,
       required int satsConfirmed,
       required int satsUnconfirmed,
-    }) {
+      required String chainName,
+    }) async {
+      final realSymbol = chainName.startsWith(symbol.toLowerCase())
+          ? symbol == 'Evrmore'
+              ? 'EVR'
+              : 'RVN'
+          : symbol;
       if (satsConfirmed + satsUnconfirmed > 0) {
         cubits.toast.flash(
             msg: ToastMessage(
@@ -93,7 +99,21 @@ class SubscriptionService {
               '+${Coin.fromInt(satsConfirmed + satsUnconfirmed).humanString()}',
         ));
       }
-      cubits.wallet.populateAssets();
+      await cubits.wallet.populateAssets();
+      print(
+          'refresh: $chainName, $symbol, ${cubits.holding.state.holding.symbol}, $realSymbol, ${cubits.transactions.state.active}');
+      if (cubits.holding.state.holding.symbol == realSymbol &&
+          cubits.transactions.state.active) {
+        print(cubits.holding.state.holding);
+        print(cubits.wallet
+            .getHoldingFrom(holding: cubits.holding.state.holding));
+        cubits.holding.update(
+            holding: cubits.wallet
+                .getHoldingFrom(holding: cubits.holding.state.holding));
+        cubits.transactions.clearTransactions();
+        cubits.transactions
+            .populateAllTransactions(holding: cubits.holding.state.holding);
+      }
     }
 
     try {
@@ -117,7 +137,8 @@ class SubscriptionService {
               symbol: message.symbol ??
                   message.chainName.split('_').first.toTitleCase(),
               satsConfirmed: message.satsConfirmed,
-              satsUnconfirmed: message.satsUnconfirmed);
+              satsUnconfirmed: message.satsUnconfirmed,
+              chainName: message.chainName);
         } else if (message is protocol.NotifyChainWalletBalance) {
           print(
               'NotifyChainWalletBalance Wallet update: ${message.symbol} ${message.satsConfirmed} ${message.satsUnconfirmed}');
@@ -125,7 +146,8 @@ class SubscriptionService {
               symbol: message.symbol ??
                   message.chainName.split('_').first.toTitleCase(),
               satsConfirmed: message.satsConfirmed,
-              satsUnconfirmed: message.satsUnconfirmed);
+              satsUnconfirmed: message.satsUnconfirmed,
+              chainName: message.chainName);
         } else {
           print('unknown subscription message: ${message.runtimeType}');
         }

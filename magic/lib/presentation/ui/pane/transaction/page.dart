@@ -160,7 +160,7 @@ class TransactionPage extends StatelessWidget {
                           child: Text(
                         'VIEW DETAILS',
                         style: AppText.button1.copyWith(
-                            color: AppColors.success,
+                            color: AppColors.white38,
                             fontWeight: FontWeight.bold),
                       )))),
               //GestureDetector(

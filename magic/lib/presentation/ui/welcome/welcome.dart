@@ -73,7 +73,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(_isAnimating ? 30 : 30)),
+                      top: Radius.circular(_isAnimating ? 30 : 0)),
                   color: AppColors.foreground),
               child: AnimatedOpacity(
                 opacity: _isFading ? 0 : _fadingInValue,
@@ -160,6 +160,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),

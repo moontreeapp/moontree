@@ -24,10 +24,25 @@ DONE menu settings, waiting before Magic logo to come in
 DONE no transaction history - just say it on transaction history
 DONE fix chips spacing
 DONE hide chips
+DONE balance less than 1 no send
 
-balance less than 1 no send
+DONE delete on send, can't change
+DONE "insufficient balance" instead of "you do not have that much"
+DONE view details white38
+DONE fix wording white on paste popup
+DONE remove border on send
+DONE snackbar - fade at the same time
 
+DONE balance
+DONE transactions - refresh on subscription
+transactions - issues downloading history sometimes
+transactions - state issue - not clearing
+sending - why sometimes unable to send - signature issue again? - its vouts from multiple wallets...
+
+conform coinspec, remove usd, make clickable
 update about page
 update need help page
+Help? Chat now -> page, our twitter
+about page -> company twitter
 
 test on IOS...

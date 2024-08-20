@@ -33,6 +33,7 @@ class GlobalCubits {
   /// other - state
   final app = AppCubit();
   final keys = KeysCubit();
+  final holdings = HoldingsCubit();
 
   /// combined
   List<Cubit> get all => [
@@ -50,6 +51,7 @@ class GlobalCubits {
         ignore,
         app,
         keys,
+        holdings,
         welcome,
       ];
   List<UpdatableCubit> get paneCubits =>
@@ -77,6 +79,7 @@ class GlobalCubits {
         BlocProvider<IgnoreCubit>(create: (context) => ignore),
         BlocProvider<AppCubit>(create: (context) => app),
         BlocProvider<KeysCubit>(create: (context) => keys),
+        BlocProvider<HoldingsCubit>(create: (context) => holdings),
         BlocProvider<WelcomeCubit>(create: (context) => welcome),
       ];
 

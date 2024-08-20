@@ -167,10 +167,8 @@ class ChipsView extends StatelessWidget {
       buildWhen: (MenuState previous, MenuState current) =>
           previous.mode != current.mode,
       builder: (BuildContext context, MenuState state) => state.mode ==
-                  DifficultyMode.easy ||
-              true // ALPHA
-          ? const SizedBox(height: 58)
-          : BlocBuilder<WalletCubit, WalletState>(
+              DifficultyMode.dev
+          ? BlocBuilder<WalletCubit, WalletState>(
               buildWhen: (WalletState previous, WalletState current) =>
                   previous.chips != current.chips,
               builder: (BuildContext context, WalletState state) => Container(
@@ -184,7 +182,8 @@ class ChipsView extends StatelessWidget {
                             chip: cubits.wallet.defaultChips[index],
                             selected: state.chips
                                 .contains(cubits.wallet.defaultChips[index]),
-                          )))));
+                          ))))
+          : const SizedBox(height: 58));
 }
 
 class ChipItem extends StatelessWidget {

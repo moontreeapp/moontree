@@ -5,14 +5,17 @@ mixin HideMixin<T> {
   void hide();
 }
 
-mixin UpdateMixin<T> {
+mixin UpdateResetMixin {
   String get key;
   void reset();
   void update();
+}
+
+mixin UpdateMixin<T> {
   void refresh();
-  void setState(T state);
   void activate();
   void deactivate();
+  void setState(T state);
 }
 
 mixin DisposedMixin {
@@ -20,7 +23,12 @@ mixin DisposedMixin {
   bool isDisposed();
 }
 
-mixin UpdateHideMixin<T> implements UpdateMixin<T>, HideMixin {}
+mixin UpdateHideMixin<T>
+    implements UpdateMixin<T>, UpdateResetMixin, HideMixin {}
+
+abstract class UpdatingCubit<T> extends Cubit<T> with UpdateResetMixin {
+  UpdatingCubit(super.initialState);
+}
 
 abstract class UpdatableCubit<T> extends Cubit<T> with UpdateHideMixin<T> {
   UpdatableCubit(super.initialState);

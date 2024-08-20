@@ -103,6 +103,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   Future<bool> populateAssets() async {
     // remember to order by currency first, amount second, alphabetical third
     update(isSubmitting: true);
+    print('populateAssets');
     final holdings = setCorrespondingFlag(_sort(_newRateThese(
             symbol: 'EVR',
             rate: await rates.getRateOf('EVR'),
@@ -216,6 +217,17 @@ class WalletCubit extends UpdatableCubit<WalletState> {
         main: holding.isAdmin ? mainOf(holding) : holding,
         admin: holding.isAdmin ? holding : adminOf(holding),
       );
+
+  Holding getHolding({
+    required String symbol,
+    required Blockchain blockchain,
+  }) =>
+      state.holdings.firstWhere((holding) =>
+          holding.symbol == symbol && holding.blockchain == blockchain);
+
+  Holding getHoldingFrom({required Holding holding}) =>
+      state.holdings.firstWhere((h) =>
+          h.symbol == holding.symbol && h.blockchain == holding.blockchain);
 }
 
 class MainAdminPair {

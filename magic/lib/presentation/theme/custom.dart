@@ -6,7 +6,7 @@ CustomTheme currentTheme = CustomTheme();
 
 class CustomTheme with ChangeNotifier {
   static bool _isDarkTheme = true;
-  ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
+  ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.dark;
 
   void toggleTheme() {
     _isDarkTheme = !_isDarkTheme;
@@ -15,9 +15,9 @@ class CustomTheme with ChangeNotifier {
 
   static ThemeData get lightTheme {
     return ThemeData(
-      brightness: Brightness.light,
-      colorScheme: AppColors.colorScheme,
-      primaryColor: AppColors.primary,
+      brightness: Brightness.dark,
+      //colorScheme: AppColors.colorScheme, // caused the blank paste issue
+      primaryColor: Colors.amber,
       disabledColor: AppColors.disabled,
       fontFamily: 'Nunito',
       dividerTheme: const DividerThemeData(
@@ -33,7 +33,7 @@ class CustomTheme with ChangeNotifier {
       ),
       tooltipTheme: const TooltipThemeData(preferBelow: true),
       textSelectionTheme: const TextSelectionThemeData(
-        cursorColor: AppColors.primary,
+        cursorColor: AppColors.primaryDisabled,
         selectionHandleColor: AppColors.primaryDisabled,
         selectionColor: AppColors.disabled,
       ),

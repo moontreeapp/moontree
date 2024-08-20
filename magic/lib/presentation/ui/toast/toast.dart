@@ -70,7 +70,6 @@ class ToastLayer extends StatelessWidget {
                     fadeDuration,
                 child: FadeIn(
                   refade: true,
-                  delay: fadeDuration,
                   duration: fadeDuration,
                   child: content,
                 ));

@@ -157,7 +157,7 @@ class SendContentState extends State<SendContent> {
         if (!validateAmountAbleToParse(amount)) 'invalid',
         if (!validateAmountGTZero(amount)) 'must be greater than 0',
         if (!validateAmountByBlockchain(amount)) 'invalid',
-        if (!validateAmountLTTotal(amount)) 'you do not have the much',
+        if (!validateAmountLTTotal(amount)) 'insufficient balance',
       ];
 
   bool validateAmountNotEmpty(String amount) => amount.isNotEmpty;
@@ -308,10 +308,11 @@ class SendContentState extends State<SendContent> {
                       child: const QRViewable(),
                     ));
               }
-              addressText.text = cubits.send.state.address;
+              //addressText.text = cubits.send.state.address;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 8),
                   CustomTextField(
                     textInputAction: TextInputAction.next,
                     controller: addressText,
@@ -407,7 +408,13 @@ class SendContentState extends State<SendContent> {
               );
             }),
         GestureDetector(
-            onTap: _send,
+            onTap: () => validateForm()
+                ? _send()
+                : cubits.toast.flash(
+                    msg: const ToastMessage(
+                    title: 'Unable to Continue:',
+                    text: 'Invalid form',
+                  )),
             child: Container(
                 height: 64,
                 decoration: ShapeDecoration(

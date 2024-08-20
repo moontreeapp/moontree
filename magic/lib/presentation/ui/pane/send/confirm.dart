@@ -153,12 +153,8 @@ class ConfirmContent extends StatelessWidget {
                     child: Container(
                         height: 64,
                         decoration: BoxDecoration(
-                          color: AppColors.buttonOutline,
+                          color: AppColors.button,
                           borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: AppColors.button,
-                            width: 4,
-                          ),
                         ),
                         child: Center(
                             child: Text(

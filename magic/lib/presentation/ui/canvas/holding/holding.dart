@@ -11,6 +11,7 @@ class HodingDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<HoldingCubit, HoldingState>(
       buildWhen: (HoldingState previous, HoldingState current) =>
+          previous.holding != current.holding ||
           previous.active != current.active ||
           (!previous.active && !current.active),
       builder: (context, state) => state.transitionWidgets(state,
