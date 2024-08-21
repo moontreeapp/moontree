@@ -3,6 +3,7 @@ import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/login/native.dart';
+import 'package:magic/presentation/ui/welcome/addresses.dart';
 import 'package:magic/presentation/ui/welcome/backup.dart';
 import 'package:magic/presentation/ui/welcome/import.dart';
 import 'package:magic/presentation/ui/welcome/wallets.dart';
@@ -105,6 +106,26 @@ class WalletsItem extends StatelessWidget {
               const Icon(Icons.wallet_rounded, color: Colors.white),
               const SizedBox(width: 16),
               Text('Wallets', style: AppText.h2.copyWith(color: Colors.white)),
+            ])),
+      );
+}
+
+class AddressesItem extends StatelessWidget {
+  const AddressesItem({super.key});
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () =>
+            cubits.welcome.update(active: true, child: const AddressesPage()),
+        child: Container(
+            height: screen.menu.itemHeight,
+            width: screen.width,
+            color: Colors.transparent,
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+              const Icon(Icons.menu_open_rounded, color: Colors.white),
+              const SizedBox(width: 16),
+              Text('Addresses',
+                  style: AppText.h2.copyWith(color: Colors.white)),
             ])),
       );
 }

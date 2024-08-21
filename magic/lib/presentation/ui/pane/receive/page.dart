@@ -143,26 +143,3 @@ class ReceivePage extends StatelessWidget {
         )
       ]));
 }
-
-class SoftReceivePage extends StatelessWidget {
-  const SoftReceivePage({super.key});
-
-  @override
-  Widget build(BuildContext context) => Container(
-      height: screen.pane.midHeight,
-      width: screen.width,
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 24),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(Icons.circle_outlined,
-                size: 64, color: AppColors.white38),
-            const SizedBox(height: 16),
-            Text('No Transaction History',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: AppColors.white.withOpacity(.44))),
-          ]));
-}

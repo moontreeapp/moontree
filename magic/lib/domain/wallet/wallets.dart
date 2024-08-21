@@ -12,6 +12,8 @@
 */
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:bip32/bip32.dart' as bip32;
+import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:magic/cubits/cubit.dart';
@@ -20,7 +22,8 @@ import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/concepts/address.dart';
 import 'package:moontree_utils/moontree_utils.dart' show decode;
-import 'package:wallet_utils/wallet_utils.dart' show ECPair, HDWallet, KPWallet;
+import 'package:wallet_utils/wallet_utils.dart'
+    show ECPair, HDWallet, KPWallet, NetworkType, P2PKH;
 
 abstract class Jsonable {
   Map<String, dynamic> get asMap;
@@ -153,12 +156,46 @@ class MnemonicWallet extends Jsonable {
       rootsMap(blockchain)[exposure]!;
 }
 
+/// add the hdIndex variable to the HDWallet class
+class HDWalletIndexed extends HDWallet {
+  final Blockchain blockchain;
+  final Exposure exposure;
+  final int hdIndex;
+  final HDWallet hdWallet;
+
+  HDWalletIndexed({
+    required this.hdWallet,
+    required this.blockchain,
+    required this.exposure,
+    required this.hdIndex,
+  }) : super(
+            bip32:
+                HDWalletIndexed.fromBase58(hdWallet.base58!, hdWallet.network),
+            p2pkh: hdWallet.p2pkh,
+            network: hdWallet.network);
+
+  static bip32.BIP32 fromBase58(String base58, NetworkType network) {
+    return bip32.BIP32.fromBase58(
+        base58,
+        bip32.NetworkType(
+            bip32: bip32.Bip32Type(
+                public: network.bip32.public, private: network.bip32.private),
+            wif: network.wif));
+  }
+}
+
 class SeedWallet {
   final Blockchain blockchain;
   final HDWallet hdWallet;
   final Map<Exposure, List<HDWallet>> subwallets = {
     Exposure.external: [],
     Exposure.internal: [],
+  };
+  final Map<Blockchain, Map<Exposure, Map<int, HDWallet>>> subwalletsIndexed = {
+    Blockchain.evrmoreMain: {Exposure.external: {}, Exposure.internal: {}},
+    Blockchain.evrmoreTest: {Exposure.external: {}, Exposure.internal: {}},
+    Blockchain.ravencoinMain: {Exposure.external: {}, Exposure.internal: {}},
+    Blockchain.ravencoinTest: {Exposure.external: {}, Exposure.internal: {}},
   };
   final Map<Exposure, int> highestIndex = {};
   final Map<Exposure, int> gap = {};
@@ -179,7 +216,12 @@ class SeedWallet {
     );
     print('p: $path');
     final sub = hdWallet.derivePath(path);
-    subwallets[exposure]!.add(sub);
+    final indexedSub = HDWalletIndexed(
+        hdWallet: sub,
+        blockchain: blockchain,
+        exposure: exposure,
+        hdIndex: hdIndex);
+    subwallets[exposure]!.add(indexedSub);
     return sub;
   }
 
@@ -191,15 +233,12 @@ class SeedWallet {
         };
     for (final exposure in nextIndexByExposure.keys) {
       highestIndex[exposure] ??= -1;
-      gap[exposure] ??= 0; // this concept may be irrelevant
-      while (gap[exposure]! < 20 &&
-          highestIndex[exposure]! < nextIndexByExposure[exposure]!) {
+      while (highestIndex[exposure]! < nextIndexByExposure[exposure]!) {
         while (cubits.app.animating) {
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
         }
         subwallet(hdIndex: highestIndex[exposure]! + 1, exposure: exposure);
         highestIndex[exposure] = highestIndex[exposure]! + 1;
-        gap[exposure] = gap[exposure]! + 1;
       }
     }
     return true;

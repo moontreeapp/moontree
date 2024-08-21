@@ -124,6 +124,14 @@ class SendCubit extends UpdatableCubit<SendState> {
     List<Transaction> txs = [];
     for (final UnsignedTransactionResult unsigned
         in state.unsignedTransaction!.unsignedTransactionResults) {
+      print('----');
+      print('vinAssets: ${unsigned.vinAssets}');
+      print('vinAmounts: ${unsigned.vinAmounts}');
+      print('targetFee: ${unsigned.targetFee}');
+      print('changeSource: ${unsigned.changeSource}');
+      print('vinPrivateKeySource: ${unsigned.vinPrivateKeySource}');
+      print('----------------');
+
       final txb = TransactionBuilder.fromRawInfo(
           unsigned.rawHex,
           unsigned.vinScriptOverride.map((String? e) => e?.hexBytes),
@@ -136,31 +144,60 @@ class SendCubit extends UpdatableCubit<SendState> {
       final List<String> walletRoots = state.unsignedTransaction!.roots;
       for (final Tuple2<int, String> e
           in unsigned.vinPrivateKeySource.enumeratedTuple<String>()) {
-        if (e.item2.contains(':')) {
-          final walletPubKeyAndDerivationIndex = e.item2.split(':');
-          // todo Current.wallet must be LeaderWallet, if not err?
-          final Exposure exposure =
-              walletPubKeyAndDerivationIndex[0] == walletRoots[0]
-                  ? Exposure.external
-                  : Exposure.internal;
-          keyPairByPath[
-                  '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=
-              cubits.keys.master.mnemonicWallets
-                  .where((MnemonicWallet e) => e
-                      .roots(state.unsignedTransaction!.security.blockchain)
-                      .contains(walletPubKeyAndDerivationIndex[0]))
-                  .map((MnemonicWallet e) => e
-                      .seedWallet(
-                          state.unsignedTransaction!.security.blockchain)
-                      .subwallet(
-                        hdIndex: int.parse(walletPubKeyAndDerivationIndex[1]),
-                        exposure: exposure,
-                      ))
-                  .firstOrNull
-                  ?.keyPair;
+        final vinIndex = e.item1;
+        final privateKeySource = e.item2;
+        if (privateKeySource.contains(':')) {
+          print('privateKeySource: $privateKeySource');
+          print('vinIndex: $vinIndex');
+          final walletPubKeyAndDerivationIndex = privateKeySource.split(':');
+          final String walletRoot = walletPubKeyAndDerivationIndex[0];
+          final int derivationIndex =
+              int.parse(walletPubKeyAndDerivationIndex[1]);
+          print('walletRoot: $walletRoot');
+          print('derivationIndex: $derivationIndex');
 
-          keyPair = keyPairByPath[
-              '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'];
+          /*
+          I/flutter ( 5038): privateKeySource: xpub6EPLto1UvaKqiJSsBntBY6F4yb8Z68u9ZA6v2Jd37pTto3HzRWrrELDR6zVUXQhr3AvVwDq3CnqiQzod1cgpyHrKD3CbUBotsoBfn5bnKCg:21
+          I/flutter ( 5038): vinIndex: 0
+          I/flutter ( 5038): walletRoot: xpub6EPLto1UvaKqiJSsBntBY6F4yb8Z68u9ZA6v2Jd37pTto3HzRWrrELDR6zVUXQhr3AvVwDq3CnqiQzod1cgpyHrKD3CbUBotsoBfn5bnKCg
+          I/flutter ( 5038): derivationIndex: 21
+          I/flutter ( 5038): p: m/44'/175'/0'/1/21
+
+          vinIndex? how is it used?
+          */
+
+          final wallet = cubits.keys.master.mnemonicWallets.firstWhere(
+              (MnemonicWallet wallet) => wallet
+                  .roots(state.unsignedTransaction!.security.blockchain)
+                  .contains(walletRoot),
+              orElse: () =>
+                  throw Exception('Wallet not found for root: $walletRoot'));
+
+          print(
+              'wallet: $wallet, wallet.roots: ${wallet.roots(state.unsignedTransaction!.security.blockchain)}');
+          final Exposure exposure = walletRoot ==
+                  wallet.root(state.unsignedTransaction!.security.blockchain,
+                      Exposure.external)
+              ? Exposure.external
+              : Exposure.internal;
+          print('exposure: $exposure');
+          keyPairByPath['${exposure.index}/$derivationIndex'] ??= wallet
+              .seedWallet(state.unsignedTransaction!.security.blockchain)
+              .subwallet(
+                hdIndex: derivationIndex,
+                exposure: exposure,
+              )
+              .keyPair;
+          print(
+              'address: ${wallet.seedWallet(state.unsignedTransaction!.security.blockchain).subwallet(
+                    hdIndex: derivationIndex,
+                    exposure: exposure,
+                  ).address}');
+          /*
+          well there you go EPTCNCFjuSP7pJLVYsF6hD64dzXFsMuo3a has nothing in it.
+          either the server is giving us bad data or we are not deriving the correct keypair.
+          */
+          keyPair = keyPairByPath['${exposure.index}/$derivationIndex'];
           // not sure this works right - what if we have multiple KeypairWallets?
           // I don't think this necessarily selects the correct one. perhaps this
           // never happens since e.item2.contains(':') is probably indicitive of
@@ -187,19 +224,22 @@ class SendCubit extends UpdatableCubit<SendState> {
           //    (Current.wallet as SingleWallet).addresses.first);
           // this should work if they only have one keypair wallet:
           keyPair = cubits.keys.master.keypairWallets
+              //.where((KeypairWallet wallet) => wallet
+              //  .wallet(state.unsignedTransaction!.security.blockchain)
+              //  .address == unsigned.vinAddresses[vinIndex])
               .map((KeypairWallet e) => e
                   .wallet(state.unsignedTransaction!.security.blockchain)
                   .keyPair)
               .firstOrNull;
         }
         txb.signRaw(
-          vin: e.item1,
+          vin: vinIndex,
           keyPair: keyPair!,
           // note for swaps: hashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
           hashType: null,
-          prevOutScriptOverride: unsigned.vinScriptOverride[e.item1]?.hexBytes,
-          asset: unsigned.vinAssets[e.item1],
-          assetAmount: unsigned.vinAmounts[e.item1],
+          prevOutScriptOverride: unsigned.vinScriptOverride[vinIndex]?.hexBytes,
+          asset: unsigned.vinAssets[vinIndex],
+          assetAmount: unsigned.vinAmounts[vinIndex],
           assetLiteral: state
               .unsignedTransaction!.security.blockchain.chaindata.assetLiteral,
         );
@@ -338,7 +378,7 @@ class SendCubit extends UpdatableCubit<SendState> {
           Just fyi it can also be wallet_key:index just like the vin source
           meta stack -
           the changeSource?
-          kralverde - 
+          kralverde -
           Yeah, if you were to put in a change wallet for instance */
           if (cs != null && !cs.contains(':')) {
             //print(state.changeAddress);
@@ -352,7 +392,7 @@ class SendCubit extends UpdatableCubit<SendState> {
               that is neither the specified changeAddress or the target address?
               so we fail here if we don't recognize the address.
               notice: if we were not to specify a changeAddress we would merely
-              trust the server. this is possible because the server doesn't 
+              trust the server. this is possible because the server doesn't
               require us to specify it, but we always do. cubit requires it.*/
               return false;
             }

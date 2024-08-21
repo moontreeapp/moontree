@@ -35,10 +35,15 @@ DONE snackbar - fade at the same time
 
 DONE balance
 DONE transactions - refresh on subscription
+DONE sending - why sometimes unable to send - signature issue again? - its vouts from multiple wallets...
+DONE discovered server is giving a bad highest count or something
+DONE no - our derivation was being capped by our old gap concept - removed.
+DONE manually verified our balance
+
 transactions - issues downloading history sometimes
 transactions - state issue - not clearing
-sending - why sometimes unable to send - signature issue again? - its vouts from multiple wallets...
 
+send to self shows change as positive... on toast.
 conform coinspec, remove usd, make clickable
 update about page
 update need help page

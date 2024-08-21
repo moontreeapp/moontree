@@ -135,6 +135,10 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                                       child: const SizedBox.shrink());
                                   cubits.app.animating = false;
                                   //deriveInBackground();
+                                  cubits.receive.deriveAll([
+                                    Blockchain.ravencoinMain,
+                                    Blockchain.evrmoreMain,
+                                  ]);
                                   cubits.receive.populateAddresses(
                                       Blockchain.ravencoinMain);
                                   cubits.receive.populateAddresses(

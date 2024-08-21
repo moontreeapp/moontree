@@ -50,7 +50,7 @@ packages:
     source: hosted
     version: "0.2.2"
   bip32:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: bip32
       sha256: "54787cd7a111e9d37394aabbf53d1fc5e2e0e0af2cd01c459147a97c0e3f8a97"

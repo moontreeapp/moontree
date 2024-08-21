@@ -66,6 +66,7 @@ dependencies:
   qr_code_scanner: ^1.0.1
   mobile_scanner: ^5.1.1
   electrum_adapter: ^2.0.4
+  bip32: ^2.0.0
 
 
 dev_dependencies:

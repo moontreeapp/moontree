@@ -3,6 +3,8 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
+import 'package:magic/domain/wallet/wallets.dart';
+import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/calls/receive.dart';
 
 part 'state.dart';
@@ -56,18 +58,21 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
   Future<int> _getIndex({
     required Blockchain blockchain,
     required Exposure exposure,
+    required MnemonicWallet mnemonicWallet,
     int? overrideIndex,
   }) async =>
       overrideIndex ??
       (await ReceiveCall(
         blockchain: blockchain,
-        mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
+        mnemonicWallet: mnemonicWallet,
         exposure: exposure,
       ).call())
           .value;
 
-  Future<void> populateAddresses(Blockchain blockchain,
-      {int? overrideIndex}) async {
+  Future<void> populateAddresses(
+    Blockchain blockchain, {
+    int? overrideIndex,
+  }) async {
     final seedWallet =
         cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain);
     if (seedWallet.highestIndex.isEmpty) {
@@ -75,10 +80,12 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
         Exposure.internal: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.internal,
+            mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
             overrideIndex: overrideIndex),
         Exposure.external: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.external,
+            mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
             overrideIndex: overrideIndex),
       });
     } else {
@@ -92,8 +99,29 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
             ?.address);
   }
 
-  Future<void> populateReceiveAddress(Blockchain blockchain,
-      {int? overrideIndex}) async {
+  Future<void> deriveAll(List<Blockchain> blockchains) async {
+    for (var blockchain in blockchains) {
+      for (var mnemonicWallet in cubits.keys.master.mnemonicWallets) {
+        mnemonicWallet.seedWallet(blockchain).derive({
+          Exposure.internal: await _getIndex(
+            blockchain: blockchain,
+            exposure: Exposure.internal,
+            mnemonicWallet: mnemonicWallet,
+          ),
+          Exposure.external: await _getIndex(
+            blockchain: blockchain,
+            exposure: Exposure.external,
+            mnemonicWallet: mnemonicWallet,
+          ),
+        });
+      }
+    }
+  }
+
+  Future<void> populateReceiveAddress(
+    Blockchain blockchain, {
+    int? overrideIndex,
+  }) async {
     final seedWallet =
         cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain);
     if (seedWallet.highestIndex.isEmpty) {
@@ -101,6 +129,7 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
         Exposure.external: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.external,
+            mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
             overrideIndex: overrideIndex),
       });
     } else {
@@ -116,8 +145,10 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
             .address);
   }
 
-  Future<String> populateChangeAddress(Blockchain blockchain,
-      {int? overrideIndex}) async {
+  Future<String> populateChangeAddress(
+    Blockchain blockchain, {
+    int? overrideIndex,
+  }) async {
     final seedWallet =
         cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain);
     if (seedWallet.highestIndex.isEmpty) {
@@ -125,6 +156,7 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
         Exposure.internal: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.internal,
+            mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
             overrideIndex: overrideIndex),
       });
     } else {
