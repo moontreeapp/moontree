@@ -55,29 +55,6 @@ class AnimatedMenu extends StatelessWidget {
           ])));
 }
 
-class HelpItem extends StatelessWidget {
-  const HelpItem({super.key});
-
-  @override
-  Widget build(BuildContext context) => MenuItem(
-        sub: SubMenu.help,
-        index: 0,
-        visual: GestureDetector(
-            onTap: () => launchUrl(Uri.parse('https://discord.gg/cGDebEXgpW')),
-            child: Container(
-                height: screen.menu.itemHeight,
-                width: screen.width,
-                color: Colors.transparent,
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  const Icon(Icons.help_rounded, color: Colors.white),
-                  const SizedBox(width: 16),
-                  Text('Need Help? Chat Now!',
-                      style: AppText.h2.copyWith(color: Colors.white)),
-                ]))),
-      );
-}
-
 class DifficultyItem extends StatelessWidget {
   final DifficultyMode mode;
   const DifficultyItem({super.key, required this.mode});
@@ -143,6 +120,49 @@ class SettingsItem extends StatelessWidget {
                 }),
             const SizedBox(width: 16),
             Text('Settings', style: AppText.h2.copyWith(color: Colors.white)),
+          ])));
+}
+
+class HelpItem extends StatelessWidget {
+  const HelpItem({super.key});
+
+  @override
+  Widget build(BuildContext context) => MenuItem(
+      sub: SubMenu.help,
+      index: 0,
+      visual: Container(
+          height: screen.menu.itemHeight,
+          width: screen.width,
+          color: Colors.transparent,
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            BlocBuilder<MenuCubit, MenuState>(
+                buildWhen: (MenuState previous, MenuState current) =>
+                    current.active && previous.sub != current.sub,
+                builder: (context, state) {
+                  const icon = Icon(Icons.info_rounded, color: Colors.white);
+                  if (cubits.menu.state.sub == SubMenu.help) {
+                    return SlideOver(
+                        begin: const Offset(0, 0),
+                        end: const Offset(-3, 0),
+                        delay: fadeDuration * (1 - 1) * .5,
+                        duration: fadeDuration,
+                        curve: Curves.easeInOutCubic,
+                        child: icon);
+                  }
+                  if (cubits.menu.state.sub == SubMenu.none) {
+                    return SlideOver(
+                        begin: const Offset(-3, 0),
+                        end: const Offset(0, 0),
+                        delay: fadeDuration * (1 - 1) * .5,
+                        duration: fadeDuration,
+                        curve: Curves.easeInOutCubic,
+                        child: icon);
+                  }
+                  return icon;
+                }),
+            const SizedBox(width: 16),
+            Text('Help? Chat Now',
+                style: AppText.h2.copyWith(color: Colors.white)),
           ])));
 }
 

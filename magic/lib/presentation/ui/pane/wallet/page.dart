@@ -50,6 +50,7 @@ class WalletPage extends StatelessWidget {
                   return ListView.builder(
                       controller: cubits.pane.state.scroller!,
                       shrinkWrap: true,
+                      padding: const EdgeInsets.only(top: 8),
                       itemCount: filtered.length,
                       itemBuilder: (context, int index) {
                         final holding = filtered[index];

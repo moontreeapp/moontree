@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/domain/concepts/side.dart';
 import 'package:magic/presentation/theme/text.dart';
@@ -20,6 +21,12 @@ class SubMenus extends StatelessWidget {
           children: [
             SizedBox(height: screen.appbar.height),
             SizedBox(height: screen.canvas.midHeight),
+            SubMenuItem(
+                state: state,
+                sub: SubMenu.help,
+                delay: slideDuration * 1.25,
+                alignment: Alignment.center,
+                child: const HelpSubMenu()),
             SubMenuItem(
                 state: state,
                 sub: SubMenu.about,
@@ -103,6 +110,32 @@ class SettingsSubMenu extends StatelessWidget {
   //Text('Some Setting', style: AppText.h1.copyWith(color: Colors.white));
 }
 
+class HelpSubMenu extends StatelessWidget {
+  const HelpSubMenu({super.key});
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+      height: screen.canvas.bottomHeight - 40 - 32,
+      width: screen.width - 32,
+      child:
+          const Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        LinkOutButton(
+            name: 'Magic',
+            logo: 'assets/logos/discord.png',
+            url: 'https://discord.gg/cGDebEXgpW'),
+        SizedBox(height: 16),
+        LinkOutButton(
+            name: 'Brock Wood',
+            logo: 'assets/logos/x.png',
+            url: 'https://x.com/br0ck_w00d'),
+        SizedBox(height: 16),
+        LinkOutButton(
+            name: 'Jordan Miller',
+            logo: 'assets/logos/x.png',
+            url: 'https://x.com/jordanmiller333'),
+      ]));
+}
+
 class AboutSubMenu extends StatelessWidget {
   const AboutSubMenu({super.key});
 
@@ -112,18 +145,64 @@ class AboutSubMenu extends StatelessWidget {
       width: screen.width - 32,
       child:
           Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Text('built by Moontree',
-                textAlign: TextAlign.center,
-                style: AppText.h1.copyWith(color: Colors.white))),
+        const LinkOutButton(
+            name: 'Magic',
+            logo: 'assets/logos/x.png',
+            url: 'https://x.com/MagicWalletApp'),
         Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-          Text('connection status: ${cubits.app.state.connection.name}',
-              textAlign: TextAlign.center,
-              style: AppText.body2.copyWith(color: Colors.white)),
+          //Text('connection status: ${cubits.app.state.connection.name}',
+          //    textAlign: TextAlign.center,
+          //    style: AppText.body2.copyWith(color: Colors.white)),
           Text('version 0.0.1',
               textAlign: TextAlign.center,
               style: AppText.body2.copyWith(color: Colors.white)),
         ])
       ]));
+}
+
+class LinkOutButton extends StatelessWidget {
+  final String url;
+  final String name;
+  final String logo;
+  const LinkOutButton(
+      {super.key, required this.url, required this.name, required this.logo});
+
+  void _launchURL() async {
+    //const url = 'https://x.com/MagicWalletApp';
+    //if (await canLaunchUrlString(url)) {
+    await launchUrl(Uri.parse(url));
+    //} else {
+    //  throw 'Could not launch $url';
+    // }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: _launchURL,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        side: const BorderSide(color: Colors.white, width: 2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            logo,
+            height: 24,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            name,
+            style: const TextStyle(fontSize: 18),
+          ),
+        ],
+      ),
+    );
+  }
 }

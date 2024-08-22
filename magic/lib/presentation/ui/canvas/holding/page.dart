@@ -9,6 +9,7 @@ import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/animations/hiding.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
@@ -104,18 +105,20 @@ class AnimatedCoinSpec extends StatelessWidget {
     String? subtitle,
     Coin? coin,
   }) {
-    final dollarText = subtitle ?? cubits.holding.state.usd;
-    final showDollar = !['\$ -', '\$ 0.00'].contains(dollarText);
+    final dollarText = cubits.holding.state.usd;
+    final showSubtitle =
+        subtitle != null; //!['\$ -', '\$ 0.00'].contains(dollarText);
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      if (!showDollar)
-        const SizedBox(height: 20)
-      else
-        const SizedBox(height: 12),
+      //if (!showDollar)
+      const SizedBox(height: 24),
+      //else
+      //  const SizedBox(height: 12),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         if (whole == null)
           if ((coin?.coin ?? cubits.holding.state.holding.coin.coin) > 0)
-            CoinBalanceSimpleView(
+            CoinBalancePriceSimpleView(
               coin: coin ?? cubits.holding.state.holding.coin,
+              alt: dollarText,
               //wholeStyle: AppText.wholeHolding,
               //partStyle: AppText.partHolding,
             )
@@ -134,10 +137,11 @@ class AnimatedCoinSpec extends StatelessWidget {
                 style: AppText.partHolding.copyWith(height: 0)),
         ]
       ]),
-      if (showDollar)
-        Text(dollarText,
-            textAlign: TextAlign.center,
-            style: AppText.usdHolding.copyWith(height: 0)),
+      if (showSubtitle)
+        FadeIn(
+            child: Text(subtitle,
+                textAlign: TextAlign.center,
+                style: AppText.usdHolding.copyWith(height: 0))),
       //HighlightedNameView(holding: cubits.holding.state.holding)
       //Text(
       //    subtitle ??

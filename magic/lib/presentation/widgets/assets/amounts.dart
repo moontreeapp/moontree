@@ -102,6 +102,93 @@ class CoinBalanceSimpleView extends StatelessWidget {
           ]));
 }
 
+class CoinBalancePriceSimpleView extends StatefulWidget {
+  final Coin coin;
+  final String alt;
+  final TextStyle? wholeStyle;
+  final TextStyle? partStyle;
+
+  const CoinBalancePriceSimpleView({
+    super.key,
+    required this.coin,
+    this.alt = '',
+    this.wholeStyle,
+    this.partStyle,
+  });
+
+  @override
+  CoinBalancePriceSimpleViewState createState() =>
+      CoinBalancePriceSimpleViewState();
+}
+
+class CoinBalancePriceSimpleViewState extends State<CoinBalancePriceSimpleView>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  bool _showOriginalText = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggleText() {
+    if (_controller.isAnimating) return;
+
+    _controller.forward().then((_) {
+      setState(() {
+        _showOriginalText = !_showOriginalText;
+      });
+      _controller.reverse();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _toggleText,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Container(
+          alignment: Alignment.center,
+          color: Colors.transparent,
+          width: screen.width,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _showOriginalText ? widget.coin.whole() : widget.alt,
+                style: widget.wholeStyle ??
+                    (widget.coin.coin > 0
+                        ? AppText.wholeHolding
+                        : AppText.partHolding),
+              ),
+              if (widget.coin.sats > 0 && _showOriginalText) ...[
+                Text(
+                  widget.coin.part(),
+                  style: widget.partStyle ?? AppText.partHolding.copyWith(),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class CoinView extends StatelessWidget {
   final Coin coin;
   final TextStyle? wholeStyle;
