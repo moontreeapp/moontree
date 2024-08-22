@@ -7,6 +7,7 @@ part 'state.dart';
 
 class ToastCubit extends UpdatableCubit<ToastState> {
   int counter = 0;
+  bool suppress = false;
   ToastCubit() : super(const ToastState());
   @override
   String get key => 'toast';
@@ -47,6 +48,7 @@ class ToastCubit extends UpdatableCubit<ToastState> {
     Duration? duration,
     ToastShowType? showType,
   }) {
+    if (suppress) return;
     reset();
     update(
       onTap: onTap,

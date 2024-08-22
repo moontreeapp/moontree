@@ -58,7 +58,7 @@ class TransactionsPage extends StatelessWidget {
                       // cubits.transactions.update(transactions: []); // causes major issue - why?
                       cubits.transactions.clearTransactions();
                       cubits.transactions
-                          .populateAllTransactions(fromHeight: 0);
+                          .populateAllTransactions(fromHeight: null);
                     },
                     child: ListView.builder(
                         controller: cubits.pane.state.scroller,

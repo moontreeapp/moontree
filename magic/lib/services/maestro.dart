@@ -217,8 +217,8 @@ class Maestro {
       onLead: activateMenu,
       onTitle: activateMenu,
     );
+    cubits.holding.deactivate();
     cubits.transactions.clearTransactions();
-    cubits.holding.update(active: false);
     cubits.balance.update(active: true);
     cubits.menu.update(active: true);
     await inactivateAllBut(cubits.wallet.key);
@@ -243,6 +243,7 @@ class Maestro {
     }
     cubits.fade.update(fade: FadeEvent.fadeIn);
     await Future.delayed(slideDuration);
+    cubits.holding.clear();
     cubits.ignore.update(active: false);
     cubits.app.animating = false;
     locked = false;

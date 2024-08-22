@@ -39,15 +39,20 @@ DONE sending - why sometimes unable to send - signature issue again? - its vouts
 DONE discovered server is giving a bad highest count or something
 DONE no - our derivation was being capped by our old gap concept - removed.
 DONE manually verified our balance
+DONE send to self shows change as positive... on toast.
 
-transactions - issues downloading history sometimes
-transactions - state issue - not clearing
+DONE transactions - state issue - not clearing
+DONE transactions - issues downloading history sometimes
+DONE derivation monopolizes everything
+DONE fix front pane drop down menu glitch
 
-send to self shows change as positive... on toast.
 conform coinspec, remove usd, make clickable
 update about page
 update need help page
 Help? Chat now -> page, our twitter
 about page -> company twitter
+
+transactions - pagination...
+send - fails with dust (on send all?)
 
 test on IOS...

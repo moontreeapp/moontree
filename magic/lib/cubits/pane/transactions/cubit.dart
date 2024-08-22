@@ -73,6 +73,10 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     update(isSubmitting: true);
     await populateTransactions(holding: holding, fromHeight: fromHeight);
     await populateMempoolTransactions(holding: holding);
+    print('${holding.symbol} ${cubits.holding.state.holding.symbol}');
+    if (holding.symbol != cubits.holding.state.holding.symbol) {
+      return;
+    }
     update(isSubmitting: false);
   }
 
@@ -89,6 +93,8 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     await Future.delayed(fadeDuration * 10);
     print('populating transactions: ${state.transactions.length}');
     final replace = holding != cubits.holding.state.holding;
+    print(
+        'asking from: ${fromHeight ?? (state.transactions.isNotEmpty ? state.transactions.length : null)}');
     final transactions = _sort(_newRateThese(
         rate: holding.isRavencoin
             ? rates.rvnUsdRate
@@ -108,6 +114,10 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     if (transactions.isEmpty || transactions == state.transactions) {
       reachedEnd = true;
       update(isSubmitting: isSubmitting);
+      return;
+    }
+    print('${holding.symbol} ${cubits.holding.state.holding.symbol}');
+    if (holding.symbol != cubits.holding.state.holding.symbol) {
       return;
     }
     update(
@@ -146,6 +156,10 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
           blockchain: holding.blockchain,
           symbol: holding.symbol,
         ).call()));
+    print('${holding.symbol} ${cubits.holding.state.holding.symbol}');
+    if (holding.symbol != cubits.holding.state.holding.symbol) {
+      return;
+    }
     update(
       mempool: transactions,
       isSubmitting: isSubmitting,

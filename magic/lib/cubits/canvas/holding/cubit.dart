@@ -35,14 +35,21 @@ class HoldingCubit extends UpdatableCubit<HoldingState> {
     TransactionDisplay? transaction,
     bool? isSubmitting,
     HoldingState? prior,
+    bool clearTransaction = false,
   }) {
     emit(HoldingState(
       active: active ?? state.active,
       section: section ?? state.section,
       holding: holding ?? state.holding,
-      transaction: transaction ?? state.transaction,
+      transaction: transaction ?? (clearTransaction ? null : state.transaction),
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
     ));
   }
+
+  void clear() => update(
+        active: false,
+        holding: const Holding.empty(),
+        clearTransaction: true,
+      );
 }

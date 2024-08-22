@@ -61,6 +61,17 @@ class MasterWallet extends Jsonable {
         'mnemonicWallets': mnemonicWallets.map((m) => m.asMap).toList(),
         'keypairWallets': keypairWallets.map((m) => m.asMap).toList(),
       };
+
+  Set<String> get mnemonicAddresses => (mnemonicWallets
+      .expand((m) => m.seedWallets.values.expand((s) => s.subwallets.values
+          .expand((subList) => subList.map((sub) => sub.address ?? ''))))
+      .toSet());
+
+  Set<String> get keypairAddresses => keypairWallets
+      .expand((kp) => kp.wallets.values.map((wallet) => wallet.address ?? ''))
+      .toSet();
+
+  Set<String> get addressSet => {...mnemonicAddresses, ...keypairAddresses};
 }
 
 class KeypairWallet extends Jsonable {
@@ -235,10 +246,13 @@ class SeedWallet {
       highestIndex[exposure] ??= -1;
       while (highestIndex[exposure]! < nextIndexByExposure[exposure]!) {
         while (cubits.app.animating) {
-          await Future.delayed(const Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 1000));
         }
+        print('subwalleting');
         subwallet(hdIndex: highestIndex[exposure]! + 1, exposure: exposure);
         highestIndex[exposure] = highestIndex[exposure]! + 1;
+        // Yield control back to the UI thread
+        await Future.delayed(Duration.zero);
       }
     }
     return true;

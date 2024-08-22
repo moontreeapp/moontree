@@ -86,6 +86,8 @@ class SubscriptionService {
       required int satsUnconfirmed,
       required String chainName,
     }) async {
+      print(
+          'triggerBalanceUpdates: $symbol, $satsConfirmed, $satsUnconfirmed, $chainName');
       final realSymbol = chainName.startsWith(symbol.toLowerCase())
           ? symbol == 'Evrmore'
               ? 'EVR'
@@ -94,6 +96,7 @@ class SubscriptionService {
       if (satsConfirmed + satsUnconfirmed > 0) {
         cubits.toast.flash(
             msg: ToastMessage(
+          duration: const Duration(seconds: 7),
           title: 'Received $symbol:',
           text:
               '+${Coin.fromInt(satsConfirmed + satsUnconfirmed).humanString()}',
