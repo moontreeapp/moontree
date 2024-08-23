@@ -53,6 +53,8 @@ DONE Help? Chat now -> page, our twitter
 
 DONE transactions - pagination...
 DONE draggable errors if tragged on transaction view
+conform about and help page buttons
+fix amount send usd glitch
 send - fails with dust (on send all?)
 
 test on IOS...
