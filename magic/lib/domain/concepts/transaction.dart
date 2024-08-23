@@ -52,6 +52,7 @@ class TransactionDisplay extends Equatable {
   final bool incoming;
   final DateTime when;
   final Sats sats;
+  final int height;
   final String hash;
   final Fiat? worth;
   final TransactionView? transactionView;
@@ -61,6 +62,7 @@ class TransactionDisplay extends Equatable {
     required this.incoming,
     required this.when,
     required this.sats,
+    required this.height,
     this.hash = '',
     this.worth,
     this.transactionView,
@@ -76,6 +78,7 @@ class TransactionDisplay extends Equatable {
         incoming: true,
         when: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
         sats: const Sats.empty(),
+        height: 0,
       );
 
   factory TransactionDisplay.fromTransactionView({
@@ -88,6 +91,7 @@ class TransactionDisplay extends Equatable {
         sats: Sats(transactionView.iProvided == 0
             ? transactionView.iReceived
             : transactionView.iProvided - transactionView.iReceived),
+        height: transactionView.height,
         hash: byteHashToString(transactionView.hash),
         transactionView: transactionView,
         blockchain: blockchain,
@@ -97,6 +101,7 @@ class TransactionDisplay extends Equatable {
     bool? incoming,
     DateTime? when,
     Sats? sats,
+    int? height,
     Fiat? worth,
     String? hash,
     TransactionView? transactionView,
@@ -106,6 +111,7 @@ class TransactionDisplay extends Equatable {
         incoming: incoming ?? this.incoming,
         when: when ?? this.when,
         sats: sats ?? this.sats,
+        height: height ?? this.height,
         worth: worth ?? this.worth,
         hash: hash ?? this.hash,
         transactionView: transactionView ?? this.transactionView,
@@ -120,9 +126,10 @@ class TransactionDisplay extends Equatable {
         incoming,
         when,
         sats,
+        height,
         worth,
         hash,
-        transactionView,
+        //transactionView, // not equatable
         blockchain,
       ];
 

@@ -98,8 +98,15 @@ class PaneCubit extends Cubit<PaneState> with UpdateHideMixin<PaneState> {
   }
 
   void _controllerListener() {
-    height = state.controller.sizeToPixels(state.controller.size);
-    heightBehavior?.call(height);
+    ///Exception has occurred.
+    // _AssertionError ('package:flutter/src/widgets/draggable_scrollable_sheet.dart': Failed assertion: line 185 pos 7: 'isAttached': DraggableScrollableController is not attached to a sheet. A DraggableScrollableController must be used in a DraggableScrollableSheet before any of its methods are called.)
+    print('Controller listener called');
+    if (state.controller.isAttached) {
+      height = state.controller.sizeToPixels(state.controller.size);
+      heightBehavior?.call(height);
+    } else {
+      print('Controller is not attached');
+    }
   }
 
   void snapTo(double heightPixels, {bool force = false}) {

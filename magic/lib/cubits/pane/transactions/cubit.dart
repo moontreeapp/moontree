@@ -1,5 +1,5 @@
+import 'dart:collection';
 import 'dart:math';
-
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,7 @@ import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/calls/mempool.dart';
 import 'package:magic/services/calls/transactions.dart';
 import 'package:magic/services/services.dart';
+import 'package:magic/utils/dart.dart';
 
 part 'state.dart';
 
@@ -93,6 +94,13 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     await Future.delayed(fadeDuration * 10);
     print('populating transactions: ${state.transactions.length}');
     final replace = holding != cubits.holding.state.holding;
+    // get the max transaction.height from the list of transactions
+    fromHeight = fromHeight ??
+        (state.transactions.isNotEmpty
+            ? state.transactions
+                .map((transaction) => transaction.height)
+                .reduce((a, b) => a < b ? a : b)
+            : null);
     print(
         'asking from: ${fromHeight ?? (state.transactions.isNotEmpty ? state.transactions.length : null)}');
     final transactions = _sort(_newRateThese(
@@ -105,10 +113,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
           mnemonicWallets: cubits.keys.master.mnemonicWallets,
           keypairWallets: cubits.keys.master.keypairWallets,
           blockchain: holding.blockchain,
-          height: fromHeight ??
-              (state.transactions.isNotEmpty
-                  ? state.transactions.length
-                  : null),
+          height: fromHeight,
           symbol: holding.symbol,
         ).call()));
     if (transactions.isEmpty || transactions == state.transactions) {
@@ -120,9 +125,14 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     if (holding.symbol != cubits.holding.state.holding.symbol) {
       return;
     }
+    final newTransactions = combineWithoutDuplicates<TransactionDisplay>(
+        replace ? <TransactionDisplay>[] : state.transactions, transactions);
+    newTransactions.sort((a, b) => b.height.compareTo(a.height));
+    if (newTransactions.length == state.transactions.length) {
+      reachedEnd = true;
+    }
     update(
-      transactions: (replace ? <TransactionDisplay>[] : state.transactions) +
-          transactions,
+      transactions: newTransactions,
       isSubmitting: isSubmitting,
     );
     cubits.pane.update(
@@ -213,6 +223,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
               TransactionDisplay(
                   incoming: Random().nextInt(2) == 0,
                   when: DateTime.now(),
+                  height: index,
                   sats: Sats(() {
                     final x = pow(index, index) as int;
                     if (x > 0 && x < 2100000000000000000) {

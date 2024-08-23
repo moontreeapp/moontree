@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/utils/extensions/double.dart';
 import 'package:magic/domain/utils/extensions/int.dart';
 
-class Fiat {
+class Fiat extends Equatable {
   final double value;
   final bool rated;
 
@@ -10,6 +11,9 @@ class Fiat {
   const Fiat.empty()
       : value = 0,
         rated = false;
+
+  @override
+  List<Object?> get props => [value, rated];
 
   factory Fiat(double value, {bool rated = true}) {
     return Fiat._(value, rated: rated);

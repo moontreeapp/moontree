@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/utils/extensions/int.dart';
 
-class Coin {
+class Coin extends Equatable {
   final int coin;
   final int sats;
   final bool isEmpty;
@@ -13,6 +14,9 @@ class Coin {
       : coin = 0,
         sats = 0,
         isEmpty = true;
+
+  @override
+  List<Object?> get props => [coin, sats, isEmpty];
 
   factory Coin({int? coin, int? sats, bool isEmpty = false}) {
     coin = coin ?? 0;
@@ -159,8 +163,10 @@ class Coin {
   }
 }
 
-class EnrichedChar {
+class EnrichedChar extends Equatable {
   final String char;
   final bool bolded;
   const EnrichedChar({required this.char, this.bolded = false});
+  @override
+  List<Object?> get props => [char, bolded];
 }

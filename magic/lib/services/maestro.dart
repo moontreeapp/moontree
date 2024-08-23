@@ -207,6 +207,11 @@ class Maestro {
       locked = true;
     }
     cubits.app.animating = true;
+    // if pane is not in middle move it to middle first
+    if (cubits.pane.height != screen.pane.midHeight) {
+      toggleMidMin();
+      await Future.delayed(slideDuration);
+    }
     cubits.pane.setOnBottomReached(null);
     cubits.ignore.update(active: true);
     cubits.navbar.update(section: NavbarSection.wallet, active: true);

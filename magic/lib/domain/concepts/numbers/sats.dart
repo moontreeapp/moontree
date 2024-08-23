@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/utils/extensions/int.dart';
 
@@ -5,7 +6,7 @@ const satsPerCoin = 100000000; // 1.00000000
 const maxCoinPerChain = 21000000000;
 
 /// an object representing a full quantity (coin and sats) as one big integer
-class Sats {
+class Sats extends Equatable {
   final int value;
   final bool isEmpty;
 
@@ -31,9 +32,12 @@ class Sats {
   // Sats shouldn't be separated by commas, so we don't get confused.
   String humanString() => value.toString(); //.toCommaString();
   String simplified() => value.simplified();
+
+  @override
+  List<Object?> get props => [value, isEmpty];
 }
 
-class Divisibility {
+class Divisibility extends Equatable {
   final int value;
   final bool isEmpty;
   const Divisibility._(this.value, {this.isEmpty = false});
@@ -46,4 +50,7 @@ class Divisibility {
   const Divisibility.empty()
       : value = 0,
         isEmpty = true;
+
+  @override
+  List<Object?> get props => [value, isEmpty];
 }

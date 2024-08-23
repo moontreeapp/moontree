@@ -73,7 +73,7 @@ class TransactionHistoryCall extends ServerCall {
       txView.chain = blockchain.name;
       txView.symbol = symbol;
     }
-    print('trasnsactions: $history');
+    print('trasnsactions: ${history.map((e) => [e.height])}');
     return translate(history, blockchain);
   }
 
