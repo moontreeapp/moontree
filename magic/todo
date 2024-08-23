@@ -51,7 +51,8 @@ DONE update about page
 DONE update need help page
 DONE Help? Chat now -> page, our twitter
 
-transactions - pagination...
+DONE transactions - pagination...
+DONE draggable errors if tragged on transaction view
 send - fails with dust (on send all?)
 
 test on IOS...
