@@ -40,21 +40,31 @@ DONE discovered server is giving a bad highest count or something
 DONE no - our derivation was being capped by our old gap concept - removed.
 DONE manually verified our balance
 DONE send to self shows change as positive... on toast.
-
 DONE transactions - state issue - not clearing
 DONE transactions - issues downloading history sometimes
 DONE derivation monopolizes everything
 DONE fix front pane drop down menu glitch
-
 DONE conform coinspec, remove usd, make clickable
 DONE update about page
 DONE update need help page
 DONE Help? Chat now -> page, our twitter
-
 DONE transactions - pagination...
 DONE draggable errors if tragged on transaction view
+
 conform about and help page buttons
 fix amount send usd glitch
-send - fails with dust (on send all?)
+balance issue - reconnect and grab balances on app active
+implement phone security on all things sensitive (backup, and send)
+snackbar on send - "Sent: 1,000"
+make send amounts comma separated values
+
+server - send - fails with dust (on send all?)
+
+some kind of scroll issue (maybe when app is inactivated?)...
 
 test on IOS...
+
+security:
+    don't load in the entire wallet except when needed.
+    instead load wallet addresses to get balance and stuff.
+    encrypt privkey inside secure storage
