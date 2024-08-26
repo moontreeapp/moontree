@@ -15,7 +15,10 @@ class ConfirmContent extends StatelessWidget {
   Future<void> _send() async {
     //cubits.send.signUnsignedTransaction(); // already signed.
     cubits.toast.suppress = true;
-    await cubits.send.broadcast();
+    await cubits.send.broadcast(
+      amount: Sats(cubits.send.state.estimate!.amount).toCoin().humanString(),
+      symbol: cubits.holding.state.holding.symbol,
+    );
     print(cubits.send.state.txHashes);
     //cubits.toast.flash(msg: ToastMessage(title: 'transaction id', text: : cubits.send.state.txHashes));
     cubits.send.reset();

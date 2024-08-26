@@ -12,8 +12,14 @@ class ToastMessage with EquatableMixin {
   final String title;
   final String text;
   final Duration? duration;
+  final bool force;
 
-  const ToastMessage({this.title = '', this.text = '', this.duration});
+  const ToastMessage({
+    this.title = '',
+    this.text = '',
+    this.duration,
+    this.force = false,
+  });
 
   @override
   List<Object?> get props => [title, text];
@@ -39,6 +45,7 @@ class ToastState with EquatableMixin {
         onTap,
         msg,
         height,
+        duration,
         duration,
         showType,
       ];

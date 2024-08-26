@@ -105,9 +105,6 @@ class AddressesPageState extends State<AddressesPage> {
                           shrinkWrap: true,
                           itemCount: cubits.keys.master.mnemonicWallets.length,
                           itemBuilder: (context, int index) {
-                            print(index);
-                            print(cubits
-                                .keys.master.mnemonicWallets[index].words);
                             for (int index = 0;
                                 index <
                                     cubits.keys.master.mnemonicWallets.length;
@@ -122,7 +119,7 @@ class AddressesPageState extends State<AddressesPage> {
                                       .seedWallet(blockchain)
                                       .subwallets[exposure]!) {
                                     print(
-                                        '${cubits.keys.master.mnemonicWallets[index].words}\nwallet: $index ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}');
+                                        'wallet: $index ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}');
                                   }
                                 }
                               }
@@ -165,7 +162,7 @@ class AddressesPageState extends State<AddressesPage> {
                                                     top: 4,
                                                     bottom: 4),
                                                 child: Text(
-                                                    '${cubits.keys.master.mnemonicWallets[index].words}\nwallet: $index ${blockchain.name} ${exposure.name} ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}'))),
+                                                    'wallet: $index ${blockchain.name} ${exposure.name} ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}'))),
                                 ]));
                           })),
                   ConstrainedBox(

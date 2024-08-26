@@ -66,6 +66,7 @@ class SendCubit extends UpdatableCubit<SendState> {
     SendState? prior,
     bool removeUnsignedTransaction = false,
     bool removeEstimate = false,
+    String? originalAmount,
   }) {
     emit(SendState(
       active: active ?? state.active,
@@ -82,6 +83,7 @@ class SendCubit extends UpdatableCubit<SendState> {
       txHashes: txHashes ?? state.txHashes,
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: prior ?? state.withoutPrior,
+      originalAmount: originalAmount ?? state.originalAmount,
     ));
   }
 
@@ -449,7 +451,7 @@ class SendCubit extends UpdatableCubit<SendState> {
             return false;
           }
           //kralverde — Today at 10:48 AM
-          //  Yeah for the vins, the tx would fail if they aren’t ours and the
+          //  Yeah for the vins, the tx would fail if they aren't ours and the
           //  asset/amount are pulled directly from the db
           //meta stack — Today at 10:51 AM
           //  true I was just trying to to verify that the
@@ -578,7 +580,7 @@ class SendCubit extends UpdatableCubit<SendState> {
   }
 
   /// actually commit transaction
-  Future<void> broadcast() async {
+  Future<void> broadcast({String? amount, String? symbol}) async {
     if (state.signedTransactions.isEmpty) {
       print('transaction not signed yet');
       return;
@@ -604,10 +606,12 @@ class SendCubit extends UpdatableCubit<SendState> {
         //    Note(note: state.note, transactionId: broadcastResult.value!));
         Future.delayed(const Duration(seconds: 2))
             .then((_) => cubits.toast.flash(
-                    msg: const ToastMessage(
-                  title: 'Sent',
-                  text: 'Successfully Sent Transaction',
-                  //copy: broadcastResult.value!
+                    msg: ToastMessage(
+                  title: 'Sent:',
+                  text: amount != null && symbol != null
+                      ? '$amount $symbol'
+                      : amount ?? symbol ?? 'Successful',
+                  force: true,
                 )));
       } else {
         Future.delayed(const Duration(seconds: 2))

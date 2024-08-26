@@ -79,6 +79,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
   final String address; // TODO: use domain object
   final String changeAddress; // TODO: use domain object
   final String amount; // TODO: use domain object
+  final String originalAmount;
   final SendRequest? sendRequest; // TODO: use domain object
   //final UnsignedTransaction unsignedTransaction; // TODO: use domain object
   final UnsignedTransactionResultCalled?
@@ -94,6 +95,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
     this.scanActive = false,
     this.asset = '',
     this.amount = '',
+    this.originalAmount = '',
     this.address = '',
     this.changeAddress = '',
     this.sendRequest,
@@ -113,6 +115,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
         address,
         changeAddress,
         amount,
+        originalAmount,
         sendRequest,
         unsignedTransaction,
         signedTransactions,
@@ -133,6 +136,7 @@ class SendState with EquatableMixin, PriorActiveStateMixin {
         address: address,
         changeAddress: changeAddress,
         amount: amount,
+        originalAmount: originalAmount,
         sendRequest: sendRequest,
         unsignedTransaction: unsignedTransaction,
         signedTransactions: signedTransactions,

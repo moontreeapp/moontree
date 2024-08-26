@@ -11,6 +11,7 @@ import 'package:magic/presentation/ui/appbar/scanner.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/animations.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
+import 'package:magic/presentation/widgets/assets/status.dart';
 import 'package:magic/services/services.dart' show screen;
 
 class AppbarHeader extends StatelessWidget {
@@ -28,8 +29,11 @@ class AppbarHeader extends StatelessWidget {
           children: [
             Leading(),
             Expanded(child: Title()),
+            AppLifecycleReactor(),
+            AppActivityWatcher(),
             ConnectionIndicator(),
-            Scanner(),
+            //Scanner(), // for ALPHA
+
             //GestureDetector(
             //    //onTap: () => cubits.fade.update(fade: FadeEvent.fadeOut),
             //    //onTap: () => cubits.pane.update(height: screen.pane.minHeight),
@@ -226,5 +230,33 @@ class ConnectionIndicator extends StatelessWidget {
                   }
                   return const SizedBox.shrink();
                 }()));
+      });
+}
+
+class AppActivityWatcher extends StatelessWidget {
+  const AppActivityWatcher({super.key});
+
+  @override
+  Widget build(BuildContext context) => BlocBuilder<AppCubit, AppState>(
+      buildWhen: (AppState previous, AppState current) =>
+          previous.status != current.status,
+      builder: (context, state) {
+        print('AppActivityWatcher: ${state.status}');
+        if (state.status == 'resumed') {
+          print('refreshing assets');
+          cubits.wallet.populateAssets().then((value) {
+            if (cubits.transactions.state.active) {
+              print('refreshing holding');
+              cubits.holding.update(
+                  holding: cubits.wallet
+                      .getHoldingFrom(holding: cubits.holding.state.holding));
+              print('refreshing transactions');
+              cubits.transactions.clearTransactions();
+              cubits.transactions.populateAllTransactions(
+                  holding: cubits.holding.state.holding);
+            }
+          });
+        }
+        return const SizedBox.shrink();
       });
 }

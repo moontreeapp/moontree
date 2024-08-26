@@ -48,7 +48,7 @@ class ToastCubit extends UpdatableCubit<ToastState> {
     Duration? duration,
     ToastShowType? showType,
   }) {
-    if (suppress) return;
+    if (suppress && (msg == null || !msg.force)) return;
     reset();
     update(
       onTap: onTap,

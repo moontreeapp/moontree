@@ -51,18 +51,20 @@ DONE Help? Chat now -> page, our twitter
 DONE transactions - pagination...
 DONE draggable errors if tragged on transaction view
 
-conform about and help page buttons
-fix amount send usd glitch
-balance issue - reconnect and grab balances on app active
+DONE balance issue - reconnect and grab balances on app active
+DONE snackbar on send - "Sent: 1,000"
+DONE if USD value not known or 0 don't show icon to switch to usd
+DONE fix amount send usd glitch
+DONE make send amounts comma separated values
 implement phone security on all things sensitive (backup, and send)
-snackbar on send - "Sent: 1,000"
-make send amounts comma separated values
 
 server - send - fails with dust (on send all?)
 
 some kind of scroll issue (maybe when app is inactivated?)...
 
 test on IOS...
+
+conform about and help page buttons
 
 security:
     don't load in the entire wallet except when needed.

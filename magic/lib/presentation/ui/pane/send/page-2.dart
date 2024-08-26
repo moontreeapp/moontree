@@ -431,32 +431,35 @@ class SendContentState extends State<SendContent> {
                             ? null
                             : invalidAmountMessages(amountText.text).first,
                     onChanged: (value) {
-                      print(value);
                       if (automaticConversion) {
                         return;
                       }
                       userChanged = true;
-
+                      
+                      // Store the current cursor position and text length
+                      final cursorPosition = amountText.selection.baseOffset;
+                      final oldLength = amountText.text.length;
+                      
                       // Remove existing commas before processing
                       String cleanValue = value.replaceAll(',', '');
-
+                      
                       if (amountDollars) {
                         // Format USD input with commas
                         final formattedValue = formatWithCommas(cleanValue);
                         if (formattedValue != value) {
-                          amountText.value = amountText.value.copyWith(
+                          // Calculate new cursor position
+                          final newPosition = cursorPosition + (formattedValue.length - oldLength);
+                          amountText.value = TextEditingValue(
                             text: formattedValue,
-                            selection: TextSelection.collapsed(
-                                offset: formattedValue.length),
+                            selection: TextSelection.collapsed(offset: newPosition.clamp(0, formattedValue.length)),
                           );
                         }
-
+                        
                         // Convert USD to coin amount for validation and cubit update
-                        final coinAmount =
-                            Fiat(double.tryParse(cleanValue) ?? 0)
-                                .toCoin(cubits.holding.state.holding.rate)
-                                .toString();
-
+                        final coinAmount = Fiat(double.tryParse(cleanValue) ?? 0)
+                            .toCoin(cubits.holding.state.holding.rate)
+                            .toString();
+                        
                         setState(() {
                           if (validateAmount(coinAmount)) {
                             cubits.send.update(amount: coinAmount);
@@ -466,13 +469,14 @@ class SendContentState extends State<SendContent> {
                         // Format coin amount input with commas
                         final formattedValue = formatWithCommas(cleanValue);
                         if (formattedValue != value) {
-                          amountText.value = amountText.value.copyWith(
+                          // Calculate new cursor position
+                          final newPosition = cursorPosition + (formattedValue.length - oldLength);
+                          amountText.value = TextEditingValue(
                             text: formattedValue,
-                            selection: TextSelection.collapsed(
-                                offset: formattedValue.length),
+                            selection: TextSelection.collapsed(offset: newPosition.clamp(0, formattedValue.length)),
                           );
                         }
-
+                        
                         setState(() {
                           if (validateAmount(cleanValue)) {
                             cubits.send.update(amount: cleanValue);
