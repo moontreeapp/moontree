@@ -13,6 +13,7 @@ import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
+import 'package:magic/presentation/ui/login/native.dart';
 import 'package:magic/presentation/ui/pane/send/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
@@ -34,6 +35,10 @@ class SendPage extends StatelessWidget {
           return const LoadingIndicator();
         }
         if (state.unsignedTransaction != null && state.estimate != null) {
+          //return LoginNative(
+          //  onFailure: cubits.appbar.state.onLead,
+          //  child: const ConfirmContent(),
+          //);
           return const ConfirmContent();
         }
         return const SendContent();
@@ -184,6 +189,9 @@ class SendContentState extends State<SendContent> {
   bool validateForm() =>
       validateAddress(cubits.send.state.address) &&
       validateAmount(cubits.send.state.amount);
+
+  bool validateVisibleForm() =>
+      validateAddress(addressText.text) && validateAmount(amountText.text);
 
   Future<void> _send() async {
     cubits.fade.update(fade: FadeEvent.fadeOut);
@@ -485,7 +493,7 @@ class SendContentState extends State<SendContent> {
               );
             }),
         GestureDetector(
-            onTap: () => validateForm()
+            onTap: () => validateForm() && validateVisibleForm()
                 ? _send()
                 : cubits.toast.flash(
                     msg: const ToastMessage(

@@ -56,7 +56,8 @@ DONE snackbar on send - "Sent: 1,000"
 DONE if USD value not known or 0 don't show icon to switch to usd
 DONE fix amount send usd glitch
 DONE make send amounts comma separated values
-implement phone security on all things sensitive (backup, and send)
+DONE implement phone security on all things sensitive (backup, and send)
+DONE conform about and help page buttons
 
 server - send - fails with dust (on send all?)
 
@@ -64,9 +65,8 @@ some kind of scroll issue (maybe when app is inactivated?)...
 
 test on IOS...
 
-conform about and help page buttons
 
-security:
+security: (requires rework)
     don't load in the entire wallet except when needed.
     instead load wallet addresses to get balance and stuff.
     encrypt privkey inside secure storage

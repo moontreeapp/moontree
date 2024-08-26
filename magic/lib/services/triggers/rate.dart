@@ -37,9 +37,10 @@ class RateWaiter extends Trigger {
       _save(rateGrabber: rateGrabber, rate: await _rate(rateGrabber));
 
   Future<double?> _getExistingRate(RateGrabber rateGrabber) async {
-    Future<double?> fromCache() async => double.tryParse(await storage.read(
-            key: StorageKey.rate
-                .key(_toRate(rateGrabber: rateGrabber, rate: 0)!.id)) ??
+    Future<double?> fromCache() async => double.tryParse((await preferences())
+            .read(
+                key: PreferenceKey.rate
+                    .key(_toRate(rateGrabber: rateGrabber, rate: 0)!.id)) ??
         '');
 
     switch (rateGrabber.symbol) {

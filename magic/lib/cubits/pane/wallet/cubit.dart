@@ -195,14 +195,15 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   }
 
   void cacheRate(Rate rate, [List<Holding>? holdings]) {
-    // save to disk, so we can load it on next app start
-    storage.write(
-        key: StorageKey.rate.key(rate.id), value: rate.rate.toStringAsFixed(4));
     // update balance
     cubits.balance.update(
         portfolioValue: Fiat((holdings ?? state.holdings)
             .map((e) => e.coin.toFiat(e.rate).value)
             .sumNumbers()));
+    // save to disk, so we can load it on next app start
+    preferences().then((obj) => obj.write(
+        key: PreferenceKey.rate.key(rate.id),
+        value: rate.rate.toStringAsFixed(4)));
   }
 
   Holding? adminOf(Holding holding, [List<Holding>? overrideHoldings]) =>

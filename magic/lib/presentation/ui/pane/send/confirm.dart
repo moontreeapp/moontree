@@ -6,6 +6,8 @@ import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/extensions.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
+import 'package:magic/presentation/ui/login/native.dart'
+    show nativeLoginFunction;
 import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart';
 
@@ -155,7 +157,11 @@ class ConfirmContent extends StatelessWidget {
                 padding: const EdgeInsets.only(
                     left: 16, right: 16, top: 12, bottom: 24),
                 child: GestureDetector(
-                    onTap: _send,
+                    onTap: () async {
+                      if (await nativeLoginFunction(context)) {
+                        _send();
+                      }
+                    },
                     child: Container(
                         height: 64,
                         decoration: BoxDecoration(

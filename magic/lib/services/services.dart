@@ -1,6 +1,8 @@
 export 'package:magic/services/derivation.dart';
+export 'package:magic/services/preferences.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:magic/services/rate.dart';
 import 'package:magic/services/routes.dart';
 import 'package:magic/services/screen.dart';
@@ -18,6 +20,8 @@ late SystemBackButton back;
 late Maestro maestro;
 late Keyboard keyboard;
 late FlutterSecureStorage storage;
+const Future<SharedPreferences> Function() preferences =
+    SharedPreferences.getInstance;
 final SubscriptionService subscription = SubscriptionService();
 //late ServerCall server;
 bool initialized = false;
@@ -41,6 +45,7 @@ void init({
       rvnGrabber: RateGrabber(symbol: 'RVN'))
     ..init();
   initialized = true;
+
 
   //api.connect();
   /// here we could have a process that loads from local disk (wallets, settings)

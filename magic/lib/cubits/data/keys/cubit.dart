@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
-import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/mnemonic.dart';
 import 'package:magic/domain/concepts/storage.dart';
 import 'package:magic/domain/wallet/utils.dart';

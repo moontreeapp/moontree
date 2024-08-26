@@ -3,8 +3,7 @@
 enum StorageKey {
   mnemonics,
   wifs,
-  rate,
-  cache;
+  authed;
 
   String key([String? id]) {
     switch (this) {
@@ -12,10 +11,8 @@ enum StorageKey {
         return 'mnemonics';
       case StorageKey.wifs:
         return 'wifs';
-      case StorageKey.cache:
-        return 'cache-$id';
-      case StorageKey.rate:
-        return 'rate-$id';
+      case StorageKey.authed:
+        return 'authed';
       default:
         return name;
     }

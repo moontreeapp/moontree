@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:magic/presentation/theme/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/domain/concepts/side.dart';
@@ -164,8 +165,12 @@ class LinkOutButton extends StatelessWidget {
   final String url;
   final String name;
   final String logo;
-  const LinkOutButton(
-      {super.key, required this.url, required this.name, required this.logo});
+  const LinkOutButton({
+    super.key,
+    required this.url,
+    required this.name,
+    required this.logo,
+  });
 
   void _launchURL() async {
     //const url = 'https://x.com/MagicWalletApp';
@@ -178,30 +183,33 @@ class LinkOutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: _launchURL,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        side: const BorderSide(color: Colors.white, width: 2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+    return SizedBox(
+      width: screen.width * .618,
+      child: ElevatedButton(
+        onPressed: _launchURL,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.front,
+          foregroundColor: Colors.white,
+          //side: const BorderSide(color: Colors.white, width: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(
-            logo,
-            height: 24,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            name,
-            style: const TextStyle(fontSize: 18),
-          ),
-        ],
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              logo,
+              height: 24,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              name,
+              style: const TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
       ),
     );
   }

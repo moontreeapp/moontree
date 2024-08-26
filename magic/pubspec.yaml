@@ -67,6 +67,7 @@ dependencies:
   mobile_scanner: ^5.1.1
   electrum_adapter: ^2.0.4
   bip32: ^2.0.0
+  shared_preferences: ^2.3.2
 
 
 dev_dependencies:

@@ -24,6 +24,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We use Face ID to secure your data.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array><string>App-Prefs</string></array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
