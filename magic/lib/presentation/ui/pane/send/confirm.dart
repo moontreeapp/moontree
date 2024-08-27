@@ -158,9 +158,9 @@ class ConfirmContent extends StatelessWidget {
                     left: 16, right: 16, top: 12, bottom: 24),
                 child: GestureDetector(
                     onTap: () async {
-                      if (await nativeLoginFunction(context)) {
-                        _send();
-                      }
+                      //if (await nativeLoginFunction(context)) {
+                      _send();
+                      //}
                     },
                     child: Container(
                         height: 64,

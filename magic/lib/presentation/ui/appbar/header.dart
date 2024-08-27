@@ -32,7 +32,7 @@ class AppbarHeader extends StatelessWidget {
             AppLifecycleReactor(),
             AppActivityWatcher(),
             ConnectionIndicator(),
-            //Scanner(), // for ALPHA
+            Scanner(),
 
             //GestureDetector(
             //    //onTap: () => cubits.fade.update(fade: FadeEvent.fadeOut),
@@ -245,11 +245,11 @@ class AppActivityWatcher extends StatelessWidget {
         if (state.status == 'resumed') {
           print('refreshing assets');
           cubits.wallet.populateAssets().then((value) {
+            print('refreshing holding');
+            cubits.holding.update(
+                holding: cubits.wallet
+                    .getHoldingFrom(holding: cubits.holding.state.holding));
             if (cubits.transactions.state.active) {
-              print('refreshing holding');
-              cubits.holding.update(
-                  holding: cubits.wallet
-                      .getHoldingFrom(holding: cubits.holding.state.holding));
               print('refreshing transactions');
               cubits.transactions.clearTransactions();
               cubits.transactions.populateAllTransactions(

@@ -105,14 +105,14 @@ class SubscriptionService {
       await cubits.wallet.populateAssets();
       print(
           'refresh: $chainName, $symbol, ${cubits.holding.state.holding.symbol}, $realSymbol, ${cubits.transactions.state.active}');
-      if (cubits.holding.state.holding.symbol == realSymbol &&
+      print(cubits.holding.state.holding);
+      print(
+          cubits.wallet.getHoldingFrom(holding: cubits.holding.state.holding));
+      cubits.holding.update(
+          holding: cubits.wallet
+              .getHoldingFrom(holding: cubits.holding.state.holding));
+      if ( //cubits.holding.state.holding.symbol == realSymbol &&
           cubits.transactions.state.active) {
-        print(cubits.holding.state.holding);
-        print(cubits.wallet
-            .getHoldingFrom(holding: cubits.holding.state.holding));
-        cubits.holding.update(
-            holding: cubits.wallet
-                .getHoldingFrom(holding: cubits.holding.state.holding));
         cubits.transactions.clearTransactions();
         cubits.transactions
             .populateAllTransactions(holding: cubits.holding.state.holding);

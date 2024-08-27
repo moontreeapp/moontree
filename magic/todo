@@ -58,13 +58,26 @@ DONE fix amount send usd glitch
 DONE make send amounts comma separated values
 DONE implement phone security on all things sensitive (backup, and send)
 DONE conform about and help page buttons
+DONE add scan to homepage
+DONE updating holding at all times
+DONE remove security from sending
+DONE test
+
+security 2.0
+    create caching mechanism for xpubs
+    cache xpubs during process of saving privkeys (triggered by import or autocreate)
+    on startup load in xpubs and then continue derivation process as normal
+    guard any loading of privkeys with login
+    load privkeys on send screen and backup screen
+    refactor as needed
+    test
+
 
 server - send - fails with dust (on send all?)
 
 some kind of scroll issue (maybe when app is inactivated?)...
 
 test on IOS...
-
 
 security: (requires rework)
     don't load in the entire wallet except when needed.
