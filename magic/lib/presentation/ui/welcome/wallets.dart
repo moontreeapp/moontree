@@ -55,7 +55,7 @@ class WalletsPageState extends State<WalletsPage> {
           right: 0,
           child: Container(
             alignment: Alignment.center,
-            height: MediaQuery.of(context).size.height,
+            height: screen.height,
             padding: const EdgeInsets.only(left: 16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),

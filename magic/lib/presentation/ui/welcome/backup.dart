@@ -78,7 +78,7 @@ class BackupPageState extends State<BackupPage> {
           right: 0,
           child: Container(
             alignment: Alignment.center,
-            height: MediaQuery.of(context).size.height,
+            height: screen.height,
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
