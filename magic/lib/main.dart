@@ -32,13 +32,22 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   if (isImmersiveSticky) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    if (!Platform.isIOS) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    } else {
+      //SystemChrome.setEnabledSystemUIMode(SystemUiMode.);
+    }
   }
   SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
   if (!Platform.isIOS) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: AppColors.androidSystemBar,
+        systemNavigationBarColor: AppColors.androidNavigationBar,
+        systemNavigationBarIconBrightness: Brightness.light));
+  } else {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: AppColors.androidSystemBar,
         systemNavigationBarColor: AppColors.androidNavigationBar,
@@ -108,8 +117,7 @@ class MaestroLayer extends StatelessWidget {
             ),
           ),
         );
-        //return Platform.isIOS ? scaffold : const SafeArea(child: scaffold);
-        return scaffold;
+        return Platform.isIOS ? SafeArea(child: scaffold) : scaffold;
       },
     );
   }
