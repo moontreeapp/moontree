@@ -23,20 +23,16 @@ class NoGlowScrollBehavior extends ScrollBehavior {
       child;
 }
 
-bool isImmersiveSticky = true;
-
 Future<void> main() async {
   // Initialize the Serverpod client with a retry mechanism to handle connection issues
   await subscription.setupClient(FlutterConnectivityMonitor(),
       retryCount: 3, retryDelay: const Duration(seconds: 2));
 
   WidgetsFlutterBinding.ensureInitialized();
-  if (isImmersiveSticky) {
-    if (!Platform.isIOS) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    } else {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-    }
+  if (!Platform.isIOS) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  } else {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
   SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
@@ -99,17 +95,10 @@ class MaestroLayer extends StatelessWidget {
           final safeAreaHeight = MediaQuery.of(context).padding.top +
               MediaQuery.of(context).padding.bottom;
           final usableHeight = constraints.maxHeight - safeAreaHeight;
-          //_initializeServices(context, usableHeight, constraints.maxWidth);
           _initializeServices(context, usableHeight, constraints.maxWidth);
-
-          print('MaestroLayer: ${constraints.maxHeight}');
-          print(
-              'MaestroLayer: ${constraints.maxHeight - MediaQuery.of(context).padding.bottom}');
-          print('MaestroLayer: ${MediaQuery.of(context).size.height}');
         } else {
           _initializeServices(
               context, constraints.maxHeight, constraints.maxWidth);
-          print('MaestroLayer: ${constraints.maxHeight}');
         }
         final scaffold = Scaffold(
           resizeToAvoidBottomInset: false,
@@ -149,9 +138,6 @@ class MaestroLayer extends StatelessWidget {
     init(
       height: height,
       width: width,
-      //statusBarHeight: Platform.isAndroid && isImmersiveSticky
-      //    ? 0
-      //    : MediaQuery.of(context).padding.top,
       statusBarHeight: 0,
     );
     cubits.welcome.update(active: true, child: const WelcomeBackScreen());
