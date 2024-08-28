@@ -98,10 +98,13 @@ class MaestroLayer extends StatelessWidget {
           final safeAreaHeight = MediaQuery.of(context).padding.top +
               MediaQuery.of(context).padding.bottom;
           final usableHeight = constraints.maxHeight - safeAreaHeight;
-          _initializeServices(context, usableHeight, constraints.maxWidth);
+          _initializeServices(
+              context, usableHeight - 200, constraints.maxWidth);
+          print('MaestroLayer: ${usableHeight}');
         } else {
           _initializeServices(
               context, constraints.maxHeight, constraints.maxWidth);
+          print('MaestroLayer: ${constraints.maxHeight}');
         }
         final scaffold = Scaffold(
           resizeToAvoidBottomInset: false,
