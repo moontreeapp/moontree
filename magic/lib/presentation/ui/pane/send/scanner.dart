@@ -16,11 +16,17 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
   String? barcode;
 
   void _handleBarcode(BarcodeCapture event) {
-    print(event);
-    print(event.barcodes);
-    print(event.barcodes.first.rawValue);
-    print(event.image);
-    print(event.raw);
+    try {
+      print(event.barcodes.first.rawValue);
+      // Your existing processing logic
+      print(event);
+      print(event.barcodes);
+      print(event.barcodes.first.rawValue);
+      print(event.image);
+      print(event.raw);
+    } catch (e) {
+      print('Error processing barcode: $e');
+    }
   }
 
   @override
@@ -34,46 +40,44 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
 
     // Finally, start the scanner itself.
     unawaited(controller.start());
+    //controller.start();
   }
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
     // Stop listening to lifecycle changes.
     WidgetsBinding.instance.removeObserver(this);
     // Stop listening to the barcode events.
     unawaited(_subscription?.cancel());
+    //_subscription?.cancel().then((_) {
+    //  _subscription = null;
+    //  // Finally, dispose of the controller.
+    //  controller.dispose().then((_) => super.dispose());
+    //  // Dispose the widget itself.
+    //});
     _subscription = null;
-    // Dispose the widget itself.
     super.dispose();
-    // Finally, dispose of the controller.
-    await controller.dispose();
+    unawaited(controller.dispose());
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // If the controller is not ready, do not try to start or stop it.
-    // Permission dialogs can trigger lifecycle changes before the controller is ready.
-    if (!controller.value.isInitialized) {
-      return;
-    }
+    if (!controller.value.isInitialized) return;
 
     switch (state) {
+      case AppLifecycleState.resumed:
+        _subscription ??= controller.barcodes.listen(_handleBarcode);
+        controller.start();
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        _subscription?.cancel();
+        _subscription = null;
+        controller.stop();
+        break;
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
-      case AppLifecycleState.paused:
-        return;
-      case AppLifecycleState.resumed:
-        // Restart the scanner when the app is resumed.
-        // Don't forget to resume listening to the barcode events.
-        _subscription = controller.barcodes.listen(_handleBarcode);
-
-        unawaited(controller.start());
-      case AppLifecycleState.inactive:
-        // Stop the scanner when the app is paused.
-        // Also stop the barcode events subscription.
-        unawaited(_subscription?.cancel());
-        _subscription = null;
-        unawaited(controller.stop());
+        break;
     }
   }
 
@@ -86,17 +90,28 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
             //fit: BoxFit.contain,
             controller: controller,
             onDetect: (BarcodeCapture event) {
-              print(event);
-              print(event.barcodes);
-              print(event.barcodes.first.rawValue);
-              print(event.image);
-              print(event.raw);
+              print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+              if (event.barcodes.first.rawValue?.isNotEmpty ?? false) {
+                cubits.send.update(address: barcode);
+                cubits.send.update(scanActive: false);
+                print(cubits.send.state.address);
+                print(event);
+                print(event.barcodes);
+                print(event.barcodes.first.rawValue);
+                print(event.image);
+                print(event.raw);
+              }
+              print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
               setState(() {
                 barcode = event.barcodes.first.rawValue;
                 if (barcode?.isNotEmpty ?? false) {
                   cubits.send.update(address: barcode);
                   cubits.send.update(scanActive: false);
                 }
+              });
+              // Consider stopping the scanner after a slight delay if necessary
+              Future.delayed(const Duration(milliseconds: 500), () {
+                controller.stop();
               });
             },
           ),

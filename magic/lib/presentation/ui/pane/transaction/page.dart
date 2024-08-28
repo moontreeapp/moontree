@@ -58,9 +58,11 @@
 // //    child: Column(
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/amounts.dart';
@@ -91,14 +93,23 @@ class TransactionPage extends StatelessWidget {
               Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                 //if (![null, '']
                 //    .contains(display.transactionView?.hash.toString()))
-                TransactionItem(label: 'ID:', display: <TextSpan>[
-                  TextSpan(
-                      text: display.readableHash,
-                      style: Theme.of(context).textTheme.body1.copyWith(
-                            fontWeight: FontWeight.normal,
-                            color: AppColors.white87,
-                          )),
-                ]),
+                GestureDetector(
+                    onLongPress: () {
+                      Clipboard.setData(ClipboardData(text: display.hash));
+                      cubits.toast.flash(
+                          msg: const ToastMessage(
+                              duration: Duration(seconds: 2),
+                              title: 'copied',
+                              text: 'to clipboard'));
+                    },
+                    child: TransactionItem(label: 'ID:', display: <TextSpan>[
+                      TextSpan(
+                          text: display.readableHash,
+                          style: Theme.of(context).textTheme.body1.copyWith(
+                                fontWeight: FontWeight.normal,
+                                color: AppColors.white87,
+                              )),
+                    ])),
                 TransactionItem(
                     label: 'Amount:',
                     overrideDisplay: SimpleCoinSplitView(

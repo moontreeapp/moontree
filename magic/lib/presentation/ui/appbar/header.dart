@@ -5,6 +5,7 @@ import 'package:magic/cubits/app/cubit.dart';
 import 'package:magic/cubits/appbar/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
+import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/server/serverv2_client.dart';
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/ui/appbar/scanner.dart';
@@ -246,12 +247,19 @@ class AppActivityWatcher extends StatelessWidget {
           print('refreshing assets');
           cubits.wallet.populateAssets().then((value) {
             print('refreshing holding');
-            cubits.holding.update(
-                holding: cubits.wallet
-                    .getHoldingFrom(holding: cubits.holding.state.holding));
+            if (cubits.holding.state.holding != const Holding.empty() &&
+                cubits.wallet.state.holdings.isNotEmpty) {
+              print(
+                  'refreshing holding ${cubits.holding.state.holding.symbol} ${[
+                for (final x in cubits.wallet.state.holdings) x.symbol
+              ]}');
+              cubits.holding.update(
+                  holding: cubits.wallet
+                      .getHoldingFrom(holding: cubits.holding.state.holding));
+            }
             if (cubits.transactions.state.active) {
               print('refreshing transactions');
-              cubits.transactions.clearTransactions();
+              //cubits.transactions.clearTransactions();
               cubits.transactions.populateAllTransactions(
                   holding: cubits.holding.state.holding);
             }

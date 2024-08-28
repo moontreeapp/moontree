@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
@@ -9,15 +7,12 @@ import 'package:magic/cubits/pane/send/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
-import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
-import 'package:magic/presentation/ui/login/native.dart';
 import 'package:magic/presentation/ui/pane/send/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
-import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/animations/loading.dart';
 import 'package:magic/services/services.dart';
 import 'package:wallet_utils/wallet_utils.dart';
@@ -334,7 +329,7 @@ class SendContentState extends State<SendContent> {
                       child: const QRViewable(),
                     ));
               }
-              //addressText.text = cubits.send.state.address;
+              addressText.text = cubits.send.state.address;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

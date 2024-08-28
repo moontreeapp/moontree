@@ -62,7 +62,9 @@ class SendEstimate with ToStringMixin {
       ];
 
   int get total => security == null || security!.isCoin
-      ? (creation ? 0 : amount) + fees + extraFees
+      ? sendAll
+          ? (creation ? 0 : amount)
+          : (creation ? 0 : amount) + fees + extraFees
       : fees + extraFees;
 
   void setFees(int fees_) => fees = fees_;

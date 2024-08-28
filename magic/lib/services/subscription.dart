@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/utils/extensions/string.dart';
 import 'package:magic/domain/wallet/wallets.dart';
@@ -106,11 +107,15 @@ class SubscriptionService {
       print(
           'refresh: $chainName, $symbol, ${cubits.holding.state.holding.symbol}, $realSymbol, ${cubits.transactions.state.active}');
       print(cubits.holding.state.holding);
-      print(
-          cubits.wallet.getHoldingFrom(holding: cubits.holding.state.holding));
-      cubits.holding.update(
-          holding: cubits.wallet
-              .getHoldingFrom(holding: cubits.holding.state.holding));
+      print('refreshing holding ${cubits.holding.state.holding.symbol} ${[
+        for (final x in cubits.wallet.state.holdings) x.symbol
+      ]}');
+      if (cubits.holding.state.holding != const Holding.empty() &&
+          cubits.wallet.state.holdings.isNotEmpty) {
+        cubits.holding.update(
+            holding: cubits.wallet
+                .getHoldingFrom(holding: cubits.holding.state.holding));
+      }
       if ( //cubits.holding.state.holding.symbol == realSymbol &&
           cubits.transactions.state.active) {
         cubits.transactions.clearTransactions();
