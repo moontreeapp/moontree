@@ -1,3 +1,19 @@
+
+2024-08-28 15:46:20.400121-0600 Runner[1816:83511] [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: 'package:flutter/src/widgets/scroll_controller.dart': Failed assertion: line 158 pos 12: '_positions.length == 1': ScrollController attached to multiple scroll views.
+#0      _AssertionError._doThrowNew (dart:core-patch/errors_patch.dart:50:61)
+#1      _AssertionError._throwNew (dart:core-patch/errors_patch.dart:40:5)
+#2      ScrollController.position (package:flutter/src/widgets/scroll_controller.dart:158:12)
+#3      _DraggableScrollableSheetScrollController.position (package:flutter/src/widgets/draggable_scrollable_sheet.dart:822:13)
+#4      DraggableScrollableController.animateTo (package:flutter/src/widgets/draggable_scrollable_sheet.dart:127:35)
+#5      EmptyFeed.build.<anonymous closure>.setHeightTo (package:magic/presentation/ui/pane/page.dart:156:30)
+#6      EmptyFeed.build.<anonymous closure>.<anonymous closure> (package:magic/presentation/ui/pane/page.dart:178:19)
+#7      SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1397:15)
+#8      SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1331:11)
+#9      SchedulerBinding._handleDrawFrame (package:flutter/src/scheduler/binding.dart:1176:5)
+#10     _invoke (dart:ui/hooks.dart:312:13)
+#11     PlatformDispatcher._drawFrame (dart:ui/platform_dispatcher.dart:419:5)
+#12     _drawFrame (dart:ui/hooks.dart:283:31)
+
 0.09626000
 0.97213700
 0.99774000
