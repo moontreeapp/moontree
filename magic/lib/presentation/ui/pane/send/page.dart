@@ -329,7 +329,9 @@ class SendContentState extends State<SendContent> {
                       child: const QRViewable(),
                     ));
               }
-              addressText.text = cubits.send.state.address;
+              if (state.prior?.scanActive == true) {
+                addressText.text = cubits.send.state.address;
+              }
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
