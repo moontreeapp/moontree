@@ -35,7 +35,7 @@ Future<void> main() async {
     if (!Platform.isIOS) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     } else {
-      //SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     }
   }
   SystemChrome.setPreferredOrientations(<DeviceOrientation>[
