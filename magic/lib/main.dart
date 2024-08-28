@@ -101,11 +101,7 @@ class MaestroLayer extends StatelessWidget {
           final usableHeight = constraints.maxHeight - safeAreaHeight;
           //_initializeServices(context, usableHeight, constraints.maxWidth);
           _initializeServices(
-              context,
-              constraints.maxHeight -
-                  MediaQuery.of(context).padding.bottom -
-                  50,
-              constraints.maxWidth);
+              context, constraints.maxHeight, constraints.maxWidth);
 
           print('MaestroLayer: ${constraints.maxHeight}');
           print(
@@ -154,9 +150,10 @@ class MaestroLayer extends StatelessWidget {
     init(
       height: height,
       width: width,
-      statusBarHeight: Platform.isAndroid && isImmersiveSticky
-          ? 0
-          : MediaQuery.of(context).padding.top,
+      //statusBarHeight: Platform.isAndroid && isImmersiveSticky
+      //    ? 0
+      //    : MediaQuery.of(context).padding.top,
+      statusBarHeight: 0,
     );
     cubits.welcome.update(active: true, child: const WelcomeBackScreen());
     cubits.menu.update(active: true);
