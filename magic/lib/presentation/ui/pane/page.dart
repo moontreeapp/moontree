@@ -129,7 +129,7 @@ class DraggablePaneStack extends StatelessWidget {
         Transaction(),
         Send(),
         Receive(),
-        //EmptyFeed(),
+        EmptyFeed(),
         FadeLayer(),
       ]);
 }
