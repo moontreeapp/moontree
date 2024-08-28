@@ -224,7 +224,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                                 )),
                             const SizedBox(height: 8),
                             const Text(
-                              'Welcome Back',
+                              'Welcome',
                               style: TextStyle(
                                 fontSize: 24,
                                 color: AppColors.subtitle,
