@@ -94,8 +94,16 @@ class MaestroLayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        _initializeServices(
-            context, constraints.maxHeight, constraints.maxWidth);
+        if (Platform.isIOS) {
+          final safeAreaHeight = MediaQuery.of(context).padding.top +
+              MediaQuery.of(context).padding.bottom;
+          final usableHeight =
+              MediaQuery.of(context).size.height - safeAreaHeight;
+          _initializeServices(context, usableHeight, constraints.maxWidth);
+        } else {
+          _initializeServices(
+              context, constraints.maxHeight, constraints.maxWidth);
+        }
         final scaffold = Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: AppColors.background,
