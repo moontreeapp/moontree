@@ -47,7 +47,13 @@ Future<void> main() async {
         statusBarColor: AppColors.androidSystemBar,
         systemNavigationBarColor: AppColors.androidNavigationBar,
         systemNavigationBarIconBrightness: Brightness.light));
+  } else {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: AppColors.background,
+        systemNavigationBarColor: AppColors.background,
+        systemNavigationBarIconBrightness: Brightness.light));
   }
+
   //ApiService.init();
   //await ApiConnection.init();
 
