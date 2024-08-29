@@ -24,15 +24,14 @@ class NoGlowScrollBehavior extends ScrollBehavior {
 }
 
 Future<void> main() async {
-  // Initialize the Serverpod client with a retry mechanism to handle connection issues
-  await subscription.setupClient(FlutterConnectivityMonitor(),
-      retryCount: 3, retryDelay: const Duration(seconds: 2));
-
   WidgetsFlutterBinding.ensureInitialized();
   if (!Platform.isIOS) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   } else {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.immersiveSticky,
+      //overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],
+    );
   }
   SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
@@ -46,16 +45,16 @@ Future<void> main() async {
   }
   if (Platform.isIOS) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      //statusBarColor: AppColors.white,
-      systemNavigationBarColor: Colors.red,
+      statusBarColor: AppColors.white,
     ));
-    //    systemNavigationBarColor: AppColors.background,
-    //systemNavigationBarIconBrightness: Brightness.light));
   }
+
+  // Initialize the Serverpod client with a retry mechanism to handle connection issues
+  await subscription.setupClient(FlutterConnectivityMonitor(),
+      retryCount: 3, retryDelay: const Duration(seconds: 2));
 
   //ApiService.init();
   //await ApiConnection.init();
-
   runApp(const MagicApp());
 }
 

@@ -120,7 +120,7 @@ class Appbar {
   ) =>
       Appbar._(
         height: height * (56 / 760),
-        logoHeight: height * (24 / 760),
+        logoHeight: 24, //height * (24 / 760),
         titleWidth: width - (24 + iconMedium + 16 + 24 + iconMedium + 16),
         statusBarHeight: statusBarHeight,
         statusBarHeightPercentage: statusBarHeight / height,
