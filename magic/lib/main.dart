@@ -32,22 +32,25 @@ Future<void> main() async {
   if (!Platform.isIOS) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   } else {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
   SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  if (!Platform.isIOS) {
+  if (Platform.isAndroid) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: AppColors.androidSystemBar,
         systemNavigationBarColor: AppColors.androidNavigationBar,
         systemNavigationBarIconBrightness: Brightness.light));
-  } else {
+  }
+  if (Platform.isIOS) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: AppColors.background,
-        systemNavigationBarColor: AppColors.background,
-        systemNavigationBarIconBrightness: Brightness.light));
+      //statusBarColor: AppColors.white,
+      systemNavigationBarColor: Colors.red,
+    ));
+    //    systemNavigationBarColor: AppColors.background,
+    //systemNavigationBarIconBrightness: Brightness.light));
   }
 
   //ApiService.init();
@@ -94,7 +97,7 @@ class MaestroLayer extends StatelessWidget {
         if (Platform.isIOS) {
           final safeAreaHeight = MediaQuery.of(context).padding.top +
               MediaQuery.of(context).padding.bottom;
-          final usableHeight = constraints.maxHeight - safeAreaHeight;
+          final usableHeight = constraints.maxHeight;
           _initializeServices(context, usableHeight, constraints.maxWidth);
         } else {
           _initializeServices(
@@ -121,7 +124,8 @@ class MaestroLayer extends StatelessWidget {
             ),
           ),
         );
-        return Platform.isIOS ? SafeArea(child: scaffold) : scaffold;
+        //return Platform.isIOS ? SafeArea(child: scaffold) : scaffold;
+        return scaffold;
       },
     );
   }
@@ -136,9 +140,11 @@ class MaestroLayer extends StatelessWidget {
       return;
     }
     init(
-      height: height,
+      height: height +
+          (Platform.isIOS ? MediaQuery.of(context).padding.top / 2 : 0),
       width: width,
-      statusBarHeight: 0,
+      statusBarHeight:
+          Platform.isIOS ? MediaQuery.of(context).padding.top / 2 : 0,
     );
     cubits.welcome.update(active: true, child: const WelcomeBackScreen());
     cubits.menu.update(active: true);

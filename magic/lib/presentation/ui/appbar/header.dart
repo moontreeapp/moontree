@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,61 +22,65 @@ class AppbarHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      height: screen.appbar.height,
-      width: screen.width,
-      alignment: Alignment.center,
-      //padding: const EdgeInsets.only(left: 24, top: 16.0, right: 24),
-      child: const Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Leading(),
-            Expanded(child: Title()),
-            AppLifecycleReactor(),
-            AppActivityWatcher(),
-            ConnectionIndicator(),
-            Scanner(),
+      height: (Platform.isIOS ? screen.appbar.statusBarHeight : 0) +
+          screen.appbar.height,
+      alignment: Alignment.bottomCenter,
+      child: Container(
+          height: screen.appbar.height,
+          width: screen.width,
+          alignment: Alignment.center,
+          //padding: const EdgeInsets.only(left: 24, top: 16.0, right: 24),
+          child: const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Leading(),
+                Expanded(child: Title()),
+                AppLifecycleReactor(),
+                AppActivityWatcher(),
+                ConnectionIndicator(),
+                Scanner(),
 
-            //GestureDetector(
-            //    //onTap: () => cubits.fade.update(fade: FadeEvent.fadeOut),
-            //    //onTap: () => cubits.pane.update(height: screen.pane.minHeight),
-            //    //onTap: () => cubits.pane.update(max: .8),
-            //    child: Text('menu',
-            //        style: Theme.of(context)
-            //            .textTheme
-            //            .h2!
-            //            .copyWith(color: Colors.white, shadows: [
-            //          const Shadow(
-            //              offset: Offset(1.0, 1.0),
-            //              blurRadius: 1.0,
-            //              color: Color.fromRGBO(0, 0, 0, 0.50))
-            //        ]))),
-            //GestureDetector(
-            //    onTap: () => cubits.fade.update(fade: FadeEvent.fadeIn),
-            //    //onTap: () => cubits.pane.update(height: screen.pane.midHeight),
-            //    child: Text('title',
-            //        style: Theme.of(context)
-            //            .textTheme
-            //            .h2!
-            //            .copyWith(color: Colors.white, shadows: [
-            //          const Shadow(
-            //              offset: Offset(1.0, 1.0),
-            //              blurRadius: 1.0,
-            //              color: Color.fromRGBO(0, 0, 0, 0.50))
-            //        ]))),
-            //GestureDetector(
-            //    onTap: () => cubits.pane.update(height: screen.pane.maxHeight),
-            //    child: Text('icons',
-            //        style: Theme.of(context)
-            //            .textTheme
-            //            .h2!
-            //            .copyWith(color: Colors.white, shadows: [
-            //          const Shadow(
-            //              offset: Offset(1.0, 1.0),
-            //              blurRadius: 1.0,
-            //              color: Color.fromRGBO(0, 0, 0, 0.50))
-            //        ]))),
-          ]));
+                //GestureDetector(
+                //    //onTap: () => cubits.fade.update(fade: FadeEvent.fadeOut),
+                //    //onTap: () => cubits.pane.update(height: screen.pane.minHeight),
+                //    //onTap: () => cubits.pane.update(max: .8),
+                //    child: Text('menu',
+                //        style: Theme.of(context)
+                //            .textTheme
+                //            .h2!
+                //            .copyWith(color: Colors.white, shadows: [
+                //          const Shadow(
+                //              offset: Offset(1.0, 1.0),
+                //              blurRadius: 1.0,
+                //              color: Color.fromRGBO(0, 0, 0, 0.50))
+                //        ]))),
+                //GestureDetector(
+                //    onTap: () => cubits.fade.update(fade: FadeEvent.fadeIn),
+                //    //onTap: () => cubits.pane.update(height: screen.pane.midHeight),
+                //    child: Text('title',
+                //        style: Theme.of(context)
+                //            .textTheme
+                //            .h2!
+                //            .copyWith(color: Colors.white, shadows: [
+                //          const Shadow(
+                //              offset: Offset(1.0, 1.0),
+                //              blurRadius: 1.0,
+                //              color: Color.fromRGBO(0, 0, 0, 0.50))
+                //        ]))),
+                //GestureDetector(
+                //    onTap: () => cubits.pane.update(height: screen.pane.maxHeight),
+                //    child: Text('icons',
+                //        style: Theme.of(context)
+                //            .textTheme
+                //            .h2!
+                //            .copyWith(color: Colors.white, shadows: [
+                //          const Shadow(
+                //              offset: Offset(1.0, 1.0),
+                //              blurRadius: 1.0,
+                //              color: Color.fromRGBO(0, 0, 0, 0.50))
+                //        ]))),
+              ])));
 }
 
 class Leading extends StatelessWidget {
