@@ -197,9 +197,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
               duration: slowFadeDuration,
               curve: Curves.easeOutCubic,
               alignment: Alignment.center,
-              height: Platform.isAndroid
-                  ? MediaQuery.of(context).size.height
-                  : screen.height,
+              height: screen.height,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.vertical(
                       top: Radius.circular(_isAnimating ? 30 : 0)),
@@ -224,6 +222,15 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                                   fit: BoxFit.contain,
                                   alignment: Alignment.center,
                                 )),
+                            //Padding(
+                            //    padding:
+                            //        const EdgeInsets.only(top: 8.0, bottom: 0),
+                            //    child: Image.asset(
+                            //      LogoIcons.magicsized,
+                            //      //height: screen.appbar.logoHeight * 2.5,
+                            //      //fit: BoxFit.contain,
+                            //      alignment: Alignment.center,
+                            //    )),
                             const SizedBox(height: 8),
                             const Text(
                               'Welcome',
