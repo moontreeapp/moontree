@@ -15,24 +15,27 @@ import 'package:magic/services/services.dart';
 import 'package:magic/services/security.dart';
 import 'package:url_launcher/url_launcher_string.dart'; // Make sure to import the security service
 
+// Add this function at the top level of your file
+Future<void> precacheSvgPicture(String assetName) async {
+  final loader = SvgAssetLoader(assetName);
+  await svg.cache
+      .putIfAbsent(loader.cacheKey(null), () => loader.loadBytes(null));
+}
+
 class WelcomeLayer extends StatelessWidget {
   const WelcomeLayer({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<WelcomeCubit, WelcomeState>(
-          //    //buildWhen: (WelcomeState previous, WelcomeState current) =>
-          //    //    current.active || !current.active,
-          builder: (BuildContext context, WelcomeState state) {
+  Widget build(BuildContext context) {
+    return BlocBuilder<WelcomeCubit, WelcomeState>(
+      builder: (BuildContext context, WelcomeState state) {
         if (state.active && state.child != null) {
           return state.child!;
         }
         return const SizedBox.shrink();
-      });
-  //builder: (context, state) => state.transitionWidgets(state,
-  //    onEntering: state.child!,
-  //    onEntered: state.child!,
-  //    onExiting: state.child!,
-  //    onExited: const SizedBox.shrink()));
+      },
+    );
+  }
 }
 
 class WelcomeBackScreen extends StatefulWidget {
@@ -43,6 +46,7 @@ class WelcomeBackScreen extends StatefulWidget {
 }
 
 class WelcomeBackScreenState extends State<WelcomeBackScreen> {
+  late Future<void> _imageFuture;
   double _fadingInValue = 1;
   bool _isAnimating = false;
   bool _isFading = false;
@@ -172,110 +176,107 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _imageFuture = precacheSvgPicture(LogoIcons.magic);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    //WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //  if (!_isFading && _fadingInValue == 0) {
-    //    Future.delayed(fastFadeDuration, () {
-    //      setState(() {
-    //        _fadingInValue = 1;
-    //      });
-    //    });
-    //  }
-    //});
-    return AnimatedOpacity(
-      opacity: _isFadingOut ? 0 : 1,
-      duration: slowFadeDuration,
-      child: Stack(
-        children: <Widget>[
-          AnimatedPositioned(
-            duration: slowFadeDuration,
-            curve: Curves.easeInOutCubic,
-            top: _isAnimating ? screen.height - screen.pane.midHeight : 0,
-            left: 0,
-            right: 0,
-            child: AnimatedContainer(
-              duration: slowFadeDuration,
-              curve: Curves.easeOutCubic,
-              alignment: Alignment.center,
-              height: screen.height,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(_isAnimating ? 30 : 0)),
-                  color: AppColors.foreground),
-              child: AnimatedOpacity(
-                opacity: _isFading ? 0 : _fadingInValue,
+    return FutureBuilder(
+      future: _imageFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return AnimatedOpacity(
+          opacity: _isFadingOut ? 0 : 1,
+          duration: slowFadeDuration,
+          child: Stack(
+            children: <Widget>[
+              AnimatedPositioned(
                 duration: slowFadeDuration,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 8.0, bottom: 0),
-                                child: SvgPicture.asset(
-                                  LogoIcons.magic,
-                                  height: screen.appbar.logoHeight * 2.5,
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment.center,
-                                )),
-                            //Padding(
-                            //    padding:
-                            //        const EdgeInsets.only(top: 8.0, bottom: 0),
-                            //    child: Image.asset(
-                            //      LogoIcons.magicsized,
-                            //      //height: screen.appbar.logoHeight * 2.5,
-                            //      //fit: BoxFit.contain,
-                            //      alignment: Alignment.center,
-                            //    )),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Welcome',
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: AppColors.subtitle,
+                curve: Curves.easeInOutCubic,
+                top: _isAnimating ? screen.height - screen.pane.midHeight : 0,
+                left: 0,
+                right: 0,
+                child: AnimatedContainer(
+                  duration: slowFadeDuration,
+                  curve: Curves.easeOutCubic,
+                  alignment: Alignment.center,
+                  height: screen.height,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(_isAnimating ? 30 : 0)),
+                      color: AppColors.foreground),
+                  child: AnimatedOpacity(
+                    opacity: _isFading ? 0 : _fadingInValue,
+                    duration: slowFadeDuration,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 8.0, bottom: 0),
+                                    child: SvgPicture.asset(
+                                      LogoIcons.magic,
+                                      height: screen.appbar.logoHeight * 2.5,
+                                      fit: BoxFit.contain,
+                                      alignment: Alignment.center,
+                                    )),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Welcome',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: AppColors.subtitle,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 60,
+                            child: ElevatedButton(
+                              onHover: (_) => cubits.app.animating = true,
+                              onPressed:
+                                  _handleAuthentication, // Changed this line
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.button,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: const Text(
+                                "LET'S GO",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 60,
-                        child: ElevatedButton(
-                          onHover: (_) => cubits.app.animating = true,
-                          onPressed: _handleAuthentication, // Changed this line
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.button,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text(
-                            "LET'S GO",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
