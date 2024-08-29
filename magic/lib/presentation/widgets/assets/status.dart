@@ -35,7 +35,8 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     //streams.app.active.status.add(state.name);
-    cubits.app.update(status: state.name);
+    print('app state: ${state.name}');
+    //cubits.app.update(status: state.name);
     //setState(() {
     //  _notification = state;
     //});
