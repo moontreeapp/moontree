@@ -18,7 +18,7 @@ late Screen screen;
 late ScreenFlags screenflags;
 late SystemBackButton back;
 late Maestro maestro;
-late Keyboard keyboard;
+//late Keyboard keyboard;
 late FlutterSecureStorage storage;
 const Future<SharedPreferences> Function() preferences =
     SharedPreferences.getInstance;
@@ -36,7 +36,7 @@ void init({
   screenflags = ScreenFlags();
   back = SystemBackButton()..initListener();
   keys.init();
-  keyboard = Keyboard();
+  //keyboard = Keyboard();
   maestro = Maestro();
   storage = const FlutterSecureStorage();
   //server = ServerCall();
@@ -45,7 +45,6 @@ void init({
       rvnGrabber: RateGrabber(symbol: 'RVN'))
     ..init();
   initialized = true;
-
 
   //api.connect();
   /// here we could have a process that loads from local disk (wallets, settings)

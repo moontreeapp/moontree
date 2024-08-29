@@ -10,7 +10,7 @@ import 'package:magic/cubits/cubit.dart';
 const AppLifecycleReactor status = AppLifecycleReactor();
 
 class AppLifecycleReactor extends StatefulWidget {
-  const AppLifecycleReactor({Key? key}) : super(key: key);
+  const AppLifecycleReactor({super.key});
 
   @override
   State<AppLifecycleReactor> createState() => _AppLifecycleReactorState();
@@ -30,19 +30,20 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
     super.dispose();
   }
 
-  late AppLifecycleState _notification = AppLifecycleState.resumed;
+  //late AppLifecycleState _notification = AppLifecycleState.resumed;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     //streams.app.active.status.add(state.name);
     cubits.app.update(status: state.name);
-    setState(() {
-      _notification = state;
-    });
+    //setState(() {
+    //  _notification = state;
+    //});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: false, child: Text(_notification.name));
+    return const SizedBox.shrink();
+    //return Visibility(visible: false, child: Text(_notification.name));
   }
 }
