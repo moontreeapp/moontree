@@ -10,6 +10,7 @@ import 'package:magic/cubits/welcome/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/services/security.dart';
@@ -19,24 +20,21 @@ class WelcomeLayer extends StatelessWidget {
   const WelcomeLayer({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<WelcomeCubit, WelcomeState>(
-          //    //buildWhen: (WelcomeState previous, WelcomeState current) =>
-          //    //    current.active || !current.active,
-          builder: (BuildContext context, WelcomeState state) {
+  Widget build(BuildContext context) {
+    return BlocBuilder<WelcomeCubit, WelcomeState>(
+      builder: (BuildContext context, WelcomeState state) {
         if (state.active && state.child != null) {
           return state.child!;
         }
         return const SizedBox.shrink();
-      });
-  //builder: (context, state) => state.transitionWidgets(state,
-  //    onEntering: state.child!,
-  //    onEntered: state.child!,
-  //    onExiting: state.child!,
-  //    onExited: const SizedBox.shrink()));
+      },
+    );
+  }
 }
 
 class WelcomeBackScreen extends StatefulWidget {
-  const WelcomeBackScreen({super.key});
+  final SvgPicture? imageWidget;
+  const WelcomeBackScreen({super.key, this.imageWidget});
 
   @override
   WelcomeBackScreenState createState() => WelcomeBackScreenState();
@@ -172,16 +170,12 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    //WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //  if (!_isFading && _fadingInValue == 0) {
-    //    Future.delayed(fastFadeDuration, () {
-    //      setState(() {
-    //        _fadingInValue = 1;
-    //      });
-    //    });
-    //  }
-    //});
     return AnimatedOpacity(
       opacity: _isFadingOut ? 0 : 1,
       duration: slowFadeDuration,
@@ -213,24 +207,16 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 8.0, bottom: 0),
-                                child: SvgPicture.asset(
-                                  LogoIcons.magic,
-                                  height: screen.appbar.logoHeight * 2.5,
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment.center,
-                                )),
-                            //Padding(
-                            //    padding:
-                            //        const EdgeInsets.only(top: 8.0, bottom: 0),
-                            //    child: Image.asset(
-                            //      LogoIcons.magicsized,
-                            //      //height: screen.appbar.logoHeight * 2.5,
-                            //      //fit: BoxFit.contain,
-                            //      alignment: Alignment.center,
-                            //    )),
+                            widget.imageWidget ??
+                                Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 8.0, bottom: 0),
+                                    child: SvgPicture.asset(
+                                      LogoIcons.magic,
+                                      height: screen.appbar.logoHeight * 2.5,
+                                      fit: BoxFit.contain,
+                                      alignment: Alignment.center,
+                                    )),
                             const SizedBox(height: 8),
                             const Text(
                               'Welcome',

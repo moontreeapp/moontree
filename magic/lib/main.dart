@@ -2,6 +2,8 @@ import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
@@ -21,6 +23,12 @@ class NoGlowScrollBehavior extends ScrollBehavior {
     ScrollableDetails details,
   ) =>
       child;
+}
+
+Future<void> precacheSvgPicture(String assetName) async {
+  final loader = SvgAssetLoader(assetName);
+  await svg.cache
+      .putIfAbsent(loader.cacheKey(null), () => loader.loadBytes(null));
 }
 
 Future<void> main() async {
@@ -52,6 +60,7 @@ Future<void> main() async {
   // Initialize the Serverpod client with a retry mechanism to handle connection issues
   await subscription.setupClient(FlutterConnectivityMonitor(),
       retryCount: 3, retryDelay: const Duration(seconds: 2));
+  await precacheSvgPicture(LogoIcons.magic);
 
   //ApiService.init();
   //await ApiConnection.init();
@@ -102,6 +111,8 @@ class MaestroLayer extends StatelessWidget {
           _initializeServices(
               context, constraints.maxHeight, constraints.maxWidth);
         }
+        // Add this function at the top level of your file
+
         final scaffold = Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: AppColors.background,
@@ -145,6 +156,8 @@ class MaestroLayer extends StatelessWidget {
       statusBarHeight:
           Platform.isIOS ? MediaQuery.of(context).padding.top / 2 : 0,
     );
+    // Add this function at the top level of your file
+
     cubits.welcome.update(active: true, child: const WelcomeBackScreen());
     cubits.menu.update(active: true);
     cubits.ignore.update(active: true);
