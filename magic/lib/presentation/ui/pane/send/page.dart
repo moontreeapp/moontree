@@ -489,29 +489,59 @@ class SendContentState extends State<SendContent> {
                 ],
               );
             }),
-        GestureDetector(
-            onTap: () => validateForm() && validateVisibleForm()
-                ? _send()
-                : cubits.toast.flash(
-                    msg: const ToastMessage(
-                    title: 'Unable to Continue:',
-                    text: 'Invalid form',
-                  )),
-            child: Container(
+        BlocBuilder<SendCubit, SendState>(
+          buildWhen: (SendState prior, SendState current) =>
+              prior.scanActive != current.scanActive,
+          builder: (BuildContext context, SendState state) {
+            if (state.scanActive) {
+              return TextButton(
+                onPressed: () => cubits.send.update(scanActive: false),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Container(
+                  height: 64,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'CLOSE SCANNER',
+                    style: AppText.button1.copyWith(
+                      fontSize: 16,
+                      color: AppColors
+                          .button, // Use the same color as the original button background
+                    ),
+                  ),
+                ),
+              );
+            }
+            return GestureDetector(
+              onTap: () => validateForm() && validateVisibleForm()
+                  ? _send()
+                  : cubits.toast.flash(
+                      msg: const ToastMessage(
+                      title: 'Unable to Continue:',
+                      text: 'Invalid form',
+                    )),
+              child: Container(
                 height: 64,
                 decoration: ShapeDecoration(
-                  //color: validateForm() ? AppColors.button : AppColors.disabled,
                   color: AppColors.button,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28 * 100),
                   ),
                 ),
                 child: Center(
-                    child: Text(
-                  'PREVIEW',
-                  style: AppText.button1
-                      .copyWith(fontSize: 16, color: Colors.white),
-                )))),
+                  child: Text(
+                    'PREVIEW',
+                    style: AppText.button1
+                        .copyWith(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ]));
 }
 
