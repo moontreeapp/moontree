@@ -93,7 +93,7 @@ class AppColors {
   ];
 
   // not defined in figma:
-  static const Color divider = black12;
+  static const Color divider = white12;
   static const Color disabled = black38;
   static const Color androidSystemBar = Colors.black;
   static const Color androidNavigationBar = Colors.black;
