@@ -168,12 +168,14 @@ class Pane {
   });
 
   factory Pane.init(double height, Appbar appbar, Navbar navbar) => Pane._(
-      maxHeight: height - appbar.height,
-      midHeight: height * _midHeightPercent,
+      maxHeight: (height + appbar.statusBarHeight) - appbar.height,
+      midHeight: (height + appbar.statusBarHeight) * _midHeightPercent,
       minHeight: navbar.height + 0,
-      maxHeightPercent: (height - appbar.height) / height,
+      maxHeightPercent: ((height - appbar.statusBarHeight) - appbar.height) /
+          (height - appbar.statusBarHeight),
       midHeightPercent: _midHeightPercent,
-      minHeightPercent: (navbar.height + 0) / height);
+      minHeightPercent:
+          (navbar.height + 0) / (height - appbar.statusBarHeight));
 }
 
 class Canvas {
