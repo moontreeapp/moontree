@@ -197,7 +197,9 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
               duration: slowFadeDuration,
               curve: Curves.easeOutCubic,
               alignment: Alignment.center,
-              height: screen.height,
+              height: Platform.isAndroid
+                  ? MediaQuery.of(context).size.height
+                  : screen.height,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.vertical(
                       top: Radius.circular(_isAnimating ? 30 : 0)),
