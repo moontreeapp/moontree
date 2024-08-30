@@ -8,11 +8,18 @@ import 'package:client_front/infrastructure/repos/receive.dart';
 import 'package:client_front/presentation/components/components.dart'
     as components;
 
-Future<void> preDeriveInBackground(
-        LeaderWallet wallet, ChainNet chainNet) async =>
-    await Future(() => preDerive(wallet, chainNet));
+Future<Iterable<Address>> preDeriveInBackground(
+  LeaderWallet wallet,
+  ChainNet chainNet, {
+  required Future<int> Function(List<String>) callback,
+}) async =>
+    await Future(() => preDerive(wallet, chainNet, callback));
 
-Future<void> preDerive(LeaderWallet wallet, ChainNet chainNet) async {
+Future<Iterable<Address>> preDerive(
+  LeaderWallet wallet,
+  ChainNet chainNet,
+  Future<int> Function(List<String>) callback,
+) async {
   components.cubits.receiveView.setAddress(wallet, force: true);
   final externalAddress =
       await ReceiveRepo(wallet: wallet, change: false).fetch();
@@ -31,22 +38,30 @@ Future<void> preDerive(LeaderWallet wallet, ChainNet chainNet) async {
       internalNeed.remove(address.index);
     }
   }
+  final List<Address> ret = [];
   for (final x in externalNeed) {
     await Future.delayed(Duration(seconds: 1));
-    await pros.addresses.save(await wallet.generateAddress(
+    final Address add = await wallet.generateAddress(
       index: x,
       exposure: NodeExposure.external,
       chain: chainNet.chain,
       net: chainNet.net,
-    ));
+    );
+    ret.add(add);
+    await pros.addresses.save(add);
   }
   for (final i in internalNeed) {
     await Future.delayed(Duration(seconds: 1));
-    await pros.addresses.save(await wallet.generateAddress(
+    Address add = await wallet.generateAddress(
       index: i,
       exposure: NodeExposure.internal,
       chain: chainNet.chain,
       net: chainNet.net,
-    ));
+    );
+    ret.add(add);
+    await pros.addresses.save(add);
   }
+  print(
+      'balances according to electrumx: ${await callback(ret.map((Address a) => a.scripthash).toList())}');
+  return ret;
 }

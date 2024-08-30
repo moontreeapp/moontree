@@ -146,9 +146,9 @@ class _LoginCreateNativeState extends State<LoginCreateNative> {
 
   Future<void> submitSetup() async {
     if (Platform.isIOS) {
-      await AppSettings.openSecuritySettings();
+      await AppSettings.openAppSettings();
     } else {
-      await AppSettings.openSecuritySettings();
+      await AppSettings.openAppSettings();
       // android only alternative
       //import 'package:open_settings/open_settings.dart';
       //await OpenSettings.openSecuritySetting();

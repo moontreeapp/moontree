@@ -1,7 +1,4 @@
 import 'dart:typed_data';
-
-import 'package:dart_cid/src/decode_cid.dart' show CIDInfo;
-import 'package:dart_cid/dart_cid.dart' show CID;
 import 'package:client_back/streams/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

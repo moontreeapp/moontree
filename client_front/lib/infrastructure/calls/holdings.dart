@@ -35,12 +35,18 @@ class HoldingBalancesCall extends ServerCall {
     required Chaindata chain,
     required List<String> roots,
     required List<ByteData> h160s,
-  }) async =>
-      await runCall(() async => await client.balances.get(
-            chainName: chain.name,
-            xpubkeys: roots,
-            h160s: h160s,
-          ));
+  }) async {
+    print('h160s: $chain');
+    print('h160s: $h160s');
+    print('roots: $roots');
+    //xpub6EtVexS6kuhFVjQNB1qGSUGumEnQVF3xp3926wy92W4GJS7ymvhbWkVzBTjXQ4u8EixkRXmE8N538zei6kCdAyZkWKcZBZ7BSdYm9uNPn9i
+    //xpub6EtVexS6kuhFZ22PBCWPC97VNkZ9vufPdrTp2ZDDApasumxt8f8CREs4Zv6nDdFKByp8BPZ5tFFj6ZG4eeerNkDM7mJ2PZfBDeB5LjdRiXY
+    return await runCall(() async => await client.balances.get(
+          chainName: chain.name,
+          xpubkeys: roots,
+          h160s: h160s,
+        ));
+  }
 
   Future<List<server.BalanceView>> call() async {
     List<String>? roots;
@@ -74,7 +80,7 @@ class HoldingBalancesCall extends ServerCall {
     for (final txView in history) {
       txView.chain = chain.name + '_' + net.name + 'net';
     }
-
+    print('history: $history');
     return sortedHoldings(history, chain.symbol);
   }
 

@@ -1,0 +1,85 @@
+hide all assets with balance 0 on simple
+
+pagination loading cycle fix
+pagination not working after 2nd call
+pagination not working - not triggered at end of list
+not pulling more than 44, 45, 46, transactions?
+
+manual refresh doesn't pull latest data -test more
+cleanup all other prints
+race condition sometimes shows "no transactions"
+race condition sometimes shows previous holding's
+
+should make a new endpoint to know which holdings have transactions and which don't immediately
+
+TESTING:
+
+DONE snackbar on recieve
+DONE balance not updating on receive
+DONE     - subscription
+DONE     - on home page trigger
+DONE Send button
+DONE    "unable to send" - unspents?
+DONE menu settings, waiting before Magic logo to come in
+DONE no transaction history - just say it on transaction history
+DONE fix chips spacing
+DONE hide chips
+DONE balance less than 1 no send
+
+DONE delete on send, can't change
+DONE "insufficient balance" instead of "you do not have that much"
+DONE view details white38
+DONE fix wording white on paste popup
+DONE remove border on send
+DONE snackbar - fade at the same time
+
+DONE balance
+DONE transactions - refresh on subscription
+DONE sending - why sometimes unable to send - signature issue again? - its vouts from multiple wallets...
+DONE discovered server is giving a bad highest count or something
+DONE no - our derivation was being capped by our old gap concept - removed.
+DONE manually verified our balance
+DONE send to self shows change as positive... on toast.
+DONE transactions - state issue - not clearing
+DONE transactions - issues downloading history sometimes
+DONE derivation monopolizes everything
+DONE fix front pane drop down menu glitch
+DONE conform coinspec, remove usd, make clickable
+DONE update about page
+DONE update need help page
+DONE Help? Chat now -> page, our twitter
+DONE transactions - pagination...
+DONE draggable errors if tragged on transaction view
+
+DONE balance issue - reconnect and grab balances on app active
+DONE snackbar on send - "Sent: 1,000"
+DONE if USD value not known or 0 don't show icon to switch to usd
+DONE fix amount send usd glitch
+DONE make send amounts comma separated values
+DONE implement phone security on all things sensitive (backup, and send)
+DONE conform about and help page buttons
+DONE add scan to homepage
+DONE updating holding at all times
+DONE remove security from sending
+DONE test
+
+security 2.0
+    create caching mechanism for xpubs
+    cache xpubs during process of saving privkeys (triggered by import or autocreate)
+    on startup load in xpubs and then continue derivation process as normal
+    guard any loading of privkeys with login
+    load privkeys on send screen and backup screen
+    refactor as needed
+    test
+
+
+server - send - fails with dust (on send all?)
+
+some kind of scroll issue (maybe when app is inactivated?)...
+
+test on IOS...
+
+security: (requires rework)
+    don't load in the entire wallet except when needed.
+    instead load wallet addresses to get balance and stuff.
+    encrypt privkey inside secure storage

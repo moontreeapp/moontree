@@ -26,13 +26,13 @@ dependencies:
   flutter:
     sdk: flutter
   #file_picker: ^4.1.5 # to import the file that we saved
-  file_picker: ^5.2.0+1 # to import the file that we saved
+  file_picker: ^6.2.0 # to import the file that we saved
   flutter_dotenv: ^5.0.2
-  flutter_keyboard_visibility: ^5.3.0
-  flutter_launcher_icons: ^0.10.0
-  flutter_secure_storage: ^6.0.0 # Configure MacOS Version: You also need to add Keychain Sharing as capability to your macOS runner.
+  flutter_keyboard_visibility: ^6.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_secure_storage: ^9.0.0 # Configure MacOS Version: You also need to add Keychain Sharing as capability to your macOS runner.
   flutter_spinkit: ^5.1.0
-  flutter_svg: ^1.1.5
+  flutter_svg: ^2.0.9
   flutter_windowmanager: ^0.2.0 # percision disable screenshot android
   fnv: ^1.0.1
   hive_flutter: ^1.1.0
@@ -41,28 +41,28 @@ dependencies:
   intl: ^0.17.0
   local_auth: ^2.1.6
   #local_auth_android: ^1.0.28 # not pulling this version automatically
-  lottie: ^1.4.3
-  material_design_icons_flutter: ^5.0.6996
+  lottie: ^3.0.0
+  material_design_icons_flutter: ^7.0.7296
   path_provider: ^2.0.11 # to get the correct path to store our file
-  permission_handler: ^10.1.0 # to handle the permissions to read and write files
+  permission_handler: ^11.3.0 # to handle the permissions to read and write files
   #platform_device_id: ^1.0.1 # fails on dart 3.0
   device_info_plus: ^9.0.1
   proclaim: ^4.1.1
   collection: ^1.17.1
   crypto: ^3.0.2
-  image: ^3.2.2
+  image: ^4.1.7
   tuple: ^2.0.0
   logging: ^1.1.0
   qr_code_scanner: ^1.0.1
   qr_flutter: ^4.1.0
   rxdart: ^0.27.5
   share: ^2.0.4 # to share the file that we create // old
-  shimmer: ^2.0.0
+  shimmer: ^3.0.0
   ulid: ^2.0.0
   url_launcher: ^6.1.6
   http: ^0.13.5
   #open_settings: ^2.0.2
-  app_settings: ^4.1.8
+  app_settings: ^5.1.1
   bloc: ^8.1.0
   flutter_bloc: ^8.1.1
   equatable: ^2.0.5
@@ -75,7 +75,7 @@ dependencies:
   moontree_utils: ^1.1.7
   #serverpod_flutter: ^0.9.21
   serverpod_flutter: ^1.1.0
-  dart_cid: ^0.1.0
+  cid: ^1.0.1
 
 dependency_overrides:
   client_back:

@@ -1,3 +1,4 @@
+import 'package:client_front/application/wallet/holdings/ebalances.dart';
 import 'package:collection/collection.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
@@ -94,8 +95,12 @@ class WalletHoldingsViewCubit extends Cubit<WalletHoldingsViewState> {
         /// using hive, because we might covert this to a web wallet too, idk.
         /// we might have more luck making use of compute in that case. maybe.
         //compute(preDerive, [wallet, chainNet]);
-        preDeriveInBackground(wallet, chainNet);
-
+        preDeriveInBackground(wallet, chainNet,
+            callback: (List<String> scripthashes) async =>
+                await getElectrumxBalancesInBackground(
+                  scripthashes: scripthashes,
+                  chain: chainNet!.chain,
+                ));
         startedDerive[chainNet] =
             (state.startedDerive[chainNet] ?? []) + [wallet];
       }

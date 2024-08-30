@@ -1,3 +1,14 @@
+buildscript {
+    ext.kotlin_version = '1.7.10'
+}
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'dev.flutter.flutter-gradle-plugin'
+}
+
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -17,19 +28,9 @@ if (flutterRoot == null) {
     throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
+def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
 
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "com.moontree.mobile"
@@ -54,14 +55,22 @@ android {
         applicationId "com.moontree.mobile"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21 // flutter secure storage requires minSdkVersion to >= 18, don't remember what requires 21
         //minSdkVersion flutter.minSdkVersion
+        //minSdkVersion 19 
+        minSdkVersion 21 // https://pub.dev/packages/camera
         targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
+        versionCode flutterVersionCode.toInteger() // line 68
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     signingConfigs {
+        //debug {
+        //    keyAlias 'hypyr'
+        //    keyPassword 'hypyrreality'
+        //    storeFile file('hypyr-keystore.jks')
+        //    storePassword 'hypyrreality'
+        //}
         release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
@@ -69,13 +78,19 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
+
     buildTypes {
+        //debug {
+        //    // TODO: Add your own signing config for the release build.
+        //    // Signing with the debug keys for now, so `flutter run --release` works.
+        //    signingConfig signingConfigs.debug
+        //}
         release {
             signingConfig signingConfigs.release
         }
     }
-
 }
+
 
 flutter {
     source '../..'

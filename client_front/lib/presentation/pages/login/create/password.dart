@@ -194,7 +194,8 @@ class _LoginCreatePasswordState extends State<LoginCreatePassword> {
     return passwordText == null &&
         password.text.length >= minimumLength &&
         confirm.text == password.text &&
-        isConsented;
+        true;
+    //isConsented;
   }
 
   Future<void> consentToAgreements() async {

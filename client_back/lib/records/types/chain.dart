@@ -52,6 +52,28 @@ extension ChainExtension on Chain {
       return Chain.none;
     }
   }
+
+  String get domain {
+    switch (this) {
+      case Chain.ravencoin:
+        return 'moontree.com';
+      case Chain.evrmore:
+        return 'moontree.com';
+      case Chain.none:
+        return 'moontree.com';
+    }
+  }
+
+  int get port {
+    switch (this) {
+      case Chain.ravencoin:
+        return 50002;
+      case Chain.evrmore:
+        return 50022;
+      case Chain.none:
+        return 50002;
+    }
+  }
 }
 
 String symbolName(String symbol) {

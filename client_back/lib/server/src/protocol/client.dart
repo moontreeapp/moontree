@@ -413,7 +413,7 @@ class Client extends _i1.ServerpodClient {
   }) : super(
           host,
           _i18.Protocol(),
-          context: context,
+          //context: context,
           authenticationKeyManager: authenticationKeyManager,
         ) {
     addresses = _EndpointAddresses(this);

@@ -6,8 +6,10 @@
   "configurations": [
   
     {
-      "name": "client_front",
-      "cwd": "client_front",
+      "name": "magic",
+      "cwd": "magic",
+      //"name": "client_front",
+      //"cwd": "client_front",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart"
