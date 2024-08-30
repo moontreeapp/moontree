@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,12 +19,12 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
       width: screen.width,
-      height: screen.height,
+      height: screen.height - screen.appbar.statusBarHeight,
       alignment: Alignment.topCenter,
       child: Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
           width: screen.width,
-          height: screen.canvas.maxHeight,
+          height: screen.canvas.maxHeight - screen.appbar.statusBarHeight,
           alignment: Alignment.center,
           child: const AnimatedMenu()));
 }
@@ -250,10 +252,23 @@ class MenuItem extends StatelessWidget {
                       child: visual));
         }
         if (state.prior?.sub == SubMenu.none && state.sub == sub) {
+          print(screen.appbar.statusBarHeight);
+          print(screen.height);
+          print(screen.height -
+              (screen.appbar.statusBarHeight + screen.appbar.height) /
+                  -screen.height);
           return onChosen ??
               SlideOver(
                   begin: const Offset(0, 0),
-                  end: Offset(0, -.866 - ((index - 1) * 0.014)),
+                  end: Offset(
+                      0,
+                      (Platform.isIOS
+                              ? screen.height -
+                                  (screen.appbar.statusBarHeight +
+                                          screen.appbar.height) /
+                                      -screen.height
+                              : -.866) -
+                          ((index - 1) * 0.014)),
                   delay: fadeDuration * index * .5,
                   duration: fadeDuration,
                   curve: Curves.easeInOutCubic,

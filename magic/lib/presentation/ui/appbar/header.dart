@@ -14,7 +14,6 @@ import 'package:magic/presentation/ui/appbar/scanner.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/animations.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
-import 'package:magic/presentation/widgets/assets/status.dart';
 import 'package:magic/services/services.dart' show screen;
 
 class AppbarHeader extends StatelessWidget {
@@ -30,16 +29,16 @@ class AppbarHeader extends StatelessWidget {
           width: screen.width,
           alignment: Alignment.center,
           //padding: const EdgeInsets.only(left: 24, top: 16.0, right: 24),
-          child: const Row(
+          child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Leading(),
-                Expanded(child: Title()),
+                const Leading(),
+                const Expanded(child: Title()),
                 //AppLifecycleReactor(),
-                AppActivityWatcher(),
-                ConnectionIndicator(),
-                Scanner(),
+                const AppActivityWatcher(),
+                const ConnectionIndicator(),
+                if (!Platform.isIOS) const Scanner(),
 
                 //GestureDetector(
                 //    //onTap: () => cubits.fade.update(fade: FadeEvent.fadeOut),
