@@ -1,0 +1,22 @@
+flutter upgrade
+flutter clean
+rm -f ios/Podfile.lock
+rm -rf ios
+flutter pub get
+flutter pub outdated
+flutter pub upgrade
+flutter create --platform=ios .
+cd ios
+add to Info.plist
+    <key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to scan QR codes</string>
+sudo gem install cocoapods
+pod cache clean --all
+pod repo update
+cd ..
+flutter build ios --no-codesign
+open ios/Runner.xcworkspace
+
+open -a Simulator

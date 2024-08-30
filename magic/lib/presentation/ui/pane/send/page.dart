@@ -635,6 +635,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             keyboardType: widget.keyboardType,
             cursorColor: AppColors.white67,
             style: const TextStyle(color: AppColors.white87),
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
               border: InputBorder.none,
               fillColor: Colors.transparent,
