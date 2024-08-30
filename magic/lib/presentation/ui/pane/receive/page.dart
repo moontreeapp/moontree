@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:magic/cubits/cubit.dart';
@@ -124,21 +126,22 @@ class ReceivePage extends StatelessWidget {
                           'COPY',
                           style: AppText.button1.copyWith(color: Colors.white),
                         ))))),
-            const SizedBox(width: 16),
-            Expanded(
-                child: Container(
-                    height: 64,
-                    decoration: ShapeDecoration(
-                      color: AppColors.button,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28 * 100),
+            if (!Platform.isIOS) const SizedBox(width: 16),
+            if (!Platform.isIOS)
+              Expanded(
+                  child: Container(
+                      height: 64,
+                      decoration: ShapeDecoration(
+                        color: AppColors.button,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28 * 100),
+                        ),
                       ),
-                    ),
-                    child: Center(
-                        child: Text(
-                      'SHARE',
-                      style: AppText.button1.copyWith(color: Colors.white),
-                    )))),
+                      child: Center(
+                          child: Text(
+                        'SHARE',
+                        style: AppText.button1.copyWith(color: Colors.white),
+                      )))),
           ],
         )
       ]));

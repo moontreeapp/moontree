@@ -252,23 +252,17 @@ class MenuItem extends StatelessWidget {
                       child: visual));
         }
         if (state.prior?.sub == SubMenu.none && state.sub == sub) {
-          print(screen.appbar.statusBarHeight);
-          print(screen.height);
-          print(screen.height -
-              (screen.appbar.statusBarHeight + screen.appbar.height) /
-                  -screen.height);
+          final y = (-1 *
+                  (screen.canvas.midHeight -
+                      (screen.appbar.height / 2) -
+                      screen.appbar.statusBarHeight) /
+                  screen.canvas.midHeight) +
+              (-1 * index * 0.024);
           return onChosen ??
               SlideOver(
                   begin: const Offset(0, 0),
                   end: Offset(
-                      0,
-                      (Platform.isIOS
-                              ? screen.height -
-                                  (screen.appbar.statusBarHeight +
-                                          screen.appbar.height) /
-                                      -screen.height
-                              : -.866) -
-                          ((index - 1) * 0.014)),
+                      0, (Platform.isIOS ? y : -.866 - ((index - 1) * 0.014))),
                   delay: fadeDuration * index * .5,
                   duration: fadeDuration,
                   curve: Curves.easeInOutCubic,
