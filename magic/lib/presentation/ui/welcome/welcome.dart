@@ -187,7 +187,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
             top: _isAnimating
                 ? screen.height -
                     screen.pane.midHeight +
-                    (Platform.isIOS ? screen.appbar.height : 0)
+                    (Platform.isIOS ? screen.appbar.statusBarHeight + 8 : 0)
                 : 0,
             left: 0,
             right: 0,
