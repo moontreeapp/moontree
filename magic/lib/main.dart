@@ -89,7 +89,7 @@ class MagicApp extends StatelessWidget {
                     child: MultiBlocProvider(
                       providers: cubits.providers,
                       child: Platform.isIOS
-                          ? const MaestroLayeri()
+                          ? const MaestroLayerIOS()
                           : const MaestroLayer(),
                     ))),
           ],
@@ -141,47 +141,6 @@ Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
   });
 }
 
-class MaestroLayerIOS extends StatefulWidget {
-  const MaestroLayerIOS({super.key});
-
-  @override
-  State<MaestroLayerIOS> createState() => _MaestroLayerIOSState();
-}
-
-class _MaestroLayerIOSState extends State<MaestroLayerIOS> {
-  @override
-  Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final safeAreaHeight = MediaQuery.of(context).padding.top +
-        MediaQuery.of(context).padding.bottom;
-    final usableHeight = screenHeight;
-    _initializeServices(context, usableHeight, screenWidth);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.background,
-      body: SizedBox(
-        height: screen.height,
-        width: screen.width,
-        child: const Stack(
-          alignment: Alignment.bottomCenter,
-          children: <Widget>[
-            AppbarLayer(),
-            CanvasLayer(),
-            PaneLayer(),
-            //NavbarLayer(),
-            PanelLayer(),
-            IgnoreLayer(),
-            WelcomeLayer(),
-            ToastLayer(),
-            //const TutorialLayer(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class MaestroLayer extends StatelessWidget {
   const MaestroLayer({super.key});
 
@@ -220,14 +179,14 @@ class MaestroLayer extends StatelessWidget {
   }
 }
 
-class MaestroLayeri extends StatefulWidget {
-  const MaestroLayeri({super.key});
+class MaestroLayerIOS extends StatefulWidget {
+  const MaestroLayerIOS({super.key});
 
   @override
-  State<MaestroLayeri> createState() => _MaestroLayeriState();
+  State<MaestroLayerIOS> createState() => _MaestroLayerIOSState();
 }
 
-class _MaestroLayeriState extends State<MaestroLayeri> {
+class _MaestroLayerIOSState extends State<MaestroLayerIOS> {
   Widget? cachedLayout;
 
   @override
