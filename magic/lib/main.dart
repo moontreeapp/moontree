@@ -88,10 +88,97 @@ class MagicApp extends StatelessWidget {
                     behavior: NoGlowScrollBehavior(),
                     child: MultiBlocProvider(
                       providers: cubits.providers,
-                      child: const MaestroLayer(),
+                      child: Platform.isIOS
+                          ? const MaestroLayerIOS()
+                          : const MaestroLayer(),
                     ))),
           ],
         ));
+  }
+}
+
+void _initializeServices(BuildContext context, double height, double width) {
+  //infraServices.version.rotate(
+  //  infraServices.version.byPlatform(Platform.isIOS ? 'ios' : 'android'),
+  //);
+  if (initialized &&
+      screen.initializedWidth == width &&
+      screen.initializedHeight == height) {
+    return;
+  }
+  init(
+    height:
+        height + (Platform.isIOS ? MediaQuery.of(context).padding.top / 2 : 0),
+    width: width,
+    statusBarHeight:
+        Platform.isIOS ? MediaQuery.of(context).padding.top / 2 : 0,
+  );
+  // Add this function at the top level of your file
+
+  cubits.welcome.update(active: true, child: const WelcomeBackScreen());
+  cubits.menu.update(active: true);
+  cubits.ignore.update(active: true);
+  cubits.pane.update(
+    active: true,
+    initial: screen.pane.midHeightPercent,
+    min: screen.pane.minHeightPercent,
+    max: screen.pane.maxHeightPercent,
+  );
+  cubits.pane.update(height: screen.pane.midHeight);
+  cubits.ignore.update(active: false);
+  _clearAuthAndLoadKeys(context);
+}
+
+/// here we load keys so everything is ready for the user after they login,
+/// they can't get past the welcome screen without logging in. the only way
+/// to get the user experience wanted.
+Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
+  await securityService.clearAuthentication();
+  await cubits.keys.load();
+  subscription.ensureConnected().then((_) {
+    subscription.setupSubscriptions(cubits.keys.master);
+    cubits.wallet.populateAssets().then((_) => maestro.activateHome());
+  });
+}
+
+class MaestroLayerIOS extends StatefulWidget {
+  const MaestroLayerIOS({super.key});
+
+  @override
+  State<MaestroLayerIOS> createState() => _MaestroLayerIOSState();
+}
+
+class _MaestroLayerIOSState extends State<MaestroLayerIOS> {
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final safeAreaHeight = MediaQuery.of(context).padding.top +
+        MediaQuery.of(context).padding.bottom;
+    final usableHeight = screenHeight;
+    _initializeServices(context, usableHeight, screenWidth);
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: AppColors.background,
+      body: SizedBox(
+        height: screen.height,
+        width: screen.width,
+        child: const Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            AppbarLayer(),
+            CanvasLayer(),
+            PaneLayer(),
+            //NavbarLayer(),
+            PanelLayer(),
+            IgnoreLayer(),
+            WelcomeLayer(),
+            ToastLayer(),
+            //const TutorialLayer(),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -102,22 +189,14 @@ class MaestroLayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        if (Platform.isIOS) {
-          final safeAreaHeight = MediaQuery.of(context).padding.top +
-              MediaQuery.of(context).padding.bottom;
-          final usableHeight = constraints.maxHeight;
-          _initializeServices(context, usableHeight, constraints.maxWidth);
-        } else {
-          _initializeServices(
-              context, constraints.maxHeight, constraints.maxWidth);
-        }
-        // Add this function at the top level of your file
-
+        _initializeServices(
+            context, constraints.maxHeight, constraints.maxWidth);
         final scaffold = Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: AppColors.background,
           body: SizedBox(
             height: screen.height,
+            width: screen.width,
             child: const Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
@@ -138,49 +217,5 @@ class MaestroLayer extends StatelessWidget {
         return scaffold;
       },
     );
-  }
-
-  void _initializeServices(BuildContext context, double height, double width) {
-    //infraServices.version.rotate(
-    //  infraServices.version.byPlatform(Platform.isIOS ? 'ios' : 'android'),
-    //);
-    if (initialized &&
-        screen.initializedWidth == width &&
-        screen.initializedHeight == height) {
-      return;
-    }
-    init(
-      height: height +
-          (Platform.isIOS ? MediaQuery.of(context).padding.top / 2 : 0),
-      width: width,
-      statusBarHeight:
-          Platform.isIOS ? MediaQuery.of(context).padding.top / 2 : 0,
-    );
-    // Add this function at the top level of your file
-
-    cubits.welcome.update(active: true, child: const WelcomeBackScreen());
-    cubits.menu.update(active: true);
-    cubits.ignore.update(active: true);
-    cubits.pane.update(
-      active: true,
-      initial: screen.pane.midHeightPercent,
-      min: screen.pane.minHeightPercent,
-      max: screen.pane.maxHeightPercent,
-    );
-    cubits.pane.update(height: screen.pane.midHeight);
-    cubits.ignore.update(active: false);
-    _clearAuthAndLoadKeys(context);
-  }
-
-  /// here we load keys so everything is ready for the user after they login,
-  /// they can't get past the welcome screen without logging in. the only way
-  /// to get the user experience wanted.
-  Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
-    await securityService.clearAuthentication();
-    await cubits.keys.load();
-    subscription.ensureConnected().then((_) {
-      subscription.setupSubscriptions(cubits.keys.master);
-      cubits.wallet.populateAssets().then((_) => maestro.activateHome());
-    });
   }
 }
