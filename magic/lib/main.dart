@@ -89,7 +89,7 @@ class MagicApp extends StatelessWidget {
                     child: MultiBlocProvider(
                       providers: cubits.providers,
                       child: Platform.isIOS
-                          ? const MaestroLayerIOS()
+                          ? const MaestroLayeri()
                           : const MaestroLayer(),
                     ))),
           ],
@@ -217,5 +217,71 @@ class MaestroLayer extends StatelessWidget {
         return scaffold;
       },
     );
+  }
+}
+
+class MaestroLayeri extends StatefulWidget {
+  const MaestroLayeri({super.key});
+
+  @override
+  State<MaestroLayeri> createState() => _MaestroLayeriState();
+}
+
+class _MaestroLayeriState extends State<MaestroLayeri> {
+  Widget? cachedLayout;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        if (cachedLayout == null || hasSignificantChange(constraints)) {
+          cachedLayout = buildLayout(constraints);
+        }
+        return cachedLayout!;
+      },
+    );
+  }
+
+  bool hasSignificantChange(BoxConstraints constraints) {
+    // Implement logic to check if the constraints have changed significantly
+    // E.g., return constraints.maxHeight > 500; or similar logic.
+    return false; // Placeholder for actual logic
+  }
+
+  Widget buildLayout(BoxConstraints constraints) {
+    if (Platform.isIOS) {
+      final screenHeight = MediaQuery.of(context).size.height;
+      final screenWidth = MediaQuery.of(context).size.width;
+      final safeAreaHeight = MediaQuery.of(context).padding.top +
+          MediaQuery.of(context).padding.bottom;
+      final usableHeight = screenHeight;
+      _initializeServices(context, usableHeight, screenWidth);
+    } else {
+      _initializeServices(context, constraints.maxHeight, constraints.maxWidth);
+    }
+    final scaffold = Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: AppColors.background,
+      body: SizedBox(
+        height: screen.height,
+        width: screen.width,
+        child: const Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            AppbarLayer(),
+            CanvasLayer(),
+            PaneLayer(),
+            //NavbarLayer(),
+            PanelLayer(),
+            IgnoreLayer(),
+            WelcomeLayer(),
+            ToastLayer(),
+            //const TutorialLayer(),
+          ],
+        ),
+      ),
+    );
+    //return Platform.isIOS ? SafeArea(child: scaffold) : scaffold;
+    return scaffold;
   }
 }
