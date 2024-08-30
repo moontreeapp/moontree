@@ -250,7 +250,7 @@ class DraggablePaneBackground extends StatelessWidget {
         alignment: Alignment.topCenter,
         //padding: EdgeInsets.only(bottom: screen.navbar.height),
         decoration: const BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.foreground,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),

@@ -184,7 +184,11 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
           AnimatedPositioned(
             duration: slowFadeDuration,
             curve: Curves.easeInOutCubic,
-            top: _isAnimating ? screen.height - screen.pane.midHeight : 0,
+            top: _isAnimating
+                ? screen.height -
+                    screen.pane.midHeight -
+                    (Platform.isIOS ? screen.appbar.statusBarHeight : 0)
+                : 0,
             left: 0,
             right: 0,
             child: AnimatedContainer(
