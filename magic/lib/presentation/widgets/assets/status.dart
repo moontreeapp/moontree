@@ -4,7 +4,6 @@
 /// as such, I think this component need to be attached to each page.
 
 import 'package:flutter/material.dart';
-//import 'package:magic/infrastructure/streams/streams.dart' as streams;
 import 'package:magic/cubits/cubit.dart';
 
 const AppLifecycleReactor status = AppLifecycleReactor();
@@ -34,17 +33,13 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    //streams.app.active.status.add(state.name);
     print('app state: ${state.name}');
-    //cubits.app.update(status: state.name);
+    cubits.app.update(status: state.name);
     //setState(() {
     //  _notification = state;
     //});
   }
 
   @override
-  Widget build(BuildContext context) {
-    return const SizedBox.shrink();
-    //return Visibility(visible: false, child: Text(_notification.name));
-  }
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

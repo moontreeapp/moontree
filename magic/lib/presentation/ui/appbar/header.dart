@@ -36,7 +36,7 @@ class AppbarHeader extends StatelessWidget {
               children: [
                 Leading(),
                 Expanded(child: Title()),
-                AppLifecycleReactor(),
+                //AppLifecycleReactor(),
                 AppActivityWatcher(),
                 ConnectionIndicator(),
                 Scanner(),
