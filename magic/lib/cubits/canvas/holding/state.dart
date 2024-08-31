@@ -59,7 +59,7 @@ class HoldingState with EquatableMixin, PriorActiveStateMixin {
   String get part => holding.coin.humanString().split('.').last != '0'
       ? holding.coin.humanString().split('.').last
       : '';
-  String get usd => '\$ ${holding.fiat}';
+  String get usd => '\$${holding.fiat}';
   String get wholeTransaction =>
       transaction?.coin.humanString().split('.').first ?? '0';
   String get partTransaction =>
