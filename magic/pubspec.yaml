@@ -129,6 +129,7 @@ flutter:
     - assets/icons/transaction/
     - assets/logos/
     - assets/animated/
+    - assets/placeholders/
 
   fonts:
     - family: Pacifico

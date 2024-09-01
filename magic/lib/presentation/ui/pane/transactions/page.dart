@@ -33,13 +33,17 @@ class TransactionsPage extends StatelessWidget {
             if (state.isSubmitting &&
                 state.transactions.isEmpty &&
                 state.mempool.isEmpty) {
-              return const LoadingIndicator();
+              // return const LoadingIndicator();
+              return ListView.builder(
+                padding: const EdgeInsets.only(top: 8),
+                itemCount: 3,
+                itemBuilder: (context, index) =>
+                    const TransactionItemPlaceholder(),
+              );
             }
             if (state.transactions.isEmpty && state.mempool.isEmpty) {
               return const FadeIn(
-                delay: slowFadeDuration,
-                child: NoHistoryMessage(),
-              );
+                  delay: slowFadeDuration, child: NoHistoryMessage());
             }
 
             ///BlocBuilder<HoldingCubit, HoldingState>(
@@ -172,4 +176,32 @@ class NoHistoryMessage extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: AppColors.white24, fontWeight: FontWeight.bold)),
           ]));
+}
+
+class TransactionItemPlaceholder extends StatelessWidget {
+  const TransactionItemPlaceholder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      leading: Container(
+        width: screen.iconHuge,
+        height: screen.iconHuge,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.frontItem,
+        ),
+      ),
+      title: Container(
+        width: double.infinity,
+        height: 24,
+        decoration: BoxDecoration(
+          color: AppColors.frontItem,
+          borderRadius:
+              BorderRadius.circular(12), // Adjust this value as needed
+        ),
+      ),
+    );
+  }
 }
