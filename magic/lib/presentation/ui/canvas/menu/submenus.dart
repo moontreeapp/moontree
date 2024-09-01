@@ -184,7 +184,7 @@ class LinkOutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: screen.width * .618,
+      width: screen.width * .53,
       child: ElevatedButton(
         onPressed: _launchURL,
         style: ElevatedButton.styleFrom(
@@ -194,7 +194,7 @@ class LinkOutButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
