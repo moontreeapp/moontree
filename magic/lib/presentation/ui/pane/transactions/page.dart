@@ -42,8 +42,7 @@ class TransactionsPage extends StatelessWidget {
               );
             }
             if (state.transactions.isEmpty && state.mempool.isEmpty) {
-              return const FadeIn(
-                  delay: slowFadeDuration, child: NoHistoryMessage());
+              return const NoHistoryMessage();
             }
 
             ///BlocBuilder<HoldingCubit, HoldingState>(
