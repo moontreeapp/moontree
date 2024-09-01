@@ -171,8 +171,9 @@ class NoHistoryMessage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.list_rounded, size: 64, color: AppColors.white24),
-            Text('No Transactions',
+            const Icon(Icons.history_rounded,
+                size: 64, color: AppColors.white12),
+            Text('No History Yet',
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: AppColors.white24, fontWeight: FontWeight.bold)),
           ]));
