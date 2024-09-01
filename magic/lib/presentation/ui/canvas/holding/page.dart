@@ -179,8 +179,10 @@ class AnimatedCoinSpec extends StatelessWidget {
                         borderRadius: BorderRadius.circular(100),
                       ),
                       child: SvgPicture.asset(
-                        '${TransactionIcons.base}/send.${TransactionIcons.ext}',
+                        '${TransactionIcons.base}/outgoing-raw.${TransactionIcons.ext}',
                         alignment: Alignment.center,
+                        colorFilter: const ColorFilter.mode(
+                            AppColors.white87, BlendMode.srcIn),
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -201,8 +203,10 @@ class AnimatedCoinSpec extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: SvgPicture.asset(
-                  '${TransactionIcons.base}/receive.${TransactionIcons.ext}',
+                  '${TransactionIcons.base}/incoming-raw.${TransactionIcons.ext}',
                   alignment: Alignment.center,
+                  colorFilter: const ColorFilter.mode(
+                      AppColors.white87, BlendMode.srcIn),
                 ),
               ),
               const SizedBox(height: 2),
