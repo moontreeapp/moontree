@@ -76,6 +76,7 @@ class MagicApp extends StatelessWidget {
     return MaterialApp(
         title: 'Magic Wallet',
         debugShowCheckedModeBanner: false,
+        color: AppColors.background,
         key: routes.appKey,
         theme: CustomTheme.lightTheme,
         darkTheme: CustomTheme.lightTheme,
