@@ -13,6 +13,7 @@ import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/pane/send/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/animations/loading.dart';
 import 'package:magic/services/services.dart';
 import 'package:wallet_utils/wallet_utils.dart';
@@ -321,13 +322,17 @@ class SendContentState extends State<SendContent> {
                 prior.scanActive != current.scanActive,
             builder: (BuildContext context, SendState state) {
               if (state.scanActive) {
-                return Container(
+                return FadeIn(
+                  duration: fadeDuration,
+                  child: Container(
                     padding: const EdgeInsets.only(top: 8),
                     constraints: BoxConstraints(maxHeight: screen.width - 32),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(28.0),
                       child: const QRViewable(),
-                    ));
+                    ),
+                  ),
+                );
               }
               if (state.prior?.scanActive == true) {
                 addressText.text = cubits.send.state.address;
