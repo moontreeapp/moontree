@@ -149,8 +149,11 @@ class MnemonicWallet extends Jsonable {
     return seedWallets[blockchain]!;
   }
 
-  String? pubkey(Blockchain blockchain) =>
-      seedWallet(blockchain).hdWallet.pubKey;
+  String? pubkey(Blockchain blockchain) {
+    print(
+        '$mnemonic - ${blockchain.name} - ${seedWallet(blockchain).hdWallet.pubKey}');
+    return seedWallet(blockchain).hdWallet.pubKey;
+  }
 
   Map<Exposure, String> rootsMap(Blockchain blockchain) {
     _roots[blockchain] ??= {

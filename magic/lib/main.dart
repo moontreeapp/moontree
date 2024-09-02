@@ -135,7 +135,7 @@ void _initializeServices(BuildContext context, double height, double width) {
 /// to get the user experience wanted.
 Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
   await securityService.clearAuthentication();
-  await cubits.keys.load();
+  await cubits.keys.loadPrivKeys();
   subscription.ensureConnected().then((_) {
     subscription.setupSubscriptions(cubits.keys.master);
     cubits.wallet.populateAssets().then((_) => maestro.activateHome());

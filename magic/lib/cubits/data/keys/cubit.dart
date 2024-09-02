@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/mnemonic.dart';
-import 'package:magic/domain/concepts/storage.dart';
+import 'package:magic/domain/storage/secure.dart';
 import 'package:magic/domain/wallet/utils.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/services.dart';
@@ -32,10 +32,12 @@ class KeysCubit extends UpdatableCubit<KeysState> {
 
   @override
   void update({
+    List<String>? xpubs,
     List<String>? mnemonics,
     List<String>? wifs,
     bool? submitting,
   }) {
+    syncXPubs(xpubs);
     syncMnemonics(mnemonics);
     syncKeypairs(wifs);
     //print(mnemonics);
@@ -46,6 +48,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     //  print(master.mnemonicWallets.first.roots(Blockchain.ravencoinMain));
     //} catch (e) {}
     emit(KeysState(
+      xpubs: xpubs ?? state.xpubs,
       mnemonics: mnemonics ?? state.mnemonics,
       wifs: wifs ?? state.wifs,
       submitting: submitting ?? state.submitting,
@@ -83,13 +86,28 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     return true;
   }
 
-  Future<void> load() async {
+  Future<void> loadXPubs() async {
+    update(submitting: true);
+
+    update(
+      xpubs: jsonDecode(
+              ((await storage()).read(key: StorageKey.xpub.key())) ?? '[]')
+          .cast<String>(),
+      submitting: false,
+    );
+    build();
+  }
+
+  Future<void> loadPrivKeys() async {
     update(submitting: true);
     update(
-      mnemonics: jsonDecode(
-              (await storage.read(key: StorageKey.mnemonics.key())) ?? '[]')
+      mnemonics: jsonDecode((await secureStorage.read(
+                  key: SecureStorageKey.mnemonics.key())) ??
+              '[]')
           .cast<String>(),
-      wifs: jsonDecode((await storage.read(key: StorageKey.wifs.key())) ?? '[]')
+      wifs: jsonDecode(
+              (await secureStorage.read(key: SecureStorageKey.wifs.key())) ??
+                  '[]')
           .cast<String>(),
       submitting: false,
     );
@@ -108,9 +126,24 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   }
 
   Future<void> dump() async {
-    storage.write(
-        key: StorageKey.mnemonics.key(), value: jsonEncode(state.mnemonics));
-    storage.write(key: StorageKey.wifs.key(), value: jsonEncode(state.wifs));
+    secureStorage.write(
+        key: SecureStorageKey.mnemonics.key(),
+        value: jsonEncode(state.mnemonics));
+    secureStorage.write(
+        key: SecureStorageKey.wifs.key(), value: jsonEncode(state.wifs));
+  }
+
+  Future<void> syncXPubs(List<String>? xpubs) async {
+    //if (xpubs != null) {
+    //  final existingXpubs =
+    //      master.mnemonicWallets.map((e) => e.mnemonic).toSet();
+    //  final addable = xpubs.toSet().difference(existingXpubs);
+    //  final removable = existingMnemonics.difference(xpubs.toSet());
+    //  master.mnemonicWallets.addAll(
+    //      addable.map((mnemonic) => MnemonicWallet(mnemonic: mnemonic)));
+    //  master.mnemonicWallets.removeWhere(
+    //      (mnemonicWallet) => removable.contains(mnemonicWallet.mnemonic));
+    //}
   }
 
   Future<void> syncMnemonics(List<String>? mnemonics) async {

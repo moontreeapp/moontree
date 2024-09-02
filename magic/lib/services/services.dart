@@ -1,5 +1,5 @@
 export 'package:magic/services/derivation.dart';
-export 'package:magic/services/preferences.dart';
+export 'package:magic/domain/storage/storage.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,8 +19,8 @@ late ScreenFlags screenflags;
 late SystemBackButton back;
 late Maestro maestro;
 //late Keyboard keyboard;
-late FlutterSecureStorage storage;
-const Future<SharedPreferences> Function() preferences =
+late FlutterSecureStorage secureStorage;
+const Future<SharedPreferences> Function() storage =
     SharedPreferences.getInstance;
 final SubscriptionService subscription = SubscriptionService();
 //late ServerCall server;
@@ -38,7 +38,7 @@ void init({
   keys.init();
   //keyboard = Keyboard();
   maestro = Maestro();
-  storage = const FlutterSecureStorage();
+  secureStorage = const FlutterSecureStorage();
   //server = ServerCall();
   rates = RateWaiter(
       evrGrabber: RateGrabber(symbol: 'EVR'),

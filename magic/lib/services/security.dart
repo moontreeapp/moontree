@@ -1,7 +1,7 @@
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:magic/domain/concepts/storage.dart';
-import 'package:magic/services/services.dart' show storage;
+import 'package:magic/domain/storage/secure.dart';
+import 'package:magic/services/services.dart' show secureStorage;
 
 class SecurityService {
   final LocalAuthentication _localAuth = LocalAuthentication();
@@ -52,13 +52,13 @@ class SecurityService {
   }
 
   Future<bool> hasUserAuthenticated() async =>
-      await storage.read(key: StorageKey.authed.key()) == 'true';
+      await secureStorage.read(key: SecureStorageKey.authed.key()) == 'true';
 
-  Future<void> _setUserAuthenticated() async =>
-      await storage.write(key: StorageKey.authed.key(), value: 'true');
+  Future<void> _setUserAuthenticated() async => await secureStorage.write(
+      key: SecureStorageKey.authed.key(), value: 'true');
 
   Future<void> clearAuthentication() async =>
-      await storage.delete(key: StorageKey.authed.key());
+      await secureStorage.delete(key: SecureStorageKey.authed.key());
 }
 
 final securityService = SecurityService();

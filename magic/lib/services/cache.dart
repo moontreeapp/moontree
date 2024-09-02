@@ -11,17 +11,17 @@ class Cache {
     required String type,
     required Iterable<SerializableEntity> records,
   }) async =>
-      (await preferences()).write(
-          key: PreferenceKey.cache.key(key),
+      (await storage()).write(
+          key: StorageKey.cache.key(key),
           value:
               jsonEncode(records.map((r) => CachedServerObject.from(r, type))));
 
   static Future<String?> read({required String key}) async =>
-      (await preferences()).read(key: PreferenceKey.cache.key(key));
+      (await storage()).read(key: StorageKey.cache.key(key));
 
   static Future<T?> readAs<T>({required String key}) async =>
       Cache.build<T>(CachedServerObject.read(
-          (await preferences()).read(key: PreferenceKey.cache.key(key)) ??
+          (await storage()).read(key: StorageKey.cache.key(key)) ??
               '{"type": "null", "json": "null"}'));
 
   static T build<T>(CachedServerObject x) =>

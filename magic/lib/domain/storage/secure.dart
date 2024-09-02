@@ -1,17 +1,17 @@
 /* a place to hold all the keys we use to store data on the device. */
 
-enum StorageKey {
+enum SecureStorageKey {
   mnemonics,
   wifs,
   authed;
 
   String key([String? id]) {
     switch (this) {
-      case StorageKey.mnemonics:
+      case SecureStorageKey.mnemonics:
         return 'mnemonics';
-      case StorageKey.wifs:
+      case SecureStorageKey.wifs:
         return 'wifs';
-      case StorageKey.authed:
+      case SecureStorageKey.authed:
         return 'authed';
       default:
         return name;

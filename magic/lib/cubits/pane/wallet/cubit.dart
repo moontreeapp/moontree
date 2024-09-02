@@ -10,7 +10,7 @@ import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
-import 'package:magic/domain/concepts/storage.dart';
+import 'package:magic/domain/storage/secure.dart';
 import 'package:magic/domain/utils/extensions/list.dart';
 import 'package:magic/presentation/ui/canvas/balance/chips.dart';
 import 'package:magic/presentation/utils/range.dart';
@@ -201,8 +201,8 @@ class WalletCubit extends UpdatableCubit<WalletState> {
             .map((e) => e.coin.toFiat(e.rate).value)
             .sumNumbers()));
     // save to disk, so we can load it on next app start
-    preferences().then((obj) => obj.write(
-        key: PreferenceKey.rate.key(rate.id),
+    storage().then((obj) => obj.write(
+        key: StorageKey.rate.key(rate.id),
         value: rate.rate.toStringAsFixed(4)));
   }
 

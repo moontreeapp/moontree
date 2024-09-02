@@ -4,7 +4,7 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/money/currency.dart' as currency;
 import 'package:magic/domain/concepts/money/security.dart';
-import 'package:magic/domain/concepts/storage.dart';
+import 'package:magic/domain/storage/secure.dart';
 import 'package:magic/services/rate.dart';
 import 'package:magic/domain/concepts/money/rate.dart';
 import 'package:magic/services/services.dart';
@@ -37,10 +37,9 @@ class RateWaiter extends Trigger {
       _save(rateGrabber: rateGrabber, rate: await _rate(rateGrabber));
 
   Future<double?> _getExistingRate(RateGrabber rateGrabber) async {
-    Future<double?> fromCache() async => double.tryParse((await preferences())
-            .read(
-                key: PreferenceKey.rate
-                    .key(_toRate(rateGrabber: rateGrabber, rate: 0)!.id)) ??
+    Future<double?> fromCache() async => double.tryParse((await storage()).read(
+            key: StorageKey.rate
+                .key(_toRate(rateGrabber: rateGrabber, rate: 0)!.id)) ??
         '');
 
     switch (rateGrabber.symbol) {
