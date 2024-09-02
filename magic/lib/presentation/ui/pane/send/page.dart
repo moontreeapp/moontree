@@ -369,8 +369,8 @@ class SendContentState extends State<SendContent> {
                   CustomTextField(
                     textInputAction: TextInputAction.done,
                     controller: amountText,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(signed: false),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        signed: false, decimal: true),
                     labelText: amountDollars ? 'Amount in USD' : 'Amount',
                     suffixIcon: ['0', '-'].contains(
                             Coin.fromString(amountText.text.replaceAll(',', ''))
