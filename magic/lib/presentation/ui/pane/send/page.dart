@@ -29,7 +29,6 @@ class SendPage extends StatelessWidget {
           prior.estimate != current.estimate,
       builder: (BuildContext context, SendState state) {
         if (state.isSubmitting) {
-          // return const LoadingIndicator();
           return const ConfirmContentPlaceholder();
         }
         if (state.unsignedTransaction != null && state.estimate != null) {
