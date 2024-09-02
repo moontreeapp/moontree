@@ -72,14 +72,16 @@ security 2.0
     refactor as needed
     test
 
+inactivity timeout 60s - lock
+canvas color (scrim, blurred scrim)
+
+all behaviors (menu and canvas stuff) should lock and unlock the maestro stuff
+snackbar on connection status change
+camera fade in fade out
+update send quantity
 
 server - send - fails with dust (on send all?)
 
 some kind of scroll issue (maybe when app is inactivated?)...
 
 test on IOS...
-
-security: (requires rework)
-    don't load in the entire wallet except when needed.
-    instead load wallet addresses to get balance and stuff.
-    encrypt privkey inside secure storage
