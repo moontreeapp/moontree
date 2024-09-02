@@ -10,6 +10,7 @@ import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
+import 'package:magic/presentation/ui/pane/send/confirm_placeholder.dart';
 import 'package:magic/presentation/ui/pane/send/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
@@ -28,7 +29,8 @@ class SendPage extends StatelessWidget {
           prior.estimate != current.estimate,
       builder: (BuildContext context, SendState state) {
         if (state.isSubmitting) {
-          return const LoadingIndicator();
+          // return const LoadingIndicator();
+          return const ConfirmContentPlaceholder();
         }
         if (state.unsignedTransaction != null && state.estimate != null) {
           //return LoginNative(
