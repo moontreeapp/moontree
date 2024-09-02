@@ -103,6 +103,7 @@ class SubscriptionService {
               '+${Coin.fromInt(satsConfirmed + satsUnconfirmed).humanString()}',
         ));
       }
+      await Future.delayed(const Duration(seconds: 1));
       await cubits.wallet.populateAssets(); // chain specific
       print(
           'refresh: $chainName, $symbol, ${cubits.holding.state.holding.symbol}, $realSymbol, ${cubits.transactions.state.active}');

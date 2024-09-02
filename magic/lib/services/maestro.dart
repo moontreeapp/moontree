@@ -27,6 +27,20 @@ class Maestro {
   //    cubits.navbar.state.section == NavbarSection.none;
   //_sectionCubits.every((cubit) => !(cubit as Cubit).state.active);
 
+  void lockedRun({Function? fn, Duration? duration}) {
+    if (locked) {
+      return;
+    } else {
+      locked = true;
+    }
+    fn?.call();
+    if (duration != null) {
+      Future.delayed(duration, () => locked = false);
+    } else {
+      locked = false;
+    }
+  }
+
   void sectionBack({Function? beforeBack, Function? afterBack}) {
     //cubits.navbar.mid();
     //cubits.mint.update(active: false);

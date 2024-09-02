@@ -75,13 +75,21 @@ security 2.0
 inactivity timeout 60s - lock
 canvas color (scrim, blurred scrim)
 
+add satori logo
+
 all behaviors (menu and canvas stuff) should lock and unlock the maestro stuff
 snackbar on connection status change
 camera fade in fade out
 update send quantity
+
+transaction history - ordering issue...
+
+balance taking time to update...
 
 server - send - fails with dust (on send all?)
 
 some kind of scroll issue (maybe when app is inactivated?)...
 
 test on IOS...
+
+pairing with chrome extension
