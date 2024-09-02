@@ -250,24 +250,26 @@ class AppActivityWatcher extends StatelessWidget {
         print('AppActivityWatcher: ${state.status}');
         if (state.status == 'resumed') {
           print('refreshing assets');
-          cubits.wallet.populateAssets().then((value) {
-            print('refreshing holding');
-            if (cubits.holding.state.holding != const Holding.empty() &&
-                cubits.wallet.state.holdings.isNotEmpty) {
-              print(
-                  'refreshing holding ${cubits.holding.state.holding.symbol} ${[
-                for (final x in cubits.wallet.state.holdings) x.symbol
-              ]}');
-              cubits.holding.update(
-                  holding: cubits.wallet
-                      .getHoldingFrom(holding: cubits.holding.state.holding));
-            }
-            if (cubits.transactions.state.active) {
-              print('refreshing transactions');
-              //cubits.transactions.clearTransactions();
-              cubits.transactions.populateAllTransactions(
-                  holding: cubits.holding.state.holding);
-            }
+          Future.delayed(const Duration(seconds: 1)).then((_) {
+            cubits.wallet.populateAssets().then((value) {
+              print('refreshing holding');
+              if (cubits.holding.state.holding != const Holding.empty() &&
+                  cubits.wallet.state.holdings.isNotEmpty) {
+                print(
+                    'refreshing holding ${cubits.holding.state.holding.symbol} ${[
+                  for (final x in cubits.wallet.state.holdings) x.symbol
+                ]}');
+                cubits.holding.update(
+                    holding: cubits.wallet
+                        .getHoldingFrom(holding: cubits.holding.state.holding));
+              }
+              if (cubits.transactions.state.active) {
+                print('refreshing transactions');
+                //cubits.transactions.clearTransactions();
+                cubits.transactions.populateAllTransactions(
+                    holding: cubits.holding.state.holding);
+              }
+            });
           });
         }
         return const SizedBox.shrink();
