@@ -58,16 +58,29 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
   Future<int> _getIndex({
     required Blockchain blockchain,
     required Exposure exposure,
-    required MnemonicWallet mnemonicWallet,
+    XPubWallet? xPubWallet,
+    MnemonicWallet? mnemonicWallet,
     int? overrideIndex,
-  }) async =>
-      overrideIndex ??
-      (await ReceiveCall(
+  }) async {
+    if (overrideIndex != null) return overrideIndex;
+    if (mnemonicWallet != null) {
+      return (await ReceiveCall.fromMnemonicWallet(
         blockchain: blockchain,
         mnemonicWallet: mnemonicWallet,
         exposure: exposure,
       ).call())
           .value;
+    }
+    if (xPubWallet != null) {
+      return (await ReceiveCall.fromXPubWallet(
+        blockchain: blockchain,
+        xPubWallet: xPubWallet,
+        exposure: exposure,
+      ).call())
+          .value;
+    }
+    return 20;
+  }
 
   Future<void> populateAddresses(
     Blockchain blockchain, {
@@ -99,21 +112,42 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
             ?.address);
   }
 
+  /// derive all addresses for all blockchains
+  /// use mnemonicWallets if they exist, else use xPubWallets
   Future<void> deriveAll(List<Blockchain> blockchains) async {
-    for (var blockchain in blockchains) {
-      for (var mnemonicWallet in cubits.keys.master.mnemonicWallets) {
-        mnemonicWallet.seedWallet(blockchain).derive({
-          Exposure.internal: await _getIndex(
-            blockchain: blockchain,
-            exposure: Exposure.internal,
-            mnemonicWallet: mnemonicWallet,
-          ),
-          Exposure.external: await _getIndex(
-            blockchain: blockchain,
-            exposure: Exposure.external,
-            mnemonicWallet: mnemonicWallet,
-          ),
-        });
+    if (cubits.keys.master.mnemonicWallets.isNotEmpty) {
+      for (var blockchain in blockchains) {
+        for (var mnemonicWallet in cubits.keys.master.mnemonicWallets) {
+          mnemonicWallet.seedWallet(blockchain).derive({
+            Exposure.internal: await _getIndex(
+              blockchain: blockchain,
+              exposure: Exposure.internal,
+              mnemonicWallet: mnemonicWallet,
+            ),
+            Exposure.external: await _getIndex(
+              blockchain: blockchain,
+              exposure: Exposure.external,
+              mnemonicWallet: mnemonicWallet,
+            ),
+          });
+        }
+      }
+    } else {
+      for (var xPubWallet in cubits.keys.master.xPubWallets) {
+        if (blockchains.contains(xPubWallet.blockchain)) {
+          xPubWallet.seedWallet.derive({
+            Exposure.internal: await _getIndex(
+              blockchain: xPubWallet.blockchain,
+              exposure: Exposure.internal,
+              xPubWallet: xPubWallet,
+            ),
+            Exposure.external: await _getIndex(
+              blockchain: xPubWallet.blockchain,
+              exposure: Exposure.external,
+              xPubWallet: xPubWallet,
+            ),
+          });
+        }
       }
     }
   }
@@ -122,27 +156,44 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
     Blockchain blockchain, {
     int? overrideIndex,
   }) async {
-    final seedWallet =
-        cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain);
-    if (seedWallet.highestIndex.isEmpty) {
-      cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain).derive({
-        Exposure.external: await _getIndex(
-            blockchain: blockchain,
-            exposure: Exposure.external,
-            mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
-            overrideIndex: overrideIndex),
-      });
-    } else {
-      cubits.keys.master.mnemonicWallets.first
-          .seedWallet(blockchain)
-          .derive({Exposure.external: 0});
-    }
-    update(
-        address: cubits.keys.master.mnemonicWallets.first
+    if (cubits.keys.master.mnemonicWallets.isNotEmpty) {
+      final seedWallet =
+          cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain);
+      if (seedWallet.highestIndex.isEmpty) {
+        cubits.keys.master.mnemonicWallets.first.seedWallet(blockchain).derive({
+          Exposure.external: await _getIndex(
+              blockchain: blockchain,
+              exposure: Exposure.external,
+              mnemonicWallet: cubits.keys.master.mnemonicWallets.first,
+              overrideIndex: overrideIndex),
+        });
+      } else {
+        cubits.keys.master.mnemonicWallets.first
             .seedWallet(blockchain)
-            .externals
-            .lastOrNull
-            ?.address);
+            .derive({Exposure.external: 0});
+      }
+      update(
+          address: cubits.keys.master.mnemonicWallets.first
+              .seedWallet(blockchain)
+              .externals
+              .lastOrNull
+              ?.address);
+    } else {
+      final xPubWallet = cubits.keys.master.xPubWallets
+          .firstWhere((xPubWallet) => xPubWallet.blockchain == blockchain);
+      if (xPubWallet.seedWallet.highestIndex.isEmpty) {
+        xPubWallet.seedWallet.derive({
+          Exposure.external: await _getIndex(
+              blockchain: blockchain,
+              exposure: Exposure.external,
+              xPubWallet: xPubWallet,
+              overrideIndex: overrideIndex),
+        });
+      } else {
+        xPubWallet.seedWallet.derive({Exposure.external: 0});
+      }
+      update(address: xPubWallet.seedWallet.externals.last.address);
+    }
   }
 
   Future<String> populateChangeAddress(

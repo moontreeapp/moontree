@@ -12,6 +12,7 @@
 */
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:hex/hex.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:convert/convert.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -69,10 +70,9 @@ class MasterWallet extends Jsonable {
         'keypairWallets': keypairWallets.map((m) => m.asMap).toList(),
       };
 
-  Set<String> get xPubAddresses => (xPubWallets
-      .expand((m) => m.seedWallets.values.expand((s) => s.subwallets.values
-          .expand((subList) => subList.map((sub) => sub.address ?? ''))))
-      .toSet());
+  Set<String> get xPubAddresses => (xPubWallets.expand((m) => m
+      .seedWallet.subwallets.values
+      .expand((subList) => subList.map((sub) => sub.address ?? '')))).toSet();
 
   Set<String> get mnemonicAddresses => (mnemonicWallets
       .expand((m) => m.seedWallets.values.expand((s) => s.subwallets.values
@@ -167,9 +167,25 @@ class MnemonicWallet extends Jsonable {
     return seedWallets[blockchain]!;
   }
 
+  /// this can derive neutered wallets.
+  String? xpub(Blockchain blockchain) => seedWallet(blockchain).xpub;
+
+  /// this is the compressed version of the xpub. not very useful in HD context.
   String? pubkey(Blockchain blockchain) {
-    print(
-        '$mnemonic - ${blockchain.name} - ${seedWallet(blockchain).hdWallet.pubKey}');
+    //print('${blockchain.name} - ${seedWallet(blockchain).xpub}');
+    //print('${blockchain.name} - ${seedWallet(blockchain).hdWallet.pubKey}');
+    //print(
+    //    '${blockchain.name} - ${seedWallet(blockchain).root(Exposure.external)} - external');
+    //print(
+    //    '${blockchain.name} - ${seedWallet(blockchain).root(Exposure.internal)} - internal');
+    //Ravencoin - xpub661My...
+    //Ravencoin - 0379c9413...
+    //Ravencoin - xpub6EyL2...
+    //Ravencoin - xpub6EyL2...
+    //Evrmore   - xpub661My...
+    //Evrmore   - 0379c9413...
+    //Evrmore   - xpub6EyL2...
+    //Evrmore   - xpub6EyL2...
     return seedWallet(blockchain).hdWallet.pubKey;
   }
 
@@ -263,6 +279,7 @@ class HDWalletIndexed extends HDWallet {
 class SeedWallet {
   final Blockchain blockchain;
   final HDWallet hdWallet;
+  String? _xpub;
   final Map<Exposure, List<HDWallet>> subwallets = {
     Exposure.external: [],
     Exposure.internal: [],
@@ -277,6 +294,14 @@ class SeedWallet {
   final Map<Exposure, int> gap = {};
 
   SeedWallet({required this.blockchain, required this.hdWallet});
+
+  String? get xpub => extendedPublicKey;
+  String? get extendedPublicKey =>
+      _xpub ??
+      () {
+        _xpub = hdWallet.base58;
+        return _xpub;
+      }();
 
   List<HDWallet> get externals => subwallets[Exposure.external]!;
   List<HDWallet> get internals => subwallets[Exposure.internal]!;

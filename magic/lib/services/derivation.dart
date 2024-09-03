@@ -21,7 +21,7 @@ Future<void> deriveInBackground([String? mnemonic]) async {
           }
           if (seedWallet.highestIndex.isEmpty) {
             seedWallet.derive({
-              exposure: (await ReceiveCall(
+              exposure: (await ReceiveCall.fromMnemonicWallet(
                 blockchain: blockchain,
                 mnemonicWallet: mnemonicWallet,
                 exposure: exposure,

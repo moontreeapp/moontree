@@ -158,6 +158,11 @@ class KeysCubit extends UpdatableCubit<KeysState> {
       master.mnemonicWallets.removeWhere(
           (mnemonicWallet) => removable.contains(mnemonicWallet.mnemonic));
     }
+    for (final blockchain in Blockchain.values) {
+      for (final mnemonicWallet in master.mnemonicWallets) {
+        mnemonicWallet.pubkey(blockchain);
+      }
+    }
   }
 
   Future<void> syncKeypairs(List<String>? wifs) async {

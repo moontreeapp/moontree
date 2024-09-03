@@ -1,5 +1,5 @@
 /*
-what would be more ideal is to have the server endpoint accept a list, and it 
+what would be more ideal is to have the server endpoint accept a list, and it
 returns a list in the same order or even a map.
 */
 
@@ -11,20 +11,41 @@ import 'package:magic/services/calls/server.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 class ReceiveCall extends ServerCall {
-  late MnemonicWallet mnemonicWallet;
+  late String root;
   late Blockchain blockchain;
   late Exposure exposure;
 
   ReceiveCall({
-    required this.mnemonicWallet,
+    required this.root,
     required this.blockchain,
-    this.exposure=Exposure.external,
+    this.exposure = Exposure.external,
   });
 
+  factory ReceiveCall.fromXPubWallet({
+    required XPubWallet xPubWallet,
+    required Blockchain blockchain,
+    Exposure exposure = Exposure.external,
+  }) =>
+      ReceiveCall(
+        root: xPubWallet.xpub,
+        blockchain: blockchain,
+        exposure: exposure,
+      );
+
+  factory ReceiveCall.fromMnemonicWallet({
+    required MnemonicWallet mnemonicWallet,
+    required Blockchain blockchain,
+    Exposure exposure = Exposure.external,
+  }) =>
+      ReceiveCall(
+        root: mnemonicWallet.root(blockchain, exposure),
+        blockchain: blockchain,
+        exposure: exposure,
+      );
+
   Future<CommInt> emptyAddressBy({required Chaindata chain}) async =>
-      await runCall(() async => await client.addresses.nextEmptyIndex(
-          chainName: chain.name,
-          xpubkey: mnemonicWallet.root(blockchain, exposure)));
+      await runCall(() async => await client.addresses
+          .nextEmptyIndex(chainName: chain.name, xpubkey: root));
 
   Future<CommInt> call() async {
     late CommInt index;
