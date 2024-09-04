@@ -335,8 +335,9 @@ class SendContentState extends State<SendContent> {
                   ),
                 );
               }
-              if (state.prior?.scanActive == true) {
+              if (state.fromQR == true) {
                 addressText.text = cubits.send.state.address;
+                cubits.send.update(fromQR: false);
               }
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
