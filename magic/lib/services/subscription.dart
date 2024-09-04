@@ -227,7 +227,7 @@ class SubscriptionService {
     final roots = <String>[];
     final h160s = <String>[];
     // todo: add evrmoreMain
-    for (final mnemonicWallet in master.mnemonicWallets) {
+    for (final mnemonicWallet in master.derivationWallets) {
       roots.addAll(mnemonicWallet.roots(Blockchain.ravencoinMain));
       //roots.addAll(mnemonicWallet.roots(Blockchain.evrmoreMain));
     }

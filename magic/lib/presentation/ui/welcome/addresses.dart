@@ -103,11 +103,12 @@ class AddressesPageState extends State<AddressesPage> {
                       ),
                       child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: cubits.keys.master.mnemonicWallets.length,
+                          itemCount:
+                              cubits.keys.master.derivationWallets.length,
                           itemBuilder: (context, int index) {
                             for (int index = 0;
                                 index <
-                                    cubits.keys.master.mnemonicWallets.length;
+                                    cubits.keys.master.derivationWallets.length;
                                 index++) {
                               print('Wallet Index: $index');
                               for (final blockchain in Blockchain.values) {
@@ -115,7 +116,7 @@ class AddressesPageState extends State<AddressesPage> {
                                 for (final exposure in Exposure.values) {
                                   print('${exposure.name}');
                                   for (final subwallet in cubits
-                                      .keys.master.mnemonicWallets[index]
+                                      .keys.master.derivationWallets[index]
                                       .seedWallet(blockchain)
                                       .subwallets[exposure]!) {
                                     print(
@@ -128,7 +129,7 @@ class AddressesPageState extends State<AddressesPage> {
                                 padding:
                                     const EdgeInsets.only(top: 16, bottom: 16),
                                 decoration: index <
-                                        cubits.keys.master.mnemonicWallets
+                                        cubits.keys.master.derivationWallets
                                                 .length -
                                             1
                                     ? const BoxDecoration(
@@ -146,7 +147,7 @@ class AddressesPageState extends State<AddressesPage> {
                                   for (final blockchain in Blockchain.values)
                                     for (final exposure in Exposure.values)
                                       for (final subwallet in cubits
-                                          .keys.master.mnemonicWallets[index]
+                                          .keys.master.derivationWallets[index]
                                           .seedWallet(blockchain)
                                           .subwallets[exposure]!)
                                         Container(

@@ -99,7 +99,7 @@ class SendCubit extends UpdatableCubit<SendState> {
         await cubits.receive.populateChangeAddress(blockchain);
     //cubits.receive.state.changeAddress.isEmpty ? : ;
     UnsignedTransactionResultCalled? unsigned = await UnsignedTransactionCall(
-      mnemonicWallets: cubits.keys.master.mnemonicWallets,
+      derivationWallets: cubits.keys.master.derivationWallets,
       keypairWallets: cubits.keys.master.keypairWallets,
       symbol: symbol ?? state.asset,
       sats: sendAllCoinFlag ? -1 : state.sendRequest?.sendAmountAsSats ?? 0,
@@ -168,8 +168,8 @@ class SendCubit extends UpdatableCubit<SendState> {
           vinIndex? how is it used?
           */
 
-          final wallet = cubits.keys.master.mnemonicWallets.firstWhere(
-              (MnemonicWallet wallet) => wallet
+          final wallet = cubits.keys.master.derivationWallets.firstWhere(
+              (DerivationWallet wallet) => wallet
                   .roots(state.unsignedTransaction!.security.blockchain)
                   .contains(walletRoot),
               orElse: () =>
@@ -203,7 +203,7 @@ class SendCubit extends UpdatableCubit<SendState> {
           // not sure this works right - what if we have multiple KeypairWallets?
           // I don't think this necessarily selects the correct one. perhaps this
           // never happens since e.item2.contains(':') is probably indicitive of
-          // MnemonicWallet.
+          // DerivationWallet.
           //if (keyPair == null) {
           //  keyPairByPath[
           //        '${exposure.index}/${int.parse(walletPubKeyAndDerivationIndex[1])}'] ??=

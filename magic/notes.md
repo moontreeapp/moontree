@@ -1374,7 +1374,7 @@ I/flutter ( 5516): privateKeySource: xpub6EPLto1UvaKqiJSsBntBY6F4yb8Z68u9ZA6v2Jd
 I/flutter ( 5516): vinIndex: 0
 I/flutter ( 5516): walletRoot: xpub6EPLto1UvaKqiJSsBntBY6F4yb8Z68u9ZA6v2Jd37pTto3HzRWrrELDR6zVUXQhr3AvVwDq3CnqiQzod1cgpyHrKD3CbUBotsoBfn5bnKCg
 I/flutter ( 5516): derivationIndex: 21
-I/flutter ( 5516): wallet: Instance of 'MnemonicWallet', wallet.roots: Closure: (Blockchain) => List<String> from Function 'roots':.
+I/flutter ( 5516): wallet: Instance of 'DerivationWallet', wallet.roots: Closure: (Blockchain) => List<String> from Function 'roots':.
 2
 I/flutter ( 5516): p: m/44'/175'/0'/1/21
 I/flutter ( 5516): address: EPTCNCFjuSP7pJLVYsF6hD64dzXFsMuo3a

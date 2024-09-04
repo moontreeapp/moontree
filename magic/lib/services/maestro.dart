@@ -293,7 +293,7 @@ class Maestro {
     /// place for testing stuff since mint is unused:
     ///
     //print(makeMnemonic());
-    //print(cubits.keys.master.mnemonicWallets.first.mnemonic);
+    //print(cubits.keys.master.derivationWallets.first.mnemonic);
     //print(cubits.keys.state.mnemonics);
     //cubits.keys.reset();
     //print(cubits.keys.dump());
@@ -301,7 +301,7 @@ class Maestro {
     //print("storage.read(key: 'key') ${await storage.read(key: 'key')}");
     //cubits.keys.update(mnemonics: [makePubKey()]);
     //cubits.keys.dump();
-    //MnemonicWallet wallet = MnemonicWallet(mnemonic: makeMnemonic());
+    //DerivationWallet wallet = DerivationWallet(mnemonic: makeMnemonic());
     //print('mnemonic: ${wallet.mnemonic}');
     //print('entropy: ${wallet.entropy}');
     //print('seed: ${wallet.seed}');

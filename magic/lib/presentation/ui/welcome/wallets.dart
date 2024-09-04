@@ -82,14 +82,15 @@ class WalletsPageState extends State<WalletsPage> {
                       ),
                       child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: cubits.keys.master.mnemonicWallets.length +
-                              cubits.keys.master.keypairWallets.length,
+                          itemCount:
+                              cubits.keys.master.derivationWallets.length +
+                                  cubits.keys.master.keypairWallets.length,
                           itemBuilder: (context, int index) =>
                               //Container(
                               //    padding:
                               //        const EdgeInsets.only(top: 16, bottom: 16),
                               //    decoration: index <
-                              //            cubits.keys.master.mnemonicWallets
+                              //            cubits.keys.master.derivationWallets
                               //                    .length +
                               //                cubits.keys.master.keypairWallets
                               //                    .length -
@@ -106,7 +107,9 @@ class WalletsPageState extends State<WalletsPage> {
                               //          )
                               //        : null,
                               //    child:
-                              index < cubits.keys.master.mnemonicWallets.length
+                              index <
+                                      cubits
+                                          .keys.master.derivationWallets.length
                                   ? ListTile(
                                       dense: true,
                                       visualDensity: VisualDensity.compact,
@@ -120,10 +123,10 @@ class WalletsPageState extends State<WalletsPage> {
                                         onPressed: () async {
                                           await cubits.keys.removeMnemonic(
                                               cubits
-                                                  .keys
-                                                  .master
-                                                  .mnemonicWallets[index]
-                                                  .mnemonic);
+                                                      .keys
+                                                      .master
+                                                      .derivationWallets[index]
+                                                      .mnemonic!);
                                           await cubits.keys.dump();
 
                                           /// do we need to resetup our subscriptions? yes.
@@ -156,8 +159,11 @@ class WalletsPageState extends State<WalletsPage> {
                                               .keys
                                               .master
                                               .keypairWallets[index -
-                                                  cubits.keys.master
-                                                      .mnemonicWallets.length -
+                                                  cubits
+                                                      .keys
+                                                      .master
+                                                      .derivationWallets
+                                                      .length -
                                                   1]
                                               .wif);
                                           await cubits.keys.dump();

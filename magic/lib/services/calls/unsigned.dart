@@ -9,7 +9,7 @@ import 'package:moontree_utils/moontree_utils.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 class UnsignedTransactionCall extends ServerCall {
-  late List<MnemonicWallet> mnemonicWallets;
+  late List<DerivationWallet> derivationWallets;
   late List<KeypairWallet> keypairWallets;
   late Blockchain blockchain;
   late String symbol;
@@ -18,7 +18,7 @@ class UnsignedTransactionCall extends ServerCall {
   final int sats;
   final String? memo;
   UnsignedTransactionCall({
-    required this.mnemonicWallets,
+    required this.derivationWallets,
     required this.keypairWallets,
     required this.blockchain,
     required this.address,
@@ -61,7 +61,7 @@ class UnsignedTransactionCall extends ServerCall {
 
   Future<UnsignedTransactionResultCalled?> call() async {
     final String? serverSymbol = (blockchain.isCoin(symbol) ? null : symbol);
-    final roots = mnemonicWallets
+    final roots = derivationWallets
         .map((e) => e.roots(blockchain))
         .expand((e) => e)
         .toList();
@@ -92,7 +92,7 @@ class UnsignedTransactionCall extends ServerCall {
   ) =>
       UnsignedTransactionResultCalled(
         unsignedTransactionResults: records,
-        mnemonicWallets: mnemonicWallets,
+        derivationWallets: derivationWallets,
         keypairWallets: keypairWallets,
         address: address,
         sats: sats,

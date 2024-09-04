@@ -15,11 +15,11 @@ import 'package:magic/services/calls/server.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 class HoldingBalancesCall extends ServerCall {
-  late List<MnemonicWallet> mnemonicWallets;
+  late List<DerivationWallet> derivationWallets;
   late List<KeypairWallet> keypairWallets;
   late Blockchain blockchain;
   HoldingBalancesCall({
-    required this.mnemonicWallets,
+    required this.derivationWallets,
     required this.keypairWallets,
     required this.blockchain,
   });
@@ -48,7 +48,7 @@ class HoldingBalancesCall extends ServerCall {
   Future<List<Holding>> call() async {
     final List<BalanceView> holdings = await holdingBalancesBy(
       chain: blockchain.chaindata,
-      roots: mnemonicWallets
+      roots: derivationWallets
           .map((e) => e.roots(blockchain))
           .expand((e) => e)
           .toList(),

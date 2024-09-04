@@ -15,14 +15,14 @@ import 'package:magic/services/calls/server.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 class TransactionMempoolCall extends ServerCall {
-  late List<MnemonicWallet> mnemonicWallets;
+  late List<DerivationWallet> derivationWallets;
   late List<KeypairWallet> keypairWallets;
   late Blockchain blockchain;
   late String? symbol;
   late Security? security;
   final int? height;
   TransactionMempoolCall({
-    required this.mnemonicWallets,
+    required this.derivationWallets,
     required this.keypairWallets,
     required this.blockchain,
     this.symbol,
@@ -59,7 +59,7 @@ class TransactionMempoolCall extends ServerCall {
       symbol: serverSymbol,
       height: height,
       chain: blockchain.chaindata,
-      roots: mnemonicWallets
+      roots: derivationWallets
           .map((e) => e.roots(blockchain))
           .expand((e) => e)
           .toList(),

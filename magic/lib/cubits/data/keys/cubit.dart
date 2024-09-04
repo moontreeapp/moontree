@@ -33,7 +33,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
 
   @override
   void update({
-    List<String>? xpubs,
+    List<Map<String, String>>? xpubs,
     List<String>? mnemonics,
     List<String>? wifs,
     bool? submitting,
@@ -44,9 +44,9 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     //print(mnemonics);
     //try {
     //  print('-----------------------------');
-    //  print(master.mnemonicWallets.first.mnemonic);
-    //  print(master.mnemonicWallets.first.roots(Blockchain.evrmoreMain));
-    //  print(master.mnemonicWallets.first.roots(Blockchain.ravencoinMain));
+    //  print(master.derivationWallets.first.mnemonic);
+    //  print(master.derivationWallets.first.roots(Blockchain.evrmoreMain));
+    //  print(master.derivationWallets.first.roots(Blockchain.ravencoinMain));
     //} catch (e) {}
     emit(KeysState(
       xpubs: xpubs ?? state.xpubs,
@@ -89,7 +89,6 @@ class KeysCubit extends UpdatableCubit<KeysState> {
 
   Future<void> loadXPubs() async {
     update(submitting: true);
-
     update(
       xpubs: jsonDecode(
               ((await storage()).read(key: StorageKey.xpub.key())) ?? '[]')
@@ -134,32 +133,29 @@ class KeysCubit extends UpdatableCubit<KeysState> {
         key: SecureStorageKey.wifs.key(), value: jsonEncode(state.wifs));
   }
 
-  Future<void> syncXPubs(List<String>? xpubs) async {
-    //if (xpubs != null) {
-    //  final existingXpubs =
-    //      master.mnemonicWallets.map((e) => e.mnemonic).toSet();
-    //  final addable = xpubs.toSet().difference(existingXpubs);
-    //  final removable = existingMnemonics.difference(xpubs.toSet());
-    //  master.mnemonicWallets.addAll(
-    //      addable.map((mnemonic) => MnemonicWallet(mnemonic: mnemonic)));
-    //  master.mnemonicWallets.removeWhere(
-    //      (mnemonicWallet) => removable.contains(mnemonicWallet.mnemonic));
-    //}
+  /// we don't really need to sync with xpubs because we always add them all at
+  /// once (on startup). If we import a wallet, we switch over to using
+  /// privkeys, and then rewrite all the xpubs to disk again.
+  Future<void> syncXPubs(List<Map<String, String>>? xpubs) async {
+    if (xpubs != null) {
+      master.derivationWallets.addAll(xpubs
+          .map((blockchainXpub) => DerivationWallet.fromXpubs(blockchainXpub)));
+    }
   }
 
   Future<void> syncMnemonics(List<String>? mnemonics) async {
     if (mnemonics != null) {
       final existingMnemonics =
-          master.mnemonicWallets.map((e) => e.mnemonic).toSet();
+          master.derivationWallets.map((e) => e.mnemonic).toSet();
       final addable = mnemonics.toSet().difference(existingMnemonics);
       final removable = existingMnemonics.difference(mnemonics.toSet());
-      master.mnemonicWallets.addAll(
-          addable.map((mnemonic) => MnemonicWallet(mnemonic: mnemonic)));
-      master.mnemonicWallets.removeWhere(
+      master.derivationWallets.addAll(
+          addable.map((mnemonic) => DerivationWallet(mnemonic: mnemonic)));
+      master.derivationWallets.removeWhere(
           (mnemonicWallet) => removable.contains(mnemonicWallet.mnemonic));
     }
     for (final blockchain in Blockchain.values) {
-      for (final mnemonicWallet in master.mnemonicWallets) {
+      for (final mnemonicWallet in master.derivationWallets) {
         mnemonicWallet.pubkey(blockchain);
       }
     }

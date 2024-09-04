@@ -6,7 +6,7 @@ import 'package:magic/services/calls/receive.dart';
 
 Future<void> deriveInBackground([String? mnemonic]) async {
   Future<void> deriveAll() async {
-    for (final mnemonicWallet in cubits.keys.master.mnemonicWallets) {
+    for (final mnemonicWallet in cubits.keys.master.derivationWallets) {
       if (mnemonic != null && mnemonicWallet.mnemonic != mnemonic) {
         continue;
       }
@@ -21,7 +21,7 @@ Future<void> deriveInBackground([String? mnemonic]) async {
           }
           if (seedWallet.highestIndex.isEmpty) {
             seedWallet.derive({
-              exposure: (await ReceiveCall.fromMnemonicWallet(
+              exposure: (await ReceiveCall.fromDerivationWallet(
                 blockchain: blockchain,
                 mnemonicWallet: mnemonicWallet,
                 exposure: exposure,

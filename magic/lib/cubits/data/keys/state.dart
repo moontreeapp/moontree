@@ -1,7 +1,7 @@
 part of 'cubit.dart';
 
 class KeysState with EquatableMixin {
-  final List<String> xpubs;
+  final List<Map<String, String>> xpubs;
   final List<String> mnemonics;
   final List<String> wifs;
   final bool submitting;

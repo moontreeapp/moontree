@@ -114,13 +114,13 @@ class BackupPageState extends State<BackupPage> {
                         child: ListView.builder(
                             shrinkWrap: true,
                             itemCount:
-                                cubits.keys.master.mnemonicWallets.length +
+                                cubits.keys.master.derivationWallets.length +
                                     cubits.keys.master.keypairWallets.length,
                             itemBuilder: (context, int index) => Container(
                                 padding:
                                     const EdgeInsets.only(top: 16, bottom: 16),
                                 decoration: index <
-                                        cubits.keys.master.mnemonicWallets
+                                        cubits.keys.master.derivationWallets
                                                 .length +
                                             cubits.keys.master.keypairWallets
                                                 .length -
@@ -137,11 +137,11 @@ class BackupPageState extends State<BackupPage> {
                                       )
                                     : null,
                                 child: index <
-                                        cubits
-                                            .keys.master.mnemonicWallets.length
+                                        cubits.keys.master.derivationWallets
+                                            .length
                                     ? Wrap(children: <Widget>[
                                         for (final word in cubits.keys.master
-                                            .mnemonicWallets[index].words)
+                                            .derivationWallets[index].words)
                                           Container(
                                               padding: const EdgeInsets.only(
                                                   left: 8,

@@ -110,7 +110,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
                 ? rates.evrUsdRate
                 : null,
         transactions: await TransactionHistoryCall(
-          mnemonicWallets: cubits.keys.master.mnemonicWallets,
+          derivationWallets: cubits.keys.master.derivationWallets,
           keypairWallets: cubits.keys.master.keypairWallets,
           blockchain: holding.blockchain,
           height: fromHeight,
@@ -161,7 +161,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
                 ? rates.evrUsdRate
                 : null,
         transactions: await TransactionMempoolCall(
-          mnemonicWallets: cubits.keys.master.mnemonicWallets,
+          derivationWallets: cubits.keys.master.derivationWallets,
           keypairWallets: cubits.keys.master.keypairWallets,
           blockchain: holding.blockchain,
           symbol: holding.symbol,

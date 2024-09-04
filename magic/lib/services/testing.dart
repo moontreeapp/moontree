@@ -105,16 +105,16 @@ class Testing {
     //      .populateAddresses(Blockchain.evrmoreMain, overrideIndex: i);
     //}
     //print(
-    //    'pubkey ${cubits.keys.master.mnemonicWallets.first.pubkey(Blockchain.evrmoreMain)}');
+    //    'pubkey ${cubits.keys.master.derivationWallets.first.pubkey(Blockchain.evrmoreMain)}');
     //print(
-    //    'roots  ${cubits.keys.master.mnemonicWallets.first.roots(Blockchain.evrmoreMain)}');
+    //    'roots  ${cubits.keys.master.derivationWallets.first.roots(Blockchain.evrmoreMain)}');
     //print('externals');
-    //print(cubits.keys.master.mnemonicWallets.first.seedWallets);
-    //print(cubits.keys.master.mnemonicWallets.first
+    //print(cubits.keys.master.derivationWallets.first.seedWallets);
+    //print(cubits.keys.master.derivationWallets.first
     //    .seedWallet(Blockchain.evrmoreMain)
     //    .externals
     //    .length);
-    //for (var x in cubits.keys.master.mnemonicWallets.first
+    //for (var x in cubits.keys.master.derivationWallets.first
     //    .seedWallet(Blockchain.evrmoreMain)
     //    .externals) {
     //  print('address ${x.address}');
@@ -122,7 +122,7 @@ class Testing {
     //  print('h160s   ${hex.encode(addressToH160(x.address!))}');
     //}
     //print('internals');
-    //for (var x in cubits.keys.master.mnemonicWallets.first
+    //for (var x in cubits.keys.master.derivationWallets.first
     //    .seedWallet(Blockchain.evrmoreMain)
     //    .externals) {
     //  print('address ${x.address}');

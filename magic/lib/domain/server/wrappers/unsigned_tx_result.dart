@@ -5,7 +5,7 @@ import 'package:magic/services/calls/server.dart';
 
 class UnsignedTransactionResultCalled extends ServerCall {
   final List<UnsignedTransactionResult> unsignedTransactionResults;
-  late List<MnemonicWallet> mnemonicWallets;
+  late List<DerivationWallet> derivationWallets;
   late List<KeypairWallet> keypairWallets;
   late Security security;
   final String changeAddress;
@@ -16,7 +16,7 @@ class UnsignedTransactionResultCalled extends ServerCall {
   final String? memo;
   UnsignedTransactionResultCalled({
     required this.unsignedTransactionResults,
-    required this.mnemonicWallets,
+    required this.derivationWallets,
     required this.keypairWallets,
     required this.address,
     required this.sats,

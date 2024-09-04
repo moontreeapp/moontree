@@ -21,19 +21,8 @@ class ReceiveCall extends ServerCall {
     this.exposure = Exposure.external,
   });
 
-  factory ReceiveCall.fromXPubWallet({
-    required XPubWallet xPubWallet,
-    required Blockchain blockchain,
-    Exposure exposure = Exposure.external,
-  }) =>
-      ReceiveCall(
-        root: xPubWallet.xpub,
-        blockchain: blockchain,
-        exposure: exposure,
-      );
-
-  factory ReceiveCall.fromMnemonicWallet({
-    required MnemonicWallet mnemonicWallet,
+  factory ReceiveCall.fromDerivationWallet({
+    required DerivationWallet mnemonicWallet,
     required Blockchain blockchain,
     Exposure exposure = Exposure.external,
   }) =>

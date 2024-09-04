@@ -109,7 +109,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
             rate: await rates.getRateOf('EVR'),
             holdings: await HoldingBalancesCall(
               blockchain: Blockchain.evrmoreMain,
-              mnemonicWallets: cubits.keys.master.mnemonicWallets,
+              derivationWallets: cubits.keys.master.derivationWallets,
               keypairWallets: cubits.keys.master.keypairWallets,
             ).call()) +
         _newRateThese(
@@ -117,7 +117,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
             rate: await rates.getRateOf('RVN'),
             holdings: await HoldingBalancesCall(
               blockchain: Blockchain.ravencoinMain,
-              mnemonicWallets: cubits.keys.master.mnemonicWallets,
+              derivationWallets: cubits.keys.master.derivationWallets,
               keypairWallets: cubits.keys.master.keypairWallets,
             ).call())));
     update(holdings: holdings, isSubmitting: false);

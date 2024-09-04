@@ -4,7 +4,7 @@
       has one .wif
       can have one .wallets (KPWallet) per blockchain
         has one .address / .h160 / .pubkey / etc
-    can have mulitple .mnemonicWallets (MnemonicWallets)
+    can have mulitple .derivationWallets (DerivationWallets)
       can have one .seedWallets (SeedWallet) per blockchain
         has two .roots per SeedWallet (external and internal)
         has two lists of .subwallets (HDWallets) (externals and internals)
@@ -12,7 +12,6 @@
 */
 import 'dart:typed_data';
 import 'dart:convert';
-import 'package:hex/hex.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:convert/convert.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -31,20 +30,15 @@ abstract class Jsonable {
 }
 
 class MasterWallet extends Jsonable {
-  final List<XPubWallet> xPubWallets = [];
-  final List<MnemonicWallet> mnemonicWallets = [];
+  final List<DerivationWallet> derivationWallets = [];
   final List<KeypairWallet> keypairWallets = [];
 
   MasterWallet({
-    Iterable<XPubWallet>? xPubWallets,
-    Iterable<MnemonicWallet>? mnemonicWallets,
+    Iterable<DerivationWallet>? derivationWallets,
     Iterable<KeypairWallet>? keypairWallets,
   }) {
-    if (xPubWallets != null) {
-      this.xPubWallets.addAll(xPubWallets);
-    }
-    if (mnemonicWallets != null) {
-      this.mnemonicWallets.addAll(mnemonicWallets);
+    if (derivationWallets != null) {
+      this.derivationWallets.addAll(derivationWallets);
     }
     if (keypairWallets != null) {
       this.keypairWallets.addAll(keypairWallets);
@@ -54,10 +48,8 @@ class MasterWallet extends Jsonable {
   factory MasterWallet.fromJson(String json) {
     final Map<String, List<String>> decoded = jsonDecode(json);
     return MasterWallet(
-      xPubWallets: (decoded['mnemonicWallets'] ?? [])
-          .map((mw) => XPubWallet.fromJson(mw)),
-      mnemonicWallets: (decoded['mnemonicWallets'] ?? [])
-          .map((mw) => MnemonicWallet.fromJson(mw)),
+      derivationWallets: (decoded['derivationWallets'] ?? [])
+          .map((mw) => DerivationWallet.fromJson(mw)),
       keypairWallets: (decoded['keypairWallets'] ?? [])
           .map((kp) => KeypairWallet.fromJson(kp)),
     );
@@ -65,16 +57,15 @@ class MasterWallet extends Jsonable {
 
   @override
   Map<String, dynamic> get asMap => {
-        'xPubWallets': xPubWallets.map((m) => m.asMap).toList(),
-        'mnemonicWallets': mnemonicWallets.map((m) => m.asMap).toList(),
+        'derivationWallets': derivationWallets.map((m) => m.asMap).toList(),
         'keypairWallets': keypairWallets.map((m) => m.asMap).toList(),
       };
 
-  Set<String> get xPubAddresses => (xPubWallets.expand((m) => m
-      .seedWallet.subwallets.values
-      .expand((subList) => subList.map((sub) => sub.address ?? '')))).toSet();
+  //Set<String> get xPubAddresses => (xPubWallets.expand((m) => m
+  //    .seedWallet.subwallets.values
+  //    .expand((subList) => subList.map((sub) => sub.address ?? '')))).toSet();
 
-  Set<String> get mnemonicAddresses => (mnemonicWallets
+  Set<String> get mnemonicAddresses => (derivationWallets
       .expand((m) => m.seedWallets.values.expand((s) => s.subwallets.values
           .expand((subList) => subList.map((sub) => sub.address ?? ''))))
       .toSet());
@@ -83,13 +74,7 @@ class MasterWallet extends Jsonable {
       .expand((kp) => kp.wallets.values.map((wallet) => wallet.address ?? ''))
       .toSet();
 
-  Set<String> get addressSet {
-    if (mnemonicAddresses.isNotEmpty) {
-      return {...mnemonicAddresses, ...keypairAddresses};
-    } else {
-      return {...xPubAddresses};
-    }
-  }
+  Set<String> get addressSet => {...mnemonicAddresses, ...keypairAddresses};
 }
 
 class KeypairWallet extends Jsonable {
@@ -131,22 +116,37 @@ class KeypairWallet extends Jsonable {
 }
 
 /// An hd wallet that can derive multiple SeedWallet for different blockchains
-class MnemonicWallet extends Jsonable {
-  final String mnemonic;
+class DerivationWallet extends Jsonable {
+  final String? mnemonic;
   String? _entropy;
   Uint8List? _seed;
   final Map<Blockchain, Map<Exposure, String>> _roots = {};
   final Map<Blockchain, SeedWallet> seedWallets = {};
 
-  MnemonicWallet({required this.mnemonic});
+  DerivationWallet({this.mnemonic});
 
-  factory MnemonicWallet.fromJson(String json) {
+  factory DerivationWallet.fromXpubs(Map<String, String> xpubs) {
+    final wallet = DerivationWallet(mnemonic: null);
+    xpubs.forEach((blockchainName, xpub) {
+      final blockchain = Blockchain.from(name: blockchainName);
+      wallet.seedWallets[blockchain] = SeedWallet(
+        blockchain: blockchain,
+        hdWallet: HDWallet.fromBase58(xpub, network: blockchain.network),
+      );
+    });
+    return wallet;
+  }
+
+  factory DerivationWallet.fromJson(String json) {
     final Map<String, String> decoded = jsonDecode(json);
-    return MnemonicWallet(mnemonic: decoded['mnemonic']!);
+    return DerivationWallet(mnemonic: decoded['mnemonic']!);
   }
 
   @override
-  Map<String, String> get asMap => {'mnemonic': mnemonic};
+  Map<String, String> get asMap => mnemonic == null ? asXPubMap : asMnemonicMap;
+  Map<String, String> get asMnemonicMap => {'mnemonic': mnemonic!};
+  Map<String, String> get asXPubMap =>
+      {for (final bs in seedWallets.entries) bs.key.name: bs.value.xpub};
 
   String get entropy {
     _entropy ??= bip39.mnemonicToEntropy(mnemonic);
@@ -154,11 +154,11 @@ class MnemonicWallet extends Jsonable {
   }
 
   Uint8List get seed {
-    _seed ??= bip39.mnemonicToSeed(mnemonic);
+    _seed ??= bip39.mnemonicToSeed(mnemonic!);
     return _seed!;
   }
 
-  List<String> get words => mnemonic.split(' ');
+  List<String> get words => mnemonic?.split(' ') ?? [];
 
   SeedWallet seedWallet(Blockchain blockchain) {
     seedWallets[blockchain] ??= SeedWallet(
@@ -202,50 +202,6 @@ class MnemonicWallet extends Jsonable {
 
   String root(Blockchain blockchain, Exposure exposure) =>
       rootsMap(blockchain)[exposure]!;
-}
-
-/// An hd wallet that can derive multiple SeedWallet for different blockchains
-class XPubWallet extends Jsonable {
-  final String xpub;
-  final Blockchain blockchain;
-  final Map<Exposure, String> _roots = {};
-  SeedWallet? _seedWallet;
-
-  XPubWallet({required this.xpub, required this.blockchain});
-
-  factory XPubWallet.fromJson(String json) {
-    final Map<String, String> decoded = jsonDecode(json);
-    return XPubWallet(
-      xpub: decoded['xpub']!,
-      blockchain: Blockchain.from(name: decoded['blockchain']!),
-    );
-  }
-  @override
-  Map<String, String> get asMap => {
-        'xpub': xpub,
-        'blockchain': blockchain.name,
-      };
-
-  SeedWallet get seedWallet {
-    _seedWallet ??= SeedWallet(
-        blockchain: blockchain,
-        hdWallet: HDWallet.fromBase58(xpub, network: blockchain.network));
-    return _seedWallet!;
-  }
-
-  String? get pubkey => seedWallet.hdWallet.pubKey;
-
-  Map<Exposure, String> get rootsMap {
-    if (_roots == {}) {
-      _roots[Exposure.external] = seedWallet.root(Exposure.external);
-      _roots[Exposure.internal] = seedWallet.root(Exposure.internal);
-    }
-    return _roots;
-  }
-
-  List<String> get roots => rootsMap.values.toList();
-
-  String root(Exposure exposure) => rootsMap[exposure]!;
 }
 
 /// add the hdIndex variable to the HDWallet class
@@ -295,12 +251,12 @@ class SeedWallet {
 
   SeedWallet({required this.blockchain, required this.hdWallet});
 
-  String? get xpub => extendedPublicKey;
-  String? get extendedPublicKey =>
+  String get xpub => extendedPublicKey;
+  String get extendedPublicKey =>
       _xpub ??
       () {
         _xpub = hdWallet.base58;
-        return _xpub;
+        return _xpub!;
       }();
 
   List<HDWallet> get externals => subwallets[Exposure.external]!;
