@@ -331,7 +331,6 @@ class SendContentState extends State<SendContent> {
                     ));
               }
               if (state.fromQR == true) {
-                print('resetting');
                 addressText.text = cubits.send.state.address;
                 cubits.send.update(fromQR: false);
               }
@@ -357,7 +356,6 @@ class SendContentState extends State<SendContent> {
                         ? null
                         : invalidAddressMessages(addressText.text).firstOrNull,
                     onChanged: (value) => setState(() {
-                      print(value);
                       if (validateAddress(addressText.text)) {
                         cubits.send.update(address: value);
                       }
