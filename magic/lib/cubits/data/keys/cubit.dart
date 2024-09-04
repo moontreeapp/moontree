@@ -98,7 +98,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     build();
   }
 
-  Future<void> loadPrivKeys() async {
+  Future<void> loadMnemonic() async {
     update(submitting: true);
     update(
       mnemonics: jsonDecode((await secureStorage.read(
@@ -125,12 +125,26 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     }
   }
 
-  Future<void> dump() async {
+  Future<void> dumpMnemonic() async {
     secureStorage.write(
         key: SecureStorageKey.mnemonics.key(),
         value: jsonEncode(state.mnemonics));
     secureStorage.write(
         key: SecureStorageKey.wifs.key(), value: jsonEncode(state.wifs));
+  }
+
+  Future<void> dumpXPubs() async {
+    (await storage()).writeKey(
+      key: StorageKey.xpubs,
+      value: jsonEncode(),
+    );
+    secureStorage.write(
+        key: SecureStorageKey.mnemonics.key(),
+        value: jsonEncode(state.mnemonics));
+    secureStorage.write(
+      key: SecureStorageKey.wifs.key(),
+      value: jsonEncode(state.wifs),
+    );
   }
 
   /// we don't really need to sync with xpubs because we always add them all at

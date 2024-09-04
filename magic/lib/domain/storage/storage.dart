@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum StorageKey {
-  xpub,
+  xpubs,
   rate,
   cache;
 
@@ -9,8 +9,8 @@ enum StorageKey {
     switch (this) {
       case StorageKey.cache:
         return 'cache:$id';
-      case StorageKey.xpub:
-        return 'xpub:$id';
+      case StorageKey.xpubs:
+        return 'xpubs';
       case StorageKey.rate:
         return 'rate:$id';
       default:
@@ -22,8 +22,10 @@ enum StorageKey {
 extension ReadWriteExt on SharedPreferences {
   Future<bool> write({required String key, required String value}) async =>
       await setString(key, value);
-  Future<bool> writeKey(
-          {required StorageKey key, required String value}) async =>
+  Future<bool> writeKey({
+    required StorageKey key,
+    required String value,
+  }) async =>
       await setString(key.key(), value);
   String? read({required String key}) => getString(key);
   String? readKey({required StorageKey key}) => getString(key.key());
