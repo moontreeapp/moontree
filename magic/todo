@@ -63,6 +63,13 @@ DONE updating holding at all times
 DONE remove security from sending
 DONE test
 
+DONE keyboard QR scanner issue
+
+balances sometimes broken - subscription connection lost?
+unable to generate transaction on ravencoin assets
+transaction history ghost transaction
+longhold IOS paste scan issue
+
 security 2.0
     create caching mechanism for xpubs
     cache xpubs during process of saving privkeys (triggered by import or autocreate)
