@@ -10,10 +10,11 @@ String getDerivationPath({
   int account = 0,
   Exposure exposure = Exposure.external,
   int? index,
+  String hardened = "'",
 }) =>
     "$master"
-    "/${blockchain?.purpose ?? purpose}'"
-    "/${blockchain?.coinType ?? coinType}'"
-    "/$account'"
+    "/${blockchain?.purpose ?? purpose}$hardened"
+    "/${blockchain?.coinType ?? coinType}$hardened"
+    "/$account$hardened"
     "/${exposure.indexStr}"
     "${index == null ? '' : '/$index'}";

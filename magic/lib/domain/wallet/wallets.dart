@@ -120,13 +120,14 @@ class DerivationWallet extends Jsonable {
   final String? mnemonic;
   String? _entropy;
   Uint8List? _seed;
+  Map<String, String>? xpubs;
   final Map<Blockchain, Map<Exposure, String>> _roots = {};
   final Map<Blockchain, SeedWallet> seedWallets = {};
 
-  DerivationWallet({this.mnemonic});
+  DerivationWallet({this.mnemonic, this.xpubs});
 
   factory DerivationWallet.fromXpubs(Map<String, String> xpubs) {
-    final wallet = DerivationWallet(mnemonic: null);
+    final wallet = DerivationWallet(xpubs: xpubs);
     xpubs.forEach((blockchainName, xpub) {
       final blockchain = Blockchain.from(name: blockchainName);
       wallet.seedWallets[blockchain] = SeedWallet(
@@ -163,7 +164,10 @@ class DerivationWallet extends Jsonable {
   SeedWallet seedWallet(Blockchain blockchain) {
     seedWallets[blockchain] ??= SeedWallet(
         blockchain: blockchain,
-        hdWallet: HDWallet.fromSeed(seed, network: blockchain.network));
+        hdWallet: mnemonic != null
+            ? HDWallet.fromSeed(seed, network: blockchain.network)
+            : HDWallet.fromBase58(xpubs![blockchain.name]!,
+                network: blockchain.network));
     return seedWallets[blockchain]!;
   }
 
@@ -270,6 +274,7 @@ class SeedWallet {
       index: hdIndex,
       exposure: exposure,
       blockchain: blockchain,
+      hardened: hdWallet.seed != null ? "'" : '',
     );
     print('p: $path');
     final sub = hdWallet.derivePath(path);
@@ -311,6 +316,7 @@ class SeedWallet {
         getDerivationPath(
           exposure: exposure,
           blockchain: blockchain,
+          hardened: hdWallet.seed != null ? "'" : '',
         ),
       )
       .base58!;

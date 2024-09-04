@@ -38,9 +38,9 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     List<String>? wifs,
     bool? submitting,
   }) {
-    syncXPubs(xpubs);
     syncMnemonics(mnemonics);
     syncKeypairs(wifs);
+    syncXPubs(xpubs);
     //print(mnemonics);
     //try {
     //  print('-----------------------------');
@@ -61,7 +61,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     if (state.mnemonics.contains(mnemonic)) return true;
     if (!validateMnemonic(mnemonic)) return false;
     update(mnemonics: [...state.mnemonics, mnemonic]);
-    await dump();
+    await saveSecrets();
     return true;
   }
 
@@ -69,36 +69,42 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     if (state.wifs.contains(privKey)) return true;
     if (!validatePrivateKey(privKey)) return false;
     update(wifs: [...state.wifs, KeypairWallet.privateKeyToWif(privKey)]);
-    await dump();
+    await saveSecrets();
     return true;
   }
 
   Future<bool> removeMnemonic(String mnemonic) async {
     if (!state.mnemonics.contains(mnemonic)) return true;
     update(mnemonics: state.mnemonics.where((m) => m != mnemonic).toList());
-    await dump();
+    await saveSecrets();
     return true;
   }
 
   Future<bool> removeWif(String wif) async {
     if (!state.wifs.contains(wif)) return true;
     update(mnemonics: state.wifs.where((w) => w != wif).toList());
-    await dump();
+    await saveSecrets();
     return true;
   }
 
   Future<void> loadXPubs() async {
-    update(submitting: true);
-    update(
-      xpubs: jsonDecode(
-              ((await storage()).read(key: StorageKey.xpub.key())) ?? '[]')
-          .cast<String>(),
-      submitting: false,
-    );
-    build();
+    final List<dynamic> rawXpubs = jsonDecode(
+        ((await storage()).read(key: StorageKey.xpubs.key())) ?? '[]');
+    final List<Map<String, String>> xpubs = rawXpubs.map((entry) {
+      return Map<String, String>.from(entry);
+    }).toList();
+    if (xpubs.isNotEmpty && xpubs != [{}]) {
+      update(submitting: true);
+      update(
+        xpubs: xpubs,
+        submitting: false,
+      );
+    } else {
+      loadSecrets(onExisting: saveXPubs);
+    }
   }
 
-  Future<void> loadMnemonic() async {
+  Future<void> loadSecrets({Future<void> Function()? onExisting}) async {
     update(submitting: true);
     update(
       mnemonics: jsonDecode((await secureStorage.read(
@@ -111,40 +117,24 @@ class KeysCubit extends UpdatableCubit<KeysState> {
           .cast<String>(),
       submitting: false,
     );
-    build();
+    build(onExisting: onExisting);
   }
 
-  Future<void> build() async {
+  Future<void> build({Future<void> Function()? onExisting}) async {
     if (state.mnemonics.isEmpty) {
       update(submitting: true);
       update(
         mnemonics: [makeMnemonic()],
         submitting: false,
       );
-      dump();
+      saveSecrets();
+    } else {
+      // for zedge case - we should never have mnemonics on disk without xpubs
+      // but if for some wild reason we do, we should save the xpubs now.
+      if (onExisting != null) {
+        await onExisting();
+      }
     }
-  }
-
-  Future<void> dumpMnemonic() async {
-    secureStorage.write(
-        key: SecureStorageKey.mnemonics.key(),
-        value: jsonEncode(state.mnemonics));
-    secureStorage.write(
-        key: SecureStorageKey.wifs.key(), value: jsonEncode(state.wifs));
-  }
-
-  Future<void> dumpXPubs() async {
-    (await storage()).writeKey(
-      key: StorageKey.xpubs,
-      value: jsonEncode(),
-    );
-    secureStorage.write(
-        key: SecureStorageKey.mnemonics.key(),
-        value: jsonEncode(state.mnemonics));
-    secureStorage.write(
-      key: SecureStorageKey.wifs.key(),
-      value: jsonEncode(state.wifs),
-    );
   }
 
   /// we don't really need to sync with xpubs because we always add them all at
@@ -166,13 +156,13 @@ class KeysCubit extends UpdatableCubit<KeysState> {
       master.derivationWallets.addAll(
           addable.map((mnemonic) => DerivationWallet(mnemonic: mnemonic)));
       master.derivationWallets.removeWhere(
-          (mnemonicWallet) => removable.contains(mnemonicWallet.mnemonic));
+          (derivationWallet) => removable.contains(derivationWallet.mnemonic));
     }
-    for (final blockchain in Blockchain.values) {
-      for (final mnemonicWallet in master.derivationWallets) {
-        mnemonicWallet.pubkey(blockchain);
-      }
-    }
+    //for (final blockchain in Blockchain.values) {
+    //  for (final derivationWallet in master.derivationWallets) {
+    //    derivationWallet.pubkey(blockchain);
+    //  }
+    //}
   }
 
   Future<void> syncKeypairs(List<String>? wifs) async {
@@ -185,5 +175,33 @@ class KeysCubit extends UpdatableCubit<KeysState> {
       master.keypairWallets.removeWhere(
           (keypairWallet) => removable.contains(keypairWallet.wif));
     }
+  }
+
+  Future<void> saveSecrets() async {
+    secureStorage.write(
+        key: SecureStorageKey.mnemonics.key(),
+        value: jsonEncode(state.mnemonics));
+    secureStorage.write(
+        key: SecureStorageKey.wifs.key(), value: jsonEncode(state.wifs));
+    // every time we save secrets we save xpubs because the secrets are our
+    // source of truth for the xpubs:
+    saveXPubs();
+  }
+
+  void ensureSeedWalletsExist() {
+    for (final blockcahin in Blockchain.mainnets) {
+      for (final derivationWallet in master.derivationWallets) {
+        derivationWallet.seedWallet(blockcahin);
+      }
+    }
+  }
+
+  Future<void> saveXPubs() async {
+    ensureSeedWalletsExist();
+    (await storage()).writeKey(
+      key: StorageKey.xpubs,
+      value: jsonEncode(
+          master.derivationWallets.map((wallet) => wallet.asXPubMap).toList()),
+    );
   }
 }

@@ -123,11 +123,11 @@ class WalletsPageState extends State<WalletsPage> {
                                         onPressed: () async {
                                           await cubits.keys.removeMnemonic(
                                               cubits
-                                                      .keys
-                                                      .master
-                                                      .derivationWallets[index]
-                                                      .mnemonic!);
-                                          await cubits.keys.dump();
+                                                  .keys
+                                                  .master
+                                                  .derivationWallets[index]
+                                                  .mnemonic!);
+                                          await cubits.keys.saveSecrets();
 
                                           /// do we need to resetup our subscriptions? yes.
                                           /// all of them or just this wallet? just do all of them.
@@ -142,6 +142,11 @@ class WalletsPageState extends State<WalletsPage> {
                                           /// do we need to derive all our addresses? yes.
                                           /// all of them or just this wallet? we can specify just this wallet.
                                           deriveInBackground();
+                                          // why not use this like we do on startup...?
+                                          //cubits.receive.deriveAll([
+                                          //  Blockchain.ravencoinMain,
+                                          //  Blockchain.evrmoreMain,
+                                          //]);
 
                                           setState(() {});
                                         },
@@ -166,7 +171,7 @@ class WalletsPageState extends State<WalletsPage> {
                                                       .length -
                                                   1]
                                               .wif);
-                                          await cubits.keys.dump();
+                                          await cubits.keys.saveSecrets();
 
                                           /// do we need to resetup our subscriptions? yes.
                                           /// all of them or just this wallet? just do all of them.
@@ -181,6 +186,11 @@ class WalletsPageState extends State<WalletsPage> {
                                           /// do we need to derive all our addresses? yes.
                                           /// all of them or just this wallet? we can specify just this wallet.
                                           deriveInBackground();
+                                          // why not use this like we do on startup...?
+                                          //cubits.receive.deriveAll([
+                                          //  Blockchain.ravencoinMain,
+                                          //  Blockchain.evrmoreMain,
+                                          //]);
 
                                           setState(() {});
                                         },

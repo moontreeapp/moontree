@@ -20,7 +20,7 @@ enum Blockchain {
   none;
 
   factory Blockchain.from({Chaindata? chaindata, String? name}) {
-    switch (chaindata?.name ?? name) {
+    switch ((chaindata?.name ?? name)?.toLowerCase()) {
       case 'ravencoin_mainnet':
         return Blockchain.ravencoinMain;
       case 'ravencoin_testnet':
@@ -29,9 +29,20 @@ enum Blockchain {
         return Blockchain.evrmoreMain;
       case 'evrmore_testnet':
         return Blockchain.evrmoreTest;
+      case 'ravencoin':
+        return Blockchain.ravencoinMain;
+      case 'evrmore':
+        return Blockchain.evrmoreMain;
+      case 'rvn':
+        return Blockchain.ravencoinMain;
+      case 'evr':
+        return Blockchain.evrmoreMain;
     }
     return Blockchain.none;
   }
+
+  static List<Blockchain> get mainnets =>
+      [Blockchain.ravencoinMain, Blockchain.evrmoreMain];
 
   String explorerTxUrl(String txid) {
     switch (this) {

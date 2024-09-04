@@ -56,14 +56,14 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
   Future<int> _getIndex({
     required Blockchain blockchain,
     required Exposure exposure,
-    DerivationWallet? mnemonicWallet,
+    DerivationWallet? derivationWallet,
     int? overrideIndex,
   }) async {
     if (overrideIndex != null) return overrideIndex;
-    if (mnemonicWallet != null) {
+    if (derivationWallet != null) {
       return (await ReceiveCall.fromDerivationWallet(
         blockchain: blockchain,
-        mnemonicWallet: mnemonicWallet,
+        derivationWallet: derivationWallet,
         exposure: exposure,
       ).call())
           .value;
@@ -82,12 +82,12 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
         Exposure.internal: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.internal,
-            mnemonicWallet: cubits.keys.master.derivationWallets.first,
+            derivationWallet: cubits.keys.master.derivationWallets.first,
             overrideIndex: overrideIndex),
         Exposure.external: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.external,
-            mnemonicWallet: cubits.keys.master.derivationWallets.first,
+            derivationWallet: cubits.keys.master.derivationWallets.first,
             overrideIndex: overrideIndex),
       });
     } else {
@@ -107,17 +107,17 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
   /// use derivationWallets if they exist, else use xPubWallets
   Future<void> deriveAll(List<Blockchain> blockchains) async {
     for (var blockchain in blockchains) {
-      for (var mnemonicWallet in cubits.keys.master.derivationWallets) {
-        mnemonicWallet.seedWallet(blockchain).derive({
+      for (var derivationWallet in cubits.keys.master.derivationWallets) {
+        derivationWallet.seedWallet(blockchain).derive({
           Exposure.internal: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.internal,
-            mnemonicWallet: mnemonicWallet,
+            derivationWallet: derivationWallet,
           ),
           Exposure.external: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.external,
-            mnemonicWallet: mnemonicWallet,
+            derivationWallet: derivationWallet,
           ),
         });
       }
@@ -135,7 +135,7 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
         Exposure.external: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.external,
-            mnemonicWallet: cubits.keys.master.derivationWallets.first,
+            derivationWallet: cubits.keys.master.derivationWallets.first,
             overrideIndex: overrideIndex),
       });
     } else {
@@ -162,7 +162,7 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
         Exposure.internal: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.internal,
-            mnemonicWallet: cubits.keys.master.derivationWallets.first,
+            derivationWallet: cubits.keys.master.derivationWallets.first,
             overrideIndex: overrideIndex),
       });
     } else {

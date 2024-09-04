@@ -6,15 +6,15 @@ import 'package:magic/services/calls/receive.dart';
 
 Future<void> deriveInBackground([String? mnemonic]) async {
   Future<void> deriveAll() async {
-    for (final mnemonicWallet in cubits.keys.master.derivationWallets) {
-      if (mnemonic != null && mnemonicWallet.mnemonic != mnemonic) {
+    for (final derivationWallet in cubits.keys.master.derivationWallets) {
+      if (mnemonic != null && derivationWallet.mnemonic != mnemonic) {
         continue;
       }
       for (final blockchain in Blockchain.values) {
         while (cubits.app.animating) {
           await Future.delayed(const Duration(milliseconds: 500));
         }
-        final seedWallet = mnemonicWallet.seedWallet(blockchain);
+        final seedWallet = derivationWallet.seedWallet(blockchain);
         for (final exposure in Exposure.values) {
           while (cubits.app.animating) {
             await Future.delayed(const Duration(milliseconds: 500));
@@ -23,7 +23,7 @@ Future<void> deriveInBackground([String? mnemonic]) async {
             seedWallet.derive({
               exposure: (await ReceiveCall.fromDerivationWallet(
                 blockchain: blockchain,
-                mnemonicWallet: mnemonicWallet,
+                derivationWallet: derivationWallet,
                 exposure: exposure,
               ).call())
                   .value,
@@ -49,5 +49,6 @@ Future<void> deriveInBackground([String? mnemonic]) async {
   //  }
   //  //body.add(message);
   //});
+  print('DERIVING IN BACKGROUND - NOT USED I THINK');
   await deriveAll();
 }

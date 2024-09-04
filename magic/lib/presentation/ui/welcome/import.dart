@@ -100,6 +100,11 @@ class ImportPageState extends State<ImportPage> {
           /// do we need to derive all our addresses? yes.
           /// all of them or just this wallet? we can specify just this wallet.
           deriveInBackground(value);
+          // why not use this like we do on startup...?
+          //cubits.receive.deriveAll([
+          //  Blockchain.ravencoinMain,
+          //  Blockchain.evrmoreMain,
+          //]);
         }
 
         /// we always default to the first wallet, so we don't need to do this.

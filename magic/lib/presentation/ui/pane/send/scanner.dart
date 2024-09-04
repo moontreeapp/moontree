@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/presentation/utils/animation.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRViewable extends StatefulWidget {
@@ -107,6 +108,10 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
                 if (barcode?.isNotEmpty ?? false) {
                   cubits.send.update(address: barcode);
                   cubits.send.update(scanActive: false);
+                  // to fix the issue with being able to change it
+                  Future.delayed(fadeDuration, () {
+                    cubits.send.update(scanActive: false);
+                  });
                 }
               });
               // Consider stopping the scanner after a slight delay if necessary

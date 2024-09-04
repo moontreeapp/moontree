@@ -22,12 +22,12 @@ class ReceiveCall extends ServerCall {
   });
 
   factory ReceiveCall.fromDerivationWallet({
-    required DerivationWallet mnemonicWallet,
+    required DerivationWallet derivationWallet,
     required Blockchain blockchain,
     Exposure exposure = Exposure.external,
   }) =>
       ReceiveCall(
-        root: mnemonicWallet.root(blockchain, exposure),
+        root: derivationWallet.root(blockchain, exposure),
         blockchain: blockchain,
         exposure: exposure,
       );

@@ -111,7 +111,7 @@ class AddressesPageState extends State<AddressesPage> {
                                     cubits.keys.master.derivationWallets.length;
                                 index++) {
                               print('Wallet Index: $index');
-                              for (final blockchain in Blockchain.values) {
+                              for (final blockchain in Blockchain.mainnets) {
                                 print('${blockchain.name}');
                                 for (final exposure in Exposure.values) {
                                   print('${exposure.name}');
@@ -144,7 +144,7 @@ class AddressesPageState extends State<AddressesPage> {
                                       )
                                     : null,
                                 child: Wrap(children: <Widget>[
-                                  for (final blockchain in Blockchain.values)
+                                  for (final blockchain in Blockchain.mainnets)
                                     for (final exposure in Exposure.values)
                                       for (final subwallet in cubits
                                           .keys.master.derivationWallets[index]

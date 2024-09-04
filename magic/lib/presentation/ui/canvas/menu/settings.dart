@@ -77,8 +77,8 @@ class ImportItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () =>
-            cubits.welcome.update(active: true, child: const ImportPage()),
+        onTap: () => cubits.welcome.update(
+            active: true, child: const LoginNative(child: ImportPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -96,8 +96,8 @@ class WalletsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () =>
-            cubits.welcome.update(active: true, child: const WalletsPage()),
+        onTap: () => cubits.welcome.update(
+            active: true, child: const LoginNative(child: WalletsPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
