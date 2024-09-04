@@ -106,12 +106,8 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
               setState(() {
                 barcode = event.barcodes.first.rawValue;
                 if (barcode?.isNotEmpty ?? false) {
-                  cubits.send.update(address: barcode);
+                  cubits.send.update(fromQR: true, address: barcode);
                   cubits.send.update(scanActive: false);
-                  // to fix the issue with being able to change it
-                  Future.delayed(fadeDuration, () {
-                    cubits.send.update(scanActive: false);
-                  });
                 }
               });
               // Consider stopping the scanner after a slight delay if necessary

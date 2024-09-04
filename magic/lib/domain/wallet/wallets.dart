@@ -274,7 +274,7 @@ class SeedWallet {
       index: hdIndex,
       exposure: exposure,
       blockchain: blockchain,
-      hardened: hdWallet.seed != null ? "'" : '',
+      hardened: hdWallet.seed != null ? "" : '',
     );
     print('p: $path');
     final sub = hdWallet.derivePath(path);
@@ -316,7 +316,7 @@ class SeedWallet {
         getDerivationPath(
           exposure: exposure,
           blockchain: blockchain,
-          hardened: hdWallet.seed != null ? "'" : '',
+          hardened: hdWallet.seed != null ? "" : '',
         ),
       )
       .base58!;

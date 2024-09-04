@@ -53,6 +53,7 @@ class SendCubit extends UpdatableCubit<SendState> {
   void update({
     bool? active,
     bool? scanActive,
+    bool? fromQR,
     String? asset,
     String? address,
     String? changeAddress,
@@ -71,6 +72,7 @@ class SendCubit extends UpdatableCubit<SendState> {
     emit(SendState(
       active: active ?? state.active,
       scanActive: scanActive ?? state.scanActive,
+      fromQR: fromQR ?? state.fromQR,
       asset: asset ?? state.asset,
       address: address ?? state.address,
       changeAddress: changeAddress ?? state.changeAddress,

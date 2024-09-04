@@ -318,7 +318,8 @@ class SendContentState extends State<SendContent> {
           Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         BlocBuilder<SendCubit, SendState>(
             buildWhen: (SendState prior, SendState current) =>
-                prior.scanActive != current.scanActive,
+                prior.scanActive != current.scanActive ||
+                prior.fromQR != current.fromQR,
             builder: (BuildContext context, SendState state) {
               if (state.scanActive) {
                 return Container(
@@ -329,8 +330,10 @@ class SendContentState extends State<SendContent> {
                       child: const QRViewable(),
                     ));
               }
-              if (state.prior?.scanActive == true) {
+              if (state.fromQR == true) {
+                print('resetting');
                 addressText.text = cubits.send.state.address;
+                cubits.send.update(fromQR: false);
               }
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -354,6 +357,7 @@ class SendContentState extends State<SendContent> {
                         ? null
                         : invalidAddressMessages(addressText.text).firstOrNull,
                     onChanged: (value) => setState(() {
+                      print(value);
                       if (validateAddress(addressText.text)) {
                         cubits.send.update(address: value);
                       }
