@@ -320,7 +320,8 @@ class SendContentState extends State<SendContent> {
           Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         BlocBuilder<SendCubit, SendState>(
             buildWhen: (SendState prior, SendState current) =>
-                prior.scanActive != current.scanActive,
+                prior.scanActive != current.scanActive ||
+                prior.fromQR != current.fromQR,
             builder: (BuildContext context, SendState state) {
               if (state.scanActive) {
                 return FadeIn(
