@@ -105,7 +105,7 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
               setState(() {
                 barcode = event.barcodes.first.rawValue;
                 if (barcode?.isNotEmpty ?? false) {
-                  cubits.send.update(address: barcode);
+                  cubits.send.update(fromQR: true, address: barcode);
                   cubits.send.update(scanActive: false);
                 }
               });
