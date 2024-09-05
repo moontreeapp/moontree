@@ -63,7 +63,6 @@ class AnimatedCoinSpec extends StatelessWidget {
                     width: screen.iconHuge + 12,
                     style: AppText.identiconHuge,
                     admin: cubits.holding.state.holding.isAdmin,
-                    blockchain: cubits.holding.state.holding.blockchain,
                   ),
         //: Stack(children: [
         //    Padding(

@@ -25,7 +25,6 @@ class Screen {
   final double wspace;
   final double bspace;
   final double toast;
-  final double iconExtraSmall;
   final double iconSmall;
   final double iconMedium;
   final double iconLarge;
@@ -53,7 +52,6 @@ class Screen {
     required this.wspace,
     required this.bspace,
     required this.toast,
-    required this.iconExtraSmall,
     required this.iconSmall,
     required this.iconMedium,
     required this.iconLarge,
@@ -88,7 +86,6 @@ class Screen {
       wspace: height * (16 / 760),
       bspace: height * (72 / 760),
       toast: height * (612 / 760),
-      iconExtraSmall: height * (12 / 760),
       iconSmall: height * (16 / 760),
       iconMedium: iconMedium,
       iconLarge: height * (40 / 760),
