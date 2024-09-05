@@ -71,6 +71,7 @@ transaction history ghost transaction
 longhold IOS paste scan issue
 
 security 2.0
+    I think what we have to do is inspect the exposure roots to see if they're different on privkey and pubkey wallets. they're not. I need to save the roots, not the top level xpubs.
     create caching mechanism for xpubs
     cache xpubs during process of saving privkeys (triggered by import or autocreate)
     on startup load in xpubs and then continue derivation process as normal

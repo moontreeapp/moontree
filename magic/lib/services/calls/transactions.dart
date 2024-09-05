@@ -12,6 +12,7 @@ import 'package:magic/domain/concepts/transaction.dart';
 import 'package:magic/domain/server/serverv2_client.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/calls/server.dart';
+import 'package:magic/utils/log.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 class TransactionHistoryCall extends ServerCall {
@@ -65,7 +66,7 @@ class TransactionHistoryCall extends ServerCall {
 
     if (history.length == 1 && history.first.error != null) {
       // handle
-      print('history.first.error: ${history.first.error}');
+      see('history.first.error: ${history.first.error}');
       return [];
     }
 
@@ -73,7 +74,7 @@ class TransactionHistoryCall extends ServerCall {
       txView.chain = blockchain.name;
       txView.symbol = symbol;
     }
-    print('trasnsactions: ${history.map((e) => [e.height])}');
+    see('trasnsactions: ${history.map((e) => [e.height])}');
     return translate(history, blockchain);
   }
 

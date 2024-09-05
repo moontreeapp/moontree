@@ -15,6 +15,7 @@ import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/loading.dart';
 import 'package:magic/services/services.dart';
+import 'package:magic/utils/log.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 
 class SendPage extends StatelessWidget {
@@ -263,7 +264,7 @@ class SendContentState extends State<SendContent> {
     );
     await cubits.send.signUnsignedTransaction();
     final validateMsg = await cubits.send.verifyTransaction();
-    print(validateMsg);
+    see(validateMsg);
     if (!validateMsg.item1) {
       cubits.send.update(
           signedTransactions: [],
@@ -438,7 +439,7 @@ class SendContentState extends State<SendContent> {
                             ? null
                             : invalidAmountMessages(amountText.text).first,
                     onChanged: (value) {
-                      print(value);
+                      see(value);
                       if (automaticConversion) {
                         return;
                       }

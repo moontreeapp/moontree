@@ -44,6 +44,11 @@ enum Blockchain {
   static List<Blockchain> get mainnets =>
       [Blockchain.ravencoinMain, Blockchain.evrmoreMain];
 
+  static List<String> get mainnetNames => [
+        Blockchain.ravencoinMain.chaindata.name,
+        Blockchain.evrmoreMain.chaindata.name,
+      ];
+
   String explorerTxUrl(String txid) {
     switch (this) {
       case Blockchain.ravencoinMain:

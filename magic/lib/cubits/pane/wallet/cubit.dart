@@ -16,6 +16,7 @@ import 'package:magic/presentation/ui/canvas/balance/chips.dart';
 import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/calls/holdings.dart';
 import 'package:magic/services/services.dart';
+import 'package:magic/utils/log.dart';
 
 part 'state.dart';
 
@@ -103,7 +104,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   Future<bool> populateAssets() async {
     // remember to order by currency first, amount second, alphabetical third
     update(isSubmitting: true);
-    print('populateAssets');
+    see('populateAssets');
     final holdings = setCorrespondingFlag(_sort(_newRateThese(
             symbol: 'EVR',
             rate: await rates.getRateOf('EVR'),
@@ -152,7 +153,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   List<Holding> setCorrespondingFlag(List<Holding> holdings) {
     final ret = <Holding>[];
     for (final holding in holdings) {
-      print(holding.symbol);
+      see(holding.symbol);
       if (holding.isCurrency) {
         ret.add(holding);
       } else if (holding.isAdmin && mainOf(holding, holdings) != null) {

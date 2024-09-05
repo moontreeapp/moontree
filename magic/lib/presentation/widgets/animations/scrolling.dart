@@ -518,9 +518,9 @@ class ScrollSnapListState extends State<ScrollSnapList> {
 
               /// ignored -- must do it manually in onNotification
               //onHorizontalDragEnd: (details) {
-              //  print(details.primaryVelocity);
+              //  see(details.primaryVelocity);
               //  if ((details.primaryVelocity ?? 0) > 5000) {
-              //    print(
+              //    see(
               //        '------------------------detected ${details.primaryVelocity}');
               //  }
               //},
@@ -535,7 +535,7 @@ class ScrollSnapListState extends State<ScrollSnapList> {
                   // ScrollSnapList. If not, skip them. Try to avoid inifinte
                   // animation loop caused by multi-level NotificationListener
                   if (scrollInfo.depth > 0) {
-                    //print('scrollInfo.depth > 0');
+                    //see('scrollInfo.depth > 0');
                     return false;
                   }
 

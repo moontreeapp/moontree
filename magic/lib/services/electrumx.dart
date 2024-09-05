@@ -35,7 +35,7 @@
 //   /// if communication fails it will reconnect and try again.
 //   /// for example:
 //   ///   await services.client.scope(() async {
-//   ///     print('erroring if client is null is desirable in this scope');
+//   ///     see('erroring if client is null is desirable in this scope');
 //   ///     return await services.client.client!.getRelayFee();
 //   ///   }));
 //   Future<T> scope<T>(Future<T> Function() callback) async {
@@ -46,8 +46,8 @@
 //       x = await callback();
 //       //} catch (e) {
 //     } on StateError {
-//       //print('creatingClient because of StateError');
-//       ////print(e);
+//       //see('creatingClient because of StateError');
+//       ////see(e);
 //       //// reconnect on any error, not just server disconnected } on StateError {
 //       //await createClient();
 //       //// if we error this time, fail
@@ -82,7 +82,7 @@
 //   /// because if we return void this function will not be awaited and therefore
 //   /// succeeding calls may try to use the client that is not yet created.
 //   Future<RavenElectrumClient?> createClient() async {
-//     print('creating Client');
+//     see('creating Client');
 //     lastActiveTime = DateTime.now();
 //     await periodicTimer?.cancel();
 //     periodicTimer = Stream.periodic(inactiveGracePeriod).listen((_) async {
@@ -153,7 +153,7 @@
 //         connectionTimeout: connectionTimeout,
 //       );
 //     } on SocketException catch (_) {
-//       print(_);
+//       see(_);
 //     }
 //     return null;
 //   }
@@ -211,7 +211,7 @@
 //     if (!keepAddresses) {
 //       final currentWallet = services.wallet.currentWallet;
 //       if (currentWallet is LeaderWallet) {
-//         print('deriving');
+//         see('deriving');
 //         await services.wallet.leader.handleDeriveAddress(leader: currentWallet);
 //       } else {
 //         // trigger single derive?
@@ -447,7 +447,7 @@
 //         ((address.startsWith('E') && pros.settings.chain == Chain.ravencoin) ||
 //             (address.startsWith('R') &&
 //                 pros.settings.chain == Chain.evrmore))) {
-//       print('huh?');
+//       see('huh?');
 //     }
 //     streams.client.download.add(ActivityMessage(
 //         active: true,
@@ -455,7 +455,7 @@
 //         message: address == null
 //             ? status ?? 'Downloading your transactions...'
 //             : 'Discovered ${status == null ? '' : '$status '}address: $address'));
-//     print('$status $address');
+//     see('$status $address');
 //   }
 
 //   Future subscribeAsset(Asset asset) async {
@@ -585,7 +585,7 @@
 //   /// avoid this and ping directly to catch errors
 //   Future<dynamic> ping() async => services.client.scope(() async {
 //         final result = await (await services.client.client).ping();
-//         print('ping result: $result'); // null
+//         see('ping result: $result'); // null
 //         return result;
 //       });
 

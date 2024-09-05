@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/server/serverv2_client.dart';
+import 'package:magic/utils/log.dart';
 
 part 'state.dart';
 
@@ -34,12 +35,14 @@ class AppCubit extends UpdatableCubit<AppState> {
     StreamingConnectionStatus? connection,
     int? blockheight,
     bool? submitting,
-  }) =>
-      emit(AppState(
-        status: status ?? state.status,
-        connection: connection ?? state.connection,
-        blockheight: blockheight ?? state.blockheight,
-        submitting: submitting ?? state.submitting,
-        prior: state.withoutPrior,
-      ));
+  }) {
+    see('blockheight', blockheight, LogColor.yellow);
+    emit(AppState(
+      status: status ?? state.status,
+      connection: connection ?? state.connection,
+      blockheight: blockheight ?? state.blockheight,
+      submitting: submitting ?? state.submitting,
+      prior: state.withoutPrior,
+    ));
+  }
 }

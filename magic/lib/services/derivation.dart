@@ -3,6 +3,7 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/services/calls/receive.dart';
+import 'package:magic/utils/log.dart';
 
 Future<void> deriveInBackground([String? mnemonic]) async {
   Future<void> deriveAll() async {
@@ -43,12 +44,12 @@ Future<void> deriveInBackground([String? mnemonic]) async {
   //Isolate.spawn(deriveAll, receivePort.sendPort);
   //receivePort.listen((message) {
   //  if (message == null) {
-  //    print('Derivation completed');
+  //    see('Derivation completed');
   //    receivePort.close(); // Close the receive port when derivation is complete
   //    return;
   //  }
   //  //body.add(message);
   //});
-  print('DERIVING IN BACKGROUND - NOT USED I THINK');
+  see('DERIVING IN BACKGROUND - NOT USED I THINK');
   await deriveAll();
 }

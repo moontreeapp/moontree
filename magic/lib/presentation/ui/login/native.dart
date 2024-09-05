@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:local_auth/local_auth.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/utils/log.dart';
 
 class LoginNative extends StatefulWidget {
   final Widget child;
@@ -32,7 +33,7 @@ class LoginNativeState extends State<LoginNative> {
         _isDeviceSupported = isDeviceSupported;
       });
     } catch (e) {
-      print(e);
+      see(e);
     }
   }
 
@@ -75,7 +76,7 @@ class LoginNativeState extends State<LoginNative> {
       }
     } catch (e) {
       // Handle other errors
-      print(e);
+      see(e);
     }
   }
 
@@ -157,7 +158,7 @@ Future<bool> nativeLoginFunction(BuildContext context) async {
       canCheckBiometrics = await localAuth.canCheckBiometrics;
       isDeviceSupported = await localAuth.isDeviceSupported();
     } catch (e) {
-      print(e);
+      see(e);
     }
   }
 
@@ -231,7 +232,7 @@ Future<bool> nativeLoginFunction(BuildContext context) async {
       }
     } catch (e) {
       // Handle other errors
-      print(e);
+      see(e);
     }
     return true;
   }

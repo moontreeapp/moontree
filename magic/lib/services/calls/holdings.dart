@@ -12,6 +12,7 @@ import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/server/protocol/comm_balance_view.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/calls/server.dart';
+import 'package:magic/utils/log.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 class HoldingBalancesCall extends ServerCall {
@@ -29,9 +30,9 @@ class HoldingBalancesCall extends ServerCall {
     required List<String> roots,
     required List<ByteData> h160s,
   }) async {
-    print('chain: $chain');
-    print('h160s: $h160s');
-    print('roots: $roots');
+    see('chain: $chain');
+    see('h160s: $h160s');
+    see('roots: $roots');
     //xpub6EtVexS6kuhFVjQNB1qGSUGumEnQVF3xp3926wy92W4GJS7ymvhbWkVzBTjXQ4u8EixkRXmE8N538zei6kCdAyZkWKcZBZ7BSdYm9uNPn9i
     //xpub6EtVexS6kuhFZ22PBCWPC97VNkZ9vufPdrTp2ZDDApasumxt8f8CREs4Zv6nDdFKByp8BPZ5tFFj6ZG4eeerNkDM7mJ2PZfBDeB5LjdRiXY
     //[xpub6DsW75qrcf81yRixgqjPqE59mXo3dZdFjvoiv2MAwoi5YFuE5NPG7KZ7WNsNjzeZJEFt2F13FDVeSuhvSLYfeSBEqsVK8LU6HYwfwL66nkZ, xpub6DsW75qrcf822pzraAivakk7rGQPD9ZRPFTAQySRzCzvnrG6L6e1771hJqhsNGhdhVLMYbzsVjUuhspdut1KXrHRi3nWrM3ioiMPdobVzYA]
@@ -57,7 +58,7 @@ class HoldingBalancesCall extends ServerCall {
 
     if (holdings.length == 1 && holdings.first.error != null) {
       // handle
-      print('error: ${holdings.first.error}');
+      see('error: ${holdings.first.error}');
       return [];
     }
 

@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/utils/log.dart';
 
 const AppLifecycleReactor status = AppLifecycleReactor();
 
@@ -33,7 +34,7 @@ class _AppLifecycleReactorState extends State<AppLifecycleReactor>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print('app state: ${state.name}');
+    see('app state: ${state.name}');
     cubits.app.update(status: state.name);
     //setState(() {
     //  _notification = state;

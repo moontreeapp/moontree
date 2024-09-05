@@ -6,6 +6,7 @@ import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
+import 'package:magic/utils/log.dart';
 
 enum AddressesLifeCycle {
   entering,
@@ -110,17 +111,16 @@ class AddressesPageState extends State<AddressesPage> {
                                 index <
                                     cubits.keys.master.derivationWallets.length;
                                 index++) {
-                              print('Wallet Index: $index');
+                              see('Wallet Index: $index');
                               for (final blockchain in Blockchain.mainnets) {
-                                print('${blockchain.name}');
+                                see('${blockchain.name}');
                                 for (final exposure in Exposure.values) {
-                                  print('${exposure.name}');
+                                  see('${exposure.name}');
                                   for (final subwallet in cubits
                                       .keys.master.derivationWallets[index]
                                       .seedWallet(blockchain)
                                       .subwallets[exposure]!) {
-                                    print(
-                                        'wallet: $index ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}');
+                                    see('wallet: $index ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}');
                                   }
                                 }
                               }

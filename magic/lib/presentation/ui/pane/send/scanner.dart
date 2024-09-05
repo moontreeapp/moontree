@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/utils/log.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRViewable extends StatefulWidget {
@@ -18,15 +19,15 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
 
   void _handleBarcode(BarcodeCapture event) {
     try {
-      print(event.barcodes.first.rawValue);
+      see(event.barcodes.first.rawValue);
       // Your existing processing logic
-      print(event);
-      print(event.barcodes);
-      print(event.barcodes.first.rawValue);
-      print(event.image);
-      print(event.raw);
+      see(event);
+      see(event.barcodes);
+      see(event.barcodes.first.rawValue);
+      see(event.image);
+      see(event.raw);
     } catch (e) {
-      print('Error processing barcode: $e');
+      see('Error processing barcode: $e');
     }
   }
 
@@ -91,18 +92,18 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
             //fit: BoxFit.contain,
             controller: controller,
             onDetect: (BarcodeCapture event) {
-              print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+              see('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
               if (event.barcodes.first.rawValue?.isNotEmpty ?? false) {
                 cubits.send.update(address: barcode);
                 cubits.send.update(scanActive: false);
-                print(cubits.send.state.address);
-                print(event);
-                print(event.barcodes);
-                print(event.barcodes.first.rawValue);
-                print(event.image);
-                print(event.raw);
+                see(cubits.send.state.address);
+                see(event);
+                see(event.barcodes);
+                see(event.barcodes.first.rawValue);
+                see(event.image);
+                see(event.raw);
               }
-              print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+              see('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
               setState(() {
                 barcode = event.barcodes.first.rawValue;
                 if (barcode?.isNotEmpty ?? false) {

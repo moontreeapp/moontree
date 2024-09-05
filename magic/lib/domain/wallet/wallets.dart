@@ -20,6 +20,7 @@ import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/concepts/address.dart';
+import 'package:magic/utils/log.dart';
 import 'package:moontree_utils/moontree_utils.dart' show decode;
 import 'package:wallet_utils/wallet_utils.dart'
     show ECPair, HDWallet, KPWallet, NetworkType, P2PKH;
@@ -176,11 +177,11 @@ class DerivationWallet extends Jsonable {
 
   /// this is the compressed version of the xpub. not very useful in HD context.
   String? pubkey(Blockchain blockchain) {
-    //print('${blockchain.name} - ${seedWallet(blockchain).xpub}');
-    //print('${blockchain.name} - ${seedWallet(blockchain).hdWallet.pubKey}');
-    //print(
+    //see('${blockchain.name} - ${seedWallet(blockchain).xpub}');
+    //see('${blockchain.name} - ${seedWallet(blockchain).hdWallet.pubKey}');
+    //see(
     //    '${blockchain.name} - ${seedWallet(blockchain).root(Exposure.external)} - external');
-    //print(
+    //see(
     //    '${blockchain.name} - ${seedWallet(blockchain).root(Exposure.internal)} - internal');
     //Ravencoin - xpub661My...
     //Ravencoin - 0379c9413...
@@ -274,9 +275,9 @@ class SeedWallet {
       index: hdIndex,
       exposure: exposure,
       blockchain: blockchain,
-      hardened: hdWallet.seed != null ? "" : '',
+      hardened: hdWallet.seed != null ? "'" : '',
     );
-    print('p: $path');
+    see('p: $path');
     final sub = hdWallet.derivePath(path);
     final indexedSub = HDWalletIndexed(
         hdWallet: sub,
@@ -299,7 +300,7 @@ class SeedWallet {
         while (cubits.app.animating) {
           await Future.delayed(const Duration(milliseconds: 1000));
         }
-        print('subwalleting');
+        see('subwalleting');
         subwallet(hdIndex: highestIndex[exposure]! + 1, exposure: exposure);
         highestIndex[exposure] = highestIndex[exposure]! + 1;
         // Yield control back to the UI thread
@@ -316,7 +317,7 @@ class SeedWallet {
         getDerivationPath(
           exposure: exposure,
           blockchain: blockchain,
-          hardened: hdWallet.seed != null ? "" : '',
+          hardened: hdWallet.seed != null ? "'" : '',
         ),
       )
       .base58!;

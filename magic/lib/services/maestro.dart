@@ -184,12 +184,12 @@ class Maestro {
   /// then the scroll list action would take over and we start scrolling the
   /// list instead which is not what we want.
   //void setMaxToMiddleOnMin(double height) {
-  //  print('height: $height, screen.pane.minHeight: ${screen.pane.minHeight}');
+  //  see('height: $height, screen.pane.minHeight: ${screen.pane.minHeight}');
   //  if (height < screen.pane.minHeight + 1) {
-  //    print('setting to mid');
+  //    see('setting to mid');
   //    cubits.pane.update(max: screen.pane.midHeightPercent);
   //  } else if (height == screen.pane.midHeight) {
-  //    print('setting to max');
+  //    see('setting to max');
   //    cubits.pane.update(max: screen.pane.maxHeightPercent);
   //  }
   //}
@@ -292,20 +292,20 @@ class Maestro {
 
     /// place for testing stuff since mint is unused:
     ///
-    //print(makeMnemonic());
-    //print(cubits.keys.master.derivationWallets.first.mnemonic);
-    //print(cubits.keys.state.mnemonics);
+    //see(makeMnemonic());
+    //see(cubits.keys.master.derivationWallets.first.mnemonic);
+    //see(cubits.keys.state.mnemonics);
     //cubits.keys.reset();
-    //print(cubits.keys.dump());
-    //print(cubits.keys.load());
-    //print("storage.read(key: 'key') ${await storage.read(key: 'key')}");
+    //see(cubits.keys.dump());
+    //see(cubits.keys.load());
+    //see("storage.read(key: 'key') ${await storage.read(key: 'key')}");
     //cubits.keys.update(mnemonics: [makePubKey()]);
     //cubits.keys.dump();
     //DerivationWallet wallet = DerivationWallet(mnemonic: makeMnemonic());
-    //print('mnemonic: ${wallet.mnemonic}');
-    //print('entropy: ${wallet.entropy}');
-    //print('seed: ${wallet.seed}');
-    //print("storage.read(key: 'key') ${await storage.read(key: 'key')}");
+    //see('mnemonic: ${wallet.mnemonic}');
+    //see('entropy: ${wallet.entropy}');
+    //see('seed: ${wallet.seed}');
+    //see("storage.read(key: 'key') ${await storage.read(key: 'key')}");
     //cubits.toast.flash(
     //    msg: const ToastMessage(
     //  title: 'test toast',

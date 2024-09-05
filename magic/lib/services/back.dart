@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:magic/services/services.dart' as services;
+import 'package:magic/utils/log.dart';
 //import 'package:magic/presentation/services/services.dart' show sail;
 
 class SystemBackButton {
@@ -27,7 +28,7 @@ class SystemBackButton {
         // if custom bottom modalsheet always in front is up navigator pop
         // instead of pop we should do nothing. the context isn't available and
         // some of these we want to do nothing anyway.
-        print('back button disabled in this case');
+        see('back button disabled in this case');
       } else {
         //await services.sail.back();
         sendToBackChannel.invokeMethod('sendToBackground');

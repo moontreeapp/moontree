@@ -41,12 +41,12 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     syncMnemonics(mnemonics);
     syncKeypairs(wifs);
     syncXPubs(xpubs);
-    //print(mnemonics);
+    //see(mnemonics);
     //try {
-    //  print('-----------------------------');
-    //  print(master.derivationWallets.first.mnemonic);
-    //  print(master.derivationWallets.first.roots(Blockchain.evrmoreMain));
-    //  print(master.derivationWallets.first.roots(Blockchain.ravencoinMain));
+    //  see('-----------------------------');
+    //  see(master.derivationWallets.first.mnemonic);
+    //  see(master.derivationWallets.first.roots(Blockchain.evrmoreMain));
+    //  see(master.derivationWallets.first.roots(Blockchain.ravencoinMain));
     //} catch (e) {}
     emit(KeysState(
       xpubs: xpubs ?? state.xpubs,

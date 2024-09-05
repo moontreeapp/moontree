@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/ignore/cubit.dart';
 import 'package:magic/services/services.dart' show screen;
+import 'package:magic/utils/log.dart';
 
 class IgnoreLayer extends StatelessWidget {
   const IgnoreLayer({super.key});
@@ -15,7 +16,7 @@ class IgnoreLayer extends StatelessWidget {
         if (state.active) {
           return GestureDetector(
               // ignore: avoid_print
-              onTap: () => print('ignore tap'),
+              onTap: () => see('ignore tap'),
               onLongPressUp: () => cubits.ignore.update(active: false),
               child: Container(
                 padding: const EdgeInsets.all(4.0),

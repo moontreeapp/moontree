@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:magic/utils/log.dart';
 
 enum AuthenticationResult {
   skipped,
@@ -19,7 +20,7 @@ class LocalAuthApi {
     try {
       return await _auth.canCheckBiometrics;
     } on PlatformException catch (e) {
-      print(e);
+      see(e);
       return false;
     }
   }
@@ -106,10 +107,10 @@ class LocalAuthApi {
         reason = AuthenticationResult.success;
         return true;
       }
-      /* 
+      /*
       by the way, there seems to be no way to tell if the user cancelled the
-      login or if the system had some other kind of failure. that is, no way to 
-      tell using this _auth object alone. you could set a flag in the android / 
+      login or if the system had some other kind of failure. that is, no way to
+      tell using this _auth object alone. you could set a flag in the android /
       ios code (which you would have to manage) and check it but that's a lot of
       work in order to differentiate and give the user a nice message.
       */
@@ -124,7 +125,7 @@ class LocalAuthApi {
       [PlatformException].
       (Therefore we should fall back on the password posibility.)
       */
-      print(e);
+      see(e);
       reason = AuthenticationResult.error;
     }
     return false;

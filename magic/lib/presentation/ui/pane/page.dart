@@ -65,7 +65,7 @@ class DraggablePane extends StatelessWidget {
 //if (state.scrollableChild != null) {}
 //        // if we have a height change, move it to the correct height,
 //        if (state.prior?.child != null && state.child == null) {
-//          print('pane 2');
+//          see('pane 2');
 //          return PaneBackground(
 //              height: state.height,
 //              child: FadeOut(
@@ -73,14 +73,14 @@ class DraggablePane extends StatelessWidget {
 //              ));
 //        }
 //        if (state.prior?.child == null && state.child != null) {
-//          print('pane 3');
+//          see('pane 3');
 //          return PaneBackground(
 //              height: state.height,
 //              child: FadeIn(
 //                child: state.child!,
 //              ));
 //        }
-//        print('pane 4');
+//        see('pane 4');
 //        return PaneBackground(height: state.height, child: state.child);
           // not sure this must be tracked in our system
           //components.cubits.bottomModalSheet

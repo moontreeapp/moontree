@@ -17,6 +17,7 @@ import 'package:magic/services/calls/mempool.dart';
 import 'package:magic/services/calls/transactions.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/utils/dart.dart';
+import 'package:magic/utils/log.dart';
 
 part 'state.dart';
 
@@ -74,7 +75,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     update(isSubmitting: true);
     await populateTransactions(holding: holding, fromHeight: fromHeight);
     await populateMempoolTransactions(holding: holding);
-    print('${holding.symbol} ${cubits.holding.state.holding.symbol}');
+    see('${holding.symbol} ${cubits.holding.state.holding.symbol}');
     if (holding.symbol != cubits.holding.state.holding.symbol) {
       return;
     }
@@ -92,7 +93,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       update(isSubmitting: true);
     }
     await Future.delayed(fadeDuration * 10);
-    print('populating transactions: ${state.transactions.length}');
+    see('populating transactions: ${state.transactions.length}');
     final replace = holding != cubits.holding.state.holding;
     // get the max transaction.height from the list of transactions
     fromHeight = fromHeight ??
@@ -101,8 +102,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
                 .map((transaction) => transaction.height)
                 .reduce((a, b) => a < b ? a : b)
             : null);
-    print(
-        'asking from: ${fromHeight ?? (state.transactions.isNotEmpty ? state.transactions.length : null)}');
+    see('asking from: ${fromHeight ?? (state.transactions.isNotEmpty ? state.transactions.length : null)}');
     final transactions = _sort(_newRateThese(
         rate: holding.isRavencoin
             ? rates.rvnUsdRate
@@ -121,7 +121,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       update(isSubmitting: isSubmitting);
       return;
     }
-    print('${holding.symbol} ${cubits.holding.state.holding.symbol}');
+    see('${holding.symbol} ${cubits.holding.state.holding.symbol}');
     if (holding.symbol != cubits.holding.state.holding.symbol) {
       return;
     }
@@ -166,7 +166,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
           blockchain: holding.blockchain,
           symbol: holding.symbol,
         ).call()));
-    print('${holding.symbol} ${cubits.holding.state.holding.symbol}');
+    see('${holding.symbol} ${cubits.holding.state.holding.symbol}');
     if (holding.symbol != cubits.holding.state.holding.symbol) {
       return;
     }
@@ -174,7 +174,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       mempool: transactions,
       isSubmitting: isSubmitting,
     );
-    print('1 $isSubmitting');
+    see('1 $isSubmitting');
   }
 
   void clearTransactions() {

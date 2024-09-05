@@ -14,6 +14,7 @@ import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/services/security.dart';
+import 'package:magic/utils/log.dart';
 import 'package:url_launcher/url_launcher_string.dart'; // Make sure to import the security service
 
 class WelcomeLayer extends StatelessWidget {
@@ -103,13 +104,13 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
       try {
         await platform.invokeMethod('openSecuritySettings');
       } on PlatformException catch (e) {
-        print("Failed to open security settings: '${e.message}'.");
+        see("Failed to open security settings: '${e.message}'.");
       }
     } else if (Platform.isIOS) {
       if (await canLaunchUrlString('App-Prefs:root=TOUCHID_PASSCODE')) {
         await launchUrlString('App-Prefs:root=TOUCHID_PASSCODE');
       } else {
-        print('Could not launch iOS settings');
+        see('Could not launch iOS settings');
       }
     }
   }
@@ -118,7 +119,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
     bool supportsBiometrics = await securityService.canCheckBiometrics();
     bool isAuthSetUp = await securityService.isAuthenticationSetUp();
     bool isAuthenticated = await securityService.authenticateUser();
-    print('isAuthenticated: $isAuthenticated');
+    see('isAuthenticated: $isAuthenticated');
     if (isAuthenticated) {
       if (!supportsBiometrics) {
         _showSecurityWarning(context, 'no_biometrics');

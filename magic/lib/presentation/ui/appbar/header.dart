@@ -15,6 +15,7 @@ import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/animations.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart' show screen;
+import 'package:magic/utils/log.dart';
 
 class AppbarHeader extends StatelessWidget {
   const AppbarHeader({super.key});
@@ -247,16 +248,15 @@ class AppActivityWatcher extends StatelessWidget {
       buildWhen: (AppState previous, AppState current) =>
           previous.status != current.status,
       builder: (context, state) {
-        print('AppActivityWatcher: ${state.status}');
+        see('AppActivityWatcher: ${state.status}');
         if (state.status == 'resumed') {
-          print('refreshing assets');
+          see('refreshing assets');
           Future.delayed(const Duration(seconds: 1)).then((_) {
             cubits.wallet.populateAssets().then((value) {
-              print('refreshing holding');
+              see('refreshing holding');
               if (cubits.holding.state.holding != const Holding.empty() &&
                   cubits.wallet.state.holdings.isNotEmpty) {
-                print(
-                    'refreshing holding ${cubits.holding.state.holding.symbol} ${[
+                see('refreshing holding ${cubits.holding.state.holding.symbol} ${[
                   for (final x in cubits.wallet.state.holdings) x.symbol
                 ]}');
                 cubits.holding.update(
@@ -264,7 +264,7 @@ class AppActivityWatcher extends StatelessWidget {
                         .getHoldingFrom(holding: cubits.holding.state.holding));
               }
               if (cubits.transactions.state.active) {
-                print('refreshing transactions');
+                see('refreshing transactions');
                 //cubits.transactions.clearTransactions();
                 cubits.transactions.populateAllTransactions(
                     holding: cubits.holding.state.holding);

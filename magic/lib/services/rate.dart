@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:magic/utils/log.dart';
 import 'package:tuple/tuple.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
@@ -39,7 +40,7 @@ class RateGrabber implements Grabber {
   }) {
     /** look in every nested thing and make sure the last successful scrape
       * isn't too old... subtract utcnow from "last_successful_scrape"
-      * and get time, if too old look at other nested data...  
+      * and get time, if too old look at other nested data...
       {
         "coingecko": {
           "last_successful_scrape": 1657905691,
@@ -83,7 +84,7 @@ class RateGrabber implements Grabber {
     try {
       jsonBody = jsonDecode(response.body) as Map<String, dynamic>;
     } catch (e) {
-      print(e);
+      see(e);
       throw FetchDataException('unable to get data from interpretMoontree');
     }
     return _interpretMoontreeStructure(jsonBody)?.item1; // item2 is avgtime

@@ -8,6 +8,7 @@ import 'package:magic/domain/storage/secure.dart';
 import 'package:magic/services/rate.dart';
 import 'package:magic/domain/concepts/money/rate.dart';
 import 'package:magic/services/services.dart';
+import 'package:magic/utils/log.dart';
 import 'package:moontree_utils/moontree_utils.dart' show Trigger;
 
 class RateWaiter extends Trigger {
@@ -91,7 +92,7 @@ class RateWaiter extends Trigger {
   }
 
   void _save({required RateGrabber rateGrabber, required double rate}) {
-    print('saving ${rateGrabber.symbol}, rate: $rate');
+    see('saving ${rateGrabber.symbol}, rate: $rate');
     switch (rateGrabber.symbol) {
       case 'EVR':
         evrUsdRate = _toRate(rateGrabber: rateGrabber, rate: rate);

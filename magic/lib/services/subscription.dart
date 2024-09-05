@@ -6,6 +6,7 @@ import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/utils/extensions/string.dart';
 import 'package:magic/domain/wallet/wallets.dart';
+import 'package:magic/utils/log.dart';
 import 'package:serverpod_client/serverpod_client.dart';
 import 'package:magic/domain/server/serverv2_client.dart' as server;
 import 'package:magic/domain/server/protocol/protocol.dart' as protocol;
@@ -40,12 +41,15 @@ class SubscriptionService {
       client: client,
       retryEverySeconds: retryDelay.inSeconds,
       listener: (StreamingConnectionHandlerState connectionState) {
-        print('connection state: ${connectionState.status.name}');
+        see('connection state: ${connectionState.status.name}');
         cubits.app.update(connection: connectionState.status);
+        if (connectionState.status == StreamingConnectionStatus.connected) {
+          setupSubscriptions(cubits.keys.master);
+        }
       },
     );
 
-    print('Connecting...');
+    see('Connecting...');
     for (int attempt = 1; attempt <= retryCount; attempt++) {
       try {
         connectionHandler.connect();
@@ -60,23 +64,23 @@ class SubscriptionService {
 
         if (connectionHandler.status.status ==
             StreamingConnectionStatus.connected) {
-          print('Connected successfully on attempt $attempt');
+          see('Connected successfully on attempt $attempt');
           await setupListeners();
           return;
         } else {
-          print('Failed to connect on attempt $attempt');
+          see('Failed to connect on attempt $attempt');
         }
       } catch (e) {
-        print('Error during connection setup on attempt $attempt: $e');
+        see('Error during connection setup on attempt $attempt: $e');
       }
 
       if (attempt < retryCount) {
-        print('Retrying in ${retryDelay.inSeconds} seconds...');
+        see('Retrying in ${retryDelay.inSeconds} seconds...');
         await Future.delayed(retryDelay);
       }
     }
 
-    print('Failed to connect after $retryCount attempts');
+    see('Failed to connect after $retryCount attempts');
     // Handle connection failure (e.g., show an error message to the user)
   }
 
@@ -87,8 +91,7 @@ class SubscriptionService {
       required int satsUnconfirmed,
       required String chainName,
     }) async {
-      print(
-          'triggerBalanceUpdates: $symbol, $satsConfirmed, $satsUnconfirmed, $chainName');
+      see('triggerBalanceUpdates: $symbol, $satsConfirmed, $satsUnconfirmed, $chainName');
       final realSymbol = chainName.startsWith(symbol.toLowerCase())
           ? symbol == 'Evrmore'
               ? 'EVR'
@@ -105,10 +108,9 @@ class SubscriptionService {
       }
       await Future.delayed(const Duration(seconds: 1));
       await cubits.wallet.populateAssets(); // chain specific
-      print(
-          'refresh: $chainName, $symbol, ${cubits.holding.state.holding.symbol}, $realSymbol, ${cubits.transactions.state.active}');
-      print(cubits.holding.state.holding);
-      print('refreshing holding ${cubits.holding.state.holding.symbol} ${[
+      see('refresh: $chainName, $symbol, ${cubits.holding.state.holding.symbol}, $realSymbol, ${cubits.transactions.state.active}');
+      see(cubits.holding.state.holding);
+      see('refreshing holding ${cubits.holding.state.holding.symbol} ${[
         for (final x in cubits.wallet.state.holdings) x.symbol
       ]}');
       if (cubits.holding.state.holding != const Holding.empty() &&
@@ -136,12 +138,11 @@ class SubscriptionService {
         if (message is protocol.NotifyChainStatus) {
         } else if (message is protocol.NotifyChainHeight) {
           if (message.height > 0) {
-            print(message);
+            see(message);
             cubits.app.update(blockheight: message.height);
           }
         } else if (message is protocol.NotifyChainH160Balance) {
-          print(
-              'NotifyChainWalletBalance H160 update: ${message.symbol} ${message.satsConfirmed} ${message.satsUnconfirmed}');
+          see('NotifyChainWalletBalance H160 update: ${message.symbol} ${message.satsConfirmed} ${message.satsUnconfirmed}');
           triggerBalanceUpdates(
               symbol: message.symbol ??
                   message.chainName.split('_').first.toTitleCase(),
@@ -149,8 +150,7 @@ class SubscriptionService {
               satsUnconfirmed: message.satsUnconfirmed,
               chainName: message.chainName);
         } else if (message is protocol.NotifyChainWalletBalance) {
-          print(
-              'NotifyChainWalletBalance Wallet update: ${message.symbol} ${message.satsConfirmed} ${message.satsUnconfirmed}');
+          see('NotifyChainWalletBalance Wallet update: ${message.symbol} ${message.satsConfirmed} ${message.satsUnconfirmed}');
           triggerBalanceUpdates(
               symbol: message.symbol ??
                   message.chainName.split('_').first.toTitleCase(),
@@ -158,13 +158,13 @@ class SubscriptionService {
               satsUnconfirmed: message.satsUnconfirmed,
               chainName: message.chainName);
         } else {
-          print('unknown subscription message: ${message.runtimeType}');
+          see('unknown subscription message: ${message.runtimeType}');
         }
       });
     } on StateError {
-      print('listeners already setup');
+      see('listeners already setup');
     } catch (e) {
-      print(e);
+      see(e);
     }
   }
 
@@ -186,7 +186,7 @@ class SubscriptionService {
     try {
       connectionHandler.connect();
     } catch (e) {
-      print('Failed to connect: $e');
+      see('Failed to connect: $e');
       // Handle connection error (e.g., throw an exception or return an error status)
     }
   }
@@ -218,7 +218,7 @@ class SubscriptionService {
         h160s: h160s,
       ));
     } catch (e) {
-      print('Failed to send subscription: $e');
+      see('Failed to send subscription: $e');
       // Implement proper error handling
     }
   }
@@ -235,15 +235,12 @@ class SubscriptionService {
       h160s.add(keypairWallet.h160AsString(Blockchain.ravencoinMain));
       //h160s.add(keypairWallet.h160AsString(Blockchain.evrmoreMain));
     }
-    final subscriptionVoid =
-
-        /// MOCK SERVER
-        //await Future.delayed(Duration(seconds: 1), spoofNothing);
-        /// SERVER
-        await specifySubscription(chains: [
-      Blockchain.ravencoinMain.chaindata.name,
-      Blockchain.evrmoreMain.chaindata.name,
-    ], roots: roots, h160s: h160s);
+    await ensureConnected();
+    final subscriptionVoid = await specifySubscription(
+      chains: Blockchain.mainnetNames,
+      roots: roots,
+      h160s: h160s,
+    );
     return subscriptionVoid;
   }
 

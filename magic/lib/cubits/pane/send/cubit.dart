@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:magic/utils/log.dart';
 import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -128,13 +129,13 @@ class SendCubit extends UpdatableCubit<SendState> {
     List<Transaction> txs = [];
     for (final UnsignedTransactionResult unsigned
         in state.unsignedTransaction!.unsignedTransactionResults) {
-      print('----');
-      print('vinAssets: ${unsigned.vinAssets}');
-      print('vinAmounts: ${unsigned.vinAmounts}');
-      print('targetFee: ${unsigned.targetFee}');
-      print('changeSource: ${unsigned.changeSource}');
-      print('vinPrivateKeySource: ${unsigned.vinPrivateKeySource}');
-      print('----------------');
+      see('----');
+      see('vinAssets: ${unsigned.vinAssets}');
+      see('vinAmounts: ${unsigned.vinAmounts}');
+      see('targetFee: ${unsigned.targetFee}');
+      see('changeSource: ${unsigned.changeSource}');
+      see('vinPrivateKeySource: ${unsigned.vinPrivateKeySource}');
+      see('----------------');
 
       final txb = TransactionBuilder.fromRawInfo(
           unsigned.rawHex,
@@ -151,14 +152,14 @@ class SendCubit extends UpdatableCubit<SendState> {
         final vinIndex = e.item1;
         final privateKeySource = e.item2;
         if (privateKeySource.contains(':')) {
-          print('privateKeySource: $privateKeySource');
-          print('vinIndex: $vinIndex');
+          see('privateKeySource: $privateKeySource');
+          see('vinIndex: $vinIndex');
           final walletPubKeyAndDerivationIndex = privateKeySource.split(':');
           final String walletRoot = walletPubKeyAndDerivationIndex[0];
           final int derivationIndex =
               int.parse(walletPubKeyAndDerivationIndex[1]);
-          print('walletRoot: $walletRoot');
-          print('derivationIndex: $derivationIndex');
+          see('walletRoot: $walletRoot');
+          see('derivationIndex: $derivationIndex');
 
           /*
           I/flutter ( 5038): privateKeySource: xpub6EPLto1UvaKqiJSsBntBY6F4yb8Z68u9ZA6v2Jd37pTto3HzRWrrELDR6zVUXQhr3AvVwDq3CnqiQzod1cgpyHrKD3CbUBotsoBfn5bnKCg:21
@@ -177,14 +178,13 @@ class SendCubit extends UpdatableCubit<SendState> {
               orElse: () =>
                   throw Exception('Wallet not found for root: $walletRoot'));
 
-          print(
-              'wallet: $wallet, wallet.roots: ${wallet.roots(state.unsignedTransaction!.security.blockchain)}');
+          see('wallet: $wallet, wallet.roots: ${wallet.roots(state.unsignedTransaction!.security.blockchain)}');
           final Exposure exposure = walletRoot ==
                   wallet.root(state.unsignedTransaction!.security.blockchain,
                       Exposure.external)
               ? Exposure.external
               : Exposure.internal;
-          print('exposure: $exposure');
+          see('exposure: $exposure');
           keyPairByPath['${exposure.index}/$derivationIndex'] ??= wallet
               .seedWallet(state.unsignedTransaction!.security.blockchain)
               .subwallet(
@@ -192,11 +192,10 @@ class SendCubit extends UpdatableCubit<SendState> {
                 exposure: exposure,
               )
               .keyPair;
-          print(
-              'address: ${wallet.seedWallet(state.unsignedTransaction!.security.blockchain).subwallet(
-                    hdIndex: derivationIndex,
-                    exposure: exposure,
-                  ).address}');
+          see('address: ${wallet.seedWallet(state.unsignedTransaction!.security.blockchain).subwallet(
+                hdIndex: derivationIndex,
+                exposure: exposure,
+              ).address}');
           /*
           well there you go EPTCNCFjuSP7pJLVYsF6hD64dzXFsMuo3a has nothing in it.
           either the server is giving us bad data or we are not deriving the correct keypair.
@@ -385,9 +384,9 @@ class SendCubit extends UpdatableCubit<SendState> {
           kralverde -
           Yeah, if you were to put in a change wallet for instance */
           if (cs != null && !cs.contains(':')) {
-            //print(state.changeAddress);
-            //print(Current.chainNet.addressFromH160String(cs));
-            //print(h160ToAddress(
+            //see(state.changeAddress);
+            //see(Current.chainNet.addressFromH160String(cs));
+            //see(h160ToAddress(
             //    cs.hexBytes, Current.chainNet.chaindata.p2pkhPrefix));
             if (state.changeAddress !=
                 state.unsignedTransaction!.security.blockchain
@@ -584,11 +583,11 @@ class SendCubit extends UpdatableCubit<SendState> {
   /// actually commit transaction
   Future<void> broadcast({String? amount, String? symbol}) async {
     if (state.signedTransactions.isEmpty) {
-      print('transaction not signed yet');
+      see('transaction not signed yet');
       return;
     }
     for (final Transaction signed in state.signedTransactions) {
-      print('broadcasting ${signed.toHex()}');
+      see('broadcasting ${signed.toHex()}');
 
       /// should we use a repository for this? why? myabe for validation purposes?
       /// and for saving the note in success case? we'd still do the rest here...
@@ -601,7 +600,7 @@ class SendCubit extends UpdatableCubit<SendState> {
       // todo: should we do more validation on the txHash?
       if (broadcastResult.value != null && broadcastResult.error == null) {
         update(txHashes: [...state.txHashes, broadcastResult.value!]);
-        print(broadcastResult);
+        see(broadcastResult);
         // todo: save note by this txHash here
         // should this be in a repo?
         //pros.notes.save(
