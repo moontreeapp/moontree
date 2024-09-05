@@ -42,6 +42,9 @@ class SubscriptionService {
       listener: (StreamingConnectionHandlerState connectionState) {
         print('connection state: ${connectionState.status.name}');
         cubits.app.update(connection: connectionState.status);
+        if (connectionState.status == StreamingConnectionStatus.connected) {
+          setupSubscriptions(cubits.keys.master);
+        }
       },
     );
 
@@ -103,6 +106,7 @@ class SubscriptionService {
               '+${Coin.fromInt(satsConfirmed + satsUnconfirmed).humanString()}',
         ));
       }
+      await Future.delayed(const Duration(seconds: 1));
       await cubits.wallet.populateAssets(); // chain specific
       print(
           'refresh: $chainName, $symbol, ${cubits.holding.state.holding.symbol}, $realSymbol, ${cubits.transactions.state.active}');
@@ -180,14 +184,16 @@ class SubscriptionService {
       await _waitForConnection();
       return;
     }
-
+    print('awaiting connection...');
+    await _waitForConnection();
+    return;
     // If not connected and not connecting, initiate a new connection
-    try {
-      connectionHandler.connect();
-    } catch (e) {
-      print('Failed to connect: $e');
-      // Handle connection error (e.g., throw an exception or return an error status)
-    }
+    //try {
+    //  connectionHandler.connect();
+    //} catch (e) {
+    //  print('Failed to connect: $e');
+    //  // Handle connection error (e.g., throw an exception or return an error status)
+    //}
   }
 
   Future<void> _waitForConnection() async {
