@@ -36,7 +36,7 @@ class TransactionsPage extends StatelessWidget {
               // return const LoadingIndicator();
               return ListView.builder(
                 padding: const EdgeInsets.only(top: 8),
-                itemCount: 6,
+                itemCount: 3,
                 itemBuilder: (context, index) =>
                     const TransactionItemPlaceholder(),
               );
