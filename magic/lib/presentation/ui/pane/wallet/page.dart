@@ -14,6 +14,11 @@ import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart';
 
+enum BlockchainIconSize {
+  small,
+  extraSmall,
+}
+
 class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
 
@@ -78,7 +83,10 @@ class HoldingItem extends StatelessWidget {
         splashColor: Colors.transparent,
         leading: holding.isCurrency
             ? CurrencyIdenticon(holding: holding)
-            : SimpleIdenticon(letter: holding.assetPathChildNFT[0]),
+            : SimpleIdenticon(
+                letter: holding.assetPathChildNFT[0],
+                blockchain: holding.blockchain,
+                blockchainIconSize: BlockchainIconSize.extraSmall),
         title: SizedBox(
             width: screen.width -
                 (screen.iconMedium +
@@ -136,6 +144,9 @@ class SimpleIdenticon extends StatelessWidget {
   final double? width;
   final TextStyle? style;
   final bool? admin;
+  final Blockchain? blockchain;
+  final BlockchainIconSize blockchainIconSize;
+
   const SimpleIdenticon({
     super.key,
     this.letter,
@@ -144,7 +155,19 @@ class SimpleIdenticon extends StatelessWidget {
     this.height,
     this.style,
     this.admin,
+    this.blockchain,
+    this.blockchainIconSize = BlockchainIconSize.small,
   });
+
+  // Getter to return the appropriate size
+  double get blockchainIconSizeValue {
+    switch (blockchainIconSize) {
+      case BlockchainIconSize.small:
+        return screen.iconSmall;
+      case BlockchainIconSize.extraSmall:
+        return screen.iconExtraSmall;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,27 +195,47 @@ class SimpleIdenticon extends StatelessWidget {
       ),
       child: Text(chosenLetter, style: style ?? AppText.identiconLarge),
     );
-    if (admin == true) {
+    if (admin == true || blockchain != null) {
       return Stack(
         children: <Widget>[
           identicon,
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: Container(
-              width: screen.iconSmall + 2,
-              height: screen.iconSmall + 2,
-              alignment: Alignment.bottomCenter,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.background,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.only(bottom: 1),
-                child: Icon(Icons.star, color: Colors.white, size: 16),
+          if (admin == true)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Container(
+                width: screen.iconSmall + 2,
+                height: screen.iconSmall + 2,
+                alignment: Alignment.bottomCenter,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.background,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.only(bottom: 1),
+                  child: Icon(Icons.star, color: Colors.white, size: 16),
+                ),
               ),
             ),
-          ),
+          if (blockchain != null)
+            Positioned(
+              left: 0,
+              bottom: 0,
+              child: Container(
+                width: blockchainIconSizeValue,
+                height: blockchainIconSizeValue,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.background,
+                ),
+                child: Image.asset(
+                  blockchain!.logo,
+                  width: blockchainIconSizeValue,
+                  height: blockchainIconSizeValue,
+                ),
+              ),
+            ),
         ],
       );
     }
