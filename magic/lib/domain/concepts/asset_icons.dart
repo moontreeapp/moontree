@@ -29,6 +29,36 @@ class AssetIcons {
       "exchange": "",
       "fiat_pair": ""
     },
+    "SATORI": {
+      "blockchain_name": "Evrmore",
+      "logo_path": "satori.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
+    "CATE": {
+      "blockchain_name": "Evrmore",
+      "logo_path": "cate.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
+    "CATE": {
+      "blockchain_name": "Ravencoin",
+      "logo_path": "cate.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
+    "LITTLEWARRIORS": {
+      "blockchain_name": "Evrmore",
+      "logo_path": "little_warriors.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
+    "WOJCOIN": {
+      "blockchain_name": "Evrmore",
+      "logo_path": "wojcoin.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
     // * Add more assets here
   };
 

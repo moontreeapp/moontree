@@ -1,62 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:magic/presentation/theme/colors.dart';
-// import 'package:magic/presentation/theme/text.dart';
-// import 'package:magic/presentation/widgets/other/other.dart';
-// import 'package:magic/services/services.dart';
-//
-// class TransactionPage extends StatelessWidget {
-//   const TransactionPage({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) => Container(
-//       height: screen.pane.midHeight,
-//       padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 24),
-//       child:
-//           Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-//         const Column(
-//           mainAxisAlignment: MainAxisAlignment.start,
-//           children: [
-//             TextFieldFormatted(
-//               autocorrect: false,
-//               textInputAction: TextInputAction.next,
-//               labelText: 'To',
-//               suffixIcon: Icon(Icons.qr_code_scanner, color: AppColors.white60),
-//             ),
-//             SizedBox(height: 4),
-//             TextFieldFormatted(
-//               autocorrect: false,
-//               textInputAction: TextInputAction.done,
-//               labelText: 'Amount',
-//             ),
-//           ],
-//         ),
-//         Container(
-//             height: 64,
-//             decoration: ShapeDecoration(
-//               color: AppColors.error,
-//               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(28 * 100),
-//               ),
-//             ),
-//             child: Center(
-//                 child: Text(
-//               'SEND',
-//               style: AppText.button1.copyWith(color: Colors.white),
-//             ))),
-//       ]));
-// }
-//
-//
-// /// how to use scroll view
-// //CustomScrollView(
-// //    shrinkWrap: true,
-// //    slivers: <Widget>[
-// //  SliverToBoxAdapter(
-// //    child: Column(
-// //  SliverFillRemaining(
-// //    hasScrollBody: false,
-// //    child: Column(
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -153,12 +94,14 @@ class TransactionPage extends StatelessWidget {
                       display.blockchain?.explorerTxUrl(display.hash) ?? '')),
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(AppColors.front),
+                        WidgetStateProperty.all<Color>(AppColors.front),
                     foregroundColor:
-                        MaterialStateProperty.all<Color>(AppColors.front),
+                        WidgetStateProperty.all<Color>(AppColors.front),
                     shadowColor:
-                        MaterialStateProperty.all<Color>(Colors.transparent),
-                    elevation: MaterialStateProperty.all<double>(0),
+                        WidgetStateProperty.all<Color>(Colors.transparent),
+                    elevation: WidgetStateProperty.all<double>(0),
+                    overlayColor: WidgetStateProperty.all<Color>(
+                        AppColors.white.withOpacity(0.12)),
                   ),
                   child: Container(
                       height: 64,

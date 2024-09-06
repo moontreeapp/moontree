@@ -1,7 +1,7 @@
 enum ConsentDocument {
-  userAgreement,
-  privacyPolicy,
-  riskDisclosures,
+  user_agreement,
+  privacy_policy,
+  risk_disclosures,
 }
 
 class Consent {

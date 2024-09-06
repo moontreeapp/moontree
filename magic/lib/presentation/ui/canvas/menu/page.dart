@@ -341,7 +341,7 @@ class LegalLinks extends StatelessWidget {
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       launchUrl(Uri.parse(
-                          documentEndpoint(ConsentDocument.userAgreement)));
+                          documentEndpoint(ConsentDocument.user_agreement)));
                     }),
               const TextSpan(text: '   '),
               TextSpan(
@@ -350,7 +350,7 @@ class LegalLinks extends StatelessWidget {
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       launchUrl(Uri.parse(
-                          documentEndpoint(ConsentDocument.privacyPolicy)));
+                          documentEndpoint(ConsentDocument.privacy_policy)));
                     }),
               const TextSpan(text: '   '),
               TextSpan(
@@ -359,7 +359,7 @@ class LegalLinks extends StatelessWidget {
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       launchUrl(Uri.parse(
-                          documentEndpoint(ConsentDocument.riskDisclosures)));
+                          documentEndpoint(ConsentDocument.risk_disclosures)));
                     }),
             ],
           ),
