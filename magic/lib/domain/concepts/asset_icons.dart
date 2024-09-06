@@ -59,6 +59,12 @@ class AssetIcons {
       "exchange": "",
       "fiat_pair": ""
     },
+    "ZEN": {
+      "blockchain_name": "Evrmore",
+      "logo_path": "zen.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
     // * Add more assets here
   };
 
