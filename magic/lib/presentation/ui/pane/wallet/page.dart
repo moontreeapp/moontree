@@ -6,6 +6,7 @@ import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/pane/wallet/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/concepts/asset_icons.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/ui/canvas/balance/chips.dart';
@@ -74,19 +75,17 @@ class HoldingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-        /// this functionality is replaced by the WalletStack
-        //onTap: () => cubits.pane.state.height == screen.pane.minHeight
-        //    ? cubits.pane.snapTo(screen.pane.midHeight)
-        //    : maestro.activateHistory(),
         onTap: () =>
             maestro.activateHistory(holding: holding, redirectOnEmpty: true),
         splashColor: Colors.transparent,
         leading: holding.isCurrency
             ? CurrencyIdenticon(holding: holding)
-            : SimpleIdenticon(
-                letter: holding.assetPathChildNFT[0],
-                blockchain: holding.blockchain,
-                blockchainIconSize: BlockchainIconSize.extraSmall),
+            : AssetIcons.hasCustomIcon(holding.name, holding.blockchain)
+                ? AssetIdenticon(holding: holding)
+                : SimpleIdenticon(
+                    letter: holding.assetPathChildNFT[0],
+                    blockchain: holding.blockchain,
+                    blockchainIconSize: BlockchainIconSize.extraSmall),
         title: SizedBox(
             width: screen.width -
                 (screen.iconMedium +
@@ -240,6 +239,68 @@ class SimpleIdenticon extends StatelessWidget {
       );
     }
     return identicon;
+  }
+}
+
+class AssetIdenticon extends StatelessWidget {
+  final Holding holding;
+  final double? height;
+  final double? width;
+
+  const AssetIdenticon({
+    super.key,
+    required this.holding,
+    this.width,
+    this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final iconPath = AssetIcons.getIconPath(holding.name, holding.blockchain);
+    if (iconPath == null) {
+      // Fallback to SimpleIdenticon if no custom icon is found
+      return SimpleIdenticon(
+        letter: holding.assetPathChildNFT[0],
+        blockchain: holding.blockchain,
+        blockchainIconSize: BlockchainIconSize.extraSmall,
+      );
+    }
+    return Stack(
+      children: [
+        Container(
+          width: width ?? screen.iconLarge,
+          height: height ?? screen.iconLarge,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: Image.asset(
+            iconPath,
+            width: width ?? screen.iconLarge,
+            height: height ?? screen.iconLarge,
+            fit: BoxFit.contain,
+          ),
+        ),
+        Positioned(
+          left: 0,
+          bottom: 0,
+          child: Container(
+            width: screen.iconExtraSmall,
+            height: screen.iconExtraSmall,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.background,
+            ),
+            child: Image.asset(
+              holding.blockchain.logo,
+              width: screen.iconExtraSmall,
+              height: screen.iconExtraSmall,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

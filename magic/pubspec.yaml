@@ -128,6 +128,7 @@ flutter:
     - assets/icons/navbar/
     - assets/icons/transaction/
     - assets/logos/
+    - assets/asset_logos/
     - assets/animated/
     - assets/placeholders/
 
