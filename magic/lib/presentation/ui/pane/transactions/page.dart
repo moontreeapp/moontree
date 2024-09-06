@@ -37,8 +37,9 @@ class TransactionsPage extends StatelessWidget {
               return ListView.builder(
                 padding: const EdgeInsets.only(top: 8),
                 itemCount: 7,
-                itemBuilder: (context, index) =>
-                    const TransactionItemPlaceholder(),
+                itemBuilder: (context, index) => TransactionItemPlaceholder(
+                  delay: Duration(milliseconds: index * 67),
+                ),
               );
             }
             if (state.transactions.isEmpty && state.mempool.isEmpty) {
@@ -179,7 +180,8 @@ class NoHistoryMessage extends StatelessWidget {
 }
 
 class TransactionItemPlaceholder extends StatelessWidget {
-  const TransactionItemPlaceholder({super.key});
+  final Duration delay;
+  const TransactionItemPlaceholder({super.key, this.delay = Duration.zero});
 
   @override
   Widget build(BuildContext context) {
@@ -188,18 +190,17 @@ class TransactionItemPlaceholder extends StatelessWidget {
       leading: Container(
         width: screen.iconHuge,
         height: screen.iconHuge,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: AppColors.frontItem,
+          color: AppColors.frontItem.withOpacity(0.67),
         ),
       ),
       title: Container(
         width: double.infinity,
         height: 24,
         decoration: BoxDecoration(
-          color: AppColors.frontItem,
-          borderRadius:
-              BorderRadius.circular(12), // Adjust this value as needed
+          color: AppColors.frontItem.withOpacity(0.67),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );
