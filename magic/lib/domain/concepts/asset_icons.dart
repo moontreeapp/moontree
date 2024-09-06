@@ -11,7 +11,25 @@ class AssetIcons {
       "exchange": "",
       "fiat_pair": ""
     },
-    // Add more assets here
+    "CEASAR": {
+      "blockchain_name": "Evrmore",
+      "logo_path": "ceasar.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
+    "EVRSTER": {
+      "blockchain_name": "Evrmore",
+      "logo_path": "evrster.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
+    "JACKDAW": {
+      "blockchain_name": "Evrmore",
+      "logo_path": "jackdaw.png",
+      "exchange": "",
+      "fiat_pair": ""
+    },
+    // * Add more assets here
   };
 
   static bool hasCustomIcon(String assetName, Blockchain blockchain) {
