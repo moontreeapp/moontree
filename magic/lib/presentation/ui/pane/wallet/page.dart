@@ -15,10 +15,13 @@ import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart';
 
-enum BlockchainIconSize {
-  small,
-  extraSmall,
-}
+// TODO: implement chain icons for assets with the same name on different chains
+// TODO: This code works but it get's applied to all assets currently. Uncomment
+// TODO: this same TODO throughout this file to apply it to all assets.
+// enum BlockchainIconSize {
+// small,
+// extraSmall,
+// }
 
 class WalletPage extends StatelessWidget {
   const WalletPage({super.key});
@@ -82,10 +85,13 @@ class HoldingItem extends StatelessWidget {
             ? CurrencyIdenticon(holding: holding)
             : AssetIcons.hasCustomIcon(holding.name, holding.blockchain)
                 ? AssetIdenticon(holding: holding)
-                : SimpleIdenticon(
-                    letter: holding.assetPathChildNFT[0],
-                    blockchain: holding.blockchain,
-                    blockchainIconSize: BlockchainIconSize.extraSmall),
+                : SimpleIdenticon(letter: holding.assetPathChildNFT[0]),
+        // TODO: implement chain icons for assets with the same name on different chains
+        // TODO: This code works but it get's applied to all assets currently.
+        // : SimpleIdenticon(
+        //     letter: holding.assetPathChildNFT[0],
+        //     blockchain: holding.blockchain,
+        //     blockchainIconSize: BlockchainIconSize.extraSmall),
         title: SizedBox(
             width: screen.width -
                 (screen.iconMedium +
@@ -144,7 +150,7 @@ class SimpleIdenticon extends StatelessWidget {
   final TextStyle? style;
   final bool? admin;
   final Blockchain? blockchain;
-  final BlockchainIconSize blockchainIconSize;
+  // final BlockchainIconSize blockchainIconSize;
 
   const SimpleIdenticon({
     super.key,
@@ -155,18 +161,20 @@ class SimpleIdenticon extends StatelessWidget {
     this.style,
     this.admin,
     this.blockchain,
-    this.blockchainIconSize = BlockchainIconSize.small,
+    // this.blockchainIconSize = BlockchainIconSize.small,
   });
 
+  // TODO: implement chain icons for assets with the same name on different chains
+  // TODO: This code works but it get's applied to all assets currently.
   // Getter to return the appropriate size
-  double get blockchainIconSizeValue {
-    switch (blockchainIconSize) {
-      case BlockchainIconSize.small:
-        return screen.iconSmall;
-      case BlockchainIconSize.extraSmall:
-        return screen.iconExtraSmall;
-    }
-  }
+  // double get blockchainIconSizeValue {
+  //   switch (blockchainIconSize) {
+  //     case BlockchainIconSize.small:
+  //       return screen.iconSmall;
+  //     case BlockchainIconSize.extraSmall:
+  //       return screen.iconExtraSmall;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -221,8 +229,12 @@ class SimpleIdenticon extends StatelessWidget {
               left: 0,
               bottom: 0,
               child: Container(
-                width: blockchainIconSizeValue,
-                height: blockchainIconSizeValue,
+                width: screen.iconSmall,
+                height: screen.iconSmall,
+                // TODO: implement chain icons for assets with the same name on different chains
+                // TODO: This code works but it get's applied to all assets currently.
+                // width: blockchainIconSizeValue,
+                // height: blockchainIconSizeValue,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
@@ -230,8 +242,12 @@ class SimpleIdenticon extends StatelessWidget {
                 ),
                 child: Image.asset(
                   blockchain!.logo,
-                  width: blockchainIconSizeValue,
-                  height: blockchainIconSizeValue,
+                  width: screen.iconSmall,
+                  height: screen.iconSmall,
+                  // TODO: implement chain icons for assets with the same name on different chains
+                  // TODO: This code works but it get's applied to all assets currently.
+                  // width: blockchainIconSizeValue,
+                  // height: blockchainIconSizeValue,
                 ),
               ),
             ),
@@ -246,12 +262,14 @@ class AssetIdenticon extends StatelessWidget {
   final Holding holding;
   final double? height;
   final double? width;
+  final Blockchain? blockchain;
 
   const AssetIdenticon({
     super.key,
     required this.holding,
     this.width,
     this.height,
+    this.blockchain,
   });
 
   @override
@@ -261,8 +279,10 @@ class AssetIdenticon extends StatelessWidget {
       // Fallback to SimpleIdenticon if no custom icon is found
       return SimpleIdenticon(
         letter: holding.assetPathChildNFT[0],
-        blockchain: holding.blockchain,
-        blockchainIconSize: BlockchainIconSize.extraSmall,
+        // TODO: implement chain icons for assets with the same name on different chains
+        // TODO: This code works but it get's applied to all assets currently.
+        // blockchain: holding.blockchain,
+        // blockchainIconSize: BlockchainIconSize.extraSmall,
       );
     }
     return Stack(
@@ -281,24 +301,25 @@ class AssetIdenticon extends StatelessWidget {
             fit: BoxFit.contain,
           ),
         ),
-        Positioned(
-          left: 0,
-          bottom: 0,
-          child: Container(
-            width: screen.iconExtraSmall,
-            height: screen.iconExtraSmall,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.background,
-            ),
-            child: Image.asset(
-              holding.blockchain.logo,
-              width: screen.iconExtraSmall,
-              height: screen.iconExtraSmall,
+        if (blockchain != null)
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Container(
+              width: screen.iconSmall,
+              height: screen.iconSmall,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.background,
+              ),
+              child: Image.asset(
+                blockchain!.logo,
+                width: screen.iconSmall,
+                height: screen.iconSmall,
+              ),
             ),
           ),
-        ),
       ],
     );
   }
