@@ -136,10 +136,10 @@ void _initializeServices(BuildContext context, double height, double width) {
 /// to get the user experience wanted.
 Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
   await securityService.clearAuthentication();
-  await cubits.keys.loadSecrets();
+  //await cubits.keys.loadSecrets();
 
   /// TODO: rework to save at the root level.
-  //await cubits.keys.loadXPubs();
+  await cubits.keys.loadXPubs();
   //see(
   //    cubits.keys.master.derivationWallets.first.roots(Blockchain.evrmoreMain));
   //[xpub6EyL2KHeobgPS891ygwWVrZUAqRArjUk5Fs4zxQ9d6Yy1GMF78AULHZaRUNmg6BZzhPj7P6Qc6SXUGc4YHMV8A9wFcxw19tmNxnF1XfMHWZ, xpub6EyL2KHeobgPSohWN2j4xPiX5PFJvnbAi64u2yA3qDQTBcBd8jdN21jmvVsuTL8HDmyCN6cf7qaV3VbBR1DQeS7JFiq6JzRw6dToyLA4Qqq]

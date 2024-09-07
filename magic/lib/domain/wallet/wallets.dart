@@ -122,9 +122,10 @@ class DerivationWallet extends Jsonable {
   String? _entropy;
   Uint8List? _seed;
   Map<String, String>? xpubs;
-  final Map<Blockchain, Map<Exposure, String>> _roots = {};
+  // (m/44'/coin_type'/account'/change/address_index) roots are change level?
   final Map<Blockchain, SeedWallet> seedWallets = {};
-
+  final Map<Blockchain, Map<Exposure, String>> rootXpubs = {};
+  final Map<Blockchain, Map<Exposure, int>> maxIds = {};
   DerivationWallet({this.mnemonic, this.xpubs});
 
   factory DerivationWallet.fromXpubs(Map<String, String> xpubs) {
@@ -135,6 +136,23 @@ class DerivationWallet extends Jsonable {
         blockchain: blockchain,
         hdWallet: HDWallet.fromBase58(xpub, network: blockchain.network),
       );
+    });
+    return wallet;
+  }
+  factory DerivationWallet.fromRoots(
+      Map<String, Map<String, String>> rootXpubs) {
+    final wallet = DerivationWallet();
+    rootXpubs.forEach((blockchainName, m) {
+      final blockchain = Blockchain.from(name: blockchainName);
+      m.forEach((exposureInt, xpub) {
+        final exposure = Exposure.from(name: exposureInt);
+        wallet.rootXpubs[blockchain] ??= {};
+        if (wallet.rootXpubs[blockchain]![exposure] != null) {
+          throw Exception(
+              'duplicate root xpubs for $blockchainName $exposureInt');
+        }
+        wallet.rootXpubs[blockchain]![exposure] = xpub;
+      });
     });
     return wallet;
   }
@@ -149,6 +167,15 @@ class DerivationWallet extends Jsonable {
   Map<String, String> get asMnemonicMap => {'mnemonic': mnemonic!};
   Map<String, String> get asXPubMap =>
       {for (final bs in seedWallets.entries) bs.key.name: bs.value.xpub};
+  Map<String, Map<String, String>> get asRootXPubMap => {
+        for (final ber in rootXpubs.entries)
+          ber.key.name: {
+            for (final er in ber.value.entries) er.key.name: er.value
+          }
+      };
+
+  bool get cold => mnemonic == null;
+  bool get hot => mnemonic != null;
 
   String get entropy {
     _entropy ??= bip39.mnemonicToEntropy(mnemonic);
@@ -162,44 +189,53 @@ class DerivationWallet extends Jsonable {
 
   List<String> get words => mnemonic?.split(' ') ?? [];
 
+  // /// this can derive neutered wallets. which, as it turns out are not all that
+  // /// useful to us...
+  // String? xpub(Blockchain blockchain) => seedWallet(blockchain).xpub;
+  //
+  // /// this is the compressed version of the xpub. not very useful in HD context.
+  // String? pubkey(Blockchain blockchain) {
+  //   //see('${blockchain.name} - ${seedWallet(blockchain).xpub}');
+  //   //see('${blockchain.name} - ${seedWallet(blockchain).hdWallet.pubKey}');
+  //   //see(
+  //   //    '${blockchain.name} - ${seedWallet(blockchain).root(Exposure.external)} - external');
+  //   //see(
+  //   //    '${blockchain.name} - ${seedWallet(blockchain).root(Exposure.internal)} - internal');
+  //   //Ravencoin - xpub661My...
+  //   //Ravencoin - 0379c9413...
+  //   //Ravencoin - xpub6EyL2...
+  //   //Ravencoin - xpub6EyL2...
+  //   //Evrmore   - xpub661My...
+  //   //Evrmore   - 0379c9413...
+  //   //Evrmore   - xpub6EyL2...
+  //   //Evrmore   - xpub6EyL2...
+  //   return seedWallet(blockchain).hdWallet.pubKey;
+  // }
+
   SeedWallet seedWallet(Blockchain blockchain) {
     seedWallets[blockchain] ??= SeedWallet(
         blockchain: blockchain,
-        hdWallet: mnemonic != null
-            ? HDWallet.fromSeed(seed, network: blockchain.network)
-            : HDWallet.fromBase58(xpubs![blockchain.name]!,
-                network: blockchain.network));
+        hdWallet: HDWallet.fromSeed(seed, network: blockchain.network));
+    //hdWallet: mnemonic != null
+    //  ? HDWallet.fromSeed(seed, network: blockchain.network)
+    //   : // always non-hardened, but never ran b/c rootXpubs is always set
+    //    HDWallet.fromBase58(xpubs![blockchain.name]!, network: blockchain.network));
     return seedWallets[blockchain]!;
   }
 
-  /// this can derive neutered wallets.
-  String? xpub(Blockchain blockchain) => seedWallet(blockchain).xpub;
-
-  /// this is the compressed version of the xpub. not very useful in HD context.
-  String? pubkey(Blockchain blockchain) {
-    //see('${blockchain.name} - ${seedWallet(blockchain).xpub}');
-    //see('${blockchain.name} - ${seedWallet(blockchain).hdWallet.pubKey}');
-    //see(
-    //    '${blockchain.name} - ${seedWallet(blockchain).root(Exposure.external)} - external');
-    //see(
-    //    '${blockchain.name} - ${seedWallet(blockchain).root(Exposure.internal)} - internal');
-    //Ravencoin - xpub661My...
-    //Ravencoin - 0379c9413...
-    //Ravencoin - xpub6EyL2...
-    //Ravencoin - xpub6EyL2...
-    //Evrmore   - xpub661My...
-    //Evrmore   - 0379c9413...
-    //Evrmore   - xpub6EyL2...
-    //Evrmore   - xpub6EyL2...
-    return seedWallet(blockchain).hdWallet.pubKey;
-  }
-
   Map<Exposure, String> rootsMap(Blockchain blockchain) {
-    _roots[blockchain] ??= {
+    rootXpubs[blockchain] ??= {
       Exposure.external: seedWallet(blockchain).root(Exposure.external),
       Exposure.internal: seedWallet(blockchain).root(Exposure.internal),
     };
-    return _roots[blockchain]!;
+    return rootXpubs[blockchain]!;
+  }
+
+  void addMaxId(Blockchain blockchain, Exposure exposure, int maxId) {
+    if (maxIds[blockchain] == null) {
+      maxIds[blockchain] = {};
+    }
+    maxIds[blockchain]![exposure] = maxId;
   }
 
   List<String> roots(Blockchain blockchain) =>

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import 'package:magic/domain/blockchain/chain.dart';
 import 'package:magic/domain/blockchain/net.dart';
+import 'package:magic/domain/blockchain/server.dart'
+    show h160FromXPubForAddress;
 import 'package:moontree_utils/moontree_utils.dart';
 // ignore: implementation_imports
 import 'package:wallet_utils/src/models/networks.dart'
@@ -189,6 +191,9 @@ enum Blockchain {
   String addressFromH160(Uint8List h160, {bool isP2sh = false}) =>
       h160ToAddress(
           h160, isP2sh ? chaindata.p2shPrefix : chaindata.p2pkhPrefix);
+
+  String addressFromXPub(String xpub, int index, {bool isP2sh = false}) =>
+      addressFromH160(h160FromXPubForAddress(xpub, index));
 
   bool isAddress(String address) {
     if (chain == Chain.ravencoin) {

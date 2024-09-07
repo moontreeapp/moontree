@@ -33,7 +33,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
 
   @override
   void update({
-    List<Map<String, String>>? xpubs,
+    List<Map<String, Map<String, String>>>? xpubs,
     List<String>? mnemonics,
     List<String>? wifs,
     bool? submitting,
@@ -87,11 +87,20 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     return true;
   }
 
+  // blockchain layer
   Future<void> loadXPubs() async {
     final List<dynamic> rawXpubs = jsonDecode(
         ((await storage()).read(key: StorageKey.xpubs.key())) ?? '[]');
-    final List<Map<String, String>> xpubs = rawXpubs.map((entry) {
-      return Map<String, String>.from(entry);
+
+    final List<Map<String, Map<String, String>>> xpubs = rawXpubs.map((entry) {
+      // Ensure that the entry is cast to Map<String, dynamic> first
+      final Map<String, dynamic> castEntry = Map<String, dynamic>.from(entry);
+
+      // Then transform it to the desired structure: Map<String, Map<String, String>>
+      return castEntry.map((key, value) {
+        // Ensure that the value is a Map<String, String>
+        return MapEntry(key, Map<String, String>.from(value));
+      });
     }).toList();
     if (xpubs.isNotEmpty && xpubs != [{}]) {
       update(submitting: true);
@@ -140,10 +149,10 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   /// we don't really need to sync with xpubs because we always add them all at
   /// once (on startup). If we import a wallet, we switch over to using
   /// privkeys, and then rewrite all the xpubs to disk again.
-  Future<void> syncXPubs(List<Map<String, String>>? xpubs) async {
+  Future<void> syncXPubs(List<Map<String, Map<String, String>>>? xpubs) async {
     if (xpubs != null) {
-      master.derivationWallets.addAll(xpubs
-          .map((blockchainXpub) => DerivationWallet.fromXpubs(blockchainXpub)));
+      master.derivationWallets.addAll(xpubs.map((blockchainExposureXpub) =>
+          DerivationWallet.fromRoots(blockchainExposureXpub)));
     }
   }
 
@@ -191,17 +200,20 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   void ensureSeedWalletsExist() {
     for (final blockcahin in Blockchain.mainnets) {
       for (final derivationWallet in master.derivationWallets) {
-        derivationWallet.seedWallet(blockcahin);
+        derivationWallet.rootsMap(blockcahin);
       }
     }
   }
 
   Future<void> saveXPubs() async {
     ensureSeedWalletsExist();
+    final write = jsonEncode(master.derivationWallets
+        .map((wallet) => wallet.asRootXPubMap)
+        .toList());
+    print(write);
     (await storage()).writeKey(
       key: StorageKey.xpubs,
-      value: jsonEncode(
-          master.derivationWallets.map((wallet) => wallet.asXPubMap).toList()),
+      value: write,
     );
   }
 }

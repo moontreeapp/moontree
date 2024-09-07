@@ -5,6 +5,7 @@ import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/utils/range.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/utils/log.dart';
 
@@ -113,14 +114,30 @@ class AddressesPageState extends State<AddressesPage> {
                                 index++) {
                               see('Wallet Index: $index');
                               for (final blockchain in Blockchain.mainnets) {
-                                see('${blockchain.name}');
                                 for (final exposure in Exposure.values) {
-                                  see('${exposure.name}');
-                                  for (final subwallet in cubits
-                                      .keys.master.derivationWallets[index]
-                                      .seedWallet(blockchain)
-                                      .subwallets[exposure]!) {
-                                    see('wallet: $index ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}');
+                                  see('Exposure: ${exposure.name}');
+                                  if (cubits.keys.master
+                                      .derivationWallets[index].hot) {
+                                    for (final subwallet in cubits
+                                        .keys.master.derivationWallets[index]
+                                        .seedWallet(blockchain)
+                                        .subwallets[exposure]!) {
+                                      see('wallet: $index ${blockchain.name} ${exposure.name} ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}');
+                                    }
+                                  } else {
+                                    final maxId = cubits
+                                            .keys
+                                            .master
+                                            .derivationWallets[index]
+                                            .maxIds[blockchain]?[exposure] ??
+                                        0;
+                                    print(maxId);
+                                    for (final idx in range(maxId + 1)) {
+                                      final xpub = cubits
+                                          .keys.master.derivationWallets[index]
+                                          .rootsMap(blockchain)[exposure]!;
+                                      see('wallet: $index ${blockchain.name} ${exposure.name} $idx\n${blockchain.addressFromXPub(xpub, idx)}');
+                                    }
                                   }
                                 }
                               }
@@ -146,24 +163,40 @@ class AddressesPageState extends State<AddressesPage> {
                                 child: Wrap(children: <Widget>[
                                   for (final blockchain in Blockchain.mainnets)
                                     for (final exposure in Exposure.values)
-                                      for (final subwallet in cubits
-                                          .keys.master.derivationWallets[index]
-                                          .seedWallet(blockchain)
-                                          .subwallets[exposure]!)
-                                        Container(
-                                            padding: const EdgeInsets.only(
-                                                left: 8,
-                                                right: 8,
-                                                top: 4,
-                                                bottom: 4),
-                                            child: Container(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8,
-                                                    right: 8,
-                                                    top: 4,
-                                                    bottom: 4),
-                                                child: Text(
-                                                    'wallet: $index ${blockchain.name} ${exposure.name} ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}'))),
+                                      if (cubits.keys.master
+                                          .derivationWallets[index].hot)
+                                        for (final subwallet in cubits.keys.master.derivationWallets[index]
+                                            .seedWallet(blockchain)
+                                            .subwallets[exposure]!)
+                                          Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8,
+                                                  right: 8,
+                                                  top: 4,
+                                                  bottom: 4),
+                                              child: Container(
+                                                  padding: const EdgeInsets.only(
+                                                      left: 8,
+                                                      right: 8,
+                                                      top: 4,
+                                                      bottom: 4),
+                                                  child: Text(
+                                                      'wallet: $index ${blockchain.name} ${exposure.name} ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1}\n${subwallet.address ?? 'unknown'}')))
+                                      else
+                                        for (final idx in range((cubits.keys.master.derivationWallets[index].maxIds[blockchain]?[exposure] ?? 0) + 1))
+                                          Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8,
+                                                  right: 8,
+                                                  top: 4,
+                                                  bottom: 4),
+                                              child: Container(
+                                                  padding: const EdgeInsets.only(
+                                                      left: 8,
+                                                      right: 8,
+                                                      top: 4,
+                                                      bottom: 4),
+                                                  child: Text('wallet: $index ${blockchain.name} ${exposure.name} $idx\n${blockchain.addressFromXPub(cubits.keys.master.derivationWallets[index].rootsMap(blockchain)[exposure]!, idx)}'))),
                                 ]));
                           })),
                   ConstrainedBox(
