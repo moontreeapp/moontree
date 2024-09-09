@@ -119,7 +119,6 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
     bool supportsBiometrics = await securityService.canCheckBiometrics();
     bool isAuthSetUp = await securityService.isAuthenticationSetUp();
     bool isAuthenticated = await securityService.authenticateUser();
-    see('isAuthenticated: $isAuthenticated');
     if (isAuthenticated) {
       if (!supportsBiometrics) {
         _showSecurityWarning(context, 'no_biometrics');
@@ -142,7 +141,9 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
     }
   }
 
-  void _proceedToMainApp() {
+  Future<void> _proceedToMainApp() async {
+    await cubits.keys.clearAll();
+    await cubits.keys.loadSecrets();
     cubits.app.animating = true;
     setState(() {
       _isFading = true;

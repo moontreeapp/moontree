@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/server/serverv2_client.dart';
 import 'package:magic/utils/log.dart';
@@ -31,7 +32,7 @@ class AppCubit extends UpdatableCubit<AppState> {
 
   @override
   void update({
-    String? status,
+    AppLifecycleState? status,
     StreamingConnectionStatus? connection,
     int? blockheight,
     bool? submitting,

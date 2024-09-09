@@ -113,6 +113,11 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     }
   }
 
+  Future<void> clearAll() async {
+    master = MasterWallet();
+    update(mnemonics: [], wifs: [], xpubs: []);
+  }
+
   Future<void> loadSecrets({Future<void> Function()? onExisting}) async {
     update(submitting: true);
     update(

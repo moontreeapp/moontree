@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PlatformException;
+import 'package:flutter/services.dart' show MethodChannel, PlatformException;
 import 'package:local_auth/local_auth.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
+import 'package:magic/services/security.dart';
 import 'package:magic/utils/log.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class LoginNative extends StatefulWidget {
   final Widget child;
@@ -24,6 +28,107 @@ class LoginNativeState extends State<LoginNative> {
   bool _canCheckBiometrics = false;
   bool _isDeviceSupported = false;
 
+  void _showSecurityWarning(BuildContext context, String warningType) {
+    String title;
+    String content;
+    bool showSettingsButton = false;
+
+    switch (warningType) {
+      case 'no_biometrics':
+        title = 'Security Warning';
+        content =
+            'Your device does not support biometric authentication. For optimal security, it is recommended to use this app on a device with biometric capabilities.';
+        break;
+      case 'no_auth_setup':
+        title = 'Security Recommendation';
+        content =
+            'Your device supports biometric or device authentication, but it\'s not set up. We STRONGLY recommend setting up device security for optimal protection of your sensitive wallet information.';
+        showSettingsButton = true;
+        break;
+      default:
+        title = 'Security Notice';
+        content =
+            'Please ensure your device is properly secured for the best protection of your sensitive information.';
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            if (showSettingsButton)
+              TextButton(
+                child: const Text('Open Settings'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _openSecuritySettings();
+                },
+              ),
+            TextButton(
+              child: const Text('Understood'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _proceed();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _openSecuritySettings() async {
+    if (Platform.isAndroid) {
+      const platform = MethodChannel('com.magic.mobile/settings');
+      try {
+        await platform.invokeMethod('openSecuritySettings');
+      } on PlatformException catch (e) {
+        see("Failed to open security settings: '${e.message}'.");
+      }
+    } else if (Platform.isIOS) {
+      if (await canLaunchUrlString('App-Prefs:root=TOUCHID_PASSCODE')) {
+        await launchUrlString('App-Prefs:root=TOUCHID_PASSCODE');
+      } else {
+        see('Could not launch iOS settings');
+      }
+    }
+  }
+
+  Future<void> _handleAuthentication() async {
+    bool supportsBiometrics = await securityService.canCheckBiometrics();
+    bool isAuthSetUp = await securityService.isAuthenticationSetUp();
+    bool isAuthenticated = await securityService.authenticateUser();
+    if (isAuthenticated) {
+      if (!supportsBiometrics) {
+        _showSecurityWarning(context, 'no_biometrics');
+      } else if (!isAuthSetUp) {
+        _showSecurityWarning(context, 'no_auth_setup');
+      } else {
+        /// moved to main.dart
+        //await cubits.keys.load();
+        //await subscription.ensureConnected();
+        //subscription.setupSubscriptions(cubits.keys.master);
+        //cubits.wallet.populateAssets().then((_) => maestro.activateHome());
+        _proceed();
+      }
+    } else {
+      if (!isAuthenticated) {
+        //_showAuthCanceledDialog();
+        //cubits.welcome.update(active: true, child: const SizedBox.shrink());
+        if (widget.onFailure != null) {
+          widget.onFailure!();
+        }
+      }
+      cubits.toast.flash(
+          msg: const ToastMessage(
+        title: 'Authentication Failed:',
+        text: 'Please try again.',
+      ));
+    }
+  }
+
   Future<void> _checkBiometrics() async {
     try {
       final canCheckBiometrics = await _localAuth.canCheckBiometrics;
@@ -35,6 +140,12 @@ class LoginNativeState extends State<LoginNative> {
     } catch (e) {
       see(e);
     }
+  }
+
+  Future<void> _proceed() async {
+    setState(() {
+      _isAuthenticated = true;
+    });
   }
 
   Future<void> _authenticate() async {
@@ -122,9 +233,9 @@ class LoginNativeState extends State<LoginNative> {
   @override
   void initState() {
     super.initState();
-    _checkBiometrics().then((_) {
-      _authenticate();
-    });
+    //_checkBiometrics().then((_) {
+    _handleAuthentication();
+    //});
   }
 
   @override

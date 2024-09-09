@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/presentation/ui/welcome/lock.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:magic/cubits/cubit.dart';
@@ -57,7 +58,7 @@ Future<void> main() async {
       statusBarColor: AppColors.white,
     ));
   }
-
+  await cubits.keys.loadXPubs();
   // Initialize the Serverpod client with a retry mechanism to handle connection issues
   await subscription.setupClient(FlutterConnectivityMonitor(),
       retryCount: 3, retryDelay: const Duration(seconds: 2));
@@ -177,6 +178,7 @@ class MaestroLayer extends StatelessWidget {
                 WelcomeLayer(),
                 ToastLayer(),
                 //const TutorialLayer(),
+                LockLayer(),
               ],
             ),
           ),
