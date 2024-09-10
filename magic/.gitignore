@@ -42,3 +42,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /macos/Flutter/GeneratedPluginRegistrant.swift
+
+# custom
+*.env
+database/
+testdb/
+*.exe
+/android/key.properties
