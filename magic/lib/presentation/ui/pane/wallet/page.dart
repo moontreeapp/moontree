@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/pane/wallet/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
@@ -33,9 +33,9 @@ class WalletPage extends StatelessWidget {
             previous.holdings != current.holdings ||
             previous.chips != current.chips,
         builder: (BuildContext context, WalletState walletState) =>
-            BlocBuilder<MenuCubit, MenuState>(
+            BlocBuilder<OldMenuCubit, OldMenuState>(
                 buildWhen: (previous, current) => previous.mode != current.mode,
-                builder: (BuildContext context, MenuState state) {
+                builder: (BuildContext context, OldMenuState state) {
                   /// all must satisfy
                   //final filtered =
                   //    walletState.holdings.toList(); // Create a copy of the list

@@ -5,14 +5,14 @@ import 'package:magic/domain/concepts/side.dart';
 
 part 'state.dart';
 
-class MenuCubit extends UpdatableCubit<MenuState> {
-  MenuCubit() : super(const MenuState());
+class OldMenuCubit extends UpdatableCubit<OldMenuState> {
+  OldMenuCubit() : super(const OldMenuState());
   @override
   String get key => 'menu';
   @override
-  void reset() => emit(const MenuState());
+  void reset() => emit(const OldMenuState());
   @override
-  void setState(MenuState state) => emit(state);
+  void setState(OldMenuState state) => emit(state);
   @override
   void hide() => update(active: false);
   @override
@@ -35,9 +35,9 @@ class MenuCubit extends UpdatableCubit<MenuState> {
     SubMenu? sub,
     bool? setting,
     bool? isSubmitting,
-    MenuState? prior,
+    OldMenuState? prior,
   }) {
-    emit(MenuState(
+    emit(OldMenuState(
       active: active ?? state.active,
       faded: faded ?? state.faded,
       child: child ?? state.child,

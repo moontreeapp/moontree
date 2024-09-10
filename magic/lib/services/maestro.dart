@@ -1,6 +1,6 @@
 import 'package:magic/cubits/appbar/cubit.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/cubits/fade/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
@@ -107,7 +107,7 @@ class Maestro {
   }
 
   bool activateMenu() {
-    if (cubits.menu.state.sub != SubMenu.none) {
+    if (cubits.oldmenu.state.sub != SubMenu.none) {
       deactivateSubMenu();
     }
     return toggleMidMin();
@@ -138,7 +138,7 @@ class Maestro {
 
   void hideSubMenuOnDrag(double height) {
     if (height > (screen.pane.midHeight + screen.pane.minHeight) / 2) {
-      if (cubits.menu.state.sub != SubMenu.none) {
+      if (cubits.oldmenu.state.sub != SubMenu.none) {
         deactivateSubMenu();
       }
     }
@@ -225,7 +225,7 @@ class Maestro {
     cubits.holding.deactivate();
     cubits.transactions.clearTransactions();
     cubits.balance.update(active: true);
-    cubits.menu.update(active: true);
+    cubits.oldmenu.update(active: true);
     await inactivateAllBut(cubits.wallet.key);
     cubits.wallet.update(active: true);
     cubits.pane.heightBehavior = (double h) {
@@ -326,7 +326,7 @@ class Maestro {
       onLead: activateHome,
       onTitle: cubits.appbar.none,
     );
-    cubits.menu.update(active: false);
+    cubits.oldmenu.update(active: false);
     cubits.balance.update(active: false);
     cubits.holding.update(
       active: true,
@@ -434,7 +434,7 @@ class Maestro {
       },
       onTitle: cubits.appbar.none,
     );
-    cubits.menu.update(active: false);
+    cubits.oldmenu.update(active: false);
     cubits.holding.update(active: true, section: HoldingSection.send);
     cubits.pane.update(
       active: true,
@@ -469,7 +469,7 @@ class Maestro {
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
-    cubits.menu.update(active: false);
+    cubits.oldmenu.update(active: false);
     cubits.holding.update(active: true, section: HoldingSection.receive);
     cubits.pane.update(
       active: true,
@@ -503,7 +503,7 @@ class Maestro {
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
-    cubits.menu.update(active: false);
+    cubits.oldmenu.update(active: false);
     cubits.holding.update(
         active: true,
         section: HoldingSection.transaction,
@@ -540,7 +540,7 @@ class Maestro {
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
-    cubits.menu.update(active: false);
+    cubits.oldmenu.update(active: false);
     cubits.holding.update(active: true, section: HoldingSection.swap);
     cubits.pane.update(
       active: true,
@@ -574,7 +574,7 @@ class Maestro {
       onLead: activateHistory,
       onTitle: cubits.appbar.none,
     );
-    cubits.menu.update(active: false);
+    cubits.oldmenu.update(active: false);
     cubits.holding.update(active: true, section: HoldingSection.swap);
     cubits.pane.update(
       active: true,
@@ -598,7 +598,7 @@ class Maestro {
     }
     cubits.app.animating = true;
     cubits.navbar.update(active: false);
-    cubits.menu.update(active: true, sub: SubMenu.none);
+    cubits.oldmenu.update(active: true, sub: SubMenu.none);
     cubits.balance.update(active: true);
     await Future.delayed(slideDuration, () => cubits.app.animating = false);
     cubits.appbar.update(
@@ -626,7 +626,7 @@ class Maestro {
       onLead: deactivateSubMenu,
       onTitle: deactivateSubMenu,
     );
-    cubits.menu.update(active: true, sub: sub);
+    cubits.oldmenu.update(active: true, sub: sub);
     cubits.balance.hide();
     await Future.delayed(slideDuration, () => cubits.app.animating = false);
     locked = false;

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:magic/presentation/ui/menu/menu.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:magic/cubits/cubit.dart';
@@ -117,7 +118,7 @@ void _initializeServices(BuildContext context, double height, double width) {
   // Add this function at the top level of your file
 
   cubits.welcome.update(active: true, child: const WelcomeBackScreen());
-  cubits.menu.update(active: true);
+  cubits.oldmenu.update(active: true);
   cubits.ignore.update(active: true);
   cubits.pane.update(
     active: true,
@@ -162,6 +163,7 @@ class MaestroLayer extends StatelessWidget {
               children: <Widget>[
                 AppbarLayer(),
                 CanvasLayer(),
+                MenuLayer(),
                 PaneLayer(),
                 //NavbarLayer(),
                 PanelLayer(),
@@ -230,6 +232,7 @@ class _MaestroLayerIOSState extends State<MaestroLayerIOS> {
           children: <Widget>[
             AppbarLayer(),
             CanvasLayer(),
+            MenuLayer(),
             PaneLayer(),
             //NavbarLayer(),
             PanelLayer(),

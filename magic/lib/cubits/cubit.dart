@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/cubits/cubits.dart';
+import 'package:magic/cubits/menu/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:provider/single_child_widget.dart' show SingleChildWidget;
 
@@ -7,6 +8,7 @@ class GlobalCubits {
   /// canvas
   final canvas = CanvasCubit();
   final balance = BalanceCubit();
+  final oldmenu = OldMenuCubit();
   final menu = MenuCubit();
   final holding = HoldingCubit();
 
@@ -38,6 +40,7 @@ class GlobalCubits {
   /// combined
   List<Cubit> get all => [
         canvas,
+        oldmenu,
         menu,
         pane,
         wallet,
@@ -60,6 +63,7 @@ class GlobalCubits {
   List<SingleChildWidget> get providers => [
         BlocProvider<CanvasCubit>(create: (context) => canvas),
         BlocProvider<BalanceCubit>(create: (context) => balance),
+        BlocProvider<OldMenuCubit>(create: (context) => oldmenu),
         BlocProvider<MenuCubit>(create: (context) => menu),
         BlocProvider<HoldingCubit>(create: (context) => holding),
         BlocProvider<PaneCubit>(create: (context) => pane),

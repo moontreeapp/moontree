@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lit_relative_date_time/lit_relative_date_time.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/pane/transactions/cubit.dart';
 import 'package:magic/domain/concepts/transaction.dart';

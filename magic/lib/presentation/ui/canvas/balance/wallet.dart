@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/services/services.dart';
 
@@ -8,10 +8,10 @@ class WalletChooser extends StatelessWidget {
   const WalletChooser({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
-      buildWhen: (MenuState previous, MenuState current) =>
+  Widget build(BuildContext context) => BlocBuilder<OldMenuCubit, OldMenuState>(
+      buildWhen: (OldMenuState previous, OldMenuState current) =>
           previous.mode != current.mode,
-      builder: (BuildContext context, MenuState state) => Padding(
+      builder: (BuildContext context, OldMenuState state) => Padding(
             padding: EdgeInsets.only(
                 top: 4,
                 bottom: 4,

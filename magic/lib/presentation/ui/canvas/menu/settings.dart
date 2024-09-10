@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/login/native.dart';
@@ -15,8 +15,8 @@ class DifficultyItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: cubits.menu.toggleDifficulty,
-        onLongPress: () => cubits.menu.update(mode: DifficultyMode.dev),
+        onTap: cubits.oldmenu.toggleDifficulty,
+        onLongPress: () => cubits.oldmenu.update(mode: DifficultyMode.dev),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -31,12 +31,12 @@ class DifficultyItem extends StatelessWidget {
 }
 
 class NotificationItem extends StatelessWidget {
-  final MenuState state;
+  final OldMenuState state;
   const NotificationItem({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-      onTap: cubits.menu.toggleSetting,
+      onTap: cubits.oldmenu.toggleSetting,
       child: Container(
           height: screen.menu.itemHeight,
           width: screen.width,

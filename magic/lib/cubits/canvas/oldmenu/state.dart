@@ -36,7 +36,7 @@ enum SubMenu {
   about;
 }
 
-class MenuState with EquatableMixin, PriorActiveStateMixin {
+class OldMenuState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
   final bool faded;
   final Widget? child;
@@ -45,9 +45,9 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
   final SubMenu sub;
   final bool setting;
   final bool isSubmitting;
-  final MenuState? prior;
+  final OldMenuState? prior;
 
-  const MenuState({
+  const OldMenuState({
     this.active = false,
     this.faded = false,
     this.child = const SizedBox.shrink(),
@@ -76,7 +76,7 @@ class MenuState with EquatableMixin, PriorActiveStateMixin {
   String toString() => '$runtimeType($props)';
 
   @override
-  MenuState get withoutPrior => MenuState(
+  OldMenuState get withoutPrior => OldMenuState(
         active: active,
         faded: faded,
         child: child,

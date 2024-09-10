@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
@@ -210,7 +210,7 @@ class CoinView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      (mode ?? cubits.menu.state.mode) == DifficultyMode.easy
+      (mode ?? cubits.oldmenu.state.mode) == DifficultyMode.easy
           ? Text(coin.simplified(),
               style: Theme.of(context)
                   .textTheme
@@ -328,7 +328,7 @@ class SimpleCoinSplitView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => (mode ?? cubits.menu.state.mode) ==
+  Widget build(BuildContext context) => (mode ?? cubits.oldmenu.state.mode) ==
           DifficultyMode.easy
       ? Text(coin.simplified(),
           style: Theme.of(context)
@@ -434,7 +434,7 @@ class FiatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      cubits.menu.state.mode == DifficultyMode.easy
+      cubits.oldmenu.state.mode == DifficultyMode.easy
           ? Text(fiat.simplified(),
               textAlign: TextAlign.right,
               style: Theme.of(context)

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/pane/wallet/cubit.dart';
 import 'package:magic/domain/concepts/holding.dart';
@@ -163,10 +163,10 @@ class ChipsView extends StatelessWidget {
   const ChipsView({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
-      buildWhen: (MenuState previous, MenuState current) =>
+  Widget build(BuildContext context) => BlocBuilder<OldMenuCubit, OldMenuState>(
+      buildWhen: (OldMenuState previous, OldMenuState current) =>
           previous.mode != current.mode,
-      builder: (BuildContext context, MenuState state) => state.mode ==
+      builder: (BuildContext context, OldMenuState state) => state.mode ==
               DifficultyMode.dev
           ? BlocBuilder<WalletCubit, WalletState>(
               buildWhen: (WalletState previous, WalletState current) =>

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/presentation/theme/colors.dart';

@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/domain/concepts/consent.dart';
 import 'package:magic/presentation/theme/theme.dart';
@@ -33,8 +33,8 @@ class AnimatedMenu extends StatelessWidget {
   const AnimatedMenu({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
-      buildWhen: (MenuState previous, MenuState current) =>
+  Widget build(BuildContext context) => BlocBuilder<OldMenuCubit, OldMenuState>(
+      buildWhen: (OldMenuState previous, OldMenuState current) =>
           current.active &&
           (previous.faded != current.faded ||
               //previous.mode != current.mode ||
@@ -66,8 +66,8 @@ class DifficultyItem extends StatelessWidget {
         sub: SubMenu.mode,
         index: -1,
         visual: GestureDetector(
-            onTap: cubits.menu.toggleDifficulty,
-            onLongPress: () => cubits.menu.update(mode: DifficultyMode.dev),
+            onTap: cubits.oldmenu.toggleDifficulty,
+            onLongPress: () => cubits.oldmenu.update(mode: DifficultyMode.dev),
             child: Container(
                 height: screen.menu.itemHeight,
                 width: screen.width,
@@ -94,13 +94,13 @@ class SettingsItem extends StatelessWidget {
           width: screen.width,
           color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            BlocBuilder<MenuCubit, MenuState>(
-                buildWhen: (MenuState previous, MenuState current) =>
+            BlocBuilder<OldMenuCubit, OldMenuState>(
+                buildWhen: (OldMenuState previous, OldMenuState current) =>
                     current.active && previous.sub != current.sub,
                 builder: (context, state) {
                   const icon =
                       Icon(Icons.settings_rounded, color: Colors.white);
-                  if (cubits.menu.state.sub == SubMenu.settings) {
+                  if (cubits.oldmenu.state.sub == SubMenu.settings) {
                     return SlideOver(
                         begin: const Offset(0, 0),
                         end: const Offset(-3, 0),
@@ -109,7 +109,7 @@ class SettingsItem extends StatelessWidget {
                         curve: Curves.easeInOutCubic,
                         child: icon);
                   }
-                  if (cubits.menu.state.sub == SubMenu.none) {
+                  if (cubits.oldmenu.state.sub == SubMenu.none) {
                     return SlideOver(
                         begin: const Offset(-3, 0),
                         end: const Offset(0, 0),
@@ -137,12 +137,12 @@ class HelpItem extends StatelessWidget {
           width: screen.width,
           color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            BlocBuilder<MenuCubit, MenuState>(
-                buildWhen: (MenuState previous, MenuState current) =>
+            BlocBuilder<OldMenuCubit, OldMenuState>(
+                buildWhen: (OldMenuState previous, OldMenuState current) =>
                     current.active && previous.sub != current.sub,
                 builder: (context, state) {
                   const icon = Icon(Icons.info_rounded, color: Colors.white);
-                  if (cubits.menu.state.sub == SubMenu.help) {
+                  if (cubits.oldmenu.state.sub == SubMenu.help) {
                     return SlideOver(
                         begin: const Offset(0, 0),
                         end: const Offset(-3, 0),
@@ -151,7 +151,7 @@ class HelpItem extends StatelessWidget {
                         curve: Curves.easeInOutCubic,
                         child: icon);
                   }
-                  if (cubits.menu.state.sub == SubMenu.none) {
+                  if (cubits.oldmenu.state.sub == SubMenu.none) {
                     return SlideOver(
                         begin: const Offset(-3, 0),
                         end: const Offset(0, 0),
@@ -180,12 +180,12 @@ class AboutItem extends StatelessWidget {
           width: screen.width,
           color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            BlocBuilder<MenuCubit, MenuState>(
-                buildWhen: (MenuState previous, MenuState current) =>
+            BlocBuilder<OldMenuCubit, OldMenuState>(
+                buildWhen: (OldMenuState previous, OldMenuState current) =>
                     current.active && previous.sub != current.sub,
                 builder: (context, state) {
                   const icon = Icon(Icons.info_rounded, color: Colors.white);
-                  if (cubits.menu.state.sub == SubMenu.about) {
+                  if (cubits.oldmenu.state.sub == SubMenu.about) {
                     return SlideOver(
                         begin: const Offset(0, 0),
                         end: const Offset(-3, 0),
@@ -194,7 +194,7 @@ class AboutItem extends StatelessWidget {
                         curve: Curves.easeInOutCubic,
                         child: icon);
                   }
-                  if (cubits.menu.state.sub == SubMenu.none) {
+                  if (cubits.oldmenu.state.sub == SubMenu.none) {
                     return SlideOver(
                         begin: const Offset(-3, 0),
                         end: const Offset(0, 0),
@@ -235,8 +235,8 @@ class MenuItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
-      buildWhen: (MenuState previous, MenuState current) =>
+  Widget build(BuildContext context) => BlocBuilder<OldMenuCubit, OldMenuState>(
+      buildWhen: (OldMenuState previous, OldMenuState current) =>
           current.active && previous.sub != current.sub,
       builder: (context, state) {
         final padding = EdgeInsets.only(

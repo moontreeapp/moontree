@@ -61,7 +61,7 @@ class ResponsiveHighlightedNameView extends StatelessWidget {
                   //width: screen.appbar.titleWidth,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: cubits.menu.isInHardMode
+                    children: cubits.oldmenu.isInHardMode
                         ? (state.holding.assetPathIsAChild
                             ? [
                                 Text('${state.holding.assetPathParents}/',

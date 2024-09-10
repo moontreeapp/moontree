@@ -42,7 +42,7 @@ class CanvasStack extends StatelessWidget {
         alignment: Alignment.topCenter,
         children: [
           Balance(),
-          Menu(),
+          // Menu(),
           HodingDetail(), // mutates into send...
         ],
       );

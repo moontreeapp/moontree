@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:magic/cubits/canvas/menu/cubit.dart';
+import 'package:magic/cubits/canvas/oldmenu/cubit.dart';
 import 'package:magic/domain/concepts/side.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/canvas/menu/settings.dart';
@@ -12,7 +12,7 @@ import 'package:magic/services/services.dart';
 import 'package:magic/cubits/cubit.dart';
 
 class SubMenus extends StatelessWidget {
-  final MenuState state;
+  final OldMenuState state;
   const SubMenus({super.key, required this.state});
 
   @override
@@ -45,7 +45,7 @@ class SubMenus extends StatelessWidget {
 
 class SubMenuItem extends StatelessWidget {
   final SubMenu sub;
-  final MenuState state;
+  final OldMenuState state;
   final Duration delay;
   final Alignment alignment;
   final Widget child;
@@ -87,13 +87,13 @@ class SubMenuItem extends StatelessWidget {
 }
 
 class SettingsSubMenu extends StatelessWidget {
-  final MenuState state;
+  final OldMenuState state;
 
   const SettingsSubMenu({super.key, required this.state});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<MenuCubit, MenuState>(
-      buildWhen: (MenuState previous, MenuState current) =>
+  Widget build(BuildContext context) => BlocBuilder<OldMenuCubit, OldMenuState>(
+      buildWhen: (OldMenuState previous, OldMenuState current) =>
           current.active &&
           (previous.setting != current.setting ||
               previous.mode != current.mode),
@@ -102,10 +102,10 @@ class SettingsSubMenu extends StatelessWidget {
           child: Column(children: [
             DifficultyItem(mode: state.mode),
             //NotificationItem(state: state),
-            if (cubits.menu.isInDevMode) const BackupItem(),
-            if (cubits.menu.isInDevMode) const ImportItem(),
-            if (cubits.menu.isInDevMode) const WalletsItem(),
-            if (cubits.menu.isInDevMode) const AddressesItem(),
+            if (cubits.oldmenu.isInDevMode) const BackupItem(),
+            if (cubits.oldmenu.isInDevMode) const ImportItem(),
+            if (cubits.oldmenu.isInDevMode) const WalletsItem(),
+            if (cubits.oldmenu.isInDevMode) const AddressesItem(),
           ])));
 
   //Text('Some Setting', style: AppText.h1.copyWith(color: Colors.white));
