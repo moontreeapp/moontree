@@ -1,9 +1,11 @@
 part of 'cubit.dart';
 
+
 class AppState with EquatableMixin {
   final AppLifecycleState status;
   final StreamingConnectionStatus connection;
   final int blockheight;
+  final DateTime? authenticatedAt;
   final bool submitting;
   final AppState? prior;
 
@@ -11,6 +13,7 @@ class AppState with EquatableMixin {
     this.status = AppLifecycleState.inactive,
     this.connection = StreamingConnectionStatus.disconnected,
     this.blockheight = 0,
+    this.authenticatedAt,
     this.submitting = false,
     this.prior,
   });
@@ -20,6 +23,7 @@ class AppState with EquatableMixin {
         status,
         connection,
         blockheight,
+        authenticatedAt,
         submitting,
         prior,
       ];
@@ -31,6 +35,7 @@ class AppState with EquatableMixin {
         status: status,
         connection: connection,
         blockheight: blockheight,
+        authenticatedAt: authenticatedAt,
         submitting: submitting,
         prior: null,
       );

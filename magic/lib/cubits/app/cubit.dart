@@ -34,6 +34,7 @@ class AppCubit extends UpdatableCubit<AppState> {
   void update({
     AppLifecycleState? status,
     StreamingConnectionStatus? connection,
+    DateTime? authenticatedAt,
     int? blockheight,
     bool? submitting,
   }) {
@@ -42,8 +43,18 @@ class AppCubit extends UpdatableCubit<AppState> {
       status: status ?? state.status,
       connection: connection ?? state.connection,
       blockheight: blockheight ?? state.blockheight,
+      authenticatedAt: authenticatedAt ?? state.authenticatedAt,
       submitting: submitting ?? state.submitting,
       prior: state.withoutPrior,
     ));
   }
+
+  void authenticatedNow() => update(authenticatedAt: DateTime.now());
+  bool get isAuthenticated =>
+      state.authenticatedAt != null &&
+      DateTime.now()
+              .difference(state.authenticatedAt!)
+              .inMilliseconds
+              .toDouble() >
+          5 * 60;
 }

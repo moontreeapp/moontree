@@ -143,6 +143,7 @@ class LoginNativeState extends State<LoginNative> {
   }
 
   Future<void> _proceed() async {
+    cubits.app.authenticatedNow();
     setState(() {
       _isAuthenticated = true;
     });

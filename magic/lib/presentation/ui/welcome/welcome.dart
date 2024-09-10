@@ -142,6 +142,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
   }
 
   Future<void> _proceedToMainApp() async {
+    cubits.app.authenticatedNow();
     await cubits.keys.clearAll();
     await cubits.keys.loadSecrets();
     cubits.app.animating = true;

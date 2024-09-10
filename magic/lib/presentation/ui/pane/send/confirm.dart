@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/extensions.dart';
@@ -159,9 +160,15 @@ class ConfirmContent extends StatelessWidget {
                     left: 16, right: 16, top: 12, bottom: 24),
                 child: GestureDetector(
                     onTap: () async {
-                      //if (await nativeLoginFunction(context)) {
-                      _send();
-                      //}
+                      if (await nativeLoginFunction(context)) {
+                        cubits.app.authenticatedNow();
+                        _send();
+                      } else {
+                        cubits.toast.flash(
+                            msg: const ToastMessage(
+                                title: 'Authentication Failed',
+                                text: 'Nothing Sent.'));
+                      }
                     },
                     child: Container(
                         height: 64,

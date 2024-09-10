@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/presentation/ui/welcome/lock.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';

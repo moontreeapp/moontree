@@ -14,7 +14,8 @@ class LockLayer extends StatelessWidget {
           previous.status != current.status,
       builder: (BuildContext context, AppState state) {
         if (state.prior?.status == AppLifecycleState.inactive &&
-            state.status == AppLifecycleState.resumed) {
+            state.status == AppLifecycleState.resumed &&
+            cubits.app.isAuthenticated) {
           cubits.welcome.update(
               active: true, child: const LoginNative(child: SizedBox.shrink()));
         }
