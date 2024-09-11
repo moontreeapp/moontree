@@ -37,9 +37,10 @@ class TransactionsPage extends StatelessWidget {
               // return const LoadingIndicator();
               return ListView.builder(
                 padding: const EdgeInsets.only(top: 8),
-                itemCount: 3,
-                itemBuilder: (context, index) =>
-                    const TransactionItemPlaceholder(),
+                itemCount: 7,
+                itemBuilder: (context, index) => TransactionItemPlaceholder(
+                  delay: Duration(milliseconds: index * 67),
+                ),
               );
             }
             if (state.transactions.isEmpty && state.mempool.isEmpty) {
@@ -179,30 +180,72 @@ class NoHistoryMessage extends StatelessWidget {
           ]));
 }
 
-class TransactionItemPlaceholder extends StatelessWidget {
-  const TransactionItemPlaceholder({super.key});
+class TransactionItemPlaceholder extends StatefulWidget {
+  final Duration delay;
+  const TransactionItemPlaceholder({super.key, this.delay = Duration.zero});
+
+  @override
+  State<TransactionItemPlaceholder> createState() =>
+      _TransactionItemPlaceholderState();
+}
+
+class _TransactionItemPlaceholderState extends State<TransactionItemPlaceholder>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    Future.delayed(widget.delay, () {
+      _controller.repeat(reverse: true);
+    });
+
+    _animation = Tween<double>(begin: 0.67, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      leading: Container(
-        width: screen.iconHuge,
-        height: screen.iconHuge,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: AppColors.frontItem,
-        ),
-      ),
-      title: Container(
-        width: double.infinity,
-        height: 24,
-        decoration: BoxDecoration(
-          color: AppColors.frontItem,
-          borderRadius:
-              BorderRadius.circular(12), // Adjust this value as needed
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Container(
+            width: screen.iconHuge,
+            height: screen.iconHuge,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.frontItem.withOpacity(_animation.value),
+            ),
+          ),
+          title: Container(
+            width: double.infinity,
+            height: 24,
+            decoration: BoxDecoration(
+              color: AppColors.frontItem.withOpacity(_animation.value),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      },
     );
   }
 }

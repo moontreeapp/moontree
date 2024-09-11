@@ -10,9 +10,11 @@ import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/send.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/theme/text.dart';
+import 'package:magic/presentation/ui/pane/send/confirm_placeholder.dart';
 import 'package:magic/presentation/ui/pane/send/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/animations/loading.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/utils/log.dart';
@@ -28,7 +30,7 @@ class SendPage extends StatelessWidget {
           prior.estimate != current.estimate,
       builder: (BuildContext context, SendState state) {
         if (state.isSubmitting) {
-          return const LoadingIndicator();
+          return const ConfirmContentPlaceholder();
         }
         if (state.unsignedTransaction != null && state.estimate != null) {
           //return LoginNative(
@@ -323,13 +325,17 @@ class SendContentState extends State<SendContent> {
                 prior.fromQR != current.fromQR,
             builder: (BuildContext context, SendState state) {
               if (state.scanActive) {
-                return Container(
+                return FadeIn(
+                  duration: fadeDuration,
+                  child: Container(
                     padding: const EdgeInsets.only(top: 8),
                     constraints: BoxConstraints(maxHeight: screen.width - 32),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(28.0),
                       child: const QRViewable(),
-                    ));
+                    ),
+                  ),
+                );
               }
               if (state.fromQR == true) {
                 addressText.text = cubits.send.state.address;
@@ -366,8 +372,8 @@ class SendContentState extends State<SendContent> {
                   CustomTextField(
                     textInputAction: TextInputAction.done,
                     controller: amountText,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(signed: false),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        signed: false, decimal: true),
                     labelText: amountDollars ? 'Amount in USD' : 'Amount',
                     suffixIcon: ['0', '-'].contains(
                             Coin.fromString(amountText.text.replaceAll(',', ''))

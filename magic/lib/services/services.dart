@@ -19,7 +19,7 @@ late ScreenFlags screenflags;
 late SystemBackButton back;
 late Maestro maestro;
 //late Keyboard keyboard;
-late FlutterSecureStorage secureStorage;
+const FlutterSecureStorage secureStorage = FlutterSecureStorage();
 const Future<SharedPreferences> Function() storage =
     SharedPreferences.getInstance;
 final SubscriptionService subscription = SubscriptionService();
@@ -38,7 +38,6 @@ void init({
   keys.init();
   //keyboard = Keyboard();
   maestro = Maestro();
-  secureStorage = const FlutterSecureStorage();
   //server = ServerCall();
   rates = RateWaiter(
       evrGrabber: RateGrabber(symbol: 'EVR'),

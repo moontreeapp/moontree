@@ -1,8 +1,8 @@
 part of 'cubit.dart';
 
-
 class AppState with EquatableMixin {
   final AppLifecycleState status;
+  final bool wasPaused;
   final StreamingConnectionStatus connection;
   final int blockheight;
   final DateTime? authenticatedAt;
@@ -11,6 +11,7 @@ class AppState with EquatableMixin {
 
   const AppState({
     this.status = AppLifecycleState.inactive,
+    this.wasPaused = false,
     this.connection = StreamingConnectionStatus.disconnected,
     this.blockheight = 0,
     this.authenticatedAt,
@@ -21,6 +22,7 @@ class AppState with EquatableMixin {
   @override
   List<Object?> get props => [
         status,
+        wasPaused,
         connection,
         blockheight,
         authenticatedAt,
@@ -33,6 +35,7 @@ class AppState with EquatableMixin {
 
   AppState get withoutPrior => AppState(
         status: status,
+        wasPaused: wasPaused,
         connection: connection,
         blockheight: blockheight,
         authenticatedAt: authenticatedAt,

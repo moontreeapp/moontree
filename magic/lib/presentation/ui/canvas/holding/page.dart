@@ -15,6 +15,7 @@ import 'package:magic/presentation/widgets/assets/amounts.dart';
 import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
+import 'package:magic/domain/concepts/asset_icons.dart';
 
 class HodingDetailPage extends StatelessWidget {
   const HodingDetailPage({super.key});
@@ -56,48 +57,24 @@ class AnimatedCoinSpec extends StatelessWidget {
                       adminHolding: pair.admin!,
                     );
                   }()
-                : SimpleIdenticon(
-                    letter: cubits.holding.state.holding
-                        .assetPathChildNFT[0], //symbol[0],
-                    height: screen.iconHuge + 12,
-                    width: screen.iconHuge + 12,
-                    style: AppText.identiconHuge,
-                    admin: cubits.holding.state.holding.isAdmin,
-                  ),
-        //: Stack(children: [
-        //    Padding(
-        //      padding: const EdgeInsets.only(left: 8),
-        //      child: SimpleIdenticon(
-        //        letter: cubits.wallet
-        //            .adminOf(cubits.holding.state.holding)!
-        //            .symbol[0],
-        //        height: screen.iconHuge,
-        //        width: screen.iconHuge,
-        //        style: AppText.identiconHuge,
-        //      ),
-        //    ),
-        //    SimpleIdenticon(
-        //      letter: cubits.holding.state.holding.symbol[0],
-        //      height: screen.iconHuge,
-        //      width: screen.iconHuge,
-        //      style: AppText.identiconHuge,
-        //    ),
-        //  ]),
+                : AssetIcons.hasCustomIcon(cubits.holding.state.holding.name,
+                        cubits.holding.state.holding.blockchain)
+                    ? AssetIdenticon(
+                        holding: cubits.holding.state.holding,
+                        height: screen.iconHuge + 12,
+                        width: screen.iconHuge + 12,
+                        blockchain: cubits.holding.state.holding.blockchain,
+                      )
+                    : SimpleIdenticon(
+                        letter:
+                            cubits.holding.state.holding.assetPathChildNFT[0],
+                        height: screen.iconHuge + 12,
+                        width: screen.iconHuge + 12,
+                        style: AppText.identiconHuge,
+                        admin: cubits.holding.state.holding.isAdmin,
+                        blockchain: cubits.holding.state.holding.blockchain,
+                      ),
       );
-  //Container(
-  //    height: screen.iconHuge,
-  //    width: screen.iconHuge,
-  //    alignment: Alignment.center,
-  //    decoration: BoxDecoration(
-  //      //color: AppColors.buttonLight,
-  //      borderRadius: BorderRadius.circular(100),
-  //    ),
-  //    child: Image.asset(LogoIcons.evr) // TODO: get from cubit
-  //    //SvgPicture.asset(
-  //    //  LogoIcons.evr,
-  //    //  alignment: Alignment.center,
-  //    //),
-  //    ));
 
   Widget assetValues({
     String? whole,
@@ -247,8 +224,8 @@ class AnimatedCoinSpec extends StatelessWidget {
       builder: (context, HoldingState state) {
         double modifierTop = 0;
         double iconTop = 16;
-        int expandedSpacing = 8;
-        int scrunchedSpacing = 8;
+        int expandedSpacing = 0;
+        int scrunchedSpacing = 0;
         double valueTop = iconTop + screen.iconHuge + expandedSpacing;
         Coin? overrideCoin;
         String? overrideWhole;
@@ -256,19 +233,19 @@ class AnimatedCoinSpec extends StatelessWidget {
         String? overrideSubtitle;
 
         if (state.section == HoldingSection.none) {
-          iconTop = 4;
+          iconTop = 8;
           valueTop = iconTop + screen.iconHuge + expandedSpacing;
         } else if (state.section == HoldingSection.send) {
           overrideSubtitle = state.holding.isCurrency
               ? (state.holding.blockchain.name)
               : state.holding.name;
-          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
-          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.67);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.67)) +
               screen.iconHuge +
               scrunchedSpacing;
         } else if (state.section == HoldingSection.receive) {
-          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
-          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.67);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.67)) +
               screen.iconHuge +
               scrunchedSpacing;
           overrideWhole = 'Send to Me';
@@ -278,15 +255,15 @@ class AnimatedCoinSpec extends StatelessWidget {
               : state.holding.name;
           //: '${state.holding.name}${'\non ${state.holding.blockchain.name}'}';
         } else if (state.section == HoldingSection.swap) {
-          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
-          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.67);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.67)) +
               screen.iconHuge +
               scrunchedSpacing;
           //iconTop = 24;
           //valueTop = 24 + screen.iconHuge + 24;
         } else if (state.section == HoldingSection.transaction) {
-          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5);
-          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.5)) +
+          iconTop = screen.canvas.midHeight / 2 - (screen.iconHuge * 1.67);
+          valueTop = (screen.canvas.midHeight / 2 - (screen.iconHuge * 1.67)) +
               screen.iconHuge +
               scrunchedSpacing;
           overrideCoin = cubits.holding.state.transaction?.coin;
