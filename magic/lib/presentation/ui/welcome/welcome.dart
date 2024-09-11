@@ -117,8 +117,11 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
 
   Future<void> _handleAuthentication() async {
     bool supportsBiometrics = await securityService.canCheckBiometrics();
-    bool isAuthSetUp = await securityService.isAuthenticationSetUp();
-    bool isAuthenticated = await securityService.authenticateUser();
+    bool isAuthSetUp = await securityService.isAuthenticationPresent();
+    bool isAuthenticated = await securityService.authenticateUser(
+      canCheckBio: supportsBiometrics,
+      isAuthSetup: isAuthSetUp,
+    );
     if (isAuthenticated) {
       if (!supportsBiometrics) {
         _showSecurityWarning(context, 'no_biometrics');

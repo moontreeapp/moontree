@@ -98,7 +98,7 @@ class LoginNativeState extends State<LoginNative> {
 
   Future<void> _handleAuthentication() async {
     bool supportsBiometrics = await securityService.canCheckBiometrics();
-    bool isAuthSetUp = await securityService.isAuthenticationSetUp();
+    bool isAuthSetUp = await securityService.isAuthenticationPresent();
     bool isAuthenticated = await securityService.authenticateUser();
     if (isAuthenticated) {
       if (!supportsBiometrics) {

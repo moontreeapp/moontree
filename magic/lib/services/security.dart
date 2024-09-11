@@ -14,7 +14,7 @@ class SecurityService {
     }
   }
 
-  Future<bool> isAuthenticationSetUp() async {
+  Future<bool> isAuthenticationPresent() async {
     try {
       List<BiometricType> availableBiometrics =
           await _localAuth.getAvailableBiometrics();
@@ -25,11 +25,11 @@ class SecurityService {
     }
   }
 
-  Future<bool> authenticateUser() async {
-    bool canCheckBio = await canCheckBiometrics();
-    bool isAuthSetUp = await isAuthenticationSetUp();
+  Future<bool> authenticateUser({bool? canCheckBio, bool? isAuthSetup}) async {
+    canCheckBio = canCheckBio ?? await canCheckBiometrics();
+    isAuthSetup = isAuthSetup ?? await isAuthenticationPresent();
 
-    if (!canCheckBio || !isAuthSetUp) {
+    if (!canCheckBio || !isAuthSetup) {
       // Device doesn't support biometrics or auth is not set up
       return true;
     }
@@ -37,16 +37,17 @@ class SecurityService {
     try {
       bool authenticated = await _localAuth.authenticate(
         localizedReason: 'Authenticate to access the app',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: false,
-        ),
+        //options: const AuthenticationOptions(
+        //  stickyAuth: true,
+        //  biometricOnly: false,
+        //),
       );
       if (authenticated) {
         await _setUserAuthenticated();
       }
       return authenticated;
-    } on PlatformException catch (_) {
+    } on PlatformException catch (e) {
+      print(e);
       return false;
     }
   }
