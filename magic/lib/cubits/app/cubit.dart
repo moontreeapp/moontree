@@ -39,6 +39,7 @@ class AppCubit extends UpdatableCubit<AppState> {
     bool? submitting,
   }) {
     see('blockheight', blockheight, LogColor.yellow);
+    see('status', status, LogColor.yellow);
     emit(AppState(
       status: status ?? state.status,
       connection: connection ?? state.connection,
