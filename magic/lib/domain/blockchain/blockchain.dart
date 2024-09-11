@@ -230,4 +230,18 @@ enum Blockchain {
   bool get isFiat => this == Blockchain.none;
   bool isCoin(String? assetSymbol) => symbol == assetSymbol;
   bool isAsset(String? assetSymbol) => !isFiat && !isCoin(assetSymbol);
+
+  // String get logoPath {
+  //   switch (this) {
+  //     case Blockchain.ravencoinMain:
+  //     case Blockchain.ravencoinTest:
+  //       return 'assets/logos/rvn-icon.png';
+  //     case Blockchain.evrmoreMain:
+  //     case Blockchain.evrmoreTest:
+  //       return 'assets/logos/evr-icon.png';
+  //     case Blockchain.none:
+  //       // ? does an empty string work here?
+  //       return '';
+  //   }
+  // }
 }

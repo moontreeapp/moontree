@@ -181,14 +181,16 @@ class SubscriptionService {
       await _waitForConnection();
       return;
     }
-
+    print('awaiting connection...');
+    await _waitForConnection();
+    return;
     // If not connected and not connecting, initiate a new connection
-    try {
-      connectionHandler.connect();
-    } catch (e) {
-      see('Failed to connect: $e');
-      // Handle connection error (e.g., throw an exception or return an error status)
-    }
+    //try {
+    //  connectionHandler.connect();
+    //} catch (e) {
+    //  print('Failed to connect: $e');
+    //  // Handle connection error (e.g., throw an exception or return an error status)
+    //}
   }
 
   Future<void> _waitForConnection() async {
