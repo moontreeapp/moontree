@@ -12,10 +12,12 @@ import 'package:url_launcher/url_launcher_string.dart';
 class LoginNative extends StatefulWidget {
   final Widget child;
   final Function? onFailure;
+  final Function? onThen;
   const LoginNative({
     super.key,
     this.child = const SizedBox.shrink(),
     this.onFailure,
+    this.onThen,
   });
 
   @override
@@ -111,7 +113,7 @@ class LoginNativeState extends State<LoginNative> {
         //await subscription.ensureConnected();
         //subscription.setupSubscriptions(cubits.keys.master);
         //cubits.wallet.populateAssets().then((_) => maestro.activateHome());
-        _proceed();
+        await _proceed();
       }
     } else {
       if (!isAuthenticated) {
@@ -235,7 +237,7 @@ class LoginNativeState extends State<LoginNative> {
   void initState() {
     super.initState();
     //_checkBiometrics().then((_) {
-    _handleAuthentication();
+    _handleAuthentication().then((value) => widget.onThen?.call());
     //});
   }
 

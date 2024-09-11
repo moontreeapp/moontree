@@ -14,6 +14,7 @@ import 'package:magic/presentation/ui/appbar/scanner.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/animations.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
+import 'package:magic/presentation/widgets/assets/status.dart';
 import 'package:magic/services/services.dart' show screen;
 import 'package:magic/utils/log.dart';
 
@@ -36,7 +37,7 @@ class AppbarHeader extends StatelessWidget {
               children: [
                 const Leading(),
                 const Expanded(child: Title()),
-                //AppLifecycleReactor(),
+                const AppLifecycleReactor(),
                 const AppActivityWatcher(),
                 const ConnectionIndicator(),
                 if (!Platform.isIOS) const Scanner(),

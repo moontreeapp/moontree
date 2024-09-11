@@ -33,6 +33,7 @@ class AppCubit extends UpdatableCubit<AppState> {
   @override
   void update({
     AppLifecycleState? status,
+    bool? wasPaused,
     StreamingConnectionStatus? connection,
     DateTime? authenticatedAt,
     int? blockheight,
@@ -40,8 +41,13 @@ class AppCubit extends UpdatableCubit<AppState> {
   }) {
     see('blockheight', blockheight, LogColor.yellow);
     see('status', status, LogColor.yellow);
+    see('authenticatedAt', authenticatedAt, LogColor.yellow);
+    if (status == AppLifecycleState.paused) {
+      wasPaused = true;
+    }
     emit(AppState(
       status: status ?? state.status,
+      wasPaused: wasPaused ?? state.wasPaused,
       connection: connection ?? state.connection,
       blockheight: blockheight ?? state.blockheight,
       authenticatedAt: authenticatedAt ?? state.authenticatedAt,
@@ -51,11 +57,14 @@ class AppCubit extends UpdatableCubit<AppState> {
   }
 
   void authenticatedNow() => update(authenticatedAt: DateTime.now());
-  bool get isAuthenticated =>
-      state.authenticatedAt != null &&
-      DateTime.now()
+  bool get isAuthenticated => () {
+        if (state.authenticatedAt != null) {
+          final seconds = DateTime.now()
               .difference(state.authenticatedAt!)
-              .inMilliseconds
-              .toDouble() >
-          5 * 60;
+              .inSeconds
+              .toDouble();
+          return seconds < 30;
+        }
+        return false;
+      }();
 }
