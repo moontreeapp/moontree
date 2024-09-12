@@ -58,6 +58,7 @@ Future<void> main() async {
     ));
   }
   await cubits.keys.loadXPubs();
+  await cubits.menu.loadSettings();
   // Initialize the Serverpod client with a retry mechanism to handle connection issues
   await subscription.setupClient(FlutterConnectivityMonitor());
   await precacheSvgPicture(LogoIcons.magic);

@@ -26,6 +26,26 @@ enum DifficultyMode {
         return Icons.scuba_diving_rounded;
     }
   }
+
+  DifficultyMode get next {
+    switch (this) {
+      case DifficultyMode.easy:
+        return DifficultyMode.hard;
+      case DifficultyMode.hard:
+        return DifficultyMode.dev;
+      case DifficultyMode.dev:
+        return DifficultyMode.easy;
+    }
+  }
+
+  static DifficultyMode? fromName(String? name) {
+    for (final DifficultyMode m in DifficultyMode.values) {
+      if (m.name == name) {
+        return m;
+      }
+    }
+    return null;
+  }
 }
 
 enum SubMenu {

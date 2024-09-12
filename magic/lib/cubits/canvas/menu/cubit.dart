@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/concepts/side.dart';
+import 'package:magic/domain/storage/storage.dart';
+import 'package:magic/services/services.dart';
 
 part 'state.dart';
 
@@ -37,6 +41,9 @@ class MenuCubit extends UpdatableCubit<MenuState> {
     bool? isSubmitting,
     MenuState? prior,
   }) {
+    if (mode != null) {
+      saveSettings();
+    }
     emit(MenuState(
       active: active ?? state.active,
       faded: faded ?? state.faded,
@@ -64,4 +71,19 @@ class MenuCubit extends UpdatableCubit<MenuState> {
   bool get isInDevMode => state.mode == DifficultyMode.dev;
   bool get isInHardOrDevMode =>
       [DifficultyMode.hard, DifficultyMode.hard].contains(state.mode);
+
+  Future<void> loadSettings() async {
+    final DifficultyMode? modeSetting = DifficultyMode.fromName(
+        (await storage()).read(key: StorageKey.setting.key('mode')));
+    if (modeSetting != null) {
+      update(mode: modeSetting);
+    }
+  }
+
+  Future<void> saveSettings() async {
+    (await storage()).write(
+      key: StorageKey.setting.key('mode'),
+      value: state.mode.name,
+    );
+  }
 }

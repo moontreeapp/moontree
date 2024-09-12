@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum StorageKey {
   xpubs,
   rate,
+  setting,
   cache;
 
   String key([String? id]) {
@@ -13,6 +14,8 @@ enum StorageKey {
         return 'xpubs';
       case StorageKey.rate:
         return 'rate:$id';
+      case StorageKey.setting:
+        return 'setting:$id';
       default:
         return name;
     }
