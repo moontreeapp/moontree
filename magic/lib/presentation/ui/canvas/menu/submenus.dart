@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/presentation/theme/colors.dart';
+import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/domain/concepts/side.dart';

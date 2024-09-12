@@ -129,10 +129,10 @@ class WalletsPageState extends State<WalletsPage> {
                                                   .mnemonic!);
                                           await cubits.keys.saveSecrets();
 
-                                          /// do we need to resetup our subscriptions? yes.
-                                          /// all of them or just this wallet? just do all of them.
-                                          await subscription.setupSubscriptions(
-                                              cubits.keys.master);
+                                          ///// do we need to resetup our subscriptions? yes.
+                                          ///// all of them or just this wallet? just do all of them.
+                                          //await subscription.setupSubscriptions(
+                                          //    cubits.keys.master);
 
                                           /// do we need to get all our assets again? yes.
                                           /// all of them or just this wallet? just do all of them.

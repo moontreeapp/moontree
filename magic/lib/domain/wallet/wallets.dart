@@ -66,7 +66,11 @@ class MasterWallet extends Jsonable {
   //    .seedWallet.subwallets.values
   //    .expand((subList) => subList.map((sub) => sub.address ?? '')))).toSet();
 
-  Set<String> get mnemonicAddresses => (derivationWallets
+  Set<String> get derivationRoots => (derivationWallets
+      .expand((m) => m.asRootXPubMap.values.expand((r) => r.values))
+      .toSet());
+
+  Set<String> get derivationAddresses => (derivationWallets
       .expand((m) => m.seedWallets.values.expand((s) => s.subwallets.values
           .expand((subList) => subList.map((sub) => sub.address ?? ''))))
       .toSet());
@@ -75,7 +79,7 @@ class MasterWallet extends Jsonable {
       .expand((kp) => kp.wallets.values.map((wallet) => wallet.address ?? ''))
       .toSet();
 
-  Set<String> get addressSet => {...mnemonicAddresses, ...keypairAddresses};
+  Set<String> get addressSet => {...derivationAddresses, ...keypairAddresses};
 }
 
 class KeypairWallet extends Jsonable {

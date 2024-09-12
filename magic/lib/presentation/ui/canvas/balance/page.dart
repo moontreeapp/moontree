@@ -56,17 +56,29 @@ class AnimatedBalance extends StatelessWidget {
                         Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('\$${state.portfolioValue.head}',
-                                        style: AppText.wholeFiat),
-                                    if (state.portfolioValue.tail != '.00' &&
-                                        state.portfolioValue.head != '-')
-                                      Text(state.portfolioValue.tail,
-                                          style: AppText.partFiat),
-                                  ]),
+                              GestureDetector(
+                                  onTap: () {
+                                    subscription.ensureConnected().then((_) {
+                                      //subscription.setupSubscriptions(cubits.keys.master);
+                                      cubits.wallet
+                                          .populateAssets()
+                                          .then((_) => maestro.activateHome());
+                                    });
+                                  },
+                                  child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('\$${state.portfolioValue.head}',
+                                            style: AppText.wholeFiat),
+                                        if (state.portfolioValue.tail !=
+                                                '.00' &&
+                                            state.portfolioValue.head != '-')
+                                          Text(state.portfolioValue.tail,
+                                              style: AppText.partFiat),
+                                      ])),
                               Text('Portfolio', style: AppText.usdHolding),
                             ]),
                         AnimatedOpacity(

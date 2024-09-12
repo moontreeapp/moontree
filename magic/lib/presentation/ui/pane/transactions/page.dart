@@ -203,7 +203,9 @@ class _TransactionItemPlaceholderState extends State<TransactionItemPlaceholder>
     );
 
     Future.delayed(widget.delay, () {
-      _controller.repeat(reverse: true);
+      if (mounted) {
+        _controller.repeat(reverse: true);
+      }
     });
 
     _animation = Tween<double>(begin: 0.67, end: 1.0).animate(

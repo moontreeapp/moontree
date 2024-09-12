@@ -1,0 +1,41 @@
+EbVZXpVyowNRSNpgewwbsC2vZ3rjCuCj9
+I/ViewRootImpl@b8cecd4[MainActivity](18006): ViewPostIme pointer 1
+I/flutter (19556): Failed call: balances.get
+I/flutter (19556): TimeoutException after 0:00:20.000000: Future not completed
+I/flutter (19556): recreating client
+E/flutter (18006): [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: 'package:flutter/src/animation/animation_controller.dart': Failed assertion: line 847 pos 7: '_ticker != null': AnimationController.stop() called after AnimationController.dispose()
+E/flutter (18006): AnimationController methods should not be used after calling dispose.
+E/flutter (18006): #0      _AssertionError._doThrowNew (dart:core-patch/errors_patch.dart:50:61)
+E/flutter (18006): #1      _AssertionError._throwNew (dart:core-patch/errors_patch.dart:40:5)
+E/flutter (18006): #2      AnimationController.stop (package:flutter/src/animation/animation_controller.dart:847:7)
+E/flutter (18006): #3      AnimationController.repeat (package:flutter/src/animation/animation_controller.dart:732:5)
+E/flutter (18006): #4      _TransactionItemPlaceholderState.initState.<anonymous closure> (package:magic/presentation/ui/pane/transactions/page.dart:206:19)
+E/flutter (18006): #5      new Future.delayed.<anonymous closure> (dart:async/future.dart:431:42)
+E/flutter (18006): #6      Timer._createTimer.<anonymous closure> (dart:async-patch/timer_patch.dart:18:15)
+E/flutter (18006): #7      _Timer._runTimers (dart:isolate-patch/timer_impl.dart:398:19)
+E/flutter (18006): #8      _Timer._handleMessage (dart:isolate-patch/timer_impl.dart:429:5)
+E/flutter (18006): #9      _RawReceivePort._handleMessage (dart:isolate-patch/isolate_patch.dart:184:12)
+E/flutter (18006):
+I/flutter (18006): populating transactions: 0
+I/flutter (18006): asking from: null
+E/flutter (18006): [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: 'package:flutter/src/animation/animation_controller.dart': Failed assertion: line 847 pos 7: '_ticker != null': AnimationController.stop() called after AnimationController.dispose()
+E/flutter (18006): AnimationController methods should not be used after calling dispose.
+E/flutter (18006): #0      _AssertionError._doThrowNew (dart:core-patch/errors_patch.dart:50:61)
+E/flutter (18006): #1      _AssertionError._throwNew (dart:core-patch/errors_patch.dart:40:5)
+E/flutter (18006): #2      AnimationController.stop (package:flutter/src/animation/animation_controller.dart:847:7)
+E/flutter (18006): #3      AnimationController.repeat (package:flutter/src/animation/animation_controller.dart:732:5)
+E/flutter (18006): #4      _TransactionItemPlaceholderState.initState.<anonymous closure> (package:magic/presentation/ui/pane/transactions/page.dart:206:19)
+E/flutter (18006): #5      new Future.delayed.<anonymous closure> (dart:async/future.dart:431:42)
+E/flutter (18006): #6      Timer._createTimer.<anonymous closure> (dart:async-patch/timer_patch.dart:18:15)
+E/flutter (18006): #7      _Timer._runTimers (dart:isolate-patch/timer_impl.dart:398:19)
+E/flutter (18006): #8      _Timer._handleMessage (dart:isolate-patch/timer_impl.dart:429:5)
+E/flutter (18006): #9      _RawReceivePort._handleMessage (dart:isolate-patch/isolate_patch.dart:184:12)
+E/flutter (18006):
+I/flutter (18006): trasnsactions: ([975897], [975891], [975654], [975650], [974644], [974620])
+I/flutter (18006): EVR
+I/flutter (18006): mempool: []
+2
+I/flutter (18006): EVR
+I/flutter (19556): Failed call: balances.get
+I/flutter (19556): SocketException: HTTP connection timed out after 0:00:20.000000, host: app.moontree.com, port: 443
+I/flutter (19556): recreating client

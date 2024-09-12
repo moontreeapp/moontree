@@ -2,7 +2,7 @@
 
 import 'package:collection/collection.dart';
 
-enum LogColor {
+enum LogColors {
   red,
   green,
   yellow,
@@ -22,19 +22,19 @@ enum LogColor {
     const String cyan = '\x1B[36m';
 
     switch (this) {
-      case LogColor.red:
+      case LogColors.red:
         return '$red$msg$reset';
-      case LogColor.green:
+      case LogColors.green:
         return '$green$msg$reset';
-      case LogColor.yellow:
+      case LogColors.yellow:
         return '$yellow$msg$reset';
-      case LogColor.blue:
+      case LogColors.blue:
         return '$blue$msg$reset';
-      case LogColor.magenta:
+      case LogColors.magenta:
         return '$magenta$msg$reset';
-      case LogColor.cyan:
+      case LogColors.cyan:
         return '$cyan$msg$reset';
-      case LogColor.reset:
+      case LogColors.reset:
         return '$reset$msg$reset';
       default:
         return '$reset$msg$reset';
@@ -45,7 +45,7 @@ enum LogColor {
 void see(
   dynamic message, [
   dynamic msg0,
-  LogColor color = LogColor.cyan,
+  LogColors color = LogColors.cyan,
   dynamic msg1,
   dynamic msg2,
   dynamic msg3,
