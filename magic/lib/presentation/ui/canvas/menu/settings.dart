@@ -59,7 +59,9 @@ class BackupItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome.update(
-            active: true, child: const LoginNative(child: BackupPage())),
+            active: true, child: const LoginNative(
+              onFailure: () => cubits.welcome.update(active: false, child: const SizedBox.shrink()),
+              child: BackupPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -78,7 +80,9 @@ class ImportItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome.update(
-            active: true, child: const LoginNative(child: ImportPage())),
+            active: true, child: const LoginNative(
+              onFailure: () => cubits.welcome.update(active: false, child: const SizedBox.shrink()),
+              child: ImportPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -97,7 +101,9 @@ class WalletsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome.update(
-            active: true, child: const LoginNative(child: WalletsPage())),
+            active: true, child: const LoginNative(
+              onFailure: () => cubits.welcome.update(active: false, child: const SizedBox.shrink()),
+              child: WalletsPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
