@@ -63,7 +63,7 @@ class AppCubit extends UpdatableCubit<AppState> {
               .difference(state.authenticatedAt!)
               .inSeconds
               .toDouble();
-          return seconds < 30;
+          return seconds < 5 * 60;
         }
         return false;
       }();

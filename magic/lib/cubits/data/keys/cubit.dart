@@ -37,10 +37,13 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     List<String>? mnemonics,
     List<String>? wifs,
     bool? submitting,
+    bool syncKeys = true,
   }) {
-    syncMnemonics(mnemonics);
-    syncKeypairs(wifs);
-    syncXPubs(xpubs);
+    if (syncKeys) {
+      syncMnemonics(mnemonics);
+      syncKeypairs(wifs);
+      syncXPubs(xpubs);
+    }
     //see(mnemonics);
     //try {
     //  see('-----------------------------');
