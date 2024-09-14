@@ -59,9 +59,11 @@ class BackupItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome.update(
-            active: true, child: const LoginNative(
-              onFailure: () => cubits.welcome.update(active: false, child: const SizedBox.shrink()),
-              child: BackupPage())),
+            active: true,
+            child: LoginNative(
+                onFailure: () => cubits.welcome
+                    .update(active: false, child: const SizedBox.shrink()),
+                child: const BackupPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -80,9 +82,11 @@ class ImportItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome.update(
-            active: true, child: const LoginNative(
-              onFailure: () => cubits.welcome.update(active: false, child: const SizedBox.shrink()),
-              child: ImportPage())),
+            active: true,
+            child: LoginNative(
+                onFailure: () => cubits.welcome
+                    .update(active: false, child: const SizedBox.shrink()),
+                child: const ImportPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -101,9 +105,11 @@ class WalletsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome.update(
-            active: true, child: const LoginNative(
-              onFailure: () => cubits.welcome.update(active: false, child: const SizedBox.shrink()),
-              child: WalletsPage())),
+            active: true,
+            child: LoginNative(
+                onFailure: () => cubits.welcome
+                    .update(active: false, child: const SizedBox.shrink()),
+                child: const WalletsPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
