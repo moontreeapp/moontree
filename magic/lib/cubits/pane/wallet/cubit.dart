@@ -23,6 +23,8 @@ part 'state.dart';
 class WalletCubit extends UpdatableCubit<WalletState> {
   WalletCubit() : super(const WalletState());
 
+  DateTime populatedAt = DateTime.now();
+
   List<Chips> defaultChips = [
     Chips.all,
     Chips.evrmore,
@@ -101,7 +103,11 @@ class WalletCubit extends UpdatableCubit<WalletState> {
     update(holdings: [], active: true);
   }
 
-  Future<bool> populateAssets() async {
+  Future<bool> populateAssets([int cooldown = 0]) async {
+    if (cooldown > 0 && DateTime.now().difference(populatedAt!).inSeconds < cooldown) {
+      return false;
+    }
+    populatedAt = DateTime.now();
     // remember to order by currency first, amount second, alphabetical third
     update(isSubmitting: true);
     see('populateAssets');

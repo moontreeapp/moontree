@@ -220,6 +220,7 @@ class Maestro {
     } else {
       locked = true;
     }
+    cubits.wallet.populateAssets(30);
     cubits.app.animating = true;
     // if pane is not in middle move it to middle first
     if (cubits.pane.height != screen.pane.midHeight) {
