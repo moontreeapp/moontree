@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:magic/cubits/app/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/cubits/welcome/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/domain/server/serverv2_client.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/fading.dart';
@@ -241,24 +243,55 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                       child: SizedBox(
                         width: double.infinity,
                         height: 60,
-                        child: ElevatedButton(
-                          onHover: (_) => cubits.app.animating = true,
-                          onPressed: _handleAuthentication, // Changed this line
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.button,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          child: const Text(
-                            "LET'S GO",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                        child: BlocBuilder<AppCubit, AppState>(
+                            buildWhen: (AppState previous, AppState current) =>
+                                previous.connection != current.connection,
+                            builder: (BuildContext context, AppState state) {
+                              if (state.connection ==
+                                  StreamingConnectionStatus.connected) {
+                                return ElevatedButton(
+                                  onHover: (_) => cubits.app.animating = true,
+                                  onPressed:
+                                      _handleAuthentication, // Changed this line
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.button,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    "LET'S GO",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return ElevatedButton(
+                                onHover: (_) => cubits.app.animating = true,
+                                onPressed: () => cubits.toast.flash(
+                                    msg: const ToastMessage(
+                                        title: 'Connection Failed:',
+                                        text: 'please check connection',
+                                        force: true)),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey[800],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "LET'S GO",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            }),
                       ),
                     ),
                     const SizedBox(height: 16),

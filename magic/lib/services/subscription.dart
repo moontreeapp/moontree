@@ -28,11 +28,9 @@ class SubscriptionService {
     client.connectivityMonitor?.addListener((connected) {
       if (!connected) {
         see('Disconnected, attempting to reconnect...');
-
         _attemptReconnect();
       }
     });
-
     await _setupConnection();
   }
 
@@ -172,9 +170,20 @@ class SubscriptionService {
   }
 
   Future<void> _waitForConnection() async {
+    int stillWaiting = 0;
     while (connectionHandler.status.status !=
         StreamingConnectionStatus.connected) {
       await Future.delayed(const Duration(seconds: 1));
+      stillWaiting += 1;
+      if (stillWaiting == 2) {
+        print('-------------------');
+        cubits.toast.flash(
+            msg: const ToastMessage(
+                duration: Duration(seconds: 7),
+                title: 'Connection Failed:',
+                text: 'please check connection',
+                force: true));
+      }
     }
   }
 

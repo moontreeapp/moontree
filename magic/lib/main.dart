@@ -60,7 +60,9 @@ Future<void> main() async {
   await cubits.keys.loadXPubs();
   await cubits.menu.loadSettings();
   // Initialize the Serverpod client with a retry mechanism to handle connection issues
+  print('setting up client');
   await subscription.setupClient(FlutterConnectivityMonitor());
+  print('setted up client');
   await precacheSvgPicture(LogoIcons.magic);
 
   //ApiService.init();
@@ -141,7 +143,7 @@ Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
   /// TODO: rework to save at the root level.
   await cubits.keys.loadXPubs();
   ////see(
-  ////    cubits.keys.master.derivationWallets.first.roots(Blockchain.evrmoreMain));
+  ////    cubits.keys.master.derivationWallets.last.roots(Blockchain.evrmoreMain));
   ////[xpub6EyL2KHeobgPS891ygwWVrZUAqRArjUk5Fs4zxQ9d6Yy1GMF78AULHZaRUNmg6BZzhPj7P6Qc6SXUGc4YHMV8A9wFcxw19tmNxnF1XfMHWZ, xpub6EyL2KHeobgPSohWN2j4xPiX5PFJvnbAi64u2yA3qDQTBcBd8jdN21jmvVsuTL8HDmyCN6cf7qaV3VbBR1DQeS7JFiq6JzRw6dToyLA4Qqq]
   ////[xpub6Djoyq41s3QGoGefbJCEkrdfHquk5315tdeuQMr21QxA3jSzGAxxLpqPfAz22RmmofBEx98MJf27KYyT8NN31SS6EzsiDxbYNDsv6hLBSfD, xpub6Djoyq41s3QGrA8YgAaZgdS3ALyG2vij5Fp1XSM9JRdx4kCrhWLtrifW67ncQhgWMmUQxRto3SS7zktvL81SxWwBtR63b9tLpDvc7ddrhHe]
   subscription.ensureConnected().then((_) {

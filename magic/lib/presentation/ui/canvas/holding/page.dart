@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:magic/cubits/canvas/holding/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/presentation/ui/pane/wallet/page.dart';
@@ -16,6 +17,10 @@ import 'package:magic/services/services.dart' show maestro, screen;
 import 'package:magic/presentation/theme/theme.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/domain/concepts/asset_icons.dart';
+
+Holding getHoldingOf(Blockchain blockchain) => cubits.wallet.state.holdings
+    .where((x) => x.blockchain == blockchain && x.isCurrency)
+    .first;
 
 class HodingDetailPage extends StatelessWidget {
   const HodingDetailPage({super.key});
@@ -133,7 +138,12 @@ class AnimatedCoinSpec extends StatelessWidget {
       width: screen.width * .8,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         const SizedBox.shrink(),
-        if (cubits.holding.state.holding.sats.value > 0)
+        if (cubits.holding.state.holding.sats.value > 0 &&
+            (cubits.holding.state.holding.isCurrency ||
+                getHoldingOf(cubits.holding.state.holding.blockchain)
+                        .sats
+                        .value >
+                    0))
           GestureDetector(
               onTap:
                   //!['\$ -', '\$ 0.00'].contains(cubits.holding.state.usd)
