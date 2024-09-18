@@ -9,24 +9,53 @@ import 'package:magic/presentation/ui/welcome/import.dart';
 import 'package:magic/presentation/ui/welcome/wallets.dart';
 import 'package:magic/services/services.dart';
 
-class DifficultyItem extends StatelessWidget {
+class DifficultyItem extends StatefulWidget {
   final DifficultyMode mode;
   const DifficultyItem({super.key, required this.mode});
 
   @override
+  _DifficultyItemState createState() => _DifficultyItemState();
+}
+
+class _DifficultyItemState extends State<DifficultyItem> {
+  bool _isShrunk = false;
+
+  void _toggleShrink() {
+    setState(() {
+      _isShrunk = !_isShrunk;
+    });
+    Future.delayed(const Duration(milliseconds: 200), () {
+      setState(() {
+        _isShrunk = !_isShrunk;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: cubits.menu.toggleDifficulty,
-        onLongPress: () => cubits.menu.update(mode: DifficultyMode.dev),
-        child: Container(
-            height: screen.menu.itemHeight,
-            width: screen.width,
-            color: Colors.transparent,
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Icon(mode.icon, color: Colors.white),
-              const SizedBox(width: 16),
-              Text('Mode: ${mode.name}',
-                  style: AppText.h2.copyWith(color: Colors.white)),
-            ])),
+        onTap: () {
+          _toggleShrink();
+          cubits.menu.toggleDifficulty();
+        },
+        onLongPress: () {
+          _toggleShrink();
+          cubits.menu.update(mode: DifficultyMode.dev);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          width: _isShrunk
+              ? screen.width * 0.67
+              : screen.width, // Animate width instead of height
+          height: screen.menu.itemHeight,
+          color: Colors.transparent,
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Icon(widget.mode.icon, color: Colors.white),
+            const SizedBox(width: 16),
+            Text('Mode: ${widget.mode.name}',
+                style: AppText.h2.copyWith(color: Colors.white)),
+          ]),
+        ),
       );
 }
 
