@@ -345,155 +345,194 @@ class SendContentState extends State<SendContent> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   const SizedBox(height: 8),
-                  CustomTextField(
-                    textInputAction: TextInputAction.next,
-                    controller: addressText,
-                    labelText: 'To',
-                    suffixIcon: Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: GestureDetector(
-                            onTap: () {
-                              cubits.send.update(
-                                  scanActive: !cubits.send.state.scanActive);
-                            },
-                            child: const Icon(Icons.qr_code_scanner,
-                                color: AppColors.white60))),
-                    errorText: addressText.text.trim() == '' ||
-                            validateAddress(addressText.text)
-                        ? null
-                        : invalidAddressMessages(addressText.text).firstOrNull,
-                    onChanged: (value) => setState(() {
-                      if (validateAddress(addressText.text)) {
-                        cubits.send.update(address: value);
+                  GestureDetector(
+                    onDoubleTap: () async {
+                      String potentialAddress =
+                          (await Clipboard.getData('text/plain'))?.text ?? '';
+                      if (validateAddress(potentialAddress)) {
+                        addressText.text = potentialAddress;
+                        cubits.send.update(address: potentialAddress);
                       }
-                    }),
+                    },
+                    child: CustomTextField(
+                      textInputAction: TextInputAction.next,
+                      controller: addressText,
+                      labelText: 'To',
+                      suffixIcon: Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: GestureDetector(
+                              onTap: () {
+                                cubits.send.update(
+                                    scanActive: !cubits.send.state.scanActive);
+                              },
+                              child: const Icon(Icons.qr_code_scanner,
+                                  color: AppColors.white60))),
+                      errorText: addressText.text.trim() == '' ||
+                              validateAddress(addressText.text)
+                          ? null
+                          : invalidAddressMessages(addressText.text)
+                              .firstOrNull,
+                      onChanged: (value) => setState(() {
+                        if (validateAddress(addressText.text)) {
+                          cubits.send.update(address: value);
+                        }
+                      }),
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    textInputAction: TextInputAction.done,
-                    controller: amountText,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        signed: false, decimal: true),
-                    labelText: amountDollars ? 'Amount in USD' : 'Amount',
-                    suffixIcon: ['0', '-'].contains(
-                            Coin.fromString(amountText.text.replaceAll(',', ''))
-                                .toFiat(cubits.holding.state.holding.rate)
-                                .toString())
-                        ? null
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: GestureDetector(
-                                onTap: () {
-                                  setState(() => automaticConversion = true);
-                                  setState(() {
-                                    if (amountDollars) {
-                                      if (userChanged) {
-                                        final convertedAmount = Fiat(
-                                                double.tryParse(amountText.text
-                                                        .trim()
-                                                        .replaceAll(',', '')) ??
-                                                    0)
-                                            .toCoin(cubits
-                                                .holding.state.holding.rate)
-                                            .toString();
-                                        amountText.text =
-                                            formatWithCommas(convertedAmount);
-                                      } else {
-                                        amountText.text = formatWithCommas(
-                                            cubits.send.state.originalAmount);
-                                      }
-                                    } else {
-                                      // Store the original token amount before conversion
-                                      final originalAmount =
-                                          amountText.text.replaceAll(',', '');
-                                      final usdAmount = Coin.fromString(
-                                              originalAmount)
-                                          .toFiat(
-                                              cubits.holding.state.holding.rate)
-                                          .toString();
-                                      amountText.text = usdAmount;
-                                      // Store the original amount for later use
-                                      cubits.send.update(
-                                          originalAmount: originalAmount);
-                                    }
-                                    amountDollars = !amountDollars;
-                                  });
-                                  setState(() {
-                                    automaticConversion = false;
-                                    userChanged = false;
-                                  });
-                                },
-                                child: Icon(
-                                    amountDollars
-                                        ? Icons.attach_money_rounded
-                                        : Icons.toll_rounded,
-                                    color: AppColors.white60))),
-                    errorText: amountDollars
-                        ? userChanged
-                            ? invalidAmountMessages(Fiat(double.tryParse(
-                                            amountText.text
-                                                .trim()
-                                                .replaceAll(',', '')) ??
-                                        0)
-                                    .toCoin(cubits.holding.state.holding.rate)
-                                    .toString())
-                                .firstOrNull
-                            : invalidAmountMessages(cubits.send.state.amount)
-                                .firstOrNull
-                        : amountText.text.trim() == '' ||
-                                validateAmount(amountText.text)
-                            ? null
-                            : invalidAmountMessages(amountText.text).first,
-                    onChanged: (value) {
-                      see(value);
-                      if (automaticConversion) {
-                        return;
-                      }
-                      userChanged = true;
-
-                      // Remove existing commas before processing
-                      String cleanValue = value.replaceAll(',', '');
-
+                  GestureDetector(
+                    onDoubleTap: () async {
                       if (amountDollars) {
-                        // Format USD input with commas
-                        final formattedValue = formatWithCommas(cleanValue);
-                        if (formattedValue != value) {
-                          amountText.value = amountText.value.copyWith(
-                            text: formattedValue,
-                            selection: TextSelection.collapsed(
-                                offset: formattedValue.length),
-                          );
+                        String potentialAmount =
+                            (await Clipboard.getData('text/plain'))?.text ?? '';
+                        try {
+                          final fiatAmount = Fiat(double.tryParse(
+                                  potentialAmount.trim().replaceAll(',', '')) ??
+                              0);
+                          setState(() {
+                            amountText.text = fiatAmount.toString();
+                          });
+                        } catch (e) {
+                          print(e);
                         }
-
-                        // Convert USD to coin amount for validation and cubit update
-                        final coinAmount =
-                            Fiat(double.tryParse(cleanValue) ?? 0)
-                                .toCoin(cubits.holding.state.holding.rate)
-                                .toString();
-
-                        setState(() {
-                          if (validateAmount(coinAmount)) {
-                            cubits.send.update(amount: coinAmount);
-                          }
-                        });
                       } else {
-                        // Format coin amount input with commas
-                        final formattedValue = formatWithCommas(cleanValue);
-                        if (formattedValue != value) {
-                          amountText.value = amountText.value.copyWith(
-                            text: formattedValue,
-                            selection: TextSelection.collapsed(
-                                offset: formattedValue.length),
-                          );
-                        }
-
+                        amountText.text =
+                            cubits.holding.state.holding.coin.entire();
                         setState(() {
-                          if (validateAmount(cleanValue)) {
-                            cubits.send.update(amount: cleanValue);
-                          }
+                          cubits.send.update(
+                              amount:
+                                  cubits.holding.state.holding.coin.entire());
                         });
                       }
                     },
+                    child: CustomTextField(
+                      textInputAction: TextInputAction.done,
+                      controller: amountText,
+                      keyboardType: const TextInputType.numberWithOptions(
+                          signed: false, decimal: true),
+                      labelText: amountDollars ? 'Amount in USD' : 'Amount',
+                      suffixIcon: ['0', '-'].contains(Coin.fromString(
+                                  amountText.text.replaceAll(',', ''))
+                              .toFiat(cubits.holding.state.holding.rate)
+                              .toString())
+                          ? null
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: GestureDetector(
+                                  onTap: () {
+                                    setState(() => automaticConversion = true);
+                                    setState(() {
+                                      if (amountDollars) {
+                                        if (userChanged) {
+                                          final convertedAmount = Fiat(
+                                                  double.tryParse(amountText
+                                                          .text
+                                                          .trim()
+                                                          .replaceAll(
+                                                              ',', '')) ??
+                                                      0)
+                                              .toCoin(cubits
+                                                  .holding.state.holding.rate)
+                                              .toString();
+                                          amountText.text =
+                                              formatWithCommas(convertedAmount);
+                                        } else {
+                                          amountText.text = formatWithCommas(
+                                              cubits.send.state.originalAmount);
+                                        }
+                                      } else {
+                                        // Store the original token amount before conversion
+                                        final originalAmount =
+                                            amountText.text.replaceAll(',', '');
+                                        final usdAmount =
+                                            Coin.fromString(originalAmount)
+                                                .toFiat(cubits
+                                                    .holding.state.holding.rate)
+                                                .toString();
+                                        amountText.text = usdAmount;
+                                        // Store the original amount for later use
+                                        cubits.send.update(
+                                            originalAmount: originalAmount);
+                                      }
+                                      amountDollars = !amountDollars;
+                                    });
+                                    setState(() {
+                                      automaticConversion = false;
+                                      userChanged = false;
+                                    });
+                                  },
+                                  child: Icon(
+                                      amountDollars
+                                          ? Icons.attach_money_rounded
+                                          : Icons.toll_rounded,
+                                      color: AppColors.white60))),
+                      errorText: amountDollars
+                          ? userChanged
+                              ? invalidAmountMessages(Fiat(double.tryParse(
+                                              amountText.text
+                                                  .trim()
+                                                  .replaceAll(',', '')) ??
+                                          0)
+                                      .toCoin(cubits.holding.state.holding.rate)
+                                      .toString())
+                                  .firstOrNull
+                              : invalidAmountMessages(cubits.send.state.amount)
+                                  .firstOrNull
+                          : amountText.text.trim() == '' ||
+                                  validateAmount(amountText.text)
+                              ? null
+                              : invalidAmountMessages(amountText.text).first,
+                      onChanged: (value) {
+                        see(value);
+                        if (automaticConversion) {
+                          return;
+                        }
+                        userChanged = true;
+
+                        // Remove existing commas before processing
+                        String cleanValue = value.replaceAll(',', '');
+
+                        if (amountDollars) {
+                          // Format USD input with commas
+                          final formattedValue = formatWithCommas(cleanValue);
+                          if (formattedValue != value) {
+                            amountText.value = amountText.value.copyWith(
+                              text: formattedValue,
+                              selection: TextSelection.collapsed(
+                                  offset: formattedValue.length),
+                            );
+                          }
+
+                          // Convert USD to coin amount for validation and cubit update
+                          final coinAmount =
+                              Fiat(double.tryParse(cleanValue) ?? 0)
+                                  .toCoin(cubits.holding.state.holding.rate)
+                                  .toString();
+
+                          setState(() {
+                            if (validateAmount(coinAmount)) {
+                              cubits.send.update(amount: coinAmount);
+                            }
+                          });
+                        } else {
+                          // Format coin amount input with commas
+                          final formattedValue = formatWithCommas(cleanValue);
+                          if (formattedValue != value) {
+                            amountText.value = amountText.value.copyWith(
+                              text: formattedValue,
+                              selection: TextSelection.collapsed(
+                                  offset: formattedValue.length),
+                            );
+                          }
+
+                          setState(() {
+                            if (validateAmount(cleanValue)) {
+                              cubits.send.update(amount: cleanValue);
+                            }
+                          });
+                        }
+                      },
+                    ),
                   ),
                 ],
               );

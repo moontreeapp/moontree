@@ -47,9 +47,9 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     //see(mnemonics);
     //try {
     //  see('-----------------------------');
-    //  see(master.derivationWallets.first.mnemonic);
-    //  see(master.derivationWallets.first.roots(Blockchain.evrmoreMain));
-    //  see(master.derivationWallets.first.roots(Blockchain.ravencoinMain));
+    //  see(master.derivationWallets.last.mnemonic);
+    //  see(master.derivationWallets.last.roots(Blockchain.evrmoreMain));
+    //  see(master.derivationWallets.last.roots(Blockchain.ravencoinMain));
     //} catch (e) {}
     emit(KeysState(
       xpubs: xpubs ?? state.xpubs,

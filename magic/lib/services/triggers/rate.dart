@@ -53,8 +53,16 @@ class RateWaiter extends Trigger {
     }
   }
 
-  Future<double> _rate(RateGrabber rateGrabber) async =>
-      (await rateGrabber.get()) ?? await _getExistingRate(rateGrabber) ?? 0;
+  Future<double> _rate(RateGrabber rateGrabber) async {
+    try {
+      return (await rateGrabber.get()) ??
+          await _getExistingRate(rateGrabber) ??
+          0;
+    } catch (e) {
+      see('unable to grab rates', '', LogColors.red);
+      return 0;
+    }
+  }
 
   Future<double?> getRateOf(String symbol) async {
     if (symbol == 'EVR') {

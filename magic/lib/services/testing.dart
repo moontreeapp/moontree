@@ -105,11 +105,11 @@ class Testing {
     //      .populateAddresses(Blockchain.evrmoreMain, overrideIndex: i);
     //}
     //see(
-    //    'pubkey ${cubits.keys.master.derivationWallets.first.pubkey(Blockchain.evrmoreMain)}');
+    //    'pubkey ${cubits.keys.master.derivationWallets.last.pubkey(Blockchain.evrmoreMain)}');
     //see(
-    //    'roots  ${cubits.keys.master.derivationWallets.first.roots(Blockchain.evrmoreMain)}');
+    //    'roots  ${cubits.keys.master.derivationWallets.last.roots(Blockchain.evrmoreMain)}');
     //see('externals');
-    //see(cubits.keys.master.derivationWallets.first.seedWallets);
+    //see(cubits.keys.master.derivationWallets.last.seedWallets);
     //see(cubits.keys.master.derivationWallets.first
     //    .seedWallet(Blockchain.evrmoreMain)
     //    .externals

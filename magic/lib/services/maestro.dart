@@ -220,6 +220,7 @@ class Maestro {
     } else {
       locked = true;
     }
+    cubits.wallet.populateAssets(30);
     cubits.app.animating = true;
     // if pane is not in middle move it to middle first
     if (cubits.pane.height != screen.pane.midHeight) {
@@ -293,7 +294,7 @@ class Maestro {
     /// place for testing stuff since mint is unused:
     ///
     //see(makeMnemonic());
-    //see(cubits.keys.master.derivationWallets.first.mnemonic);
+    //see(cubits.keys.master.derivationWallets.last.mnemonic);
     //see(cubits.keys.state.mnemonics);
     //cubits.keys.reset();
     //see(cubits.keys.dump());

@@ -97,9 +97,10 @@ class Leading extends StatelessWidget {
             onTap: state.onLead,
             child: Container(
                 height: 16 + screen.iconMedium + 16,
-                width: 24 + screen.iconMedium,
+                width: 24 + screen.iconMedium + 8,
                 alignment: Alignment.centerRight,
                 color: Colors.transparent,
+                padding: const EdgeInsets.only(right: 8),
                 child: () {
                   if (state.leading == AppbarLeading.menu) {
                     return Icon(Icons.menu_rounded,
@@ -154,7 +155,7 @@ class Title extends StatelessWidget {
                   ? state.titleChild
                   : (state.title == 'Magic'
                       ? Padding(
-                          padding: const EdgeInsets.only(left: 8, top: 8.0),
+                          padding: const EdgeInsets.only(left: 0, top: 8.0),
                           child: SvgPicture.asset(
                             LogoIcons.magic,
                             height: screen.appbar.logoHeight,
@@ -162,7 +163,7 @@ class Title extends StatelessWidget {
                             alignment: Alignment.center,
                           ))
                       : Padding(
-                          padding: const EdgeInsets.only(left: 16, top: 2.0),
+                          padding: const EdgeInsets.only(left: 8, top: 2.0),
                           child: Text(state.title,
                               style: Theme.of(context)
                                   .textTheme

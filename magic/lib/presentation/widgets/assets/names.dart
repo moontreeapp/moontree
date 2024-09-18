@@ -52,7 +52,7 @@ class ResponsiveHighlightedNameView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<HoldingCubit, HoldingState>(
       builder: (BuildContext context, HoldingState state) => Padding(
-          padding: const EdgeInsets.only(left: 16, top: 2.0, right: 16),
+          padding: const EdgeInsets.only(left: 8, top: 2.0, right: 16),
           child: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,

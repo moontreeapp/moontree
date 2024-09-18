@@ -79,14 +79,14 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
     Blockchain blockchain, {
     int? overrideIndex,
   }) async {
-    if (cubits.keys.master.derivationWallets.first.cold) {
+    if (cubits.keys.master.derivationWallets.last.cold) {
       final xpubs =
-          cubits.keys.master.derivationWallets.first.rootsMap(blockchain);
+          cubits.keys.master.derivationWallets.last.rootsMap(blockchain);
       final index = overrideIndex ??
           await _getIndex(
               blockchain: blockchain,
               exposure: Exposure.external,
-              derivationWallet: cubits.keys.master.derivationWallets.first,
+              derivationWallet: cubits.keys.master.derivationWallets.last,
               overrideIndex: overrideIndex);
       update(
           address: blockchain.addressFromH160(
@@ -96,32 +96,30 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
       return;
     }
     final seedWallet =
-        cubits.keys.master.derivationWallets.first.seedWallet(blockchain);
+        cubits.keys.master.derivationWallets.last.seedWallet(blockchain);
     if (seedWallet.highestIndex.isEmpty) {
-      cubits.keys.master.derivationWallets.first.seedWallet(blockchain).derive({
+      cubits.keys.master.derivationWallets.last.seedWallet(blockchain).derive({
         Exposure.internal: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.internal,
-            derivationWallet: cubits.keys.master.derivationWallets.first,
+            derivationWallet: cubits.keys.master.derivationWallets.last,
             overrideIndex: overrideIndex),
         Exposure.external: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.external,
-            derivationWallet: cubits.keys.master.derivationWallets.first,
+            derivationWallet: cubits.keys.master.derivationWallets.last,
             overrideIndex: overrideIndex),
       });
     } else {
-      cubits.keys.master.derivationWallets.first
-          .seedWallet(blockchain)
-          .derive();
+      cubits.keys.master.derivationWallets.last.seedWallet(blockchain).derive();
     }
     update(
-      address: cubits.keys.master.derivationWallets.first
+      address: cubits.keys.master.derivationWallets.last
           .seedWallet(blockchain)
           .externals
           .lastOrNull
           ?.address,
-      changeAddress: cubits.keys.master.derivationWallets.first
+      changeAddress: cubits.keys.master.derivationWallets.last
           .seedWallet(blockchain)
           .internals
           .lastOrNull
@@ -168,14 +166,14 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
     Blockchain blockchain, {
     int? overrideIndex,
   }) async {
-    if (cubits.keys.master.derivationWallets.first.cold) {
-      final xpub = cubits.keys.master.derivationWallets.first
+    if (cubits.keys.master.derivationWallets.last.cold) {
+      final xpub = cubits.keys.master.derivationWallets.last
           .rootsMap(blockchain)[Exposure.external]!;
       final index = overrideIndex ??
           await _getIndex(
               blockchain: blockchain,
               exposure: Exposure.external,
-              derivationWallet: cubits.keys.master.derivationWallets.first,
+              derivationWallet: cubits.keys.master.derivationWallets.last,
               overrideIndex: overrideIndex);
       final address =
           blockchain.addressFromH160(h160FromXPubForAddress(xpub, index));
@@ -183,21 +181,21 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
       return;
     }
     final seedWallet =
-        cubits.keys.master.derivationWallets.first.seedWallet(blockchain);
+        cubits.keys.master.derivationWallets.last.seedWallet(blockchain);
     if (seedWallet.highestIndex.isEmpty) {
-      cubits.keys.master.derivationWallets.first.seedWallet(blockchain).derive({
+      cubits.keys.master.derivationWallets.last.seedWallet(blockchain).derive({
         Exposure.external: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.external,
-            derivationWallet: cubits.keys.master.derivationWallets.first,
+            derivationWallet: cubits.keys.master.derivationWallets.last,
             overrideIndex: overrideIndex),
       });
     } else {
-      cubits.keys.master.derivationWallets.first
+      cubits.keys.master.derivationWallets.last
           .seedWallet(blockchain)
           .derive({Exposure.external: 0});
     }
-    final addressFromSeed = cubits.keys.master.derivationWallets.first
+    final addressFromSeed = cubits.keys.master.derivationWallets.last
         .seedWallet(blockchain)
         .externals
         .lastOrNull
@@ -209,14 +207,14 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
     Blockchain blockchain, {
     int? overrideIndex,
   }) async {
-    if (cubits.keys.master.derivationWallets.first.cold) {
-      final xpub = cubits.keys.master.derivationWallets.first
+    if (cubits.keys.master.derivationWallets.last.cold) {
+      final xpub = cubits.keys.master.derivationWallets.last
           .rootsMap(blockchain)[Exposure.internal]!;
       final index = overrideIndex ??
           await _getIndex(
               blockchain: blockchain,
               exposure: Exposure.internal,
-              derivationWallet: cubits.keys.master.derivationWallets.first,
+              derivationWallet: cubits.keys.master.derivationWallets.last,
               overrideIndex: overrideIndex);
       final address =
           blockchain.addressFromH160(h160FromXPubForAddress(xpub, index));
@@ -224,22 +222,22 @@ class ReceiveCubit extends UpdatableCubit<ReceiveState> {
       return address;
     }
     final seedWallet =
-        cubits.keys.master.derivationWallets.first.seedWallet(blockchain);
+        cubits.keys.master.derivationWallets.last.seedWallet(blockchain);
     if (seedWallet.highestIndex.isEmpty) {
-      cubits.keys.master.derivationWallets.first.seedWallet(blockchain).derive({
+      cubits.keys.master.derivationWallets.last.seedWallet(blockchain).derive({
         Exposure.internal: await _getIndex(
             blockchain: blockchain,
             exposure: Exposure.internal,
-            derivationWallet: cubits.keys.master.derivationWallets.first,
+            derivationWallet: cubits.keys.master.derivationWallets.last,
             overrideIndex: overrideIndex),
       });
     } else {
-      cubits.keys.master.derivationWallets.first
+      cubits.keys.master.derivationWallets.last
           .seedWallet(blockchain)
           .derive({Exposure.internal: 0});
     }
     update(
-        changeAddress: cubits.keys.master.derivationWallets.first
+        changeAddress: cubits.keys.master.derivationWallets.last
             .seedWallet(blockchain)
             .internals
             .last
