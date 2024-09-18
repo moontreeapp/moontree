@@ -81,12 +81,14 @@ class ImportItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => cubits.welcome.update(
-            active: true,
-            child: LoginNative(
-                onFailure: () => cubits.welcome
-                    .update(active: false, child: const SizedBox.shrink()),
-                child: const ImportPage())),
+        onTap: () =>
+            cubits.menu.update(active: true, child: const ImportPage()),
+        // onTap: () => cubits.welcome.update(
+        //     active: true,
+        //     child: LoginNative(
+        //         onFailure: () => cubits.welcome
+        //             .update(active: false, child: const SizedBox.shrink()),
+        //         child: const ImportPage())),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
