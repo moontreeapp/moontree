@@ -44,9 +44,7 @@ class _DifficultyItemState extends State<DifficultyItem> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
-          width: _isShrunk
-              ? screen.width * 0.67
-              : screen.width, // Animate width instead of height
+          width: _isShrunk ? screen.width * 0.67 : screen.width,
           height: screen.menu.itemHeight,
           color: Colors.transparent,
           child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
