@@ -15,7 +15,6 @@ import 'package:magic/presentation/ui/pane/send/scanner.dart';
 import 'package:magic/presentation/ui/pane/send/confirm.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/animations/fading.dart';
-import 'package:magic/presentation/widgets/animations/loading.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/utils/log.dart';
 import 'package:wallet_utils/wallet_utils.dart';
@@ -197,6 +196,7 @@ class SendContentState extends State<SendContent> {
     await Future.delayed(fadeDuration);
     cubits.send.update(isSubmitting: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
+
     // validate address is valid
     // validate amount is a valid amount
     // validate amount is less than amount we hold of this asset
@@ -298,10 +298,7 @@ class SendContentState extends State<SendContent> {
         },
       );
     }
-    cubits.fade.update(fade: FadeEvent.faded);
-    await Future.delayed(fadeDuration);
     cubits.send.update(isSubmitting: false);
-    cubits.fade.update(fade: FadeEvent.faded);
     cubits.fade.update(fade: FadeEvent.fadeIn);
   }
 
