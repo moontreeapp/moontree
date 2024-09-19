@@ -13,9 +13,8 @@ enum BackupLifeCycle {
   String get msg {
     switch (this) {
       case BackupLifeCycle.entering:
-        return 'Are you sure you want to reveal sensitive wallet data on screen?';
       case BackupLifeCycle.hidden:
-        return 'Are you sure you want to reveal sensitive wallet data on screen?';
+        return 'Confirm\nView sensitive backup words?';
       case BackupLifeCycle.exiting:
         return ' ';
       default:
@@ -28,7 +27,7 @@ enum BackupLifeCycle {
       case BackupLifeCycle.shown:
         return 'DONE';
       default:
-        return 'REVEAL';
+        return 'VIEW';
     }
   }
 
@@ -73,16 +72,16 @@ class BackupPageState extends State<BackupPage> {
         AnimatedPositioned(
           duration: slideDuration,
           curve: Curves.easeOutCubic,
-          top: lifecycle.animating ? screen.height : 0,
-          left: 0,
-          right: 0,
+          top: 0,
+          bottom: 0,
+          left: lifecycle.animating ? screen.width : 0,
+          right: lifecycle.animating ? -screen.width : 0,
           child: Container(
             alignment: Alignment.center,
             height: screen.height,
-            padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                color: AppColors.foreground),
+                color: AppColors.background),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -94,127 +93,233 @@ class BackupPageState extends State<BackupPage> {
                         onPressed: () => toStage(BackupLifeCycle.exiting))),
                 if (lifecycle.msg != '')
                   Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        lifecycle.msg,
-                        textAlign: TextAlign.center,
-                      ))
-                else
-                  Column(children: [
-                    const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          'To backup your wallet, write these words down on paper and store them in a safe place.',
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        RichText(
                           textAlign: TextAlign.center,
-                        )),
-                    ConstrainedBox(
+                          text: const TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Confirm\n',
+                                style: TextStyle(
+                                  color: AppColors.white87,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Nunito',
+                                  letterSpacing: 0.15,
+                                  height: 1.5,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'View ',
+                                style: TextStyle(
+                                  color: AppColors.white87,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Nunito',
+                                  letterSpacing: 0.5,
+                                  height: 1.5,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'sensitive',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'Nunito',
+                                  letterSpacing: 0.5,
+                                  height: 1.5,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' backup words?',
+                                style: TextStyle(
+                                  color: AppColors.white87,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Nunito',
+                                  letterSpacing: 0.5,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 56,
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      toStage(BackupLifeCycle.exiting),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.foreground,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(28 * 100),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'NO',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: SizedBox(
+                                height: 56,
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      toStage(BackupLifeCycle.shown),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.button,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(28 * 100),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'YES',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Column(
+                    children: [
+                      ConstrainedBox(
                         constraints: BoxConstraints(
                           maxHeight: screen.height - 60 - 60 - 32 - 100,
                         ),
                         child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount:
-                                cubits.keys.master.derivationWallets.length +
-                                    cubits.keys.master.keypairWallets.length,
-                            itemBuilder: (context, int index) => Container(
-                                padding:
-                                    const EdgeInsets.only(top: 16, bottom: 16),
-                                decoration: index <
-                                        cubits.keys.master.derivationWallets
-                                                .length +
-                                            cubits.keys.master.keypairWallets
-                                                .length -
-                                            1
-                                    ? const BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
-                                            color: Colors
-                                                .white38, // Set the color of the border
-                                            width:
-                                                1.0, // Set the width of the border
+                          shrinkWrap: true,
+                          itemCount:
+                              cubits.keys.master.derivationWallets.length +
+                                  cubits.keys.master.keypairWallets.length,
+                          itemBuilder: (context, int index) {
+                            final isDerivationWallet = index <
+                                cubits.keys.master.derivationWallets.length;
+                            final walletIndex = isDerivationWallet
+                                ? index
+                                : index -
+                                    cubits.keys.master.derivationWallets.length;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(height: 32),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  child: Text(
+                                    'Wallet ${walletIndex + 1}',
+                                    style: const TextStyle(
+                                      color: AppColors.white87,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Nunito',
+                                      letterSpacing: 0.5,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                isDerivationWallet
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: GridView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3,
+                                            childAspectRatio: 3,
+                                            crossAxisSpacing: 16,
+                                            mainAxisSpacing: 8,
                                           ),
+                                          itemCount: cubits
+                                              .keys
+                                              .master
+                                              .derivationWallets[index]
+                                              .words
+                                              .length,
+                                          itemBuilder: (context, wordIndex) {
+                                            final word = cubits
+                                                .keys
+                                                .master
+                                                .derivationWallets[index]
+                                                .words[wordIndex];
+                                            return Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.foreground,
+                                                borderRadius:
+                                                    BorderRadius.circular(32),
+                                              ),
+                                              child: Center(child: Text(word)),
+                                            );
+                                          },
                                         ),
                                       )
-                                    : null,
-                                child: index <
-                                        cubits.keys.master.derivationWallets
-                                            .length
-                                    ? Wrap(children: <Widget>[
-                                        for (final word in cubits.keys.master
-                                            .derivationWallets[index].words)
-                                          Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8,
-                                                  right: 8,
-                                                  top: 4,
-                                                  bottom: 4),
-                                              child: Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 8,
-                                                          right: 8,
-                                                          top: 4,
-                                                          bottom: 4),
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: AppColors
-                                                            .primary100),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            16),
-                                                  ),
-                                                  child: Text(word))),
-                                      ])
-                                    : Container(
-                                        padding: const EdgeInsets.only(
-                                            left: 8,
-                                            right: 8,
-                                            top: 4,
-                                            bottom: 4),
+                                    : Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
                                         child: Container(
-                                            padding: const EdgeInsets.only(
-                                                left: 8,
-                                                right: 8,
-                                                top: 4,
-                                                bottom: 4),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: AppColors.primary100),
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            child: Text(
-                                                'wif: ${cubits.keys.master.keypairWallets[index].wif}')))))),
-                  ]),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                                          padding: const EdgeInsets.only(
+                                              left: 8,
+                                              right: 8,
+                                              top: 4,
+                                              bottom: 4),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.foreground,
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          child: Text(
+                                              'wif: ${cubits.keys.master.keypairWallets[walletIndex].wif}'),
+                                        ),
+                                      ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      const Padding(
+                        padding:
+                            EdgeInsets.only(left: 16, right: 16, bottom: 32),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 64,
+                        ),
+                      ),
+                    ],
+                  ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 32),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      onHover: (_) => cubits.app.animating = true,
-                      onPressed: () {
-                        if (lifecycle == BackupLifeCycle.hidden) {
-                          toStage(BackupLifeCycle.shown);
-                        } else if (lifecycle == BackupLifeCycle.shown) {
-                          toStage(BackupLifeCycle.exiting);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightGreen,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text(
-                        lifecycle.submitText,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                    height: 64,
                   ),
                 ),
               ],

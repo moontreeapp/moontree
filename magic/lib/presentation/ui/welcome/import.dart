@@ -36,7 +36,7 @@ enum ImportLifecycle {
       case ImportLifecycle.success:
         return 'CLOSE';
       default:
-        return 'SUBMIT';
+        return 'IMPORT';
     }
   }
 
@@ -149,16 +149,16 @@ class ImportPageState extends State<ImportPage> {
         AnimatedPositioned(
           duration: slideDuration,
           curve: Curves.easeOutCubic,
-          top: lifecycle.animating ? screen.height : 0,
-          left: 0,
-          right: 0,
+          top: 0,
+          bottom: 0,
+          left: lifecycle.animating ? screen.width : 0,
+          right: lifecycle.animating ? -screen.width : 0,
           child: Container(
             alignment: Alignment.center,
             height: screen.height,
-            padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                color: AppColors.foreground),
+                color: AppColors.background),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -171,31 +171,50 @@ class ImportPageState extends State<ImportPage> {
                 if (lifecycle.msg == '')
                   Padding(
                       padding: const EdgeInsets.all(16),
-                      child: TextField(
-                        controller: controller,
-                        focusNode: textFocus,
-                        maxLines: 4,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your seed phrase here',
-                          hintStyle: const TextStyle(color: Colors.white54),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.foreground,
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        textInputAction: TextInputAction.done,
-                        onTapOutside: (_) => submitFocus.requestFocus(),
-                        onChanged: (value) {
-                          if (lifecycle == ImportLifecycle.form &&
-                              isValid(value.trim())) {
-                            toStage(ImportLifecycle.validated);
-                          } else if (lifecycle == ImportLifecycle.validated &&
-                              !isValid(value.trim())) {
-                            toStage(ImportLifecycle.form);
-                          }
-                        },
-                        onEditingComplete: () => submitFocus.requestFocus(),
-                        onSubmitted: (value) => submitFocus.requestFocus(),
+                        child: TextField(
+                          controller: controller,
+                          focusNode: textFocus,
+                          maxLines: 4,
+                          textAlign:
+                              TextAlign.left, // Changed to left alignment
+                          style: const TextStyle(color: AppColors.white87),
+                          decoration: InputDecoration(
+                            hintText: 'Seed Words',
+                            hintStyle: const TextStyle(
+                              color: AppColors.white38,
+                              fontSize: 16,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.all(16),
+                            filled: true,
+                            fillColor: Colors.transparent,
+                            errorStyle: const TextStyle(
+                              height: 0.8,
+                              color: AppColors.error,
+                            ),
+                          ),
+                          textInputAction: TextInputAction.done,
+                          onTapOutside: (_) => submitFocus.requestFocus(),
+                          onChanged: (value) {
+                            if (lifecycle == ImportLifecycle.form &&
+                                isValid(value.trim())) {
+                              toStage(ImportLifecycle.validated);
+                            } else if (lifecycle == ImportLifecycle.validated &&
+                                !isValid(value.trim())) {
+                              toStage(ImportLifecycle.form);
+                            }
+                          },
+                          onEditingComplete: () => submitFocus.requestFocus(),
+                          onSubmitted: (value) => submitFocus.requestFocus(),
+                        ),
                       ))
                 else
                   Padding(
@@ -205,27 +224,31 @@ class ImportPageState extends State<ImportPage> {
                         textAlign: TextAlign.center,
                       )),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 32), // Increased bottom padding
                   child: SizedBox(
                     width: double.infinity,
-                    height: 60,
+                    height: 64,
                     child: ElevatedButton(
                       focusNode: submitFocus,
-                      onPressed: submit,
+                      onPressed: lifecycle.submitEnabled ? submit : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: lifecycle.submitEnabled
-                            ? Colors.lightGreen
-                            : Colors.grey,
+                            ? AppColors.button
+                            : Colors.grey[300],
+                        foregroundColor: Colors.white,
+                        elevation: 0, // Remove shadow
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(28 * 100),
                         ),
                       ),
                       child: Text(
                         lifecycle.submitText,
                         style: const TextStyle(
                           fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600, // Slightly less bold
                         ),
                       ),
                     ),

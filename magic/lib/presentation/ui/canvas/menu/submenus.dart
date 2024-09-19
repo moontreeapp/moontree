@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magic/presentation/theme/colors.dart';
-import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/domain/concepts/side.dart';
@@ -103,13 +102,60 @@ class SettingsSubMenu extends StatelessWidget {
           child: Column(children: [
             DifficultyItem(mode: state.mode),
             //NotificationItem(state: state),
-            if (cubits.menu.isInDevMode) const BackupItem(),
-            if (cubits.menu.isInDevMode) const ImportItem(),
-            if (cubits.menu.isInDevMode) const WalletsItem(),
-            if (cubits.menu.isInDevMode) const AddressesItem(),
+            if (cubits.menu.isInDevMode ||
+                cubits.menu.isInHardMode ||
+                cubits.menu.isInEasyMode)
+              const FadeInItem(child: BackupItem()),
+            if (cubits.menu.isInDevMode || cubits.menu.isInHardMode)
+              const FadeInItem(child: ImportItem()),
+            if (cubits.menu.isInDevMode) const FadeInItem(child: WalletsItem()),
+            if (cubits.menu.isInDevMode)
+              const FadeInItem(child: AddressesItem()),
           ])));
 
   //Text('Some Setting', style: AppText.h1.copyWith(color: Colors.white));
+}
+
+class FadeInItem extends StatefulWidget {
+  final Widget child;
+  const FadeInItem({super.key, required this.child});
+
+  @override
+  FadeInItemState createState() => FadeInItemState();
+}
+
+class FadeInItemState extends State<FadeInItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _animation,
+      child: widget.child,
+    );
+  }
 }
 
 class HelpSubMenu extends StatelessWidget {
@@ -155,7 +201,7 @@ class AboutSubMenu extends StatelessWidget {
           //Text('connection status: ${cubits.app.state.connection.name}',
           //    textAlign: TextAlign.center,
           //    style: AppText.body2.copyWith(color: Colors.white)),
-          Text('version 1.3.0-alpha',
+          Text('version 1.5.0-alpha',
               textAlign: TextAlign.center,
               style: AppText.body2.copyWith(color: Colors.white)),
         ])
