@@ -203,6 +203,7 @@ class ImportPageState extends State<ImportPage> {
                           ),
                           textInputAction: TextInputAction.done,
                           onTapOutside: (_) => submitFocus.requestFocus(),
+                          //onTapOutside: (_) => FocusScope.of(context).unfocus(),
                           onChanged: (value) {
                             if (lifecycle == ImportLifecycle.form &&
                                 isValid(value.trim())) {
