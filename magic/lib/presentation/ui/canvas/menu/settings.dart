@@ -14,10 +14,10 @@ class DifficultyItem extends StatefulWidget {
   const DifficultyItem({super.key, required this.mode});
 
   @override
-  _DifficultyItemState createState() => _DifficultyItemState();
+  DifficultyItemState createState() => DifficultyItemState();
 }
 
-class _DifficultyItemState extends State<DifficultyItem> {
+class DifficultyItemState extends State<DifficultyItem> {
   bool _isShrunk = false;
 
   void _toggleShrink() {
