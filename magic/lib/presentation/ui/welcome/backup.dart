@@ -3,6 +3,7 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
+import 'dart:io'; // Add this import
 
 enum BackupLifeCycle {
   entering,
@@ -87,10 +88,19 @@ class BackupPageState extends State<BackupPage> {
               children: <Widget>[
                 Container(
                     alignment: Alignment.centerLeft,
-                    child: IconButton(
+                    padding: EdgeInsets.only(
+                      top: Platform.isIOS ? 36.0 : 0.0,
+                      left: 16.0,
+                    ),
+                    child: SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: IconButton(
                         icon: const Icon(Icons.close_rounded,
-                            color: Colors.white54),
-                        onPressed: () => toStage(BackupLifeCycle.exiting))),
+                            color: Colors.white),
+                        onPressed: () => toStage(BackupLifeCycle.exiting),
+                      ),
+                    )),
                 if (lifecycle.msg != '')
                   Padding(
                     padding: const EdgeInsets.all(16),

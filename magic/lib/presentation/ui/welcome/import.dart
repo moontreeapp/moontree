@@ -4,6 +4,7 @@ import 'package:magic/domain/blockchain/mnemonic.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
+import 'dart:io'; // Add this import
 
 enum ImportLifecycle {
   entering,
@@ -144,121 +145,139 @@ class ImportPageState extends State<ImportPage> {
         toStage(ImportLifecycle.form);
       }
     });
-    return Stack(
-      children: <Widget>[
-        AnimatedPositioned(
-          duration: slideDuration,
-          curve: Curves.easeOutCubic,
-          top: 0,
-          bottom: 0,
-          left: lifecycle.animating ? screen.width : 0,
-          right: lifecycle.animating ? -screen.width : 0,
-          child: Container(
-            alignment: Alignment.center,
-            height: screen.height,
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                color: AppColors.background),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Stack(
+        children: <Widget>[
+          AnimatedPositioned(
+            duration: slideDuration,
+            curve: Curves.easeOutCubic,
+            top: 0,
+            bottom: 0,
+            left: lifecycle.animating ? screen.width : 0,
+            right: lifecycle.animating ? -screen.width : 0,
+            child: Container(
+              alignment: Alignment.center,
+              height: screen.height,
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  color: AppColors.background),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
                     alignment: Alignment.centerLeft,
-                    child: IconButton(
+                    padding: EdgeInsets.only(
+                      top: Platform.isIOS ? 36.0 : 0.0,
+                      left: 16.0,
+                    ),
+                    child: SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: IconButton(
                         icon: const Icon(Icons.close_rounded,
-                            color: Colors.white54),
-                        onPressed: () => toStage(ImportLifecycle.exiting))),
-                if (lifecycle.msg == '')
-                  Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.foreground,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: TextField(
-                          controller: controller,
-                          focusNode: textFocus,
-                          maxLines: 4,
-                          textAlign:
-                              TextAlign.left, // Changed to left alignment
-                          style: const TextStyle(color: AppColors.white87),
-                          decoration: InputDecoration(
-                            hintText: 'Seed Words',
-                            hintStyle: const TextStyle(
-                              color: AppColors.white38,
-                              fontSize: 16,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.all(16),
-                            filled: true,
-                            fillColor: Colors.transparent,
-                            errorStyle: const TextStyle(
-                              height: 0.8,
-                              color: AppColors.error,
-                            ),
-                          ),
-                          textInputAction: TextInputAction.done,
-                          onTapOutside: (_) => submitFocus.requestFocus(),
-                          onChanged: (value) {
-                            if (lifecycle == ImportLifecycle.form &&
-                                isValid(value.trim())) {
-                              toStage(ImportLifecycle.validated);
-                            } else if (lifecycle == ImportLifecycle.validated &&
-                                !isValid(value.trim())) {
-                              toStage(ImportLifecycle.form);
-                            }
-                          },
-                          onEditingComplete: () => submitFocus.requestFocus(),
-                          onSubmitted: (value) => submitFocus.requestFocus(),
-                        ),
-                      ))
-                else
-                  Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        lifecycle.msg,
-                        textAlign: TextAlign.center,
-                      )),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 32), // Increased bottom padding
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 64,
-                    child: ElevatedButton(
-                      focusNode: submitFocus,
-                      onPressed: lifecycle.submitEnabled ? submit : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: lifecycle.submitEnabled
-                            ? AppColors.button
-                            : Colors.grey[300],
-                        foregroundColor: Colors.white,
-                        elevation: 0, // Remove shadow
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(28 * 100),
-                        ),
+                            color: Colors.white),
+                        onPressed: () => toStage(ImportLifecycle.exiting),
                       ),
-                      child: Text(
-                        lifecycle.submitText,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600, // Slightly less bold
+                    ),
+                  ),
+                  if (lifecycle.msg == '')
+                    Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.foreground,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: TextField(
+                            controller: controller,
+                            focusNode: textFocus,
+                            maxLines: 4,
+                            textAlign: TextAlign.left,
+                            style: const TextStyle(color: AppColors.white87),
+                            decoration: InputDecoration(
+                              hintText: 'Seed Words',
+                              hintStyle: const TextStyle(
+                                color: AppColors.white38,
+                                fontSize: 16,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.all(16),
+                              filled: true,
+                              fillColor: Colors.transparent,
+                              errorStyle: const TextStyle(
+                                height: 0.8,
+                                color: AppColors.error,
+                              ),
+                            ),
+                            textInputAction: TextInputAction.done,
+                            onChanged: (value) {
+                              if (lifecycle == ImportLifecycle.form &&
+                                  isValid(value.trim())) {
+                                toStage(ImportLifecycle.validated);
+                              } else if (lifecycle ==
+                                      ImportLifecycle.validated &&
+                                  !isValid(value.trim())) {
+                                toStage(ImportLifecycle.form);
+                              }
+                            },
+                            onEditingComplete: () {
+                              FocusScope.of(context).unfocus();
+                              submitFocus.requestFocus();
+                            },
+                            onSubmitted: (value) {
+                              FocusScope.of(context).unfocus();
+                              submitFocus.requestFocus();
+                            },
+                          ),
+                        ))
+                  else
+                    Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          lifecycle.msg,
+                          textAlign: TextAlign.center,
+                        )),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, bottom: 32),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 64,
+                      child: ElevatedButton(
+                        focusNode: submitFocus,
+                        onPressed: lifecycle.submitEnabled ? submit : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: lifecycle.submitEnabled
+                              ? AppColors.button
+                              : Colors.grey[300],
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28 * 100),
+                          ),
+                        ),
+                        child: Text(
+                          lifecycle.submitText,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
