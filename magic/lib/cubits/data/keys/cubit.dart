@@ -112,7 +112,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
         submitting: false,
       );
     } else {
-      loadSecrets(onExisting: saveXPubs);
+      await loadSecrets(onExisting: saveXPubs);
     }
   }
 
@@ -134,7 +134,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
           .cast<String>(),
       submitting: false,
     );
-    build(onExisting: onExisting);
+    await build(onExisting: onExisting);
   }
 
   Future<void> build({Future<void> Function()? onExisting}) async {
