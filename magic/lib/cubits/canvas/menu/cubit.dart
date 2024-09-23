@@ -1,10 +1,8 @@
-import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/concepts/side.dart';
-import 'package:magic/domain/storage/storage.dart';
 import 'package:magic/services/services.dart';
 
 part 'state.dart';
@@ -74,14 +72,14 @@ class MenuCubit extends UpdatableCubit<MenuState> {
 
   Future<void> loadSettings() async {
     final DifficultyMode? modeSetting = DifficultyMode.fromName(
-        (await storage()).read(key: StorageKey.setting.key('mode')));
+        await storage.read(key: StorageKey.setting.key('mode')));
     if (modeSetting != null) {
       update(mode: modeSetting);
     }
   }
 
   Future<void> saveSettings() async {
-    (await storage()).write(
+    storage.write(
       key: StorageKey.setting.key('mode'),
       value: state.mode.name,
     );

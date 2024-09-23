@@ -213,9 +213,8 @@ class WalletCubit extends UpdatableCubit<WalletState> {
             .map((e) => e.coin.toFiat(e.rate).value)
             .sumNumbers()));
     // save to disk, so we can load it on next app start
-    storage().then((obj) => obj.write(
-        key: StorageKey.rate.key(rate.id),
-        value: rate.rate.toStringAsFixed(4)));
+    storage.write(
+        key: StorageKey.rate.key(rate.id), value: rate.rate.toStringAsFixed(4));
   }
 
   Holding? adminOf(Holding holding, [List<Holding>? overrideHoldings]) =>
