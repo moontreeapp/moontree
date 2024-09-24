@@ -20,8 +20,7 @@ late SystemBackButton back;
 late Maestro maestro;
 //late Keyboard keyboard;
 const FlutterSecureStorage secureStorage = FlutterSecureStorage();
-const Future<SharedPreferences> Function() storage =
-    SharedPreferences.getInstance;
+final SharedPreferencesAsync storage = SharedPreferencesAsync();
 final SubscriptionService subscription = SubscriptionService();
 //late ServerCall server;
 bool initialized = false;

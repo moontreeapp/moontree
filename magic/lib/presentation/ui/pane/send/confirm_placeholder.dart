@@ -62,14 +62,14 @@ class ConfirmContentPlaceholder extends StatelessWidget {
                 child: Container(
                     height: 64,
                     decoration: BoxDecoration(
-                      color: AppColors.button,
+                      color: Colors.grey[800],
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Center(
                         child: Text(
                       'SEND',
                       style: AppText.button1
-                          .copyWith(fontSize: 16, color: Colors.white),
+                          .copyWith(fontSize: 16, color: Colors.grey),
                     )))),
           ],
         ),

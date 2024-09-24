@@ -57,6 +57,7 @@ class AppCubit extends UpdatableCubit<AppState> {
   }
 
   void authenticatedNow() => update(authenticatedAt: DateTime.now());
+
   bool get isAuthenticated => () {
         if (state.authenticatedAt != null) {
           final seconds = DateTime.now()

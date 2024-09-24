@@ -92,8 +92,8 @@ class KeysCubit extends UpdatableCubit<KeysState> {
 
   // blockchain layer
   Future<void> loadXPubs() async {
-    final List<dynamic> rawXpubs = jsonDecode(
-        ((await storage()).read(key: StorageKey.xpubs.key())) ?? '[]');
+    final List<dynamic> rawXpubs =
+        jsonDecode(await (storage.read(key: StorageKey.xpubs.key())) ?? '[]');
 
     final List<Map<String, Map<String, String>>> xpubs = rawXpubs.map((entry) {
       // Ensure that the entry is cast to Map<String, dynamic> first
@@ -112,7 +112,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
         submitting: false,
       );
     } else {
-      loadSecrets(onExisting: saveXPubs);
+      await loadSecrets(onExisting: saveXPubs);
     }
   }
 
@@ -134,7 +134,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
           .cast<String>(),
       submitting: false,
     );
-    build(onExisting: onExisting);
+    await build(onExisting: onExisting);
   }
 
   Future<void> build({Future<void> Function()? onExisting}) async {
@@ -219,7 +219,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
         .map((wallet) => wallet.asRootXPubMap)
         .toList());
     print(write);
-    (await storage()).writeKey(
+    storage.writeKey(
       key: StorageKey.xpubs,
       value: write,
     );

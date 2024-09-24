@@ -22,14 +22,14 @@ enum StorageKey {
   }
 }
 
-extension ReadWriteExt on SharedPreferences {
-  Future<bool> write({required String key, required String value}) async =>
+extension ReadWriteExt on SharedPreferencesAsync {
+  Future<void> write({required String key, required String value}) async =>
       await setString(key, value);
-  Future<bool> writeKey({
+  Future<void> writeKey({
     required StorageKey key,
     required String value,
   }) async =>
       await setString(key.key(), value);
-  String? read({required String key}) => getString(key);
-  String? readKey({required StorageKey key}) => getString(key.key());
+  Future<String?> read({required String key}) => getString(key);
+  Future<String?> readKey({required StorageKey key}) => getString(key.key());
 }

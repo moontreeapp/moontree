@@ -9,10 +9,8 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/cubits/welcome/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
-import 'package:magic/domain/server/serverv2_client.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
-import 'package:magic/presentation/widgets/animations/fading.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/services/security.dart';
@@ -44,7 +42,7 @@ class WelcomeBackScreen extends StatefulWidget {
 }
 
 class WelcomeBackScreenState extends State<WelcomeBackScreen> {
-  double _fadingInValue = 1;
+  final double _fadingInValue = 1;
   bool _isAnimating = false;
   bool _isFading = false;
   bool _isFadingOut = false;
@@ -247,37 +245,13 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                             buildWhen: (AppState previous, AppState current) =>
                                 previous.connection != current.connection,
                             builder: (BuildContext context, AppState state) {
-                              if (state.connection ==
-                                  StreamingConnectionStatus.connected) {
-                                return ElevatedButton(
-                                  onHover: (_) => cubits.app.animating = true,
-                                  onPressed:
-                                      _handleAuthentication, // Changed this line
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.button,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    "LET'S GO",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                );
-                              }
+                              //if (state.connection ==
+                              //    StreamingConnectionStatus.connected) {
                               return ElevatedButton(
                                 onHover: (_) => cubits.app.animating = true,
-                                onPressed: () => cubits.toast.flash(
-                                    msg: const ToastMessage(
-                                        title: 'Connection Failed:',
-                                        text: 'please check connection',
-                                        force: true)),
+                                onPressed: _handleAuthentication,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey[800],
+                                  backgroundColor: AppColors.button,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -286,11 +260,12 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
                                   "LET'S GO",
                                   style: TextStyle(
                                     fontSize: 18,
-                                    color: Colors.grey,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               );
+                              //}
                             }),
                       ),
                     ),

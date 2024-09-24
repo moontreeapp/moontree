@@ -369,8 +369,17 @@ class Maestro {
     cubits.transactions.update(active: true);
     cubits.fade.update(fade: FadeEvent.fadeIn);
     cubits.ignore.update(active: false);
-    cubits.pane.setOnBottomReached(
-        () => cubits.transactions.populateTransactions(holding: holding));
+    cubits.pane
+        .setOnBottomReached(() => cubits.transactions.populateTransactions(
+              holding: holding,
+
+              // get the max transaction.height from the list of transactions
+              fromHeight: (cubits.transactions.state.transactions.isNotEmpty
+                  ? cubits.transactions.state.transactions
+                      .map((transaction) => transaction.height)
+                      .reduce((a, b) => a < b ? a : b)
+                  : null),
+            ));
     await Future.delayed(slideDuration, () => cubits.app.animating = false);
     locked = false;
     //if (redirectOnEmpty && cubits.holding.state.holding.sats.value == 0) {

@@ -5,6 +5,41 @@ import 'package:magic/domain/concepts/numbers/fiat.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/server/protocol/comm_balance_view.dart';
 
+class Asset extends Equatable {
+  final String name;
+  final String symbol;
+  final Blockchain blockchain;
+
+  const Asset({
+    required this.name,
+    required this.symbol,
+    required this.blockchain,
+  });
+
+  const Asset.empty()
+      : name = '',
+        symbol = '',
+        blockchain = Blockchain.none;
+
+  factory Asset.fromHolding({
+    required Holding holding,
+  }) =>
+      Asset(
+          name: holding.name,
+          symbol: holding.symbol,
+          blockchain: holding.blockchain);
+
+  @override
+  String toString() => '$runtimeType($props)';
+
+  @override
+  List<Object?> get props => <Object?>[
+        name,
+        symbol,
+        blockchain,
+      ];
+}
+
 class Holding extends Equatable {
   final String name;
   final String symbol;
@@ -99,6 +134,7 @@ class Holding extends Equatable {
   bool get isOnEvrmore => blockchain.symbol == 'EVR';
   bool get isOnRavencoin => blockchain.symbol == 'RVN';
 
+  Asset get asset => Asset.fromHolding(holding: this);
   Coin get coin => sats.toCoin();
   Fiat get fiat {
     if (rate != null) {

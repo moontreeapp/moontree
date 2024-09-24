@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -7,7 +6,6 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/cubits/mixins.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/money/rate.dart';
-import 'package:magic/domain/concepts/numbers/coin.dart';
 import 'package:magic/domain/concepts/holding.dart';
 import 'package:magic/domain/concepts/numbers/sats.dart';
 import 'package:magic/domain/concepts/transaction.dart';
@@ -17,13 +15,15 @@ import 'package:magic/services/calls/mempool.dart';
 import 'package:magic/services/calls/transactions.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/utils/dart.dart';
-import 'package:magic/utils/log.dart';
 
 part 'state.dart';
 
 class TransactionsCubit extends UpdatableCubit<TransactionsState> {
   TransactionsCubit() : super(const TransactionsState());
-  bool reachedEnd = false;
+
+  late bool reachedEnd = false;
+  final Map<Asset, List<TransactionDisplay>> transactionsByAsset = {};
+
   @override
   String get key => 'transactions';
   @override
@@ -47,14 +47,17 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
   void update({
     bool? active,
     bool? disposed,
-    Holding? asset,
-    // should be Transaction then we convert to a display object in the ui or state.
+    Asset? asset,
     List<TransactionDisplay>? mempool,
     List<TransactionDisplay>? transactions,
     Widget? child,
     bool? clearing,
     bool? isSubmitting,
   }) {
+    if (transactions != null && asset != null) {
+      transactions = syncTransactions(transactions, asset);
+    }
+
     emit(TransactionsState(
       active: active ?? state.active,
       asset: asset ?? state.asset,
@@ -72,14 +75,24 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
     int? fromHeight,
   }) async {
     holding = holding ?? cubits.holding.state.holding;
-    update(isSubmitting: true);
-    await populateTransactions(holding: holding, fromHeight: fromHeight);
-    await populateMempoolTransactions(holding: holding);
-    see('${holding.symbol} ${cubits.holding.state.holding.symbol}');
-    if (holding.symbol != cubits.holding.state.holding.symbol) {
-      return;
+    if (transactionsByAsset.containsKey(holding.asset)) {
+      update(isSubmitting: true);
+      update(
+          asset: holding.asset,
+          transactions: transactionsByAsset[holding.asset]);
+      await populateTransactions(holding: holding, fromHeight: fromHeight);
+      await populateMempoolTransactions(holding: holding);
+      update(isSubmitting: false);
+    } else {
+      await populateTransactions(holding: holding, fromHeight: fromHeight);
+      update(isSubmitting: true);
+      await populateTransactions(holding: holding, fromHeight: fromHeight);
+      await populateMempoolTransactions(holding: holding);
+      if (holding.symbol != cubits.holding.state.holding.symbol) {
+        return;
+      }
+      update(isSubmitting: false);
     }
-    update(isSubmitting: false);
   }
 
   Future<void> populateTransactions({Holding? holding, int? fromHeight}) async {
@@ -93,16 +106,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       update(isSubmitting: true);
     }
     await Future.delayed(fadeDuration * 10);
-    see('populating transactions: ${state.transactions.length}');
     final replace = holding != cubits.holding.state.holding;
-    // get the max transaction.height from the list of transactions
-    fromHeight = fromHeight ??
-        (state.transactions.isNotEmpty
-            ? state.transactions
-                .map((transaction) => transaction.height)
-                .reduce((a, b) => a < b ? a : b)
-            : null);
-    see('asking from: ${fromHeight ?? (state.transactions.isNotEmpty ? state.transactions.length : null)}');
     final transactions = _sort(_newRateThese(
         rate: holding.isRavencoin
             ? rates.rvnUsdRate
@@ -121,7 +125,6 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       update(isSubmitting: isSubmitting);
       return;
     }
-    see('${holding.symbol} ${cubits.holding.state.holding.symbol}');
     if (holding.symbol != cubits.holding.state.holding.symbol) {
       return;
     }
@@ -132,6 +135,7 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       reachedEnd = true;
     }
     update(
+      asset: holding.asset,
       transactions: newTransactions,
       isSubmitting: isSubmitting,
     );
@@ -166,7 +170,6 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
           blockchain: holding.blockchain,
           symbol: holding.symbol,
         ).call()));
-    see('${holding.symbol} ${cubits.holding.state.holding.symbol}');
     if (holding.symbol != cubits.holding.state.holding.symbol) {
       return;
     }
@@ -174,12 +177,11 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       mempool: transactions,
       isSubmitting: isSubmitting,
     );
-    see('1 $isSubmitting');
   }
 
   void clearTransactions() {
     reachedEnd = false;
-    update(mempool: [], transactions: []);
+    update(asset: const Asset.empty(), mempool: [], transactions: []);
   }
 
   Future<void> slowlyClearTransactions() async {
@@ -207,16 +209,10 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
       transactions.sortedBy((e) => e.when).reversed.toList();
 
   void populate() => update(
-          asset: Holding(
+          asset: const Asset(
             name: 'Ravencoin',
             symbol: 'RVN',
             blockchain: Blockchain.ravencoinMain,
-            sats: Sats(21),
-            metadata: HoldingMetadata(
-              divisibility: Divisibility(8),
-              reissuable: false,
-              supply: Sats.fromCoin(Coin(coin: 21000000000)),
-            ),
           ),
           transactions: [
             for (final index in range(16))
@@ -233,6 +229,22 @@ class TransactionsCubit extends UpdatableCubit<TransactionsState> {
                   }()))
           ]);
 
-  // todo pagenae list of holdings
-  //Holding getNextBatch(List<Holding> batch) {}
+  List<TransactionDisplay> syncTransactions(
+    List<TransactionDisplay> newTransactions,
+    Asset holding,
+  ) {
+    if (!transactionsByAsset.containsKey(holding)) {
+      transactionsByAsset[holding] = [];
+    }
+    List<TransactionDisplay> cachedTransactions = transactionsByAsset[holding]!;
+    for (var newTransaction in newTransactions) {
+      if (!cachedTransactions
+          .any((cached) => cached.height == newTransaction.height)) {
+        cachedTransactions.add(newTransaction);
+      }
+    }
+    cachedTransactions.sort((a, b) => b.height.compareTo(a.height));
+    transactionsByAsset[holding] = cachedTransactions;
+    return cachedTransactions;
+  }
 }

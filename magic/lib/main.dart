@@ -57,23 +57,45 @@ Future<void> main() async {
       statusBarColor: AppColors.white,
     ));
   }
-  await cubits.keys.loadXPubs();
-  await cubits.menu.loadSettings();
-  // Initialize the Serverpod client with a retry mechanism to handle connection issues
-  print('setting up client');
-  await subscription.setupClient(FlutterConnectivityMonitor());
-  print('setted up client');
-  await precacheSvgPicture(LogoIcons.magic);
+  try {
+    await cubits.keys.loadXPubs();
+    await cubits.menu.loadSettings();
+    await subscription.setupClient(FlutterConnectivityMonitor());
+    await precacheSvgPicture(LogoIcons.magic);
+    runApp(const MagicApp());
+  } catch (e) {
+    print('Initialization error: $e');
+    runApp(MagicAppDebug(error: '$e'));
+  }
+}
 
-  //ApiService.init();
-  //await ApiConnection.init();
-  runApp(const MagicApp());
+class MagicAppDebug extends StatelessWidget {
+  final String error;
+  const MagicAppDebug({super.key, this.error = ''});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Magic Wallet',
+      debugShowCheckedModeBanner: false,
+      color: AppColors.background,
+      key: routes.appKey,
+      theme: CustomTheme.lightTheme,
+      darkTheme: CustomTheme.lightTheme,
+      navigatorKey: routes.navigatorKey,
+      navigatorObservers: <NavigatorObserver>[routes],
+      home: Text('unable to load app please update. $error',
+          style: const TextStyle(
+            color: AppColors.white,
+            fontSize: 20,
+          )),
+    );
+  }
 }
 
 class MagicApp extends StatelessWidget {
   const MagicApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -138,18 +160,21 @@ void _initializeServices(BuildContext context, double height, double width) {
 /// to get the user experience wanted.
 Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
   await securityService.clearAuthentication();
-  //await cubits.keys.loadSecrets();
 
-  /// TODO: rework to save at the root level.
-  await cubits.keys.loadXPubs();
+  /// moved loading to the first thing we do
+  //await cubits.keys.loadSecrets();
+  //await cubits.keys.loadXPubs();
+
   ////see(
   ////    cubits.keys.master.derivationWallets.last.roots(Blockchain.evrmoreMain));
   ////[xpub6EyL2KHeobgPS891ygwWVrZUAqRArjUk5Fs4zxQ9d6Yy1GMF78AULHZaRUNmg6BZzhPj7P6Qc6SXUGc4YHMV8A9wFcxw19tmNxnF1XfMHWZ, xpub6EyL2KHeobgPSohWN2j4xPiX5PFJvnbAi64u2yA3qDQTBcBd8jdN21jmvVsuTL8HDmyCN6cf7qaV3VbBR1DQeS7JFiq6JzRw6dToyLA4Qqq]
   ////[xpub6Djoyq41s3QGoGefbJCEkrdfHquk5315tdeuQMr21QxA3jSzGAxxLpqPfAz22RmmofBEx98MJf27KYyT8NN31SS6EzsiDxbYNDsv6hLBSfD, xpub6Djoyq41s3QGrA8YgAaZgdS3ALyG2vij5Fp1XSM9JRdx4kCrhWLtrifW67ncQhgWMmUQxRto3SS7zktvL81SxWwBtR63b9tLpDvc7ddrhHe]
+  print('before ensure connected');
   subscription.ensureConnected().then((_) {
     //  //subscription.setupSubscriptions(cubits.keys.master);
     cubits.wallet.populateAssets().then((_) => maestro.activateHome());
   });
+  print('after ensure connected');
 }
 
 class MaestroLayer extends StatelessWidget {

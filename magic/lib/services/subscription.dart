@@ -35,6 +35,9 @@ class SubscriptionService {
   }
 
   Future<void> _setupConnection() async {
+    // Prevent multiple connection attempts
+    if (cubits.app.state.connection == StreamingConnectionStatus.connected) return;
+
     await _cancelListeners();
 
     connectionHandler = StreamingConnectionHandler(

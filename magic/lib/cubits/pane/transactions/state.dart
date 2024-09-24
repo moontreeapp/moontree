@@ -3,7 +3,7 @@ part of 'cubit.dart';
 @immutable
 class TransactionsState with EquatableMixin, PriorActiveStateMixin {
   final bool active;
-  final Holding asset;
+  final Asset asset;
   final List<TransactionDisplay> mempool;
   final List<TransactionDisplay> transactions;
   final Widget child;
@@ -13,7 +13,7 @@ class TransactionsState with EquatableMixin, PriorActiveStateMixin {
 
   const TransactionsState({
     this.active = false,
-    this.asset = const Holding.empty(),
+    this.asset = const Asset.empty(),
     this.mempool = const [],
     this.transactions = const [],
     this.child = const SizedBox.shrink(),
