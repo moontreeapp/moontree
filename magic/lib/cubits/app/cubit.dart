@@ -42,6 +42,9 @@ class AppCubit extends UpdatableCubit<AppState> {
     see('blockheight', blockheight, LogColors.yellow);
     see('status', status, LogColors.yellow);
     see('authenticatedAt', authenticatedAt, LogColors.yellow);
+    see('wasPaused', wasPaused, LogColors.yellow);
+    see('connection', connection, LogColors.yellow);
+    see('submitting', submitting, LogColors.yellow);
     if (status == AppLifecycleState.paused) {
       wasPaused = true;
     }

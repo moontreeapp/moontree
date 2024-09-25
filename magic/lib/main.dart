@@ -60,6 +60,7 @@ Future<void> main() async {
   try {
     await cubits.keys.loadXPubs();
     await cubits.menu.loadSettings();
+    await cubits.wallet.loadHoldings();
     await subscription.setupClient(FlutterConnectivityMonitor());
     await precacheSvgPicture(LogoIcons.magic);
     runApp(const MagicApp());
