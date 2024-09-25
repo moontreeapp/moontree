@@ -19,11 +19,16 @@ class SubscriptionService {
   late server.ConnectivityMonitor monitor;
   bool isConnected = false;
   late StreamingConnectionHandler connectionHandler;
+  VoidCallback? onConnection;
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   SubscriptionService() : client = server.Client('$moontreeUrl/');
 
-  Future<void> setupClient(server.ConnectivityMonitor givenMonitor) async {
+  Future<void> setupClient({
+    required server.ConnectivityMonitor givenMonitor,
+    VoidCallback? onConnection,
+  }) async {
+    this.onConnection = onConnection;
     client.connectivityMonitor = givenMonitor;
     client.connectivityMonitor?.addListener((connected) {
       if (!connected) {
@@ -58,6 +63,7 @@ class SubscriptionService {
             cubits.keys.master.derivationRoots,
             LogColors.green,
           );
+          onConnection?.call();
           setupListeners();
         }
       },
@@ -181,7 +187,7 @@ class SubscriptionService {
         StreamingConnectionStatus.connected) {
       await Future.delayed(const Duration(seconds: 1));
       stillWaiting += 1;
-      if (stillWaiting == 2) {
+      if (stillWaiting == 10) {
         cubits.toast.flash(
             msg: const ToastMessage(
                 duration: Duration(seconds: 7),

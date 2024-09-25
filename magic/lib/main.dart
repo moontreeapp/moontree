@@ -60,8 +60,10 @@ Future<void> main() async {
   try {
     await cubits.keys.loadXPubs();
     await cubits.menu.loadSettings();
-    await cubits.wallet.loadHoldings();
-    await subscription.setupClient(FlutterConnectivityMonitor());
+    await subscription.setupClient(
+      givenMonitor: FlutterConnectivityMonitor(),
+      onConnection: cubits.wallet.populateAssets,
+    );
     await precacheSvgPicture(LogoIcons.magic);
     runApp(const MagicApp());
   } catch (e) {
@@ -173,7 +175,7 @@ Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
   print('before ensure connected');
   subscription.ensureConnected().then((_) {
     //  //subscription.setupSubscriptions(cubits.keys.master);
-    cubits.wallet.populateAssets().then((_) => maestro.activateHome());
+    maestro.activateHome();
   });
   print('after ensure connected');
 }

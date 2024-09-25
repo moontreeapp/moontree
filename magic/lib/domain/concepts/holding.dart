@@ -84,7 +84,8 @@ class Holding extends Equatable {
         reissuable: map['metadata']['reissuable'] as bool,
         supply: Sats(map['metadata']['supply'] as int),
       ),
-      sats: Sats(map['sats'] as int),
+      sats: Sats(map['sats']['value'] as int,
+          isEmpty: map['sats']['isEmpty'] as bool),
       weHaveAdminOrMain: map['weHaveAdminOrMain'] as bool,
       rate: map['rate'] as double?,
       blockchain: Blockchain.from(name: map['blockchain']));
@@ -151,9 +152,13 @@ class Holding extends Equatable {
       'name': name,
       'symbol': symbol,
       'metadata': {
-        'divisibility': metadata.divisibility,
+        'divisibility': metadata.divisibility.value,
         'reissuable': metadata.reissuable,
         'supply': metadata.supply
+      },
+      'sats': {
+        'value': sats.value,
+        'isEmpty': sats.isEmpty,
       },
       'weHaveAdminOrMain': weHaveAdminOrMain,
       'rate': rate,

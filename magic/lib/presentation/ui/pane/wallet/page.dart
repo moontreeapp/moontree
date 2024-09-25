@@ -51,6 +51,15 @@ class WalletPage extends StatelessWidget {
                   //    .toList();
 
                   /// smart - depends...
+                  if (walletState.holdings.isEmpty) {
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(top: 8),
+                      itemCount: 3,
+                      itemBuilder: (context, index) => HoldingItemPlaceholder(
+                        delay: Duration(milliseconds: index * 67),
+                      ),
+                    );
+                  }
                   final filtered = walletState.holdings
                       .where((holding) =>
                           Chips.combinedFilter(walletState.chips)(holding))
@@ -339,5 +348,84 @@ extension CurrencyLogo on Blockchain {
       default:
         return LogoIcons.evr;
     }
+  }
+}
+
+class HoldingItemPlaceholder extends StatefulWidget {
+  final Duration delay;
+  const HoldingItemPlaceholder({super.key, this.delay = Duration.zero});
+
+  @override
+  State<HoldingItemPlaceholder> createState() => _HoldingItemPlaceholderState();
+}
+
+class _HoldingItemPlaceholderState extends State<HoldingItemPlaceholder>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    Future.delayed(widget.delay, () {
+      if (mounted) {
+        _controller.repeat(reverse: true);
+      }
+    });
+
+    _animation = Tween<double>(begin: 0.67, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Container(
+            width: screen.iconLarge,
+            height: screen.iconLarge,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.frontItem.withOpacity(_animation.value),
+            ),
+          ),
+          title: SizedBox(
+            width: screen.width -
+                (screen.iconMedium +
+                    screen.iconMedium +
+                    screen.iconLarge +
+                    24 +
+                    24),
+            child: Container(
+              width: double.infinity,
+              height: 24,
+              decoration: BoxDecoration(
+                color: AppColors.frontItem.withOpacity(_animation.value),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

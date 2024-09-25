@@ -73,7 +73,6 @@ class WalletCubit extends UpdatableCubit<WalletState> {
       isSubmitting: isSubmitting ?? state.isSubmitting,
       prior: state.withoutPrior,
     ));
-    saveHoldings();
   }
 
   void toggleChip(Chips chip) {

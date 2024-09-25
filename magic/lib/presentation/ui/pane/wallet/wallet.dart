@@ -17,13 +17,13 @@ class Wallet extends StatelessWidget {
               onEntering: () {
                 //WidgetsBinding.instance.addPostFrameCallback(
                 //    (_) => cubits.pane.update(height: screen.pane.midHeight));
-                if (state.holdings.isEmpty) {
-                  return GestureDetector(
-                      onTap: cubits.wallet.populateAssets,
-                      child: const Center(
-                          child: Text('Loading...',
-                              style: TextStyle(color: Colors.grey))));
-                }
+                //if (state.holdings.isEmpty) {
+                //  return GestureDetector(
+                //      onTap: cubits.wallet.populateAssets,
+                //      child: const Center(
+                //          child: Text('Loading...',
+                //              style: TextStyle(color: Colors.grey))));
+                //}
                 return const WalletStack(child: WalletPage());
               },
               onEntered: () => const WalletStack(child: WalletPage()),
