@@ -106,7 +106,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
 
   Future<bool> populateAssets([int cooldown = 0]) async {
     if (cooldown > 0 &&
-        DateTime.now().difference(populatedAt!).inSeconds < cooldown) {
+        DateTime.now().difference(populatedAt).inSeconds < cooldown) {
       return false;
     }
     populatedAt = DateTime.now();

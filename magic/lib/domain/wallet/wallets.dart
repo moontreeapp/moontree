@@ -193,6 +193,20 @@ class DerivationWallet extends Jsonable {
 
   List<String> get words => mnemonic?.split(' ') ?? [];
 
+  // Deriving the private key from the mnemonic
+  String get parentPrivateKey {
+    // Generate the HD wallet root from the seed
+    final root = bip32.BIP32.fromSeed(seed);
+    // Get the private key in hex format (from the root node)
+    // Returns Uint8List, convert to String as necessary
+    return _bytesToHex(root.privateKey!);
+  }
+
+  // Helper function to convert Uint8List to hex
+  String _bytesToHex(Uint8List bytes) {
+    return hex.encode(bytes);
+  }
+
   // /// this can derive neutered wallets. which, as it turns out are not all that
   // /// useful to us...
   // String? xpub(Blockchain blockchain) => seedWallet(blockchain).xpub;

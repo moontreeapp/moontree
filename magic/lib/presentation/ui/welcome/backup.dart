@@ -3,6 +3,7 @@ import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
+import 'package:magic/utils/log.dart';
 
 enum BackupLifeCycle {
   entering,
@@ -244,42 +245,53 @@ class BackupPageState extends State<BackupPage> {
                                   ),
                                 ),
                                 isDerivationWallet
-                                    ? Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16),
-                                        child: GridView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            childAspectRatio: 3,
-                                            crossAxisSpacing: 16,
-                                            mainAxisSpacing: 8,
-                                          ),
-                                          itemCount: cubits
+                                    ? GestureDetector(
+                                        onLongPress: () {
+                                          see(cubits
                                               .keys
                                               .master
                                               .derivationWallets[index]
-                                              .words
-                                              .length,
-                                          itemBuilder: (context, wordIndex) {
-                                            final word = cubits
+                                              .parentPrivateKey);
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          child: GridView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3,
+                                              childAspectRatio: 3,
+                                              crossAxisSpacing: 16,
+                                              mainAxisSpacing: 8,
+                                            ),
+                                            itemCount: cubits
                                                 .keys
                                                 .master
                                                 .derivationWallets[index]
-                                                .words[wordIndex];
-                                            return Container(
-                                              padding: const EdgeInsets.all(4),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.foreground,
-                                                borderRadius:
-                                                    BorderRadius.circular(32),
-                                              ),
-                                              child: Center(child: Text(word)),
-                                            );
-                                          },
+                                                .words
+                                                .length,
+                                            itemBuilder: (context, wordIndex) {
+                                              final word = cubits
+                                                  .keys
+                                                  .master
+                                                  .derivationWallets[index]
+                                                  .words[wordIndex];
+                                              return Container(
+                                                padding:
+                                                    const EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.foreground,
+                                                  borderRadius:
+                                                      BorderRadius.circular(32),
+                                                ),
+                                                child:
+                                                    Center(child: Text(word)),
+                                              );
+                                            },
+                                          ),
                                         ),
                                       )
                                     : Padding(

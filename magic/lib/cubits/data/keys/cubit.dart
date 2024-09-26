@@ -7,6 +7,7 @@ import 'package:magic/domain/storage/secure.dart';
 import 'package:magic/domain/wallet/utils.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/services.dart';
+import 'package:magic/utils/log.dart';
 part 'state.dart';
 
 class KeysCubit extends UpdatableCubit<KeysState> {
