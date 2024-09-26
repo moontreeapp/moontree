@@ -236,7 +236,7 @@ class AddressesPageState extends State<AddressesPage> {
                                       ),
                                       child: Wrap(children: <Widget>[
                                         for (final blockchain
-                                            in Blockchain.values)
+                                            in Blockchain.mainnets)
                                           Text(cubits
                                               .keys.master.keypairWallets[index]
                                               .address(blockchain))

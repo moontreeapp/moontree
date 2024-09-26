@@ -147,8 +147,8 @@ class SubscriptionService {
     }
     final subscriptionVoid = await specifySubscription(
       chains: Blockchain.mainnetNames,
-      roots: roots,
-      h160s: h160s,
+      roots: roots.toSet().toList(),
+      h160s: h160s.toSet().toList(),
     );
     return subscriptionVoid;
   }

@@ -63,15 +63,23 @@ class KeysCubit extends UpdatableCubit<KeysState> {
 
   Future<bool> addMnemonic(String mnemonic) async {
     if (state.mnemonics.contains(mnemonic)) return true;
-    if (!validateMnemonic(mnemonic)) return false;
+    if (!isValidMnemonic(mnemonic)) return false;
     update(mnemonics: [...state.mnemonics, mnemonic]);
+    await saveSecrets();
+    return true;
+  }
+
+  Future<bool> addWif(String wif) async {
+    if (state.wifs.contains(wif)) return true;
+    if (!isValidWif(wif)) return false;
+    update(wifs: [...state.wifs, wif]);
     await saveSecrets();
     return true;
   }
 
   Future<bool> addPrivKey(String privKey) async {
     if (state.wifs.contains(privKey)) return true;
-    if (!validatePrivateKey(privKey)) return false;
+    if (!isValidPrivateKey(privKey)) return false;
     update(wifs: [...state.wifs, KeypairWallet.privateKeyToWif(privKey)]);
     await saveSecrets();
     return true;
@@ -219,7 +227,6 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     final write = jsonEncode(master.derivationWallets
         .map((wallet) => wallet.asRootXPubMap)
         .toList());
-    print(write);
     storage.writeKey(
       key: StorageKey.xpubs,
       value: write,
