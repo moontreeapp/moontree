@@ -167,6 +167,9 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
           cubits.receive.deriveAll(Blockchain.mainnets);
           cubits.receive.populateAddresses(Blockchain.ravencoinMain);
           cubits.receive.populateAddresses(Blockchain.evrmoreMain);
+          if (cubits.keys.state.wifs.isNotEmpty) {
+            cubits.wallet.populateAssets();
+          }
         });
       });
     });

@@ -113,11 +113,37 @@ class KeypairWallet extends Jsonable {
   //        ? ChainNet(chain, net).chaindata.p2shPrefix
   //        : ChainNet(chain, net).chaindata.p2pkhPrefix);
 
+  String h160Raw(Blockchain blockchain) => wallet(blockchain).pubKey!;
+  ByteData h160RawBytes(Blockchain blockchain) =>
+      hexStringToByteData(wallet(blockchain).pubKey!);
   Uint8List h160(Blockchain blockchain) =>
       hash160FromHexString(wallet(blockchain).pubKey!);
   String h160AsString(Blockchain blockchain) => hex.encode(h160(blockchain));
   ByteData h160AsByteData(Blockchain blockchain) =>
-      h160(blockchain).buffer.asByteData();
+      hexStringToByteData(h160AsString(blockchain));
+  //h160(blockchain).buffer.asByteData();
+}
+
+String hexStringToByteString(String hexString) {
+  // Convert the hex string to a list of bytes
+  List<int> bytes = hex.decode(hexString);
+
+  // Convert each byte to the '\x' format
+  String byteString =
+      bytes.map((b) => '\\x${b.toRadixString(16).padLeft(2, '0')}').join('');
+
+  return byteString;
+}
+
+ByteData hexStringToByteData(String hexString) {
+  // Convert the hex string into a list of bytes
+  List<int> bytes = hex.decode(hexString);
+
+  // Create a ByteData from the list of bytes
+  Uint8List uint8list = Uint8List.fromList(bytes);
+  ByteData byteData = ByteData.sublistView(uint8list);
+
+  return byteData;
 }
 
 /// An hd wallet that can derive multiple SeedWallet for different blockchains
