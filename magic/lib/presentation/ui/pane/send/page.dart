@@ -230,7 +230,8 @@ class SendContentState extends State<SendContent> {
         Coin.fromString(cubits.send.state.amount.replaceAll(',', ''))
             .toSats()
             .value;
-    final sendAll = sendSats == cubits.holding.state.holding.sats.value;
+    final sendAll = sendSats == cubits.holding.state.holding.sats.value &&
+        cubits.holding.state.holding.isCurrency;
     cubits.send.update(
         sendRequest: SendRequest(
       sendAll: sendAll,
