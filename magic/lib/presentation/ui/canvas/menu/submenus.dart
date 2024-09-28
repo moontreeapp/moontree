@@ -201,7 +201,7 @@ class AboutSubMenu extends StatelessWidget {
           //Text('connection status: ${cubits.app.state.connection.name}',
           //    textAlign: TextAlign.center,
           //    style: AppText.body2.copyWith(color: Colors.white)),
-          Text('version 1.5.2-alpha',
+          Text('version 1.5.4-alpha',
               textAlign: TextAlign.center,
               style: AppText.body2.copyWith(color: Colors.white)),
         ])

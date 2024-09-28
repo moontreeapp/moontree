@@ -12,7 +12,7 @@ enum DifficultyMode {
       case DifficultyMode.hard:
         return 'Advanced';
       case DifficultyMode.dev:
-        return 'Dev';
+        return 'Autistic';
     }
   }
 
