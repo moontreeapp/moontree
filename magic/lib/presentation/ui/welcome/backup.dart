@@ -218,6 +218,7 @@ class BackupPageState extends State<BackupPage> {
                   )
                 else
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ConstrainedBox(
                         constraints: BoxConstraints(
@@ -325,14 +326,6 @@ class BackupPageState extends State<BackupPage> {
                               ],
                             );
                           },
-                        ),
-                      ),
-                      const Padding(
-                        padding:
-                            EdgeInsets.only(left: 16, right: 16, bottom: 32),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 64,
                         ),
                       ),
                     ],
