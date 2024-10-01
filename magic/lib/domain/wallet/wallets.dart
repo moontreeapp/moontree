@@ -20,6 +20,7 @@ import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/concepts/address.dart';
+import 'package:magic/domain/wallet/kpwallet.dart';
 import 'package:magic/utils/log.dart';
 import 'package:moontree_utils/moontree_utils.dart' show decode;
 import 'package:wallet_utils/wallet_utils.dart'
@@ -98,8 +99,22 @@ class KeypairWallet extends Jsonable {
     return KeypairWallet(wif: decoded['wif']!);
   }
 
+  factory KeypairWallet.fromRoots(Map<String, String> rootXpubs) {
+    final wallet = KeypairWallet(wif: '');
+    rootXpubs.forEach((blockchainName, xpub) {
+      final blockchain = Blockchain.from(name: blockchainName);
+      wallet.wallets[blockchain] ??=
+          keypairWalletFromPubKey(xpub, blockchain.network);
+    });
+    return wallet;
+  }
+
   @override
   Map<String, String> get asMap => {'wif': wif};
+  Map<String, String> get asRootXPubMap => {
+        for (final w in wallets.entries)
+          if (w.value.pubKey != null) w.key.name: w.value.pubKey!
+      };
 
   static String privateKeyToWif(String privKey) =>
       ECPair.fromPrivateKey(decode(privKey)).toWIF();

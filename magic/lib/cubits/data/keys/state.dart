@@ -2,6 +2,7 @@ part of 'cubit.dart';
 
 class KeysState with EquatableMixin {
   final List<Map<String, Map<String, String>>> xpubs;
+  final List<Map<String, String>>? xpubsKP;
   final List<String> mnemonics;
   final List<String> wifs;
   final bool submitting;
@@ -9,6 +10,7 @@ class KeysState with EquatableMixin {
 
   const KeysState({
     required this.xpubs,
+    required this.xpubsKP,
     required this.mnemonics,
     required this.wifs,
     this.submitting = false,
@@ -16,11 +18,12 @@ class KeysState with EquatableMixin {
   });
 
   factory KeysState.empty() =>
-      const KeysState(xpubs: [], mnemonics: [], wifs: []);
+      const KeysState(xpubs: [], xpubsKP: [], mnemonics: [], wifs: []);
 
   @override
   List<Object?> get props => [
         xpubs,
+        xpubsKP,
         mnemonics,
         wifs,
         submitting,
@@ -32,6 +35,7 @@ class KeysState with EquatableMixin {
 
   KeysState get withoutPrior => KeysState(
         xpubs: xpubs,
+        xpubsKP: xpubsKP,
         mnemonics: mnemonics,
         wifs: wifs,
         submitting: submitting,
