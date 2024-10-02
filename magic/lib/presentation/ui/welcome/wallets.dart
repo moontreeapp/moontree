@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
@@ -64,12 +66,21 @@ class WalletsPageState extends State<WalletsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(top: 8, left: 16),
-                    child: IconButton(
-                        icon: const Icon(Icons.close_rounded,
-                            color: Colors.white54),
-                        onPressed: () => toStage(WalletsLifecycle.exiting))),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(
+                      top: Platform.isIOS ? 36.0 : 8.0, left: 16),
+                  child: SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: IconButton(
+                          icon: const Icon(Icons.close_rounded,
+                              color: Colors.white),
+                          onPressed: () => toStage(WalletsLifecycle.exiting))),
+                ),
+                // child: IconButton(
+                //     icon: const Icon(Icons.close_rounded,
+                //         color: Colors.white54),
+                //     onPressed: () => toStage(WalletsLifecycle.exiting))),
                 Column(children: [
                   ConstrainedBox(
                       constraints: BoxConstraints(

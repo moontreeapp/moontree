@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:magic/cubits/cubit.dart';
@@ -93,7 +95,8 @@ class AddressesPageState extends State<AddressesPage> {
           child: Container(
             alignment: Alignment.center,
             height: screen.height,
-            padding: const EdgeInsets.only(top: 8, left: 16),
+            padding:
+                EdgeInsets.only(top: Platform.isIOS ? 36.0 : 8.0, left: 16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                 color: AppColors.background),
@@ -101,11 +104,16 @@ class AddressesPageState extends State<AddressesPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                        icon: const Icon(Icons.close_rounded,
-                            color: Colors.white54),
-                        onPressed: () => toStage(AddressesLifeCycle.exiting))),
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: IconButton(
+                          icon: const Icon(Icons.close_rounded,
+                              color: Colors.white),
+                          onPressed: () =>
+                              toStage(AddressesLifeCycle.exiting))),
+                ),
                 Column(children: [
                   ConstrainedBox(
                       constraints: BoxConstraints(
