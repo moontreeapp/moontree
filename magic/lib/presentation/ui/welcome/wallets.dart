@@ -167,16 +167,13 @@ class WalletsPageState extends State<WalletsPage> {
                                         icon: const Icon(Icons.delete_rounded,
                                             color: AppColors.white24),
                                         onPressed: () async {
+                                          final kpIndex = index -
+                                              cubits.keys.master
+                                                  .derivationWallets.length;
                                           await cubits.keys.removeWif(cubits
                                               .keys
                                               .master
-                                              .keypairWallets[index -
-                                                  cubits
-                                                      .keys
-                                                      .master
-                                                      .derivationWallets
-                                                      .length -
-                                                  1]
+                                              .keypairWallets[kpIndex]
                                               .wif);
                                           await cubits.keys.saveSecrets();
 

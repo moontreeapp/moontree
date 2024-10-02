@@ -19,11 +19,16 @@ class SubscriptionService {
   late server.ConnectivityMonitor monitor;
   bool isConnected = false;
   late StreamingConnectionHandler connectionHandler;
+  VoidCallback? onConnection;
   List<StreamSubscription<dynamic>> listeners = <StreamSubscription<dynamic>>[];
 
   SubscriptionService() : client = server.Client('$moontreeUrl/');
 
-  Future<void> setupClient(server.ConnectivityMonitor givenMonitor) async {
+  Future<void> setupClient({
+    required server.ConnectivityMonitor givenMonitor,
+    VoidCallback? onConnection,
+  }) async {
+    this.onConnection = onConnection;
     client.connectivityMonitor = givenMonitor;
     client.connectivityMonitor?.addListener((connected) {
       if (!connected) {
@@ -36,19 +41,21 @@ class SubscriptionService {
 
   Future<void> _setupConnection() async {
     // Prevent multiple connection attempts
-    if (cubits.app.state.connection == StreamingConnectionStatus.connected) return;
+    if (cubits.app.state.connection == StreamingConnectionStatus.connected) {
+      return;
+    }
 
     await _cancelListeners();
 
     connectionHandler = StreamingConnectionHandler(
       client: client,
-      retryEverySeconds: 5,
+      retryEverySeconds: 1,
       listener: (StreamingConnectionHandlerState connectionState) async {
         see('connection state: ${connectionState.status.name}');
         cubits.app.update(connection: connectionState.status);
         if (connectionState.status == StreamingConnectionStatus.connected) {
           while (cubits.keys.master.derivationRoots.isEmpty) {
-            see('waiting for keys');
+            see('waiting for keys', '---', LogColors.yellow);
             await Future.delayed(const Duration(seconds: 30));
           }
           see(
@@ -56,10 +63,12 @@ class SubscriptionService {
             cubits.keys.master.derivationRoots,
             LogColors.green,
           );
+          onConnection?.call();
           setupListeners();
         }
       },
     );
+    see('connecting...', '', LogColors.green);
 
     connectionHandler.connect();
   }
@@ -138,8 +147,8 @@ class SubscriptionService {
     }
     final subscriptionVoid = await specifySubscription(
       chains: Blockchain.mainnetNames,
-      roots: roots,
-      h160s: h160s,
+      roots: roots.toSet().toList(),
+      h160s: h160s.toSet().toList(),
     );
     return subscriptionVoid;
   }
@@ -178,14 +187,13 @@ class SubscriptionService {
         StreamingConnectionStatus.connected) {
       await Future.delayed(const Duration(seconds: 1));
       stillWaiting += 1;
-      if (stillWaiting == 2) {
-        print('-------------------');
+      if (stillWaiting == 10) {
         cubits.toast.flash(
             msg: const ToastMessage(
                 duration: Duration(seconds: 7),
                 title: 'Connection Failed:',
                 text: 'please check connection',
-                force: true));
+                force: false));
       }
     }
   }

@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/services/services.dart';
-import 'dart:io'; // Add this import
+import 'package:magic/utils/log.dart';
 
 enum BackupLifeCycle {
   entering,
@@ -217,6 +220,7 @@ class BackupPageState extends State<BackupPage> {
                   )
                 else
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ConstrainedBox(
                         constraints: BoxConstraints(
@@ -238,89 +242,145 @@ class BackupPageState extends State<BackupPage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const SizedBox(height: 32),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  child: Text(
-                                    'Wallet ${walletIndex + 1}',
-                                    style: const TextStyle(
-                                      color: AppColors.white87,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: 'Nunito',
-                                      letterSpacing: 0.5,
-                                      height: 1.5,
-                                    ),
-                                  ),
-                                ),
-                                isDerivationWallet
-                                    ? Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16),
-                                        child: GridView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            childAspectRatio: 3,
-                                            crossAxisSpacing: 16,
-                                            mainAxisSpacing: 8,
-                                          ),
-                                          itemCount: cubits
-                                              .keys
-                                              .master
-                                              .derivationWallets[index]
-                                              .words
-                                              .length,
-                                          itemBuilder: (context, wordIndex) {
-                                            final word = cubits
+                                GestureDetector(
+                                    onLongPress: () {
+                                      if (isDerivationWallet) {
+                                        Clipboard.setData(ClipboardData(
+                                            text: cubits
                                                 .keys
                                                 .master
                                                 .derivationWallets[index]
-                                                .words[wordIndex];
-                                            return Container(
-                                              padding: const EdgeInsets.all(4),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.foreground,
-                                                borderRadius:
-                                                    BorderRadius.circular(32),
-                                              ),
-                                              child: Center(child: Text(word)),
-                                            );
-                                          },
+                                                .parentPrivateKey));
+                                        cubits.toast.flash(
+                                            msg: const ToastMessage(
+                                                duration: Duration(seconds: 3),
+                                                title: 'Master Private Key',
+                                                text: 'copied to clipboard'));
+                                      } else {
+                                        Clipboard.setData(ClipboardData(
+                                            text: cubits
+                                                .keys
+                                                .master
+                                                .keypairWallets[walletIndex]
+                                                .wif));
+                                        cubits.toast.flash(
+                                            msg: const ToastMessage(
+                                                duration: Duration(seconds: 3),
+                                                title: 'Private Key',
+                                                text: 'copied to clipboard'));
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
+                                      child: Text(
+                                        'Wallet ${walletIndex + 1}',
+                                        style: const TextStyle(
+                                          color: AppColors.white87,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'Nunito',
+                                          letterSpacing: 0.5,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                    )),
+                                isDerivationWallet
+                                    ? GestureDetector(
+                                        onLongPress: () {
+                                          Clipboard.setData(ClipboardData(
+                                              text: cubits
+                                                  .keys
+                                                  .master
+                                                  .derivationWallets[index]
+                                                  .words
+                                                  .join(' ')));
+                                          cubits.toast.flash(
+                                              msg: const ToastMessage(
+                                                  duration:
+                                                      Duration(seconds: 3),
+                                                  title: 'Seed Words',
+                                                  text: 'copied to clipboard'));
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          child: GridView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3,
+                                              childAspectRatio: 3,
+                                              crossAxisSpacing: 16,
+                                              mainAxisSpacing: 8,
+                                            ),
+                                            itemCount: cubits
+                                                .keys
+                                                .master
+                                                .derivationWallets[index]
+                                                .words
+                                                .length,
+                                            itemBuilder: (context, wordIndex) {
+                                              final word = cubits
+                                                  .keys
+                                                  .master
+                                                  .derivationWallets[index]
+                                                  .words[wordIndex];
+                                              return Container(
+                                                padding:
+                                                    const EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.foreground,
+                                                  borderRadius:
+                                                      BorderRadius.circular(32),
+                                                ),
+                                                child:
+                                                    Center(child: Text(word)),
+                                              );
+                                            },
+                                          ),
                                         ),
                                       )
                                     : Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 16),
-                                        child: Container(
-                                          padding: const EdgeInsets.only(
-                                              left: 8,
-                                              right: 8,
-                                              top: 4,
-                                              bottom: 4),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.foreground,
-                                            borderRadius:
-                                                BorderRadius.circular(100),
+                                        child: GestureDetector(
+                                          onLongPress: () {
+                                            Clipboard.setData(ClipboardData(
+                                                text: cubits
+                                                    .keys
+                                                    .master
+                                                    .keypairWallets[walletIndex]
+                                                    .wif));
+                                            cubits.toast.flash(
+                                                msg: const ToastMessage(
+                                                    duration:
+                                                        Duration(seconds: 3),
+                                                    title: 'Private Key',
+                                                    text:
+                                                        'copied to clipboard'));
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.only(
+                                                left: 8,
+                                                right: 8,
+                                                top: 4,
+                                                bottom: 4),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.foreground,
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                            ),
+                                            child: Text(
+                                                'wif: ${cubits.keys.master.keypairWallets[walletIndex].wif}'),
                                           ),
-                                          child: Text(
-                                              'wif: ${cubits.keys.master.keypairWallets[walletIndex].wif}'),
                                         ),
                                       ),
                               ],
                             );
                           },
-                        ),
-                      ),
-                      const Padding(
-                        padding:
-                            EdgeInsets.only(left: 16, right: 16, bottom: 32),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 64,
                         ),
                       ),
                     ],

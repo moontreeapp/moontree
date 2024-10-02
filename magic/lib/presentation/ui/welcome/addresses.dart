@@ -109,7 +109,7 @@ class AddressesPageState extends State<AddressesPage> {
                 Column(children: [
                   ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: screen.height - 60 - 60 - 32 - 100,
+                        maxHeight: (screen.height - 60 - 60 - 32 - 100) * .72,
                       ),
                       child: ListView.builder(
                           shrinkWrap: true,
@@ -397,7 +397,7 @@ class AddressesPageState extends State<AddressesPage> {
                           })),
                   ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: screen.height - 60 - 60 - 32 - 100,
+                        maxHeight: (screen.height - 60 - 60 - 32 - 100) * .28,
                       ),
                       child: ListView.builder(
                           shrinkWrap: true,
@@ -432,7 +432,7 @@ class AddressesPageState extends State<AddressesPage> {
                                       ),
                                       child: Wrap(children: <Widget>[
                                         for (final blockchain
-                                            in Blockchain.values)
+                                            in Blockchain.mainnets)
                                           Text(cubits
                                               .keys.master.keypairWallets[index]
                                               .address(blockchain))

@@ -7,6 +7,7 @@ import 'package:magic/domain/storage/secure.dart';
 import 'package:magic/domain/wallet/utils.dart';
 import 'package:magic/domain/wallet/wallets.dart';
 import 'package:magic/services/services.dart';
+import 'package:magic/utils/log.dart';
 part 'state.dart';
 
 class KeysCubit extends UpdatableCubit<KeysState> {
@@ -34,6 +35,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   @override
   void update({
     List<Map<String, Map<String, String>>>? xpubs,
+    List<Map<String, String>>? xpubsKP,
     List<String>? mnemonics,
     List<String>? wifs,
     bool? submitting,
@@ -42,7 +44,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     if (syncKeys) {
       syncMnemonics(mnemonics);
       syncKeypairs(wifs);
-      syncXPubs(xpubs);
+      syncXPubs(xpubs, xpubsKP);
     }
     //see(mnemonics);
     //try {
@@ -53,6 +55,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     //} catch (e) {}
     emit(KeysState(
       xpubs: xpubs ?? state.xpubs,
+      xpubsKP: xpubsKP ?? state.xpubsKP,
       mnemonics: mnemonics ?? state.mnemonics,
       wifs: wifs ?? state.wifs,
       submitting: submitting ?? state.submitting,
@@ -62,15 +65,23 @@ class KeysCubit extends UpdatableCubit<KeysState> {
 
   Future<bool> addMnemonic(String mnemonic) async {
     if (state.mnemonics.contains(mnemonic)) return true;
-    if (!validateMnemonic(mnemonic)) return false;
+    if (!isValidMnemonic(mnemonic)) return false;
     update(mnemonics: [...state.mnemonics, mnemonic]);
+    await saveSecrets();
+    return true;
+  }
+
+  Future<bool> addWif(String wif) async {
+    if (state.wifs.contains(wif)) return true;
+    if (!isValidWif(wif)) return false;
+    update(wifs: [...state.wifs, wif]);
     await saveSecrets();
     return true;
   }
 
   Future<bool> addPrivKey(String privKey) async {
     if (state.wifs.contains(privKey)) return true;
-    if (!validatePrivateKey(privKey)) return false;
+    if (!isValidPrivateKey(privKey)) return false;
     update(wifs: [...state.wifs, KeypairWallet.privateKeyToWif(privKey)]);
     await saveSecrets();
     return true;
@@ -85,7 +96,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
 
   Future<bool> removeWif(String wif) async {
     if (!state.wifs.contains(wif)) return true;
-    update(mnemonics: state.wifs.where((w) => w != wif).toList());
+    update(wifs: state.wifs.where((w) => w != wif).toList());
     await saveSecrets();
     return true;
   }
@@ -105,14 +116,25 @@ class KeysCubit extends UpdatableCubit<KeysState> {
         return MapEntry(key, Map<String, String>.from(value));
       });
     }).toList();
+    final List<dynamic> rawXpubsKP =
+        jsonDecode(await (storage.read(key: StorageKey.xpubsKP.key())) ?? '[]');
+    final List<Map<String, String>> xpubsKP = rawXpubsKP
+        .map((entry) => Map<String, String>.from(entry)
+            .map((key, value) => MapEntry(key, value)))
+        .toList();
+    see(rawXpubsKP, xpubsKP, LogColors.red);
     if (xpubs.isNotEmpty && xpubs != [{}]) {
       update(submitting: true);
       update(
         xpubs: xpubs,
+        xpubsKP: xpubsKP,
         submitting: false,
       );
     } else {
-      await loadSecrets(onExisting: saveXPubs);
+      await loadSecrets(onExisting: () async {
+        await saveXPubs();
+        await saveXPubsKP();
+      });
     }
   }
 
@@ -157,10 +179,15 @@ class KeysCubit extends UpdatableCubit<KeysState> {
   /// we don't really need to sync with xpubs because we always add them all at
   /// once (on startup). If we import a wallet, we switch over to using
   /// privkeys, and then rewrite all the xpubs to disk again.
-  Future<void> syncXPubs(List<Map<String, Map<String, String>>>? xpubs) async {
+  Future<void> syncXPubs(List<Map<String, Map<String, String>>>? xpubs,
+      List<Map<String, String>>? xpubsKP) async {
     if (xpubs != null) {
       master.derivationWallets.addAll(xpubs.map((blockchainExposureXpub) =>
           DerivationWallet.fromRoots(blockchainExposureXpub)));
+    }
+    if (xpubsKP != null) {
+      master.keypairWallets.addAll(xpubsKP.map((blockchainExposureXpub) =>
+          KeypairWallet.fromRoots(blockchainExposureXpub)));
     }
   }
 
@@ -202,7 +229,8 @@ class KeysCubit extends UpdatableCubit<KeysState> {
         key: SecureStorageKey.wifs.key(), value: jsonEncode(state.wifs));
     // every time we save secrets we save xpubs because the secrets are our
     // source of truth for the xpubs:
-    saveXPubs();
+    await saveXPubs();
+    await saveXPubsKP();
   }
 
   void ensureSeedWalletsExist() {
@@ -213,14 +241,31 @@ class KeysCubit extends UpdatableCubit<KeysState> {
     }
   }
 
+  void ensureKPWalletsExist() {
+    for (final blockcahin in Blockchain.mainnets) {
+      for (final keypairWallet in master.keypairWallets) {
+        keypairWallet.wallet(blockcahin);
+      }
+    }
+  }
+
   Future<void> saveXPubs() async {
     ensureSeedWalletsExist();
     final write = jsonEncode(master.derivationWallets
         .map((wallet) => wallet.asRootXPubMap)
         .toList());
-    print(write);
     storage.writeKey(
       key: StorageKey.xpubs,
+      value: write,
+    );
+  }
+
+  Future<void> saveXPubsKP() async {
+    ensureKPWalletsExist();
+    final write = jsonEncode(
+        master.keypairWallets.map((wallet) => wallet.asRootXPubMap).toList());
+    storage.writeKey(
+      key: StorageKey.xpubsKP,
       value: write,
     );
   }

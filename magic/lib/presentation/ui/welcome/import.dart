@@ -80,14 +80,15 @@ class ImportPageState extends State<ImportPage> {
   }
 
   bool isValid(String value) =>
-      validateMnemonic(value) || validatePrivateKey(value);
+      isValidMnemonic(value) || isValidWif(value) || isValidPrivateKey(value);
 
   void submit() async {
     final value = controller.text.trim();
     if (lifecycle == ImportLifecycle.validated) {
       toStage(ImportLifecycle.submitting);
-      if ((validateMnemonic(value) && await cubits.keys.addMnemonic(value)) ||
-          (validatePrivateKey(value) && await cubits.keys.addPrivKey(value))) {
+      if ((isValidMnemonic(value) && await cubits.keys.addMnemonic(value)) ||
+          (isValidWif(value) && await cubits.keys.addWif(value)) ||
+          (isValidPrivateKey(value) && await cubits.keys.addPrivKey(value))) {
         /// do we need to resetup our subscriptions? yes.
         /// all of them or just this wallet? just do all of them.
         await subscription.setupSubscriptions(cubits.keys.master);
@@ -97,7 +98,7 @@ class ImportPageState extends State<ImportPage> {
         //cubits.wallet.clearAssets();
         await cubits.wallet.populateAssets();
 
-        if (validateMnemonic(value)) {
+        if (isValidMnemonic(value)) {
           /// do we need to derive all our addresses? yes.
           /// all of them or just this wallet? we can specify just this wallet.
           deriveInBackground(value);

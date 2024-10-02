@@ -20,6 +20,7 @@ import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
 import 'package:magic/domain/concepts/address.dart';
+import 'package:magic/domain/wallet/kpwallet.dart';
 import 'package:magic/utils/log.dart';
 import 'package:moontree_utils/moontree_utils.dart' show decode;
 import 'package:wallet_utils/wallet_utils.dart'
@@ -98,8 +99,22 @@ class KeypairWallet extends Jsonable {
     return KeypairWallet(wif: decoded['wif']!);
   }
 
+  factory KeypairWallet.fromRoots(Map<String, String> rootXpubs) {
+    final wallet = KeypairWallet(wif: '');
+    rootXpubs.forEach((blockchainName, xpub) {
+      final blockchain = Blockchain.from(name: blockchainName);
+      wallet.wallets[blockchain] ??=
+          keypairWalletFromPubKey(xpub, blockchain.network);
+    });
+    return wallet;
+  }
+
   @override
   Map<String, String> get asMap => {'wif': wif};
+  Map<String, String> get asRootXPubMap => {
+        for (final w in wallets.entries)
+          if (w.value.pubKey != null) w.key.name: w.value.pubKey!
+      };
 
   static String privateKeyToWif(String privKey) =>
       ECPair.fromPrivateKey(decode(privKey)).toWIF();
@@ -113,11 +128,37 @@ class KeypairWallet extends Jsonable {
   //        ? ChainNet(chain, net).chaindata.p2shPrefix
   //        : ChainNet(chain, net).chaindata.p2pkhPrefix);
 
+  String h160Raw(Blockchain blockchain) => wallet(blockchain).pubKey!;
+  ByteData h160RawBytes(Blockchain blockchain) =>
+      hexStringToByteData(wallet(blockchain).pubKey!);
   Uint8List h160(Blockchain blockchain) =>
       hash160FromHexString(wallet(blockchain).pubKey!);
   String h160AsString(Blockchain blockchain) => hex.encode(h160(blockchain));
   ByteData h160AsByteData(Blockchain blockchain) =>
-      h160(blockchain).buffer.asByteData();
+      hexStringToByteData(h160AsString(blockchain));
+  //h160(blockchain).buffer.asByteData();
+}
+
+String hexStringToByteString(String hexString) {
+  // Convert the hex string to a list of bytes
+  List<int> bytes = hex.decode(hexString);
+
+  // Convert each byte to the '\x' format
+  String byteString =
+      bytes.map((b) => '\\x${b.toRadixString(16).padLeft(2, '0')}').join('');
+
+  return byteString;
+}
+
+ByteData hexStringToByteData(String hexString) {
+  // Convert the hex string into a list of bytes
+  List<int> bytes = hex.decode(hexString);
+
+  // Create a ByteData from the list of bytes
+  Uint8List uint8list = Uint8List.fromList(bytes);
+  ByteData byteData = ByteData.sublistView(uint8list);
+
+  return byteData;
 }
 
 /// An hd wallet that can derive multiple SeedWallet for different blockchains
@@ -192,6 +233,20 @@ class DerivationWallet extends Jsonable {
   }
 
   List<String> get words => mnemonic?.split(' ') ?? [];
+
+  // Deriving the private key from the mnemonic
+  String get parentPrivateKey {
+    // Generate the HD wallet root from the seed
+    final root = bip32.BIP32.fromSeed(seed);
+    // Get the private key in hex format (from the root node)
+    // Returns Uint8List, convert to String as necessary
+    return _bytesToHex(root.privateKey!);
+  }
+
+  // Helper function to convert Uint8List to hex
+  String _bytesToHex(Uint8List bytes) {
+    return hex.encode(bytes);
+  }
 
   // /// this can derive neutered wallets. which, as it turns out are not all that
   // /// useful to us...

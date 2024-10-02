@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/concepts/numbers/coin.dart';
@@ -38,6 +40,8 @@ class Asset extends Equatable {
         symbol,
         blockchain,
       ];
+
+  String get uniqueId => '$name-$blockchain';
 }
 
 class Holding extends Equatable {
@@ -71,6 +75,20 @@ class Holding extends Equatable {
         rate = null,
         balanceView = null,
         blockchain = Blockchain.none;
+
+  factory Holding.fromMap({required Map<String, dynamic> map}) => Holding(
+      name: map['name'] as String,
+      symbol: map['symbol'] as String,
+      metadata: HoldingMetadata(
+        divisibility: Divisibility(map['metadata']['divisibility'] as int),
+        reissuable: map['metadata']['reissuable'] as bool,
+        supply: Sats(map['metadata']['supply'] as int),
+      ),
+      sats: Sats(map['sats']['value'] as int,
+          isEmpty: map['sats']['isEmpty'] as bool),
+      weHaveAdminOrMain: map['weHaveAdminOrMain'] as bool,
+      rate: map['rate'] as double?,
+      blockchain: Blockchain.from(name: map['blockchain']));
 
   factory Holding.fromBalanceView({
     required BalanceView balanceView,
@@ -126,6 +144,27 @@ class Holding extends Equatable {
         balanceView,
         blockchain,
       ];
+
+  String get uniqueId => '$name-$blockchain';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'symbol': symbol,
+      'metadata': {
+        'divisibility': metadata.divisibility.value,
+        'reissuable': metadata.reissuable,
+        'supply': metadata.supply
+      },
+      'sats': {
+        'value': sats.value,
+        'isEmpty': sats.isEmpty,
+      },
+      'weHaveAdminOrMain': weHaveAdminOrMain,
+      'rate': rate,
+      'blockchain': blockchain,
+    };
+  }
 
   bool get isEmpty => sats.isEmpty;
   bool get isCurrency => symbol == blockchain.symbol;

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -105,7 +106,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
 
   Future<bool> populateAssets([int cooldown = 0]) async {
     if (cooldown > 0 &&
-        DateTime.now().difference(populatedAt!).inSeconds < cooldown) {
+        DateTime.now().difference(populatedAt).inSeconds < cooldown) {
       return false;
     }
     populatedAt = DateTime.now();
@@ -240,6 +241,25 @@ class WalletCubit extends UpdatableCubit<WalletState> {
   Holding getHoldingFrom({required Holding holding}) =>
       state.holdings.firstWhere((h) =>
           h.symbol == holding.symbol && h.blockchain == holding.blockchain);
+
+  Future<void> loadHoldings() async {
+    final List<dynamic> rawHolding =
+        jsonDecode(await (storage.readKey(key: StorageKey.holdings)) ?? '[]');
+    final List<Holding> holdings = rawHolding
+        .map((entry) => Holding.fromMap(map: Map<String, dynamic>.from(entry)))
+        .toList();
+    if (holdings.isNotEmpty) {
+      update(holdings: holdings);
+    }
+  }
+
+  Future<void> saveHoldings() async {
+    final write = jsonEncode(state.holdings.map((e) => e.toJson()).toList());
+    storage.writeKey(
+      key: StorageKey.holdings,
+      value: write,
+    );
+  }
 }
 
 class MainAdminPair {

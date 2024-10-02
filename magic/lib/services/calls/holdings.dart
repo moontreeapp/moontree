@@ -46,16 +46,65 @@ class HoldingBalancesCall extends ServerCall {
         ));
   }
 
+  String byteDataToHexString(ByteData? byteData) {
+    StringBuffer hexString = StringBuffer();
+
+    for (int i = 0; i < byteData!.lengthInBytes; i++) {
+      // Get the byte and convert it to a 2-digit hexadecimal string
+      hexString.write(byteData.getUint8(i).toRadixString(16).padLeft(2, '0'));
+    }
+
+    return hexString.toString();
+  }
+
   Future<List<Holding>> call() async {
+    //see('keypairWallets:', keypairWallets.firstOrNull, LogColors.green);
+    //see(
+    //    'keypairWallets:',
+    //    byteDataToHexString(
+    //        keypairWallets.firstOrNull?.h160RawBytes(blockchain)),
+    //    LogColors.green);
+    //see(
+    //    'keypairWallets:',
+    //    byteDataToHexString(
+    //        keypairWallets.firstOrNull?.h160AsByteData(blockchain)),
+    //    LogColors.green);
+    //see('keypairWallets:', keypairWallets.firstOrNull?.h160AsString(blockchain),
+    //    LogColors.green);
+    //see(
+    //    'keypairH160s:',
+    //    keypairWallets
+    //        .map((e) => e.h160AsByteData(blockchain))
+    //        .toList()
+    //        .firstOrNull,
+    //    LogColors.green);
+
     final List<BalanceView> holdings = await holdingBalancesBy(
       chain: blockchain.chaindata,
       roots: derivationWallets
           .map((e) => e.roots(blockchain))
           .expand((e) => e)
           .toList(),
-      h160s: keypairWallets.map((e) => e.h160AsByteData(blockchain)).toList(),
+      h160s: [],
     );
-
+    if (keypairWallets.isNotEmpty) {
+      final List<BalanceView> kpHoldings = await holdingBalancesBy(
+        chain: blockchain.chaindata,
+        roots: [],
+        h160s: keypairWallets.map((e) => e.h160AsByteData(blockchain)).toList(),
+      );
+      for (final kpHolding in kpHoldings) {
+        final existing = holdings.firstWhereOrNull(
+            (e) => e.symbol == kpHolding.symbol && e.chain == kpHolding.chain);
+        if (existing != null) {
+          existing.satsConfirmed += kpHolding.satsConfirmed;
+          existing.satsUnconfirmed += kpHolding.satsUnconfirmed;
+        } else {
+          holdings.add(kpHolding);
+        }
+      }
+    }
+    print(holdings);
     if (holdings.length == 1 && holdings.first.error != null) {
       // handle
       see('error: ${holdings.first.error}');
