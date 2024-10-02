@@ -324,20 +324,3 @@ class AssetIdenticon extends StatelessWidget {
     );
   }
 }
-
-extension CurrencyLogo on Blockchain {
-  String get logo {
-    switch (this) {
-      case Blockchain.ravencoinMain:
-        return LogoIcons.rvn;
-      case Blockchain.ravencoinTest:
-        return LogoIcons.rvn;
-      case Blockchain.evrmoreMain:
-        return LogoIcons.evr;
-      case Blockchain.evrmoreTest:
-        return LogoIcons.evr;
-      default:
-        return LogoIcons.evr;
-    }
-  }
-}

@@ -50,32 +50,27 @@ class WalletsPageState extends State<WalletsPage> {
         AnimatedPositioned(
           duration: slideDuration,
           curve: Curves.easeOutCubic,
-          top: lifecycle.animating ? screen.height : 0,
-          left: 0,
-          right: 0,
+          top: 0,
+          bottom: 0,
+          left: lifecycle.animating ? screen.width : 0,
+          right: lifecycle.animating ? -screen.width : 0,
           child: Container(
             alignment: Alignment.center,
             height: screen.height,
-            padding: const EdgeInsets.only(left: 16),
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                color: AppColors.foreground),
+                color: AppColors.background), // Updated background color
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
                     alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(top: 8, left: 16),
                     child: IconButton(
                         icon: const Icon(Icons.close_rounded,
                             color: Colors.white54),
                         onPressed: () => toStage(WalletsLifecycle.exiting))),
                 Column(children: [
-                  const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        'Your Wallets',
-                        textAlign: TextAlign.center,
-                      )),
                   ConstrainedBox(
                       constraints: BoxConstraints(
                         maxHeight: screen.height - 60 - 60 - 32 - 100,
@@ -115,11 +110,17 @@ class WalletsPageState extends State<WalletsPage> {
                                       visualDensity: VisualDensity.compact,
                                       iconColor: Colors.white70,
                                       textColor: Colors.white70,
+                                      leading: const CircleAvatar(
+                                        backgroundColor: AppColors.foreground,
+                                        child: Icon(Icons.wallet_rounded,
+                                            color: Colors.white38),
+                                      ),
                                       title: Text(
                                         'Wallet $index (HD wallet)',
                                       ),
                                       trailing: IconButton(
-                                        icon: const Icon(Icons.delete_rounded),
+                                        icon: const Icon(Icons.delete_rounded,
+                                            color: AppColors.white24),
                                         onPressed: () async {
                                           await cubits.keys.removeMnemonic(
                                               cubits
@@ -155,10 +156,16 @@ class WalletsPageState extends State<WalletsPage> {
                                   : ListTile(
                                       dense: true,
                                       visualDensity: VisualDensity.compact,
+                                      leading: const CircleAvatar(
+                                        backgroundColor: AppColors.foreground,
+                                        child: Icon(Icons.abc,
+                                            color: Colors.white),
+                                      ),
                                       title: Text(
                                           'Wallet $index (Keypair wallet)'),
                                       trailing: IconButton(
-                                        icon: const Icon(Icons.delete_rounded),
+                                        icon: const Icon(Icons.delete_rounded,
+                                            color: AppColors.white24),
                                         onPressed: () async {
                                           await cubits.keys.removeWif(cubits
                                               .keys
@@ -197,32 +204,21 @@ class WalletsPageState extends State<WalletsPage> {
                                       ),
                                     )))
                   //)
-                  ,
                 ]),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 32.0, right: 16.0),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      onPressed: () => toStage(WalletsLifecycle.exiting),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightGreen,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Text(
-                        'CLOSE',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                    height: 56,
                   ),
                 ),
+                // const Padding(
+                //   padding: EdgeInsets.only(left: 16, right: 16, bottom: 32),
+                //   child: SizedBox(
+                //     width: double.infinity,
+                //     height: 8,
+                //   ),
+                // ),
               ],
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:magic/domain/blockchain/chain.dart';
 import 'package:magic/domain/blockchain/net.dart';
 import 'package:magic/domain/blockchain/server.dart'
     show h160FromXPubForAddress;
+import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 // ignore: implementation_imports
 import 'package:wallet_utils/src/models/networks.dart'
@@ -176,6 +177,21 @@ enum Blockchain {
     return ravencoinMainnetChaindata;
   }
 
+  String get logo {
+    switch (this) {
+      case Blockchain.ravencoinMain:
+        return LogoIcons.rvn;
+      case Blockchain.ravencoinTest:
+        return LogoIcons.rvn;
+      case Blockchain.evrmoreMain:
+        return LogoIcons.evr;
+      case Blockchain.evrmoreTest:
+        return LogoIcons.evr;
+      default:
+        return LogoIcons.evr;
+    }
+  }
+
   //Constants get constants =>
   //    net == Net.main ? mainnetConstants : testnetConstants;
 
@@ -230,18 +246,4 @@ enum Blockchain {
   bool get isFiat => this == Blockchain.none;
   bool isCoin(String? assetSymbol) => symbol == assetSymbol;
   bool isAsset(String? assetSymbol) => !isFiat && !isCoin(assetSymbol);
-
-  // String get logoPath {
-  //   switch (this) {
-  //     case Blockchain.ravencoinMain:
-  //     case Blockchain.ravencoinTest:
-  //       return 'assets/logos/rvn-icon.png';
-  //     case Blockchain.evrmoreMain:
-  //     case Blockchain.evrmoreTest:
-  //       return 'assets/logos/evr-icon.png';
-  //     case Blockchain.none:
-  //       // ? does an empty string work here?
-  //       return '';
-  //   }
-  // }
 }
