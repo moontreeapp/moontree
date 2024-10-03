@@ -274,7 +274,7 @@ class BackupPageState extends State<BackupPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 8),
                                       child: Text(
-                                        'Wallet ${walletIndex + 1}',
+                                        'Wallet ${isDerivationWallet ? index + 1 : index + cubits.keys.master.derivationWallets.length}',
                                         style: const TextStyle(
                                           color: AppColors.white87,
                                           fontSize: 20,
