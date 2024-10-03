@@ -111,17 +111,8 @@ class AddressesPageState extends State<AddressesPage> {
                           shrinkWrap: true,
                           itemCount:
                               cubits.keys.master.derivationWallets.length +
-                                  cubits.keys.master.keypairWallets.length +
-                                  cubits.keys.master.derivationWallets.length +
                                   cubits.keys.master.keypairWallets.length,
                           itemBuilder: (context, int index) {
-                            if (index >=
-                                cubits.keys.master.derivationWallets.length +
-                                    cubits.keys.master.keypairWallets.length) {
-                              index = index -
-                                  cubits.keys.master.derivationWallets.length -
-                                  cubits.keys.master.keypairWallets.length;
-                            }
                             if (index <
                                 cubits.keys.master.derivationWallets.length) {
                               printOutSecrets();
