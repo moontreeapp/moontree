@@ -65,17 +65,6 @@ class AddressesPageState extends State<AddressesPage> {
     }
   }
 
-  void copyToClipboard(String address) {
-    Clipboard.setData(ClipboardData(text: address));
-    cubits.toast.flash(
-      msg: const ToastMessage(
-        duration: Duration(seconds: 2),
-        title: 'Copied',
-        text: 'Address copied to clipboard',
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -116,343 +105,34 @@ class AddressesPageState extends State<AddressesPage> {
                 ),
                 Column(children: [
                   ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: (screen.height - 60 - 60 - 32 - 100) * .72,
-                      ),
+                      constraints:
+                          BoxConstraints(maxHeight: screen.height - 56),
                       child: ListView.builder(
                           shrinkWrap: true,
                           itemCount:
-                              cubits.keys.master.derivationWallets.length,
+                              cubits.keys.master.derivationWallets.length +
+                                  cubits.keys.master.keypairWallets.length +
+                                  cubits.keys.master.derivationWallets.length +
+                                  cubits.keys.master.keypairWallets.length,
                           itemBuilder: (context, int index) {
-                            for (int index = 0;
-                                index <
-                                    cubits.keys.master.derivationWallets.length;
-                                index++) {
-                              see('Wallet Index: $index');
-                              for (final blockchain in Blockchain.mainnets) {
-                                for (final exposure in Exposure.values) {
-                                  see('Exposure: ${exposureLabel(exposure)}');
-                                  if (cubits.keys.master
-                                      .derivationWallets[index].hot) {
-                                    for (final subwallet in cubits
-                                        .keys.master.derivationWallets[index]
-                                        .seedWallet(blockchain)
-                                        .subwallets[exposure]!) {
-                                      see('Wallet: $index (${exposureLabel(exposure)}: ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1})\n${subwallet.address ?? 'unknown'}');
-                                      Container(
-                                          padding: const EdgeInsets.only(
-                                              left: 8,
-                                              right: 8,
-                                              top: 4,
-                                              bottom: 4),
-                                          child: Row(
-                                            children: [
-                                              ColorFiltered(
-                                                colorFilter: const ColorFilter
-                                                    .matrix(<double>[
-                                                  0.2126,
-                                                  0.7152,
-                                                  0.0722,
-                                                  0,
-                                                  0,
-                                                  0.2126,
-                                                  0.7152,
-                                                  0.0722,
-                                                  0,
-                                                  0,
-                                                  0.2126,
-                                                  0.7152,
-                                                  0.0722,
-                                                  0,
-                                                  0,
-                                                  0,
-                                                  0,
-                                                  0,
-                                                  1,
-                                                  0,
-                                                ]),
-                                                child: Image.asset(
-                                                    blockchain.logo,
-                                                    width: 40,
-                                                    height: 40),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                    'Wallet: $index (${exposureLabel(exposure)}: ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1})\n${subwallet.address ?? 'unknown'}'),
-                                              ),
-                                            ],
-                                          ));
-                                    }
-                                  } else {
-                                    final maxId = cubits
-                                            .keys
-                                            .master
-                                            .derivationWallets[index]
-                                            .maxIds[blockchain]?[exposure] ??
-                                        0;
-                                    print(maxId);
-                                    for (final idx in range(maxId + 1)) {
-                                      final xpub = cubits
-                                          .keys.master.derivationWallets[index]
-                                          .rootsMap(blockchain)[exposure]!;
-                                      see('Wallet: $index (${exposureLabel(exposure)}: $idx)\n${blockchain.addressFromXPub(xpub, idx)}');
-                                      Container(
-                                          padding: const EdgeInsets.only(
-                                              left: 8,
-                                              right: 8,
-                                              top: 4,
-                                              bottom: 4),
-                                          child: Row(
-                                            children: [
-                                              ColorFiltered(
-                                                colorFilter: const ColorFilter
-                                                    .matrix(<double>[
-                                                  0.2126,
-                                                  0.7152,
-                                                  0.0722,
-                                                  0,
-                                                  0,
-                                                  0.2126,
-                                                  0.7152,
-                                                  0.0722,
-                                                  0,
-                                                  0,
-                                                  0.2126,
-                                                  0.7152,
-                                                  0.0722,
-                                                  0,
-                                                  0,
-                                                  0,
-                                                  0,
-                                                  0,
-                                                  1,
-                                                  0,
-                                                ]),
-                                                child: Image.asset(
-                                                    blockchain.logo,
-                                                    width: 40,
-                                                    height: 40),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                    'Wallet: $index (${exposureLabel(exposure)}: $idx)\n${blockchain.addressFromXPub(cubits.keys.master.derivationWallets[index].rootsMap(blockchain)[exposure]!, idx)}'),
-                                              ),
-                                            ],
-                                          ));
-                                    }
-                                  }
-                                }
-                              }
+                            if (index >=
+                                cubits.keys.master.derivationWallets.length +
+                                    cubits.keys.master.keypairWallets.length) {
+                              index = index -
+                                  cubits.keys.master.derivationWallets.length -
+                                  cubits.keys.master.keypairWallets.length;
                             }
-                            return Container(
-                                padding:
-                                    const EdgeInsets.only(top: 16, bottom: 16),
-                                decoration: index <
-                                        cubits.keys.master.derivationWallets
-                                                .length -
-                                            1
-                                    ? const BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
-                                            color: Colors
-                                                .white38, // Set the color of the border
-                                            width:
-                                                1.0, // Set the width of the border
-                                          ),
-                                        ),
-                                      )
-                                    : null,
-                                child: Wrap(children: <Widget>[
-                                  for (final blockchain in Blockchain.mainnets)
-                                    for (final exposure in Exposure.values)
-                                      if (cubits.keys.master
-                                          .derivationWallets[index].hot)
-                                        for (final subwallet in cubits.keys
-                                            .master.derivationWallets[index]
-                                            .seedWallet(blockchain)
-                                            .subwallets[exposure]!)
-                                          Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8,
-                                                  right: 8,
-                                                  top: 4,
-                                                  bottom: 4),
-                                              child: Row(
-                                                children: [
-                                                  ColorFiltered(
-                                                    colorFilter:
-                                                        const ColorFilter
-                                                            .matrix(<double>[
-                                                      0.2126,
-                                                      0.7152,
-                                                      0.0722,
-                                                      0,
-                                                      0,
-                                                      0.2126,
-                                                      0.7152,
-                                                      0.0722,
-                                                      0,
-                                                      0,
-                                                      0.2126,
-                                                      0.7152,
-                                                      0.0722,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                      1,
-                                                      0,
-                                                    ]),
-                                                    child: Image.asset(
-                                                        blockchain.logo,
-                                                        width: 40,
-                                                        height: 40),
-                                                  ),
-                                                  const SizedBox(width: 16),
-                                                  Expanded(
-                                                    child: Text(
-                                                        'Wallet: $index (${exposureLabel(exposure)}: ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1})\n${subwallet.address ?? 'unknown'}'),
-                                                  ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.copy,
-                                                      color: Colors.white70,
-                                                    ),
-                                                    onPressed: () =>
-                                                        copyToClipboard(
-                                                            subwallet.address ??
-                                                                'unknown'),
-                                                  ),
-                                                ],
-                                              ))
-                                      else
-                                        for (final idx in range(
-                                            (cubits
-                                                            .keys
-                                                            .master
-                                                            .derivationWallets[
-                                                                index]
-                                                            .maxIds[blockchain]
-                                                        ?[exposure] ??
-                                                    0) +
-                                                1))
-                                          Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8,
-                                                  right: 8,
-                                                  top: 4,
-                                                  bottom: 4),
-                                              child: Row(
-                                                children: [
-                                                  ColorFiltered(
-                                                    colorFilter:
-                                                        const ColorFilter
-                                                            .matrix(<double>[
-                                                      0.2126,
-                                                      0.7152,
-                                                      0.0722,
-                                                      0,
-                                                      0,
-                                                      0.2126,
-                                                      0.7152,
-                                                      0.0722,
-                                                      0,
-                                                      0,
-                                                      0.2126,
-                                                      0.7152,
-                                                      0.0722,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                      1,
-                                                      0,
-                                                    ]),
-                                                    child: Image.asset(
-                                                        blockchain.logo,
-                                                        width: 40,
-                                                        height: 40),
-                                                  ),
-                                                  const SizedBox(width: 16),
-                                                  Expanded(
-                                                    child: Text(
-                                                        'Wallet: $index (${exposureLabel(exposure)}: $idx)\n${blockchain.addressFromXPub(cubits.keys.master.derivationWallets[index].rootsMap(blockchain)[exposure]!, idx)}'),
-                                                  ),
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.copy,
-                                                      color: Colors.white70,
-                                                    ),
-                                                    onPressed: () => copyToClipboard(
-                                                        blockchain.addressFromXPub(
-                                                            cubits
-                                                                    .keys
-                                                                    .master
-                                                                    .derivationWallets[
-                                                                        index]
-                                                                    .rootsMap(
-                                                                        blockchain)[
-                                                                exposure]!,
-                                                            idx)),
-                                                  ),
-                                                ],
-                                              )),
-                                ]));
+                            if (index <
+                                cubits.keys.master.derivationWallets.length) {
+                              printOutSecrets();
+                              return DerivativeWalletSecret(index: index);
+                            }
+                            return KeyPairSecret(
+                                index: index -
+                                    cubits
+                                        .keys.master.derivationWallets.length);
                           })),
-                  ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: (screen.height - 60 - 60 - 32 - 100) * .28,
-                      ),
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: cubits.keys.master.keypairWallets.length,
-                          itemBuilder: (context, int index) => Container(
-                              padding:
-                                  const EdgeInsets.only(top: 16, bottom: 16),
-                              decoration: index <
-                                      cubits.keys.master.keypairWallets.length -
-                                          1
-                                  ? const BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors
-                                              .white38, // Set the color of the border
-                                          width:
-                                              1.0, // Set the width of the border
-                                        ),
-                                      ),
-                                    )
-                                  : null,
-                              child: Container(
-                                  padding: const EdgeInsets.only(
-                                      left: 8, right: 8, top: 4, bottom: 4),
-                                  child: Container(
-                                      padding: const EdgeInsets.only(
-                                          left: 8, right: 8, top: 4, bottom: 4),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: AppColors.primary100),
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Wrap(children: <Widget>[
-                                        for (final blockchain
-                                            in Blockchain.mainnets)
-                                          Text(cubits
-                                              .keys.master.keypairWallets[index]
-                                              .address(blockchain))
-                                      ])))))),
                 ]),
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                  ),
-                ),
               ],
             ),
           ),
@@ -471,4 +151,283 @@ String exposureLabel(Exposure exposure) {
     default:
       return exposure.name;
   }
+}
+
+void printOutSecrets() {
+  for (int i = 0; i < cubits.keys.master.derivationWallets.length; i++) {
+    see('Wallet Index: $i');
+    for (final blockchain in Blockchain.mainnets) {
+      for (final exposure in Exposure.values) {
+        see('Exposure: ${exposureLabel(exposure)}');
+        if (cubits.keys.master.derivationWallets[i].hot) {
+          for (final subwallet in cubits.keys.master.derivationWallets[i]
+              .seedWallet(blockchain)
+              .subwallets[exposure]!) {
+            see('Wallet: $i (${exposureLabel(exposure)}: ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1})\n${subwallet.address ?? 'unknown'}');
+            Container(
+                padding:
+                    const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+                child: Row(
+                  children: [
+                    ColorFiltered(
+                      colorFilter: const ColorFilter.matrix(<double>[
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                      ]),
+                      child:
+                          Image.asset(blockchain.logo, width: 40, height: 40),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                          'Wallet: $i (${exposureLabel(exposure)}: ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1})\n${subwallet.address ?? 'unknown'}'),
+                    ),
+                  ],
+                ));
+          }
+        } else {
+          final maxId = cubits.keys.master.derivationWallets[i]
+                  .maxIds[blockchain]?[exposure] ??
+              0;
+          print(maxId);
+          for (final idx in range(maxId + 1)) {
+            final xpub = cubits.keys.master.derivationWallets[i]
+                .rootsMap(blockchain)[exposure]!;
+            see('Wallet: $i (${exposureLabel(exposure)}: $idx)\n${blockchain.addressFromXPub(xpub, idx)}');
+            Container(
+                padding:
+                    const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+                child: Row(
+                  children: [
+                    ColorFiltered(
+                      colorFilter: const ColorFilter.matrix(<double>[
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0.2126,
+                        0.7152,
+                        0.0722,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                      ]),
+                      child:
+                          Image.asset(blockchain.logo, width: 40, height: 40),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                          'Wallet: $i (${exposureLabel(exposure)}: $idx)\n${blockchain.addressFromXPub(cubits.keys.master.derivationWallets[i].rootsMap(blockchain)[exposure]!, idx)}'),
+                    ),
+                  ],
+                ));
+          }
+        }
+      }
+    }
+  }
+}
+
+class DerivativeWalletSecret extends StatelessWidget {
+  final int index;
+  const DerivativeWalletSecret({super.key, required this.index});
+
+  void copyToClipboard(String address) {
+    Clipboard.setData(ClipboardData(text: address));
+    cubits.toast.flash(
+      msg: const ToastMessage(
+        duration: Duration(seconds: 2),
+        title: 'Copied',
+        text: 'Address copied to clipboard',
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => Container(
+      padding: const EdgeInsets.only(top: 16, bottom: 16),
+      decoration: index < cubits.keys.master.derivationWallets.length - 1
+          ? const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white38, // Set the color of the border
+                  width: 1.0, // Set the width of the border
+                ),
+              ),
+            )
+          : null,
+      child: Wrap(children: <Widget>[
+        for (final blockchain in Blockchain.mainnets)
+          for (final exposure in Exposure.values)
+            if (cubits.keys.master.derivationWallets[index].hot)
+              for (final subwallet in cubits
+                  .keys.master.derivationWallets[index]
+                  .seedWallet(blockchain)
+                  .subwallets[exposure]!)
+                Container(
+                    padding: const EdgeInsets.only(
+                        left: 8, right: 8, top: 4, bottom: 4),
+                    child: Row(
+                      children: [
+                        ColorFiltered(
+                          colorFilter: const ColorFilter.matrix(<double>[
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1,
+                            0,
+                          ]),
+                          child: Image.asset(blockchain.logo,
+                              width: 40, height: 40),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                              'Wallet: $index (${exposureLabel(exposure)}: ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1})\n${subwallet.address ?? 'unknown'}'),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.copy,
+                            color: Colors.white70,
+                          ),
+                          onPressed: () =>
+                              copyToClipboard(subwallet.address ?? 'unknown'),
+                        ),
+                      ],
+                    ))
+            else
+              for (final idx in range((cubits
+                          .keys
+                          .master
+                          .derivationWallets[index]
+                          .maxIds[blockchain]?[exposure] ??
+                      0) +
+                  1))
+                Container(
+                    padding: const EdgeInsets.only(
+                        left: 8, right: 8, top: 4, bottom: 4),
+                    child: Row(
+                      children: [
+                        ColorFiltered(
+                          colorFilter: const ColorFilter.matrix(<double>[
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1,
+                            0,
+                          ]),
+                          child: Image.asset(blockchain.logo,
+                              width: 40, height: 40),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                              'Wallet: $index (${exposureLabel(exposure)}: $idx)\n${blockchain.addressFromXPub(cubits.keys.master.derivationWallets[index].rootsMap(blockchain)[exposure]!, idx)}'),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.copy,
+                            color: Colors.white70,
+                          ),
+                          onPressed: () => copyToClipboard(
+                              blockchain.addressFromXPub(
+                                  cubits.keys.master.derivationWallets[index]
+                                      .rootsMap(blockchain)[exposure]!,
+                                  idx)),
+                        ),
+                      ],
+                    )),
+      ]));
+}
+
+class KeyPairSecret extends StatelessWidget {
+  final int index;
+  const KeyPairSecret({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) => Container(
+      padding: const EdgeInsets.only(top: 16, bottom: 16),
+      decoration: index < cubits.keys.master.keypairWallets.length - 1
+          ? const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white38, // Set the color of the border
+                  width: 1.0, // Set the width of the border
+                ),
+              ),
+            )
+          : null,
+      child: Container(
+          padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+          child: Container(
+              padding:
+                  const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.primary100),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Wrap(children: <Widget>[
+                for (final blockchain in Blockchain.mainnets)
+                  Text(cubits.keys.master.keypairWallets[index]
+                      .address(blockchain))
+              ]))));
 }
