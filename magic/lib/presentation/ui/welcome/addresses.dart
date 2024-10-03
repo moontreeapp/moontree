@@ -103,10 +103,11 @@ class AddressesPageState extends State<AddressesPage> {
                           onPressed: () =>
                               toStage(AddressesLifeCycle.exiting))),
                 ),
-                Column(children: [
-                  ConstrainedBox(
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Container(
                       constraints:
                           BoxConstraints(maxHeight: screen.height - 56),
+                      alignment: Alignment.center,
                       child: ListView.builder(
                           shrinkWrap: true,
                           itemCount:
