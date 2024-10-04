@@ -12,6 +12,7 @@ import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
+import 'package:magic/services/client/derive.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/services/security.dart';
 import 'package:magic/utils/log.dart';
@@ -164,7 +165,15 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
           cubits.welcome.update(active: false, child: const SizedBox.shrink());
           cubits.app.animating = false;
           //deriveInBackground();
-          cubits.receive.deriveAll(Blockchain.mainnets);
+          cubits.receive.deriveAll(Blockchain.mainnets).then((_) {
+            getElectrumxBalancesInBackground(
+              scripthashes: [
+                cubits.keys.master.keypairScripthashes
+                    .h160AsString(Blockchain.ravencoinMain),
+                .last.roots(Blockchain.evrmoreMain).first], blockchain: Blockchain.evrmoreMain).then((int balance) {
+              see('balance: $balance');
+            });
+          });
           cubits.receive.populateAddresses(Blockchain.ravencoinMain);
           cubits.receive.populateAddresses(Blockchain.evrmoreMain);
           if (cubits.keys.state.wifs.isNotEmpty) {

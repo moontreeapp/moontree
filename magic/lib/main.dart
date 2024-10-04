@@ -177,6 +177,7 @@ Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
     //  //subscription.setupSubscriptions(cubits.keys.master);
     maestro.activateHome();
   });
+
   print('after ensure connected');
 }
 

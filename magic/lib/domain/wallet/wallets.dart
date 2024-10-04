@@ -16,6 +16,7 @@ import 'package:bip32/bip32.dart' as bip32;
 import 'package:convert/convert.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/pane/send/cubit.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/domain/blockchain/derivation.dart';
 import 'package:magic/domain/blockchain/exposure.dart';
@@ -24,7 +25,7 @@ import 'package:magic/domain/wallet/kpwallet.dart';
 import 'package:magic/utils/log.dart';
 import 'package:moontree_utils/moontree_utils.dart' show decode;
 import 'package:wallet_utils/wallet_utils.dart'
-    show ECPair, HDWallet, KPWallet, NetworkType, P2PKH;
+    show ECPair, HDWallet, KPWallet, NetworkType, P2PKH, WalletBase;
 
 abstract class Jsonable {
   Map<String, dynamic> get asMap;
@@ -81,6 +82,20 @@ class MasterWallet extends Jsonable {
       .toSet();
 
   Set<String> get addressSet => {...derivationAddresses, ...keypairAddresses};
+
+  Set<Uint8List> get derivationScripthashes => (derivationWallets
+      .expand((m) => m.seedWallets.values.expand((s) => s.subwallets.values
+          .expand((subList) =>
+              subList.map((sub) => sub.p2pkh.data.hash ?? Uint8List(0)))))
+      .toSet());
+
+  Set<String> get keypairScripthashes => keypairWallets
+      .expand((kp) => kp.wallets.entries
+          .map((entry) => entry.key.scripthash(entry.value.pubKey!)))
+      .toSet();
+
+  Set<String> get scripthashes =>
+      {...derivationScripthashes, ...keypairScripthashes};
 }
 
 class KeypairWallet extends Jsonable {

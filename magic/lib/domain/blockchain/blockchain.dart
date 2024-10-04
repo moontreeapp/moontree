@@ -3,6 +3,7 @@ import 'package:magic/domain/blockchain/chain.dart';
 import 'package:magic/domain/blockchain/net.dart';
 import 'package:magic/domain/blockchain/server.dart'
     show h160FromXPubForAddress;
+import 'package:magic/domain/concepts/scripthash.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 // ignore: implementation_imports
@@ -200,6 +201,9 @@ enum Blockchain {
     return Constants(
         cd.kawpowHeaderActivationTimestamp, cd.p2pkhPrefix, cd.p2shPrefix);
   }
+
+  String scripthash(String pubkey) =>
+      scripthashFromPubkey(pubkey, chaindata.p2shPrefix);
 
   String addressFromH160String(String h160, {bool isP2sh = false}) =>
       addressFromH160(h160.hexBytes, isP2sh: isP2sh);
