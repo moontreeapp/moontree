@@ -122,7 +122,7 @@ class KeysCubit extends UpdatableCubit<KeysState> {
         .map((entry) => Map<String, String>.from(entry)
             .map((key, value) => MapEntry(key, value)))
         .toList();
-    see(rawXpubsKP, xpubsKP, LogColors.red);
+    see(rawXpubsKP, xpubsKP, AnsiColors.red);
     if (xpubs.isNotEmpty && xpubs != [{}]) {
       update(submitting: true);
       update(

@@ -58,26 +58,26 @@ class HoldingBalancesCall extends ServerCall {
   }
 
   Future<List<Holding>> call() async {
-    //see('keypairWallets:', keypairWallets.firstOrNull, LogColors.green);
+    //see('keypairWallets:', keypairWallets.firstOrNull, AnsiColors.green);
     //see(
     //    'keypairWallets:',
     //    byteDataToHexString(
     //        keypairWallets.firstOrNull?.h160RawBytes(blockchain)),
-    //    LogColors.green);
+    //    AnsiColors.green);
     //see(
     //    'keypairWallets:',
     //    byteDataToHexString(
     //        keypairWallets.firstOrNull?.h160AsByteData(blockchain)),
-    //    LogColors.green);
+    //    AnsiColors.green);
     //see('keypairWallets:', keypairWallets.firstOrNull?.h160AsString(blockchain),
-    //    LogColors.green);
+    //    AnsiColors.green);
     //see(
     //    'keypairH160s:',
     //    keypairWallets
     //        .map((e) => e.h160AsByteData(blockchain))
     //        .toList()
     //        .firstOrNull,
-    //    LogColors.green);
+    //    AnsiColors.green);
 
     final List<BalanceView> holdings = await holdingBalancesBy(
       chain: blockchain.chaindata,

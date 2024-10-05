@@ -2,6 +2,9 @@
 
 import 'package:collection/collection.dart';
 
+import 'package:ansi_logger/ansi_logger.dart';
+export 'package:ansi_logger/src/ansi_colors.dart';
+
 enum LogColors {
   red,
   green,
@@ -45,7 +48,7 @@ enum LogColors {
 void see(
   dynamic message, [
   dynamic msg0,
-  LogColors color = LogColors.cyan,
+  AnsiColors color = AnsiColors.cyan,
   dynamic msg1,
   dynamic msg2,
   dynamic msg3,
@@ -69,5 +72,6 @@ void see(
     msg8,
     msg9
   ].whereNotNull().join(' ');
-  print(color.colorize(msg));
+  //print(color.colorize(msg));
+  SimpleAnsiLogger.log(color, msg);
 }

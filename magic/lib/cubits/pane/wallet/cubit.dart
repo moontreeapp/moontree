@@ -129,7 +129,7 @@ class WalletCubit extends UpdatableCubit<WalletState> {
               derivationWallets: cubits.keys.master.derivationWallets,
               keypairWallets: cubits.keys.master.keypairWallets,
             ).call())));
-    see('holdings:', holdings, LogColors.magenta);
+    see('holdings:', holdings, AnsiColors.imperialPurple);
     if (holdings.isNotEmpty) {
       update(holdings: [], isSubmitting: false);
       update(holdings: holdings, isSubmitting: false);

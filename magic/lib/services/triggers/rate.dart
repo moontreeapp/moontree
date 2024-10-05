@@ -58,7 +58,7 @@ class RateWaiter extends Trigger {
           await _getExistingRate(rateGrabber) ??
           0;
     } catch (e) {
-      see('unable to grab rates', '', LogColors.red);
+      see('unable to grab rates', '', AnsiColors.red);
       return 0;
     }
   }

@@ -14,7 +14,7 @@ class LockLayer extends StatelessWidget {
       buildWhen: (AppState previous, AppState current) =>
           previous.status != current.status,
       builder: (BuildContext context, AppState state) {
-        see(state.wasPaused, state.status, LogColors.magenta);
+        see(state.wasPaused, state.status, AnsiColors.imperialPurple);
         if (state.wasPaused &&
             state.status == AppLifecycleState.resumed &&
             !cubits.app.isAuthenticated) {

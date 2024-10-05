@@ -83,11 +83,20 @@ class MasterWallet extends Jsonable {
 
   Set<String> get addressSet => {...derivationAddresses, ...keypairAddresses};
 
-  Set<Uint8List> get derivationScripthashes => (derivationWallets
-      .expand((m) => m.seedWallets.values.expand((s) => s.subwallets.values
-          .expand((subList) =>
-              subList.map((sub) => sub.p2pkh.data.hash ?? Uint8List(0)))))
-      .toSet());
+  Set<String> get derivationScripthashes => derivationWallets
+      .expand((derivationWallet) =>
+          derivationWallet.seedWallets.entries.expand((entry) {
+            final blockchain = entry.key;
+            final seedWallet = entry.value;
+            return seedWallet.subwallets.values.expand((subList) {
+              return subList.map((subwallet) {
+                final pubKey = subwallet.pubKey;
+                return blockchain.scripthash(pubKey);
+              });
+            });
+          }))
+      .where((scripthash) => scripthash.isNotEmpty)
+      .toSet();
 
   Set<String> get keypairScripthashes => keypairWallets
       .expand((kp) => kp.wallets.entries
@@ -96,6 +105,34 @@ class MasterWallet extends Jsonable {
 
   Set<String> get scripthashes =>
       {...derivationScripthashes, ...keypairScripthashes};
+
+  Set<String> derivationScripthashesForBlockchain(Blockchain blockchain) =>
+      derivationWallets
+          .expand((derivationWallet) => derivationWallet.seedWallets.entries
+                  .where((entry) => entry.key == blockchain)
+                  .expand((entry) {
+                final seedWallet = entry.value;
+                return seedWallet.subwallets.values.expand((subList) {
+                  return subList.map((subwallet) {
+                    final pubKey = subwallet.pubKey;
+                    return blockchain.scripthash(pubKey);
+                  });
+                });
+              }))
+          .where((scripthash) => scripthash.isNotEmpty)
+          .toSet();
+
+  Set<String> keypairScripthashesForBlockchain(Blockchain blockchain) =>
+      keypairWallets
+          .expand((kp) => kp.wallets.entries
+              .where((entry) => entry.key == blockchain)
+              .map((entry) => entry.key.scripthash(entry.value.pubKey!)))
+          .toSet();
+
+  Set<String> scripthashesForBlockchain(Blockchain blockchain) => {
+        ...derivationScripthashesForBlockchain(blockchain),
+        ...keypairScripthashesForBlockchain(blockchain)
+      };
 }
 
 class KeypairWallet extends Jsonable {

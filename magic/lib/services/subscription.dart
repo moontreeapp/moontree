@@ -55,20 +55,20 @@ class SubscriptionService {
         cubits.app.update(connection: connectionState.status);
         if (connectionState.status == StreamingConnectionStatus.connected) {
           while (cubits.keys.master.derivationRoots.isEmpty) {
-            see('waiting for keys', '---', LogColors.yellow);
+            see('waiting for keys', '---', AnsiColors.yellow);
             await Future.delayed(const Duration(seconds: 30));
           }
           see(
             cubits.keys.state.mnemonics.isEmpty,
             cubits.keys.master.derivationRoots,
-            LogColors.green,
+            AnsiColors.green,
           );
           onConnection?.call();
           setupListeners();
         }
       },
     );
-    see('connecting...', '', LogColors.green);
+    see('connecting...', '', AnsiColors.green);
 
     connectionHandler.connect();
   }

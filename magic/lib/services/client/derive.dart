@@ -5,7 +5,7 @@ import 'package:magic/services/client/electrumx.dart';
 import 'package:moontree_utils/moontree_utils.dart';
 
 Future<int> getElectrumxBalancesInBackground({
-  required List<String> scripthashes,
+  required Iterable<String> scripthashes,
   Blockchain blockchain = Blockchain.evrmoreMain,
 }) async {
   EClientService eClientService = EClientService();

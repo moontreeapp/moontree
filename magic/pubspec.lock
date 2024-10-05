@@ -22,6 +22,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.7.0"
+  ansi_logger:
+    dependency: "direct main"
+    description:
+      name: ansi_logger
+      sha256: c838c2005dbdfaa8d26ee9128cd2aae936981c90d7c153d01cee2eed11e55d8b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.11"
   archive:
     dependency: transitive
     description:
