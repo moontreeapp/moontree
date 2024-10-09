@@ -166,12 +166,13 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
           cubits.app.animating = false;
           //deriveInBackground();
           cubits.receive.deriveAll(Blockchain.mainnets).then((_) {
-            see(
-                'second opinion',
-                getElectrumxBalancesInBackground(
-                    scripthashes: cubits.keys.master
-                        .scripthashesForBlockchain(Blockchain.evrmoreMain)),
-                AnsiColors.red);
+            /// scripthash incorrect here:
+            //see(
+            //    'second opinion',
+            //    getElectrumxBalancesInBackground(
+            //        scripthashes: cubits.keys.master
+            //            .scripthashesForBlockchain(Blockchain.evrmoreMain)),
+            //    AnsiColors.red);
           });
           cubits.receive.populateAddresses(Blockchain.ravencoinMain);
           cubits.receive.populateAddresses(Blockchain.evrmoreMain);
