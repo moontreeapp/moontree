@@ -64,7 +64,7 @@ dependencies:
   local_auth: ^2.2.0
   crypto: ^3.0.3
   qr_code_scanner: ^1.0.1
-  mobile_scanner: ^5.1.1
+  mobile_scanner: ^6.0.0
   electrum_adapter: ^2.0.4
   bip32: ^2.0.0
   shared_preferences: ^2.3.2

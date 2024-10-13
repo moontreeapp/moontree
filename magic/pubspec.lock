@@ -652,10 +652,10 @@ packages:
     dependency: "direct main"
     description:
       name: mobile_scanner
-      sha256: d234581c090526676fd8fab4ada92f35c6746e3fb4f05a399665d75a399fb760
+      sha256: e93461298494a3e5475dd2b41068012823b8fe2caf8d47ba545faca2aa3767d6
       url: "https://pub.dev"
     source: hosted
-    version: "5.2.3"
+    version: "6.0.1"
   moontree_utils:
     dependency: "direct main"
     description:

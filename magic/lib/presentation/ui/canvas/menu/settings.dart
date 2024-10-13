@@ -7,10 +7,12 @@ import 'package:magic/presentation/ui/welcome/addresses.dart';
 import 'package:magic/presentation/ui/welcome/backup.dart';
 import 'package:magic/presentation/ui/welcome/import.dart';
 import 'package:magic/presentation/ui/welcome/wallets.dart';
+import 'package:magic/presentation/ui/welcome/pair_with_chrome.dart';
 import 'package:magic/services/services.dart';
 
 class DifficultyItem extends StatefulWidget {
   final DifficultyMode mode;
+
   const DifficultyItem({super.key, required this.mode});
 
   @override
@@ -59,6 +61,7 @@ class DifficultyItemState extends State<DifficultyItem> {
 
 class NotificationItem extends StatelessWidget {
   final MenuState state;
+
   const NotificationItem({super.key, required this.state});
 
   @override
@@ -162,5 +165,30 @@ class AddressesItem extends StatelessWidget {
               Text('Addresses',
                   style: AppText.h2.copyWith(color: Colors.white)),
             ])),
+      );
+}
+
+class PairWithChromeItem extends StatelessWidget {
+  const PairWithChromeItem({super.key});
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => cubits.welcome
+            .update(active: true, child: const PairWithChromePage()),
+        child: Container(
+          height: screen.menu.itemHeight,
+          width: screen.width,
+          color: Colors.transparent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Icon(Icons.public, color: Colors.white),
+              const SizedBox(width: 16),
+              Text(
+                'Pair with chrome',
+                style: AppText.h2.copyWith(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
       );
 }

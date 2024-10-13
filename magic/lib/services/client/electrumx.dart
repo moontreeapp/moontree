@@ -52,7 +52,7 @@ class EClientService {
   Future<List<ScripthashBalance>> getBalances(
     Iterable<String> scripthashes,
   ) async =>
-      (await client).getBalances(scripthashes);
+      (await client).getBalances(scripthashes.toList());
 
   Future<List<List<ScripthashUnspent>>> getUnspents(
     Iterable<String> scripthashes,
