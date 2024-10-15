@@ -319,7 +319,7 @@ class DerivativeWalletSecret extends StatelessWidget {
                         const SizedBox(width: 16),
                         Expanded(
                           child: Text(
-                              'Wallet: $index (${exposureLabel(exposure)}: ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1})\n${subwallet.address ?? 'unknown'}'),
+                              'Wallet: $index (${exposureLabel(exposure)}: ${(subwallet is HDWalletIndexed) ? subwallet.hdIndex : -1})\n${subwallet.address ?? 'unknown'}\n${subwallet.pubKey}'),
                         ),
                         IconButton(
                           icon: const Icon(
@@ -419,7 +419,7 @@ class KeyPairSecret extends StatelessWidget {
               ),
               child: Wrap(children: <Widget>[
                 for (final blockchain in Blockchain.mainnets)
-                  Text(cubits.keys.master.keypairWallets[index]
-                      .address(blockchain))
+                  Text(
+                      '${cubits.keys.master.keypairWallets[index].address(blockchain)}\n${cubits.keys.master.keypairWallets[index].pubkey(blockchain)}'),
               ]))));
 }

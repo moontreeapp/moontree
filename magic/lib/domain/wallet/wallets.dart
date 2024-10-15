@@ -172,6 +172,7 @@ class KeypairWallet extends Jsonable {
       ECPair.fromPrivateKey(decode(privKey)).toWIF();
 
   String address(Blockchain blockchain) => wallet(blockchain).address!;
+  String pubkey(Blockchain blockchain) => wallet(blockchain).pubKey!;
 
   /// returns the address representation according to chain and net
   //String address(Chain chain, Net net, {bool isP2sh = false}) => h160ToAddress(
