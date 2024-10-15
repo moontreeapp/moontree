@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:magic/domain/blockchain/blockchain.dart';
+import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:magic/services/services.dart';
@@ -102,7 +105,7 @@ class PairWithChromePageState extends State<PairWithChromePage>
                       width: screen.width * 0.7,
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.red,
+                          color: AppColors.toast,
                           width: 3,
                         ),
                         borderRadius: BorderRadius.circular(10),
@@ -111,20 +114,26 @@ class PairWithChromePageState extends State<PairWithChromePage>
                   },
                   onDetect: (BarcodeCapture event) {
                     if (event.barcodes.first.rawValue?.isNotEmpty ?? false) {
-                      final randomNumber = event.barcodes.first.rawValue!;
-                      if (barcode != randomNumber) {
+                      final value = event.barcodes.first.rawValue!;
+                      if (barcode != value) {
+                        final msg =
+                            ScannerMessage(raw: event.barcodes.first.rawValue!);
                         see('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-                        barcode = randomNumber;
-                        final pubKeys = cubits.keys.master.derivationWallets
+                        barcode = value;
+                        final hdPubKeys = cubits.keys.master.derivationWallets
                             .expand((wallet) => wallet.seedWallets.values)
                             .expand(
                                 (seedWallet) => seedWallet.subwallets.values)
                             .expand((subWallets) => subWallets)
                             .map((subWallet) => subWallet.pubKey)
                             .toList();
-                        see(randomNumber, pubKeys);
+                        final kpPubKeys = cubits.keys.master.keypairWallets
+                            .expand((wallet) => wallet.pubkeys)
+                            .toList();
+                        see(msg.raw, msg.pairCode, AnsiColors.DarkLiver,
+                            hdPubKeys, kpPubKeys);
                         // Todo: Send data to server
-                        // await sendDataToServer(randomNumber, pubKeys);
+                        //await sendDataToServer(msg.pairCode, hdPubKeys, kpPubKeys);
                         Future.delayed(const Duration(milliseconds: 500), () {
                           toStage(PairWithChromeLifeCycle.exiting);
                           controller.stop();
@@ -156,4 +165,68 @@ class PairWithChromePageState extends State<PairWithChromePage>
       ],
     );
   }
+}
+
+enum ScannerMessageType {
+  pair,
+  send,
+  unknown;
+
+  static ScannerMessageType from(String value) {
+    switch (value) {
+      case 'pair':
+        return ScannerMessageType.pair;
+      case 'send':
+        return ScannerMessageType.send;
+      default:
+        return ScannerMessageType.unknown;
+    }
+  }
+
+  String get toServerEndpoint {
+    switch (this) {
+      case ScannerMessageType.pair:
+        return 'pair.prove';
+      case ScannerMessageType.send:
+        return '';
+      case ScannerMessageType.unknown:
+        return '';
+      default:
+        return '';
+    }
+  }
+}
+
+class ScannerMessage {
+  /* examples
+  {
+    "action": "send",
+    "params": {
+      "to": "<some_address>",
+      "amount": "<some_amount>",
+      "blockchain": "<some_chain>",
+      "asset": "<some_asset>"
+    }
+  }
+  {
+    "action": "pair",
+    "code": "cfc6f6ae-391d-49d3-9835-931aa29cf361"
+  }
+  */
+  final String raw;
+
+  const ScannerMessage({required this.raw});
+
+  ScannerMessageType get scannerMessageType =>
+      ScannerMessageType.from(message['action'] as String);
+
+  Map<String, dynamic> get message => jsonDecode(raw) as Map<String, dynamic>;
+
+  String get pairCode => message['code'] as String;
+  String get sendTo => message['params']['to'] as String;
+  String get sendAmount => message['params']['amount'] as String;
+  int get sendSats => int.tryParse(message['params']['amount'] as String) ?? 0;
+  String get sendAsset => message['params']['asset'] as String;
+  Blockchain get sendBlockchain =>
+      Blockchain.from(name: message['params']['blockchain'] as String);
 }

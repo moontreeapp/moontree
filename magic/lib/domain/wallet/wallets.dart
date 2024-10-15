@@ -173,6 +173,13 @@ class KeypairWallet extends Jsonable {
 
   String address(Blockchain blockchain) => wallet(blockchain).address!;
   String pubkey(Blockchain blockchain) => wallet(blockchain).pubKey!;
+  List<String> get addresses => [
+        for (final blockchain in Blockchain.mainnets)
+          wallet(blockchain).address!
+      ];
+  List<String> get pubkeys => [
+        for (final blockchain in Blockchain.mainnets) wallet(blockchain).pubKey!
+      ];
 
   /// returns the address representation according to chain and net
   //String address(Chain chain, Net net, {bool isP2sh = false}) => h160ToAddress(
