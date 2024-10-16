@@ -92,7 +92,6 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
             //fit: BoxFit.contain,
             controller: controller,
             onDetect: (BarcodeCapture event) {
-              see('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
               if (event.barcodes.first.rawValue?.isNotEmpty ?? false) {
                 cubits.send.update(address: barcode);
                 cubits.send.update(scanActive: false);
@@ -103,7 +102,6 @@ class QRViewableState extends State<QRViewable> with WidgetsBindingObserver {
                 see(event.image);
                 see(event.raw);
               }
-              see('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
               setState(() {
                 barcode = event.barcodes.first.rawValue;
                 if (barcode?.isNotEmpty ?? false) {

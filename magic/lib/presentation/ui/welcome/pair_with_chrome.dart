@@ -34,7 +34,7 @@ class PairWithChromePageState extends State<PairWithChromePage>
   PairWithChromeLifeCycle lifecycle = PairWithChromeLifeCycle.entering;
   final MobileScannerController controller = MobileScannerController();
   String? barcode;
-  KeysCubit keysCubit = KeysCubit();
+
   void toStage(PairWithChromeLifeCycle stage) {
     if (mounted) {
       if (stage == PairWithChromeLifeCycle.exiting) {
@@ -46,13 +46,6 @@ class PairWithChromePageState extends State<PairWithChromePage>
       }
       setState(() => lifecycle = stage);
     }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    unawaited(controller.dispose());
-    super.dispose();
   }
 
   @override
@@ -75,7 +68,18 @@ class PairWithChromePageState extends State<PairWithChromePage>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     unawaited(controller.start());
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller first
+    unawaited(controller.dispose());
+
+    // Then remove the observer and dispose the widget
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -115,30 +119,29 @@ class PairWithChromePageState extends State<PairWithChromePage>
                   onDetect: (BarcodeCapture event) {
                     if (event.barcodes.first.rawValue?.isNotEmpty ?? false) {
                       final value = event.barcodes.first.rawValue!;
-                      if (barcode != value) {
-                        final msg =
-                            ScannerMessage(raw: event.barcodes.first.rawValue!);
-                        see('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-                        barcode = value;
-                        final hdPubKeys = cubits.keys.master.derivationWallets
-                            .expand((wallet) => wallet.seedWallets.values)
-                            .expand(
-                                (seedWallet) => seedWallet.subwallets.values)
-                            .expand((subWallets) => subWallets)
-                            .map((subWallet) => subWallet.pubKey)
-                            .toList();
-                        final kpPubKeys = cubits.keys.master.keypairWallets
-                            .expand((wallet) => wallet.pubkeys)
-                            .toList();
-                        see(msg.raw, msg.pairCode, AnsiColors.DarkLiver,
-                            hdPubKeys, kpPubKeys);
-                        // Todo: Send data to server
-                        //await sendDataToServer(msg.pairCode, hdPubKeys, kpPubKeys);
-                        Future.delayed(const Duration(milliseconds: 500), () {
-                          toStage(PairWithChromeLifeCycle.exiting);
-                          controller.stop();
-                        });
-                      }
+                      final msg =
+                          ScannerMessage(raw: event.barcodes.first.rawValue!);
+                      see('scanner event: ${msg.raw}');
+                      barcode = value;
+                      final hdPubKeys = cubits.keys.master.derivationWallets
+                          .expand((wallet) => wallet.seedWallets.values)
+                          .expand((seedWallet) => seedWallet.subwallets.values)
+                          .expand((subWallets) => subWallets)
+                          .map((subWallet) => subWallet.pubKey)
+                          .toList();
+                      final kpPubKeys = cubits.keys.master.keypairWallets
+                          .expand((wallet) => wallet.pubkeys)
+                          .toList();
+                      see(msg.pairCode);
+                      see(hdPubKeys, kpPubKeys);
+                      // Todo: Send data to server
+                      //sendDataToServer(msg.pairCode, hdPubKeys, kpPubKeys);
+                      controller.stop();
+                      toStage(PairWithChromeLifeCycle.exiting);
+                      //toStage(PairWithChromeLifeCycle.paused);
+                      //Future.delayed(const Duration(milliseconds: 500), () {
+                      //  toStage(PairWithChromeLifeCycle.exiting);
+                      //});
                     }
                   },
                 ),
@@ -222,7 +225,7 @@ class ScannerMessage {
 
   Map<String, dynamic> get message => jsonDecode(raw) as Map<String, dynamic>;
 
-  String get pairCode => message['code'] as String;
+  String get pairCode => (message['code'] ?? '') as String;
   String get sendTo => message['params']['to'] as String;
   String get sendAmount => message['params']['amount'] as String;
   int get sendSats => int.tryParse(message['params']['amount'] as String) ?? 0;
