@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:magic/cubits/canvas/menu/cubit.dart';
 import 'package:magic/cubits/cubit.dart';
+import 'package:magic/services/services.dart';
 import 'package:magic/presentation/theme/text.dart';
 import 'package:magic/presentation/ui/login/native.dart';
 import 'package:magic/presentation/ui/welcome/addresses.dart';
@@ -8,7 +9,6 @@ import 'package:magic/presentation/ui/welcome/backup.dart';
 import 'package:magic/presentation/ui/welcome/import.dart';
 import 'package:magic/presentation/ui/welcome/wallets.dart';
 import 'package:magic/presentation/ui/welcome/pair_with_chrome.dart';
-import 'package:magic/services/services.dart';
 
 class DifficultyItem extends StatefulWidget {
   final DifficultyMode mode;
@@ -90,6 +90,7 @@ class BackupItem extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome.update(
             active: true,
+            allowScreenshot: false,
             child: LoginNative(
                 onFailure: () => cubits.welcome
                     .update(active: false, child: const SizedBox.shrink()),
@@ -111,8 +112,11 @@ class ImportItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () =>
-            cubits.welcome.update(active: true, child: const ImportPage()),
+        onTap: () => cubits.welcome.update(
+          active: true,
+          allowScreenshot: false,
+          child: const ImportPage(),
+        ),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -132,9 +136,12 @@ class WalletsItem extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome.update(
             active: true,
+            allowScreenshot: false,
             child: LoginNative(
-                onFailure: () => cubits.welcome
-                    .update(active: false, child: const SizedBox.shrink()),
+                onFailure: () => cubits.welcome.update(
+                      active: false,
+                      child: const SizedBox.shrink(),
+                    ),
                 child: const WalletsPage())),
         child: Container(
             height: screen.menu.itemHeight,
@@ -153,8 +160,11 @@ class AddressesItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () =>
-            cubits.welcome.update(active: true, child: const AddressesPage()),
+        onTap: () => cubits.welcome.update(
+          active: true,
+          allowScreenshot: false,
+          child: const AddressesPage(),
+        ),
         child: Container(
             height: screen.menu.itemHeight,
             width: screen.width,
@@ -168,8 +178,9 @@ class AddressesItem extends StatelessWidget {
       );
 }
 
-class PairWithChromeItem extends StatelessWidget {
-  const PairWithChromeItem({super.key});
+class AddToChromeItem extends StatelessWidget {
+  const AddToChromeItem({super.key});
+
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => cubits.welcome

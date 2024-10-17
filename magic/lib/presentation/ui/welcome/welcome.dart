@@ -12,7 +12,6 @@ import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
 import 'package:magic/presentation/widgets/assets/icons.dart';
-import 'package:magic/services/client/derive.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/services/security.dart';
 import 'package:magic/utils/log.dart';
@@ -187,6 +186,7 @@ class WelcomeBackScreenState extends State<WelcomeBackScreen> {
   @override
   void initState() {
     super.initState();
+    securityService.checkUSBDebuggingStatus(context);
   }
 
   @override

@@ -1,10 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:no_screenshot/no_screenshot.dart';
 import 'package:magic/domain/storage/secure.dart';
 import 'package:magic/services/services.dart' show secureStorage;
+import 'package:magic/presentation/widgets/other/app_dialog.dart';
+import 'package:magic/utils/log.dart';
 
 class SecurityService {
   final LocalAuthentication _localAuth = LocalAuthentication();
+  final _noScreenshot = NoScreenshot.instance;
 
   Future<bool> canCheckBiometrics() async {
     try {
@@ -60,6 +65,34 @@ class SecurityService {
 
   Future<void> clearAuthentication() async =>
       await secureStorage.delete(key: SecureStorageKey.authed.key());
+
+  Future<bool> checkUSBDebuggingStatus(BuildContext context) async {
+    const platform = MethodChannel('usb_debug_check');
+    try {
+      final bool isEnabled =
+          await platform.invokeMethod('isUSBDebuggingEnabled');
+      if (isEnabled && context.mounted) {
+        showUSBDebuggingWarningDialog(context);
+        return true;
+      }
+      return false;
+    } on PlatformException catch (e) {
+      see("Failed to check USB Debugging: '${e.message}'.");
+      return false;
+    }
+  }
+
+  Future<bool> disableScreenshot() async {
+    bool result = await _noScreenshot.screenshotOff();
+    see('Screenshot Off: $result');
+    return result;
+  }
+
+  Future<bool> enableScreenshot() async {
+    bool result = await _noScreenshot.screenshotOn();
+    see('Enable Screenshot: $result');
+    return result;
+  }
 }
 
 final securityService = SecurityService();
