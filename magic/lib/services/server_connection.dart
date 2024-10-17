@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:async';
+import 'package:magic/cubits/cubit.dart';
+import 'package:magic/cubits/toast/cubit.dart';
 import 'package:magic/utils/log.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 
@@ -35,7 +37,7 @@ class WebSocketConnection {
   static String stateString = 'DD';
 
   /// Stream listen
-  StreamController<dynamic> stream = StreamController.broadcast(sync: true);
+  StreamController<String> stream = StreamController.broadcast(sync: true);
 
   /// Send listen data in queue
   List<String> sendDataQueue = [];
@@ -108,6 +110,22 @@ class WebSocketConnection {
   void _listener(dynamic message) {
     try {
       stream.add(message);
+      final msg = jsonDecode(message) as Map<String, dynamic>;
+      if (msg['endpoint'] == 'pair.prove' && msg['result'] == "success") {
+        cubits.toast.flash(
+            msg: const ToastMessage(
+          title: 'Pair with Magic on Chrome:',
+          text: 'Successful',
+          force: true,
+        ));
+      } else if (msg['endpoint'] == 'pair.prove' && msg['result'] == 'error') {
+        cubits.toast.flash(
+            msg: ToastMessage(
+          title: 'Pairing Failed:',
+          text: msg['error'],
+          force: true,
+        ));
+      }
       log(
         "$message",
         name: 'WebSocketConnection',

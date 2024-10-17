@@ -63,7 +63,7 @@ void showUSBDebuggingWarningDialog(BuildContext context) {
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 5),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(200),
                           side: const BorderSide(
                               color: AppColors.button, width: 1),
                         ),
@@ -89,7 +89,7 @@ void showUSBDebuggingWarningDialog(BuildContext context) {
                           backgroundColor: AppColors.button,
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(200),
                           ),
                         ),
                         onPressed: isChecked
