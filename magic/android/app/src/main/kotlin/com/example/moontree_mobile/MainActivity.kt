@@ -1,7 +1,6 @@
 package com.magic.mobile
 
 import android.content.Intent
-import android.os.Bundle
 import android.provider.Settings
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -34,9 +33,9 @@ class MainActivity: FlutterFragmentActivity() {
     }
 
     private fun isUSBDebuggingEnabled(): Boolean {
-        return Settings.Secure.getInt(
+        return Settings.Global.getInt(
             contentResolver,
-            Settings.Secure.ADB_ENABLED,
+            Settings.Global.ADB_ENABLED,
             0
         ) != 0
     }

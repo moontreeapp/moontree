@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,7 @@ Future<void> main() async {
       onConnection: cubits.wallet.populateAssets,
     );
     await precacheSvgPicture(LogoIcons.magic);
+    await precacheSvgPicture(LogoIcons.appLogo);
     runApp(const MagicApp());
   } catch (e) {
     print('Initialization error: $e');
@@ -181,41 +183,99 @@ Future<void> _clearAuthAndLoadKeys(BuildContext context) async {
   print('after ensure connected');
 }
 
-class MaestroLayer extends StatelessWidget {
+class MaestroLayer extends StatefulWidget {
   const MaestroLayer({super.key});
 
   @override
+  State<MaestroLayer> createState() => _MaestroLayerState();
+}
+
+class _MaestroLayerState extends State<MaestroLayer>
+    with WidgetsBindingObserver {
+  bool _isInBackground = false;
+
+  @override
+  initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (_isInBackground) {
+          setState(() {
+            _isInBackground = false;
+          });
+        }
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        setState(() {
+          _isInBackground = true;
+        });
+        break;
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+    }
+  }
+
+  @override
+  dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        _initializeServices(
-            context, constraints.maxHeight, constraints.maxWidth);
-        final scaffold = Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: AppColors.background,
-          body: SizedBox(
-            height: screen.height,
-            width: screen.width,
-            child: const Stack(
-              alignment: Alignment.bottomCenter,
-              children: <Widget>[
-                AppbarLayer(),
-                CanvasLayer(),
-                PaneLayer(),
-                //NavbarLayer(),
-                PanelLayer(),
-                IgnoreLayer(),
-                WelcomeLayer(),
-                ToastLayer(),
-                //const TutorialLayer(),
-                LockLayer(),
-              ],
+    // see('is in background: $_isInBackground');
+    return Stack(
+      children: [
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            _initializeServices(
+                context, constraints.maxHeight, constraints.maxWidth);
+            final scaffold = Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: AppColors.background,
+              body: SizedBox(
+                height: screen.height,
+                width: screen.width,
+                child: const Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: <Widget>[
+                    AppbarLayer(),
+                    CanvasLayer(),
+                    PaneLayer(),
+                    //NavbarLayer(),
+                    PanelLayer(),
+                    IgnoreLayer(),
+                    WelcomeLayer(),
+                    ToastLayer(),
+                    //const TutorialLayer(),
+                    LockLayer(),
+                  ],
+                ),
+              ),
+            );
+            //return Platform.isIOS ? SafeArea(child: scaffold) : scaffold;
+            return scaffold;
+          },
+        ),
+        if (_isInBackground)
+          Container(
+            color: Colors.black,
+            child: Center(
+              child: SvgPicture.asset(
+                LogoIcons.appLogo,
+                height: screen.appbar.logoHeight * 6,
+                fit: BoxFit.contain,
+                alignment: Alignment.center,
+              ),
             ),
           ),
-        );
-        //return Platform.isIOS ? SafeArea(child: scaffold) : scaffold;
-        return scaffold;
-      },
+      ],
     );
   }
 }
@@ -227,18 +287,69 @@ class MaestroLayerIOS extends StatefulWidget {
   State<MaestroLayerIOS> createState() => _MaestroLayerIOSState();
 }
 
-class _MaestroLayerIOSState extends State<MaestroLayerIOS> {
+class _MaestroLayerIOSState extends State<MaestroLayerIOS>
+    with WidgetsBindingObserver {
   Widget? cachedLayout;
+  bool _isInBackground = false;
+
+  @override
+  initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (_isInBackground) {
+          setState(() {
+            _isInBackground = false;
+          });
+        }
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        setState(() {
+          _isInBackground = true;
+        });
+        break;
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+    }
+  }
+
+  @override
+  dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        if (cachedLayout == null || hasSignificantChange(constraints)) {
-          cachedLayout = buildLayout(constraints);
-        }
-        return cachedLayout!;
-      },
+    return Stack(
+      children: [
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            if (cachedLayout == null || hasSignificantChange(constraints)) {
+              cachedLayout = buildLayout(constraints);
+            }
+            return cachedLayout!;
+          },
+        ),
+        if (_isInBackground)
+          Container(
+            color: Colors.black,
+            child: Center(
+              child: SvgPicture.asset(
+                LogoIcons.appLogo,
+                height: screen.appbar.logoHeight * 6,
+                fit: BoxFit.contain,
+                alignment: Alignment.center,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
