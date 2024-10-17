@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:magic/domain/blockchain/blockchain.dart';
 import 'package:magic/presentation/theme/colors.dart';
 import 'package:magic/presentation/utils/animation.dart';
+import 'package:magic/services/server_connection.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:magic/services/services.dart';
 import 'package:magic/cubits/cubits.dart';
@@ -117,12 +118,12 @@ class PairWithChromePageState extends State<PairWithChromePage>
                     );
                   },
                   onDetect: (BarcodeCapture event) {
-                    if (event.barcodes.first.rawValue?.isNotEmpty ?? false) {
+                    if (barcode == null &&
+                        (event.barcodes.first.rawValue?.isNotEmpty ?? false)) {
                       final value = event.barcodes.first.rawValue!;
-                      final msg =
-                          ScannerMessage(raw: event.barcodes.first.rawValue!);
-                      see('scanner event: ${msg.raw}');
                       barcode = value;
+                      final msg = ScannerMessage(raw: value);
+                      see('scanner event: ${msg.raw}');
                       final hdPubKeys = cubits.keys.master.derivationWallets
                           .expand((wallet) => wallet.seedWallets.values)
                           .expand((seedWallet) => seedWallet.subwallets.values)
@@ -136,6 +137,14 @@ class PairWithChromePageState extends State<PairWithChromePage>
                       see(hdPubKeys, kpPubKeys);
                       // Todo: Send data to server
                       //sendDataToServer(msg.pairCode, hdPubKeys, kpPubKeys);
+                      WebSocketEndpoint(
+                        endpoint: msg.scannerMessageType.toServerEndpoint,
+                        params: {
+                          'code': msg.pairCode,
+                          'hd_pubkeys': hdPubKeys,
+                          'keypair_pubkeys': kpPubKeys,
+                        },
+                      ).send();
                       controller.stop();
                       toStage(PairWithChromeLifeCycle.exiting);
                       //toStage(PairWithChromeLifeCycle.paused);
@@ -225,7 +234,8 @@ class ScannerMessage {
 
   Map<String, dynamic> get message => jsonDecode(raw) as Map<String, dynamic>;
 
-  String get pairCode => (message['code'] ?? '') as String;
+  String get pairCode =>
+      (message['code'] ?? message['params']['code'] ?? '') as String;
   String get sendTo => message['params']['to'] as String;
   String get sendAmount => message['params']['amount'] as String;
   int get sendSats => int.tryParse(message['params']['amount'] as String) ?? 0;

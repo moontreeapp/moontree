@@ -1,6 +1,25 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:async';
+import 'package:magic/utils/log.dart';
 import 'package:web_socket_client/web_socket_client.dart';
+
+class WebSocketEndpoint {
+  final String endpoint;
+  final Map<String, dynamic>? params;
+
+  WebSocketEndpoint({required this.endpoint, this.params});
+
+  String toJson() {
+    if (params == null) {
+      return jsonEncode({'endpoint': endpoint});
+    }
+    return jsonEncode({
+      'endpoint': endpoint,
+      'params': params ?? {},
+    });
+  }
+}
 
 /// Web Socket Connection
 class WebSocketConnection {
@@ -31,14 +50,10 @@ class WebSocketConnection {
   Future<void> _init() async {
     try {
       /// websocket server url parse
-      //Todo: Add your websocket server url
-      final wsUrl = Uri.parse('');
       socket = WebSocket(
-        wsUrl,
+        Uri.parse('ws://app.moontree.com:8181/socket'),
         pingInterval: const Duration(seconds: 5),
-        backoff: const ConstantBackoff(
-          Duration(seconds: 5),
-        ),
+        backoff: const ConstantBackoff(Duration(seconds: 5)),
       );
       _listenConnectionState();
     } catch (e, t) {
@@ -49,8 +64,8 @@ class WebSocketConnection {
     }
   }
 
-  /// Send data to server
   Future<void> sendDataToServer(String data) async {
+    see('sending', data);
     if (state is Connected || state is Reconnected) {
       socket?.send(data);
     } else {
@@ -58,13 +73,14 @@ class WebSocketConnection {
     }
   }
 
-  /// Listen events
+  Future<void> sendEndpoint(WebSocketEndpoint endpoint) async {
+    await sendDataToServer(endpoint.toJson());
+  }
+
   void _listenEvents() {
-    /// listener
     socket?.messages.listen(_listener);
   }
 
-  /// Listen connection state
   void _listenConnectionState() {
     socket?.connection.listen(
       (event) {
@@ -104,7 +120,6 @@ class WebSocketConnection {
     }
   }
 
-  /// for closing connection
   void closeConnection() {
     socket?.close(1000, 'CLOSE_NORMAL');
     stream.close();

@@ -178,8 +178,8 @@ class AddressesItem extends StatelessWidget {
       );
 }
 
-class AddToChromeItem extends StatelessWidget {
-  const AddToChromeItem({super.key});
+class PairWithChromeItem extends StatelessWidget {
+  const PairWithChromeItem({super.key});
 
   @override
   Widget build(BuildContext context) => GestureDetector(

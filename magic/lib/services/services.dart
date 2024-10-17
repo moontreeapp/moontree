@@ -2,6 +2,7 @@ export 'package:magic/services/derivation.dart';
 export 'package:magic/domain/storage/storage.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:magic/services/server_connection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:magic/services/rate.dart';
 import 'package:magic/services/routes.dart';
@@ -18,6 +19,7 @@ late Screen screen;
 late ScreenFlags screenflags;
 late SystemBackButton back;
 late Maestro maestro;
+late WebSocketConnection websocket;
 //late Keyboard keyboard;
 const FlutterSecureStorage secureStorage = FlutterSecureStorage();
 final SharedPreferencesAsync storage = SharedPreferencesAsync();
@@ -42,6 +44,7 @@ void init({
       evrGrabber: RateGrabber(symbol: 'EVR'),
       rvnGrabber: RateGrabber(symbol: 'RVN'))
     ..init();
+  websocket = WebSocketConnection();
   initialized = true;
 
   //api.connect();
@@ -52,4 +55,10 @@ void init({
   //        chain: value.chain,
   //        net: value.net,
   //      );
+}
+
+extension WebSocketEndpointExtension on WebSocketEndpoint {
+  Future<void> send() async {
+    await websocket.sendEndpoint(this);
+  }
 }
