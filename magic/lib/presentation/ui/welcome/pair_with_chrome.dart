@@ -124,15 +124,28 @@ class PairWithChromePageState extends State<PairWithChromePage>
                       barcode = value;
                       final msg = ScannerMessage(raw: value);
                       see('scanner event: ${msg.raw}');
-                      final hdPubKeys = cubits.keys.master.derivationWallets
-                          .expand((wallet) => wallet.seedWallets.values)
-                          .expand((seedWallet) => seedWallet.subwallets.values)
-                          .expand((subWallets) => subWallets)
-                          .map((subWallet) => subWallet.pubKey)
-                          .toList();
-                      final kpPubKeys = cubits.keys.master.keypairWallets
-                          .expand((wallet) => wallet.pubkeys)
-                          .toList();
+                      //final hdPubKeys = cubits.keys.master.derivationWallets
+                      //    .expand((wallet) => wallet.seedWallets.values)
+                      //    .expand((seedWallet) => seedWallet.subwallets.values)
+                      //    .expand((subWallets) => subWallets)
+                      //    .map((subWallet) => subWallet.pubKey)
+                      //    .toList();
+                      //final kpPubKeys = cubits.keys.master.keypairWallets
+                      //    .expand((wallet) => wallet.pubkeys)
+                      //    .toList();
+                      final hdPubKeys = [
+                        for (Blockchain blockchain in Blockchain.mainnets)
+                          cubits.keys.master.derivationWallets
+                              .map((e) => e.roots(blockchain))
+                              .expand((e) => e)
+                              .toList()
+                      ].expand((i) => i).toSet().toList();
+                      final kpPubKeys = [
+                        for (Blockchain blockchain in Blockchain.mainnets)
+                          cubits.keys.master.keypairWallets
+                              .map((e) => e.h160AsByteData(blockchain))
+                              .toList()
+                      ].expand((i) => i).toSet().toList();
                       see(msg.pairCode);
                       see(hdPubKeys, kpPubKeys);
                       // Todo: Send data to server
