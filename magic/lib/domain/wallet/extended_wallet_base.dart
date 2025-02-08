@@ -28,9 +28,12 @@ extension ExtendedWalletBase on WalletBase {
     if (kDebugMode) {
       logW('address: $address');
     }
+    final String prefix = network.messagePrefix == '\x18Evrmore Signed Message:\n'
+      ? 'Evrmore Signed Message:\n'
+      : network.messagePrefix;
     return SignMessage(
       message: message,
-      prefix: network.messagePrefix,
+      prefix: prefix,
     ).signCompact(privateKeyWIF: wif);
   }
 

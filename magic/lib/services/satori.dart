@@ -1,9 +1,10 @@
+import 'dart:convert';
+// ignore: implementation_imports
 import 'package:bip32/src/utils/wif.dart' as wif;
 import 'package:magic/domain/wallet/extended_wallet_base.dart';
 import 'package:wallet_utils/wallet_utils.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:magic/utils/logger.dart';
 
