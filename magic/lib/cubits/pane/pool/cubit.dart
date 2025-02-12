@@ -185,7 +185,8 @@ class PoolCubit extends UpdatableCubit<PoolState> {
     if (keypairWallets.isNotEmpty) {
       for (var keypairWallet in keypairWallets) {
         for (var kpWallet in keypairWallet.wallets.values) {
-          if (kpWallet.address != null) {
+          if (kpWallet.address != null &&
+              kpWallet.address!.toLowerCase().startsWith('e')) {
             allAddresses.add(kpWallet.address!);
           }
         }
@@ -230,7 +231,6 @@ class PoolCubit extends UpdatableCubit<PoolState> {
         return KPWallet.fromWIF(wif, Blockchain.evrmoreMain.network);
       }).toList();
       print('kpWallets: $kpWallets');
-
 
       SatoriServerClient satoriClient = SatoriServerClient();
       print('satoriClient: $satoriClient');
@@ -293,6 +293,12 @@ class PoolCubit extends UpdatableCubit<PoolState> {
         }
         cubits.fade.update(fade: FadeEvent.fadeIn);
         update(isSubmitting: false, poolStatus: PoolStatus.joined);
+        cubits.toast.flash(
+          msg: const ToastMessage(
+            title: 'Success!',
+            text: 'Magic Pool Joined',
+          ),
+        );
       } else {
         logE('Failed to join the pool');
         cubits.toast.flash(
@@ -313,12 +319,6 @@ class PoolCubit extends UpdatableCubit<PoolState> {
       );
       update(isSubmitting: false);
     }
-    cubits.toast.flash(
-      msg: const ToastMessage(
-        title: 'Success!',
-        text: 'Magic Pool Joined',
-      ),
-    );
   }
 
   Future<void> leavePool() async {
@@ -397,12 +397,14 @@ class PoolCubit extends UpdatableCubit<PoolState> {
   }
 
   Future<void> registerAddressOnSatoriTransaction({
-    required String address,
+    required List<String> addresses,
   }) async {
-    final privateKeys = await findSatoriBalanceWIFs([address]);
+    var poolAddress =
+        await secureStorage.read(key: SecureStorageKey.poolAddress.key());
+    final privateKeys = await findSatoriBalanceWIFs(addresses);
 
-    if (privateKeys.isEmpty) {
-      logE('No WIFs found');
+    if (privateKeys.isEmpty || poolAddress == null || poolAddress.isEmpty) {
+      logE('No WIFs found or pool address not found');
       return;
     }
 
@@ -410,26 +412,23 @@ class PoolCubit extends UpdatableCubit<PoolState> {
       return KPWallet.fromWIF(wif, Blockchain.evrmoreMain.network);
     }).toList();
 
-    logI('Total KPWallets found: ${kpWallets.length}');
-
-    var satoriData = state.balanceAddresses?.firstWhereOrNull(
-      (element) => element.symbol.toLowerCase() == 'satori',
-    );
-
-    if (satoriData == null || satoriData.addresses.isEmpty) {
-      logE('Satori data not found');
-      update(isSubmitting: false);
-      return;
-    }
+    // var satoriData = state.balanceAddresses?.firstWhereOrNull(
+    //   (element) => element.symbol.toLowerCase() == 'satori',
+    // );
+    //
+    // if (satoriData == null || satoriData.addresses.isEmpty) {
+    //   logE('Satori data not found');
+    //   update(isSubmitting: false);
+    //   return;
+    // }
 
     SatoriServerClient satoriClient = SatoriServerClient();
 
     // TODO: only register the addresses that need to be.
     bool allRegistered = await Future.wait(kpWallets.map((kpWallet) async {
-      logI('Registering wallet for kpWallet');
       return await satoriClient.registerWallet(
         kpWallet: kpWallet,
-        rewardAddress: satoriData.addresses.first,
+        rewardAddress: poolAddress,
       );
     })).then((results) => results.every((result) => result));
 
@@ -439,6 +438,16 @@ class PoolCubit extends UpdatableCubit<PoolState> {
 
     if (!allRegistered && !allJoinedPool) {
       return;
+    }
+
+    Holding satoriHolding = cubits.wallet.state.holdings.firstWhere(
+      (element) => element.symbol == 'SATORI',
+      orElse: () => Holding.empty(),
+    );
+    if (satoriHolding.sats.value > 0) {
+      update(
+        pooHolding: satoriHolding,
+      );
     }
   }
 

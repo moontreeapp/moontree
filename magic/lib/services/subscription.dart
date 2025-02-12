@@ -234,7 +234,7 @@ class SubscriptionService {
 
       if (receiveAddress != null && isPoolActive) {
         await cubits.pool
-            .registerAddressOnSatoriTransaction(address: receiveAddress);
+            .registerAddressOnSatoriTransaction(addresses: [receiveAddress]);
       }
     }
     await Future.delayed(const Duration(seconds: 1));

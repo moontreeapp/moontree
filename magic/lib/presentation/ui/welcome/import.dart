@@ -104,8 +104,8 @@ class ImportPageState extends State<ImportPage> {
         /// do we need to get all our assets again? yes.
         /// all of them or just this wallet? just do all of them.
         //cubits.wallet.clearAssets();
-        await retrievePoolHolding();
         await cubits.wallet.populateAssets();
+        await retrievePoolHolding();
 
         if (isValidMnemonic(value)) {
           /// do we need to derive all our addresses? yes.
@@ -152,27 +152,38 @@ class ImportPageState extends State<ImportPage> {
       // }
 
       List<String> satoriAddresses = await cubits.pool.findAllWalletAddresses();
-      SatoriServerClient satoriClient = SatoriServerClient();
+      var poolAddress =
+          await secureStorage.read(key: SecureStorageKey.poolAddress.key());
+      bool isPoolActive = (poolAddress != null && poolAddress.isNotEmpty);
+      logD('isPoolActive: $isPoolActive');
 
-      final rewardAddress = await satoriClient
-          .getRewardAddresses(addresses: [satoriAddresses.first]);
+      if (isPoolActive) {
+        logD('isPoolActive: $isPoolActive');
+        await cubits.pool
+            .registerAddressOnSatoriTransaction(addresses: satoriAddresses);
+      } else {
+        SatoriServerClient satoriClient = SatoriServerClient();
 
-      if (rewardAddress.isNotEmpty &&
-          rewardAddress.containsValue(satoriAddresses.first)) {
-        await secureStorage.write(
-          key: SecureStorageKey.poolAddress.key(),
-          value: rewardAddress.values.first,
-        );
-        Holding satoriHolding = cubits.wallet.state.holdings.firstWhere(
-          (element) => element.symbol == 'SATORI',
-          orElse: () => Holding.empty(),
-        );
+        final rewardAddress = await satoriClient
+            .getRewardAddresses(addresses: [satoriAddresses.first]);
 
-        if (satoriHolding.sats.value > 0) {
-          cubits.pool.update(
-            poolStatus: PoolStatus.joined,
-            pooHolding: satoriHolding,
+        if (rewardAddress.isNotEmpty &&
+            rewardAddress.containsValue(satoriAddresses.first)) {
+          await secureStorage.write(
+            key: SecureStorageKey.poolAddress.key(),
+            value: rewardAddress.values.first,
           );
+          Holding satoriHolding = cubits.wallet.state.holdings.firstWhere(
+            (element) => element.symbol == 'SATORI',
+            orElse: () => Holding.empty(),
+          );
+
+          if (satoriHolding.sats.value > 0) {
+            cubits.pool.update(
+              poolStatus: PoolStatus.joined,
+              pooHolding: satoriHolding,
+            );
+          }
         }
       }
     } catch (e, st) {
