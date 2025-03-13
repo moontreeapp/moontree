@@ -106,8 +106,8 @@ class SettingsSubMenu extends StatelessWidget {
                 cubits.menu.isInHardMode ||
                 cubits.menu.isInEasyMode)
               const FadeInItem(child: BackupItem()),
-            if (cubits.menu.isInDevMode || cubits.menu.isInHardMode)
               const FadeInItem(child: ImportItem()),
+            //if (cubits.menu.isInDevMode || cubits.menu.isInHardMode)
             if (cubits.menu.isInDevMode) const FadeInItem(child: WalletsItem()),
             if (cubits.menu.isInDevMode)
               const FadeInItem(child: AddressesItem()),
